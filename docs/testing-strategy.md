@@ -9,6 +9,10 @@
 - Manifest write/read.
 - Deduplicated commit and restore.
 - Retention decisions.
+- Configuration load/save/defaults and validation.
+- IPC request/response serialisation.
+- Normal-file capture and VSS fallback selection.
+- Resource profile debounce delays.
 
 ## Integration tests
 
@@ -19,6 +23,8 @@
 - Atomic cloud-folder mirror writes.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
+- Service operation backup/list/restore using real temporary files.
+- Missing watched-folder failure reporting.
 
 ## Benchmarks
 
@@ -41,3 +47,5 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
 - Restore smoke test from installed build.
 - Developer CLI smoke test: back up a file, list versions, inspect the version,
   restore it, and compare hashes.
+- Developer service package artefacts: install script, uninstall script,
+  quickstart, and sample configuration.

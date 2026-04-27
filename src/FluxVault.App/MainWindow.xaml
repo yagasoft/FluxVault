@@ -19,9 +19,10 @@
                 <TextBlock Text="{Binding ServiceStatus}" FontSize="14" Foreground="#5F6368" Margin="0,4,0,0" />
             </StackPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Add watched folder" Padding="16,8" Margin="8,0,0,0" />
-                <Button Content="Restore" Padding="16,8" Margin="8,0,0,0" />
-                <Button Content="Export diagnostics" Padding="16,8" Margin="8,0,0,0" />
+                <Button Content="Refresh" Command="{Binding RefreshCommand}" Padding="16,8" Margin="8,0,0,0" />
+                <Button Content="Run backup now" Command="{Binding RunBackupNowCommand}" Padding="16,8" Margin="8,0,0,0" />
+                <Button Content="Restore" Command="{Binding RestoreSelectedCommand}" Padding="16,8" Margin="8,0,0,0" />
+                <Button Content="Export diagnostics" Command="{Binding ExportDiagnosticsCommand}" Padding="16,8" Margin="8,0,0,0" />
             </StackPanel>
         </DockPanel>
 
@@ -34,15 +35,48 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <DataGrid Grid.Column="0" ItemsSource="{Binding WatchedFolders}" AutoGenerateColumns="False"
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding RepositoryPath, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,8,8" Padding="8" />
+                        <Button Grid.Row="0" Grid.Column="1" Content="Repository" Command="{Binding BrowseRepositoryCommand}"
+                                Padding="14,8" Margin="0,0,0,8" />
+                        <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding MirrorPath, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,8,12" Padding="8" />
+                        <Button Grid.Row="1" Grid.Column="1" Content="Mirror" Command="{Binding BrowseMirrorCommand}"
+                                Padding="14,8" Margin="0,0,0,12" />
+
+                        <DockPanel Grid.Row="2" Grid.ColumnSpan="2" LastChildFill="True">
+                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,12">
+                                <TextBox Text="{Binding NewWatchedFolderPath, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="460" Padding="8" Margin="0,0,8,0" />
+                                <Button Content="Browse" Command="{Binding BrowseWatchedFolderCommand}" Padding="14,8" Margin="0,0,8,0" />
+                                <Button Content="Add" Command="{Binding AddWatchedFolderCommand}" Padding="14,8" Margin="0,0,8,0" />
+                                <Button Content="Remove" Command="{Binding RemoveWatchedFolderCommand}" Padding="14,8" Margin="0,0,8,0" />
+                                <Button Content="Save" Command="{Binding SaveConfigurationCommand}" Padding="14,8" />
+                            </StackPanel>
+
+                            <DataGrid ItemsSource="{Binding WatchedFolders}" SelectedItem="{Binding SelectedWatchedFolder}"
+                                      AutoGenerateColumns="False"
                               CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Folder" Binding="{Binding Path}" Width="*" />
-                            <DataGridTextColumn Header="Profile" Binding="{Binding ResourceProfile}" Width="120" />
-                            <DataGridTextColumn Header="Compression" Binding="{Binding Compression}" Width="140" />
-                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="180" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Folder" Binding="{Binding Path}" Width="*" />
+                                    <DataGridTextColumn Header="Profile" Binding="{Binding ResourceProfile}" Width="120" />
+                                    <DataGridTextColumn Header="Compression" Binding="{Binding Compression}" Width="140" />
+                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="180" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DockPanel>
+                    </Grid>
 
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="MVP capture strategy" FontSize="18" FontWeight="SemiBold" />
@@ -66,9 +100,10 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock Text="{Binding RepositorySummary}" TextWrapping="Wrap" FontSize="15" Foreground="#3C4043" />
-                    <DataGrid Grid.Row="1" ItemsSource="{Binding RecentVersions}" AutoGenerateColumns="False"
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding RecentVersions}" SelectedItem="{Binding SelectedVersion}" AutoGenerateColumns="False"
                               CanUserAddRows="False" IsReadOnly="True" Margin="0,18,0,0">
                         <DataGrid.Columns>
+                            <DataGridTextColumn Header="Version" Binding="{Binding VersionId}" Width="220" />
                             <DataGridTextColumn Header="File" Binding="{Binding SourcePath}" Width="*" />
                             <DataGridTextColumn Header="Captured" Binding="{Binding CapturedAt}" Width="180" />
                             <DataGridTextColumn Header="Consistency" Binding="{Binding Consistency}" Width="160" />

@@ -13,12 +13,14 @@ public partial class App : System.Windows.Application
     {
         base.OnStartup(e);
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        var viewModel = new MainWindowViewModel();
 
         mainWindow = new MainWindow
         {
-            DataContext = MainWindowViewModel.DesignTime()
+            DataContext = viewModel
         };
         mainWindow.Show();
+        _ = viewModel.RefreshAsync();
 
         notifyIcon = new WinForms.NotifyIcon
         {
@@ -48,10 +50,12 @@ public partial class App : System.Windows.Application
     {
         if (mainWindow is null)
         {
+            var viewModel = new MainWindowViewModel();
             mainWindow = new MainWindow
             {
-                DataContext = MainWindowViewModel.DesignTime()
+                DataContext = viewModel
             };
+            _ = viewModel.RefreshAsync();
         }
 
         mainWindow.Show();

@@ -17,9 +17,20 @@ a tray app, and a per-machine Windows service.
 
 ## Repository status
 
-This is an early scaffold. The first implementation slice focuses on the
-deduplicated repository, restore path, and release documentation before the
-Windows-specific capture provider is completed.
+FluxVault now has a developer-usable MVP loop:
+
+- WPF dashboard connected to the service over local named-pipe IPC.
+- Per-machine Worker Service host with persisted configuration under
+  `C:\ProgramData\FluxVault\config.json`.
+- Watched-folder backup using file-system notifications plus periodic
+  reconciliation.
+- Normal readable-file capture with VSS fallback for locked files when the
+  service has sufficient Windows privileges.
+- Version list, inspect, restore, diagnostics export, local repository, and
+  optional cloud-folder mirror.
+
+VSS captures are reported as crash-consistent in this MVP. Writer-aware
+app-consistency reporting remains a hardening item.
 
 ## Build
 
@@ -27,6 +38,28 @@ Windows-specific capture provider is completed.
 dotnet restore
 dotnet build
 dotnet test
+```
+
+## Developer app and service quickstart
+
+```powershell
+.\eng\package.ps1
+
+# Elevated PowerShell
+.\artifacts\publish\install-service.ps1
+
+# Normal desktop session
+.\artifacts\publish\app\FluxVault.App.exe
+```
+
+In the dashboard, choose a repository folder, optionally choose a cloud-sync
+mirror folder, add a watched folder, save the configuration, run a backup, then
+restore a selected version to an alternate path.
+
+To remove the unsigned developer service:
+
+```powershell
+.\artifacts\publish\uninstall-service.ps1
 ```
 
 ## Local backup harness

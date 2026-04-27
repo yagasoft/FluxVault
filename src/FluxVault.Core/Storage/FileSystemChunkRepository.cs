@@ -3,6 +3,7 @@ using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
 using FluxVault.Core.Content;
+using FluxVault.Core.Retention;
 
 namespace FluxVault.Core.Storage;
 
@@ -159,6 +160,64 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
     }
 
+    public async Task<RepositoryRetentionPreview> PreviewRetentionAsync(
+        RetentionPolicy policy,
+        DateTimeOffset nowUtc,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(policy);
+        var state = await BuildRetentionStateAsync(policy, nowUtc, cancellationToken).ConfigureAwait(false);
+        return new RepositoryRetentionPreview(
+            state.Decisions,
+            state.KeptVersionCount,
+            state.PrunableVersionCount,
+            state.PrunableStorageBytes,
+            GetRepositorySize(rootPath));
+    }
+
+    public async Task<RepositoryRetentionResult> ApplyRetentionAsync(
+        RetentionPolicy policy,
+        DateTimeOffset nowUtc,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(policy);
+        var state = await BuildRetentionStateAsync(policy, nowUtc, cancellationToken).ConfigureAwait(false);
+        var mirrorWarnings = new List<string>();
+        var reclaimedBytes = 0L;
+
+        foreach (var manifest in state.PrunableManifests)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            reclaimedBytes += DeleteLocalFile(ManifestPath(rootPath, manifest.VersionId));
+            DeleteMirrorFile(ManifestPath, manifest.VersionId, mirrorWarnings);
+        }
+
+        var deletedChunkCount = 0;
+        foreach (var digest in state.PrunableChunkDigests)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var chunkBytes = DeleteLocalFile(ChunkPath(rootPath, digest));
+            var metadataBytes = DeleteLocalFile(MetadataPath(rootPath, digest));
+            if (chunkBytes > 0 || metadataBytes > 0)
+            {
+                deletedChunkCount++;
+                reclaimedBytes += chunkBytes + metadataBytes;
+            }
+
+            DeleteMirrorFile(ChunkPath, digest, mirrorWarnings);
+            DeleteMirrorFile(MetadataPath, digest, mirrorWarnings);
+        }
+
+        return new RepositoryRetentionResult(
+            state.Decisions,
+            state.KeptVersionCount,
+            state.PrunableVersionCount,
+            deletedChunkCount,
+            reclaimedBytes,
+            GetRepositorySize(rootPath),
+            mirrorWarnings);
+    }
+
     private PreparedChunk PreparePayload(
         ReadOnlySpan<byte> raw,
         string digest,
@@ -232,6 +291,122 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             ?? throw new InvalidDataException($"Manifest {manifestPath} could not be read.");
     }
 
+    private async Task<RetentionState> BuildRetentionStateAsync(
+        RetentionPolicy policy,
+        DateTimeOffset nowUtc,
+        CancellationToken cancellationToken)
+    {
+        var manifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
+        var summaries = manifests.Select(manifest => new RepositoryVersionSummary(
+            manifest.VersionId,
+            manifest.SourcePath,
+            manifest.CapturedAtUtc,
+            manifest.Consistency,
+            manifest.LogicalLength,
+            manifest.Chunks.Count)).ToArray();
+
+        var decisions = RetentionPlanner.Decide(summaries, policy, nowUtc).ToArray();
+        var prunableIds = decisions
+            .Where(decision => !decision.Keep)
+            .Select(decision => decision.VersionId)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var prunableManifests = manifests
+            .Where(manifest => prunableIds.Contains(manifest.VersionId))
+            .ToArray();
+        var keptManifests = manifests
+            .Where(manifest => !prunableIds.Contains(manifest.VersionId))
+            .ToArray();
+
+        var keptDigests = keptManifests
+            .SelectMany(manifest => manifest.Chunks.Select(chunk => chunk.Digest))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var prunableChunkDigests = prunableManifests
+            .SelectMany(manifest => manifest.Chunks.Select(chunk => chunk.Digest))
+            .Where(digest => !keptDigests.Contains(digest))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        return new RetentionState(
+            decisions,
+            decisions.Count(decision => decision.Keep),
+            prunableManifests.Length,
+            prunableManifests,
+            prunableChunkDigests,
+            prunableChunkDigests.Sum(GetLocalChunkStorageBytes));
+    }
+
+    private async Task<IReadOnlyList<FileVersionManifest>> ReadAllManifestsAsync(CancellationToken cancellationToken)
+    {
+        if (!Directory.Exists(ManifestsPath(rootPath)))
+        {
+            return [];
+        }
+
+        var manifests = new List<FileVersionManifest>();
+        foreach (var path in Directory.EnumerateFiles(ManifestsPath(rootPath), "*.json"))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            manifests.Add(await ReadManifestAsync(path, cancellationToken).ConfigureAwait(false));
+        }
+
+        return manifests;
+    }
+
+    private long GetLocalChunkStorageBytes(string digest)
+    {
+        return GetFileLength(ChunkPath(rootPath, digest)) + GetFileLength(MetadataPath(rootPath, digest));
+    }
+
+    private static long GetRepositorySize(string root)
+    {
+        if (!Directory.Exists(root))
+        {
+            return 0;
+        }
+
+        return Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories).Sum(GetFileLength);
+    }
+
+    private static long DeleteLocalFile(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return 0;
+        }
+
+        var length = new FileInfo(path).Length;
+        File.Delete(path);
+        return length;
+    }
+
+    private void DeleteMirrorFile(Func<string, string, string> pathFactory, string key, List<string> warnings)
+    {
+        if (mirrorPath is null)
+        {
+            return;
+        }
+
+        var path = pathFactory(mirrorPath, key);
+        if (!File.Exists(path))
+        {
+            return;
+        }
+
+        try
+        {
+            File.Delete(path);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            warnings.Add($"Could not delete mirror artefact {path}: {exception.Message}");
+        }
+    }
+
+    private static long GetFileLength(string path)
+    {
+        return File.Exists(path) ? new FileInfo(path).Length : 0;
+    }
+
     private static void AtomicWrite(string path, byte[] bytes)
     {
         var directory = Path.GetDirectoryName(path) ?? throw new InvalidOperationException($"Path has no directory: {path}");
@@ -274,4 +449,12 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     }
 
     private sealed record PreparedChunk(byte[] Payload, ChunkMetadata Metadata);
+
+    private sealed record RetentionState(
+        IReadOnlyList<RepositoryVersionRetentionDecision> Decisions,
+        int KeptVersionCount,
+        int PrunableVersionCount,
+        IReadOnlyList<FileVersionManifest> PrunableManifests,
+        IReadOnlyList<string> PrunableChunkDigests,
+        long PrunableStorageBytes);
 }

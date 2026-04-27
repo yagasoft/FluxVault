@@ -81,6 +81,85 @@ public sealed class RepositoryTests
         Assert.Equal(result.Manifest.LogicalLength, inspection.LogicalLength);
     }
 
+    [Fact]
+    public async Task Preview_retention_reports_prunable_versions_without_mutating_repository()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        var now = new DateTimeOffset(2026, 4, 27, 12, 0, 0, TimeSpan.Zero);
+        await CommitSeriesAsync(repository, 25, now.AddDays(-220));
+
+        var preview = await repository.PreviewRetentionAsync(new RetentionPolicy(
+            IsEnabled: true,
+            KeepAllFor: TimeSpan.FromHours(24),
+            KeepHourlyFor: TimeSpan.FromDays(30),
+            KeepDailyFor: TimeSpan.FromDays(180),
+            MinimumVersionsPerFile: 20), now);
+
+        var versionsAfterPreview = await repository.ListVersionsAsync();
+        Assert.Equal(25, versionsAfterPreview.Count);
+        Assert.Equal(20, preview.KeptVersionCount);
+        Assert.Equal(5, preview.PrunableVersionCount);
+        Assert.True(preview.EstimatedReclaimableBytes > 0);
+    }
+
+    [Fact]
+    public async Task Apply_retention_prunes_manifests_and_kept_versions_restore()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        var now = new DateTimeOffset(2026, 4, 27, 12, 0, 0, TimeSpan.Zero);
+        await CommitSeriesAsync(repository, 25, now.AddDays(-220));
+
+        var result = await repository.ApplyRetentionAsync(new RetentionPolicy(
+            IsEnabled: true,
+            KeepAllFor: TimeSpan.FromHours(24),
+            KeepHourlyFor: TimeSpan.FromDays(30),
+            KeepDailyFor: TimeSpan.FromDays(180),
+            MinimumVersionsPerFile: 20), now);
+
+        var versions = await repository.ListVersionsAsync();
+        Assert.Equal(20, versions.Count);
+        Assert.Equal(5, result.PrunedVersionCount);
+        Assert.True(result.DeletedChunkCount > 0);
+        foreach (var version in versions)
+        {
+            var restoredPath = Path.Combine(workspace.RootPath, $"{version.VersionId}.restore");
+            await repository.RestoreAsync(version.VersionId, restoredPath);
+            Assert.True(new FileInfo(restoredPath).Length > 0);
+        }
+    }
+
+    [Fact]
+    public async Task Apply_retention_keeps_chunks_referenced_by_remaining_manifests()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        var now = new DateTimeOffset(2026, 4, 27, 12, 0, 0, TimeSpan.Zero);
+        var sharedPayload = Encoding.UTF8.GetBytes(string.Concat(Enumerable.Repeat("shared content ", 300)));
+
+        await repository.CommitAsync(NewRequest(
+            sharedPayload,
+            now.AddDays(-220),
+            sourcePath: @"D:\Work\Docs\first.docx"));
+        var kept = await repository.CommitAsync(NewRequest(
+            sharedPayload,
+            now.AddDays(-219),
+            sourcePath: @"D:\Work\Docs\second.docx"));
+
+        var result = await repository.ApplyRetentionAsync(new RetentionPolicy(
+            IsEnabled: true,
+            KeepAllFor: TimeSpan.Zero,
+            KeepHourlyFor: TimeSpan.Zero,
+            KeepDailyFor: TimeSpan.Zero,
+            MinimumVersionsPerFile: 1), now);
+
+        Assert.Equal(0, result.DeletedChunkCount);
+        var restoredPath = Path.Combine(workspace.RootPath, "second.restore");
+        await repository.RestoreAsync(kept.Manifest.VersionId, restoredPath);
+        Assert.Equal(sharedPayload, await File.ReadAllBytesAsync(restoredPath));
+    }
+
     private static FileSystemChunkRepository CreateRepository(string path)
     {
         return new FileSystemChunkRepository(
@@ -90,11 +169,27 @@ public sealed class RepositoryTests
             new ZstdChunkCodec());
     }
 
-    private static FileCommitRequest NewRequest(byte[] payload, DateTimeOffset? capturedAtUtc = null)
+    private static async Task CommitSeriesAsync(
+        FileSystemChunkRepository repository,
+        int count,
+        DateTimeOffset firstCaptureAtUtc)
+    {
+        for (var index = 0; index < count; index++)
+        {
+            var payload = Encoding.UTF8.GetBytes(string.Concat(
+                Enumerable.Repeat($"version {index:D2} unique content ", 128)));
+            await repository.CommitAsync(NewRequest(payload, firstCaptureAtUtc.AddMinutes(index)));
+        }
+    }
+
+    private static FileCommitRequest NewRequest(
+        byte[] payload,
+        DateTimeOffset? capturedAtUtc = null,
+        string sourcePath = @"D:\Work\Docs\brief.docx")
     {
         return new FileCommitRequest(
             WatchedFolderId: "docs",
-            SourcePath: @"D:\Work\Docs\brief.docx",
+            SourcePath: sourcePath,
             CapturedAtUtc: capturedAtUtc ?? DateTimeOffset.UtcNow,
             Consistency: CaptureConsistency.CrashConsistent,
             Compression: CompressionPreference.Zstd,

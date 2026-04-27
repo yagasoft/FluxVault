@@ -28,6 +28,8 @@ FluxVault now has a developer-usable MVP loop:
   service has sufficient Windows privileges.
 - Version list, inspect, restore, diagnostics export, local repository, and
   optional cloud-folder mirror.
+- Conservative automatic retention, with a WPF Options dialog for previewing
+  and applying retention settings.
 
 VSS captures are reported as crash-consistent in this MVP. Writer-aware
 app-consistency reporting remains a hardening item.
@@ -55,6 +57,12 @@ dotnet test
 In the dashboard, choose a repository folder, optionally choose a cloud-sync
 mirror folder, add a watched folder, save the configuration, run a backup, then
 restore a selected version to an alternate path.
+
+Open **Options** to review retention. The MVP defaults keep every version for
+24 hours, keep one version per hour for 30 days, keep one version per day for
+180 days, and always keep at least the latest 20 versions per source file.
+Retention is enabled by default and runs after successful service backups; the
+dialog can preview reclaimable repository space and run retention immediately.
 
 To remove the unsigned developer service:
 

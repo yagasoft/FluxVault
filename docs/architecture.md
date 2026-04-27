@@ -34,6 +34,9 @@ folder.
 7. Chunk fingerprints are compared against the local repository.
 8. New chunks and a manifest are committed atomically.
 9. Repository artefacts are mirrored into the configured cloud sync folder.
+10. If retention is enabled, the service applies the configured retention policy
+    after the successful backup and reports kept, pruned, and reclaimed counts
+    in service status.
 
 ## MVP harness flow
 
@@ -46,6 +49,13 @@ writes, listing, inspection, and restore without claiming open-file consistency.
 The repository stores immutable chunks and append-only version manifests. A
 manifest is the authoritative description of one captured file version. Chunks
 are addressed by BLAKE3 digest and may be zstd-compressed according to policy.
+
+Retention is manifest-led. FluxVault groups versions by normalised source path,
+keeps dense recent history, thins older history to hourly and daily buckets,
+and always keeps at least the latest configured number of versions per source
+file. After deleting pruned manifests locally, it garbage-collects only chunks
+and metadata no remaining manifest references. Mirror cleanup is best-effort
+and reported through status and diagnostics.
 
 ## Future release tracks
 

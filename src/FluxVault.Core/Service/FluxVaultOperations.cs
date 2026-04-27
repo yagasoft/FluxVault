@@ -21,6 +21,7 @@ public sealed class FluxVaultOperations(
     private DateTimeOffset? lastCaptureUtc;
     private string lastMessage = "Ready";
     private DurableChangeRuntimeStatus? durableChange;
+    private RepositoryRetentionResult? lastRetention;
 
     public async Task SaveConfigurationAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken = default)
     {
@@ -65,6 +66,12 @@ public sealed class FluxVaultOperations(
         var message = messages.Count == 0
             ? $"Captured {captured} file(s)."
             : string.Join(" ", messages);
+        if (success)
+        {
+            message = await ApplyRetentionAfterSuccessfulBackupAsync(repository, configuration, message, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
         return CompleteBackup(success, message, captured, failed);
     }
 
@@ -103,6 +110,12 @@ public sealed class FluxVaultOperations(
         var message = messages.Count == 0
             ? $"Captured {captured} changed file(s)."
             : string.Join(" ", messages);
+        if (success)
+        {
+            message = await ApplyRetentionAfterSuccessfulBackupAsync(CreateRepository(configuration), configuration, message, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
         return CompleteBackup(success, message, captured, failed);
     }
 
@@ -123,6 +136,25 @@ public sealed class FluxVaultOperations(
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         await CreateRepository(configuration).RestoreAsync(versionId, outputPath, cancellationToken).ConfigureAwait(false);
         lastMessage = $"Restored {versionId} to {outputPath}.";
+    }
+
+    public async Task<RepositoryRetentionPreview> PreviewRetentionAsync(CancellationToken cancellationToken = default)
+    {
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        return await CreateRepository(configuration)
+            .PreviewRetentionAsync(configuration.RetentionPolicy, DateTimeOffset.UtcNow, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<RepositoryRetentionResult> RunRetentionNowAsync(CancellationToken cancellationToken = default)
+    {
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var result = await CreateRepository(configuration)
+            .ApplyRetentionAsync(configuration.RetentionPolicy, DateTimeOffset.UtcNow, cancellationToken)
+            .ConfigureAwait(false);
+        lastRetention = result;
+        lastMessage = FormatRetentionSummary(result);
+        return result;
     }
 
     public async Task<string> ExportDiagnosticsAsync(string exportPath, CancellationToken cancellationToken = default)
@@ -165,6 +197,7 @@ public sealed class FluxVaultOperations(
                     durableChange?.Status ?? "Using reconciliation scan"))
                 .ToArray(),
             RecentVersions: versions.Take(50).ToArray(),
+            LastRetention: lastRetention,
             DurableChange: durableChange);
     }
 
@@ -179,6 +212,8 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.InspectVersion => FluxVaultIpcResponse.WithInspection(await InspectVersionAsync(Require(request.VersionId, "version id"), cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RestoreVersion => await RestoreVersionResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.ExportDiagnostics => FluxVaultIpcResponse.WithOutputPath(await ExportDiagnosticsAsync(Require(request.ExportPath, "export path"), cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.PreviewRetention => FluxVaultIpcResponse.WithRetentionPreview(await PreviewRetentionAsync(cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.RunRetentionNow => FluxVaultIpcResponse.WithRetentionResult(await RunRetentionNowAsync(cancellationToken).ConfigureAwait(false)),
             _ => FluxVaultIpcResponse.Failure($"Unsupported command: {request.Command}")
         };
     }
@@ -208,6 +243,45 @@ public sealed class FluxVaultOperations(
         lastCaptureUtc = DateTimeOffset.UtcNow;
         lastMessage = message;
         return new BackupRunSummary(success, message, captured, failed, lastCaptureUtc.Value);
+    }
+
+    private async Task<string> ApplyRetentionAfterSuccessfulBackupAsync(
+        IChunkRepository repository,
+        FluxVaultConfiguration configuration,
+        string message,
+        CancellationToken cancellationToken)
+    {
+        if (!configuration.RetentionPolicy.IsEnabled)
+        {
+            return message;
+        }
+
+        var retention = await repository.ApplyRetentionAsync(
+                configuration.RetentionPolicy,
+                DateTimeOffset.UtcNow,
+                cancellationToken)
+            .ConfigureAwait(false);
+        lastRetention = retention;
+        return $"{message} {FormatRetentionSummary(retention)}";
+    }
+
+    private static string FormatRetentionSummary(RepositoryRetentionResult result)
+    {
+        return $"Retention kept {result.KeptVersionCount} version(s), pruned {result.PrunedVersionCount}, reclaimed {FormatBytes(result.ReclaimedBytes)}.";
+    }
+
+    private static string FormatBytes(long bytes)
+    {
+        string[] units = ["B", "KB", "MB", "GB", "TB"];
+        var value = (double)bytes;
+        var unit = 0;
+        while (value >= 1024 && unit < units.Length - 1)
+        {
+            value /= 1024;
+            unit++;
+        }
+
+        return unit == 0 ? $"{bytes} B" : $"{value:0.0} {units[unit]}";
     }
 
     private async Task<(int Captured, int Failed, IReadOnlyList<string> Messages)> CaptureTargetsAsync(

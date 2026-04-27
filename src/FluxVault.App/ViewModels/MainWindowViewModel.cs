@@ -20,6 +20,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private Task? autoRefreshTask;
     private bool isApplyingStatus;
     private bool hasLocalConfigurationChanges;
+    private RetentionPolicy currentRetentionPolicy = RetentionPolicy.CreateDefault();
 
     [ObservableProperty]
     private string serviceStatus = "Service connection: checking...";
@@ -63,6 +64,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public ObservableCollection<WatchedFolderRow> WatchedFolders { get; } = [];
 
     public ObservableCollection<VersionRow> RecentVersions { get; } = [];
+
+    public IFluxVaultServiceClient ServiceClient => client;
 
     public IReadOnlyList<string> ResourceProfiles { get; } =
     [
@@ -308,6 +311,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             RepositoryPath = status.Configuration.RepositoryPath;
             MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
+            currentRetentionPolicy = status.Configuration.RetentionPolicy;
             var durableStatus = string.IsNullOrWhiteSpace(status.DurableChange?.Status)
                 ? string.Empty
                 : $" - {status.DurableChange.Status.TrimEnd('.')}";
@@ -365,7 +369,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     folder.Compression,
                     folder.ResourceProfile,
                     IsEnabled: true))
-                .ToArray());
+                .ToArray(),
+            RetentionPolicy: currentRetentionPolicy);
     }
 
     private static string BrowseFolder(string selectedPath)

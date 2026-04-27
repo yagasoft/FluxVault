@@ -18,7 +18,10 @@ folder; direct cloud adapters arrive later.
 - VSS-backed reads for open files.
 - Chunked deduplicated storage with BLAKE3 fingerprints.
 - Configurable zstd compression.
-- Smart retention with dense recent versions and thinner older versions.
+- Smart retention with dense recent versions and thinner older versions
+  implemented with conservative MVP defaults: keep all versions for 24 hours,
+  one per hour for 30 days, one per day for 180 days, and at least the latest
+  20 versions per source file.
 - Basic restore browser supporting original and alternate restore paths.
 - Local logs and diagnostics export only.
 - Developer command-line harness for backing up, listing, inspecting, and
@@ -33,6 +36,14 @@ folder; direct cloud adapters arrive later.
 - No hidden telemetry.
 - The command-line harness does not provide open-file consistency; it backs up
   normal file streams only.
+
+## MVP retention behaviour
+
+Retention is enabled by default and runs after successful service backups. The
+WPF Options dialog can change retention values, preview the number of prunable
+versions and estimated reclaimable bytes, and run retention immediately. This
+slice does not enforce a hard repository-size quota; repository size is
+reported for visibility only.
 
 ## Consistency language
 

@@ -9,7 +9,9 @@ public sealed record FluxVaultIpcResponse(
     BackupRunSummary? Backup,
     IReadOnlyList<RepositoryVersionSummary>? Versions,
     RepositoryInspection? Inspection,
-    string? OutputPath)
+    string? OutputPath,
+    RepositoryRetentionPreview? RetentionPreview = null,
+    RepositoryRetentionResult? RetentionResult = null)
 {
     public static FluxVaultIpcResponse Ok()
     {
@@ -39,6 +41,16 @@ public sealed record FluxVaultIpcResponse(
     public static FluxVaultIpcResponse WithOutputPath(string outputPath)
     {
         return new FluxVaultIpcResponse(true, null, null, null, null, null, outputPath);
+    }
+
+    public static FluxVaultIpcResponse WithRetentionPreview(RepositoryRetentionPreview preview)
+    {
+        return new FluxVaultIpcResponse(true, null, null, null, null, null, null, preview);
+    }
+
+    public static FluxVaultIpcResponse WithRetentionResult(RepositoryRetentionResult result)
+    {
+        return new FluxVaultIpcResponse(true, null, null, null, null, null, null, null, result);
     }
 
     public static FluxVaultIpcResponse Failure(string errorMessage)

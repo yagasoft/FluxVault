@@ -1,6 +1,7 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Ipc;
+using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Ipc;
 
 namespace FluxVault.Core.Tests;
@@ -47,5 +48,37 @@ public sealed class IpcSerializationTests
         Assert.NotNull(roundTrip.Status.DurableChange);
         Assert.Equal("USN active.", roundTrip.Status.DurableChange.Status);
         Assert.Equal((long)1000, Assert.Single(roundTrip.Status.DurableChange.Checkpoints).NextUsn);
+    }
+
+    [Fact]
+    public void Retention_request_serialization_preserves_command()
+    {
+        var request = FluxVaultIpcRequest.RunRetentionNow();
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeRequest(FluxVaultIpcSerializer.SerializeRequest(request));
+
+        Assert.Equal(FluxVaultIpcCommand.RunRetentionNow, roundTrip.Command);
+    }
+
+    [Fact]
+    public void Retention_response_serialization_preserves_result()
+    {
+        var result = new RepositoryRetentionResult(
+            Decisions: [],
+            KeptVersionCount: 42,
+            PrunedVersionCount: 8,
+            DeletedChunkCount: 5,
+            ReclaimedBytes: 1024,
+            RepositorySizeBytes: 4096,
+            MirrorWarnings: ["mirror warning"]);
+        var response = FluxVaultIpcResponse.WithRetentionResult(result);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
+
+        Assert.True(roundTrip.Success);
+        Assert.NotNull(roundTrip.RetentionResult);
+        Assert.Equal(8, roundTrip.RetentionResult.PrunedVersionCount);
+        Assert.Equal(1024, roundTrip.RetentionResult.ReclaimedBytes);
+        Assert.Equal("mirror warning", Assert.Single(roundTrip.RetentionResult.MirrorWarnings));
     }
 }

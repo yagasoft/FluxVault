@@ -8,5 +8,7 @@ public enum FluxVaultIpcCommand
     ListVersions = 3,
     InspectVersion = 4,
     RestoreVersion = 5,
-    ExportDiagnostics = 6
+    ExportDiagnostics = 6,
+    PreviewRetention = 7,
+    RunRetentionNow = 8
 }

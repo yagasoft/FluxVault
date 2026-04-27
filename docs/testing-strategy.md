@@ -24,6 +24,10 @@
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.
+- Service-triggered retention and manual `RunRetentionNow`.
+- Mirror cleanup after retention pruning.
+- Options dialog view-model save, preview, and run-retention behaviour with a
+  fake service client.
 - Missing watched-folder failure reporting.
 
 ## Benchmarks

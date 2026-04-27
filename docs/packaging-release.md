@@ -39,6 +39,8 @@ Windows service.
 - Unit and integration tests.
 - Package validation.
 - Dependency vulnerability scan.
-- CodeQL/security scan.
+- CodeQL/security scan for final release or production PRs. MVP feature PRs use
+  the `build-test` workflow as the required gate unless explicitly promoted to
+  release readiness.
 - SBOM generation.
 - Release artefact upload.

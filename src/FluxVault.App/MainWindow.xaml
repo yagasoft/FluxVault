@@ -20,6 +20,7 @@
             </StackPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Refresh" Command="{Binding RefreshCommand}" Padding="16,8" Margin="8,0,0,0" />
+                <Button Content="Options" Click="Options_Click" Padding="16,8" Margin="8,0,0,0" />
                 <Button Content="Run backup now" Command="{Binding RunBackupNowCommand}" Padding="16,8" Margin="8,0,0,0" />
                 <Button Content="Restore" Command="{Binding RestoreSelectedCommand}" Padding="16,8" Margin="8,0,0,0" />
                 <Button Content="Export diagnostics" Command="{Binding ExportDiagnosticsCommand}" Padding="16,8" Margin="8,0,0,0" />

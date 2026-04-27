@@ -5,14 +5,11 @@
 ```text
 repository/
   chunks/
-    blake3-prefix/
+    digest-prefix/
       digest.chunk
+      digest.json
   manifests/
-    yyyy/
-      mm/
-        version-id.json
-  refs/
-    latest.json
+    version-id.json
 ```
 
 ## Chunk records
@@ -35,6 +32,17 @@ A manifest records:
 - compression policy used
 
 Manifests are written to a temporary file and atomically moved into place.
+
+## Retention and garbage collection
+
+Retention deletes manifests first. A version disappears from `list` as soon as
+its manifest is pruned. Chunk and metadata files are deleted only when no
+remaining manifest references the chunk digest, so shared chunks survive older
+version pruning.
+
+Cloud-folder mirrors use the same layout. Local pruning is authoritative; mirror
+deletion is best-effort and any mirror cleanup warnings are surfaced in service
+status and diagnostics.
 
 ## CLI repository operations
 

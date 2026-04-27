@@ -1,5 +1,6 @@
 using System.Text.Json;
 using FluxVault.Abstractions.Configuration;
+using FluxVault.Abstractions.Policies;
 
 namespace FluxVault.Core.Configuration;
 
@@ -18,9 +19,10 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         }
 
         await using var stream = File.OpenRead(configPath);
-        return await JsonSerializer.DeserializeAsync<FluxVaultConfiguration>(stream, JsonOptions, cancellationToken)
+        var configuration = await JsonSerializer.DeserializeAsync<FluxVaultConfiguration>(stream, JsonOptions, cancellationToken)
             .ConfigureAwait(false)
             ?? throw new InvalidDataException($"FluxVault configuration could not be read: {configPath}");
+        return Normalise(configuration);
     }
 
     public async Task SaveAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken = default)
@@ -56,5 +58,12 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
                 throw new InvalidDataException($"Watched folder path is required for {folder.Id}.");
             }
         }
+    }
+
+    private static FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
+    {
+        return configuration.RetentionPolicy is null
+            ? configuration with { RetentionPolicy = RetentionPolicy.CreateDefault() }
+            : configuration;
     }
 }

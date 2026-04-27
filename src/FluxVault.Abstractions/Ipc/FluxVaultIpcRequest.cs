@@ -44,4 +44,14 @@ public sealed record FluxVaultIpcRequest(
     {
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.ExportDiagnostics, null, null, null, exportPath);
     }
+
+    public static FluxVaultIpcRequest PreviewRetention()
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.PreviewRetention, null, null, null, null);
+    }
+
+    public static FluxVaultIpcRequest RunRetentionNow()
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.RunRetentionNow, null, null, null, null);
+    }
 }

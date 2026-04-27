@@ -1,10 +1,13 @@
 namespace FluxVault.Abstractions.Configuration;
 
+using FluxVault.Abstractions.Policies;
+
 public sealed record FluxVaultConfiguration(
     string RepositoryPath,
     string? MirrorPath,
     bool IsEnabled,
-    IReadOnlyList<WatchedFolderConfiguration> WatchedFolders)
+    IReadOnlyList<WatchedFolderConfiguration> WatchedFolders,
+    RetentionPolicy RetentionPolicy = null!)
 {
     public static FluxVaultConfiguration CreateDefault(string programDataPath)
     {
@@ -13,6 +16,7 @@ public sealed record FluxVaultConfiguration(
             RepositoryPath: Path.Combine(programDataPath, "repository"),
             MirrorPath: null,
             IsEnabled: true,
-            WatchedFolders: []);
+            WatchedFolders: [],
+            RetentionPolicy: RetentionPolicy.CreateDefault());
     }
 }

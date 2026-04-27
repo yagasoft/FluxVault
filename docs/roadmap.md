@@ -4,7 +4,8 @@
 
 Build the full user-facing shape early: WPF dashboard, tray shell, Windows
 service, watched folders, VSS + USN + smart cadence, chunked repository,
-cloud-folder mirror, smart retention, restore, diagnostics, and benchmarks.
+cloud-folder mirror, conservative automatic retention with Options dialog
+controls, restore, diagnostics, and benchmarks.
 
 ## V1 production
 

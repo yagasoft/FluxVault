@@ -19,6 +19,11 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(Path.Combine(programData, "repository"), configuration.RepositoryPath);
         Assert.Null(configuration.MirrorPath);
         Assert.Empty(configuration.WatchedFolders);
+        Assert.True(configuration.RetentionPolicy.IsEnabled);
+        Assert.Equal(TimeSpan.FromHours(24), configuration.RetentionPolicy.KeepAllFor);
+        Assert.Equal(TimeSpan.FromDays(30), configuration.RetentionPolicy.KeepHourlyFor);
+        Assert.Equal(TimeSpan.FromDays(180), configuration.RetentionPolicy.KeepDailyFor);
+        Assert.Equal(20, configuration.RetentionPolicy.MinimumVersionsPerFile);
     }
 
     [Fact]
@@ -54,6 +59,32 @@ public sealed class ConfigurationStoreTests
         Assert.Equal("docs", watchedFolder.Id);
         Assert.Equal(ResourceProfile.Fast, watchedFolder.ResourceProfile);
         Assert.Equal(["*.txt", "*.docx"], watchedFolder.IncludePatterns);
+        Assert.True(actual.RetentionPolicy.IsEnabled);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_retention_policy()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(
+            Path.Combine(workspace.RootPath, "config.json"),
+            workspace.RootPath);
+        var expected = new FluxVaultConfiguration(
+            RepositoryPath: Path.Combine(workspace.RootPath, "repository"),
+            MirrorPath: null,
+            IsEnabled: true,
+            WatchedFolders: [],
+            RetentionPolicy: new RetentionPolicy(
+                IsEnabled: false,
+                KeepAllFor: TimeSpan.FromHours(12),
+                KeepHourlyFor: TimeSpan.FromDays(14),
+                KeepDailyFor: TimeSpan.FromDays(90),
+                MinimumVersionsPerFile: 10));
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+        Assert.Equal(expected.RetentionPolicy, actual.RetentionPolicy);
     }
 
     [Fact]

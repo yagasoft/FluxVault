@@ -68,6 +68,44 @@ public sealed class XamlQualityTests
         }
     }
 
+    [Fact]
+    public void Main_header_constrains_status_text_away_from_command_buttons()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+
+        Assert.Empty(document.Descendants(XamlNamespace + "DockPanel"));
+        var serviceStatus = document
+            .Descendants(XamlNamespace + "TextBlock")
+            .Single(element => (string?)element.Attribute("Text") == "{Binding ServiceStatus}");
+        var commandPanel = document
+            .Descendants(XamlNamespace + "StackPanel")
+            .Single(element => element
+                .Descendants(XamlNamespace + "Button")
+                .Any(button => (string?)button.Attribute("Content") == "Export diagnostics"));
+
+        Assert.Equal("CharacterEllipsis", (string?)serviceStatus.Attribute("TextTrimming"));
+        Assert.Equal("0", (string?)serviceStatus.Attribute("MinWidth"));
+        Assert.NotNull(serviceStatus.Element(XamlNamespace + "TextBlock.ToolTip"));
+        Assert.Equal("1", (string?)commandPanel.Attribute("Grid.Column"));
+    }
+
+    [Fact]
+    public void Usn_health_uses_wrapping_tooltip_content()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var usnHealth = document
+            .Descendants(XamlNamespace + "TextBlock")
+            .Single(element => (string?)element.Attribute("Text") == "{Binding UsnHealth}");
+        var tooltipText = usnHealth
+            .Element(XamlNamespace + "TextBlock.ToolTip")
+            ?.Element(XamlNamespace + "ToolTip")
+            ?.Element(XamlNamespace + "TextBlock");
+
+        Assert.NotNull(tooltipText);
+        Assert.Equal("{Binding UsnHealthToolTip}", (string?)tooltipText.Attribute("Text"));
+        Assert.Equal("Wrap", (string?)tooltipText.Attribute("TextWrapping"));
+    }
+
     private static XDocument LoadXaml(params string[] relativePathParts)
     {
         var root = FindRepositoryRoot();

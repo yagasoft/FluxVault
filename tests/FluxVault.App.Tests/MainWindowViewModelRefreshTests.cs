@@ -117,7 +117,8 @@ public sealed class MainWindowViewModelRefreshTests
 
         await viewModel.RefreshAsync();
 
-        Assert.Contains("USN active", viewModel.ServiceStatus);
+        Assert.DoesNotContain("USN active", viewModel.ServiceStatus);
+        Assert.Contains("USN: active", viewModel.UsnHealth);
     }
 
     [Fact]
@@ -152,6 +153,43 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Contains("Unable to open volume", viewModel.UsnHealth);
         Assert.Contains("FSCTL_QUERY_USN_JOURNAL", viewModel.UsnHealthToolTip);
         Assert.Contains("Unsupported volume", viewModel.UsnHealthToolTip);
+    }
+
+    [Fact]
+    public async Task Refresh_keeps_raw_usn_failure_out_of_visible_header_text()
+    {
+        var rawFailure = "USN catch-up failed: Unable to find an entry point named 'NativeDeviceIoControl' in DLL 'kernel32.dll'.";
+        var checkedAt = DateTimeOffset.UtcNow;
+        var status = StatusWithVersions("v1") with
+        {
+            DurableChange = new DurableChangeRuntimeStatus(
+                checkedAt,
+                "USN unavailable.",
+                rawFailure,
+                []) with
+            {
+                Details =
+                    [
+                        new DurableChangeDetail(
+                            WatchedFolderId: "docs",
+                            Path: @"D:\Work",
+                            VolumeRoot: @"D:\",
+                            Operation: "FSCTL_QUERY_USN_JOURNAL",
+                            Reason: rawFailure,
+                            Win32ErrorCode: null)
+                    ]
+            }
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        Assert.DoesNotContain("NativeDeviceIoControl", viewModel.ServiceStatus);
+        Assert.DoesNotContain("NativeDeviceIoControl", viewModel.UsnHealth);
+        Assert.Contains("unable to query change journal", viewModel.UsnHealth, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("NativeDeviceIoControl", viewModel.UsnHealthToolTip);
+        Assert.Contains("NativeDeviceIoControl", viewModel.ServiceStatusToolTip);
     }
 
     [Fact]

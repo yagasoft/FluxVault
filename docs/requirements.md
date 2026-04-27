@@ -29,6 +29,10 @@ folder; direct cloud adapters arrive later.
 - Local logs and diagnostics export only.
 - Tray activity pane and dashboard Activity view for pending, in-progress,
   blocked, failed, and completed capture events.
+- Dashboard service status must remain constrained and must not overlap command
+  buttons; full detail should be available through tooltips and diagnostics.
+- The tray activity pane must open fully inside the active monitor work area,
+  including high-DPI and taskbar-edge scenarios.
 - Helpful tooltips for every Options control, covering retention, capture
   cadence, compression, preview, apply, save, and close behaviours.
 - USN health must show exact fallback reasons in the UI and diagnostics instead

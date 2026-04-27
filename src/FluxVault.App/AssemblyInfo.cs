@@ -1,4 +1,7 @@
+using System.Runtime.CompilerServices;
 using System.Windows;
+
+[assembly: InternalsVisibleTo("FluxVault.App.Tests")]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None,

@@ -19,7 +19,9 @@ public partial class App : System.Windows.Application
         {
             DataContext = viewModel
         };
+        mainWindow.Activated += (_, _) => _ = viewModel.RefreshAsync();
         mainWindow.Show();
+        viewModel.StartAutoRefresh();
         _ = viewModel.RefreshAsync();
 
         notifyIcon = new WinForms.NotifyIcon
@@ -34,6 +36,11 @@ public partial class App : System.Windows.Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        if (mainWindow?.DataContext is MainWindowViewModel viewModel)
+        {
+            viewModel.StopAutoRefresh();
+        }
+
         notifyIcon?.Dispose();
         base.OnExit(e);
     }
@@ -55,7 +62,15 @@ public partial class App : System.Windows.Application
             {
                 DataContext = viewModel
             };
+            mainWindow.Activated += (_, _) => _ = viewModel.RefreshAsync();
+            viewModel.StartAutoRefresh();
             _ = viewModel.RefreshAsync();
+        }
+
+        if (mainWindow.DataContext is MainWindowViewModel existingViewModel)
+        {
+            existingViewModel.StartAutoRefresh();
+            _ = existingViewModel.RefreshAsync();
         }
 
         mainWindow.Show();

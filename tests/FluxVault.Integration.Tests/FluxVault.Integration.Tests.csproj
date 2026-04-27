@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\FluxVault.Abstractions\FluxVault.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\FluxVault.Cli\FluxVault.Cli.csproj" />
     <ProjectReference Include="..\..\src\FluxVault.Core\FluxVault.Core.csproj" />
     <ProjectReference Include="..\..\src\FluxVault.Windows\FluxVault.Windows.csproj" />
   </ItemGroup>

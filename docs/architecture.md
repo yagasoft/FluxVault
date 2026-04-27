@@ -10,6 +10,8 @@ FluxVault has four main runtime parts:
   restore, and diagnostics logic.
 - `FluxVault.Windows`: Windows-specific capture providers such as USN, file
   notifications, and VSS.
+- `FluxVault.Cli`: developer-facing backup/list/inspect/restore harness used to
+  validate the repository before service and UI automation are complete.
 
 ## MVP capture flow
 
@@ -21,6 +23,12 @@ FluxVault has four main runtime parts:
 6. Chunk fingerprints are compared against the local repository.
 7. New chunks and a manifest are committed atomically.
 8. Repository artefacts are mirrored into the configured cloud sync folder.
+
+## MVP harness flow
+
+The CLI harness bypasses VSS/USN and commits a normal readable file stream
+directly into the repository. This proves chunking, manifest creation, mirror
+writes, listing, inspection, and restore without claiming open-file consistency.
 
 ## Storage boundary
 

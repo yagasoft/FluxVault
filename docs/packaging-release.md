@@ -6,6 +6,12 @@ FluxVault targets a per-machine installer because the service, VSS capture, and
 Explorer integration require machine-level setup. MVP packages may be unsigned
 developer artefacts. V1 public releases require signed binaries and installer.
 
+Developer packages include:
+
+- WPF dashboard/tray shell
+- Windows service shell
+- CLI backup harness
+
 ## GitHub releases
 
 GitHub Releases are the first distribution channel. The app may check releases

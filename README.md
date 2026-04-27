@@ -28,3 +28,18 @@ dotnet restore
 dotnet build
 dotnet test
 ```
+
+## Local backup harness
+
+The MVP command-line harness backs up normal readable files into a local
+FluxVault repository. It does not use VSS or USN yet.
+
+```powershell
+dotnet run --project .\src\FluxVault.Cli -- backup --source .\README.md --repository .\.tmp\vault --mirror .\.tmp\cloud
+dotnet run --project .\src\FluxVault.Cli -- list --repository .\.tmp\vault
+dotnet run --project .\src\FluxVault.Cli -- inspect --repository .\.tmp\vault --version <version-id>
+dotnet run --project .\src\FluxVault.Cli -- restore --repository .\.tmp\vault --version <version-id> --output .\.tmp\README.restored.md
+```
+
+Exit codes are `0` for success, `1` for invalid arguments, `2` for not found,
+and `3` for backup/restore failures.

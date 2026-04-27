@@ -35,3 +35,10 @@ A manifest records:
 - compression policy used
 
 Manifests are written to a temporary file and atomically moved into place.
+
+## CLI repository operations
+
+The developer CLI writes into the same chunk and manifest layout as the service
+will use. `list` reads manifest summaries, `inspect` reads one manifest and
+reports stored/logical size, and `restore` reconstructs the file from ordered
+manifest chunks.

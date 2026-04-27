@@ -23,4 +23,10 @@ dotnet publish (Join-Path $root "src\FluxVault.App\FluxVault.App.csproj") `
     --self-contained false `
     --output (Join-Path $output "app")
 
+dotnet publish (Join-Path $root "src\FluxVault.Cli\FluxVault.Cli.csproj") `
+    --configuration $Configuration `
+    --runtime $Runtime `
+    --self-contained false `
+    --output (Join-Path $output "cli")
+
 Write-Host "Published FluxVault developer artefacts to $output"

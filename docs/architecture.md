@@ -23,15 +23,17 @@ folder.
 ## MVP capture flow
 
 1. Directory notification wakes the service quickly when a watched path changes.
-2. Periodic reconciliation scans repair missed events; USN catch-up remains the
-   next hardening step.
-3. Smart cadence coalesces hot files to avoid repeated full-file reads.
-4. Normal stream reads capture readable files; the Windows service falls back to
+2. USN journal catch-up reads durable per-volume changes since the last saved
+   checkpoint and targets only changed files when continuity is proven.
+3. Periodic reconciliation scans remain as a safety net when USN is unavailable,
+   inaccessible, reset, or unsupported for the watched volume.
+4. Smart cadence coalesces hot files to avoid repeated full-file reads.
+5. Normal stream reads capture readable files; the Windows service falls back to
    VSS through `vssadmin.exe` for locked files when privileges allow it.
-5. Core chunking splits the captured bytes into FastCDC-style chunks.
-6. Chunk fingerprints are compared against the local repository.
-7. New chunks and a manifest are committed atomically.
-8. Repository artefacts are mirrored into the configured cloud sync folder.
+6. Core chunking splits the captured bytes into FastCDC-style chunks.
+7. Chunk fingerprints are compared against the local repository.
+8. New chunks and a manifest are committed atomically.
+9. Repository artefacts are mirrored into the configured cloud sync folder.
 
 ## MVP harness flow
 

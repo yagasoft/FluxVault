@@ -53,6 +53,30 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Targeted_backup_commits_only_matching_existing_files_once()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var included = Path.Combine(watched, "draft.txt");
+        var excluded = Path.Combine(watched, "draft.tmp");
+        var missing = Path.Combine(watched, "missing.txt");
+        await File.WriteAllTextAsync(included, "targeted version");
+        await File.WriteAllTextAsync(excluded, "excluded");
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupForFilesAsync([included, included, excluded, missing]);
+
+        var versions = await operations.ListVersionsAsync();
+        Assert.True(backup.Success);
+        Assert.Equal(1, backup.CapturedFileCount);
+        Assert.Equal(0, backup.FailedFileCount);
+        Assert.Equal(included, Assert.Single(versions).SourcePath);
+    }
+
+    [Fact]
     public async Task Mirror_receives_complete_artifacts_without_temporary_files()
     {
         using var workspace = TemporaryWorkspace.Create();

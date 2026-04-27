@@ -72,7 +72,7 @@
                                     <DataGridTextColumn Header="Folder" Binding="{Binding Path}" Width="*" />
                                     <DataGridTextColumn Header="Profile" Binding="{Binding ResourceProfile}" Width="120" />
                                     <DataGridTextColumn Header="Compression" Binding="{Binding Compression}" Width="140" />
-                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="180" />
+                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="260" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </DockPanel>

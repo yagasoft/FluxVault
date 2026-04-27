@@ -1,0 +1,63 @@
+namespace FluxVault.Abstractions.ChangeTracking;
+
+public interface IUsnChangeJournalReader
+{
+    Task<UsnChangeJournalReadResult> ReadChangesAsync(
+        IReadOnlyList<UsnWatchedFolderScope> watchedFolders,
+        IReadOnlyList<UsnJournalCheckpoint> checkpoints,
+        CancellationToken cancellationToken = default);
+}
+
+public sealed record UsnWatchedFolderScope(
+    string WatchedFolderId,
+    string Path,
+    bool Recursive);
+
+public sealed record UsnJournalCheckpoint(
+    string WatchedFolderId,
+    string VolumeRoot,
+    ulong JournalId,
+    long NextUsn,
+    uint ReasonMask,
+    DateTimeOffset CheckedAtUtc);
+
+public sealed record UsnChangedFile(
+    string WatchedFolderId,
+    string Path,
+    uint Reason,
+    bool IsDirectory);
+
+public sealed record DurableChangeRuntimeStatus(
+    DateTimeOffset? LastUsnCatchUpUtc,
+    string Status,
+    string? FallbackReason,
+    IReadOnlyList<UsnJournalCheckpoint> Checkpoints);
+
+public sealed record UsnChangeJournalReadResult(
+    bool IsAvailable,
+    bool RequiresFullScan,
+    string Status,
+    string? FallbackReason,
+    IReadOnlyList<UsnChangedFile> ChangedFiles,
+    IReadOnlyList<UsnJournalCheckpoint> Checkpoints)
+{
+    public static UsnChangeJournalReadResult Active(
+        string status,
+        IReadOnlyList<UsnChangedFile> changedFiles,
+        IReadOnlyList<UsnJournalCheckpoint> checkpoints)
+    {
+        return new UsnChangeJournalReadResult(true, false, status, null, changedFiles, checkpoints);
+    }
+
+    public static UsnChangeJournalReadResult FullScanRequired(
+        string fallbackReason,
+        IReadOnlyList<UsnJournalCheckpoint> checkpoints)
+    {
+        return new UsnChangeJournalReadResult(true, true, "USN journal reset.", fallbackReason, [], checkpoints);
+    }
+
+    public static UsnChangeJournalReadResult Unavailable(string fallbackReason)
+    {
+        return new UsnChangeJournalReadResult(false, true, "USN unavailable.", fallbackReason, [], []);
+    }
+}

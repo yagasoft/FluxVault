@@ -1,5 +1,6 @@
 using System.IO.Enumeration;
 using System.Text.Json;
+using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Capture;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
@@ -19,6 +20,7 @@ public sealed class FluxVaultOperations(
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
     private DateTimeOffset? lastCaptureUtc;
     private string lastMessage = "Ready";
+    private DurableChangeRuntimeStatus? durableChange;
 
     public async Task SaveConfigurationAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken = default)
     {
@@ -35,9 +37,9 @@ public sealed class FluxVaultOperations(
         }
 
         var repository = CreateRepository(configuration);
-        var captured = 0;
         var failed = 0;
         var messages = new List<string>();
+        var targets = new List<FileBackupTarget>();
 
         foreach (var folder in configuration.WatchedFolders.Where(folder => folder.IsEnabled))
         {
@@ -51,31 +53,55 @@ public sealed class FluxVaultOperations(
 
             foreach (var file in EnumerateIncludedFiles(folder))
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                await using var capture = await captureProvider.CaptureAsync(new FileCaptureRequest(file), cancellationToken)
-                    .ConfigureAwait(false);
-                if (!capture.Success || capture.Content is null)
-                {
-                    failed++;
-                    messages.Add($"{file}: {capture.Message}");
-                    continue;
-                }
-
-                await repository.CommitAsync(new FileCommitRequest(
-                    WatchedFolderId: folder.Id,
-                    SourcePath: Path.GetFullPath(file),
-                    CapturedAtUtc: DateTimeOffset.UtcNow,
-                    Consistency: capture.Consistency,
-                    Compression: folder.Compression,
-                    MinimumCompressionBytes: 256 * 1024,
-                    Content: capture.Content), cancellationToken).ConfigureAwait(false);
-                captured++;
+                targets.Add(new FileBackupTarget(folder, file));
             }
         }
 
+        var (captured, captureFailed, captureMessages) = await CaptureTargetsAsync(repository, targets, cancellationToken)
+            .ConfigureAwait(false);
+        failed += captureFailed;
+        messages.AddRange(captureMessages);
         var success = failed == 0;
         var message = messages.Count == 0
             ? $"Captured {captured} file(s)."
+            : string.Join(" ", messages);
+        return CompleteBackup(success, message, captured, failed);
+    }
+
+    public async Task<BackupRunSummary> RunBackupForFilesAsync(
+        IEnumerable<string> filePaths,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(filePaths);
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        if (!configuration.IsEnabled)
+        {
+            return CompleteBackup(true, "Protection is disabled.", 0, 0);
+        }
+
+        var targets = new List<FileBackupTarget>();
+        foreach (var path in filePaths
+                     .Where(path => !string.IsNullOrWhiteSpace(path))
+                     .Select(Path.GetFullPath)
+                     .Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!File.Exists(path))
+            {
+                continue;
+            }
+
+            if (TryFindIncludedFolder(configuration, path, out var folder))
+            {
+                targets.Add(new FileBackupTarget(folder, path));
+            }
+        }
+
+        var (captured, failed, messages) = await CaptureTargetsAsync(CreateRepository(configuration), targets, cancellationToken)
+            .ConfigureAwait(false);
+        var success = failed == 0;
+        var message = messages.Count == 0
+            ? $"Captured {captured} changed file(s)."
             : string.Join(" ", messages);
         return CompleteBackup(success, message, captured, failed);
     }
@@ -110,6 +136,11 @@ public sealed class FluxVaultOperations(
         return filePath;
     }
 
+    public void UpdateDurableChangeStatus(DurableChangeRuntimeStatus status)
+    {
+        durableChange = status;
+    }
+
     public async Task<FluxVaultServiceStatus> GetStatusAsync(CancellationToken cancellationToken = default)
     {
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
@@ -130,9 +161,11 @@ public sealed class FluxVaultOperations(
                     folder.Path,
                     Directory.Exists(folder.Path),
                     folder.IsEnabled,
-                    Directory.Exists(folder.Path) ? "Ready" : "Folder missing"))
+                    Directory.Exists(folder.Path) ? "Ready" : "Folder missing",
+                    durableChange?.Status ?? "Using reconciliation scan"))
                 .ToArray(),
-            RecentVersions: versions.Take(50).ToArray());
+            RecentVersions: versions.Take(50).ToArray(),
+            DurableChange: durableChange);
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -177,6 +210,40 @@ public sealed class FluxVaultOperations(
         return new BackupRunSummary(success, message, captured, failed, lastCaptureUtc.Value);
     }
 
+    private async Task<(int Captured, int Failed, IReadOnlyList<string> Messages)> CaptureTargetsAsync(
+        IChunkRepository repository,
+        IReadOnlyList<FileBackupTarget> targets,
+        CancellationToken cancellationToken)
+    {
+        var captured = 0;
+        var failed = 0;
+        var messages = new List<string>();
+        foreach (var target in targets)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await using var capture = await captureProvider.CaptureAsync(new FileCaptureRequest(target.Path), cancellationToken)
+                .ConfigureAwait(false);
+            if (!capture.Success || capture.Content is null)
+            {
+                failed++;
+                messages.Add($"{target.Path}: {capture.Message}");
+                continue;
+            }
+
+            await repository.CommitAsync(new FileCommitRequest(
+                WatchedFolderId: target.Folder.Id,
+                SourcePath: Path.GetFullPath(target.Path),
+                CapturedAtUtc: DateTimeOffset.UtcNow,
+                Consistency: capture.Consistency,
+                Compression: target.Folder.Compression,
+                MinimumCompressionBytes: 256 * 1024,
+                Content: capture.Content), cancellationToken).ConfigureAwait(false);
+            captured++;
+        }
+
+        return (captured, failed, messages);
+    }
+
     private static IEnumerable<string> EnumerateIncludedFiles(WatchedFolderConfiguration folder)
     {
         var searchOption = folder.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
@@ -191,6 +258,51 @@ public sealed class FluxVaultOperations(
                 yield return file;
             }
         }
+    }
+
+    private static bool TryFindIncludedFolder(
+        FluxVaultConfiguration configuration,
+        string filePath,
+        out WatchedFolderConfiguration folder)
+    {
+        foreach (var candidate in configuration.WatchedFolders.Where(folder => folder.IsEnabled && Directory.Exists(folder.Path)))
+        {
+            if (IsUnderWatchedFolder(candidate, filePath) && MatchesPatterns(candidate, filePath))
+            {
+                folder = candidate;
+                return true;
+            }
+        }
+
+        folder = null!;
+        return false;
+    }
+
+    private static bool IsUnderWatchedFolder(WatchedFolderConfiguration folder, string filePath)
+    {
+        var fullPath = Path.GetFullPath(filePath);
+        var root = Path.GetFullPath(folder.Path);
+        if (!folder.Recursive)
+        {
+            return string.Equals(
+                Path.GetDirectoryName(fullPath)?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
+                root.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
+                StringComparison.OrdinalIgnoreCase);
+        }
+
+        var rootWithSeparator = root.EndsWith(Path.DirectorySeparatorChar)
+            ? root
+            : root + Path.DirectorySeparatorChar;
+        return fullPath.StartsWith(rootWithSeparator, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool MatchesPatterns(WatchedFolderConfiguration folder, string filePath)
+    {
+        var name = Path.GetFileName(filePath);
+        var included = folder.IncludePatterns.Count == 0
+            || folder.IncludePatterns.Any(pattern => FileSystemName.MatchesSimpleExpression(pattern, name, ignoreCase: true));
+        var excluded = folder.ExcludePatterns.Any(pattern => FileSystemName.MatchesSimpleExpression(pattern, name, ignoreCase: true));
+        return included && !excluded;
     }
 
     private static FileSystemChunkRepository CreateRepository(FluxVaultConfiguration configuration)
@@ -209,4 +321,6 @@ public sealed class FluxVaultOperations(
             ? throw new ArgumentException($"{name} is required.")
             : value;
     }
+
+    private sealed record FileBackupTarget(WatchedFolderConfiguration Folder, string Path);
 }

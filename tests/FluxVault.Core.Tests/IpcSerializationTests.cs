@@ -1,4 +1,5 @@
 using FluxVault.Abstractions.Configuration;
+using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Core.Ipc;
 
@@ -22,13 +23,19 @@ public sealed class IpcSerializationTests
     [Fact]
     public void Response_serialization_preserves_status_details()
     {
+        var checkedAt = new DateTimeOffset(2026, 4, 27, 12, 1, 0, TimeSpan.Zero);
         var status = new FluxVaultServiceStatus(
             IsServiceRunning: true,
             Configuration: FluxVaultConfiguration.CreateDefault(@"C:\ProgramData\FluxVault"),
             LastMessage: "Ready",
             LastCaptureUtc: new DateTimeOffset(2026, 4, 27, 12, 0, 0, TimeSpan.Zero),
             WatchedFolders: [],
-            RecentVersions: []);
+            RecentVersions: [],
+            DurableChange: new DurableChangeRuntimeStatus(
+                checkedAt,
+                "USN active.",
+                null,
+                [new UsnJournalCheckpoint("docs", @"D:\", 42, 1000, 1, checkedAt)]));
         var response = FluxVaultIpcResponse.WithStatus(status);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
@@ -37,5 +44,8 @@ public sealed class IpcSerializationTests
         Assert.NotNull(roundTrip.Status);
         Assert.Equal("Ready", roundTrip.Status.LastMessage);
         Assert.Equal(new DateTimeOffset(2026, 4, 27, 12, 0, 0, TimeSpan.Zero), roundTrip.Status.LastCaptureUtc);
+        Assert.NotNull(roundTrip.Status.DurableChange);
+        Assert.Equal("USN active.", roundTrip.Status.DurableChange.Status);
+        Assert.Equal((long)1000, Assert.Single(roundTrip.Status.DurableChange.Checkpoints).NextUsn);
     }
 }

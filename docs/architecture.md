@@ -13,12 +13,21 @@ FluxVault has four main runtime parts:
 - `FluxVault.Cli`: developer-facing backup/list/inspect/restore harness used to
   validate the repository before service and UI automation are complete.
 
+The current MVP service exposes a local named-pipe JSON IPC surface for status,
+configuration save, manual backup, version listing, version inspection, restore,
+and diagnostics export. Configuration is stored in
+`C:\ProgramData\FluxVault\config.json`; repository artefacts are written to the
+configured local repository, with optional atomic mirroring into a cloud-sync
+folder.
+
 ## MVP capture flow
 
 1. Directory notification wakes the service quickly when a watched path changes.
-2. USN journal catch-up confirms the changed file set and repairs missed events.
+2. Periodic reconciliation scans repair missed events; USN catch-up remains the
+   next hardening step.
 3. Smart cadence coalesces hot files to avoid repeated full-file reads.
-4. VSS supplies a stable read view for open or consistency-sensitive files.
+4. Normal stream reads capture readable files; the Windows service falls back to
+   VSS through `vssadmin.exe` for locked files when privileges allow it.
 5. Core chunking splits the captured bytes into FastCDC-style chunks.
 6. Chunk fingerprints are compared against the local repository.
 7. New chunks and a manifest are committed atomically.

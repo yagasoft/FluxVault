@@ -11,6 +11,21 @@ Developer packages include:
 - WPF dashboard/tray shell
 - Windows service shell
 - CLI backup harness
+- install and uninstall PowerShell scripts
+- quickstart and sample configuration
+
+`eng/package.ps1` publishes the developer artefacts to `artifacts\publish`:
+
+- `service`
+- `app`
+- `cli`
+- `install-service.ps1`
+- `uninstall-service.ps1`
+- `quickstart.md`
+- `sample-config.json`
+
+The developer service installs as `FluxVaultService` with display name
+`FluxVault Service`.
 
 ## GitHub releases
 

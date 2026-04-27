@@ -29,4 +29,9 @@ dotnet publish (Join-Path $root "src\FluxVault.Cli\FluxVault.Cli.csproj") `
     --self-contained false `
     --output (Join-Path $output "cli")
 
+Copy-Item -LiteralPath (Join-Path $root "eng\install-service.ps1") -Destination (Join-Path $output "install-service.ps1") -Force
+Copy-Item -LiteralPath (Join-Path $root "eng\uninstall-service.ps1") -Destination (Join-Path $output "uninstall-service.ps1") -Force
+Copy-Item -LiteralPath (Join-Path $root "installer\quickstart.md") -Destination (Join-Path $output "quickstart.md") -Force
+Copy-Item -LiteralPath (Join-Path $root "installer\sample-config.json") -Destination (Join-Path $output "sample-config.json") -Force
+
 Write-Host "Published FluxVault developer artefacts to $output"

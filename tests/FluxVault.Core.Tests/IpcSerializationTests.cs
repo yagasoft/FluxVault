@@ -1,0 +1,41 @@
+using FluxVault.Abstractions.Configuration;
+using FluxVault.Abstractions.Ipc;
+using FluxVault.Core.Ipc;
+
+namespace FluxVault.Core.Tests;
+
+public sealed class IpcSerializationTests
+{
+    [Fact]
+    public void Request_serialization_preserves_command_and_payload()
+    {
+        var configuration = FluxVaultConfiguration.CreateDefault(@"C:\ProgramData\FluxVault");
+        var request = FluxVaultIpcRequest.SaveConfiguration(configuration);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeRequest(FluxVaultIpcSerializer.SerializeRequest(request));
+
+        Assert.Equal(FluxVaultIpcCommand.SaveConfiguration, roundTrip.Command);
+        Assert.NotNull(roundTrip.Configuration);
+        Assert.Equal(configuration.RepositoryPath, roundTrip.Configuration.RepositoryPath);
+    }
+
+    [Fact]
+    public void Response_serialization_preserves_status_details()
+    {
+        var status = new FluxVaultServiceStatus(
+            IsServiceRunning: true,
+            Configuration: FluxVaultConfiguration.CreateDefault(@"C:\ProgramData\FluxVault"),
+            LastMessage: "Ready",
+            LastCaptureUtc: new DateTimeOffset(2026, 4, 27, 12, 0, 0, TimeSpan.Zero),
+            WatchedFolders: [],
+            RecentVersions: []);
+        var response = FluxVaultIpcResponse.WithStatus(status);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
+
+        Assert.True(roundTrip.Success);
+        Assert.NotNull(roundTrip.Status);
+        Assert.Equal("Ready", roundTrip.Status.LastMessage);
+        Assert.Equal(new DateTimeOffset(2026, 4, 27, 12, 0, 0, TimeSpan.Zero), roundTrip.Status.LastCaptureUtc);
+    }
+}

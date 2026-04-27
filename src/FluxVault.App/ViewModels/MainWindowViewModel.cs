@@ -13,7 +13,13 @@ namespace FluxVault.App.ViewModels;
 
 public sealed partial class MainWindowViewModel : ObservableObject
 {
-    private readonly NamedPipeFluxVaultClient client;
+    private readonly IFluxVaultServiceClient client;
+    private readonly TimeSpan autoRefreshInterval;
+    private readonly SemaphoreSlim refreshGate = new(1, 1);
+    private CancellationTokenSource? autoRefreshCancellation;
+    private Task? autoRefreshTask;
+    private bool isApplyingStatus;
+    private bool hasLocalConfigurationChanges;
 
     [ObservableProperty]
     private string serviceStatus = "Service connection: checking...";
@@ -37,13 +43,14 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private string diagnosticsText = "Diagnostics are local-only. Use Export diagnostics to write a JSON bundle.";
 
     public MainWindowViewModel()
-        : this(new NamedPipeFluxVaultClient())
+        : this(new NamedPipeFluxVaultClient(), TimeSpan.FromSeconds(5))
     {
     }
 
-    private MainWindowViewModel(NamedPipeFluxVaultClient client)
+    public MainWindowViewModel(IFluxVaultServiceClient client, TimeSpan autoRefreshInterval)
     {
         this.client = client;
+        this.autoRefreshInterval = autoRefreshInterval;
     }
 
     public string CaptureStrategy { get; } =
@@ -67,21 +74,123 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     public async Task RefreshAsync()
     {
+        await RefreshAsync(isAutomatic: false).ConfigureAwait(true);
+    }
+
+    public void StartAutoRefresh()
+    {
+        if (autoRefreshTask is { IsCompleted: false })
+        {
+            return;
+        }
+
+        autoRefreshCancellation = new CancellationTokenSource();
+        autoRefreshTask = AutoRefreshAsync(autoRefreshCancellation.Token);
+    }
+
+    public void StopAutoRefresh()
+    {
+        autoRefreshCancellation?.Cancel();
+        autoRefreshCancellation?.Dispose();
+        autoRefreshCancellation = null;
+        autoRefreshTask = null;
+    }
+
+    private async Task AutoRefreshAsync(CancellationToken cancellationToken)
+    {
         try
         {
-            var response = await client.SendAsync(FluxVaultIpcRequest.GetStatus()).ConfigureAwait(true);
-            if (!response.Success || response.Status is null)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                ServiceStatus = $"Service connection: unavailable ({response.ErrorMessage ?? "no status returned"})";
+                await Task.Delay(autoRefreshInterval, cancellationToken).ConfigureAwait(true);
+                await RefreshAsync(isAutomatic: true, cancellationToken).ConfigureAwait(true);
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+        }
+    }
+
+    private async Task RefreshAsync(bool isAutomatic, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (isAutomatic && hasLocalConfigurationChanges)
+            {
                 return;
             }
 
-            ApplyStatus(response.Status);
+            if (!await refreshGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
+            {
+                return;
+            }
+
+            try
+            {
+                var response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true);
+                if (!response.Success || response.Status is null)
+                {
+                    ServiceStatus = $"Service connection: unavailable ({response.ErrorMessage ?? "no status returned"})";
+                    return;
+                }
+
+                ApplyStatus(response.Status);
+            }
+            finally
+            {
+                refreshGate.Release();
+            }
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException)
         {
             ServiceStatus = $"Service connection: unavailable ({ex.Message})";
         }
+    }
+
+    partial void OnRepositoryPathChanged(string value)
+    {
+        MarkConfigurationDirty();
+    }
+
+    partial void OnMirrorPathChanged(string value)
+    {
+        MarkConfigurationDirty();
+    }
+
+    partial void OnNewWatchedFolderPathChanged(string value)
+    {
+        MarkConfigurationDirty();
+    }
+
+    private void MarkConfigurationDirty()
+    {
+        if (!isApplyingStatus)
+        {
+            hasLocalConfigurationChanges = true;
+        }
+    }
+
+    private async Task SaveConfigurationCoreAsync()
+    {
+        var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(BuildConfiguration())).ConfigureAwait(true);
+        ServiceStatus = response.Success
+            ? "Service connection: configuration saved"
+            : $"Service connection: save failed ({response.ErrorMessage})";
+        if (response.Success)
+        {
+            hasLocalConfigurationChanges = false;
+            await RefreshAsync().ConfigureAwait(true);
+        }
+    }
+
+    private void MarkStatusApplied()
+    {
+        hasLocalConfigurationChanges = false;
+    }
+
+    private void SetServiceUnavailable(Exception ex)
+    {
+        ServiceStatus = $"Service connection: unavailable ({ex.Message})";
     }
 
     [RelayCommand]
@@ -117,6 +226,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             CompressionPreference.Zstd,
             "Pending save"));
         NewWatchedFolderPath = string.Empty;
+        hasLocalConfigurationChanges = true;
     }
 
     [RelayCommand]
@@ -125,26 +235,20 @@ public sealed partial class MainWindowViewModel : ObservableObject
         if (SelectedWatchedFolder is not null)
         {
             WatchedFolders.Remove(SelectedWatchedFolder);
+            hasLocalConfigurationChanges = true;
         }
     }
 
     [RelayCommand]
     private async Task SaveConfigurationAsync()
     {
-        var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(BuildConfiguration())).ConfigureAwait(true);
-        ServiceStatus = response.Success
-            ? "Service connection: configuration saved"
-            : $"Service connection: save failed ({response.ErrorMessage})";
-        if (response.Success)
-        {
-            await RefreshAsync().ConfigureAwait(true);
-        }
+        await SaveConfigurationCoreAsync().ConfigureAwait(true);
     }
 
     [RelayCommand]
     private async Task RunBackupNowAsync()
     {
-        await SaveConfigurationAsync().ConfigureAwait(true);
+        await SaveConfigurationCoreAsync().ConfigureAwait(true);
         var response = await client.SendAsync(FluxVaultIpcRequest.RunBackupNow()).ConfigureAwait(true);
         ServiceStatus = response.Backup is null
             ? $"Service connection: backup failed ({response.ErrorMessage})"
@@ -175,6 +279,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
         ServiceStatus = response.Success
             ? $"Service connection: restored {SelectedVersion.VersionId}"
             : $"Service connection: restore failed ({response.ErrorMessage})";
+        if (response.Success)
+        {
+            await RefreshAsync().ConfigureAwait(true);
+        }
     }
 
     [RelayCommand]
@@ -194,30 +302,44 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private void ApplyStatus(FluxVaultServiceStatus status)
     {
-        RepositoryPath = status.Configuration.RepositoryPath;
-        MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
-        ServiceStatus = $"Service connection: running - {status.LastMessage}";
-        WatchedFolders.Clear();
-        foreach (var folder in status.Configuration.WatchedFolders)
+        var selectedVersionId = SelectedVersion?.VersionId;
+        isApplyingStatus = true;
+        try
         {
-            var runtime = status.WatchedFolders.SingleOrDefault(value => value.Id == folder.Id);
-            WatchedFolders.Add(new WatchedFolderRow(
-                folder.Id,
-                folder.Path,
-                folder.ResourceProfile,
-                folder.Compression,
-                runtime?.Status ?? "Ready"));
-        }
+            RepositoryPath = status.Configuration.RepositoryPath;
+            MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
+            ServiceStatus = $"Service connection: running - {status.LastMessage}. Last refreshed {DateTime.Now:HH:mm:ss}";
+            WatchedFolders.Clear();
+            foreach (var folder in status.Configuration.WatchedFolders)
+            {
+                var runtime = status.WatchedFolders.SingleOrDefault(value => value.Id == folder.Id);
+                WatchedFolders.Add(new WatchedFolderRow(
+                    folder.Id,
+                    folder.Path,
+                    folder.ResourceProfile,
+                    folder.Compression,
+                    runtime?.Status ?? "Ready"));
+            }
 
-        RecentVersions.Clear();
-        foreach (var version in status.RecentVersions)
+            RecentVersions.Clear();
+            foreach (var version in status.RecentVersions)
+            {
+                RecentVersions.Add(new VersionRow(
+                    version.VersionId,
+                    version.SourcePath,
+                    version.CapturedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss"),
+                    version.Consistency,
+                    version.ChunkCount));
+            }
+
+            SelectedVersion = selectedVersionId is null
+                ? null
+                : RecentVersions.SingleOrDefault(version => version.VersionId == selectedVersionId);
+            MarkStatusApplied();
+        }
+        finally
         {
-            RecentVersions.Add(new VersionRow(
-                version.VersionId,
-                version.SourcePath,
-                version.CapturedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss"),
-                version.Consistency,
-                version.ChunkCount));
+            isApplyingStatus = false;
         }
     }
 

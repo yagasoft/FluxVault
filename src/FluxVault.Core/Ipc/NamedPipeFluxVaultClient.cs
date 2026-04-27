@@ -3,7 +3,7 @@ using FluxVault.Abstractions.Ipc;
 
 namespace FluxVault.Core.Ipc;
 
-public sealed class NamedPipeFluxVaultClient(string pipeName = NamedPipeFluxVaultServer.DefaultPipeName)
+public sealed class NamedPipeFluxVaultClient(string pipeName = NamedPipeFluxVaultServer.DefaultPipeName) : IFluxVaultServiceClient
 {
     public async Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
     {

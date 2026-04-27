@@ -464,63 +464,88 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private static string BuildDurableChangeSummary(DurableChangeRuntimeStatus durableChange)
     {
         var status = FormatDurableStatus(durableChange.Status);
+        var latestCheck = FormatLatestUsnCheck(durableChange.LastUsnCatchUpUtc);
         if (string.IsNullOrWhiteSpace(durableChange.FallbackReason))
         {
-            return status;
+            return JoinDurableSummary(status, latestCheck);
         }
 
         var fallback = durableChange.FallbackReason;
         if (Contains(fallback, "Unable to open volume"))
         {
-            return $"{status} - Unable to open volume";
+            return JoinDurableSummary(status, latestCheck, "Unable to open volume");
         }
 
         if (Contains(fallback, "Unsupported volume"))
         {
-            return $"{status} - unsupported volume";
+            return JoinDurableSummary(status, latestCheck, "unsupported volume");
         }
 
         if (Contains(fallback, "journal wrapped"))
         {
-            return $"{status} - journal wrapped";
+            return JoinDurableSummary(status, latestCheck, "journal wrapped");
         }
 
         if (Contains(fallback, "journal ID changed"))
         {
-            return $"{status} - journal ID changed";
+            return JoinDurableSummary(status, latestCheck, "journal ID changed");
         }
 
         if (Contains(fallback, "checkpoint missing"))
         {
-            return $"{status} - checkpoint missing";
+            return JoinDurableSummary(status, latestCheck, "checkpoint missing");
         }
 
         if (Contains(fallback, "File-id path resolution failed"))
         {
-            return $"{status} - file path resolution failed";
+            return JoinDurableSummary(status, latestCheck, "file path resolution failed");
         }
 
         if (Contains(fallback, "FSCTL_QUERY_USN_JOURNAL")
             || Contains(fallback, "NativeDeviceIoControl")
             || durableChange.Details.Any(detail => string.Equals(detail.Operation, "FSCTL_QUERY_USN_JOURNAL", StringComparison.OrdinalIgnoreCase)))
         {
-            return $"{status} - unable to query change journal";
+            return JoinDurableSummary(status, latestCheck, "unable to query change journal");
         }
 
         if (Contains(fallback, "FSCTL_READ_USN_JOURNAL"))
         {
-            return $"{status} - unable to read change journal";
+            return JoinDurableSummary(status, latestCheck, "unable to read change journal");
         }
 
-        return $"{status} - {TrimSummary(fallback)}";
+        return JoinDurableSummary(status, latestCheck, TrimSummary(fallback));
     }
 
     private static string FormatDurableStatus(string status)
     {
         var trimmed = status.Trim().TrimEnd('.');
-        return trimmed.StartsWith("USN ", StringComparison.OrdinalIgnoreCase)
+        var withoutPrefix = trimmed.StartsWith("USN ", StringComparison.OrdinalIgnoreCase)
             ? trimmed[4..]
             : trimmed;
+        var parts = withoutPrefix.Split(". ", 2, StringSplitOptions.TrimEntries);
+        if (parts.Length == 1)
+        {
+            return withoutPrefix;
+        }
+
+        return $"{parts[0]} - {LowercaseFirst(parts[1].TrimEnd('.'))}";
+    }
+
+    private static string? FormatLatestUsnCheck(DateTimeOffset? checkedAt)
+    {
+        return checkedAt is null ? null : $"last checked {checkedAt.Value.ToLocalTime():HH:mm:ss}";
+    }
+
+    private static string JoinDurableSummary(params string?[] parts)
+    {
+        return string.Join(" - ", parts.Where(part => !string.IsNullOrWhiteSpace(part)));
+    }
+
+    private static string LowercaseFirst(string value)
+    {
+        return string.IsNullOrEmpty(value)
+            ? value
+            : char.ToLowerInvariant(value[0]) + value[1..];
     }
 
     private static bool Contains(string value, string expected)

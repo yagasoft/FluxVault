@@ -40,6 +40,22 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
+    public void Options_tooltips_wrap_string_content_instead_of_clipping()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "OptionsWindow.xaml");
+        var tooltipStyle = document
+            .Descendants(XamlNamespace + "Style")
+            .Single(element => (string?)element.Attribute("TargetType") == "ToolTip");
+        var wrappingTextBlock = tooltipStyle
+            .Descendants(XamlNamespace + "TextBlock")
+            .SingleOrDefault(element => (string?)element.Attribute("Text") == "{Binding}");
+
+        Assert.NotNull(wrappingTextBlock);
+        Assert.Equal("Wrap", (string?)wrappingTextBlock.Attribute("TextWrapping"));
+        Assert.Equal("460", (string?)wrappingTextBlock.Attribute("MaxWidth"));
+    }
+
+    [Fact]
     public void Options_labels_have_helpful_tooltips()
     {
         var document = LoadXaml("src", "FluxVault.App", "OptionsWindow.xaml");

@@ -18,13 +18,24 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <DockPanel>
-                <StackPanel DockPanel.Dock="Left">
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
                     <TextBlock Text="Activity" FontSize="20" FontWeight="SemiBold" Foreground="#202124" />
                     <TextBlock Text="{Binding StatusText}" FontSize="12" Foreground="#5F6368" Margin="0,2,0,0" />
                 </StackPanel>
-                <Button DockPanel.Dock="Right" Content="Refresh" Command="{Binding RefreshCommand}" Padding="12,6" />
-            </DockPanel>
+                <Button Grid.Column="1"
+                        Content="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        MinWidth="86"
+                        Padding="12,6"
+                        ToolTip="Refresh the activity, pending capture, and blocked-file lists." />
+            </Grid>
 
             <ListBox Grid.Row="2" ItemsSource="{Binding Events}" BorderBrush="#DADCE0">
                 <ListBox.ItemTemplate>
@@ -58,8 +69,10 @@
             </GroupBox>
 
             <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Run backup now" Command="{Binding RunBackupNowCommand}" Padding="12,6" Margin="0,0,8,0" />
-                <Button Content="Pause protection" Command="{Binding PauseProtectionCommand}" Padding="12,6" />
+                <Button Content="Run backup now" Command="{Binding RunBackupNowCommand}" Padding="12,6" Margin="0,0,8,0"
+                        ToolTip="Ask the service to scan all watched folders immediately." />
+                <Button Content="Pause protection" Command="{Binding PauseProtectionCommand}" Padding="12,6"
+                        ToolTip="Pause or resume background protection." />
             </StackPanel>
         </Grid>
     </Border>

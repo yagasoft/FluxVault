@@ -2,6 +2,7 @@ using System.IO;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
@@ -46,6 +47,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string usnHealth = "USN: checking";
+
+    [ObservableProperty]
+    private string usnHealthToolTip = "Durable change tracking status is checking.";
 
     [ObservableProperty]
     private string retentionHealth = "Retention: checking";
@@ -328,13 +332,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
             MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
             currentRetentionPolicy = status.Configuration.RetentionPolicy;
             currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
-            var durableStatus = string.IsNullOrWhiteSpace(status.DurableChange?.Status)
-                ? string.Empty
-                : $" - {status.DurableChange.Status.TrimEnd('.')}";
+            var durableStatus = BuildDurableChangeStatusSuffix(status.DurableChange);
             ServiceStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}{durableStatus}. Last refreshed {DateTime.Now:HH:mm:ss}";
-            UsnHealth = string.IsNullOrWhiteSpace(status.DurableChange?.Status)
-                ? "USN: reconciliation scan"
-                : $"USN: {status.DurableChange.Status.TrimEnd('.')}";
+            ApplyDurableChangeHealth(status.DurableChange);
             RetentionHealth = status.LastRetention is null
                 ? "Retention: waiting"
                 : $"Retention: kept {status.LastRetention.KeptVersionCount}, pruned {status.LastRetention.PrunedVersionCount}";
@@ -427,6 +427,62 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         var pending = statuses.Count(status => status.State is CaptureRuntimeState.WaitingForQuietWindow or CaptureRuntimeState.ForcedHotFileSnapshot);
         return pending > 0 ? $"Capture: pending {pending}" : "Capture: idle";
+    }
+
+    private void ApplyDurableChangeHealth(DurableChangeRuntimeStatus? durableChange)
+    {
+        if (durableChange is null || string.IsNullOrWhiteSpace(durableChange.Status))
+        {
+            UsnHealth = "USN: reconciliation scan";
+            UsnHealthToolTip = "The service has not reported durable USN tracking yet. FluxVault will use reconciliation scans as the safety net.";
+            return;
+        }
+
+        var status = durableChange.Status.TrimEnd('.');
+        var fallback = string.IsNullOrWhiteSpace(durableChange.FallbackReason)
+            ? string.Empty
+            : $" - {durableChange.FallbackReason}";
+        UsnHealth = $"USN: {status}{fallback}";
+        UsnHealthToolTip = BuildDurableChangeToolTip(durableChange);
+    }
+
+    private static string BuildDurableChangeStatusSuffix(DurableChangeRuntimeStatus? durableChange)
+    {
+        if (durableChange is null || string.IsNullOrWhiteSpace(durableChange.Status))
+        {
+            return string.Empty;
+        }
+
+        var fallback = string.IsNullOrWhiteSpace(durableChange.FallbackReason)
+            ? string.Empty
+            : $": {durableChange.FallbackReason}";
+        return $" - {durableChange.Status.TrimEnd('.')}{fallback}";
+    }
+
+    private static string BuildDurableChangeToolTip(DurableChangeRuntimeStatus durableChange)
+    {
+        var lines = new List<string>
+        {
+            durableChange.Status.TrimEnd('.')
+        };
+        if (!string.IsNullOrWhiteSpace(durableChange.FallbackReason))
+        {
+            lines.Add(durableChange.FallbackReason);
+        }
+
+        foreach (var detail in durableChange.Details.Take(8))
+        {
+            var scope = string.IsNullOrWhiteSpace(detail.Path) ? string.Empty : $" ({detail.Path})";
+            var error = detail.Win32ErrorCode is null ? string.Empty : $" [Win32 {detail.Win32ErrorCode}]";
+            lines.Add($"{detail.Operation}{scope}: {detail.Reason}{error}");
+        }
+
+        if (durableChange.Details.Count > 8)
+        {
+            lines.Add($"Plus {durableChange.Details.Count - 8} more detail(s) in diagnostics.");
+        }
+
+        return string.Join(Environment.NewLine, lines);
     }
 
     private static string BrowseFolder(string selectedPath)

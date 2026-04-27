@@ -19,6 +19,7 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
     private const uint DefaultReasonMask = 0xffffffff;
     private const int ErrorHandleEof = 38;
     private const int JournalBufferLength = 1024 * 1024;
+    private const int MaxDiagnosticDetails = 50;
 
     public Task<UsnChangeJournalReadResult> ReadChangesAsync(
         IReadOnlyList<UsnWatchedFolderScope> watchedFolders,
@@ -29,9 +30,19 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
         {
             return Task.FromResult(ReadChanges(watchedFolders, checkpoints, cancellationToken));
         }
+        catch (UsnJournalOperationException ex)
+        {
+            return Task.FromResult(UsnChangeJournalReadResult.Unavailable(ex.Detail.Reason, [ex.Detail]));
+        }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            return Task.FromResult(UsnChangeJournalReadResult.Unavailable(ex.Message));
+            var detail = UsnJournalDiagnosticFormatter.UnexpectedFailure(
+                watchedFolderId: null,
+                path: null,
+                volumeRoot: null,
+                operation: "USN catch-up",
+                exception: ex);
+            return Task.FromResult(UsnChangeJournalReadResult.Unavailable(detail.Reason, [detail]));
         }
     }
 
@@ -47,7 +58,9 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
 
         var changed = new List<UsnChangedFile>();
         var nextCheckpoints = new List<UsnJournalCheckpoint>();
-        var fallbackReasons = new List<string>();
+        var continuityFallbackReasons = new List<string>();
+        var unavailableReasons = new List<string>();
+        var details = new List<DurableChangeDetail>();
 
         foreach (var scope in watchedFolders)
         {
@@ -56,36 +69,69 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
             var volumeRoot = Path.GetPathRoot(folderPath);
             if (string.IsNullOrWhiteSpace(volumeRoot))
             {
-                fallbackReasons.Add($"{scope.Path}: volume root could not be resolved.");
+                var detail = new DurableChangeDetail(
+                    scope.WatchedFolderId,
+                    scope.Path,
+                    null,
+                    "Resolve volume root",
+                    $"{scope.Path}: volume root could not be resolved.",
+                    null);
+                unavailableReasons.Add(detail.Reason);
+                AddDetail(details, detail);
                 continue;
             }
 
-            using var volume = OpenVolume(volumeRoot);
-            var state = QueryJournal(volume, volumeRoot);
-            var checkpoint = checkpoints
-                .FirstOrDefault(candidate =>
-                    string.Equals(candidate.WatchedFolderId, scope.WatchedFolderId, StringComparison.OrdinalIgnoreCase)
-                    && string.Equals(candidate.VolumeRoot, state.VolumeRoot, StringComparison.OrdinalIgnoreCase));
-            var continuity = UsnJournalContinuity.Evaluate(scope.WatchedFolderId, state, checkpoint, DefaultReasonMask);
-            nextCheckpoints.Add(continuity.Checkpoint);
-            if (continuity.RequiresFullScan)
+            try
             {
-                fallbackReasons.Add($"{scope.Path}: {continuity.FallbackReason}");
-                continue;
-            }
+                using var volume = OpenVolume(scope, volumeRoot);
+                var state = QueryJournal(volume, scope, volumeRoot);
+                var checkpoint = checkpoints
+                    .FirstOrDefault(candidate =>
+                        string.Equals(candidate.WatchedFolderId, scope.WatchedFolderId, StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(candidate.VolumeRoot, state.VolumeRoot, StringComparison.OrdinalIgnoreCase));
+                var continuity = UsnJournalContinuity.Evaluate(scope.WatchedFolderId, state, checkpoint, DefaultReasonMask);
+                nextCheckpoints.Add(continuity.Checkpoint);
+                if (continuity.RequiresFullScan)
+                {
+                    var detail = new DurableChangeDetail(
+                        scope.WatchedFolderId,
+                        scope.Path,
+                        state.VolumeRoot,
+                        "Evaluate USN continuity",
+                        $"{scope.Path}: {continuity.FallbackReason}",
+                        null);
+                    continuityFallbackReasons.Add(detail.Reason);
+                    AddDetail(details, detail);
+                    continue;
+                }
 
-            changed.AddRange(ReadChangedFiles(volume, scope, state, continuity.StartUsn, cancellationToken));
+                changed.AddRange(ReadChangedFiles(volume, scope, state, continuity.StartUsn, details, cancellationToken));
+            }
+            catch (UsnJournalOperationException ex)
+            {
+                unavailableReasons.Add(ex.Detail.Reason);
+                AddDetail(details, ex.Detail);
+            }
         }
 
-        if (fallbackReasons.Count > 0)
+        if (unavailableReasons.Count > 0)
         {
-            return UsnChangeJournalReadResult.FullScanRequired(string.Join(" ", fallbackReasons), nextCheckpoints);
+            return UsnChangeJournalReadResult.Unavailable(string.Join(" ", unavailableReasons), details) with
+            {
+                Checkpoints = nextCheckpoints
+            };
+        }
+
+        if (continuityFallbackReasons.Count > 0)
+        {
+            return UsnChangeJournalReadResult.FullScanRequired(string.Join(" ", continuityFallbackReasons), nextCheckpoints, details);
         }
 
         return UsnChangeJournalReadResult.Active(
             $"USN active. Found {changed.Count} changed file(s).",
             changed,
-            nextCheckpoints);
+            nextCheckpoints,
+            details);
     }
 
     private static IEnumerable<UsnChangedFile> ReadChangedFiles(
@@ -93,6 +139,7 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
         UsnWatchedFolderScope scope,
         UsnJournalState state,
         long startUsn,
+        ICollection<DurableChangeDetail> details,
         CancellationToken cancellationToken)
     {
         var currentUsn = startUsn;
@@ -110,7 +157,14 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
                 UsnJournalId = state.JournalId
             };
 
-            var bytesReturned = DeviceIoControl(volume, FsctlReadUsnJournal, request, buffer);
+            var bytesReturned = DeviceIoControl(
+                volume,
+                FsctlReadUsnJournal,
+                request,
+                buffer,
+                scope,
+                state.VolumeRoot,
+                "FSCTL_READ_USN_JOURNAL");
             if (bytesReturned <= sizeof(long))
             {
                 break;
@@ -129,7 +183,7 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
                 var record = TryParseRecord(buffer, offset, recordLength);
                 if (record is not null)
                 {
-                    var path = ResolvePath(volume, record.Value);
+                    var path = ResolvePath(volume, scope, state.VolumeRoot, record.Value, details);
                     if (path is not null && IsWithinScope(scope, path))
                     {
                         yield return new UsnChangedFile(
@@ -179,7 +233,12 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
         return null;
     }
 
-    private static string? ResolvePath(SafeFileHandle volume, UsnRecord record)
+    private static string? ResolvePath(
+        SafeFileHandle volume,
+        UsnWatchedFolderScope scope,
+        string volumeRoot,
+        UsnRecord record,
+        ICollection<DurableChangeDetail> details)
     {
         var descriptor = record.ExtendedFileReferenceNumber is null
             ? FileIdDescriptor.FromFileId((long)record.FileReferenceNumber.GetValueOrDefault())
@@ -193,6 +252,12 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
             FileFlagBackupSemantics);
         if (file.IsInvalid)
         {
+            AddDetail(details, UsnJournalDiagnosticFormatter.FileIdPathResolutionFailed(
+                scope.WatchedFolderId,
+                scope.Path,
+                volumeRoot,
+                FormatFileReference(record),
+                Marshal.GetLastWin32Error()));
             return null;
         }
 
@@ -200,10 +265,24 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
         var length = GetFinalPathNameByHandle(file, path, (uint)path.Capacity, 0);
         if (length == 0)
         {
+            AddDetail(details, UsnJournalDiagnosticFormatter.FileIdPathResolutionFailed(
+                scope.WatchedFolderId,
+                scope.Path,
+                volumeRoot,
+                FormatFileReference(record),
+                Marshal.GetLastWin32Error()));
             return null;
         }
 
         return NormaliseFinalPath(path.ToString());
+    }
+
+    private static void AddDetail(ICollection<DurableChangeDetail> details, DurableChangeDetail detail)
+    {
+        if (details.Count < MaxDiagnosticDetails)
+        {
+            details.Add(detail);
+        }
     }
 
     private static bool IsWithinScope(UsnWatchedFolderScope scope, string path)
@@ -238,7 +317,19 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
             : path;
     }
 
-    private static SafeFileHandle OpenVolume(string volumeRoot)
+    private static string FormatFileReference(UsnRecord record)
+    {
+        if (record.FileReferenceNumber is not null)
+        {
+            return $"0x{record.FileReferenceNumber.Value:X16}";
+        }
+
+        return record.ExtendedFileReferenceNumber is null
+            ? "unknown"
+            : $"0x{Convert.ToHexString(record.ExtendedFileReferenceNumber)}";
+    }
+
+    private static SafeFileHandle OpenVolume(UsnWatchedFolderScope scope, string volumeRoot)
     {
         var root = volumeRoot.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         var volumePath = root.StartsWith(@"\\.\", StringComparison.Ordinal)
@@ -254,16 +345,30 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
             IntPtr.Zero);
         if (handle.IsInvalid)
         {
-            throw new Win32Exception(Marshal.GetLastWin32Error(), $"Unable to open volume {volumePath}.");
+            throw new UsnJournalOperationException(UsnJournalDiagnosticFormatter.OpenVolumeFailed(
+                scope.WatchedFolderId,
+                scope.Path,
+                volumeRoot,
+                volumePath,
+                Marshal.GetLastWin32Error()));
         }
 
         return handle;
     }
 
-    private static UsnJournalState QueryJournal(SafeFileHandle volume, string volumeRoot)
+    private static UsnJournalState QueryJournal(SafeFileHandle volume, UsnWatchedFolderScope scope, string volumeRoot)
     {
         var buffer = new byte[Marshal.SizeOf<UsnJournalDataV0>()];
-        DeviceIoControl(volume, FsctlQueryUsnJournal, IntPtr.Zero, 0, buffer, buffer.Length);
+        DeviceIoControl(
+            volume,
+            FsctlQueryUsnJournal,
+            IntPtr.Zero,
+            0,
+            buffer,
+            buffer.Length,
+            scope,
+            volumeRoot,
+            "FSCTL_QUERY_USN_JOURNAL");
         var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
         try
         {
@@ -280,7 +385,10 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
         SafeFileHandle handle,
         uint controlCode,
         TInput input,
-        byte[] output)
+        byte[] output,
+        UsnWatchedFolderScope scope,
+        string volumeRoot,
+        string operation)
         where TInput : struct
     {
         var size = Marshal.SizeOf<TInput>();
@@ -288,7 +396,7 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
         try
         {
             Marshal.StructureToPtr(input, pointer, false);
-            return DeviceIoControl(handle, controlCode, pointer, size, output, output.Length);
+            return DeviceIoControl(handle, controlCode, pointer, size, output, output.Length, scope, volumeRoot, operation);
         }
         finally
         {
@@ -302,7 +410,10 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
         IntPtr input,
         int inputLength,
         byte[] output,
-        int outputLength)
+        int outputLength,
+        UsnWatchedFolderScope scope,
+        string volumeRoot,
+        string operation)
     {
         if (NativeDeviceIoControl(
                 handle,
@@ -323,7 +434,12 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
             return sizeof(long);
         }
 
-        throw new Win32Exception(error);
+        throw new UsnJournalOperationException(UsnJournalDiagnosticFormatter.DeviceIoControlFailed(
+            scope.WatchedFolderId,
+            scope.Path,
+            volumeRoot,
+            operation,
+            error));
     }
 
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
@@ -435,4 +551,9 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
         byte[]? ExtendedFileReferenceNumber,
         uint Reason,
         uint FileAttributes);
+
+    private sealed class UsnJournalOperationException(DurableChangeDetail detail) : Exception(detail.Reason)
+    {
+        public DurableChangeDetail Detail { get; } = detail;
+    }
 }

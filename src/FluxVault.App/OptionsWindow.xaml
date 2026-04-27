@@ -3,7 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="FluxVault options" Height="520" Width="620" MinHeight="500" MinWidth="560"
         WindowStartupLocation="CenterOwner" Background="#F6F7F9"
+        ToolTipService.ShowDuration="30000"
         Loaded="OptionsWindow_Loaded">
+    <Window.Resources>
+        <Style TargetType="ToolTip">
+            <Setter Property="MaxWidth" Value="460" />
+            <Setter Property="Placement" Value="Mouse" />
+        </Style>
+    </Window.Resources>
     <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -37,27 +44,38 @@
                     </Grid.ColumnDefinitions>
 
                     <CheckBox Grid.Row="0" Grid.ColumnSpan="2" Content="Enable automatic retention"
-                              IsChecked="{Binding RetentionEnabled}" Margin="0,0,0,14" />
+                              IsChecked="{Binding RetentionEnabled}" Margin="0,0,0,14"
+                              ToolTip="Run repository retention automatically after successful backups." />
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Keep every version for" VerticalAlignment="Center" Margin="0,0,14,10" />
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding KeepAllHours, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Keep every version for" VerticalAlignment="Center" Margin="0,0,14,10"
+                               ToolTip="Dense retention window in hours. Every committed version is preserved during this period." />
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding KeepAllHours, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
+                             ToolTip="Number of hours to keep every version before older versions are thinned." />
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Keep hourly versions for days" VerticalAlignment="Center" Margin="0,0,14,10" />
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding KeepHourlyDays, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Keep hourly versions for days" VerticalAlignment="Center" Margin="0,0,14,10"
+                               ToolTip="After the dense window, keep one version per hour for this many days." />
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding KeepHourlyDays, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
+                             ToolTip="Number of days where FluxVault keeps one representative version per hour." />
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Keep daily versions for days" VerticalAlignment="Center" Margin="0,0,14,10" />
-                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding KeepDailyDays, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Keep daily versions for days" VerticalAlignment="Center" Margin="0,0,14,10"
+                               ToolTip="After the hourly window, keep one version per day for this many days." />
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding KeepDailyDays, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
+                             ToolTip="Number of days where FluxVault keeps one representative version per day." />
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Minimum versions per file" VerticalAlignment="Center" Margin="0,0,14,10" />
-                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding MinimumVersionsPerFile, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Minimum versions per file" VerticalAlignment="Center" Margin="0,0,14,10"
+                               ToolTip="Safety floor. FluxVault never prunes below this many latest versions per source file." />
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding MinimumVersionsPerFile, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
+                             ToolTip="Minimum number of latest versions to keep for each protected file, regardless of age." />
 
                     <Border Grid.Row="6" Grid.ColumnSpan="2" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Padding="12">
                         <TextBlock Text="{Binding PreviewText}" TextWrapping="Wrap" Foreground="#3C4043" />
                     </Border>
 
                     <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
-                        <Button Content="Preview" Command="{Binding PreviewRetentionCommand}" Padding="14,8" Margin="0,0,8,0" />
-                        <Button Content="Run retention now" Command="{Binding RunRetentionNowCommand}" Padding="14,8" />
+                        <Button Content="Preview" Command="{Binding PreviewRetentionCommand}" Padding="14,8" Margin="0,0,8,0"
+                                ToolTip="Calculate what retention would prune without deleting anything." />
+                        <Button Content="Run retention now" Command="{Binding RunRetentionNowCommand}" Padding="14,8"
+                                ToolTip="Apply the current retention policy and remove pruned manifests and orphaned chunks." />
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -83,38 +101,61 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Capture cadence" FontWeight="SemiBold" Margin="0,0,0,12" />
-                        <TextBlock Grid.Row="1" Text="Watcher poll seconds" VerticalAlignment="Center" Margin="0,0,14,8" />
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding WatcherPollSeconds, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8" />
-                        <TextBlock Grid.Row="2" Text="Reconciliation minutes" VerticalAlignment="Center" Margin="0,0,14,8" />
-                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PeriodicReconciliationMinutes, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8" />
-                        <TextBlock Grid.Row="3" Text="Debounce fast / balanced / quiet" VerticalAlignment="Center" Margin="0,0,14,8" />
+                        <TextBlock Grid.Row="1" Text="Watcher poll seconds" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="How often the service wakes to process queued file-system events." />
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding WatcherPollSeconds, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8"
+                                 ToolTip="Seconds between lightweight watcher queue checks." />
+                        <TextBlock Grid.Row="2" Text="Reconciliation minutes" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Safety-net full scan interval used when watcher or USN events are missed or unavailable." />
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PeriodicReconciliationMinutes, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8"
+                                 ToolTip="Minutes between reconciliation scans of watched folders." />
+                        <TextBlock Grid.Row="3" Text="Debounce fast / balanced / quiet" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Quiet-window delay before capturing changed files for each resource profile." />
                         <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
-                            <TextBox Text="{Binding FastDebounceSeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" />
-                            <TextBox Text="{Binding BalancedDebounceSeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0" />
-                            <TextBox Text="{Binding QuietDebounceSeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0" />
+                            <TextBox Text="{Binding FastDebounceSeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8"
+                                     ToolTip="Fast profile debounce in seconds." />
+                            <TextBox Text="{Binding BalancedDebounceSeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="Balanced profile debounce in seconds." />
+                            <TextBox Text="{Binding QuietDebounceSeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="Quiet profile debounce in seconds." />
                         </StackPanel>
-                        <TextBlock Grid.Row="4" Text="Max hot delay fast / balanced / quiet" VerticalAlignment="Center" Margin="0,0,14,8" />
+                        <TextBlock Grid.Row="4" Text="Max hot delay fast / balanced / quiet" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Maximum time a constantly changing file may wait before FluxVault takes a snapshot anyway." />
                         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
-                            <TextBox Text="{Binding FastMaxHotFileDelaySeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" />
-                            <TextBox Text="{Binding BalancedMaxHotFileDelayMinutes, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0" />
-                            <TextBox Text="{Binding QuietMaxHotFileDelayMinutes, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0" />
+                            <TextBox Text="{Binding FastMaxHotFileDelaySeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8"
+                                     ToolTip="Fast profile maximum hot-file delay in seconds." />
+                            <TextBox Text="{Binding BalancedMaxHotFileDelayMinutes, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="Balanced profile maximum hot-file delay in minutes." />
+                            <TextBox Text="{Binding QuietMaxHotFileDelayMinutes, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="Quiet profile maximum hot-file delay in minutes." />
                         </StackPanel>
-                        <TextBlock Grid.Row="5" Text="Minimum same-file interval seconds" VerticalAlignment="Center" Margin="0,0,14,8" />
-                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MinimumSameFileCaptureIntervalSeconds, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8" />
-                        <TextBlock Grid.Row="6" Text="Maximum concurrent captures" VerticalAlignment="Center" Margin="0,0,14,18" />
-                        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding MaximumConcurrentCaptures, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,18" />
+                        <TextBlock Grid.Row="5" Text="Minimum same-file interval seconds" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Minimum time between captures of the same file, preventing hot files from thrashing the disk." />
+                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MinimumSameFileCaptureIntervalSeconds, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8"
+                                 ToolTip="Seconds FluxVault waits before capturing the same file again." />
+                        <TextBlock Grid.Row="6" Text="Maximum concurrent captures" VerticalAlignment="Center" Margin="0,0,14,18"
+                                   ToolTip="Maximum number of files the service captures in parallel." />
+                        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding MaximumConcurrentCaptures, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,18"
+                                 ToolTip="Parallel capture limit. Keep this low for less disruption." />
 
                         <TextBlock Grid.Row="7" Grid.ColumnSpan="2" Text="Compression" FontWeight="SemiBold" Margin="0,0,0,12" />
-                        <TextBlock Grid.Row="8" Text="Profile / default / hot-file" VerticalAlignment="Center" Margin="0,0,14,8" />
+                        <TextBlock Grid.Row="8" Text="Profile / default / hot-file" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Compression policy profile, normal codec, and hot-file override." />
                         <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
-                            <ComboBox ItemsSource="{Binding CodecProfiles}" SelectedItem="{Binding CodecProfile}" Width="120" />
-                            <ComboBox ItemsSource="{Binding Codecs}" SelectedItem="{Binding DefaultCodec}" Width="110" Margin="8,0,0,0" />
-                            <ComboBox ItemsSource="{Binding Codecs}" SelectedItem="{Binding HotFileCodec}" Width="110" Margin="8,0,0,0" />
+                            <ComboBox ItemsSource="{Binding CodecProfiles}" SelectedItem="{Binding CodecProfile}" Width="120"
+                                      ToolTip="Adaptive skips or lowers compression for unsuitable files; ratio-focused profiles spend more CPU." />
+                            <ComboBox ItemsSource="{Binding Codecs}" SelectedItem="{Binding DefaultCodec}" Width="110" Margin="8,0,0,0"
+                                      ToolTip="Default codec for normal captures under the selected profile." />
+                            <ComboBox ItemsSource="{Binding Codecs}" SelectedItem="{Binding HotFileCodec}" Width="110" Margin="8,0,0,0"
+                                      ToolTip="Codec override for hot files. LZ4 or off keeps capture latency lower." />
                         </StackPanel>
-                        <TextBlock Grid.Row="9" Text="Level / minimum KB" VerticalAlignment="Center" Margin="0,0,14,0" />
+                        <TextBlock Grid.Row="9" Text="Level / minimum KB" VerticalAlignment="Center" Margin="0,0,14,0"
+                                   ToolTip="Compression effort level and minimum chunk size before compression is attempted." />
                         <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal">
-                            <TextBox Text="{Binding CodecLevel, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" />
-                            <TextBox Text="{Binding CodecMinimumKb, UpdateSourceTrigger=PropertyChanged}" Width="90" Padding="8" Margin="8,0,0,0" />
+                            <TextBox Text="{Binding CodecLevel, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8"
+                                     ToolTip="Codec effort level. Higher values may improve ratio but use more CPU." />
+                            <TextBox Text="{Binding CodecMinimumKb, UpdateSourceTrigger=PropertyChanged}" Width="90" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="Chunks smaller than this size are stored without compression." />
                         </StackPanel>
                     </Grid>
                 </ScrollViewer>
@@ -122,8 +163,10 @@
         </TabControl>
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Save" Command="{Binding SaveCommand}" Padding="16,8" Margin="0,0,8,0" />
-            <Button Content="Close" Click="Close_Click" Padding="16,8" />
+            <Button Content="Save" Command="{Binding SaveCommand}" Padding="16,8" Margin="0,0,8,0"
+                    ToolTip="Save the current retention, cadence, and compression options to the service configuration." />
+            <Button Content="Close" Click="Close_Click" Padding="16,8"
+                    ToolTip="Close Options without applying any unsaved changes." />
         </StackPanel>
     </Grid>
 </Window>

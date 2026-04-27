@@ -11,9 +11,16 @@ public sealed class UsnCatchUpServiceTests
     public async Task Unavailable_reader_returns_full_scan_decision_without_throwing()
     {
         using var workspace = TemporaryWorkspace.Create();
+        var detail = new DurableChangeDetail(
+            WatchedFolderId: "docs",
+            Path: Path.Combine(workspace.RootPath, "watched"),
+            VolumeRoot: @"D:\",
+            Operation: "FSCTL_QUERY_USN_JOURNAL",
+            Reason: "Unsupported volume.",
+            Win32ErrorCode: 1);
         var service = CreateService(
             workspace,
-            UsnChangeJournalReadResult.Unavailable("USN is not available on this volume."));
+            UsnChangeJournalReadResult.Unavailable("USN is not available on this volume.", [detail]));
         var configuration = NewConfiguration(workspace);
         Directory.CreateDirectory(configuration.WatchedFolders.Single().Path);
 
@@ -23,6 +30,7 @@ public sealed class UsnCatchUpServiceTests
         Assert.Empty(result.ChangedFiles);
         Assert.Contains("unavailable", result.Status.Status, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("USN is not available", result.Status.FallbackReason);
+        Assert.Equal(detail, Assert.Single(result.Status.Details));
     }
 
     [Fact]

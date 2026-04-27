@@ -31,7 +31,18 @@ public sealed record DurableChangeRuntimeStatus(
     DateTimeOffset? LastUsnCatchUpUtc,
     string Status,
     string? FallbackReason,
-    IReadOnlyList<UsnJournalCheckpoint> Checkpoints);
+    IReadOnlyList<UsnJournalCheckpoint> Checkpoints)
+{
+    public IReadOnlyList<DurableChangeDetail> Details { get; init; } = [];
+}
+
+public sealed record DurableChangeDetail(
+    string? WatchedFolderId,
+    string? Path,
+    string? VolumeRoot,
+    string Operation,
+    string Reason,
+    int? Win32ErrorCode);
 
 public sealed record UsnChangeJournalReadResult(
     bool IsAvailable,
@@ -41,23 +52,38 @@ public sealed record UsnChangeJournalReadResult(
     IReadOnlyList<UsnChangedFile> ChangedFiles,
     IReadOnlyList<UsnJournalCheckpoint> Checkpoints)
 {
+    public IReadOnlyList<DurableChangeDetail> Details { get; init; } = [];
+
     public static UsnChangeJournalReadResult Active(
         string status,
         IReadOnlyList<UsnChangedFile> changedFiles,
-        IReadOnlyList<UsnJournalCheckpoint> checkpoints)
+        IReadOnlyList<UsnJournalCheckpoint> checkpoints,
+        IReadOnlyList<DurableChangeDetail>? details = null)
     {
-        return new UsnChangeJournalReadResult(true, false, status, null, changedFiles, checkpoints);
+        return new UsnChangeJournalReadResult(true, false, status, null, changedFiles, checkpoints)
+        {
+            Details = details ?? []
+        };
     }
 
     public static UsnChangeJournalReadResult FullScanRequired(
         string fallbackReason,
-        IReadOnlyList<UsnJournalCheckpoint> checkpoints)
+        IReadOnlyList<UsnJournalCheckpoint> checkpoints,
+        IReadOnlyList<DurableChangeDetail>? details = null)
     {
-        return new UsnChangeJournalReadResult(true, true, "USN journal reset.", fallbackReason, [], checkpoints);
+        return new UsnChangeJournalReadResult(true, true, "USN journal reset.", fallbackReason, [], checkpoints)
+        {
+            Details = details ?? []
+        };
     }
 
-    public static UsnChangeJournalReadResult Unavailable(string fallbackReason)
+    public static UsnChangeJournalReadResult Unavailable(
+        string fallbackReason,
+        IReadOnlyList<DurableChangeDetail>? details = null)
     {
-        return new UsnChangeJournalReadResult(false, true, "USN unavailable.", fallbackReason, [], []);
+        return new UsnChangeJournalReadResult(false, true, "USN unavailable.", fallbackReason, [], [])
+        {
+            Details = details ?? []
+        };
     }
 }

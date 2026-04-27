@@ -121,6 +121,40 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Refresh_shows_durable_change_fallback_reason_and_tooltip_details()
+    {
+        var checkedAt = DateTimeOffset.UtcNow;
+        var status = StatusWithVersions("v1") with
+        {
+            DurableChange = new DurableChangeRuntimeStatus(
+                checkedAt,
+                "USN unavailable.",
+                "Unable to open volume \\\\.\\D: Access is denied.",
+                []) with
+            {
+                Details =
+                    [
+                        new DurableChangeDetail(
+                            WatchedFolderId: "docs",
+                            Path: @"D:\Work",
+                            VolumeRoot: @"D:\",
+                            Operation: "FSCTL_QUERY_USN_JOURNAL",
+                            Reason: "Unsupported volume.",
+                            Win32ErrorCode: 1)
+                    ]
+            }
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        Assert.Contains("Unable to open volume", viewModel.UsnHealth);
+        Assert.Contains("FSCTL_QUERY_USN_JOURNAL", viewModel.UsnHealthToolTip);
+        Assert.Contains("Unsupported volume", viewModel.UsnHealthToolTip);
+    }
+
+    [Fact]
     public async Task Refresh_populates_capture_status_activity()
     {
         var status = StatusWithVersions("v1") with

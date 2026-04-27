@@ -23,6 +23,8 @@ one Windows 11 PC.
 - FluxVault icon in the executable, taskbar, and tray.
 - Left-navigation dashboard with Protection, Repository, Activity, Options, and
   Diagnostics.
+- Helpful Options tooltips and compact health-strip details for durable-change
+  fallback reasons.
 - Tray activity pane with recent events, pending work, blocked files, retention
   result, and quick actions.
 - Adaptive compression policy with zstd default, lz4 for hot files, Brotli for

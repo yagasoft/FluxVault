@@ -19,7 +19,7 @@
         </StackPanel>
 
         <TabControl Grid.Row="2" Background="White" BorderBrush="#DADCE0">
-            <TabItem Header="Retention">
+            <TabItem Header="Basic">
                 <Grid Margin="18">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -63,10 +63,61 @@
             </TabItem>
 
             <TabItem Header="Advanced">
-                <Grid Margin="18">
-                    <TextBlock Text="Repository size is reported through retention preview. Hard repository-size quotas are not enabled in this MVP slice."
-                               TextWrapping="Wrap" Foreground="#3C4043" />
-                </Grid>
+                <ScrollViewer Margin="18" VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Capture cadence" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="1" Text="Watcher poll seconds" VerticalAlignment="Center" Margin="0,0,14,8" />
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding WatcherPollSeconds, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8" />
+                        <TextBlock Grid.Row="2" Text="Reconciliation minutes" VerticalAlignment="Center" Margin="0,0,14,8" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PeriodicReconciliationMinutes, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8" />
+                        <TextBlock Grid.Row="3" Text="Debounce fast / balanced / quiet" VerticalAlignment="Center" Margin="0,0,14,8" />
+                        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBox Text="{Binding FastDebounceSeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" />
+                            <TextBox Text="{Binding BalancedDebounceSeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0" />
+                            <TextBox Text="{Binding QuietDebounceSeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0" />
+                        </StackPanel>
+                        <TextBlock Grid.Row="4" Text="Max hot delay fast / balanced / quiet" VerticalAlignment="Center" Margin="0,0,14,8" />
+                        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBox Text="{Binding FastMaxHotFileDelaySeconds, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" />
+                            <TextBox Text="{Binding BalancedMaxHotFileDelayMinutes, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0" />
+                            <TextBox Text="{Binding QuietMaxHotFileDelayMinutes, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" Margin="8,0,0,0" />
+                        </StackPanel>
+                        <TextBlock Grid.Row="5" Text="Minimum same-file interval seconds" VerticalAlignment="Center" Margin="0,0,14,8" />
+                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MinimumSameFileCaptureIntervalSeconds, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8" />
+                        <TextBlock Grid.Row="6" Text="Maximum concurrent captures" VerticalAlignment="Center" Margin="0,0,14,18" />
+                        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding MaximumConcurrentCaptures, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,18" />
+
+                        <TextBlock Grid.Row="7" Grid.ColumnSpan="2" Text="Compression" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="8" Text="Profile / default / hot-file" VerticalAlignment="Center" Margin="0,0,14,8" />
+                        <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                            <ComboBox ItemsSource="{Binding CodecProfiles}" SelectedItem="{Binding CodecProfile}" Width="120" />
+                            <ComboBox ItemsSource="{Binding Codecs}" SelectedItem="{Binding DefaultCodec}" Width="110" Margin="8,0,0,0" />
+                            <ComboBox ItemsSource="{Binding Codecs}" SelectedItem="{Binding HotFileCodec}" Width="110" Margin="8,0,0,0" />
+                        </StackPanel>
+                        <TextBlock Grid.Row="9" Text="Level / minimum KB" VerticalAlignment="Center" Margin="0,0,14,0" />
+                        <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal">
+                            <TextBox Text="{Binding CodecLevel, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8" />
+                            <TextBox Text="{Binding CodecMinimumKb, UpdateSourceTrigger=PropertyChanged}" Width="90" Padding="8" Margin="8,0,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
         </TabControl>
 

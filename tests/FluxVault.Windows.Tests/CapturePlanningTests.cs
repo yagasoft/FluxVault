@@ -13,4 +13,15 @@ public sealed class CapturePlanningTests
         Assert.Contains(ChangeDetectionSource.DirectoryNotifications, plan.LatencyHints);
         Assert.Equal(OpenFileReadStrategy.VssSnapshotWhenNeeded, plan.OpenFileReadStrategy);
     }
+
+    [Fact]
+    public void Vss_shadow_capture_builds_path_under_shadow_volume()
+    {
+        var path = VssAdminCaptureProvider.BuildShadowPath(
+            @"D:\",
+            @"D:\Work\large.bin",
+            @"\\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy42\");
+
+        Assert.Equal(@"\\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy42\Work\large.bin", path);
+    }
 }

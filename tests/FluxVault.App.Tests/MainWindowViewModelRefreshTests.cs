@@ -120,6 +120,36 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Contains("USN active", viewModel.ServiceStatus);
     }
 
+    [Fact]
+    public async Task Refresh_populates_capture_status_activity()
+    {
+        var status = StatusWithVersions("v1") with
+        {
+            CaptureStatuses =
+            [
+                new CaptureRuntimeStatus(
+                    @"D:\Work\blocked.txt",
+                    "docs",
+                    CaptureRuntimeState.Blocked,
+                    DateTimeOffset.UtcNow,
+                    DateTimeOffset.UtcNow.AddSeconds(30),
+                    DateTimeOffset.UtcNow,
+                    null,
+                    "File is locked.",
+                    null,
+                    2)
+            ]
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        var row = Assert.Single(viewModel.CaptureStatuses);
+        Assert.Equal(CaptureRuntimeState.Blocked, row.State);
+        Assert.Contains("Blocked", viewModel.CaptureHealth);
+    }
+
     private static FluxVaultServiceStatus StatusWithVersions(params string[] versionIds)
     {
         var configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault");

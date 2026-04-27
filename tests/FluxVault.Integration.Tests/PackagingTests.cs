@@ -13,6 +13,18 @@ public sealed class PackagingTests
         Assert.True(File.Exists(Path.Combine(root, "installer", "sample-config.json")));
     }
 
+    [Fact]
+    public void App_icon_is_packaged_as_windows_icon_resource()
+    {
+        var root = FindRepositoryRoot();
+        var iconPath = Path.Combine(root, "src", "FluxVault.App", "Assets", "FluxVault.ico");
+        var project = File.ReadAllText(Path.Combine(root, "src", "FluxVault.App", "FluxVault.App.csproj"));
+
+        Assert.True(File.Exists(iconPath));
+        Assert.Contains("<ApplicationIcon>Assets\\FluxVault.ico</ApplicationIcon>", project);
+        Assert.True(new FileInfo(iconPath).Length > 1024);
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

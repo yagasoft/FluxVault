@@ -54,6 +54,38 @@ public sealed class OptionsViewModelTests
     }
 
     [Fact]
+    public async Task Save_persists_capture_cadence_and_codec_policy()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
+        var viewModel = new OptionsViewModel(client);
+        await viewModel.InitialiseAsync();
+        viewModel.WatcherPollSeconds = 4;
+        viewModel.PeriodicReconciliationMinutes = 9;
+        viewModel.BalancedDebounceSeconds = 7;
+        viewModel.BalancedMaxHotFileDelayMinutes = 3;
+        viewModel.MinimumSameFileCaptureIntervalSeconds = 11;
+        viewModel.MaximumConcurrentCaptures = 2;
+        viewModel.CodecProfile = CodecProfile.Ratio;
+        viewModel.DefaultCodec = CompressionPreference.Brotli;
+        viewModel.HotFileCodec = CompressionPreference.Lz4;
+        viewModel.CodecMinimumKb = 128;
+
+        await viewModel.SaveAsync();
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        Assert.Equal(TimeSpan.FromSeconds(4), saved.CaptureCadencePolicy.WatcherPollInterval);
+        Assert.Equal(TimeSpan.FromMinutes(9), saved.CaptureCadencePolicy.PeriodicReconciliationInterval);
+        Assert.Equal(TimeSpan.FromSeconds(7), saved.CaptureCadencePolicy.BalancedDebounce);
+        Assert.Equal(TimeSpan.FromMinutes(3), saved.CaptureCadencePolicy.BalancedMaxHotFileDelay);
+        Assert.Equal(TimeSpan.FromSeconds(11), saved.CaptureCadencePolicy.MinimumSameFileCaptureInterval);
+        Assert.Equal(2, saved.CaptureCadencePolicy.MaximumConcurrentCaptures);
+        Assert.Equal(CodecProfile.Ratio, saved.CodecPolicy.Profile);
+        Assert.Equal(CompressionPreference.Brotli, saved.CodecPolicy.Codec);
+        Assert.Equal(CompressionPreference.Lz4, saved.CodecPolicy.HotFileOverride);
+        Assert.Equal(128 * 1024, saved.CodecPolicy.MinimumBytes);
+    }
+
+    [Fact]
     public async Task Preview_and_run_retention_show_service_results()
     {
         var preview = new RepositoryRetentionPreview(

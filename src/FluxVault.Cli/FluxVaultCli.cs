@@ -234,6 +234,9 @@ public static class FluxVaultCli
         return value.ToLowerInvariant() switch
         {
             "zstd" => CompressionPreference.Zstd,
+            "lz4" => CompressionPreference.Lz4,
+            "brotli" => CompressionPreference.Brotli,
+            "lzma" => CompressionPreference.Lzma,
             "off" => CompressionPreference.Off,
             _ => throw new ArgumentException($"Unsupported compression: {value}")
         };

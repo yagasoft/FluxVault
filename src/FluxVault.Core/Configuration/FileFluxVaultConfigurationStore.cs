@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Policies;
 
@@ -10,6 +11,11 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
     {
         WriteIndented = true
     };
+
+    static FileFluxVaultConfigurationStore()
+    {
+        JsonOptions.Converters.Add(new JsonStringEnumConverter());
+    }
 
     public async Task<FluxVaultConfiguration> LoadAsync(CancellationToken cancellationToken = default)
     {
@@ -28,6 +34,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
     public async Task SaveAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(configuration);
+        configuration = Normalise(configuration);
         Validate(configuration);
         var directory = Path.GetDirectoryName(configPath) ?? throw new InvalidOperationException("Configuration path has no directory.");
         Directory.CreateDirectory(directory);
@@ -58,12 +65,20 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
                 throw new InvalidDataException($"Watched folder path is required for {folder.Id}.");
             }
         }
+
+        if (configuration.CaptureCadencePolicy.MaximumConcurrentCaptures < 1)
+        {
+            throw new InvalidDataException("Maximum concurrent captures must be at least 1.");
+        }
     }
 
     private static FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
     {
-        return configuration.RetentionPolicy is null
-            ? configuration with { RetentionPolicy = RetentionPolicy.CreateDefault() }
-            : configuration;
+        return configuration with
+        {
+            RetentionPolicy = configuration.RetentionPolicy ?? RetentionPolicy.CreateDefault(),
+            CaptureCadencePolicy = configuration.CaptureCadencePolicy ?? CaptureCadencePolicy.CreateDefault(),
+            CodecPolicy = configuration.CodecPolicy ?? CodecPolicy.CreateDefault()
+        };
     }
 }

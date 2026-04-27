@@ -21,6 +21,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private bool isApplyingStatus;
     private bool hasLocalConfigurationChanges;
     private RetentionPolicy currentRetentionPolicy = RetentionPolicy.CreateDefault();
+    private CaptureCadencePolicy currentCaptureCadencePolicy = CaptureCadencePolicy.CreateDefault();
 
     [ObservableProperty]
     private string serviceStatus = "Service connection: checking...";
@@ -43,6 +44,18 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private string diagnosticsText = "Diagnostics are local-only. Use Export diagnostics to write a JSON bundle.";
 
+    [ObservableProperty]
+    private string usnHealth = "USN: checking";
+
+    [ObservableProperty]
+    private string retentionHealth = "Retention: checking";
+
+    [ObservableProperty]
+    private string mirrorHealth = "Mirror: local only";
+
+    [ObservableProperty]
+    private string captureHealth = "Capture: idle";
+
     public MainWindowViewModel()
         : this(new NamedPipeFluxVaultClient(), TimeSpan.FromSeconds(5))
     {
@@ -64,6 +77,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public ObservableCollection<WatchedFolderRow> WatchedFolders { get; } = [];
 
     public ObservableCollection<VersionRow> RecentVersions { get; } = [];
+
+    public ObservableCollection<CaptureStatusRow> CaptureStatuses { get; } = [];
 
     public IFluxVaultServiceClient ServiceClient => client;
 
@@ -312,10 +327,21 @@ public sealed partial class MainWindowViewModel : ObservableObject
             RepositoryPath = status.Configuration.RepositoryPath;
             MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
             currentRetentionPolicy = status.Configuration.RetentionPolicy;
+            currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
             var durableStatus = string.IsNullOrWhiteSpace(status.DurableChange?.Status)
                 ? string.Empty
                 : $" - {status.DurableChange.Status.TrimEnd('.')}";
             ServiceStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}{durableStatus}. Last refreshed {DateTime.Now:HH:mm:ss}";
+            UsnHealth = string.IsNullOrWhiteSpace(status.DurableChange?.Status)
+                ? "USN: reconciliation scan"
+                : $"USN: {status.DurableChange.Status.TrimEnd('.')}";
+            RetentionHealth = status.LastRetention is null
+                ? "Retention: waiting"
+                : $"Retention: kept {status.LastRetention.KeptVersionCount}, pruned {status.LastRetention.PrunedVersionCount}";
+            MirrorHealth = string.IsNullOrWhiteSpace(status.Configuration.MirrorPath)
+                ? "Mirror: local only"
+                : $"Mirror: {status.Configuration.MirrorPath}";
+            CaptureHealth = BuildCaptureHealth(status.CaptureStatuses ?? []);
             WatchedFolders.Clear();
             foreach (var folder in status.Configuration.WatchedFolders)
             {
@@ -345,6 +371,17 @@ public sealed partial class MainWindowViewModel : ObservableObject
             SelectedVersion = selectedVersionId is null
                 ? null
                 : RecentVersions.SingleOrDefault(version => version.VersionId == selectedVersionId);
+            CaptureStatuses.Clear();
+            foreach (var captureStatus in status.CaptureStatuses ?? [])
+            {
+                CaptureStatuses.Add(new CaptureStatusRow(
+                    captureStatus.SourcePath,
+                    captureStatus.State,
+                    captureStatus.LastEventUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") ?? string.Empty,
+                    captureStatus.NextForcedCaptureUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") ?? string.Empty,
+                    captureStatus.BlockedReason ?? captureStatus.DelayReason ?? captureStatus.Consistency?.ToString() ?? string.Empty));
+            }
+
             MarkStatusApplied();
         }
         finally
@@ -370,7 +407,26 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     folder.ResourceProfile,
                     IsEnabled: true))
                 .ToArray(),
-            RetentionPolicy: currentRetentionPolicy);
+            RetentionPolicy: currentRetentionPolicy,
+            CaptureCadencePolicy: currentCaptureCadencePolicy);
+    }
+
+    private static string BuildCaptureHealth(IReadOnlyList<CaptureRuntimeStatus> statuses)
+    {
+        var blocked = statuses.Count(status => status.State == CaptureRuntimeState.Blocked);
+        if (blocked > 0)
+        {
+            return $"Capture: Blocked files {blocked}";
+        }
+
+        var capturing = statuses.Count(status => status.State == CaptureRuntimeState.Capturing);
+        if (capturing > 0)
+        {
+            return $"Capture: capturing {capturing}";
+        }
+
+        var pending = statuses.Count(status => status.State is CaptureRuntimeState.WaitingForQuietWindow or CaptureRuntimeState.ForcedHotFileSnapshot);
+        return pending > 0 ? $"Capture: pending {pending}" : "Capture: idle";
     }
 
     private static string BrowseFolder(string selectedPath)
@@ -398,3 +454,10 @@ public sealed record VersionRow(
     string CapturedAt,
     CaptureConsistency Consistency,
     int ChunkCount);
+
+public sealed record CaptureStatusRow(
+    string SourcePath,
+    CaptureRuntimeState State,
+    string LastEvent,
+    string NextForcedCapture,
+    string Detail);

@@ -24,6 +24,12 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(TimeSpan.FromDays(30), configuration.RetentionPolicy.KeepHourlyFor);
         Assert.Equal(TimeSpan.FromDays(180), configuration.RetentionPolicy.KeepDailyFor);
         Assert.Equal(20, configuration.RetentionPolicy.MinimumVersionsPerFile);
+        Assert.Equal(TimeSpan.FromSeconds(5), configuration.CaptureCadencePolicy.WatcherPollInterval);
+        Assert.Equal(TimeSpan.FromMinutes(10), configuration.CaptureCadencePolicy.PeriodicReconciliationInterval);
+        Assert.Equal(TimeSpan.FromSeconds(8), configuration.CaptureCadencePolicy.GetDebounce(ResourceProfile.Balanced));
+        Assert.Equal(CodecProfile.Adaptive, configuration.CodecPolicy.Profile);
+        Assert.Equal(CompressionPreference.Zstd, configuration.CodecPolicy.Codec);
+        Assert.Equal(CompressionPreference.Lz4, configuration.CodecPolicy.HotFileOverride);
     }
 
     [Fact]
@@ -79,12 +85,24 @@ public sealed class ConfigurationStoreTests
                 KeepAllFor: TimeSpan.FromHours(12),
                 KeepHourlyFor: TimeSpan.FromDays(14),
                 KeepDailyFor: TimeSpan.FromDays(90),
-                MinimumVersionsPerFile: 10));
+                MinimumVersionsPerFile: 10),
+            CaptureCadencePolicy: new CaptureCadencePolicy(
+                WatcherPollInterval: TimeSpan.FromSeconds(3),
+                PeriodicReconciliationInterval: TimeSpan.FromMinutes(7),
+                FastDebounce: TimeSpan.FromSeconds(1),
+                BalancedDebounce: TimeSpan.FromSeconds(6),
+                QuietDebounce: TimeSpan.FromSeconds(20),
+                FastMaxHotFileDelay: TimeSpan.FromSeconds(20),
+                BalancedMaxHotFileDelay: TimeSpan.FromMinutes(1),
+                QuietMaxHotFileDelay: TimeSpan.FromMinutes(5),
+                MinimumSameFileCaptureInterval: TimeSpan.FromSeconds(10),
+                MaximumConcurrentCaptures: 2));
 
         await store.SaveAsync(expected);
 
         var actual = await store.LoadAsync();
         Assert.Equal(expected.RetentionPolicy, actual.RetentionPolicy);
+        Assert.Equal(expected.CaptureCadencePolicy, actual.CaptureCadencePolicy);
     }
 
     [Fact]

@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using FluxVault.App.ViewModels;
 using WinForms = System.Windows.Forms;
@@ -8,6 +9,7 @@ public partial class App : System.Windows.Application
 {
     private WinForms.NotifyIcon? notifyIcon;
     private MainWindow? mainWindow;
+    private ActivityPaneWindow? activityPaneWindow;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -26,12 +28,19 @@ public partial class App : System.Windows.Application
 
         notifyIcon = new WinForms.NotifyIcon
         {
-            Icon = System.Drawing.SystemIcons.Application,
+            Icon = LoadFluxVaultIcon(),
             Text = "FluxVault",
             Visible = true,
             ContextMenuStrip = BuildTrayMenu()
         };
         notifyIcon.DoubleClick += (_, _) => ShowDashboard();
+        notifyIcon.MouseUp += (_, args) =>
+        {
+            if (args.Button == WinForms.MouseButtons.Left)
+            {
+                ShowActivityPane();
+            }
+        };
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -49,6 +58,10 @@ public partial class App : System.Windows.Application
     {
         var menu = new WinForms.ContextMenuStrip();
         menu.Items.Add("Open dashboard", null, (_, _) => ShowDashboard());
+        menu.Items.Add("Activity", null, (_, _) => ShowActivityPane());
+        menu.Items.Add("Blocked files", null, (_, _) => ShowActivityPane());
+        menu.Items.Add("Pause/resume protection", null, async (_, _) => await SetProtectionPausedAsync());
+        menu.Items.Add("Options", null, (_, _) => ShowOptions());
         menu.Items.Add("Exit", null, (_, _) => Shutdown());
         return menu;
     }
@@ -76,5 +89,62 @@ public partial class App : System.Windows.Application
         mainWindow.Show();
         mainWindow.WindowState = WindowState.Normal;
         mainWindow.Activate();
+    }
+
+    private void ShowActivityPane()
+    {
+        if (activityPaneWindow is null)
+        {
+            activityPaneWindow = new ActivityPaneWindow
+            {
+                DataContext = new ActivityPaneViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient()),
+                ShowInTaskbar = false
+            };
+            activityPaneWindow.Closed += (_, _) => activityPaneWindow = null;
+        }
+
+        var cursor = WinForms.Control.MousePosition;
+        activityPaneWindow.Left = Math.Max(0, cursor.X - activityPaneWindow.Width + 24);
+        activityPaneWindow.Top = Math.Max(0, cursor.Y - activityPaneWindow.Height - 12);
+        activityPaneWindow.Show();
+        activityPaneWindow.Activate();
+        if (activityPaneWindow.DataContext is ActivityPaneViewModel viewModel)
+        {
+            _ = viewModel.RefreshAsync();
+        }
+    }
+
+    private void ShowOptions()
+    {
+        var owner = mainWindow;
+        if (owner is null)
+        {
+            ShowDashboard();
+            owner = mainWindow;
+        }
+
+        var window = new OptionsWindow(new OptionsViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient()))
+        {
+            Owner = owner
+        };
+        window.ShowDialog();
+        if (owner?.DataContext is MainWindowViewModel viewModel)
+        {
+            _ = viewModel.RefreshAsync();
+        }
+    }
+
+    private static async Task SetProtectionPausedAsync()
+    {
+        var client = new FluxVault.Core.Ipc.NamedPipeFluxVaultClient();
+        _ = await client.SendAsync(FluxVault.Abstractions.Ipc.FluxVaultIpcRequest.SetProtectionPaused());
+    }
+
+    private static System.Drawing.Icon LoadFluxVaultIcon()
+    {
+        var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "FluxVault.ico");
+        return File.Exists(iconPath)
+            ? new System.Drawing.Icon(iconPath)
+            : System.Drawing.SystemIcons.Application;
     }
 }

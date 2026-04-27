@@ -11,7 +11,9 @@ public sealed record FluxVaultIpcResponse(
     RepositoryInspection? Inspection,
     string? OutputPath,
     RepositoryRetentionPreview? RetentionPreview = null,
-    RepositoryRetentionResult? RetentionResult = null)
+    RepositoryRetentionResult? RetentionResult = null,
+    IReadOnlyList<FluxVaultActivityEvent>? ActivityEvents = null,
+    IReadOnlyList<CaptureRuntimeStatus>? BlockedFiles = null)
 {
     public static FluxVaultIpcResponse Ok()
     {
@@ -51,6 +53,16 @@ public sealed record FluxVaultIpcResponse(
     public static FluxVaultIpcResponse WithRetentionResult(RepositoryRetentionResult result)
     {
         return new FluxVaultIpcResponse(true, null, null, null, null, null, null, null, result);
+    }
+
+    public static FluxVaultIpcResponse WithActivity(IReadOnlyList<FluxVaultActivityEvent> events)
+    {
+        return new FluxVaultIpcResponse(true, null, null, null, null, null, null, null, null, events);
+    }
+
+    public static FluxVaultIpcResponse WithBlockedFiles(IReadOnlyList<CaptureRuntimeStatus> blockedFiles)
+    {
+        return new FluxVaultIpcResponse(true, null, null, null, null, null, null, null, null, null, blockedFiles);
     }
 
     public static FluxVaultIpcResponse Failure(string errorMessage)

@@ -4,11 +4,13 @@ using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Capture;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
+using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Content;
 using FluxVault.Core.Ipc;
+using FluxVault.Core.Policies;
 using FluxVault.Core.Storage;
 
 namespace FluxVault.Core.Service;
@@ -22,6 +24,8 @@ public sealed class FluxVaultOperations(
     private string lastMessage = "Ready";
     private DurableChangeRuntimeStatus? durableChange;
     private RepositoryRetentionResult? lastRetention;
+    private readonly Lock runtimeGate = new();
+    private readonly Dictionary<string, CaptureRuntimeStatus> captureStatuses = new(StringComparer.OrdinalIgnoreCase);
 
     public async Task SaveConfigurationAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken = default)
     {
@@ -54,11 +58,18 @@ public sealed class FluxVaultOperations(
 
             foreach (var file in EnumerateIncludedFiles(folder))
             {
-                targets.Add(new FileBackupTarget(folder, file));
+                targets.Add(new FileBackupTarget(
+                    folder,
+                    file,
+                    CodecPolicySelector.Select(configuration.CodecPolicy, file, new FileInfo(file).Length, isHotFile: false)));
             }
         }
 
-        var (captured, captureFailed, captureMessages) = await CaptureTargetsAsync(repository, targets, cancellationToken)
+        var (captured, captureFailed, captureMessages) = await CaptureTargetsAsync(
+                repository,
+                targets,
+                configuration.CaptureCadencePolicy.MaximumConcurrentCaptures,
+                cancellationToken)
             .ConfigureAwait(false);
         failed += captureFailed;
         messages.AddRange(captureMessages);
@@ -100,11 +111,18 @@ public sealed class FluxVaultOperations(
 
             if (TryFindIncludedFolder(configuration, path, out var folder))
             {
-                targets.Add(new FileBackupTarget(folder, path));
+                targets.Add(new FileBackupTarget(
+                    folder,
+                    path,
+                    CodecPolicySelector.Select(configuration.CodecPolicy, path, new FileInfo(path).Length, isHotFile: false)));
             }
         }
 
-        var (captured, failed, messages) = await CaptureTargetsAsync(CreateRepository(configuration), targets, cancellationToken)
+        var (captured, failed, messages) = await CaptureTargetsAsync(
+                CreateRepository(configuration),
+                targets,
+                configuration.CaptureCadencePolicy.MaximumConcurrentCaptures,
+                cancellationToken)
             .ConfigureAwait(false);
         var success = failed == 0;
         var message = messages.Count == 0
@@ -168,9 +186,81 @@ public sealed class FluxVaultOperations(
         return filePath;
     }
 
+    public IReadOnlyList<FluxVaultActivityEvent> GetActivity()
+    {
+        var events = GetCaptureStatuses()
+            .Select(ToActivityEvent)
+            .ToList();
+        if (lastRetention is not null)
+        {
+            events.Add(new FluxVaultActivityEvent(
+                DateTimeOffset.UtcNow,
+                FluxVaultActivityKind.Retention,
+                "Retention",
+                FormatRetentionSummary(lastRetention)));
+        }
+
+        if (events.Count == 0)
+        {
+            events.Add(new FluxVaultActivityEvent(DateTimeOffset.UtcNow, FluxVaultActivityKind.Info, "Ready", lastMessage));
+        }
+
+        return events
+            .OrderByDescending(value => value.TimestampUtc)
+            .Take(100)
+            .ToArray();
+    }
+
+    public IReadOnlyList<CaptureRuntimeStatus> ListBlockedFiles()
+    {
+        return GetCaptureStatuses()
+            .Where(status => status.State == CaptureRuntimeState.Blocked)
+            .ToArray();
+    }
+
+    public async Task SetProtectionPausedAsync(CancellationToken cancellationToken = default)
+    {
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var updated = configuration with { IsEnabled = !configuration.IsEnabled };
+        await configurationStore.SaveAsync(updated, cancellationToken).ConfigureAwait(false);
+        lastMessage = updated.IsEnabled ? "Protection resumed." : "Protection paused.";
+    }
+
     public void UpdateDurableChangeStatus(DurableChangeRuntimeStatus status)
     {
         durableChange = status;
+    }
+
+    public void UpdateCaptureRuntimeStatus(
+        string sourcePath,
+        string watchedFolderId,
+        CaptureRuntimeState state,
+        DateTimeOffset? lastEventUtc,
+        DateTimeOffset? nextForcedCaptureUtc,
+        string? delayReason = null,
+        string? blockedReason = null,
+        CaptureConsistency? consistency = null)
+    {
+        var normalisedPath = Path.GetFullPath(sourcePath);
+        lock (runtimeGate)
+        {
+            captureStatuses.TryGetValue(normalisedPath, out var previous);
+            captureStatuses[normalisedPath] = new CaptureRuntimeStatus(
+                SourcePath: normalisedPath,
+                WatchedFolderId: watchedFolderId,
+                State: state,
+                LastEventUtc: lastEventUtc ?? previous?.LastEventUtc,
+                NextForcedCaptureUtc: nextForcedCaptureUtc,
+                LastCaptureAttemptUtc: state is CaptureRuntimeState.Capturing or CaptureRuntimeState.ForcedHotFileSnapshot
+                    ? DateTimeOffset.UtcNow
+                    : previous?.LastCaptureAttemptUtc,
+                DelayReason: delayReason,
+                BlockedReason: blockedReason,
+                Consistency: consistency ?? previous?.Consistency,
+                AttemptCount: state is CaptureRuntimeState.Capturing or CaptureRuntimeState.ForcedHotFileSnapshot
+                    ? (previous?.AttemptCount ?? 0) + 1
+                    : previous?.AttemptCount ?? 0);
+        }
     }
 
     public async Task<FluxVaultServiceStatus> GetStatusAsync(CancellationToken cancellationToken = default)
@@ -198,7 +288,8 @@ public sealed class FluxVaultOperations(
                 .ToArray(),
             RecentVersions: versions.Take(50).ToArray(),
             LastRetention: lastRetention,
-            DurableChange: durableChange);
+            DurableChange: durableChange,
+            CaptureStatuses: GetCaptureStatuses());
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -214,6 +305,9 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.ExportDiagnostics => FluxVaultIpcResponse.WithOutputPath(await ExportDiagnosticsAsync(Require(request.ExportPath, "export path"), cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.PreviewRetention => FluxVaultIpcResponse.WithRetentionPreview(await PreviewRetentionAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunRetentionNow => FluxVaultIpcResponse.WithRetentionResult(await RunRetentionNowAsync(cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.GetActivity => FluxVaultIpcResponse.WithActivity(GetActivity()),
+            FluxVaultIpcCommand.ListBlockedFiles => FluxVaultIpcResponse.WithBlockedFiles(ListBlockedFiles()),
+            FluxVaultIpcCommand.SetProtectionPaused => await SetProtectionPausedResponseAsync(cancellationToken).ConfigureAwait(false),
             _ => FluxVaultIpcResponse.Failure($"Unsupported command: {request.Command}")
         };
     }
@@ -235,6 +329,12 @@ public sealed class FluxVaultOperations(
             Require(request.VersionId, "version id"),
             Require(request.OutputPath, "output path"),
             cancellationToken).ConfigureAwait(false);
+        return FluxVaultIpcResponse.Ok();
+    }
+
+    private async Task<FluxVaultIpcResponse> SetProtectionPausedResponseAsync(CancellationToken cancellationToken)
+    {
+        await SetProtectionPausedAsync(cancellationToken).ConfigureAwait(false);
         return FluxVaultIpcResponse.Ok();
     }
 
@@ -287,35 +387,106 @@ public sealed class FluxVaultOperations(
     private async Task<(int Captured, int Failed, IReadOnlyList<string> Messages)> CaptureTargetsAsync(
         IChunkRepository repository,
         IReadOnlyList<FileBackupTarget> targets,
+        int maximumConcurrentCaptures,
         CancellationToken cancellationToken)
     {
         var captured = 0;
         var failed = 0;
         var messages = new List<string>();
+        if (maximumConcurrentCaptures > 1)
+        {
+            using var semaphore = new SemaphoreSlim(maximumConcurrentCaptures);
+            var parallelMessages = new System.Collections.Concurrent.ConcurrentBag<string>();
+            var tasks = targets.Select(async target =>
+            {
+                await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+                try
+                {
+                    var result = await CaptureTargetAsync(repository, target, cancellationToken).ConfigureAwait(false);
+                    if (result.Success)
+                    {
+                        Interlocked.Increment(ref captured);
+                    }
+                    else
+                    {
+                        Interlocked.Increment(ref failed);
+                        if (!string.IsNullOrWhiteSpace(result.Message))
+                        {
+                            parallelMessages.Add(result.Message);
+                        }
+                    }
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+            return (captured, failed, parallelMessages.Order(StringComparer.OrdinalIgnoreCase).ToArray());
+        }
+
         foreach (var target in targets)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await using var capture = await captureProvider.CaptureAsync(new FileCaptureRequest(target.Path), cancellationToken)
-                .ConfigureAwait(false);
-            if (!capture.Success || capture.Content is null)
+            var result = await CaptureTargetAsync(repository, target, cancellationToken).ConfigureAwait(false);
+            if (result.Success)
+            {
+                captured++;
+            }
+            else
             {
                 failed++;
-                messages.Add($"{target.Path}: {capture.Message}");
-                continue;
+                if (!string.IsNullOrWhiteSpace(result.Message))
+                {
+                    messages.Add(result.Message);
+                }
             }
-
-            await repository.CommitAsync(new FileCommitRequest(
-                WatchedFolderId: target.Folder.Id,
-                SourcePath: Path.GetFullPath(target.Path),
-                CapturedAtUtc: DateTimeOffset.UtcNow,
-                Consistency: capture.Consistency,
-                Compression: target.Folder.Compression,
-                MinimumCompressionBytes: 256 * 1024,
-                Content: capture.Content), cancellationToken).ConfigureAwait(false);
-            captured++;
         }
 
         return (captured, failed, messages);
+    }
+
+    private async Task<CaptureTargetResult> CaptureTargetAsync(
+        IChunkRepository repository,
+        FileBackupTarget target,
+        CancellationToken cancellationToken)
+    {
+        UpdateCaptureRuntimeStatus(
+            target.Path,
+            target.Folder.Id,
+            CaptureRuntimeState.Capturing,
+            lastEventUtc: null,
+            nextForcedCaptureUtc: null);
+        await using var capture = await captureProvider.CaptureAsync(new FileCaptureRequest(target.Path), cancellationToken)
+            .ConfigureAwait(false);
+        if (!capture.Success || capture.Content is null)
+        {
+            UpdateCaptureRuntimeStatus(
+                target.Path,
+                target.Folder.Id,
+                IsBlockedFailure(capture.Message) ? CaptureRuntimeState.Blocked : CaptureRuntimeState.Failed,
+                lastEventUtc: null,
+                nextForcedCaptureUtc: null,
+                blockedReason: IsBlockedFailure(capture.Message) ? capture.Message : null);
+            return new CaptureTargetResult(false, $"{target.Path}: {capture.Message}");
+        }
+
+        await repository.CommitAsync(new FileCommitRequest(
+            WatchedFolderId: target.Folder.Id,
+            SourcePath: Path.GetFullPath(target.Path),
+            CapturedAtUtc: DateTimeOffset.UtcNow,
+            Consistency: capture.Consistency,
+            Compression: target.Compression,
+            MinimumCompressionBytes: 0,
+            Content: capture.Content), cancellationToken).ConfigureAwait(false);
+        UpdateCaptureRuntimeStatus(
+            target.Path,
+            target.Folder.Id,
+            CaptureRuntimeState.Captured,
+            lastEventUtc: null,
+            nextForcedCaptureUtc: null,
+            consistency: capture.Consistency);
+        return new CaptureTargetResult(true, null);
     }
 
     private static IEnumerable<string> EnumerateIncludedFiles(WatchedFolderConfiguration folder)
@@ -396,5 +567,61 @@ public sealed class FluxVaultOperations(
             : value;
     }
 
-    private sealed record FileBackupTarget(WatchedFolderConfiguration Folder, string Path);
+    private sealed record FileBackupTarget(WatchedFolderConfiguration Folder, string Path, CompressionPreference Compression);
+    private sealed record CaptureTargetResult(bool Success, string? Message);
+
+    private IReadOnlyList<CaptureRuntimeStatus> GetCaptureStatuses()
+    {
+        lock (runtimeGate)
+        {
+            return captureStatuses.Values
+                .OrderByDescending(status => status.LastCaptureAttemptUtc ?? status.LastEventUtc ?? DateTimeOffset.MinValue)
+                .Take(200)
+                .ToArray();
+        }
+    }
+
+    private static bool IsBlockedFailure(string? message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return false;
+        }
+
+        return message.Contains("being used by another process", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("access", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("denied", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("locked", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static FluxVaultActivityEvent ToActivityEvent(CaptureRuntimeStatus status)
+    {
+        var kind = status.State switch
+        {
+            CaptureRuntimeState.WaitingForQuietWindow => FluxVaultActivityKind.Pending,
+            CaptureRuntimeState.ForcedHotFileSnapshot => FluxVaultActivityKind.Pending,
+            CaptureRuntimeState.Capturing => FluxVaultActivityKind.Capturing,
+            CaptureRuntimeState.Captured => FluxVaultActivityKind.Captured,
+            CaptureRuntimeState.Blocked => FluxVaultActivityKind.Blocked,
+            CaptureRuntimeState.Failed => FluxVaultActivityKind.Failed,
+            _ => FluxVaultActivityKind.Info
+        };
+        var title = status.State switch
+        {
+            CaptureRuntimeState.WaitingForQuietWindow => "Waiting for quiet window",
+            CaptureRuntimeState.ForcedHotFileSnapshot => "Forced hot-file snapshot",
+            CaptureRuntimeState.Capturing => "Capturing",
+            CaptureRuntimeState.Captured => "Captured",
+            CaptureRuntimeState.Blocked => "Blocked",
+            CaptureRuntimeState.Failed => "Failed",
+            _ => "Activity"
+        };
+        var detail = status.BlockedReason ?? status.DelayReason ?? Path.GetFileName(status.SourcePath);
+        return new FluxVaultActivityEvent(
+            status.LastCaptureAttemptUtc ?? status.LastEventUtc ?? DateTimeOffset.UtcNow,
+            kind,
+            title,
+            detail,
+            status.SourcePath);
+    }
 }

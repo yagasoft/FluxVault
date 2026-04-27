@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/FluxVault.Benchmarks/FluxVault.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/FluxVault.Abstractions/FluxVault.Abstractions.csproj" />
+    <Project Path="src/FluxVault.App/FluxVault.App.csproj" />
+    <Project Path="src/FluxVault.Core/FluxVault.Core.csproj" />
+    <Project Path="src/FluxVault.Service/FluxVault.Service.csproj" />
+    <Project Path="src/FluxVault.Windows/FluxVault.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FluxVault.Core.Tests/FluxVault.Core.Tests.csproj" />
+    <Project Path="tests/FluxVault.Integration.Tests/FluxVault.Integration.Tests.csproj" />
+    <Project Path="tests/FluxVault.Windows.Tests/FluxVault.Windows.Tests.csproj" />
+  </Folder>
+</Solution>

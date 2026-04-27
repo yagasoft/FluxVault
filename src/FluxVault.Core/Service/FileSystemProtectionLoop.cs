@@ -1,4 +1,7 @@
 using FluxVault.Abstractions.ChangeTracking;
+using FluxVault.Abstractions.Configuration;
+using FluxVault.Abstractions.Ipc;
+using FluxVault.Abstractions.Policies;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.ChangeTracking;
 using FluxVault.Core.Policies;
@@ -12,35 +15,45 @@ public sealed class FileSystemProtectionLoop(
 {
     private readonly Lock gate = new();
     private readonly List<FileSystemWatcher> watchers = [];
-    private DateTimeOffset lastChangeUtc = DateTimeOffset.MinValue;
     private DateTimeOffset lastFullScanUtc = DateTimeOffset.MinValue;
-    private bool pendingChanges = true;
     private string watcherSignature = string.Empty;
+    private bool pendingCatchUp = true;
+    private readonly Dictionary<string, PendingFileChange> pendingFileChanges = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, DateTimeOffset> lastCaptureAttemptByPath = new(StringComparer.OrdinalIgnoreCase);
 
     public async Task RunAsync(CancellationToken cancellationToken)
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
         await RebuildWatchersAsync(cancellationToken).ConfigureAwait(false);
         await RunCatchUpCycleAsync(cancellationToken).ConfigureAwait(false);
-        pendingChanges = false;
         lastFullScanUtc = DateTimeOffset.UtcNow;
 
-        while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
+        while (!cancellationToken.IsCancellationRequested)
         {
-            await RebuildWatchersAsync(cancellationToken).ConfigureAwait(false);
             var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
-            var debounce = configuration.WatchedFolders.Count == 0
-                ? TimeSpan.FromSeconds(8)
-                : configuration.WatchedFolders.Min(folder => ResourceProfileScheduler.GetDebounceDelay(folder.ResourceProfile));
+            var cadence = configuration.CaptureCadencePolicy;
+            await Task.Delay(cadence.WatcherPollInterval, cancellationToken).ConfigureAwait(false);
+            await RebuildWatchersAsync(cancellationToken).ConfigureAwait(false);
             var now = DateTimeOffset.UtcNow;
-            var shouldCatchUp = pendingChanges && now - lastChangeUtc >= debounce;
-            var shouldReconcile = now - lastFullScanUtc >= TimeSpan.FromMinutes(10);
+            var dueChanges = TakeDueChanges(cadence, now);
+            var shouldCatchUp = dueChanges.Count > 0 || pendingCatchUp;
+            var shouldReconcile = now - lastFullScanUtc >= cadence.PeriodicReconciliationInterval;
             if (!shouldCatchUp && !shouldReconcile)
             {
                 continue;
             }
 
-            if (shouldCatchUp)
+            if (dueChanges.Count > 0)
+            {
+                await operations.RunBackupForFilesAsync(dueChanges.Select(change => change.SourcePath), cancellationToken)
+                    .ConfigureAwait(false);
+                now = DateTimeOffset.UtcNow;
+                foreach (var change in dueChanges)
+                {
+                    lastCaptureAttemptByPath[change.SourcePath] = now;
+                }
+            }
+
+            if (pendingCatchUp)
             {
                 await RunCatchUpCycleAsync(cancellationToken).ConfigureAwait(false);
             }
@@ -51,7 +64,7 @@ public sealed class FileSystemProtectionLoop(
                 lastFullScanUtc = now;
             }
 
-            pendingChanges = false;
+            pendingCatchUp = false;
         }
     }
 
@@ -118,22 +131,87 @@ public sealed class FileSystemProtectionLoop(
                 NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.CreationTime,
                 EnableRaisingEvents = true
             };
-            watcher.Changed += MarkPending;
-            watcher.Created += MarkPending;
-            watcher.Renamed += MarkPending;
-            watcher.Deleted += MarkPending;
+            watcher.Changed += (_, args) => MarkPending(folder, args);
+            watcher.Created += (_, args) => MarkPending(folder, args);
+            watcher.Renamed += (_, args) => MarkPending(folder, args);
+            watcher.Deleted += (_, args) => MarkPending(folder, args);
             watchers.Add(watcher);
         }
 
-        pendingChanges = true;
+        pendingCatchUp = true;
     }
 
-    private void MarkPending(object sender, FileSystemEventArgs args)
+    private void MarkPending(WatchedFolderConfiguration folder, FileSystemEventArgs args)
     {
+        var sourcePath = Path.GetFullPath(args.FullPath);
         lock (gate)
         {
-            pendingChanges = true;
-            lastChangeUtc = DateTimeOffset.UtcNow;
+            var now = DateTimeOffset.UtcNow;
+            if (pendingFileChanges.TryGetValue(sourcePath, out var existing))
+            {
+                pendingFileChanges[sourcePath] = existing with { LatestEventUtc = now };
+            }
+            else
+            {
+                pendingFileChanges[sourcePath] = new PendingFileChange(
+                    sourcePath,
+                    folder.Id,
+                    folder.ResourceProfile,
+                    FirstEventUtc: now,
+                    LatestEventUtc: now);
+            }
         }
     }
+
+    private IReadOnlyList<PendingFileChange> TakeDueChanges(CaptureCadencePolicy cadence, DateTimeOffset now)
+    {
+        var due = new List<PendingFileChange>();
+        lock (gate)
+        {
+            foreach (var change in pendingFileChanges.Values.ToArray())
+            {
+                lastCaptureAttemptByPath.TryGetValue(change.SourcePath, out var lastCaptureAttempt);
+                var decision = CaptureCadenceScheduler.Evaluate(
+                    cadence,
+                    change.ResourceProfile,
+                    change.FirstEventUtc,
+                    change.LatestEventUtc,
+                    lastCaptureAttempt == default ? null : lastCaptureAttempt,
+                    now);
+                if (!decision.ShouldCapture)
+                {
+                    operations.UpdateCaptureRuntimeStatus(
+                        change.SourcePath,
+                        change.WatchedFolderId,
+                        CaptureRuntimeState.WaitingForQuietWindow,
+                        change.LatestEventUtc,
+                        decision.NextForcedCaptureUtc,
+                        delayReason: decision.DelayReason);
+                    continue;
+                }
+
+                if (decision.IsForcedHotFileSnapshot)
+                {
+                    operations.UpdateCaptureRuntimeStatus(
+                        change.SourcePath,
+                        change.WatchedFolderId,
+                        CaptureRuntimeState.ForcedHotFileSnapshot,
+                        change.LatestEventUtc,
+                        decision.NextForcedCaptureUtc);
+                }
+
+                due.Add(change);
+                pendingFileChanges.Remove(change.SourcePath);
+            }
+        }
+
+        return due;
+    }
+
+    private sealed record PendingFileChange(
+        string SourcePath,
+        string WatchedFolderId,
+        ResourceProfile ResourceProfile,
+        DateTimeOffset FirstEventUtc,
+        DateTimeOffset LatestEventUtc);
 }

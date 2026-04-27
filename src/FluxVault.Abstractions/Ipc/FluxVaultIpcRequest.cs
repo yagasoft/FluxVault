@@ -54,4 +54,19 @@ public sealed record FluxVaultIpcRequest(
     {
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.RunRetentionNow, null, null, null, null);
     }
+
+    public static FluxVaultIpcRequest GetActivity()
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.GetActivity, null, null, null, null);
+    }
+
+    public static FluxVaultIpcRequest ListBlockedFiles()
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.ListBlockedFiles, null, null, null, null);
+    }
+
+    public static FluxVaultIpcRequest SetProtectionPaused()
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.SetProtectionPaused, null, null, null, null);
+    }
 }

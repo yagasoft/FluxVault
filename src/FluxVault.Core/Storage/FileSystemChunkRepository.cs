@@ -141,9 +141,9 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var payload = await File.ReadAllBytesAsync(ChunkPath(rootPath, chunk.Digest), cancellationToken);
-                var bytes = chunk.Encoding == ChunkEncoding.Zstd
-                    ? codec.Decompress(payload, chunk.Length)
-                    : payload;
+                var bytes = chunk.Encoding == ChunkEncoding.Raw
+                    ? payload
+                    : codec.Decompress(payload, chunk.Length, chunk.Encoding);
 
                 await output.WriteAsync(bytes, cancellationToken);
             }
@@ -224,20 +224,33 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         CompressionPreference compression,
         int minimumCompressionBytes)
     {
-        if (compression == CompressionPreference.Zstd && raw.Length >= minimumCompressionBytes)
+        var encoding = ToChunkEncoding(compression);
+        if (encoding != ChunkEncoding.Raw && raw.Length >= minimumCompressionBytes)
         {
-            var compressed = codec.Compress(raw, level: 3);
+            var compressed = codec.Compress(raw, encoding, level: 3);
             if (compressed.Length < raw.Length)
             {
                 return new PreparedChunk(
                     compressed,
-                    new ChunkMetadata(digest, raw.Length, compressed.Length, ChunkEncoding.Zstd));
+                    new ChunkMetadata(digest, raw.Length, compressed.Length, encoding));
             }
         }
 
         return new PreparedChunk(
             raw.ToArray(),
             new ChunkMetadata(digest, raw.Length, raw.Length, ChunkEncoding.Raw));
+    }
+
+    private static ChunkEncoding ToChunkEncoding(CompressionPreference compression)
+    {
+        return compression switch
+        {
+            CompressionPreference.Zstd => ChunkEncoding.Zstd,
+            CompressionPreference.Lz4 => ChunkEncoding.Lz4,
+            CompressionPreference.Brotli => ChunkEncoding.Brotli,
+            CompressionPreference.Lzma => ChunkEncoding.Lzma,
+            _ => ChunkEncoding.Raw
+        };
     }
 
     private void MirrorChunkIfNeeded(string digest, PreparedChunk prepared)

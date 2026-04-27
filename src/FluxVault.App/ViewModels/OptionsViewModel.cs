@@ -28,10 +28,59 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
     private int minimumVersionsPerFile;
 
     [ObservableProperty]
+    private int watcherPollSeconds;
+
+    [ObservableProperty]
+    private int periodicReconciliationMinutes;
+
+    [ObservableProperty]
+    private int fastDebounceSeconds;
+
+    [ObservableProperty]
+    private int balancedDebounceSeconds;
+
+    [ObservableProperty]
+    private int quietDebounceSeconds;
+
+    [ObservableProperty]
+    private int fastMaxHotFileDelaySeconds;
+
+    [ObservableProperty]
+    private int balancedMaxHotFileDelayMinutes;
+
+    [ObservableProperty]
+    private int quietMaxHotFileDelayMinutes;
+
+    [ObservableProperty]
+    private int minimumSameFileCaptureIntervalSeconds;
+
+    [ObservableProperty]
+    private int maximumConcurrentCaptures;
+
+    [ObservableProperty]
+    private CodecProfile codecProfile;
+
+    [ObservableProperty]
+    private CompressionPreference defaultCodec;
+
+    [ObservableProperty]
+    private CompressionPreference hotFileCodec;
+
+    [ObservableProperty]
+    private int codecLevel;
+
+    [ObservableProperty]
+    private int codecMinimumKb;
+
+    [ObservableProperty]
     private string previewText = "Retention preview has not been run.";
 
     [ObservableProperty]
     private string statusText = "Ready";
+
+    public IReadOnlyList<CodecProfile> CodecProfiles { get; } = Enum.GetValues<CodecProfile>();
+
+    public IReadOnlyList<CompressionPreference> Codecs { get; } = Enum.GetValues<CompressionPreference>();
 
     public async Task InitialiseAsync(CancellationToken cancellationToken = default)
     {
@@ -44,6 +93,8 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
 
         currentConfiguration = response.Status.Configuration;
         ApplyPolicy(currentConfiguration.RetentionPolicy);
+        ApplyCadence(currentConfiguration.CaptureCadencePolicy);
+        ApplyCodec(currentConfiguration.CodecPolicy);
         StatusText = "Options loaded.";
     }
 
@@ -62,7 +113,9 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
 
         var updated = currentConfiguration with
         {
-            RetentionPolicy = BuildPolicy()
+            RetentionPolicy = BuildPolicy(),
+            CaptureCadencePolicy = BuildCadence(),
+            CodecPolicy = BuildCodec()
         };
         var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(updated), cancellationToken)
             .ConfigureAwait(true);
@@ -120,6 +173,57 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
             KeepHourlyFor: TimeSpan.FromDays(Math.Max(0, KeepHourlyDays)),
             KeepDailyFor: TimeSpan.FromDays(Math.Max(0, KeepDailyDays)),
             MinimumVersionsPerFile: Math.Max(1, MinimumVersionsPerFile));
+    }
+
+    private void ApplyCadence(CaptureCadencePolicy policy)
+    {
+        WatcherPollSeconds = Math.Max(1, (int)Math.Round(policy.WatcherPollInterval.TotalSeconds));
+        PeriodicReconciliationMinutes = Math.Max(1, (int)Math.Round(policy.PeriodicReconciliationInterval.TotalMinutes));
+        FastDebounceSeconds = Math.Max(0, (int)Math.Round(policy.FastDebounce.TotalSeconds));
+        BalancedDebounceSeconds = Math.Max(0, (int)Math.Round(policy.BalancedDebounce.TotalSeconds));
+        QuietDebounceSeconds = Math.Max(0, (int)Math.Round(policy.QuietDebounce.TotalSeconds));
+        FastMaxHotFileDelaySeconds = Math.Max(1, (int)Math.Round(policy.FastMaxHotFileDelay.TotalSeconds));
+        BalancedMaxHotFileDelayMinutes = Math.Max(1, (int)Math.Round(policy.BalancedMaxHotFileDelay.TotalMinutes));
+        QuietMaxHotFileDelayMinutes = Math.Max(1, (int)Math.Round(policy.QuietMaxHotFileDelay.TotalMinutes));
+        MinimumSameFileCaptureIntervalSeconds = Math.Max(0, (int)Math.Round(policy.MinimumSameFileCaptureInterval.TotalSeconds));
+        MaximumConcurrentCaptures = Math.Max(1, policy.MaximumConcurrentCaptures);
+    }
+
+    private CaptureCadencePolicy BuildCadence()
+    {
+        return new CaptureCadencePolicy(
+            WatcherPollInterval: TimeSpan.FromSeconds(Math.Max(1, WatcherPollSeconds)),
+            PeriodicReconciliationInterval: TimeSpan.FromMinutes(Math.Max(1, PeriodicReconciliationMinutes)),
+            FastDebounce: TimeSpan.FromSeconds(Math.Max(0, FastDebounceSeconds)),
+            BalancedDebounce: TimeSpan.FromSeconds(Math.Max(0, BalancedDebounceSeconds)),
+            QuietDebounce: TimeSpan.FromSeconds(Math.Max(0, QuietDebounceSeconds)),
+            FastMaxHotFileDelay: TimeSpan.FromSeconds(Math.Max(1, FastMaxHotFileDelaySeconds)),
+            BalancedMaxHotFileDelay: TimeSpan.FromMinutes(Math.Max(1, BalancedMaxHotFileDelayMinutes)),
+            QuietMaxHotFileDelay: TimeSpan.FromMinutes(Math.Max(1, QuietMaxHotFileDelayMinutes)),
+            MinimumSameFileCaptureInterval: TimeSpan.FromSeconds(Math.Max(0, MinimumSameFileCaptureIntervalSeconds)),
+            MaximumConcurrentCaptures: Math.Max(1, MaximumConcurrentCaptures));
+    }
+
+    private void ApplyCodec(CodecPolicy policy)
+    {
+        CodecProfile = policy.Profile;
+        DefaultCodec = policy.Codec;
+        HotFileCodec = policy.HotFileOverride;
+        CodecLevel = Math.Max(1, policy.Level);
+        CodecMinimumKb = Math.Max(0, (int)Math.Round(policy.MinimumBytes / 1024d));
+    }
+
+    private CodecPolicy BuildCodec()
+    {
+        var defaults = currentConfiguration?.CodecPolicy ?? CodecPolicy.CreateDefault();
+        return defaults with
+        {
+            Codec = DefaultCodec,
+            Profile = CodecProfile,
+            Level = Math.Clamp(CodecLevel, 1, 22),
+            MinimumBytes = Math.Max(0, CodecMinimumKb) * 1024L,
+            HotFileOverride = HotFileCodec
+        };
     }
 
     private static string FormatPreview(RepositoryRetentionPreview preview)

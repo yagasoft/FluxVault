@@ -35,12 +35,11 @@ Windows service.
 
 ## CI gates
 
-- Restore and build.
-- Unit and integration tests.
-- Package validation.
-- Dependency vulnerability scan.
-- CodeQL/security scan for final release or production PRs. MVP feature PRs use
-  the `build-test` workflow as the required gate unless explicitly promoted to
-  release readiness.
-- SBOM generation.
-- Release artefact upload.
+- `ci.yml` runs restore, build, and tests as the `build-test` job on pull
+  requests and on pushes to `main`.
+- `codeql.yml` does not run on pull requests. It runs on pushes to `main`,
+  weekly schedule, and manual dispatch.
+- MVP feature PRs wait only for `build-test`. Do not wait for CodeQL unless the
+  PR is explicitly promoted to a final release or production-readiness gate.
+- Package validation, dependency review, SBOM generation, signing, and release
+  artefact upload are V1/release-track gates.

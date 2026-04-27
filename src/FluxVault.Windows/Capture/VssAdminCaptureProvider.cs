@@ -42,8 +42,7 @@ public sealed class VssAdminCaptureProvider : IFileCaptureProvider
             return FileCaptureResult.Failed("VSS shadow was created but its id or volume path could not be parsed.");
         }
 
-        var relativePath = Path.GetRelativePath(root, fullPath);
-        var shadowPath = Path.Combine(shadowVolume.TrimEnd('\\'), relativePath);
+        var shadowPath = BuildShadowPath(root, fullPath, shadowVolume);
         try
         {
             var stream = new FileStream(
@@ -64,6 +63,12 @@ public sealed class VssAdminCaptureProvider : IFileCaptureProvider
             await DeleteShadowAsync(shadowId).ConfigureAwait(false);
             return FileCaptureResult.Failed($"VSS shadow read failed: {ex.Message}");
         }
+    }
+
+    public static string BuildShadowPath(string volumeRoot, string sourcePath, string shadowVolume)
+    {
+        var relativePath = Path.GetRelativePath(volumeRoot, sourcePath);
+        return Path.Combine(shadowVolume.TrimEnd('\\'), relativePath);
     }
 
     private static async ValueTask DeleteShadowAsync(string shadowId)

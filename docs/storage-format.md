@@ -15,8 +15,8 @@ repository/
 ## Chunk records
 
 Each chunk is immutable and addressed by BLAKE3 digest. The stored payload may be
-raw or zstd-compressed. The manifest records the encoding, logical length, stored
-length, and digest.
+raw, zstd, lz4, Brotli, or LZMA encoded. The manifest records the encoding,
+logical length, stored length, and digest.
 
 ## Version manifests
 
@@ -29,7 +29,7 @@ A manifest records:
 - consistency level
 - logical file length
 - ordered chunk list
-- compression policy used
+- chunk encoding used for each chunk
 
 Manifests are written to a temporary file and atomically moved into place.
 

@@ -81,6 +81,28 @@ public sealed class RepositoryTests
         Assert.Equal(result.Manifest.LogicalLength, inspection.LogicalLength);
     }
 
+    [Theory]
+    [InlineData(CompressionPreference.Lz4)]
+    [InlineData(CompressionPreference.Brotli)]
+    [InlineData(CompressionPreference.Lzma)]
+    public async Task Commit_and_restore_supports_expanded_codecs(CompressionPreference compression)
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        var payload = Encoding.UTF8.GetBytes(string.Concat(Enumerable.Repeat("codec payload ", 500)));
+
+        var result = await repository.CommitAsync(NewRequest(payload) with
+        {
+            Compression = compression,
+            MinimumCompressionBytes = 1
+        });
+
+        var restoredPath = Path.Combine(workspace.RootPath, $"{compression}.restore");
+        await repository.RestoreAsync(result.Manifest.VersionId, restoredPath);
+
+        Assert.Equal(payload, await File.ReadAllBytesAsync(restoredPath));
+    }
+
     [Fact]
     public async Task Preview_retention_reports_prunable_versions_without_mutating_repository()
     {

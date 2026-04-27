@@ -1,7 +1,10 @@
 using System.Security.Cryptography;
 using System.Text;
+using FluxVault.Abstractions.Capture;
 using FluxVault.Abstractions.Configuration;
+using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
+using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Capture;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Service;
@@ -160,6 +163,49 @@ public sealed class ServiceOperationsTests
         Assert.Contains("does not exist", backup.Message);
     }
 
+    [Fact]
+    public async Task Blocked_capture_is_reported_in_status()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "content");
+        var configuration = NewConfiguration(workspace, watched);
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var operations = new FluxVaultOperations(
+            store,
+            new StubCaptureProvider(FileCaptureResult.Failed("The process cannot access the file because it is locked.")));
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+        var status = await operations.GetStatusAsync();
+
+        Assert.False(backup.Success);
+        var captureStatus = Assert.Single(status.CaptureStatuses!);
+        Assert.Equal(CaptureRuntimeState.Blocked, captureStatus.State);
+        Assert.Contains("locked", captureStatus.BlockedReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Set_protection_paused_toggles_enabled_state()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        await operations.SetProtectionPausedAsync();
+        var paused = await operations.GetStatusAsync();
+        await operations.SetProtectionPausedAsync();
+        var resumed = await operations.GetStatusAsync();
+
+        Assert.False(paused.Configuration.IsEnabled);
+        Assert.True(resumed.Configuration.IsEnabled);
+    }
+
     private static FluxVaultOperations CreateOperations(TemporaryWorkspace workspace, FluxVaultConfiguration configuration)
     {
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
@@ -222,5 +268,13 @@ public sealed class ServiceOperationsTests
     {
         await using var stream = File.OpenRead(path);
         return Convert.ToHexString(await SHA256.HashDataAsync(stream));
+    }
+
+    private sealed class StubCaptureProvider(FileCaptureResult result) : IFileCaptureProvider
+    {
+        public Task<FileCaptureResult> CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(result);
+        }
     }
 }

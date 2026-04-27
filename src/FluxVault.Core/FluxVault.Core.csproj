@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Blake3" />
+    <PackageReference Include="K4os.Compression.LZ4.Streams" />
+    <PackageReference Include="SharpCompress" />
     <PackageReference Include="ZstdSharp.Port" />
   </ItemGroup>
 

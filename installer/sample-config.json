@@ -2,5 +2,35 @@
   "repositoryPath": "C:\\ProgramData\\FluxVault\\repository",
   "mirrorPath": null,
   "isEnabled": true,
-  "watchedFolders": []
+  "watchedFolders": [],
+  "retentionPolicy": {
+    "isEnabled": true,
+    "keepAllFor": "1.00:00:00",
+    "keepHourlyFor": "30.00:00:00",
+    "keepDailyFor": "180.00:00:00",
+    "minimumVersionsPerFile": 20
+  },
+  "captureCadencePolicy": {
+    "watcherPollInterval": "00:00:05",
+    "periodicReconciliationInterval": "00:10:00",
+    "fastDebounce": "00:00:02",
+    "balancedDebounce": "00:00:08",
+    "quietDebounce": "00:00:30",
+    "fastMaxHotFileDelay": "00:00:30",
+    "balancedMaxHotFileDelay": "00:02:00",
+    "quietMaxHotFileDelay": "00:10:00",
+    "minimumSameFileCaptureInterval": "00:00:15",
+    "maximumConcurrentCaptures": 1
+  },
+  "codecPolicy": {
+    "codec": "zstd",
+    "profile": "adaptive",
+    "level": 3,
+    "minimumBytes": 262144,
+    "skipExtensions": [".zip", ".7z", ".rar", ".jpg", ".jpeg", ".png", ".mp4", ".mov", ".gz", ".xz", ".zst"],
+    "hotFileOverride": "lz4",
+    "enableDictionaryMode": false,
+    "enableLongDistanceMode": false,
+    "threads": 0
+  }
 }

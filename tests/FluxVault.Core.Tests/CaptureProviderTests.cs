@@ -24,6 +24,28 @@ public sealed class CaptureProviderTests
     }
 
     [Fact]
+    public async Task Normal_file_capture_does_not_block_compatible_writers()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var source = Path.Combine(workspace.RootPath, "source.txt");
+        await File.WriteAllTextAsync(source, "initial content");
+        var provider = new NormalFileCaptureProvider();
+
+        await using var capture = await provider.CaptureAsync(new FileCaptureRequest(source));
+
+        Assert.True(capture.Success);
+        await using var writer = new FileStream(
+            source,
+            FileMode.Open,
+            FileAccess.Write,
+            FileShare.ReadWrite | FileShare.Delete,
+            bufferSize: 4096,
+            FileOptions.Asynchronous);
+        writer.Seek(0, SeekOrigin.End);
+        await writer.WriteAsync(Encoding.UTF8.GetBytes(" updated"));
+    }
+
+    [Fact]
     public async Task Fallback_capture_uses_vss_when_normal_read_fails()
     {
         var normal = new StubCaptureProvider(FileCaptureResult.Failed("locked"));

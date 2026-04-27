@@ -10,5 +10,12 @@ public enum FluxVaultIpcCommand
     RestoreVersion = 5,
     ExportDiagnostics = 6,
     PreviewRetention = 7,
-    RunRetentionNow = 8
+    RunRetentionNow = 8,
+    GetActivity = 9,
+    ListBlockedFiles = 10,
+    SetProtectionPaused = 11,
+    PreviewMirrorRebalance = 12,
+    RunMirrorRebalance = 13,
+    ResolveConflict = 14,
+    GetSyncStatus = 15
 }

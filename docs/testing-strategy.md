@@ -5,13 +5,16 @@
 - Policy resolution and inheritance.
 - Chunk boundary validity and deterministic chunking.
 - BLAKE3 fingerprinting.
-- zstd round-trip compression.
+- zstd, lz4, Brotli, and LZMA round-trip compression.
+- Adaptive codec-policy selection.
+- Capture cadence defaults and forced hot-file snapshot decisions.
 - Manifest write/read.
 - Deduplicated commit and restore.
 - Retention decisions.
 - Configuration load/save/defaults and validation.
 - IPC request/response serialisation.
-- Normal-file capture and VSS fallback selection.
+- Normal-file capture, non-interfering source sharing, and VSS fallback
+  selection.
 - Resource profile debounce delays.
 
 ## Integration tests
@@ -28,6 +31,8 @@
 - Mirror cleanup after retention pruning.
 - Options dialog view-model save, preview, and run-retention behaviour with a
   fake service client.
+- Activity pane view-model loading for recent events and blocked files.
+- CodeQL workflow trigger guard: no `pull_request` trigger.
 - Missing watched-folder failure reporting.
 
 ## Benchmarks

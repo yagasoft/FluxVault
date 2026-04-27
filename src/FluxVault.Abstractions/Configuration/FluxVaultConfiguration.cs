@@ -7,7 +7,9 @@ public sealed record FluxVaultConfiguration(
     string? MirrorPath,
     bool IsEnabled,
     IReadOnlyList<WatchedFolderConfiguration> WatchedFolders,
-    RetentionPolicy RetentionPolicy = null!)
+    RetentionPolicy RetentionPolicy = null!,
+    CaptureCadencePolicy CaptureCadencePolicy = null!,
+    CodecPolicy CodecPolicy = null!)
 {
     public static FluxVaultConfiguration CreateDefault(string programDataPath)
     {
@@ -17,6 +19,8 @@ public sealed record FluxVaultConfiguration(
             MirrorPath: null,
             IsEnabled: true,
             WatchedFolders: [],
-            RetentionPolicy: RetentionPolicy.CreateDefault());
+            RetentionPolicy: RetentionPolicy.CreateDefault(),
+            CaptureCadencePolicy: CaptureCadencePolicy.CreateDefault(),
+            CodecPolicy: CodecPolicy.CreateDefault());
     }
 }

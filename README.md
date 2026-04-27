@@ -10,7 +10,9 @@ a tray app, and a per-machine Windows service.
 - USN journal catch-up plus directory notifications for low-latency detection.
 - VSS snapshot reads for open-file capture and app-consistency where writers cooperate.
 - FastCDC-style chunking with BLAKE3 chunk fingerprints.
-- Configurable zstd compression and smart retention.
+- Configurable capture cadence with bounded hot-file snapshots.
+- Adaptive compression policy with zstd by default, plus lz4, Brotli, LZMA,
+  and off modes for explicit profiles.
 - Local immutable repository plus atomic writes into a user-selected cloud sync folder.
 - Basic restore to original or alternate paths.
 - Local diagnostics only; no hidden telemetry.
@@ -30,9 +32,15 @@ FluxVault now has a developer-usable MVP loop:
   optional cloud-folder mirror.
 - Conservative automatic retention, with a WPF Options dialog for previewing
   and applying retention settings.
+- A FluxVault app icon, left-navigation dashboard, activity view, tray activity
+  pane, and blocked-file reporting.
 
 VSS captures are reported as crash-consistent in this MVP. Writer-aware
 app-consistency reporting remains a hardening item.
+
+FluxVault opens source files read-only with `FileShare.ReadWrite |
+FileShare.Delete`; VSS captures read from the shadow path. Repository writes
+should be kept outside watched source folders unless explicitly configured.
 
 ## Build
 
@@ -63,6 +71,13 @@ Open **Options** to review retention. The MVP defaults keep every version for
 180 days, and always keep at least the latest 20 versions per source file.
 Retention is enabled by default and runs after successful service backups; the
 dialog can preview reclaimable repository space and run retention immediately.
+
+The **Advanced** options page controls capture cadence and compression. The
+default watcher poll is 5 seconds, reconciliation is 10 minutes, and hot files
+are forced after 30 seconds, 2 minutes, or 10 minutes for Fast, Balanced, and
+Quiet profiles. PRs wait for `build-test` only; CodeQL runs on `main` push,
+manual dispatch, or the scheduled scan, and is not a PR gate unless explicitly
+requested.
 
 To remove the unsigned developer service:
 

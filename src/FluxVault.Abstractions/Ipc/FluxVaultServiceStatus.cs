@@ -12,7 +12,8 @@ public sealed record FluxVaultServiceStatus(
     IReadOnlyList<WatchedFolderRuntimeStatus> WatchedFolders,
     IReadOnlyList<RepositoryVersionSummary> RecentVersions,
     RepositoryRetentionResult? LastRetention = null,
-    DurableChangeRuntimeStatus? DurableChange = null);
+    DurableChangeRuntimeStatus? DurableChange = null,
+    IReadOnlyList<CaptureRuntimeStatus>? CaptureStatuses = null);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,

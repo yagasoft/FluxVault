@@ -1,0 +1,66 @@
+<Window x:Class="FluxVault.App.ActivityPaneWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="FluxVault activity"
+        Width="420" Height="520" MinWidth="360" MinHeight="420"
+        WindowStyle="ToolWindow" ResizeMode="CanResizeWithGrip"
+        Background="#F6F7F9"
+        Loaded="ActivityPaneWindow_Loaded">
+    <Border BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF">
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="120" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left">
+                    <TextBlock Text="Activity" FontSize="20" FontWeight="SemiBold" Foreground="#202124" />
+                    <TextBlock Text="{Binding StatusText}" FontSize="12" Foreground="#5F6368" Margin="0,2,0,0" />
+                </StackPanel>
+                <Button DockPanel.Dock="Right" Content="Refresh" Command="{Binding RefreshCommand}" Padding="12,6" />
+            </DockPanel>
+
+            <ListBox Grid.Row="2" ItemsSource="{Binding Events}" BorderBrush="#DADCE0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="58" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Time}" Foreground="#5F6368" FontSize="12" />
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="#202124" />
+                                <TextBlock Text="{Binding Detail}" TextWrapping="Wrap" Foreground="#3C4043" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <GroupBox Grid.Row="4" Header="Blocked files">
+                <ListBox ItemsSource="{Binding BlockedFiles}" BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="4">
+                                <TextBlock Text="{Binding SourcePath}" Foreground="#A15C00" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Reason}" Foreground="#5F6368" FontSize="12" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
+
+            <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Run backup now" Command="{Binding RunBackupNowCommand}" Padding="12,6" Margin="0,0,8,0" />
+                <Button Content="Pause protection" Command="{Binding PauseProtectionCommand}" Padding="12,6" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

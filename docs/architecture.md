@@ -27,16 +27,52 @@ folder.
    checkpoint and targets only changed files when continuity is proven.
 3. Periodic reconciliation scans remain as a safety net when USN is unavailable,
    inaccessible, reset, or unsupported for the watched volume.
-4. Smart cadence coalesces hot files to avoid repeated full-file reads.
+4. Smart cadence coalesces hot files to avoid repeated full-file reads. If a
+   file keeps changing beyond its configured maximum hot-file delay, the service
+   queues a snapshot anyway and reports a forced hot-file snapshot.
 5. Normal stream reads capture readable files; the Windows service falls back to
    VSS through `vssadmin.exe` for locked files when privileges allow it.
 6. Core chunking splits the captured bytes into FastCDC-style chunks.
 7. Chunk fingerprints are compared against the local repository.
 8. New chunks and a manifest are committed atomically.
 9. Repository artefacts are mirrored into the configured cloud sync folder.
-10. If retention is enabled, the service applies the configured retention policy
+10. Compression is selected by policy. The default adaptive profile uses zstd,
+    skips known compressed file types, uses lz4 for hot files, and keeps Brotli
+    and LZMA as explicit ratio/cold-archive choices.
+11. If retention is enabled, the service applies the configured retention policy
     after the successful backup and reports kept, pruned, and reclaimed counts
     in service status.
+
+## Capture cadence
+
+The cadence policy is stored in `config.json` and is editable from Advanced
+Options. Defaults are:
+
+- Watcher poll interval: 5 seconds.
+- Periodic reconciliation: 10 minutes.
+- Debounce: Fast 2 seconds, Balanced 8 seconds, Quiet 30 seconds.
+- Maximum hot-file delay: Fast 30 seconds, Balanced 2 minutes, Quiet 10 minutes.
+- Minimum same-file capture interval: 15 seconds.
+- Maximum concurrent captures: 1.
+
+Directory notifications are latency hints. USN is the durable source where
+available. Reconciliation remains the safety net when USN cannot prove
+continuity.
+
+## Non-interference contract
+
+FluxVault should not make normal user applications wait on backup reads.
+
+- Normal capture opens source files read-only with `FileShare.ReadWrite |
+  FileShare.Delete`.
+- VSS capture reads from the shadow copy path, not the live source path.
+- Repository and mirror writes are outside the watched source tree unless the
+  user explicitly chooses such a layout.
+- Restore and future hydration workflows must avoid unsafe overwrites of open
+  or blocked targets unless the user chooses an alternate path or confirms the
+  operation.
+- Blocked files are surfaced through service status, diagnostics, the dashboard
+  Activity view, and the tray activity pane.
 
 ## MVP harness flow
 
@@ -48,7 +84,8 @@ writes, listing, inspection, and restore without claiming open-file consistency.
 
 The repository stores immutable chunks and append-only version manifests. A
 manifest is the authoritative description of one captured file version. Chunks
-are addressed by BLAKE3 digest and may be zstd-compressed according to policy.
+are addressed by BLAKE3 digest and may be stored raw or encoded with zstd, lz4,
+Brotli, or LZMA according to policy.
 
 Retention is manifest-led. FluxVault groups versions by normalised source path,
 keeps dense recent history, thins older history to hourly and daily buckets,

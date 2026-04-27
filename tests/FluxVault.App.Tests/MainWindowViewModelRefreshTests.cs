@@ -1,4 +1,5 @@
 using System.IO;
+using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
@@ -97,6 +98,26 @@ public sealed class MainWindowViewModelRefreshTests
 
         Assert.Single(viewModel.RecentVersions);
         Assert.Contains("unavailable", viewModel.ServiceStatus);
+    }
+
+    [Fact]
+    public async Task Refresh_shows_durable_change_status_when_service_reports_it()
+    {
+        var checkedAt = DateTimeOffset.UtcNow;
+        var status = StatusWithVersions("v1") with
+        {
+            DurableChange = new DurableChangeRuntimeStatus(
+                checkedAt,
+                "USN active.",
+                null,
+                [new UsnJournalCheckpoint("docs", @"D:\", 42, 200, 1, checkedAt)])
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        Assert.Contains("USN active", viewModel.ServiceStatus);
     }
 
     private static FluxVaultServiceStatus StatusWithVersions(params string[] versionIds)

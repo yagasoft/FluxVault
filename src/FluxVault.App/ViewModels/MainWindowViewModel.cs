@@ -308,17 +308,23 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             RepositoryPath = status.Configuration.RepositoryPath;
             MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
-            ServiceStatus = $"Service connection: running - {status.LastMessage}. Last refreshed {DateTime.Now:HH:mm:ss}";
+            var durableStatus = string.IsNullOrWhiteSpace(status.DurableChange?.Status)
+                ? string.Empty
+                : $" - {status.DurableChange.Status.TrimEnd('.')}";
+            ServiceStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}{durableStatus}. Last refreshed {DateTime.Now:HH:mm:ss}";
             WatchedFolders.Clear();
             foreach (var folder in status.Configuration.WatchedFolders)
             {
                 var runtime = status.WatchedFolders.SingleOrDefault(value => value.Id == folder.Id);
+                var runtimeStatus = runtime is null
+                    ? "Ready"
+                    : $"{runtime.Status} - {runtime.DurableChangeStatus}";
                 WatchedFolders.Add(new WatchedFolderRow(
                     folder.Id,
                     folder.Path,
                     folder.ResourceProfile,
                     folder.Compression,
-                    runtime?.Status ?? "Ready"));
+                    runtimeStatus));
             }
 
             RecentVersions.Clear();

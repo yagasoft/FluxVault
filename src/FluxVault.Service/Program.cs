@@ -1,9 +1,12 @@
 using FluxVault.Service;
+using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Capture;
 using FluxVault.Core.Capture;
+using FluxVault.Core.ChangeTracking;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
 using FluxVault.Core.Service;
+using FluxVault.Windows.ChangeTracking;
 using FluxVault.Windows.Capture;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -13,6 +16,10 @@ var programDataPath = Path.Combine(
     "FluxVault");
 builder.Services.AddSingleton<IFluxVaultConfigurationStore>(
     new FileFluxVaultConfigurationStore(Path.Combine(programDataPath, "config.json"), programDataPath));
+builder.Services.AddSingleton<IUsnJournalCheckpointStore>(
+    new FileUsnJournalCheckpointStore(Path.Combine(programDataPath, "state", "usn-checkpoints.json")));
+builder.Services.AddSingleton<IUsnChangeJournalReader, WindowsUsnChangeJournalReader>();
+builder.Services.AddSingleton<UsnCatchUpService>();
 builder.Services.AddSingleton(CapturePipelinePlanner.CreateDefault());
 builder.Services.AddSingleton<IFileCaptureProvider>(
     _ => new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new VssAdminCaptureProvider()));

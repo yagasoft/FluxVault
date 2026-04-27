@@ -22,8 +22,8 @@ FluxVault now has a developer-usable MVP loop:
 - WPF dashboard connected to the service over local named-pipe IPC.
 - Per-machine Worker Service host with persisted configuration under
   `C:\ProgramData\FluxVault\config.json`.
-- Watched-folder backup using file-system notifications plus periodic
-  reconciliation.
+- Watched-folder backup using file-system notifications, USN journal catch-up,
+  and periodic reconciliation fallback.
 - Normal readable-file capture with VSS fallback for locked files when the
   service has sufficient Windows privileges.
 - Version list, inspect, restore, diagnostics export, local repository, and
@@ -65,7 +65,7 @@ To remove the unsigned developer service:
 ## Local backup harness
 
 The MVP command-line harness backs up normal readable files into a local
-FluxVault repository. It does not use VSS or USN yet.
+FluxVault repository. It does not use VSS or USN.
 
 ```powershell
 dotnet run --project .\src\FluxVault.Cli -- backup --source .\README.md --repository .\.tmp\vault --mirror .\.tmp\cloud

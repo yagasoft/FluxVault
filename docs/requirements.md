@@ -22,7 +22,7 @@ folder; direct cloud adapters arrive later.
 - Basic restore browser supporting original and alternate restore paths.
 - Local logs and diagnostics export only.
 - Developer command-line harness for backing up, listing, inspecting, and
-  restoring normal readable files before the VSS/USN service path is complete.
+  restoring normal readable files without claiming VSS or USN consistency.
 
 ## Explicit non-goals for v1
 

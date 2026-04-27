@@ -103,12 +103,12 @@ public sealed class MainWindowViewModelRefreshTests
     [Fact]
     public async Task Refresh_shows_durable_change_status_when_service_reports_it()
     {
-        var checkedAt = DateTimeOffset.UtcNow;
+        var checkedAt = new DateTimeOffset(2026, 4, 27, 18, 14, 5, TimeSpan.Zero);
         var status = StatusWithVersions("v1") with
         {
             DurableChange = new DurableChangeRuntimeStatus(
                 checkedAt,
-                "USN active.",
+                "USN active. Found 0 changed file(s).",
                 null,
                 [new UsnJournalCheckpoint("docs", @"D:\", 42, 200, 1, checkedAt)])
         };
@@ -119,6 +119,10 @@ public sealed class MainWindowViewModelRefreshTests
 
         Assert.DoesNotContain("USN active", viewModel.ServiceStatus);
         Assert.Contains("USN: active", viewModel.UsnHealth);
+        Assert.Contains("last checked", viewModel.UsnHealth);
+        Assert.Contains(checkedAt.ToLocalTime().ToString("HH:mm:ss"), viewModel.UsnHealth);
+        Assert.Contains("found 0 changed file(s)", viewModel.UsnHealth);
+        Assert.DoesNotContain("Capture:", viewModel.UsnHealth);
     }
 
     [Fact]

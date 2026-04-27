@@ -42,20 +42,29 @@ public sealed class FileSystemProtectionLoop(
                 continue;
             }
 
-            if (dueChanges.Count > 0)
+            var catchUpOutcome = ProtectionLoopCatchUpOutcome.None;
+            if (shouldCatchUp)
             {
-                await operations.RunBackupForFilesAsync(dueChanges.Select(change => change.SourcePath), cancellationToken)
-                    .ConfigureAwait(false);
+                catchUpOutcome = await RunCatchUpCycleCoreAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            if (dueChanges.Count > 0 && !catchUpOutcome.RanFullScan)
+            {
+                var duePaths = dueChanges
+                    .Select(change => change.SourcePath)
+                    .Where(path => !catchUpOutcome.BackedUpPaths.Contains(Path.GetFullPath(path)))
+                    .ToArray();
+                if (duePaths.Length > 0)
+                {
+                    await operations.RunBackupForFilesAsync(duePaths, cancellationToken)
+                        .ConfigureAwait(false);
+                }
+
                 now = DateTimeOffset.UtcNow;
                 foreach (var change in dueChanges)
                 {
                     lastCaptureAttemptByPath[change.SourcePath] = now;
                 }
-            }
-
-            if (pendingCatchUp)
-            {
-                await RunCatchUpCycleAsync(cancellationToken).ConfigureAwait(false);
             }
 
             if (shouldReconcile)
@@ -70,6 +79,11 @@ public sealed class FileSystemProtectionLoop(
 
     public async Task RunCatchUpCycleAsync(CancellationToken cancellationToken = default)
     {
+        _ = await RunCatchUpCycleCoreAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<ProtectionLoopCatchUpOutcome> RunCatchUpCycleCoreAsync(CancellationToken cancellationToken = default)
+    {
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         try
         {
@@ -78,13 +92,16 @@ public sealed class FileSystemProtectionLoop(
             if (result.RequiresFullScan)
             {
                 await operations.RunBackupNowAsync(cancellationToken).ConfigureAwait(false);
-                return;
+                return ProtectionLoopCatchUpOutcome.FullScan;
             }
 
             if (result.ChangedFiles.Count > 0)
             {
                 await operations.RunBackupForFilesAsync(result.ChangedFiles, cancellationToken).ConfigureAwait(false);
+                return ProtectionLoopCatchUpOutcome.Targeted(result.ChangedFiles);
             }
+
+            return ProtectionLoopCatchUpOutcome.None;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -108,6 +125,7 @@ public sealed class FileSystemProtectionLoop(
                 Details = [detail]
             });
             await operations.RunBackupNowAsync(cancellationToken).ConfigureAwait(false);
+            return ProtectionLoopCatchUpOutcome.FullScan;
         }
     }
 
@@ -224,4 +242,20 @@ public sealed class FileSystemProtectionLoop(
         ResourceProfile ResourceProfile,
         DateTimeOffset FirstEventUtc,
         DateTimeOffset LatestEventUtc);
+
+    private sealed record ProtectionLoopCatchUpOutcome(bool RanFullScan, IReadOnlySet<string> BackedUpPaths)
+    {
+        public static ProtectionLoopCatchUpOutcome None { get; } =
+            new(false, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+
+        public static ProtectionLoopCatchUpOutcome FullScan { get; } =
+            new(true, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+
+        public static ProtectionLoopCatchUpOutcome Targeted(IEnumerable<string> paths)
+        {
+            return new ProtectionLoopCatchUpOutcome(
+                false,
+                paths.Select(Path.GetFullPath).ToHashSet(StringComparer.OrdinalIgnoreCase));
+        }
+    }
 }

@@ -22,9 +22,11 @@ folder.
 
 ## MVP capture flow
 
-1. Directory notification wakes the service quickly when a watched path changes.
+1. Directory notification wakes the service quickly when a watched path changes
+   and records live pending capture work.
 2. USN journal catch-up reads durable per-volume changes since the last saved
-   checkpoint and targets only changed files when continuity is proven.
+   checkpoint and targets only changed files when continuity is proven. Mature
+   watcher changes run a USN catch-up before falling back to the watcher path.
 3. Periodic reconciliation scans remain as a safety net when USN is unavailable,
    inaccessible, reset, or unsupported for the watched volume.
 4. Smart cadence coalesces hot files to avoid repeated full-file reads. If a
@@ -55,20 +57,23 @@ Options. Defaults are:
 - Minimum same-file capture interval: 15 seconds.
 - Maximum concurrent captures: 1.
 
-Directory notifications are latency hints. USN is the durable source where
-available. Reconciliation remains the safety net when USN cannot prove
-continuity. Durable-change status carries both a concise label and structured
-diagnostic details, so the UI and exported diagnostics can distinguish unable
-to open volume, unsupported volume, journal ID change, journal wrap, checkpoint
-seeding, and file-id path resolution failures.
+Directory notifications are latency hints and drive the live capture queue.
+USN is the durable catch-up source where available. Reconciliation remains the
+safety net when USN cannot prove continuity. Durable-change status carries a
+latest-check label, timestamp, and structured diagnostic details, so the UI and
+exported diagnostics can distinguish unable to open volume, unsupported volume,
+journal ID change, journal wrap, checkpoint seeding, and file-id path
+resolution failures.
 
 ## Options and status UX
 
 Every editable Options control has a native WPF tooltip describing the
-operational effect of the setting. The dashboard health strip keeps status
-compact but exposes detailed durable-change information through the USN tooltip
-and diagnostics export. The main header constrains long service text with
-ellipsis trimming so it cannot overlap command buttons.
+operational effect of the setting; long tooltip text wraps inside a bounded
+width. The dashboard health strip keeps status compact but exposes detailed
+durable-change information through the USN tooltip and diagnostics export.
+The main header constrains long service text with ellipsis trimming so it
+cannot overlap command buttons. The Capture tile is the live watcher/debounce
+queue; the USN tile is the latest durable catch-up result.
 
 The tray activity pane is positioned from the active monitor working area. The
 WinForms cursor and monitor coordinates are converted to WPF device-independent

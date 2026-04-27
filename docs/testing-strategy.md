@@ -18,7 +18,7 @@
   selection.
 - Resource profile debounce delays.
 - XAML quality checks for compact Activity pane controls, constrained dashboard
-  header status text, wrapping USN tooltips, and Options tooltips.
+  header status text, wrapping USN tooltips, and wrapping Options tooltips.
 - USN diagnostic formatting for volume-open, unsupported-volume, journal-read,
   and file-id path-resolution failures.
 - Windows interop binding checks for native USN calls such as `DeviceIoControl`.
@@ -43,6 +43,10 @@
 - Diagnostics export containing durable-change fallback details.
 - CodeQL workflow trigger guard: no `pull_request` trigger.
 - Missing watched-folder failure reporting.
+- Watcher-driven due changes trigger USN catch-up first, then fall back to the
+  watcher path only when USN reports no changed files.
+- USN unavailable/full-scan-required watcher cycles run one full scan without
+  duplicating the same targeted watcher capture.
 
 ## Benchmarks
 

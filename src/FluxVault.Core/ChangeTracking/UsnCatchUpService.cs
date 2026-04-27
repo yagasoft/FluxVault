@@ -32,7 +32,21 @@ public sealed class UsnCatchUpService(
                     DateTimeOffset.UtcNow,
                     requiresFullScan ? "Using reconciliation scan." : "No watched folders available for USN.",
                     requiresFullScan ? "No enabled watched folders currently exist on disk." : null,
-                    checkpoints));
+                    checkpoints) with
+                {
+                    Details = requiresFullScan
+                            ?
+                            [
+                                new DurableChangeDetail(
+                                    WatchedFolderId: null,
+                                    Path: null,
+                                    VolumeRoot: null,
+                                    Operation: "Resolve watched folders",
+                                    Reason: "No enabled watched folders currently exist on disk.",
+                                    Win32ErrorCode: null)
+                            ]
+                            : []
+                });
         }
 
         var result = await reader.ReadChangesAsync(scopes, checkpoints, cancellationToken).ConfigureAwait(false);
@@ -50,7 +64,10 @@ public sealed class UsnCatchUpService(
             DateTimeOffset.UtcNow,
             result.Status,
             result.FallbackReason,
-            result.Checkpoints);
+            result.Checkpoints) with
+        {
+            Details = result.Details
+        };
 
         return new UsnCatchUpResult(result.RequiresFullScan, changedFiles, result.Checkpoints, status);
     }

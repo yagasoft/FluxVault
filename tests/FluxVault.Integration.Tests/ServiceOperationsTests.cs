@@ -1,5 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Capture;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
@@ -204,6 +206,39 @@ public sealed class ServiceOperationsTests
 
         Assert.False(paused.Configuration.IsEnabled);
         Assert.True(resumed.Configuration.IsEnabled);
+    }
+
+    [Fact]
+    public async Task Export_diagnostics_includes_durable_change_details()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var operations = CreateOperations(workspace, NewConfiguration(workspace, watched));
+        var detail = new DurableChangeDetail(
+            WatchedFolderId: "docs",
+            Path: watched,
+            VolumeRoot: @"D:\",
+            Operation: "FSCTL_READ_USN_JOURNAL",
+            Reason: "FSCTL_READ_USN_JOURNAL failed.",
+            Win32ErrorCode: 5);
+        operations.UpdateDurableChangeStatus(new DurableChangeRuntimeStatus(
+            DateTimeOffset.UtcNow,
+            "USN unavailable.",
+            "FSCTL_READ_USN_JOURNAL failed on D:.",
+            []) with
+        {
+            Details = [detail]
+        });
+        var exportFolder = Path.Combine(workspace.RootPath, "diagnostics");
+
+        var diagnosticsPath = await operations.ExportDiagnosticsAsync(exportFolder);
+        var json = await File.ReadAllTextAsync(diagnosticsPath);
+
+        using var document = JsonDocument.Parse(json);
+        var durableChange = document.RootElement.GetProperty("durableChange");
+        Assert.Equal("FSCTL_READ_USN_JOURNAL failed on D:.", durableChange.GetProperty("fallbackReason").GetString());
+        Assert.Equal("FSCTL_READ_USN_JOURNAL", durableChange.GetProperty("details")[0].GetProperty("operation").GetString());
     }
 
     private static FluxVaultOperations CreateOperations(TemporaryWorkspace workspace, FluxVaultConfiguration configuration)

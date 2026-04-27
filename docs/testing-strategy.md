@@ -13,9 +13,13 @@
 - Retention decisions.
 - Configuration load/save/defaults and validation.
 - IPC request/response serialisation.
+- Durable-change detail serialisation for USN fallback diagnostics.
 - Normal-file capture, non-interfering source sharing, and VSS fallback
   selection.
 - Resource profile debounce delays.
+- XAML quality checks for compact Activity pane controls and Options tooltips.
+- USN diagnostic formatting for volume-open, unsupported-volume, journal-read,
+  and file-id path-resolution failures.
 
 ## Integration tests
 
@@ -32,6 +36,7 @@
 - Options dialog view-model save, preview, and run-retention behaviour with a
   fake service client.
 - Activity pane view-model loading for recent events and blocked files.
+- Diagnostics export containing durable-change fallback details.
 - CodeQL workflow trigger guard: no `pull_request` trigger.
 - Missing watched-folder failure reporting.
 

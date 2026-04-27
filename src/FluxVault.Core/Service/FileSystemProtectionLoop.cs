@@ -92,11 +92,21 @@ public sealed class FileSystemProtectionLoop(
         }
         catch (Exception ex)
         {
+            var detail = new DurableChangeDetail(
+                WatchedFolderId: null,
+                Path: null,
+                VolumeRoot: null,
+                Operation: "USN catch-up cycle",
+                Reason: $"USN catch-up cycle failed: {ex.Message}",
+                Win32ErrorCode: null);
             operations.UpdateDurableChangeStatus(new DurableChangeRuntimeStatus(
                 DateTimeOffset.UtcNow,
                 "USN unavailable.",
-                ex.Message,
-                []));
+                detail.Reason,
+                []) with
+            {
+                Details = [detail]
+            });
             await operations.RunBackupNowAsync(cancellationToken).ConfigureAwait(false);
         }
     }

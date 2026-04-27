@@ -57,7 +57,17 @@ Options. Defaults are:
 
 Directory notifications are latency hints. USN is the durable source where
 available. Reconciliation remains the safety net when USN cannot prove
-continuity.
+continuity. Durable-change status carries both a concise label and structured
+diagnostic details, so the UI and exported diagnostics can distinguish unable
+to open volume, unsupported volume, journal ID change, journal wrap, checkpoint
+seeding, and file-id path resolution failures.
+
+## Options and status UX
+
+Every editable Options control has a native WPF tooltip describing the
+operational effect of the setting. The dashboard health strip keeps status
+compact but exposes detailed durable-change information through the USN tooltip
+and diagnostics export.
 
 ## Non-interference contract
 

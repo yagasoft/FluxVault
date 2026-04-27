@@ -36,7 +36,19 @@ public sealed class IpcSerializationTests
                 checkedAt,
                 "USN active.",
                 null,
-                [new UsnJournalCheckpoint("docs", @"D:\", 42, 1000, 1, checkedAt)]));
+                [new UsnJournalCheckpoint("docs", @"D:\", 42, 1000, 1, checkedAt)]) with
+            {
+                Details =
+                    [
+                        new DurableChangeDetail(
+                            WatchedFolderId: "docs",
+                            Path: @"D:\Work",
+                            VolumeRoot: @"D:\",
+                            Operation: "FSCTL_QUERY_USN_JOURNAL",
+                            Reason: "USN active.",
+                            Win32ErrorCode: null)
+                    ]
+            });
         var response = FluxVaultIpcResponse.WithStatus(status);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
@@ -48,6 +60,7 @@ public sealed class IpcSerializationTests
         Assert.NotNull(roundTrip.Status.DurableChange);
         Assert.Equal("USN active.", roundTrip.Status.DurableChange.Status);
         Assert.Equal((long)1000, Assert.Single(roundTrip.Status.DurableChange.Checkpoints).NextUsn);
+        Assert.Equal("FSCTL_QUERY_USN_JOURNAL", Assert.Single(roundTrip.Status.DurableChange.Details).Operation);
     }
 
     [Fact]

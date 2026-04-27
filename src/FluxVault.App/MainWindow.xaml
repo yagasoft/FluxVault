@@ -14,6 +14,9 @@
             <Setter Property="BorderBrush" Value="#C9D1D9" />
             <Setter Property="Background" Value="#FFFFFF" />
         </Style>
+        <Style TargetType="ToolTip">
+            <Setter Property="MaxWidth" Value="520" />
+        </Style>
         <Style TargetType="DataGrid">
             <Setter Property="BorderBrush" Value="#DADCE0" />
             <Setter Property="RowHeight" Value="28" />
@@ -50,7 +53,7 @@
 
         <UniformGrid Grid.Row="2" Columns="4">
             <Border Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1" Padding="10" Margin="0,0,8,0">
-                <TextBlock Text="{Binding UsnHealth}" TextTrimming="CharacterEllipsis" Foreground="#202124" />
+                <TextBlock Text="{Binding UsnHealth}" ToolTip="{Binding UsnHealthToolTip}" TextTrimming="CharacterEllipsis" Foreground="#202124" />
             </Border>
             <Border Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1" Padding="10" Margin="0,0,8,0">
                 <TextBlock Text="{Binding RetentionHealth}" TextTrimming="CharacterEllipsis" Foreground="#202124" />

@@ -34,6 +34,8 @@ FluxVault now has a developer-usable MVP loop:
   and applying retention settings.
 - A FluxVault app icon, left-navigation dashboard, activity view, tray activity
   pane, and blocked-file reporting.
+- Helpful tooltips across Options so each retention, cadence, and compression
+  setting explains its operational impact.
 
 VSS captures are reported as crash-consistent in this MVP. Writer-aware
 app-consistency reporting remains a hardening item.
@@ -75,9 +77,13 @@ dialog can preview reclaimable repository space and run retention immediately.
 The **Advanced** options page controls capture cadence and compression. The
 default watcher poll is 5 seconds, reconciliation is 10 minutes, and hot files
 are forced after 30 seconds, 2 minutes, or 10 minutes for Fast, Balanced, and
-Quiet profiles. PRs wait for `build-test` only; CodeQL runs on `main` push,
-manual dispatch, or the scheduled scan, and is not a PR gate unless explicitly
-requested.
+Quiet profiles. The dashboard USN health strip now includes the exact fallback
+reason when durable USN catch-up is unavailable, for example unable to open a
+volume, unsupported volume, journal wrap, or file-id path resolution failure.
+The same durable-change details are included in diagnostics exports.
+
+PRs wait for `build-test` only; CodeQL runs on `main` push, manual dispatch, or
+the scheduled scan, and is not a PR gate unless explicitly requested.
 
 To remove the unsigned developer service:
 

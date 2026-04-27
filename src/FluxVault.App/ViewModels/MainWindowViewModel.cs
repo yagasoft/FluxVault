@@ -28,6 +28,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private string serviceStatus = "Service connection: checking...";
 
     [ObservableProperty]
+    private string serviceStatusToolTip = "Service connection status is checking.";
+
+    [ObservableProperty]
     private string repositoryPath = string.Empty;
 
     [ObservableProperty]
@@ -152,7 +155,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 var response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true);
                 if (!response.Success || response.Status is null)
                 {
-                    ServiceStatus = $"Service connection: unavailable ({response.ErrorMessage ?? "no status returned"})";
+                    SetServiceStatus($"Service connection: unavailable ({response.ErrorMessage ?? "no status returned"})");
                     return;
                 }
 
@@ -165,7 +168,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException)
         {
-            ServiceStatus = $"Service connection: unavailable ({ex.Message})";
+            SetServiceUnavailable(ex);
         }
     }
 
@@ -195,9 +198,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private async Task SaveConfigurationCoreAsync()
     {
         var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(BuildConfiguration())).ConfigureAwait(true);
-        ServiceStatus = response.Success
+        SetServiceStatus(response.Success
             ? "Service connection: configuration saved"
-            : $"Service connection: save failed ({response.ErrorMessage})";
+            : $"Service connection: save failed ({response.ErrorMessage})");
         if (response.Success)
         {
             hasLocalConfigurationChanges = false;
@@ -212,7 +215,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private void SetServiceUnavailable(Exception ex)
     {
-        ServiceStatus = $"Service connection: unavailable ({ex.Message})";
+        SetServiceStatus($"Service connection: unavailable ({ex.Message})");
     }
 
     [RelayCommand]
@@ -272,9 +275,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         await SaveConfigurationCoreAsync().ConfigureAwait(true);
         var response = await client.SendAsync(FluxVaultIpcRequest.RunBackupNow()).ConfigureAwait(true);
-        ServiceStatus = response.Backup is null
+        SetServiceStatus(response.Backup is null
             ? $"Service connection: backup failed ({response.ErrorMessage})"
-            : $"Service connection: {response.Backup.Message}";
+            : $"Service connection: {response.Backup.Message}");
         await RefreshAsync().ConfigureAwait(true);
     }
 
@@ -298,9 +301,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         var response = await client.SendAsync(FluxVaultIpcRequest.RestoreVersion(SelectedVersion.VersionId, dialog.FileName))
             .ConfigureAwait(true);
-        ServiceStatus = response.Success
+        SetServiceStatus(response.Success
             ? $"Service connection: restored {SelectedVersion.VersionId}"
-            : $"Service connection: restore failed ({response.ErrorMessage})";
+            : $"Service connection: restore failed ({response.ErrorMessage})");
         if (response.Success)
         {
             await RefreshAsync().ConfigureAwait(true);
@@ -332,8 +335,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
             currentRetentionPolicy = status.Configuration.RetentionPolicy;
             currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
-            var durableStatus = BuildDurableChangeStatusSuffix(status.DurableChange);
-            ServiceStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}{durableStatus}. Last refreshed {DateTime.Now:HH:mm:ss}";
+            var visibleStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}. Last refreshed {DateTime.Now:HH:mm:ss}";
+            SetServiceStatus(visibleStatus, BuildServiceStatusToolTip(visibleStatus, status.DurableChange));
             ApplyDurableChangeHealth(status.DurableChange);
             RetentionHealth = status.LastRetention is null
                 ? "Retention: waiting"
@@ -438,43 +441,114 @@ public sealed partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        var status = durableChange.Status.TrimEnd('.');
-        var fallback = string.IsNullOrWhiteSpace(durableChange.FallbackReason)
-            ? string.Empty
-            : $" - {durableChange.FallbackReason}";
-        UsnHealth = $"USN: {status}{fallback}";
+        UsnHealth = $"USN: {BuildDurableChangeSummary(durableChange)}";
         UsnHealthToolTip = BuildDurableChangeToolTip(durableChange);
     }
 
-    private static string BuildDurableChangeStatusSuffix(DurableChangeRuntimeStatus? durableChange)
+    private void SetServiceStatus(string text, string? toolTip = null)
+    {
+        ServiceStatus = text;
+        ServiceStatusToolTip = string.IsNullOrWhiteSpace(toolTip) ? text : toolTip;
+    }
+
+    private static string BuildServiceStatusToolTip(string visibleStatus, DurableChangeRuntimeStatus? durableChange)
     {
         if (durableChange is null || string.IsNullOrWhiteSpace(durableChange.Status))
         {
-            return string.Empty;
+            return visibleStatus;
         }
 
-        var fallback = string.IsNullOrWhiteSpace(durableChange.FallbackReason)
-            ? string.Empty
-            : $": {durableChange.FallbackReason}";
-        return $" - {durableChange.Status.TrimEnd('.')}{fallback}";
+        return visibleStatus + Environment.NewLine + BuildDurableChangeToolTip(durableChange);
+    }
+
+    private static string BuildDurableChangeSummary(DurableChangeRuntimeStatus durableChange)
+    {
+        var status = FormatDurableStatus(durableChange.Status);
+        if (string.IsNullOrWhiteSpace(durableChange.FallbackReason))
+        {
+            return status;
+        }
+
+        var fallback = durableChange.FallbackReason;
+        if (Contains(fallback, "Unable to open volume"))
+        {
+            return $"{status} - Unable to open volume";
+        }
+
+        if (Contains(fallback, "Unsupported volume"))
+        {
+            return $"{status} - unsupported volume";
+        }
+
+        if (Contains(fallback, "journal wrapped"))
+        {
+            return $"{status} - journal wrapped";
+        }
+
+        if (Contains(fallback, "journal ID changed"))
+        {
+            return $"{status} - journal ID changed";
+        }
+
+        if (Contains(fallback, "checkpoint missing"))
+        {
+            return $"{status} - checkpoint missing";
+        }
+
+        if (Contains(fallback, "File-id path resolution failed"))
+        {
+            return $"{status} - file path resolution failed";
+        }
+
+        if (Contains(fallback, "FSCTL_QUERY_USN_JOURNAL")
+            || Contains(fallback, "NativeDeviceIoControl")
+            || durableChange.Details.Any(detail => string.Equals(detail.Operation, "FSCTL_QUERY_USN_JOURNAL", StringComparison.OrdinalIgnoreCase)))
+        {
+            return $"{status} - unable to query change journal";
+        }
+
+        if (Contains(fallback, "FSCTL_READ_USN_JOURNAL"))
+        {
+            return $"{status} - unable to read change journal";
+        }
+
+        return $"{status} - {TrimSummary(fallback)}";
+    }
+
+    private static string FormatDurableStatus(string status)
+    {
+        var trimmed = status.Trim().TrimEnd('.');
+        return trimmed.StartsWith("USN ", StringComparison.OrdinalIgnoreCase)
+            ? trimmed[4..]
+            : trimmed;
+    }
+
+    private static bool Contains(string value, string expected)
+    {
+        return value.Contains(expected, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string TrimSummary(string value)
+    {
+        const int maxLength = 96;
+        var singleLine = value.ReplaceLineEndings(" ").Trim();
+        return singleLine.Length <= maxLength ? singleLine : singleLine[..(maxLength - 1)] + "...";
     }
 
     private static string BuildDurableChangeToolTip(DurableChangeRuntimeStatus durableChange)
     {
-        var lines = new List<string>
-        {
-            durableChange.Status.TrimEnd('.')
-        };
+        var lines = new List<string>();
+        AddUniqueLine(lines, durableChange.Status.TrimEnd('.'));
         if (!string.IsNullOrWhiteSpace(durableChange.FallbackReason))
         {
-            lines.Add(durableChange.FallbackReason);
+            AddUniqueLine(lines, durableChange.FallbackReason);
         }
 
         foreach (var detail in durableChange.Details.Take(8))
         {
             var scope = string.IsNullOrWhiteSpace(detail.Path) ? string.Empty : $" ({detail.Path})";
             var error = detail.Win32ErrorCode is null ? string.Empty : $" [Win32 {detail.Win32ErrorCode}]";
-            lines.Add($"{detail.Operation}{scope}: {detail.Reason}{error}");
+            AddUniqueLine(lines, $"{detail.Operation}{scope}: {detail.Reason}{error}");
         }
 
         if (durableChange.Details.Count > 8)
@@ -483,6 +557,14 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
 
         return string.Join(Environment.NewLine, lines);
+    }
+
+    private static void AddUniqueLine(ICollection<string> lines, string value)
+    {
+        if (!lines.Contains(value, StringComparer.OrdinalIgnoreCase))
+        {
+            lines.Add(value);
+        }
     }
 
     private static string BrowseFolder(string selectedPath)

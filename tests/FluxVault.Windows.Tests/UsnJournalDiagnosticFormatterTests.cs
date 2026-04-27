@@ -1,9 +1,24 @@
 using FluxVault.Windows.ChangeTracking;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace FluxVault.Windows.Tests;
 
 public sealed class UsnJournalDiagnosticFormatterTests
 {
+    [Fact]
+    public void Native_device_io_control_import_targets_real_windows_entry_point()
+    {
+        var method = typeof(WindowsUsnChangeJournalReader).GetMethod(
+            "NativeDeviceIoControl",
+            BindingFlags.NonPublic | BindingFlags.Static);
+
+        var attribute = Assert.Single(method!.GetCustomAttributes<DllImportAttribute>());
+
+        Assert.Equal("kernel32.dll", attribute.Value);
+        Assert.Equal("DeviceIoControl", attribute.EntryPoint);
+    }
+
     [Fact]
     public void Open_volume_failure_names_volume_and_win32_error()
     {

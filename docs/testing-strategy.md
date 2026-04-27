@@ -17,9 +17,13 @@
 - Normal-file capture, non-interfering source sharing, and VSS fallback
   selection.
 - Resource profile debounce delays.
-- XAML quality checks for compact Activity pane controls and Options tooltips.
+- XAML quality checks for compact Activity pane controls, constrained dashboard
+  header status text, wrapping USN tooltips, and Options tooltips.
 - USN diagnostic formatting for volume-open, unsupported-volume, journal-read,
   and file-id path-resolution failures.
+- Windows interop binding checks for native USN calls such as `DeviceIoControl`.
+- Tray pane placement for taskbar edges, high-DPI conversion, and small working
+  areas.
 
 ## Integration tests
 
@@ -57,6 +61,7 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
 - Uninstall.
 - Service recovery.
 - Tray/dashboard service connection.
+- Tray activity pane placement inside the active monitor working area.
 - Explorer integration registration.
 - Restore smoke test from installed build.
 - Developer CLI smoke test: back up a file, list versions, inspect the version,

@@ -33,7 +33,8 @@ FluxVault now has a developer-usable MVP loop:
 - Conservative automatic retention, with a WPF Options dialog for previewing
   and applying retention settings.
 - A FluxVault app icon, left-navigation dashboard, activity view, tray activity
-  pane, and blocked-file reporting.
+  pane that stays inside the active monitor working area, and blocked-file
+  reporting.
 - Helpful tooltips across Options so each retention, cadence, and compression
   setting explains its operational impact.
 
@@ -77,10 +78,12 @@ dialog can preview reclaimable repository space and run retention immediately.
 The **Advanced** options page controls capture cadence and compression. The
 default watcher poll is 5 seconds, reconciliation is 10 minutes, and hot files
 are forced after 30 seconds, 2 minutes, or 10 minutes for Fast, Balanced, and
-Quiet profiles. The dashboard USN health strip now includes the exact fallback
-reason when durable USN catch-up is unavailable, for example unable to open a
-volume, unsupported volume, journal wrap, or file-id path resolution failure.
-The same durable-change details are included in diagnostics exports.
+Quiet profiles. The dashboard header keeps service status short so command
+buttons remain usable; durable-change details live in the USN health tile,
+tooltip, and diagnostics export. When durable USN catch-up is unavailable, the
+tile shows a concise reason such as unable to open a volume, unable to query
+the change journal, unsupported volume, journal wrap, or file-id path
+resolution failure.
 
 PRs wait for `build-test` only; CodeQL runs on `main` push, manual dispatch, or
 the scheduled scan, and is not a PR gate unless explicitly requested.

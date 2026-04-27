@@ -452,7 +452,7 @@ public sealed class WindowsUsnChangeJournalReader : IUsnChangeJournalReader
         uint dwFlagsAndAttributes,
         IntPtr hTemplateFile);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true)]
     private static extern bool NativeDeviceIoControl(
         SafeFileHandle hDevice,
         uint dwIoControlCode,

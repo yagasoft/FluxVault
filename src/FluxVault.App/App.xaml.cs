@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using FluxVault.App.ViewModels;
 using WinForms = System.Windows.Forms;
 
@@ -104,8 +105,24 @@ public partial class App : System.Windows.Application
         }
 
         var cursor = WinForms.Control.MousePosition;
-        activityPaneWindow.Left = Math.Max(0, cursor.X - activityPaneWindow.Width + 24);
-        activityPaneWindow.Top = Math.Max(0, cursor.Y - activityPaneWindow.Height - 12);
+        var screen = WinForms.Screen.FromPoint(cursor);
+        var dpi = VisualTreeHelper.GetDpi(activityPaneWindow);
+        var desiredWidth = activityPaneWindow.ActualWidth > 0 ? activityPaneWindow.ActualWidth : activityPaneWindow.Width;
+        var desiredHeight = activityPaneWindow.ActualHeight > 0 ? activityPaneWindow.ActualHeight : activityPaneWindow.Height;
+        var placement = TrayPanePlacement.Calculate(
+            cursor,
+            screen.WorkingArea,
+            desiredWidth,
+            desiredHeight,
+            dpi.DpiScaleX,
+            dpi.DpiScaleY);
+
+        activityPaneWindow.MinWidth = Math.Min(activityPaneWindow.MinWidth, placement.Width);
+        activityPaneWindow.MinHeight = Math.Min(activityPaneWindow.MinHeight, placement.Height);
+        activityPaneWindow.Width = placement.Width;
+        activityPaneWindow.Height = placement.Height;
+        activityPaneWindow.Left = placement.Left;
+        activityPaneWindow.Top = placement.Top;
         activityPaneWindow.Show();
         activityPaneWindow.Activate();
         if (activityPaneWindow.DataContext is ActivityPaneViewModel viewModel)

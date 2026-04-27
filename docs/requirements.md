@@ -21,6 +21,8 @@ folder; direct cloud adapters arrive later.
 - Smart retention with dense recent versions and thinner older versions.
 - Basic restore browser supporting original and alternate restore paths.
 - Local logs and diagnostics export only.
+- Developer command-line harness for backing up, listing, inspecting, and
+  restoring normal readable files before the VSS/USN service path is complete.
 
 ## Explicit non-goals for v1
 
@@ -29,6 +31,8 @@ folder; direct cloud adapters arrive later.
 - No support commitment for Windows 10, Windows Server, network shares, or NAS.
 - No FluxVault-owned kernel driver.
 - No hidden telemetry.
+- The command-line harness does not provide open-file consistency; it backs up
+  normal file streams only.
 
 ## Consistency language
 

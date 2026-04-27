@@ -18,6 +18,7 @@
 - VSS unavailable or failed.
 - Atomic cloud-folder mirror writes.
 - Restore to original and alternate paths.
+- CLI backup/list/inspect/restore using real temporary files.
 
 ## Benchmarks
 
@@ -38,3 +39,5 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
 - Tray/dashboard service connection.
 - Explorer integration registration.
 - Restore smoke test from installed build.
+- Developer CLI smoke test: back up a file, list versions, inspect the version,
+  restore it, and compare hashes.

@@ -46,6 +46,41 @@ public sealed class RepositoryTests
         Assert.Equal(0, second.NewChunkCount);
     }
 
+    [Fact]
+    public async Task List_versions_returns_newest_versions_first()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+
+        var older = await repository.CommitAsync(NewRequest(
+            Encoding.UTF8.GetBytes("older content"),
+            new DateTimeOffset(2026, 4, 27, 8, 0, 0, TimeSpan.Zero)));
+        var newer = await repository.CommitAsync(NewRequest(
+            Encoding.UTF8.GetBytes("newer content"),
+            new DateTimeOffset(2026, 4, 27, 9, 0, 0, TimeSpan.Zero)));
+
+        var versions = await repository.ListVersionsAsync();
+
+        Assert.Collection(
+            versions,
+            first => Assert.Equal(newer.Manifest.VersionId, first.VersionId),
+            second => Assert.Equal(older.Manifest.VersionId, second.VersionId));
+    }
+
+    [Fact]
+    public async Task Inspect_returns_manifest_for_existing_version()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        var result = await repository.CommitAsync(NewRequest(Encoding.UTF8.GetBytes("inspect content")));
+
+        var inspection = await repository.InspectAsync(result.Manifest.VersionId);
+
+        Assert.Equal(result.Manifest.VersionId, inspection.Manifest.VersionId);
+        Assert.Equal(result.Manifest.Chunks.Count, inspection.ChunkCount);
+        Assert.Equal(result.Manifest.LogicalLength, inspection.LogicalLength);
+    }
+
     private static FileSystemChunkRepository CreateRepository(string path)
     {
         return new FileSystemChunkRepository(
@@ -55,12 +90,12 @@ public sealed class RepositoryTests
             new ZstdChunkCodec());
     }
 
-    private static FileCommitRequest NewRequest(byte[] payload)
+    private static FileCommitRequest NewRequest(byte[] payload, DateTimeOffset? capturedAtUtc = null)
     {
         return new FileCommitRequest(
             WatchedFolderId: "docs",
             SourcePath: @"D:\Work\Docs\brief.docx",
-            CapturedAtUtc: DateTimeOffset.UtcNow,
+            CapturedAtUtc: capturedAtUtc ?? DateTimeOffset.UtcNow,
             Consistency: CaptureConsistency.CrashConsistent,
             Compression: CompressionPreference.Zstd,
             MinimumCompressionBytes: 128,

@@ -6,7 +6,7 @@ using FluxVault.Core.Content;
 
 namespace FluxVault.Core.Storage;
 
-public sealed class FileSystemChunkRepository
+public sealed class FileSystemChunkRepository : IChunkRepository
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
@@ -15,7 +15,7 @@ public sealed class FileSystemChunkRepository
 
     private readonly string rootPath;
     private readonly string? mirrorPath;
-    private readonly FastCdcChunker chunker;
+    private readonly StreamingFastCdcChunker streamingChunker;
     private readonly Blake3ContentHasher hasher;
     private readonly ZstdChunkCodec codec;
 
@@ -27,7 +27,7 @@ public sealed class FileSystemChunkRepository
         string? mirrorPath = null)
     {
         this.rootPath = rootPath;
-        this.chunker = chunker;
+        streamingChunker = new StreamingFastCdcChunker(chunker.Options);
         this.hasher = hasher;
         this.codec = codec;
         this.mirrorPath = mirrorPath;
@@ -40,17 +40,14 @@ public sealed class FileSystemChunkRepository
         Directory.CreateDirectory(ManifestsPath(rootPath));
 
         await using var content = request.Content;
-        using var buffer = new MemoryStream();
-        await content.CopyToAsync(buffer, cancellationToken);
-        var bytes = buffer.ToArray();
-
         var chunks = new List<ManifestChunk>();
         var newChunkCount = 0;
+        var logicalLength = 0L;
 
-        foreach (var chunk in chunker.Chunk(bytes))
+        await foreach (var chunk in streamingChunker.ChunkAsync(content, cancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var raw = bytes.AsSpan(chunk.Offset, chunk.Length);
+            var raw = chunk.Payload.AsSpan();
             var digest = hasher.Hash(raw);
             var metadata = ReadChunkMetadata(rootPath, digest);
 
@@ -64,7 +61,8 @@ public sealed class FileSystemChunkRepository
                 newChunkCount++;
             }
 
-            chunks.Add(new ManifestChunk(digest, chunk.Offset, chunk.Length, metadata.StoredLength, metadata.Encoding));
+            chunks.Add(new ManifestChunk(digest, chunk.Offset, chunk.Payload.Length, metadata.StoredLength, metadata.Encoding));
+            logicalLength += chunk.Payload.Length;
         }
 
         var manifest = new FileVersionManifest(
@@ -73,7 +71,7 @@ public sealed class FileSystemChunkRepository
             SourcePath: request.SourcePath,
             CapturedAtUtc: request.CapturedAtUtc,
             Consistency: request.Consistency,
-            LogicalLength: bytes.LongLength,
+            LogicalLength: logicalLength,
             Chunks: chunks);
 
         var manifestBytes = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonOptions);
@@ -83,15 +81,50 @@ public sealed class FileSystemChunkRepository
         return new FileCommitResult(manifest, newChunkCount);
     }
 
+    public async Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default)
+    {
+        if (!Directory.Exists(ManifestsPath(rootPath)))
+        {
+            return [];
+        }
+
+        var versions = new List<RepositoryVersionSummary>();
+        foreach (var path in Directory.EnumerateFiles(ManifestsPath(rootPath), "*.json"))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var manifest = await ReadManifestAsync(path, cancellationToken).ConfigureAwait(false);
+            versions.Add(new RepositoryVersionSummary(
+                manifest.VersionId,
+                manifest.SourcePath,
+                manifest.CapturedAtUtc,
+                manifest.Consistency,
+                manifest.LogicalLength,
+                manifest.Chunks.Count));
+        }
+
+        return versions
+            .OrderByDescending(version => version.CapturedAtUtc)
+            .ThenByDescending(version => version.VersionId, StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    public async Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
+        var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
+        return new RepositoryInspection(
+            manifest,
+            manifest.Chunks.Count,
+            manifest.LogicalLength,
+            manifest.Chunks.Sum(chunk => (long)chunk.StoredLength));
+    }
+
     public async Task RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
         ArgumentException.ThrowIfNullOrWhiteSpace(outputPath);
 
-        var manifestPath = ManifestPath(rootPath, versionId);
-        await using var manifestStream = File.OpenRead(manifestPath);
-        var manifest = await JsonSerializer.DeserializeAsync<FileVersionManifest>(manifestStream, JsonOptions, cancellationToken)
-            ?? throw new InvalidDataException($"Manifest {versionId} could not be read.");
+        var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
 
         var outputDirectory = Path.GetDirectoryName(outputPath);
         if (!string.IsNullOrWhiteSpace(outputDirectory))
@@ -178,6 +211,25 @@ public sealed class FileSystemChunkRepository
         }
 
         return JsonSerializer.Deserialize<ChunkMetadata>(File.ReadAllBytes(path), JsonOptions);
+    }
+
+    private async Task<FileVersionManifest> ReadManifestByVersionAsync(string versionId, CancellationToken cancellationToken)
+    {
+        var manifestPath = ManifestPath(rootPath, versionId);
+        if (!File.Exists(manifestPath))
+        {
+            throw new FileNotFoundException($"Manifest {versionId} was not found.", manifestPath);
+        }
+
+        return await ReadManifestAsync(manifestPath, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<FileVersionManifest> ReadManifestAsync(string manifestPath, CancellationToken cancellationToken)
+    {
+        await using var manifestStream = File.OpenRead(manifestPath);
+        return await JsonSerializer.DeserializeAsync<FileVersionManifest>(manifestStream, JsonOptions, cancellationToken)
+            .ConfigureAwait(false)
+            ?? throw new InvalidDataException($"Manifest {manifestPath} could not be read.");
     }
 
     private static void AtomicWrite(string path, byte[] bytes)

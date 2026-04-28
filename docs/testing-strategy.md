@@ -24,8 +24,8 @@
 - Windows interop binding checks for native USN calls such as `DeviceIoControl`.
 - Tray pane placement for taskbar edges, high-DPI conversion, and small working
   areas.
-- Planned File browser selection model: tri-state folder toggling, immediate
-  files only, recursive selection, retained manual child selections, parent
+- File browser selection model: tri-state folder toggling, immediate files
+  only, recursive selection, retained manual child selections, parent
   child-selection indicators, and pending-change summaries.
 - Planned restore lineage: restored versions preserve newer versions and record
   the restored-from and fork-origin version ids.
@@ -52,8 +52,11 @@
   watcher path only when USN reports no changed files.
 - USN unavailable/full-scan-required watcher cycles run one full scan without
   duplicating the same targeted watcher capture.
-- Planned File browser flow: unsaved selection edits do not change service
+- File browser flow: unsaved selection edits do not change service
   configuration until Save.
+- File browser compiled selections: recursive folders include nested files,
+  immediate-only folders exclude nested files, and selected-file rules capture
+  only the selected files.
 - Planned sync mapping gate: remote peers do not hydrate, patch, or create a
   newly selected target until mapping is confirmed.
 

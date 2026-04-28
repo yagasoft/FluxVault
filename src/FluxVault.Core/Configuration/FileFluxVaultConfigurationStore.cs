@@ -74,11 +74,16 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
 
     private static FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
     {
+        var selectionRules = configuration.SelectionRules ?? [];
         return configuration with
         {
             RetentionPolicy = configuration.RetentionPolicy ?? RetentionPolicy.CreateDefault(),
             CaptureCadencePolicy = configuration.CaptureCadencePolicy ?? CaptureCadencePolicy.CreateDefault(),
-            CodecPolicy = configuration.CodecPolicy ?? CodecPolicy.CreateDefault()
+            CodecPolicy = configuration.CodecPolicy ?? CodecPolicy.CreateDefault(),
+            SelectionRules = selectionRules,
+            WatchedFolders = selectionRules.Count == 0
+                ? configuration.WatchedFolders
+                : ProtectionSelectionCompiler.Compile(selectionRules)
         };
     }
 }

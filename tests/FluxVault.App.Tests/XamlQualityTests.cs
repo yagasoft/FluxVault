@@ -122,6 +122,59 @@ public sealed class XamlQualityTests
         Assert.Equal("Wrap", (string?)tooltipText.Attribute("TextWrapping"));
     }
 
+    [Fact]
+    public void Main_window_contains_three_pane_file_browser_tab()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var fileBrowserTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => (string?)element.Attribute("Header") == "File browser");
+        var paneGrid = fileBrowserTab
+            .Descendants(XamlNamespace + "Grid")
+            .Single(element => (string?)element.Attribute("Name") == "FileBrowserPaneGrid");
+
+        Assert.Equal(3, paneGrid.Element(XamlNamespace + "Grid.ColumnDefinitions")?.Elements(XamlNamespace + "ColumnDefinition").Count());
+    }
+
+    [Fact]
+    public void Protection_tab_no_longer_contains_watched_folder_browse_add_remove_controls()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var protectionTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => (string?)element.Attribute("Header") == "Protection");
+        var buttonLabels = protectionTab
+            .Descendants(XamlNamespace + "Button")
+            .Select(element => (string?)element.Attribute("Content"))
+            .Where(value => value is not null)
+            .ToArray();
+
+        Assert.DoesNotContain("Browse", buttonLabels);
+        Assert.DoesNotContain("Add", buttonLabels);
+        Assert.DoesNotContain("Remove", buttonLabels);
+    }
+
+    [Fact]
+    public void File_browser_interactive_controls_have_tooltips()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var fileBrowserTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => (string?)element.Attribute("Header") == "File browser");
+        var interactiveElements = fileBrowserTab
+            .Descendants()
+            .Where(element => element.Name.Namespace == XamlNamespace
+                              && element.Name.LocalName is "Button" or "TreeView" or "DataGrid")
+            .ToArray();
+
+        var missingTooltips = interactiveElements
+            .Where(element => string.IsNullOrWhiteSpace((string?)element.Attribute("ToolTip")))
+            .Select(Describe)
+            .ToArray();
+
+        Assert.Empty(missingTooltips);
+    }
+
     private static XDocument LoadXaml(params string[] relativePathParts)
     {
         var root = FindRepositoryRoot();

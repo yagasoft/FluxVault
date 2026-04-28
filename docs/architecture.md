@@ -89,15 +89,25 @@ and the right pane summarises unsaved selections and unselections.
 
 Folder selection is tri-state: recursive selected, immediate files only, and
 not selected. Manual child selections are retained below a parent so they can be
-restored when a recursive parent selection is removed. Parent folders show an
-indicator when descendants have manual selections. The service reloads watched
-selection rules only after the user saves the browser changes.
+restored when a recursive parent selection is removed. Parent folders show a
+compact child-selection indicator when descendants have manual selections. The
+service reloads watched selection rules only after the user saves the browser
+changes. While configuration or File browser edits are dirty, dashboard refresh
+updates runtime status, versions, and activity without replacing local unsaved
+selection rules or clearing the pending-changes pane.
 
 FluxVault persists browser selections as `ProtectionSelectionRule` records and
 compiles them into existing `WatchedFolderConfiguration` entries before the
 service captures files. Recursive folders compile to recursive watched folders,
 immediate-files selections compile to non-recursive watched folders, and
 individual file selections compile to parent-folder include patterns.
+
+Global `ProtectionExclusionRule` records complement the tree. Each enabled rule
+contains a .NET regex pattern, a target of file, folder, or both, and optional
+support labels. Rules are validated before save, matched case-insensitively
+against full normalised paths with a timeout, and applied after include matching
+but before capture. Folder exclusions stop recursive scans from descending into
+matching folders; targeted watcher/USN captures skip excluded files too.
 
 ## Non-interference contract
 
@@ -148,6 +158,14 @@ PC is only advertised as pending until every peer confirms a same-path mapping
 or chooses a per-PC override. Peers must not hydrate, patch, or create the
 target path before that mapping is confirmed. After confirmation, peers fetch
 only missing chunks and patch safe targets at chunk level.
+
+Sync loop prevention must be metadata-led. A peer first checks whether required
+chunks already exist locally, but it also records source version id, operation
+id, origin device id, and applied remote-version metadata. Writes performed by
+FluxVault during remote hydration must be suppressed or classified as sync
+applications when local change detection observes them, so the peer does not
+publish the same remote version as a new local change unless the local file
+diverged afterward.
 
 ## Future release tracks
 

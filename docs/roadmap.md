@@ -32,10 +32,20 @@ one Windows 11 PC.
 - File browser folder selection cycles through recursive selected, immediate
   files only, and not selected. Manual child selections are retained when a
   parent recursive selection is removed, and parent folders show child-selection
-  indicators.
+  indicators. Folder state is shown with compact checkbox-style visual
+  indicators rather than long state labels.
+- File browser panes use equal space with horizontal and vertical scrolling, so
+  long folder paths do not force the whole dashboard wider.
 - Protection-tab folder browse/add controls are removed once the File browser
   becomes the primary watched-selection workflow. Selection changes apply only
-  after Save.
+  after Save. Unsaved selection edits are preserved across refresh and app
+  focus changes until the user saves or explicitly discards them.
+- Global file/folder exclusion regex rules complement tree selection and apply
+  to full normalised paths before capture.
+- Health tiles live in the footer so the header remains focused on service
+  status and commands.
+- UI concept comparison artefacts are maintained before a larger runtime
+  redesign is chosen.
 - Helpful Options tooltips and compact health-strip details for durable-change
   fallback reasons.
 - Tray activity pane with recent events, pending work, blocked files, retention
@@ -101,6 +111,9 @@ downloading or rewriting whole files unnecessarily.
   the shared repository.
 - Other PCs hydrate only missing chunks and patch files at chunk level where
   the target file can be safely opened.
+- Sync loop prevention is required: peers must use chunk existence checks plus
+  source version id, operation id, sync origin, and device metadata so a
+  remotely applied change is not republished forever as a new local version.
 - Open or locked target files become blocked rather than overwritten.
 - Conflicts preserve both versions and show a `Resolve conflict` action with
   keep local, keep remote, restore as copy, open both, and mark resolved.

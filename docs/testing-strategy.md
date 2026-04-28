@@ -26,7 +26,12 @@
   areas.
 - File browser selection model: tri-state folder toggling, immediate files
   only, recursive selection, retained manual child selections, parent
-  child-selection indicators, and pending-change summaries.
+  child-selection indicators, checkbox-style visual states, pending-change
+  summaries, discard/reload, and Save-only application.
+- Dirty File browser and configuration edits are preserved across automatic
+  refresh, manual refresh, app activation, and Options return.
+- Exclusion rules: config round-trip, regex validation, case-insensitive file
+  and folder matching, and disabled-rule handling.
 - Planned restore lineage: restored versions preserve newer versions and record
   the restored-from and fork-origin version ids.
 
@@ -57,8 +62,14 @@
 - File browser compiled selections: recursive folders include nested files,
   immediate-only folders exclude nested files, and selected-file rules capture
   only the selected files.
+- Protection exclusions: recursive scans skip excluded folders, immediate
+  selections skip excluded files, selected-file rules are filtered, and targeted
+  backup paths from watcher/USN are ignored when excluded.
 - Planned sync mapping gate: remote peers do not hydrate, patch, or create a
   newly selected target until mapping is confirmed.
+- Planned sync loop prevention: a remotely hydrated version is not republished
+  as a new local version when watcher/USN observes FluxVault's own sync-applied
+  write.
 
 ## Benchmarks
 

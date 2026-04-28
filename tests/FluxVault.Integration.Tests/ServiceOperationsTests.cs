@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Capture;
 using FluxVault.Abstractions.Configuration;
@@ -284,6 +285,102 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Recursive_selection_skips_files_under_excluded_folder_regex()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        var includedFolder = Path.Combine(watched, "included");
+        var excludedFolder = Path.Combine(watched, "node_modules");
+        Directory.CreateDirectory(includedFolder);
+        Directory.CreateDirectory(excludedFolder);
+        var included = Path.Combine(includedFolder, "draft.txt");
+        var excluded = Path.Combine(excludedFolder, "package.txt");
+        await File.WriteAllTextAsync(included, "included");
+        await File.WriteAllTextAsync(excluded, "excluded");
+        var configuration = NewSelectionConfiguration(
+            workspace,
+            [SelectionRule("docs", watched, ProtectionSelectionMode.RecursiveFolder)],
+            [ExclusionRule("node", excludedFolder, ProtectionExclusionTarget.Folder)]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        Assert.True(backup.Success);
+        Assert.Equal(included, version.SourcePath);
+    }
+
+    [Fact]
+    public async Task Immediate_selection_applies_file_exclusion_regex()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var included = Path.Combine(watched, "draft.txt");
+        var excluded = Path.Combine(watched, "draft.tmp");
+        await File.WriteAllTextAsync(included, "included");
+        await File.WriteAllTextAsync(excluded, "excluded");
+        var configuration = NewSelectionConfiguration(
+            workspace,
+            [SelectionRule("docs", watched, ProtectionSelectionMode.ImmediateFiles)],
+            [new ProtectionExclusionRule("tmp", @"\.tmp$", ProtectionExclusionTarget.File, IsEnabled: true)]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        Assert.True(backup.Success);
+        Assert.Equal(included, version.SourcePath);
+    }
+
+    [Fact]
+    public async Task Selected_file_rule_is_skipped_when_path_matches_exclusion_regex()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var selected = Path.Combine(watched, "selected.txt");
+        await File.WriteAllTextAsync(selected, "selected");
+        var configuration = NewSelectionConfiguration(
+            workspace,
+            [SelectionRule("selected", selected, ProtectionSelectionMode.File)],
+            [ExclusionRule("selected", selected, ProtectionExclusionTarget.File)]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+
+        Assert.True(backup.Success);
+        Assert.Empty(await operations.ListVersionsAsync());
+    }
+
+    [Fact]
+    public async Task Targeted_backup_skips_excluded_paths()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var included = Path.Combine(watched, "included.txt");
+        var excluded = Path.Combine(watched, "excluded.txt");
+        await File.WriteAllTextAsync(included, "included");
+        await File.WriteAllTextAsync(excluded, "excluded");
+        var configuration = NewSelectionConfiguration(
+            workspace,
+            [SelectionRule("docs", watched, ProtectionSelectionMode.ImmediateFiles)],
+            [ExclusionRule("excluded", excluded, ProtectionExclusionTarget.File)]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupForFilesAsync([included, excluded]);
+
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        Assert.True(backup.Success);
+        Assert.Equal(included, version.SourcePath);
+    }
+
+    [Fact]
     public async Task Export_diagnostics_includes_durable_change_details()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -344,14 +441,16 @@ public sealed class ServiceOperationsTests
 
     private static FluxVaultConfiguration NewSelectionConfiguration(
         TemporaryWorkspace workspace,
-        IReadOnlyList<ProtectionSelectionRule> selectionRules)
+        IReadOnlyList<ProtectionSelectionRule> selectionRules,
+        IReadOnlyList<ProtectionExclusionRule>? exclusionRules = null)
     {
         return new FluxVaultConfiguration(
             RepositoryPath: workspace.RepositoryPath,
             MirrorPath: null,
             IsEnabled: true,
             WatchedFolders: [],
-            SelectionRules: selectionRules);
+            SelectionRules: selectionRules,
+            ExclusionRules: exclusionRules ?? []);
     }
 
     private static ProtectionSelectionRule SelectionRule(
@@ -365,6 +464,18 @@ public sealed class ServiceOperationsTests
             mode,
             CompressionPreference.Zstd,
             ResourceProfile.Fast,
+            IsEnabled: true);
+    }
+
+    private static ProtectionExclusionRule ExclusionRule(
+        string id,
+        string path,
+        ProtectionExclusionTarget target)
+    {
+        return new ProtectionExclusionRule(
+            id,
+            Regex.Escape(Path.GetFullPath(path)) + @"(\\|$)",
+            target,
             IsEnabled: true);
     }
 

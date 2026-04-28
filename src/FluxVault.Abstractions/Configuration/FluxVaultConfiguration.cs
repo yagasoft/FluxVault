@@ -10,7 +10,8 @@ public sealed record FluxVaultConfiguration(
     RetentionPolicy RetentionPolicy = null!,
     CaptureCadencePolicy CaptureCadencePolicy = null!,
     CodecPolicy CodecPolicy = null!,
-    IReadOnlyList<ProtectionSelectionRule> SelectionRules = null!)
+    IReadOnlyList<ProtectionSelectionRule> SelectionRules = null!,
+    IReadOnlyList<ProtectionExclusionRule> ExclusionRules = null!)
 {
     public static FluxVaultConfiguration CreateDefault(string programDataPath)
     {
@@ -23,6 +24,7 @@ public sealed record FluxVaultConfiguration(
             RetentionPolicy: RetentionPolicy.CreateDefault(),
             CaptureCadencePolicy: CaptureCadencePolicy.CreateDefault(),
             CodecPolicy: CodecPolicy.CreateDefault(),
-            SelectionRules: []);
+            SelectionRules: [],
+            ExclusionRules: []);
     }
 }

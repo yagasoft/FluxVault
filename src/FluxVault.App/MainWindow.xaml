@@ -33,9 +33,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="12" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="14" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -60,36 +60,40 @@
                 </TextBlock>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Refresh" Command="{Binding RefreshCommand}" />
-                <Button Content="Options" Click="Options_Click" />
-                <Button Content="Run backup now" Command="{Binding RunBackupNowCommand}" />
-                <Button Content="Restore" Command="{Binding RestoreSelectedCommand}" />
-                <Button Content="Export diagnostics" Command="{Binding ExportDiagnosticsCommand}" />
+                <Button Command="{Binding RefreshCommand}" ToolTip="Refresh dashboard status and version data.">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⟳" Margin="0,0,6,0" />
+                        <TextBlock Text="Refresh" />
+                    </StackPanel>
+                </Button>
+                <Button Click="Options_Click" ToolTip="Open retention, capture, compression, and exclusion settings.">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⚙" Margin="0,0,6,0" />
+                        <TextBlock Text="Options" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding RunBackupNowCommand}" ToolTip="Run a full scan backup now.">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="↥" Margin="0,0,6,0" />
+                        <TextBlock Text="Run backup now" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding RestoreSelectedCommand}" ToolTip="Restore the selected repository version.">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="↙" Margin="0,0,6,0" />
+                        <TextBlock Text="Restore" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ExportDiagnosticsCommand}" ToolTip="Export local service status, diagnostics, and health details.">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="▣" Margin="0,0,6,0" />
+                        <TextBlock Text="Export diagnostics" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
 
-        <UniformGrid Grid.Row="2" Columns="4">
-            <Border Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1" Padding="10" Margin="0,0,8,0">
-                <TextBlock Text="{Binding UsnHealth}" TextTrimming="CharacterEllipsis" Foreground="#202124">
-                    <TextBlock.ToolTip>
-                        <ToolTip MaxWidth="640">
-                            <TextBlock Text="{Binding UsnHealthToolTip}" TextWrapping="Wrap" />
-                        </ToolTip>
-                    </TextBlock.ToolTip>
-                </TextBlock>
-            </Border>
-            <Border Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1" Padding="10" Margin="0,0,8,0">
-                <TextBlock Text="{Binding RetentionHealth}" TextTrimming="CharacterEllipsis" Foreground="#202124" />
-            </Border>
-            <Border Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1" Padding="10" Margin="0,0,8,0">
-                <TextBlock Text="{Binding MirrorHealth}" TextTrimming="CharacterEllipsis" Foreground="#202124" />
-            </Border>
-            <Border Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1" Padding="10">
-                <TextBlock Text="{Binding CaptureHealth}" TextTrimming="CharacterEllipsis" Foreground="#202124" />
-            </Border>
-        </UniformGrid>
-
-        <TabControl Grid.Row="4" TabStripPlacement="Left" Background="#FFFFFF" BorderBrush="#DADCE0">
+        <TabControl Grid.Row="2" TabStripPlacement="Left" Background="#FFFFFF" BorderBrush="#DADCE0">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
                     <Setter Property="Width" Value="132" />
@@ -98,7 +102,7 @@
                 </Style>
             </TabControl.Resources>
 
-            <TabItem Header="Protection">
+            <TabItem Header="🛡 Protection">
                 <Grid Margin="18">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -129,12 +133,12 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="File browser">
+            <TabItem Header="📁 File browser">
                 <Grid Margin="18" Name="FileBrowserPaneGrid">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="1.4*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -151,21 +155,26 @@
                         <Button Content="Save selections"
                                 Command="{Binding SaveConfigurationCommand}"
                                 ToolTip="Save pending File browser selections to the service configuration." />
+                        <Button Content="Discard changes"
+                                Command="{Binding DiscardConfigurationChangesCommand}"
+                                ToolTip="Discard unsaved File browser and configuration edits, then reload settings from the service." />
                     </StackPanel>
 
-                    <Border Grid.Row="1" Grid.Column="0" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Margin="0,0,10,0">
+                    <ScrollViewer Grid.Row="1" Grid.Column="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="0,0,10,0">
+                    <Border BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" MinWidth="280">
                         <TreeView ItemsSource="{Binding FileBrowser.Roots}"
                                   SelectedItemChanged="FileBrowserTree_SelectedItemChanged"
                                   ToolTip="Browse drives and folders. Use the selection button on each folder to cycle protection mode.">
                             <TreeView.Resources>
                                 <HierarchicalDataTemplate DataType="{x:Type vm:FileBrowserFolderNode}" ItemsSource="{Binding Children}">
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="{Binding SelectionGlyph}"
-                                                Width="72"
+                                        <Button Width="32"
                                                 Padding="4,2"
                                                 Margin="0,0,6,0"
                                                 Click="FolderSelection_Click"
-                                                ToolTip="Cycle this folder between recursive, immediate files only, and not selected." />
+                                                ToolTip="{Binding SelectionToolTip}">
+                                            <TextBlock Text="{Binding SelectionIndicator}" HorizontalAlignment="Center" />
+                                        </Button>
                                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </HierarchicalDataTemplate>
@@ -175,9 +184,10 @@
                             </TreeView.Resources>
                         </TreeView>
                     </Border>
+                    </ScrollViewer>
 
-                    <DataGrid Grid.Row="1"
-                              Grid.Column="1"
+                    <ScrollViewer Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="0,0,10,0">
+                    <DataGrid MinWidth="320"
                               ItemsSource="{Binding FileBrowser.Files}"
                               ToolTip="Files in the selected folder. Check a file to protect only that file.">
                         <DataGrid.Columns>
@@ -186,9 +196,10 @@
                             <DataGridTextColumn Header="Bytes" Binding="{Binding Length}" Width="100" />
                         </DataGrid.Columns>
                     </DataGrid>
+                    </ScrollViewer>
 
-                    <DataGrid Grid.Row="1"
-                              Grid.Column="2"
+                    <ScrollViewer Grid.Row="1" Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <DataGrid MinWidth="320"
                               ItemsSource="{Binding FileBrowser.PendingChanges}"
                               ToolTip="Unsaved File browser selection changes. Press Save selections to apply them.">
                         <DataGrid.Columns>
@@ -197,10 +208,11 @@
                             <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="120" />
                         </DataGrid.Columns>
                     </DataGrid>
+                    </ScrollViewer>
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Repository">
+            <TabItem Header="🧱 Repository">
                 <Grid Margin="18">
                     <DataGrid ItemsSource="{Binding RecentVersions}" SelectedItem="{Binding SelectedVersion}">
                         <DataGrid.Columns>
@@ -214,7 +226,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Activity">
+            <TabItem Header="↯ Activity">
                 <Grid Margin="18">
                     <DataGrid ItemsSource="{Binding CaptureStatuses}">
                         <DataGrid.RowStyle>
@@ -238,7 +250,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Options">
+            <TabItem Header="⚙ Options">
                 <Grid Margin="18">
                     <StackPanel>
                         <Button Content="Open options" Click="Options_Click" Width="140" HorizontalAlignment="Left" Margin="0,0,0,12" />
@@ -248,7 +260,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Diagnostics">
+            <TabItem Header="▣ Diagnostics">
                 <Grid Margin="18">
                     <TextBox Text="{Binding DiagnosticsText}" IsReadOnly="True" TextWrapping="Wrap"
                              VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="13"
@@ -256,5 +268,26 @@
                 </Grid>
             </TabItem>
         </TabControl>
+
+        <UniformGrid Grid.Row="4" Name="FooterHealthBar" Columns="4">
+            <Border Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1" Padding="10" Margin="0,0,8,0">
+                <TextBlock Text="{Binding UsnHealth}" TextTrimming="CharacterEllipsis" Foreground="#202124">
+                    <TextBlock.ToolTip>
+                        <ToolTip MaxWidth="640">
+                            <TextBlock Text="{Binding UsnHealthToolTip}" TextWrapping="Wrap" />
+                        </ToolTip>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+            </Border>
+            <Border Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1" Padding="10" Margin="0,0,8,0">
+                <TextBlock Text="{Binding RetentionHealth}" TextTrimming="CharacterEllipsis" Foreground="#202124" />
+            </Border>
+            <Border Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1" Padding="10" Margin="0,0,8,0">
+                <TextBlock Text="{Binding MirrorHealth}" TextTrimming="CharacterEllipsis" Foreground="#202124" />
+            </Border>
+            <Border Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1" Padding="10">
+                <TextBlock Text="{Binding CaptureHealth}" TextTrimming="CharacterEllipsis" Foreground="#202124" />
+            </Border>
+        </UniformGrid>
     </Grid>
 </Window>

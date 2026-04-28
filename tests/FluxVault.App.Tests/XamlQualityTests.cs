@@ -95,9 +95,10 @@ public sealed class XamlQualityTests
             .Single(element => (string?)element.Attribute("Text") == "{Binding ServiceStatus}");
         var commandPanel = document
             .Descendants(XamlNamespace + "StackPanel")
-            .Single(element => element
-                .Descendants(XamlNamespace + "Button")
-                .Any(button => (string?)button.Attribute("Content") == "Export diagnostics"));
+            .Single(element => (string?)element.Attribute("Grid.Column") == "1"
+                && element
+                .Descendants(XamlNamespace + "TextBlock")
+                .Any(text => (string?)text.Attribute("Text") == "Export diagnostics"));
 
         Assert.Equal("CharacterEllipsis", (string?)serviceStatus.Attribute("TextTrimming"));
         Assert.Equal("0", (string?)serviceStatus.Attribute("MinWidth"));
@@ -128,7 +129,7 @@ public sealed class XamlQualityTests
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
         var fileBrowserTab = document
             .Descendants(XamlNamespace + "TabItem")
-            .Single(element => (string?)element.Attribute("Header") == "File browser");
+            .Single(element => HasHeader(element, "File browser"));
         var paneGrid = fileBrowserTab
             .Descendants(XamlNamespace + "Grid")
             .Single(element => (string?)element.Attribute("Name") == "FileBrowserPaneGrid");
@@ -137,12 +138,82 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
+    public void File_browser_uses_equal_width_scrollable_panes()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var fileBrowserTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "File browser"));
+        var paneGrid = fileBrowserTab
+            .Descendants(XamlNamespace + "Grid")
+            .Single(element => (string?)element.Attribute("Name") == "FileBrowserPaneGrid");
+        var widths = paneGrid
+            .Element(XamlNamespace + "Grid.ColumnDefinitions")
+            ?.Elements(XamlNamespace + "ColumnDefinition")
+            .Select(element => (string?)element.Attribute("Width"))
+            .ToArray();
+
+        Assert.Equal(new[] { "*", "*", "*" }, widths ?? []);
+        Assert.All(
+            fileBrowserTab.Descendants(XamlNamespace + "ScrollViewer"),
+            viewer =>
+            {
+                Assert.Equal("Auto", (string?)viewer.Attribute("HorizontalScrollBarVisibility"));
+                Assert.Equal("Auto", (string?)viewer.Attribute("VerticalScrollBarVisibility"));
+            });
+    }
+
+    [Fact]
+    public void File_browser_folder_selection_uses_visual_indicator_not_text_labels()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+
+        Assert.DoesNotContain(document
+            .Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Content") == "{Binding SelectionGlyph}");
+        Assert.NotNull(document
+            .Descendants(XamlNamespace + "TextBlock")
+            .SingleOrDefault(element => (string?)element.Attribute("Text") == "{Binding SelectionIndicator}"));
+    }
+
+    [Fact]
+    public void Health_tiles_are_in_footer_bar_not_header_strip()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var footer = document
+            .Descendants(XamlNamespace + "UniformGrid")
+            .SingleOrDefault(element => (string?)element.Attribute("Name") == "FooterHealthBar");
+
+        Assert.NotNull(footer);
+        Assert.Equal("4", (string?)footer.Attribute("Grid.Row"));
+        Assert.DoesNotContain(document
+            .Descendants(XamlNamespace + "UniformGrid"),
+            element => (string?)element.Attribute("Grid.Row") == "2");
+    }
+
+    [Fact]
+    public void Main_commands_and_navigation_include_icons_with_text()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var refreshButton = document
+            .Descendants(XamlNamespace + "Button")
+            .Single(element => (string?)element.Attribute("Command") == "{Binding RefreshCommand}");
+        var fileBrowserTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => ((string?)element.Attribute("Header"))?.Contains("File browser", StringComparison.OrdinalIgnoreCase) == true);
+
+        Assert.Contains(refreshButton.Descendants(XamlNamespace + "TextBlock"), text => (string?)text.Attribute("Text") == "Refresh");
+        Assert.Contains(refreshButton.Descendants(XamlNamespace + "TextBlock"), text => (string?)text.Attribute("Text") == "\u27F3");
+        Assert.Contains("\uD83D\uDCC1", ((string?)fileBrowserTab.Attribute("Header"))!);
+    }
+
+    [Fact]
     public void Protection_tab_no_longer_contains_watched_folder_browse_add_remove_controls()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
         var protectionTab = document
             .Descendants(XamlNamespace + "TabItem")
-            .Single(element => (string?)element.Attribute("Header") == "Protection");
+            .Single(element => HasHeader(element, "Protection"));
         var buttonLabels = protectionTab
             .Descendants(XamlNamespace + "Button")
             .Select(element => (string?)element.Attribute("Content"))
@@ -160,7 +231,7 @@ public sealed class XamlQualityTests
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
         var fileBrowserTab = document
             .Descendants(XamlNamespace + "TabItem")
-            .Single(element => (string?)element.Attribute("Header") == "File browser");
+            .Single(element => HasHeader(element, "File browser"));
         var interactiveElements = fileBrowserTab
             .Descendants()
             .Where(element => element.Name.Namespace == XamlNamespace
@@ -195,5 +266,10 @@ public sealed class XamlQualityTests
     private static string Describe(XElement element)
     {
         return $"{element.Name.LocalName}:{(string?)element.Attribute("Content") ?? (string?)element.Attribute("Text") ?? (string?)element.Attribute("Name") ?? element.ToString(SaveOptions.DisableFormatting)}";
+    }
+
+    private static bool HasHeader(XElement element, string headerText)
+    {
+        return ((string?)element.Attribute("Header"))?.Contains(headerText, StringComparison.OrdinalIgnoreCase) == true;
     }
 }

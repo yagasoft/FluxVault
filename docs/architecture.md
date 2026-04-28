@@ -69,11 +69,14 @@ resolution failures.
 
 Every editable Options control has a native WPF tooltip describing the
 operational effect of the setting; long tooltip text wraps inside a bounded
-width. The dashboard health strip keeps status compact but exposes detailed
-durable-change information through the USN tooltip and diagnostics export.
-The main header constrains long service text with ellipsis trimming so it
-cannot overlap command buttons. The Capture tile is the live watcher/debounce
-queue; the USN tile is the latest durable catch-up result.
+width. The selected dashboard direction is Concept A, the operational cockpit:
+stable primary commands in the header, left navigation for workspaces, the File
+browser as the default workspace, and health tiles in the footer. The dashboard
+health strip keeps status compact but exposes detailed durable-change
+information through the USN tooltip and diagnostics export. The main header
+constrains long service text with ellipsis trimming so it cannot overlap command
+buttons. The Capture tile is the live watcher/debounce queue; the USN tile is
+the latest durable catch-up result.
 
 The tray activity pane is positioned from the active monitor working area. The
 WinForms cursor and monitor coordinates are converted to WPF device-independent

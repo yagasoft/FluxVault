@@ -29,7 +29,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid Margin="22">
+    <Grid Name="OperationalCockpitShell" Margin="22">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="12" />
@@ -59,23 +59,11 @@
                     </TextBlock.ToolTip>
                 </TextBlock>
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Grid.Column="1" Name="OperationalCockpitCommandBar" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Command="{Binding RefreshCommand}" ToolTip="Refresh dashboard status and version data.">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⟳" Margin="0,0,6,0" />
                         <TextBlock Text="Refresh" />
-                    </StackPanel>
-                </Button>
-                <Button Click="Options_Click" ToolTip="Open retention, capture, compression, and exclusion settings.">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="⚙" Margin="0,0,6,0" />
-                        <TextBlock Text="Options" />
-                    </StackPanel>
-                </Button>
-                <Button Click="About_Click" ToolTip="About FluxVault.">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="ⓘ" Margin="0,0,6,0" />
-                        <TextBlock Text="About" />
                     </StackPanel>
                 </Button>
                 <Button Command="{Binding RunBackupNowCommand}" ToolTip="Run a full scan backup now.">
@@ -90,6 +78,18 @@
                         <TextBlock Text="Restore" />
                     </StackPanel>
                 </Button>
+                <Button Click="Options_Click" ToolTip="Open retention, capture, compression, and exclusion settings.">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⚙" Margin="0,0,6,0" />
+                        <TextBlock Text="Options" />
+                    </StackPanel>
+                </Button>
+                <Button Click="About_Click" ToolTip="About FluxVault.">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="ⓘ" Margin="0,0,6,0" />
+                        <TextBlock Text="About" />
+                    </StackPanel>
+                </Button>
                 <Button Command="{Binding ExportDiagnosticsCommand}" ToolTip="Export local service status, diagnostics, and health details.">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="▣" Margin="0,0,6,0" />
@@ -99,7 +99,12 @@
             </StackPanel>
         </Grid>
 
-        <TabControl Grid.Row="2" TabStripPlacement="Left" Background="#FFFFFF" BorderBrush="#DADCE0">
+        <TabControl Grid.Row="2"
+                    Name="OperationalCockpitWorkspace"
+                    SelectedIndex="1"
+                    TabStripPlacement="Left"
+                    Background="#FFFFFF"
+                    BorderBrush="#DADCE0">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
                     <Setter Property="Width" Value="132" />

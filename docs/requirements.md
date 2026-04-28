@@ -31,6 +31,9 @@ folder; direct cloud adapters arrive later.
   blocked, failed, and completed capture events.
 - Dashboard service status must remain constrained and must not overlap command
   buttons; full detail should be available through tooltips and diagnostics.
+- The runtime dashboard follows the selected operational cockpit direction:
+  stable primary commands in the header, left navigation, File browser as the
+  default workspace, and footer health/status tiles.
 - The tray activity pane must open fully inside the active monitor work area,
   including high-DPI and taskbar-edge scenarios.
 - Helpful tooltips for every Options control, covering retention, capture

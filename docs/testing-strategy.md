@@ -17,7 +17,8 @@
 - Normal-file capture, non-interfering source sharing, and VSS fallback
   selection.
 - Resource profile debounce delays.
-- XAML quality checks for compact Activity pane controls, constrained dashboard
+- XAML quality checks for compact Activity pane controls, the selected
+  operational cockpit shell, prioritised command order, constrained dashboard
   header status text, wrapping USN tooltips, and wrapping Options tooltips.
 - About window and branding checks for Yagasoft logo packaging, GitHub/website
   links, roadmap summary, external-link failure handling, and preserving the

@@ -88,3 +88,9 @@ views without making any one workflow dominate the app.
 header, left navigation, and health tiles in the footer. `V1-003` keeps Concept
 A but changes startup selection to the first workspace tab, with Explorer
 restore entry points now passing restore hints into the running dashboard.
+The V1-003 follow-up keeps the cockpit direction and polishes the File browser:
+scoped regex rules are edited on selected folders/files, folders with local
+regex rules show an `R` tree indicator, in-app folder/file context menus launch
+Explorer/default-app actions through a shell abstraction, and Options owns the
+Explorer Add/Show FluxVault versions/Remove registration without clipping its
+footer buttons.

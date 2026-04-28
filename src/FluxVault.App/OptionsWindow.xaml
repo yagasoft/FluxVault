@@ -1,7 +1,7 @@
 <Window x:Class="FluxVault.App.OptionsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="FluxVault options" Height="520" Width="620" MinHeight="500" MinWidth="560"
+        Title="FluxVault options" Height="660" Width="720" MinHeight="620" MinWidth="640"
         WindowStartupLocation="CenterOwner" Background="#F6F7F9"
         ToolTipService.ShowDuration="30000"
         Loaded="OptionsWindow_Loaded">
@@ -18,12 +18,12 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid Margin="24">
+    <Grid Name="OptionsShell" Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="16" />
+            <RowDefinition Height="14" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="16" />
+            <RowDefinition Height="14" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -34,62 +34,68 @@
 
         <TabControl Grid.Row="2" Background="White" BorderBrush="#DADCE0">
             <TabItem Header="Basic">
-                <Grid Margin="18">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="16" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="240" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                <ScrollViewer Name="BasicOptionsScrollViewer"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <Grid Margin="18">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="16" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                    <CheckBox Grid.Row="0" Grid.ColumnSpan="2" Content="Enable automatic retention"
-                              IsChecked="{Binding RetentionEnabled}" Margin="0,0,0,14"
-                              ToolTip="Run repository retention automatically after successful backups." />
+                        <CheckBox Grid.Row="0" Grid.ColumnSpan="2" Content="Enable automatic retention"
+                                  IsChecked="{Binding RetentionEnabled}" Margin="0,0,0,14"
+                                  ToolTip="Run repository retention automatically after successful backups." />
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Keep every version for" VerticalAlignment="Center" Margin="0,0,14,10"
-                               ToolTip="Dense retention window in hours. Every committed version is preserved during this period." />
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding KeepAllHours, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
-                             ToolTip="Number of hours to keep every version before older versions are thinned." />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Keep every version for" VerticalAlignment="Center" Margin="0,0,14,10"
+                                   ToolTip="Dense retention window in hours. Every committed version is preserved during this period." />
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding KeepAllHours, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
+                                 ToolTip="Number of hours to keep every version before older versions are thinned." />
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Keep hourly versions for days" VerticalAlignment="Center" Margin="0,0,14,10"
-                               ToolTip="After the dense window, keep one version per hour for this many days." />
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding KeepHourlyDays, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
-                             ToolTip="Number of days where FluxVault keeps one representative version per hour." />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Keep hourly versions for days" VerticalAlignment="Center" Margin="0,0,14,10"
+                                   ToolTip="After the dense window, keep one version per hour for this many days." />
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding KeepHourlyDays, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
+                                 ToolTip="Number of days where FluxVault keeps one representative version per hour." />
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Keep daily versions for days" VerticalAlignment="Center" Margin="0,0,14,10"
-                               ToolTip="After the hourly window, keep one version per day for this many days." />
-                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding KeepDailyDays, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
-                             ToolTip="Number of days where FluxVault keeps one representative version per day." />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Keep daily versions for days" VerticalAlignment="Center" Margin="0,0,14,10"
+                                   ToolTip="After the hourly window, keep one version per day for this many days." />
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding KeepDailyDays, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
+                                 ToolTip="Number of days where FluxVault keeps one representative version per day." />
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Minimum versions per file" VerticalAlignment="Center" Margin="0,0,14,10"
-                               ToolTip="Safety floor. FluxVault never prunes below this many latest versions per source file." />
-                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding MinimumVersionsPerFile, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
-                             ToolTip="Minimum number of latest versions to keep for each protected file, regardless of age." />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Minimum versions per file" VerticalAlignment="Center" Margin="0,0,14,10"
+                                   ToolTip="Safety floor. FluxVault never prunes below this many latest versions per source file." />
+                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding MinimumVersionsPerFile, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
+                                 ToolTip="Minimum number of latest versions to keep for each protected file, regardless of age." />
 
-                    <Border Grid.Row="6" Grid.ColumnSpan="2" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Padding="12">
-                        <TextBlock Text="{Binding PreviewText}" TextWrapping="Wrap" Foreground="#3C4043" />
-                    </Border>
+                        <Border Grid.Row="6" Grid.ColumnSpan="2" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Padding="12">
+                            <TextBlock Text="{Binding PreviewText}" TextWrapping="Wrap" Foreground="#3C4043" />
+                        </Border>
 
-                    <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
-                        <Button Content="Preview" Command="{Binding PreviewRetentionCommand}" Padding="14,8" Margin="0,0,8,0"
-                                ToolTip="Calculate what retention would prune without deleting anything." />
-                        <Button Content="Run retention now" Command="{Binding RunRetentionNowCommand}" Padding="14,8"
-                                ToolTip="Apply the current retention policy and remove pruned manifests and orphaned chunks." />
-                    </StackPanel>
-                </Grid>
+                        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+                            <Button Content="Preview" Command="{Binding PreviewRetentionCommand}" Padding="14,8" Margin="0,0,8,0"
+                                    ToolTip="Calculate what retention would prune without deleting anything." />
+                            <Button Content="Run retention now" Command="{Binding RunRetentionNowCommand}" Padding="14,8"
+                                    ToolTip="Apply the current retention policy and remove pruned manifests and orphaned chunks." />
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
 
             <TabItem Header="Advanced">
-                <ScrollViewer Margin="18" VerticalScrollBarVisibility="Auto">
-                    <Grid>
+                <ScrollViewer Name="AdvancedOptionsScrollViewer"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <Grid Margin="18">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -105,13 +111,6 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="18" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="160" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="260" />
@@ -178,62 +177,27 @@
 
                         <TextBlock Grid.Row="11" Grid.ColumnSpan="2" Text="Explorer context menu" FontWeight="SemiBold" Margin="0,0,0,12" />
                         <TextBlock Grid.Row="12" Grid.ColumnSpan="2" Text="{Binding ExplorerContextMenuStatus}" Foreground="#3C4043" TextWrapping="Wrap" Margin="0,0,0,8"
-                                   ToolTip="Current per-user Explorer context-menu registration status." />
+                                   ToolTip="Current per-user Explorer full-menu and Windows 11 compact-menu registration status." />
                         <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Name="RegisterExplorerContextMenuButton"
                                     Content="Register Explorer menu"
                                     Command="{Binding RegisterExplorerContextMenuCommand}"
                                     Padding="14,8" Margin="0,0,8,0"
-                                    ToolTip="Register per-user file and folder Explorer actions that open FluxVault with the selected path as a restore hint." />
+                                    ToolTip="Register per-user file and folder Explorer actions for add, show versions, and remove." />
                             <Button Name="UnregisterExplorerContextMenuButton"
                                     Content="Unregister Explorer menu"
                                     Command="{Binding UnregisterExplorerContextMenuCommand}"
                                     Padding="14,8"
                                     ToolTip="Remove FluxVault per-user file and folder actions from Explorer." />
                         </StackPanel>
-
-                        <TextBlock Grid.Row="15" Grid.ColumnSpan="2" Text="Path exclusions" FontWeight="SemiBold" Margin="0,0,0,12" />
-                        <TextBlock Grid.Row="16" Text="Label / regex pattern" VerticalAlignment="Center" Margin="0,0,14,8"
-                                   ToolTip="Optional label and .NET regex matched against full normalised local paths." />
-                        <StackPanel Grid.Row="16" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
-                            <TextBox Text="{Binding NewExclusionLabel, UpdateSourceTrigger=PropertyChanged}" Width="120" Padding="8"
-                                     ToolTip="Optional friendly label for this exclusion rule." />
-                            <TextBox Text="{Binding NewExclusionPattern, UpdateSourceTrigger=PropertyChanged}" Width="260" Padding="8" Margin="8,0,0,0"
-                                     ToolTip="Case-insensitive .NET regex. It is matched against full paths, not only file names." />
-                        </StackPanel>
-                        <TextBlock Grid.Row="17" Text="Target / description" VerticalAlignment="Center" Margin="0,0,14,8"
-                                   ToolTip="Choose whether this regex excludes files, folders, or both, and optionally describe why." />
-                        <StackPanel Grid.Row="17" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
-                            <ComboBox ItemsSource="{Binding ExclusionTargets}" SelectedItem="{Binding NewExclusionTarget}" Width="120"
-                                      ToolTip="Folder exclusions also stop recursive scans from descending into matching folders." />
-                            <TextBox Text="{Binding NewExclusionDescription, UpdateSourceTrigger=PropertyChanged}" Width="268" Padding="8" Margin="8,0,0,0"
-                                     ToolTip="Optional support note explaining why this path pattern is excluded." />
-                        </StackPanel>
-                        <StackPanel Grid.Row="18" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,8">
-                            <Button Content="Add exclusion" Command="{Binding AddExclusionRuleCommand}" Padding="14,8" Margin="0,0,8,0"
-                                    ToolTip="Validate and add this exclusion rule to the pending Options changes." />
-                            <Button Content="Remove selected" Command="{Binding RemoveSelectedExclusionRuleCommand}" Padding="14,8"
-                                    ToolTip="Remove the selected exclusion rule from the pending Options changes." />
-                        </StackPanel>
-                        <DataGrid Grid.Row="19" Grid.ColumnSpan="2"
-                                  ItemsSource="{Binding ExclusionRules}"
-                                  SelectedItem="{Binding SelectedExclusionRule}"
-                                  ToolTip="Configured exclusion regex rules. Save options to apply changes to the service.">
-                            <DataGrid.Columns>
-                                <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" Width="70" />
-                                <DataGridTextColumn Header="Target" Binding="{Binding Target}" Width="80" />
-                                <DataGridTextColumn Header="Label" Binding="{Binding Label}" Width="120" />
-                                <DataGridTextColumn Header="Pattern" Binding="{Binding Pattern}" Width="*" />
-                            </DataGrid.Columns>
-                        </DataGrid>
                     </Grid>
                 </ScrollViewer>
             </TabItem>
         </TabControl>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="4" Name="OptionsStickyFooter" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Save" Command="{Binding SaveCommand}" Padding="16,8" Margin="0,0,8,0"
-                    ToolTip="Save the current retention, cadence, and compression options to the service configuration." />
+                    ToolTip="Save the current retention, cadence, compression, and Explorer options to the service configuration." />
             <Button Content="Close" Click="Close_Click" Padding="16,8"
                     ToolTip="Close Options without applying any unsaved changes." />
         </StackPanel>

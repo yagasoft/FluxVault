@@ -87,23 +87,28 @@ public sealed class OptionsViewModelTests
     }
 
     [Fact]
-    public async Task Options_can_add_and_save_exclusion_regex_rules()
+    public async Task Save_removes_old_global_exclusion_rules_from_options_payload()
     {
-        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
+        var existingRule = new ProtectionExclusionRule(
+            "legacy",
+            @"\\bin(\\|$)",
+            ProtectionExclusionTarget.Folder,
+            IsEnabled: true,
+            Label: "Build output");
+        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()) with
+        {
+            Configuration = StatusWithPolicy(RetentionPolicy.CreateDefault()).Configuration with
+            {
+                ExclusionRules = [existingRule]
+            }
+        });
         var viewModel = new OptionsViewModel(client);
         await viewModel.InitialiseAsync();
-        viewModel.NewExclusionLabel = "Build output";
-        viewModel.NewExclusionPattern = @"\\bin(\\|$)";
-        viewModel.NewExclusionTarget = ProtectionExclusionTarget.Folder;
 
-        viewModel.AddExclusionRuleCommand.Execute(null);
         await viewModel.SaveAsync();
 
         var saved = Assert.Single(client.SavedConfigurations);
-        var rule = Assert.Single(saved.ExclusionRules);
-        Assert.Equal("Build output", rule.Label);
-        Assert.Equal(ProtectionExclusionTarget.Folder, rule.Target);
-        Assert.True(rule.IsEnabled);
+        Assert.Empty(saved.ExclusionRules);
     }
 
     [Fact]
@@ -141,7 +146,12 @@ public sealed class OptionsViewModelTests
     public async Task Explorer_context_menu_can_be_registered_and_unregistered_from_options()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
-        var explorerContextMenu = new FakeExplorerContextMenuService(false, "Explorer context menu is not registered.");
+        var explorerContextMenu = new FakeExplorerContextMenuService(
+            new ExplorerContextMenuStatus(
+                IsRegistered: false,
+                IsClassicRegistered: false,
+                IsCompactRegistered: false,
+                Message: "Explorer context menu is not registered."));
         var viewModel = new OptionsViewModel(client, explorerContextMenu);
 
         await viewModel.InitialiseAsync();
@@ -152,6 +162,23 @@ public sealed class OptionsViewModelTests
         Assert.Equal(1, explorerContextMenu.UnregisterCount);
         Assert.False(viewModel.IsExplorerContextMenuRegistered);
         Assert.Contains("unregistered", viewModel.ExplorerContextMenuStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Explorer_context_menu_status_reports_classic_and_compact_paths()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
+        var explorerContextMenu = new FakeExplorerContextMenuService(
+            new ExplorerContextMenuStatus(
+                IsRegistered: true,
+                IsClassicRegistered: true,
+                IsCompactRegistered: false,
+                Message: "Full menu registered. Windows 11 compact menu unavailable without app identity."));
+        var viewModel = new OptionsViewModel(client, explorerContextMenu);
+
+        Assert.True(viewModel.IsExplorerContextMenuRegistered);
+        Assert.Contains("Full menu", viewModel.ExplorerContextMenuStatus);
+        Assert.Contains("compact", viewModel.ExplorerContextMenuStatus, StringComparison.OrdinalIgnoreCase);
     }
 
     private static FluxVaultServiceStatus StatusWithPolicy(RetentionPolicy policy)
@@ -199,10 +226,8 @@ public sealed class OptionsViewModelTests
         }
     }
 
-    private sealed class FakeExplorerContextMenuService(bool isRegistered, string message) : IExplorerContextMenuService
+    private sealed class FakeExplorerContextMenuService(ExplorerContextMenuStatus status) : IExplorerContextMenuService
     {
-        private ExplorerContextMenuStatus status = new(isRegistered, message);
-
         public int RegisterCount { get; private set; }
 
         public int UnregisterCount { get; private set; }
@@ -215,14 +240,22 @@ public sealed class OptionsViewModelTests
         public ExplorerContextMenuStatus Register()
         {
             RegisterCount++;
-            status = new ExplorerContextMenuStatus(true, "Explorer context menu registered.");
+            status = new ExplorerContextMenuStatus(
+                IsRegistered: true,
+                IsClassicRegistered: true,
+                IsCompactRegistered: true,
+                Message: "Explorer context menu registered for full and compact menus.");
             return status;
         }
 
         public ExplorerContextMenuStatus Unregister()
         {
             UnregisterCount++;
-            status = new ExplorerContextMenuStatus(false, "Explorer context menu unregistered.");
+            status = new ExplorerContextMenuStatus(
+                IsRegistered: false,
+                IsClassicRegistered: false,
+                IsCompactRegistered: false,
+                Message: "Explorer context menu unregistered.");
             return status;
         }
     }

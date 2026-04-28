@@ -183,6 +183,7 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
@@ -201,11 +202,57 @@
                                 ToolTip="Discard unsaved File browser and configuration edits, then reload settings from the service." />
                     </StackPanel>
 
-                    <Border Grid.Row="1" Grid.Column="0" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Margin="0,0,10,0" MinWidth="0">
+                    <Border Grid.Row="1" Grid.ColumnSpan="3" BorderBrush="#DADCE0" BorderThickness="1" Background="#FAFBFC" Padding="10" Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Include regex" VerticalAlignment="Center" Margin="0,0,8,8" />
+                            <TextBox Grid.Row="0" Grid.Column="1"
+                                     Text="{Binding FileBrowser.SelectedIncludeRegexText, UpdateSourceTrigger=PropertyChanged}"
+                                     Padding="7"
+                                     Margin="0,0,12,8"
+                                     ToolTip="One .NET regex per line. Inherited include regex rules are additive." />
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Exclude regex" VerticalAlignment="Center" Margin="0,0,8,8" />
+                            <TextBox Grid.Row="0" Grid.Column="3"
+                                     Text="{Binding FileBrowser.SelectedExcludeRegexText, UpdateSourceTrigger=PropertyChanged}"
+                                     Padding="7"
+                                     Margin="0,0,12,8"
+                                     ToolTip="One .NET regex per line. Exclude rules from selected parents and children are additive." />
+                            <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal" Margin="0,0,0,8">
+                                <Button Content="Apply regex"
+                                        Command="{Binding FileBrowser.ApplySelectedRegexRulesCommand}"
+                                        ToolTip="Apply the regex lists to the currently selected protected folder or file." />
+                                <Button Content="Clear regex"
+                                        Command="{Binding FileBrowser.ClearSelectedRegexRulesCommand}"
+                                        ToolTip="Clear local regex lists from the currently selected protected folder or file." />
+                            </StackPanel>
+                            <TextBlock Grid.Row="1" Grid.ColumnSpan="5"
+                                       Text="{Binding FileBrowser.SelectedRegexStatus}"
+                                       Foreground="#5F6368"
+                                       TextWrapping="Wrap" />
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="2" Grid.Column="0" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Margin="0,0,10,0" MinWidth="0">
                         <TreeView ItemsSource="{Binding FileBrowser.Roots}"
                                   SelectedItemChanged="FileBrowserTree_SelectedItemChanged"
                                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <TreeView.ContextMenu>
+                                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                    <MenuItem Header="Show in File Explorer"
+                                              Command="{Binding FileBrowser.ShowSelectedFolderInExplorerCommand}" />
+                                </ContextMenu>
+                            </TreeView.ContextMenu>
                             <TreeView.Resources>
                                 <HierarchicalDataTemplate DataType="{x:Type vm:FileBrowserFolderNode}" ItemsSource="{Binding Children}">
                                     <StackPanel Orientation="Horizontal">
@@ -216,6 +263,12 @@
                                                 ToolTip="{Binding SelectionToolTip}">
                                             <TextBlock Text="{Binding SelectionIndicator}" HorizontalAlignment="Center" />
                                         </Button>
+                                        <TextBlock Text="{Binding RegexIndicator}"
+                                                   ToolTip="{Binding RegexToolTip}"
+                                                   Width="18"
+                                                   Foreground="#A05A00"
+                                                   FontWeight="SemiBold"
+                                                   VerticalAlignment="Center" />
                                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </HierarchicalDataTemplate>
@@ -226,16 +279,25 @@
                         </TreeView>
                     </Border>
 
-                    <DataGrid Grid.Row="1"
+                    <DataGrid Grid.Row="2"
                               Grid.Column="1"
                               Name="FileBrowserFilesGrid"
                               MinWidth="0"
                               Margin="0,0,10,0"
                               ItemsSource="{Binding FileBrowser.Files}"
+                              SelectedItem="{Binding FileBrowser.SelectedFile}"
                               Loaded="FileBrowserGrid_Loaded"
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
                               ScrollViewer.VerticalScrollBarVisibility="Auto"
                               ToolTip="Files in the selected folder. Check a file to protect only that file.">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                <MenuItem Header="Open in default app"
+                                          Command="{Binding FileBrowser.OpenSelectedFileCommand}" />
+                                <MenuItem Header="Show in File Explorer"
+                                          Command="{Binding FileBrowser.ShowSelectedFileInExplorerCommand}" />
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="SizeToCells" MinWidth="90" />
                             <DataGridTextColumn Header="File" Binding="{Binding Name}" Width="SizeToCells" MinWidth="160" />
@@ -243,7 +305,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <DataGrid Grid.Row="1"
+                    <DataGrid Grid.Row="2"
                               Grid.Column="2"
                               Name="FileBrowserPendingChangesGrid"
                               MinWidth="0"

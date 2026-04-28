@@ -62,10 +62,33 @@ public sealed class PackagingTests
 
         Assert.DoesNotContain("--restore-path", installScript, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("--restore-path", uninstallScript, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("--add-path", installScript, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("--add-path", uninstallScript, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("--remove-path", installScript, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("--remove-path", uninstallScript, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("Software\\Classes\\*\\shell", installScript, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("Software\\Classes\\*\\shell", uninstallScript, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("RegisterExplorerContextMenu", installScript, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("RegisterExplorerContextMenu", uninstallScript, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void App_context_menu_service_declares_ordered_full_menu_verbs_and_compact_status()
+    {
+        var root = FindRepositoryRoot();
+        var source = File.ReadAllText(Path.Combine(root, "src", "FluxVault.App", "Services", "ExplorerContextMenuService.cs"));
+
+        Assert.Contains("Add to FluxVault", source);
+        Assert.Contains("Show FluxVault versions", source);
+        Assert.Contains("Remove from FluxVault", source);
+        Assert.Contains("--add-path", source);
+        Assert.Contains("--show-versions", source);
+        Assert.Contains("--remove-path", source);
+        Assert.Contains("FluxVault01Add", source);
+        Assert.Contains("FluxVault02ShowVersions", source);
+        Assert.Contains("FluxVault03Remove", source);
+        Assert.Contains("IExplorerCommand", source);
+        Assert.Contains("compact", source, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

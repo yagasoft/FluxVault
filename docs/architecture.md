@@ -26,13 +26,18 @@ available pipe, the operational cockpit shows a warning and keeps the app open.
 The dashboard can attempt to start or stop the service through Windows service
 control APIs; access-denied results are surfaced as elevation-required messages.
 
-The app owns per-user Explorer restore entry points. Options registers or
-unregisters HKCU file/folder context-menu commands that launch the current
-`FluxVault.App.exe --restore-path "%1"` path. Startup request routing is
-single-instance: a second app process forwards the restore-path hint to the
-running dashboard through a local named pipe, then exits. The hint is applied to
-the restore UI by selecting a matching recent version where possible; it never
-starts a restore by itself.
+The app owns per-user Explorer entry points. Options registers or unregisters
+HKCU full-menu file/folder commands in this order: `Add to FluxVault`, `Show
+FluxVault versions`, and `Remove from FluxVault`. Add and Remove requests are
+forwarded through the same startup pipe and save configuration immediately.
+`Show FluxVault versions` launches the current `FluxVault.App.exe
+--show-versions "%1"` path; the legacy `--restore-path "%1"` argument remains
+accepted. Startup request routing is single-instance: a second app process
+forwards the request to the running dashboard through a local named pipe, then
+exits. Version hints select a matching recent version where possible; they never
+start a restore by themselves. Windows 11 compact menus require app identity and
+an `IExplorerCommand` shell extension, so the current unpackaged app reports
+compact registration as unavailable while still registering the full menu.
 
 When installed by the developer script, `FluxVaultService` uses delayed
 automatic start, SCM restart recovery, and the `FluxVaultService` Windows Event
@@ -134,7 +139,10 @@ selection rules or clearing the pending-changes pane.
 The File browser tree owns its own scrollbars so mouse-wheel scrolling works
 when the cursor is over the folder tree. File and pending-change grids auto-fit
 their columns on first render, then rely on horizontal scrolling for long names
-or paths rather than resizing the three-pane layout.
+or paths rather than resizing the three-pane layout. Folder and file context
+menus use a shell-launch abstraction so tests can prove `explorer.exe <folder>`,
+`explorer.exe /select,<file>`, and default-app open behaviour without launching
+Explorer.
 
 FluxVault persists browser selections as `ProtectionSelectionRule` records and
 compiles them into existing `WatchedFolderConfiguration` entries before the
@@ -142,12 +150,14 @@ service captures files. Recursive folders compile to recursive watched folders,
 immediate-files selections compile to non-recursive watched folders, and
 individual file selections compile to parent-folder include patterns.
 
-Global `ProtectionExclusionRule` records complement the tree. Each enabled rule
-contains a .NET regex pattern, a target of file, folder, or both, and optional
-support labels. Rules are validated before save, matched case-insensitively
-against full normalised paths with a timeout, and applied after include matching
-but before capture. Folder exclusions stop recursive scans from descending into
-matching folders; targeted watcher/USN captures skip excluded files too.
+Scoped `ProtectionScopedRegexRule` lists complement each selected folder or
+file. Recursive folder regex rules apply to descendants; immediate-folder rules
+apply only to files directly inside that folder; child rules are additive with
+inherited parent rules. Include rules are treated as an additive narrowing set,
+and any matching exclude rule suppresses the file before capture. Folders with
+local scoped regex rules show an `R` indicator in the tree. Legacy global
+`ProtectionExclusionRule` records are still understood by the service for
+backward compatibility, but the Options global regex editor has been removed.
 
 ## Non-interference contract
 

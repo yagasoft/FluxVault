@@ -56,7 +56,7 @@ public sealed class FluxVaultOperations(
                 continue;
             }
 
-            foreach (var file in EnumerateIncludedFiles(folder, configuration.ExclusionRules))
+            foreach (var file in EnumerateIncludedFiles(folder, configuration))
             {
                 targets.Add(new FileBackupTarget(
                     folder,
@@ -500,15 +500,18 @@ public sealed class FluxVaultOperations(
 
     private static IEnumerable<string> EnumerateIncludedFiles(
         WatchedFolderConfiguration folder,
-        IReadOnlyList<ProtectionExclusionRule> exclusionRules)
+        FluxVaultConfiguration configuration)
     {
-        foreach (var file in EnumerateCandidateFiles(folder.Path, folder.Recursive, exclusionRules))
+        foreach (var file in EnumerateCandidateFiles(folder.Path, folder.Recursive, configuration))
         {
             var name = Path.GetFileName(file);
             var included = folder.IncludePatterns.Count == 0
                 || folder.IncludePatterns.Any(pattern => FileSystemName.MatchesSimpleExpression(pattern, name, ignoreCase: true));
             var excluded = folder.ExcludePatterns.Any(pattern => FileSystemName.MatchesSimpleExpression(pattern, name, ignoreCase: true));
-            if (included && !excluded && !ProtectionExclusionMatcher.IsFileExcluded(file, exclusionRules))
+            if (included
+                && !excluded
+                && !ProtectionExclusionMatcher.IsFileExcluded(file, configuration.ExclusionRules)
+                && ProtectionSelectionRegexMatcher.IsFileIncluded(file, configuration.SelectionRules))
             {
                 yield return file;
             }
@@ -524,7 +527,8 @@ public sealed class FluxVaultOperations(
         {
             if (IsUnderWatchedFolder(candidate, filePath)
                 && MatchesPatterns(candidate, filePath)
-                && !ProtectionExclusionMatcher.IsFileExcluded(filePath, configuration.ExclusionRules))
+                && !ProtectionExclusionMatcher.IsFileExcluded(filePath, configuration.ExclusionRules)
+                && ProtectionSelectionRegexMatcher.IsFileIncluded(filePath, configuration.SelectionRules))
             {
                 folder = candidate;
                 return true;
@@ -565,7 +569,7 @@ public sealed class FluxVaultOperations(
     private static IEnumerable<string> EnumerateCandidateFiles(
         string folderPath,
         bool recursive,
-        IReadOnlyList<ProtectionExclusionRule> exclusionRules)
+        FluxVaultConfiguration configuration)
     {
         foreach (var file in Directory.EnumerateFiles(folderPath, "*", SearchOption.TopDirectoryOnly))
         {
@@ -579,12 +583,13 @@ public sealed class FluxVaultOperations(
 
         foreach (var childFolder in Directory.EnumerateDirectories(folderPath))
         {
-            if (ProtectionExclusionMatcher.IsFolderExcluded(childFolder, exclusionRules))
+            if (ProtectionExclusionMatcher.IsFolderExcluded(childFolder, configuration.ExclusionRules)
+                || ProtectionSelectionRegexMatcher.IsFolderExcluded(childFolder, configuration.SelectionRules))
             {
                 continue;
             }
 
-            foreach (var file in EnumerateCandidateFiles(childFolder, recursive: true, exclusionRules))
+            foreach (var file in EnumerateCandidateFiles(childFolder, recursive: true, configuration: configuration))
             {
                 yield return file;
             }

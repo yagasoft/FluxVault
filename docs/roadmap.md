@@ -40,8 +40,12 @@ one Windows 11 PC.
   becomes the primary watched-selection workflow. Selection changes apply only
   after Save. Unsaved selection edits are preserved across refresh and app
   focus changes until the user saves or explicitly discards them.
-- Global file/folder exclusion regex rules complement tree selection and apply
-  to full normalised paths before capture.
+- Scoped include/exclude regex rules attach to selected File browser folders or
+  files. Recursive folder rules apply recursively, immediate folder rules apply
+  only to direct files, and child rules are additive with inherited parent rules
+  before capture.
+- File browser context menus open folders in File Explorer, open files in the
+  default app, and show files selected in File Explorer.
 - Health tiles live in the footer so the header remains focused on service
   status and commands.
 - About window with Yagasoft branding, project and website links, app version,
@@ -78,9 +82,12 @@ Expected user-visible result: safe local production use on Windows 11.
 - Restore browser with safer overwrite workflows and Explorer entry points.
   The first implementation adds app-side destination picking, overwrite
   confirmation before restore IPC, safe restore failure status, per-user HKCU
-  Explorer file/folder actions managed from Options, and second-launch
-  `--restore-path` handoff to the running dashboard. Restore lineage metadata
-  remains separate.
+  Explorer file/folder actions managed from Options, ordered Add/Show FluxVault
+  versions/Remove full-menu verbs, immediate Add/Remove configuration saves, and
+  second-launch `--restore-path`/`--show-versions` handoff to the running
+  dashboard. Windows 11 compact-menu registration is reported as unavailable
+  until release packaging supplies app identity and an `IExplorerCommand` shell
+  extension. Restore lineage metadata remains separate.
 - Per-file version graph for restore lineage. Restoring an old version creates
   a new version event that points to the restored version as its fork origin,
   while newer versions remain available.

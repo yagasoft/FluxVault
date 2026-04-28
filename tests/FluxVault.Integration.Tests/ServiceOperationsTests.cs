@@ -412,6 +412,66 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Scoped_recursive_regex_rules_filter_backup_candidates()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var included = Path.Combine(watched, "final.txt");
+        var excluded = Path.Combine(watched, "draft.tmp");
+        await File.WriteAllTextAsync(included, "included");
+        await File.WriteAllTextAsync(excluded, "excluded");
+        var selection = SelectionRule("docs", watched, ProtectionSelectionMode.RecursiveFolder) with
+        {
+            IncludeRegexRules =
+            [
+                new ProtectionScopedRegexRule("txt", @"\.txt$", ProtectionExclusionTarget.File)
+            ],
+            ExcludeRegexRules =
+            [
+                new ProtectionScopedRegexRule("draft", @"\\draft", ProtectionExclusionTarget.File)
+            ]
+        };
+        var configuration = NewSelectionConfiguration(workspace, [selection]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        Assert.True(backup.Success);
+        Assert.Equal(included, version.SourcePath);
+    }
+
+    [Fact]
+    public async Task Targeted_backup_respects_scoped_regex_exclusions()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var included = Path.Combine(watched, "included.txt");
+        var excluded = Path.Combine(watched, "excluded.txt");
+        await File.WriteAllTextAsync(included, "included");
+        await File.WriteAllTextAsync(excluded, "excluded");
+        var selection = SelectionRule("docs", watched, ProtectionSelectionMode.ImmediateFiles) with
+        {
+            ExcludeRegexRules =
+            [
+                ProtectionScopedRegexRule.ExactPath("excluded", excluded, ProtectionExclusionTarget.File)
+            ]
+        };
+        var configuration = NewSelectionConfiguration(workspace, [selection]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupForFilesAsync([included, excluded]);
+
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        Assert.True(backup.Success);
+        Assert.Equal(included, version.SourcePath);
+    }
+
+    [Fact]
     public async Task Targeted_backup_skips_excluded_paths()
     {
         using var workspace = TemporaryWorkspace.Create();

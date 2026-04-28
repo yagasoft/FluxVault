@@ -13,6 +13,15 @@ public interface IFileBrowserFileSystem
     IReadOnlyList<FileBrowserFileInfo> GetFiles(string path);
 }
 
+public interface IFileBrowserShellLauncher
+{
+    void ShowFolder(string folderPath);
+
+    void OpenFile(string filePath);
+
+    void ShowFileInExplorer(string filePath);
+}
+
 public sealed record FileBrowserFolderInfo(
     string Path,
     string Name,
@@ -47,6 +56,9 @@ public sealed partial class FileBrowserFolderNode(
     [ObservableProperty]
     private bool hasLoadedChildren;
 
+    [ObservableProperty]
+    private bool hasLocalRegexRules;
+
     public string Path { get; } = System.IO.Path.GetFullPath(path);
 
     public string Name { get; } = string.IsNullOrWhiteSpace(name) ? path : name;
@@ -80,6 +92,12 @@ public sealed partial class FileBrowserFolderNode(
         _ => "Not selected. Click to cycle this folder through protection modes."
     };
 
+    public string RegexIndicator => HasLocalRegexRules ? "R" : string.Empty;
+
+    public string RegexToolTip => HasLocalRegexRules
+        ? "This selected folder has local include or exclude regex rules."
+        : "No local regex rules are defined on this folder.";
+
     partial void OnSelectionModeChanged(ProtectionSelectionMode? value)
     {
         OnPropertyChanged(nameof(SelectionVisualState));
@@ -92,6 +110,12 @@ public sealed partial class FileBrowserFolderNode(
         OnPropertyChanged(nameof(SelectionVisualState));
         OnPropertyChanged(nameof(SelectionIndicator));
         OnPropertyChanged(nameof(SelectionToolTip));
+    }
+
+    partial void OnHasLocalRegexRulesChanged(bool value)
+    {
+        OnPropertyChanged(nameof(RegexIndicator));
+        OnPropertyChanged(nameof(RegexToolTip));
     }
 }
 

@@ -67,8 +67,12 @@ folder; direct cloud adapters arrive later.
 - The older watched-folder Browse workflow is removed once the File browser
   becomes the primary selection workflow.
 - Selection changes must not affect the running service until the user saves.
-- Global exclusion regex rules can target files, folders, or both. Rules match
-  full normalised paths and are validated before save.
+- Scoped include/exclude regex rules attach to selected File browser folders or
+  files. Recursive folder regex applies recursively, immediate folder regex
+  applies only to direct files, and child regex rules are additive with inherited
+  parent rules. Folders with local regex rules show a tree indicator.
+- File browser context menus provide `Show in File Explorer` for folders and
+  `Open in default app` plus `Show in File Explorer` for files.
 - Health/status tiles are displayed in the footer so command buttons and header
   text remain stable.
 - About branding shows Yagasoft copyright, logo, app description, GitHub project
@@ -86,12 +90,22 @@ folder; direct cloud adapters arrive later.
   coverage must be reported as `CrashConsistent`; writer/requester failure must
   fail the capture rather than commit a misleading version.
 - Explorer file/folder entry points are registered per user from Options, not
-  from the developer service scripts. The command launches
-  `FluxVault.App.exe --restore-path "%1"` and treats the path as a restore UI
-  hint only.
-- A second app launch with `--restore-path` must forward the request to the
-  already-running dashboard when possible, bring that dashboard forward, and
-  exit without auto-restoring or overwriting data.
+  from the developer service scripts. Full-menu verbs are ordered `Add to
+  FluxVault`, `Show FluxVault versions`, then `Remove from FluxVault`.
+- Explorer Add saves an immediate/non-recursive folder selection or file
+  selection immediately. Explorer Remove removes a direct rule or creates a
+  scoped exclusion on the nearest inherited parent selection.
+- `Show FluxVault versions` launches `FluxVault.App.exe --show-versions "%1"`;
+  the legacy `--restore-path "%1"` remains accepted. Both treat the path as a
+  restore/version UI hint only.
+- A second app launch with `--show-versions`/`--restore-path`, `--add-path`, or
+  `--remove-path` must forward the request to the already-running dashboard when
+  possible, bring that dashboard forward, and exit without auto-restoring or
+  overwriting data.
+- Windows 11 compact context-menu registration requires app identity and an
+  `IExplorerCommand` shell extension. Until release packaging supplies that
+  identity, Options must report compact registration as unavailable and still
+  register the full menu.
 - Restoring an older version preserves newer versions and records the restored
   version as the fork origin for the new restore event.
 - Version history supports Git-like per-file lineage through FluxVault manifests

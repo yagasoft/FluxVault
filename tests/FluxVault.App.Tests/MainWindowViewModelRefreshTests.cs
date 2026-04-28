@@ -558,6 +558,47 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Contains("restore request", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public async Task Explorer_add_path_request_saves_configuration_immediately()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithSelectionRules([]));
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+
+        await viewModel.ApplyStartupRequestAsync(
+            new AppStartupRequest(AppStartupRequestAction.AddToFluxVault, @"D:\Work\Docs"));
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        var rule = Assert.Single(saved.SelectionRules);
+        Assert.Equal(Path.GetFullPath(@"D:\Work\Docs"), rule.Path);
+        Assert.Equal(ProtectionSelectionMode.ImmediateFiles, rule.Mode);
+        Assert.Contains("added", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Explorer_remove_inherited_path_request_saves_scoped_exclusion_immediately()
+    {
+        var inherited = new ProtectionSelectionRule(
+            "root",
+            Path.GetFullPath(@"D:\Work"),
+            ProtectionSelectionMode.RecursiveFolder,
+            CompressionPreference.Zstd,
+            ResourceProfile.Balanced,
+            IsEnabled: true);
+        var client = new FakeFluxVaultServiceClient(StatusWithSelectionRules([inherited]));
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+
+        await viewModel.ApplyStartupRequestAsync(
+            new AppStartupRequest(AppStartupRequestAction.RemoveFromFluxVault, @"D:\Work\Docs\brief.docx"));
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        var rule = Assert.Single(saved.SelectionRules);
+        Assert.Equal(Path.GetFullPath(@"D:\Work"), rule.Path);
+        Assert.Contains(rule.ExcludeRegexRules ?? [], regex => regex.Pattern.Contains("brief\\.docx"));
+        Assert.Contains("excluded", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static FluxVaultServiceStatus StatusWithVersions(params string[] versionIds)
     {
         var configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault");
@@ -651,6 +692,8 @@ public sealed class MainWindowViewModelRefreshTests
 
         public List<(string VersionId, string OutputPath)> RestoreRequests { get; } = [];
 
+        public List<FluxVaultConfiguration> SavedConfigurations { get; } = [];
+
         public FluxVaultIpcResponse RestoreResponse { get; init; } = FluxVaultIpcResponse.Ok();
 
         public int GetStatusCount => Commands.Count(command => command == FluxVaultIpcCommand.GetStatus);
@@ -678,6 +721,12 @@ public sealed class MainWindowViewModelRefreshTests
                     request.VersionId ?? throw new InvalidOperationException("Missing version id."),
                     request.OutputPath ?? throw new InvalidOperationException("Missing output path.")));
                 return Task.FromResult(RestoreResponse);
+            }
+
+            if (request.Command == FluxVaultIpcCommand.SaveConfiguration)
+            {
+                SavedConfigurations.Add(request.Configuration ?? throw new InvalidOperationException("Missing configuration."));
+                return Task.FromResult(FluxVaultIpcResponse.Ok());
             }
 
             var status = statuses.Count > 1 ? statuses.Dequeue() : statuses.Peek();

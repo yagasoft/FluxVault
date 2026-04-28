@@ -1,27 +1,62 @@
 using System.IO;
 using System.IO.Pipes;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FluxVault.App.Services;
 
-public sealed record AppStartupRequest(string? RestorePath)
+public enum AppStartupRequestAction
 {
+    Activate = 0,
+    ShowVersions = 1,
+    AddToFluxVault = 2,
+    RemoveFromFluxVault = 3
+}
+
+public sealed record AppStartupRequest
+{
+    [JsonConstructor]
+    public AppStartupRequest(AppStartupRequestAction action, string? path)
+    {
+        Action = action;
+        Path = path;
+    }
+
+    public AppStartupRequest(string? restorePath)
+        : this(string.IsNullOrWhiteSpace(restorePath)
+            ? AppStartupRequestAction.Activate
+            : AppStartupRequestAction.ShowVersions, restorePath)
+    {
+    }
+
+    public AppStartupRequestAction Action { get; init; }
+
+    public string? Path { get; init; }
+
+    public string? RestorePath => Action == AppStartupRequestAction.ShowVersions ? Path : null;
+
     public static AppStartupRequest Parse(IReadOnlyList<string> args)
     {
         for (var index = 0; index < args.Count; index++)
         {
-            if (!string.Equals(args[index], "--restore-path", StringComparison.OrdinalIgnoreCase))
+            var action = args[index].ToLowerInvariant() switch
             {
-                continue;
-            }
+                "--restore-path" => AppStartupRequestAction.ShowVersions,
+                "--show-versions" => AppStartupRequestAction.ShowVersions,
+                "--add-path" => AppStartupRequestAction.AddToFluxVault,
+                "--remove-path" => AppStartupRequestAction.RemoveFromFluxVault,
+                _ => AppStartupRequestAction.Activate
+            };
 
-            if (index + 1 < args.Count && !string.IsNullOrWhiteSpace(args[index + 1]))
+            if (action != AppStartupRequestAction.Activate
+                && index + 1 < args.Count
+                && !string.IsNullOrWhiteSpace(args[index + 1]))
             {
-                return new AppStartupRequest(args[index + 1]);
+                return new AppStartupRequest(action, args[index + 1]);
             }
         }
 
-        return new AppStartupRequest(RestorePath: null);
+        return new AppStartupRequest(AppStartupRequestAction.Activate, path: null);
     }
 }
 
@@ -157,7 +192,7 @@ public sealed class AppStartupRequestRouter : IAppStartupRequestRouter
                         JsonOptions,
                         cancellationToken)
                     .ConfigureAwait(false)
-                    ?? new AppStartupRequest(RestorePath: null);
+                    ?? new AppStartupRequest(AppStartupRequestAction.Activate, path: null);
                 await handler(request).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

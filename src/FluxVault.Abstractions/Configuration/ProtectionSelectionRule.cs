@@ -8,4 +8,6 @@ public sealed record ProtectionSelectionRule(
     ProtectionSelectionMode Mode,
     CompressionPreference Compression,
     ResourceProfile ResourceProfile,
-    bool IsEnabled);
+    bool IsEnabled,
+    IReadOnlyList<ProtectionScopedRegexRule>? IncludeRegexRules = null,
+    IReadOnlyList<ProtectionScopedRegexRule>? ExcludeRegexRules = null);

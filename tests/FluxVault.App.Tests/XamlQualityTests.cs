@@ -76,6 +76,58 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
+    public void Options_dialog_removes_global_regex_editor_and_keeps_footer_buttons_sticky()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "OptionsWindow.xaml");
+        var rootGrid = document
+            .Descendants(XamlNamespace + "Grid")
+            .First(element => (string?)element.Attribute("Name") == "OptionsShell");
+        var footer = document
+            .Descendants(XamlNamespace + "StackPanel")
+            .Single(element => (string?)element.Attribute("Name") == "OptionsStickyFooter");
+        var tabControl = document
+            .Descendants(XamlNamespace + "TabControl")
+            .Single();
+
+        Assert.DoesNotContain(
+            document.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "Path exclusions");
+        Assert.DoesNotContain(
+            document.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Content") == "Add exclusion");
+        Assert.DoesNotContain(
+            document.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Content") == "Remove selected");
+        Assert.Equal("4", (string?)footer.Attribute("Grid.Row"));
+        Assert.Equal("Right", (string?)footer.Attribute("HorizontalAlignment"));
+        Assert.Equal("2", (string?)tabControl.Attribute("Grid.Row"));
+        Assert.Contains(
+            rootGrid.Element(XamlNamespace + "Grid.RowDefinitions")?.Elements(XamlNamespace + "RowDefinition") ?? [],
+            row => (string?)row.Attribute("Height") == "*");
+    }
+
+    [Fact]
+    public void Options_tab_content_scrolls_without_hiding_save_and_close()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "OptionsWindow.xaml");
+        var window = document.Root ?? throw new InvalidOperationException("Missing root.");
+        var scrollViewers = document
+            .Descendants(XamlNamespace + "ScrollViewer")
+            .Where(element => (string?)element.Attribute("Name") is "BasicOptionsScrollViewer" or "AdvancedOptionsScrollViewer")
+            .ToArray();
+
+        Assert.True(int.Parse((string?)window.Attribute("MinHeight") ?? "0") >= 620);
+        Assert.Equal(2, scrollViewers.Length);
+        Assert.All(
+            scrollViewers,
+            scroll =>
+            {
+                Assert.Equal("Auto", (string?)scroll.Attribute("VerticalScrollBarVisibility"));
+                Assert.Equal("Disabled", (string?)scroll.Attribute("HorizontalScrollBarVisibility"));
+            });
+    }
+
+    [Fact]
     public void Options_labels_have_helpful_tooltips()
     {
         var document = LoadXaml("src", "FluxVault.App", "OptionsWindow.xaml");
@@ -155,6 +207,55 @@ public sealed class XamlQualityTests
             .Single(element => (string?)element.Attribute("Name") == "FileBrowserPaneGrid");
 
         Assert.Equal(3, paneGrid.Element(XamlNamespace + "Grid.ColumnDefinitions")?.Elements(XamlNamespace + "ColumnDefinition").Count());
+    }
+
+    [Fact]
+    public void File_browser_exposes_scoped_regex_editor_and_folder_indicator()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var fileBrowserTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "File browser"));
+
+        Assert.Contains(
+            fileBrowserTab.Descendants(XamlNamespace + "TextBox"),
+            element => (string?)element.Attribute("Text") == "{Binding FileBrowser.SelectedIncludeRegexText, UpdateSourceTrigger=PropertyChanged}");
+        Assert.Contains(
+            fileBrowserTab.Descendants(XamlNamespace + "TextBox"),
+            element => (string?)element.Attribute("Text") == "{Binding FileBrowser.SelectedExcludeRegexText, UpdateSourceTrigger=PropertyChanged}");
+        Assert.Contains(
+            fileBrowserTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding FileBrowser.ApplySelectedRegexRulesCommand}");
+        Assert.Contains(
+            fileBrowserTab.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "{Binding RegexIndicator}");
+    }
+
+    [Fact]
+    public void File_browser_folder_and_file_context_menus_use_shell_commands()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var fileBrowserTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "File browser"));
+        var tree = fileBrowserTab.Descendants(XamlNamespace + "TreeView").Single();
+        var filesGrid = fileBrowserTab
+            .Descendants(XamlNamespace + "DataGrid")
+            .Single(element => (string?)element.Attribute("Name") == "FileBrowserFilesGrid");
+
+        Assert.Contains(
+            tree.Descendants(XamlNamespace + "MenuItem"),
+            item => (string?)item.Attribute("Header") == "Show in File Explorer"
+                && (string?)item.Attribute("Command") == "{Binding FileBrowser.ShowSelectedFolderInExplorerCommand}");
+        Assert.Contains(
+            filesGrid.Descendants(XamlNamespace + "MenuItem"),
+            item => (string?)item.Attribute("Header") == "Open in default app"
+                && (string?)item.Attribute("Command") == "{Binding FileBrowser.OpenSelectedFileCommand}");
+        Assert.Contains(
+            filesGrid.Descendants(XamlNamespace + "MenuItem"),
+            item => (string?)item.Attribute("Header") == "Show in File Explorer"
+                && (string?)item.Attribute("Command") == "{Binding FileBrowser.ShowSelectedFileInExplorerCommand}");
+        Assert.Equal("{Binding FileBrowser.SelectedFile}", (string?)filesGrid.Attribute("SelectedItem"));
     }
 
     [Fact]

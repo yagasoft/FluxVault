@@ -236,6 +236,27 @@ public sealed partial class MainWindowViewModel : ObservableObject
         SetServiceStatus($"Service connection: restore request received for {restorePath}");
     }
 
+    public async Task ApplyStartupRequestAsync(AppStartupRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Path))
+        {
+            return;
+        }
+
+        switch (request.Action)
+        {
+            case AppStartupRequestAction.ShowVersions:
+                ApplyRestorePathRequest(request.Path);
+                break;
+            case AppStartupRequestAction.AddToFluxVault:
+                await ApplyExplorerSelectionRequestAsync(request.Path, add: true).ConfigureAwait(true);
+                break;
+            case AppStartupRequestAction.RemoveFromFluxVault:
+                await ApplyExplorerSelectionRequestAsync(request.Path, add: false).ConfigureAwait(true);
+                break;
+        }
+    }
+
     private async Task AutoRefreshAsync(CancellationToken cancellationToken)
     {
         try
@@ -366,16 +387,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    private async Task SaveConfigurationCoreAsync()
+    private async Task SaveConfigurationCoreAsync(bool refreshAfterSave = true, string? successStatus = null)
     {
         var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(BuildConfiguration())).ConfigureAwait(true);
         SetServiceStatus(response.Success
-            ? "Service connection: configuration saved"
+            ? successStatus ?? "Service connection: configuration saved"
             : $"Service connection: save failed ({response.ErrorMessage})");
         if (response.Success)
         {
             hasLocalConfigurationChanges = false;
-            await RefreshAsync().ConfigureAwait(true);
+            if (refreshAfterSave)
+            {
+                await RefreshAsync().ConfigureAwait(true);
+            }
         }
     }
 
@@ -447,6 +471,30 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private async Task SaveConfigurationAsync()
     {
         await SaveConfigurationCoreAsync().ConfigureAwait(true);
+    }
+
+    private async Task ApplyExplorerSelectionRequestAsync(string path, bool add)
+    {
+        var isDirectory = IsDirectoryLike(path);
+        if (add)
+        {
+            FileBrowser.AddPathSelection(path, isDirectory);
+            await SaveConfigurationCoreAsync(
+                refreshAfterSave: false,
+                successStatus: $"Service connection: added {path} to FluxVault.").ConfigureAwait(true);
+            return;
+        }
+
+        var removedOrExcluded = FileBrowser.RemovePathSelection(path, isDirectory);
+        if (!removedOrExcluded)
+        {
+            SetServiceStatus($"Service connection: {path} is not directly or inheritably protected.");
+            return;
+        }
+
+        await SaveConfigurationCoreAsync(
+            refreshAfterSave: false,
+            successStatus: $"Service connection: removed or excluded {path} from FluxVault.").ConfigureAwait(true);
     }
 
     [RelayCommand]
@@ -661,6 +709,21 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             return string.Equals(sourcePath, restoreHintPath, StringComparison.OrdinalIgnoreCase);
         }
+    }
+
+    private static bool IsDirectoryLike(string path)
+    {
+        if (Directory.Exists(path))
+        {
+            return true;
+        }
+
+        if (File.Exists(path))
+        {
+            return false;
+        }
+
+        return string.IsNullOrWhiteSpace(Path.GetExtension(path));
     }
 
     private static IReadOnlyList<ProtectionSelectionRule> DeriveSelectionRules(IReadOnlyList<WatchedFolderConfiguration> watchedFolders)

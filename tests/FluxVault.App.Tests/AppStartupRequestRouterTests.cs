@@ -9,7 +9,23 @@ public sealed class AppStartupRequestRouterTests
     {
         var request = AppStartupRequest.Parse(["--restore-path", @"D:\Work\Drafts"]);
 
+        Assert.Equal(AppStartupRequestAction.ShowVersions, request.Action);
         Assert.Equal(@"D:\Work\Drafts", request.RestorePath);
+        Assert.Equal(@"D:\Work\Drafts", request.Path);
+    }
+
+    [Theory]
+    [InlineData("--show-versions", AppStartupRequestAction.ShowVersions)]
+    [InlineData("--add-path", AppStartupRequestAction.AddToFluxVault)]
+    [InlineData("--remove-path", AppStartupRequestAction.RemoveFromFluxVault)]
+    public void Explorer_action_argument_parser_accepts_context_menu_actions(
+        string argument,
+        AppStartupRequestAction expectedAction)
+    {
+        var request = AppStartupRequest.Parse([argument, @"D:\Work\Drafts\brief.docx"]);
+
+        Assert.Equal(expectedAction, request.Action);
+        Assert.Equal(@"D:\Work\Drafts\brief.docx", request.Path);
     }
 
     [Fact]
@@ -26,7 +42,7 @@ public sealed class AppStartupRequestRouterTests
         await using var secondary = new AppStartupRequestRouter(instanceKey);
 
         var forwarded = await secondary.TryForwardToExistingInstanceAsync(
-            new AppStartupRequest(@"D:\Work\Drafts\brief.docx"));
+            new AppStartupRequest(AppStartupRequestAction.ShowVersions, @"D:\Work\Drafts\brief.docx"));
 
         Assert.True(primary.IsPrimaryInstance);
         Assert.False(secondary.IsPrimaryInstance);

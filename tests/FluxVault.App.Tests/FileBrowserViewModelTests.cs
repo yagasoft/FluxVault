@@ -111,6 +111,101 @@ public sealed class FileBrowserViewModelTests
     }
 
     [Fact]
+    public void Explorer_add_folder_creates_immediate_folder_selection_and_is_idempotent()
+    {
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        viewModel.LoadSelectionRules([]);
+
+        viewModel.AddPathSelection(@"D:\Work\Docs", isDirectory: true);
+        viewModel.AddPathSelection(@"D:\Work\Docs", isDirectory: true);
+
+        var rule = Assert.Single(viewModel.GetSelectionRules());
+        Assert.Equal(Path.GetFullPath(@"D:\Work\Docs"), rule.Path);
+        Assert.Equal(ProtectionSelectionMode.ImmediateFiles, rule.Mode);
+    }
+
+    [Fact]
+    public void Explorer_add_file_creates_file_selection_and_is_idempotent()
+    {
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        viewModel.LoadSelectionRules([]);
+
+        viewModel.AddPathSelection(@"D:\Work\Docs\brief.docx", isDirectory: false);
+        viewModel.AddPathSelection(@"D:\Work\Docs\brief.docx", isDirectory: false);
+
+        var rule = Assert.Single(viewModel.GetSelectionRules());
+        Assert.Equal(Path.GetFullPath(@"D:\Work\Docs\brief.docx"), rule.Path);
+        Assert.Equal(ProtectionSelectionMode.File, rule.Mode);
+    }
+
+    [Fact]
+    public void Explorer_remove_direct_selection_removes_rule()
+    {
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        viewModel.LoadSelectionRules([Rule("docs", @"D:\Work\Docs", ProtectionSelectionMode.ImmediateFiles)]);
+
+        viewModel.RemovePathSelection(@"D:\Work\Docs", isDirectory: true);
+
+        Assert.Empty(viewModel.GetSelectionRules());
+    }
+
+    [Fact]
+    public void Explorer_remove_inherited_selection_adds_scoped_exclusion_to_nearest_parent()
+    {
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        viewModel.LoadSelectionRules([Rule("root", @"D:\Work", ProtectionSelectionMode.RecursiveFolder)]);
+
+        viewModel.RemovePathSelection(@"D:\Work\Docs\brief.docx", isDirectory: false);
+
+        var rule = Assert.Single(viewModel.GetSelectionRules());
+        Assert.Equal(Path.GetFullPath(@"D:\Work"), rule.Path);
+        Assert.Contains(rule.ExcludeRegexRules ?? [], regex => regex.Pattern.Contains("Docs") && regex.Pattern.Contains("brief\\.docx"));
+    }
+
+    [Fact]
+    public void Folder_node_indicates_local_scoped_regex_rules()
+    {
+        var node = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        viewModel.LoadSelectionRules(
+            [
+                Rule("work", @"D:\Work", ProtectionSelectionMode.RecursiveFolder) with
+                {
+                    IncludeRegexRules =
+                    [
+                        new ProtectionScopedRegexRule("include-docx", @"\.docx$", ProtectionExclusionTarget.File)
+                    ]
+                }
+            ]);
+
+        viewModel.RefreshTreeIndicators([node]);
+
+        Assert.True(node.HasLocalRegexRules);
+        Assert.Equal("R", node.RegexIndicator);
+    }
+
+    [Fact]
+    public void File_browser_context_commands_launch_selected_paths_through_shell_abstraction()
+    {
+        var shell = new FakeFileBrowserShellLauncher();
+        var folder = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);
+        var viewModel = new FileBrowserViewModel(
+            new FakeFileBrowserFileSystem([], [], [new FileBrowserFileInfo(@"D:\Work\brief.docx", "brief.docx", 10)]),
+            shell);
+        viewModel.LoadSelectionRules([]);
+        viewModel.SelectFolder(folder);
+        viewModel.SelectedFile = Assert.Single(viewModel.Files);
+
+        viewModel.ShowSelectedFolderInExplorerCommand.Execute(null);
+        viewModel.OpenSelectedFileCommand.Execute(null);
+        viewModel.ShowSelectedFileInExplorerCommand.Execute(null);
+
+        Assert.Equal([Path.GetFullPath(@"D:\Work")], shell.ShownFolders);
+        Assert.Equal([Path.GetFullPath(@"D:\Work\brief.docx")], shell.OpenedFiles);
+        Assert.Equal([Path.GetFullPath(@"D:\Work\brief.docx")], shell.SelectedFiles);
+    }
+
+    [Fact]
     public async Task Main_window_save_sends_compiled_file_browser_rules_only_after_save()
     {
         var client = new FakeFluxVaultServiceClient(Status());
@@ -174,6 +269,30 @@ public sealed class FileBrowserViewModelTests
         public IReadOnlyList<FileBrowserFileInfo> GetFiles(string path)
         {
             return files;
+        }
+    }
+
+    private sealed class FakeFileBrowserShellLauncher : IFileBrowserShellLauncher
+    {
+        public List<string> ShownFolders { get; } = [];
+
+        public List<string> OpenedFiles { get; } = [];
+
+        public List<string> SelectedFiles { get; } = [];
+
+        public void ShowFolder(string folderPath)
+        {
+            ShownFolders.Add(Path.GetFullPath(folderPath));
+        }
+
+        public void OpenFile(string filePath)
+        {
+            OpenedFiles.Add(Path.GetFullPath(filePath));
+        }
+
+        public void ShowFileInExplorer(string filePath)
+        {
+            SelectedFiles.Add(Path.GetFullPath(filePath));
         }
     }
 

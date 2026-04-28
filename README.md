@@ -39,6 +39,10 @@ FluxVault now has a developer-usable MVP loop:
   reporting.
 - A three-pane File browser tab for selecting recursive folders, immediate
   folder files, or individual files before saving service configuration.
+- Compact checkbox-style File browser indicators, equal-width scrollable panes,
+  and preserved unsaved selection changes until Save or Discard.
+- Global file/folder exclusion regex rules in Options for generated folders,
+  caches, temporary files, and other full-path patterns.
 - Helpful wrapping tooltips across Options so each retention, cadence, and
   compression setting explains its operational impact without clipping.
 
@@ -85,6 +89,15 @@ immediate files only, and not selected. Individual file selections are compiled
 into service watched-folder rules, and unsaved changes are shown before Save
 applies them to the service.
 
+Open **Options** > **Advanced** to add exclusion regex rules. Exclusion rules
+match full normalised paths and can target files, folders, or both. Folder
+rules prevent recursive scans from descending into matching folders; watcher
+and USN targeted captures skip excluded paths too.
+
+UI/UX redesign directions are tracked in
+[`docs/ui-concepts/mvp-021-ui-concepts.md`](docs/ui-concepts/mvp-021-ui-concepts.md).
+The runtime app keeps the current dashboard until a concept is selected.
+
 Future restore hardening will keep FluxVault history append-only. Restoring an
 older version will create a new version event that records the restored version
 as the fork origin, while newer versions stay available. This is Git-like
@@ -92,7 +105,9 @@ lineage on FluxVault manifests and chunks, not a normal `.git` repository.
 
 Future multi-PC sync will wait for each peer to confirm the same source path or
 choose a per-PC path override before creating, hydrating, or patching a newly
-selected folder or file on that peer.
+selected folder or file on that peer. Sync will also record source version,
+operation, origin device, and applied-version metadata so a remote hydration
+write is not republished forever as a new local change.
 
 Open **Options** to review retention. The MVP defaults keep every version for
 24 hours, keep one version per hour for 30 days, keep one version per day for

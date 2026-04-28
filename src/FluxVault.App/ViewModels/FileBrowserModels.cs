@@ -24,6 +24,14 @@ public sealed record FileBrowserFileInfo(
     string Name,
     long Length);
 
+public enum FileBrowserSelectionVisualState
+{
+    Empty = 0,
+    Checked = 1,
+    Indeterminate = 2,
+    ChildSelected = 3
+}
+
 public sealed partial class FileBrowserFolderNode(
     string path,
     string name,
@@ -49,21 +57,41 @@ public sealed partial class FileBrowserFolderNode(
 
     public ObservableCollection<FileBrowserFolderNode> Children { get; } = [];
 
-    public string SelectionGlyph => SelectionMode switch
+    public FileBrowserSelectionVisualState SelectionVisualState => SelectionMode switch
     {
-        ProtectionSelectionMode.RecursiveFolder => "Recursive",
-        ProtectionSelectionMode.ImmediateFiles => "Files",
-        _ => HasDescendantSelection ? "Child" : "None"
+        ProtectionSelectionMode.RecursiveFolder => FileBrowserSelectionVisualState.Checked,
+        ProtectionSelectionMode.ImmediateFiles => FileBrowserSelectionVisualState.Indeterminate,
+        _ => HasDescendantSelection ? FileBrowserSelectionVisualState.ChildSelected : FileBrowserSelectionVisualState.Empty
+    };
+
+    public string SelectionIndicator => SelectionVisualState switch
+    {
+        FileBrowserSelectionVisualState.Checked => "☑",
+        FileBrowserSelectionVisualState.Indeterminate => "◼",
+        FileBrowserSelectionVisualState.ChildSelected => "◧",
+        _ => "☐"
+    };
+
+    public string SelectionToolTip => SelectionVisualState switch
+    {
+        FileBrowserSelectionVisualState.Checked => "Recursive folder selection. This folder and all descendants are protected.",
+        FileBrowserSelectionVisualState.Indeterminate => "Immediate files only. Files directly inside this folder are protected.",
+        FileBrowserSelectionVisualState.ChildSelected => "A child folder or file below this folder has a manual selection.",
+        _ => "Not selected. Click to cycle this folder through protection modes."
     };
 
     partial void OnSelectionModeChanged(ProtectionSelectionMode? value)
     {
-        OnPropertyChanged(nameof(SelectionGlyph));
+        OnPropertyChanged(nameof(SelectionVisualState));
+        OnPropertyChanged(nameof(SelectionIndicator));
+        OnPropertyChanged(nameof(SelectionToolTip));
     }
 
     partial void OnHasDescendantSelectionChanged(bool value)
     {
-        OnPropertyChanged(nameof(SelectionGlyph));
+        OnPropertyChanged(nameof(SelectionVisualState));
+        OnPropertyChanged(nameof(SelectionIndicator));
+        OnPropertyChanged(nameof(SelectionToolTip));
     }
 }
 

@@ -86,6 +86,26 @@ public sealed class OptionsViewModelTests
     }
 
     [Fact]
+    public async Task Options_can_add_and_save_exclusion_regex_rules()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
+        var viewModel = new OptionsViewModel(client);
+        await viewModel.InitialiseAsync();
+        viewModel.NewExclusionLabel = "Build output";
+        viewModel.NewExclusionPattern = @"\\bin(\\|$)";
+        viewModel.NewExclusionTarget = ProtectionExclusionTarget.Folder;
+
+        viewModel.AddExclusionRuleCommand.Execute(null);
+        await viewModel.SaveAsync();
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        var rule = Assert.Single(saved.ExclusionRules);
+        Assert.Equal("Build output", rule.Label);
+        Assert.Equal(ProtectionExclusionTarget.Folder, rule.Target);
+        Assert.True(rule.IsEnabled);
+    }
+
+    [Fact]
     public async Task Preview_and_run_retention_show_service_results()
     {
         var preview = new RepositoryRetentionPreview(

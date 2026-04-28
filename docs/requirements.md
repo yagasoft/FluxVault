@@ -42,12 +42,20 @@ folder; direct cloud adapters arrive later.
 - File browser tab with three panes: drives/folders, files in the selected
   folder, and pending unsaved selection changes.
 - Folder selection cycles through recursive selected, immediate files only, and
-  not selected.
+  not selected, shown through compact checkbox-style visual indicators.
 - Manual child selections are retained when a parent recursive selection is
   removed, and parents show child-selection indicators.
+- File browser panes share available space equally and provide horizontal and
+  vertical scrolling for long paths and dense folders.
+- Unsaved File browser changes must survive dashboard refresh, app activation,
+  and Options dialog return until the user saves or explicitly discards them.
 - The older watched-folder Browse workflow is removed once the File browser
   becomes the primary selection workflow.
 - Selection changes must not affect the running service until the user saves.
+- Global exclusion regex rules can target files, folders, or both. Rules match
+  full normalised paths and are validated before save.
+- Health/status tiles are displayed in the footer so command buttons and header
+  text remain stable.
 
 ## Planned V1 and sync requirements
 
@@ -58,6 +66,9 @@ folder; direct cloud adapters arrive later.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.
+- Multi-PC sync must prevent recursive re-publication loops by recording source
+  version, operation, origin device, and applied remote-version metadata. Chunk
+  existence checks alone are not enough.
 
 ## Explicit non-goals for v1
 

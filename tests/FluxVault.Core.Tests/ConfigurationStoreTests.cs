@@ -31,6 +31,7 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(CompressionPreference.Zstd, configuration.CodecPolicy.Codec);
         Assert.Equal(CompressionPreference.Lz4, configuration.CodecPolicy.HotFileOverride);
         Assert.Empty(configuration.SelectionRules);
+        Assert.Empty(configuration.ExclusionRules);
     }
 
     [Fact]
@@ -89,6 +90,7 @@ public sealed class ConfigurationStoreTests
         var actual = await store.LoadAsync();
 
         Assert.Empty(actual.SelectionRules);
+        Assert.Empty(actual.ExclusionRules);
     }
 
     [Fact]
@@ -125,6 +127,58 @@ public sealed class ConfigurationStoreTests
 
         var actual = await store.LoadAsync();
         Assert.Equal(expected.SelectionRules, actual.SelectionRules);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_exclusion_rules()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(
+            Path.Combine(workspace.RootPath, "config.json"),
+            workspace.RootPath);
+        var expected = new FluxVaultConfiguration(
+            RepositoryPath: Path.Combine(workspace.RootPath, "repository"),
+            MirrorPath: null,
+            IsEnabled: true,
+            WatchedFolders: [],
+            ExclusionRules:
+            [
+                new ProtectionExclusionRule(
+                    Id: "build",
+                    Pattern: @"\\bin(\\|$)",
+                    Target: ProtectionExclusionTarget.Folder,
+                    IsEnabled: true,
+                    Label: "Build output",
+                    Description: "Skip generated build outputs.")
+            ]);
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+        Assert.Equal(expected.ExclusionRules, actual.ExclusionRules);
+    }
+
+    [Fact]
+    public async Task Save_rejects_invalid_exclusion_regex()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var configuration = new FluxVaultConfiguration(
+            RepositoryPath: workspace.RepositoryPath,
+            MirrorPath: null,
+            IsEnabled: true,
+            WatchedFolders: [],
+            ExclusionRules:
+            [
+                new ProtectionExclusionRule(
+                    Id: "broken",
+                    Pattern: "[",
+                    Target: ProtectionExclusionTarget.Both,
+                    IsEnabled: true)
+            ]);
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => store.SaveAsync(configuration));
+        Assert.Contains("exclusion", error.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

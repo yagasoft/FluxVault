@@ -70,17 +70,25 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         {
             throw new InvalidDataException("Maximum concurrent captures must be at least 1.");
         }
+
+        var exclusionValidation = ProtectionExclusionRuleValidator.Validate(configuration.ExclusionRules);
+        if (!exclusionValidation.IsValid)
+        {
+            throw new InvalidDataException(string.Join(" ", exclusionValidation.Errors));
+        }
     }
 
     private static FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
     {
         var selectionRules = configuration.SelectionRules ?? [];
+        var exclusionRules = configuration.ExclusionRules ?? [];
         return configuration with
         {
             RetentionPolicy = configuration.RetentionPolicy ?? RetentionPolicy.CreateDefault(),
             CaptureCadencePolicy = configuration.CaptureCadencePolicy ?? CaptureCadencePolicy.CreateDefault(),
             CodecPolicy = configuration.CodecPolicy ?? CodecPolicy.CreateDefault(),
             SelectionRules = selectionRules,
+            ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0
                 ? configuration.WatchedFolders
                 : ProtectionSelectionCompiler.Compile(selectionRules)

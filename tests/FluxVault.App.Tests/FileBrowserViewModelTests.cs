@@ -30,6 +30,32 @@ public sealed class FileBrowserViewModelTests
     }
 
     [Fact]
+    public void Folder_selection_exposes_checkbox_style_visual_states()
+    {
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        var root = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);
+        var child = new FileBrowserFolderNode(@"D:\Work\Child", "Child", isAccessible: true, errorMessage: null);
+        root.Children.Add(child);
+        viewModel.LoadSelectionRules([]);
+
+        Assert.Equal(FileBrowserSelectionVisualState.Empty, root.SelectionVisualState);
+
+        viewModel.ToggleFolderSelection(root);
+        Assert.Equal(FileBrowserSelectionVisualState.Checked, root.SelectionVisualState);
+        Assert.Contains("recursive", root.SelectionToolTip, StringComparison.OrdinalIgnoreCase);
+
+        viewModel.ToggleFolderSelection(root);
+        Assert.Equal(FileBrowserSelectionVisualState.Indeterminate, root.SelectionVisualState);
+        Assert.Contains("immediate", root.SelectionToolTip, StringComparison.OrdinalIgnoreCase);
+
+        viewModel.ToggleFolderSelection(root);
+        viewModel.ToggleFolderSelection(child);
+        viewModel.RefreshTreeIndicators([root]);
+        Assert.Equal(FileBrowserSelectionVisualState.ChildSelected, root.SelectionVisualState);
+        Assert.Contains("child", root.SelectionToolTip, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void Manual_child_selection_reappears_when_recursive_parent_is_removed()
     {
         var root = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);

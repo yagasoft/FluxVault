@@ -101,6 +101,12 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="18" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="160" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="260" />
@@ -164,6 +170,41 @@
                             <TextBox Text="{Binding CodecMinimumKb, UpdateSourceTrigger=PropertyChanged}" Width="90" Padding="8" Margin="8,0,0,0"
                                      ToolTip="Chunks smaller than this size are stored without compression." />
                         </StackPanel>
+
+                        <TextBlock Grid.Row="11" Grid.ColumnSpan="2" Text="Path exclusions" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="12" Text="Label / regex pattern" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Optional label and .NET regex matched against full normalised local paths." />
+                        <StackPanel Grid.Row="12" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBox Text="{Binding NewExclusionLabel, UpdateSourceTrigger=PropertyChanged}" Width="120" Padding="8"
+                                     ToolTip="Optional friendly label for this exclusion rule." />
+                            <TextBox Text="{Binding NewExclusionPattern, UpdateSourceTrigger=PropertyChanged}" Width="260" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="Case-insensitive .NET regex. It is matched against full paths, not only file names." />
+                        </StackPanel>
+                        <TextBlock Grid.Row="13" Text="Target / description" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Choose whether this regex excludes files, folders, or both, and optionally describe why." />
+                        <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                            <ComboBox ItemsSource="{Binding ExclusionTargets}" SelectedItem="{Binding NewExclusionTarget}" Width="120"
+                                      ToolTip="Folder exclusions also stop recursive scans from descending into matching folders." />
+                            <TextBox Text="{Binding NewExclusionDescription, UpdateSourceTrigger=PropertyChanged}" Width="268" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="Optional support note explaining why this path pattern is excluded." />
+                        </StackPanel>
+                        <StackPanel Grid.Row="14" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,8">
+                            <Button Content="Add exclusion" Command="{Binding AddExclusionRuleCommand}" Padding="14,8" Margin="0,0,8,0"
+                                    ToolTip="Validate and add this exclusion rule to the pending Options changes." />
+                            <Button Content="Remove selected" Command="{Binding RemoveSelectedExclusionRuleCommand}" Padding="14,8"
+                                    ToolTip="Remove the selected exclusion rule from the pending Options changes." />
+                        </StackPanel>
+                        <DataGrid Grid.Row="15" Grid.ColumnSpan="2"
+                                  ItemsSource="{Binding ExclusionRules}"
+                                  SelectedItem="{Binding SelectedExclusionRule}"
+                                  ToolTip="Configured exclusion regex rules. Save options to apply changes to the service.">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" Width="70" />
+                                <DataGridTextColumn Header="Target" Binding="{Binding Target}" Width="80" />
+                                <DataGridTextColumn Header="Label" Binding="{Binding Label}" Width="120" />
+                                <DataGridTextColumn Header="Pattern" Binding="{Binding Pattern}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Grid>
                 </ScrollViewer>
             </TabItem>

@@ -87,6 +87,60 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Manual_refresh_does_not_overwrite_dirty_file_browser_changes()
+    {
+        var client = new FakeFluxVaultServiceClient(
+            StatusWithSelectionRules([]),
+            StatusWithSelectionRules([]));
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+
+        viewModel.FileBrowser.ReplaceSelectionRule(new ProtectionSelectionRule(
+            "draft",
+            Path.GetFullPath(@"D:\Work\draft.txt"),
+            ProtectionSelectionMode.File,
+            CompressionPreference.Zstd,
+            ResourceProfile.Balanced,
+            IsEnabled: true));
+        await viewModel.RefreshAsync();
+
+        Assert.Single(viewModel.FileBrowser.GetSelectionRules());
+        Assert.Single(viewModel.FileBrowser.PendingChanges);
+    }
+
+    [Fact]
+    public async Task Discard_configuration_changes_reloads_service_configuration()
+    {
+        var client = new FakeFluxVaultServiceClient(
+            StatusWithSelectionRules([]),
+            StatusWithSelectionRules(
+                [
+                    new ProtectionSelectionRule(
+                        "service",
+                        Path.GetFullPath(@"D:\Service"),
+                        ProtectionSelectionMode.RecursiveFolder,
+                        CompressionPreference.Zstd,
+                        ResourceProfile.Balanced,
+                        IsEnabled: true)
+                ]));
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+        viewModel.FileBrowser.ReplaceSelectionRule(new ProtectionSelectionRule(
+            "local",
+            Path.GetFullPath(@"D:\Local"),
+            ProtectionSelectionMode.File,
+            CompressionPreference.Zstd,
+            ResourceProfile.Balanced,
+            IsEnabled: true));
+
+        await viewModel.DiscardConfigurationChangesCommand.ExecuteAsync(null);
+
+        var rule = Assert.Single(viewModel.FileBrowser.GetSelectionRules());
+        Assert.Equal(Path.GetFullPath(@"D:\Service"), rule.Path);
+        Assert.Empty(viewModel.FileBrowser.PendingChanges);
+    }
+
+    [Fact]
     public async Task Service_unavailable_keeps_existing_versions_visible()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
@@ -255,6 +309,18 @@ public sealed class MainWindowViewModelRefreshTests
                 MirrorPath: null,
                 IsEnabled: true,
                 WatchedFolders: [])
+        };
+    }
+
+    private static FluxVaultServiceStatus StatusWithSelectionRules(IReadOnlyList<ProtectionSelectionRule> selectionRules)
+    {
+        return StatusWithVersions() with
+        {
+            Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+            {
+                SelectionRules = selectionRules,
+                WatchedFolders = []
+            }
         };
     }
 

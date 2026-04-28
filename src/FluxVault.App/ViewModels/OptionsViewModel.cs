@@ -1,9 +1,11 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
 
 namespace FluxVault.App.ViewModels;
@@ -78,9 +80,28 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
     [ObservableProperty]
     private string statusText = "Ready";
 
+    [ObservableProperty]
+    private string newExclusionLabel = string.Empty;
+
+    [ObservableProperty]
+    private string newExclusionDescription = string.Empty;
+
+    [ObservableProperty]
+    private string newExclusionPattern = string.Empty;
+
+    [ObservableProperty]
+    private ProtectionExclusionTarget newExclusionTarget = ProtectionExclusionTarget.Both;
+
+    [ObservableProperty]
+    private ProtectionExclusionRule? selectedExclusionRule;
+
     public IReadOnlyList<CodecProfile> CodecProfiles { get; } = Enum.GetValues<CodecProfile>();
 
     public IReadOnlyList<CompressionPreference> Codecs { get; } = Enum.GetValues<CompressionPreference>();
+
+    public IReadOnlyList<ProtectionExclusionTarget> ExclusionTargets { get; } = Enum.GetValues<ProtectionExclusionTarget>();
+
+    public ObservableCollection<ProtectionExclusionRule> ExclusionRules { get; } = [];
 
     public async Task InitialiseAsync(CancellationToken cancellationToken = default)
     {
@@ -95,6 +116,7 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
         ApplyPolicy(currentConfiguration.RetentionPolicy);
         ApplyCadence(currentConfiguration.CaptureCadencePolicy);
         ApplyCodec(currentConfiguration.CodecPolicy);
+        ApplyExclusions(currentConfiguration.ExclusionRules ?? []);
         StatusText = "Options loaded.";
     }
 
@@ -115,7 +137,8 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
         {
             RetentionPolicy = BuildPolicy(),
             CaptureCadencePolicy = BuildCadence(),
-            CodecPolicy = BuildCodec()
+            CodecPolicy = BuildCodec(),
+            ExclusionRules = ExclusionRules.ToArray()
         };
         var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(updated), cancellationToken)
             .ConfigureAwait(true);
@@ -154,6 +177,44 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
         }
 
         StatusText = FormatResult(response.RetentionResult);
+    }
+
+    [RelayCommand]
+    public void AddExclusionRule()
+    {
+        var rule = new ProtectionExclusionRule(
+            Id: $"exclude-{Guid.NewGuid():N}",
+            Pattern: NewExclusionPattern.Trim(),
+            Target: NewExclusionTarget,
+            IsEnabled: true,
+            Label: string.IsNullOrWhiteSpace(NewExclusionLabel) ? null : NewExclusionLabel.Trim(),
+            Description: string.IsNullOrWhiteSpace(NewExclusionDescription) ? null : NewExclusionDescription.Trim());
+        var validation = ProtectionExclusionRuleValidator.Validate([rule]);
+        if (!validation.IsValid)
+        {
+            StatusText = string.Join(" ", validation.Errors);
+            return;
+        }
+
+        ExclusionRules.Add(rule);
+        NewExclusionLabel = string.Empty;
+        NewExclusionDescription = string.Empty;
+        NewExclusionPattern = string.Empty;
+        NewExclusionTarget = ProtectionExclusionTarget.Both;
+        StatusText = "Exclusion rule added. Save options to apply it.";
+    }
+
+    [RelayCommand]
+    public void RemoveSelectedExclusionRule()
+    {
+        if (SelectedExclusionRule is null)
+        {
+            return;
+        }
+
+        ExclusionRules.Remove(SelectedExclusionRule);
+        SelectedExclusionRule = null;
+        StatusText = "Exclusion rule removed. Save options to apply it.";
     }
 
     private void ApplyPolicy(RetentionPolicy policy)
@@ -224,6 +285,15 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
             MinimumBytes = Math.Max(0, CodecMinimumKb) * 1024L,
             HotFileOverride = HotFileCodec
         };
+    }
+
+    private void ApplyExclusions(IReadOnlyList<ProtectionExclusionRule> rules)
+    {
+        ExclusionRules.Clear();
+        foreach (var rule in rules)
+        {
+            ExclusionRules.Add(rule);
+        }
     }
 
     private static string FormatPreview(RepositoryRetentionPreview preview)

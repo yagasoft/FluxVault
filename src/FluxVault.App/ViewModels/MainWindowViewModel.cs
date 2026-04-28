@@ -24,6 +24,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private bool hasLocalConfigurationChanges;
     private RetentionPolicy currentRetentionPolicy = RetentionPolicy.CreateDefault();
     private CaptureCadencePolicy currentCaptureCadencePolicy = CaptureCadencePolicy.CreateDefault();
+    private CodecPolicy currentCodecPolicy = CodecPolicy.CreateDefault();
+    private IReadOnlyList<ProtectionExclusionRule> currentExclusionRules = [];
 
     [ObservableProperty]
     private string serviceStatus = "Service connection: checking...";
@@ -149,15 +151,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    private async Task RefreshAsync(bool isAutomatic, CancellationToken cancellationToken = default)
+    private async Task RefreshAsync(
+        bool isAutomatic,
+        CancellationToken cancellationToken = default,
+        bool forceConfigurationReload = false)
     {
         try
         {
-            if (isAutomatic && hasLocalConfigurationChanges)
-            {
-                return;
-            }
-
             if (!await refreshGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
             {
                 return;
@@ -172,7 +172,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     return;
                 }
 
-                ApplyStatus(response.Status);
+                ApplyStatus(response.Status, preserveLocalConfiguration: hasLocalConfigurationChanges && !forceConfigurationReload);
             }
             finally
             {
@@ -219,6 +219,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
             hasLocalConfigurationChanges = false;
             await RefreshAsync().ConfigureAwait(true);
         }
+    }
+
+    [RelayCommand]
+    private async Task DiscardConfigurationChangesAsync()
+    {
+        hasLocalConfigurationChanges = false;
+        await RefreshAsync(isAutomatic: false, forceConfigurationReload: true).ConfigureAwait(true);
     }
 
     private void MarkStatusApplied()
@@ -338,23 +345,28 @@ public sealed partial class MainWindowViewModel : ObservableObject
             : $"Diagnostics export failed: {response.ErrorMessage}";
     }
 
-    private void ApplyStatus(FluxVaultServiceStatus status)
+    private void ApplyStatus(FluxVaultServiceStatus status, bool preserveLocalConfiguration)
     {
         var selectedVersionId = SelectedVersion?.VersionId;
         isApplyingStatus = true;
         try
         {
-            RepositoryPath = status.Configuration.RepositoryPath;
-            MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
-            currentRetentionPolicy = status.Configuration.RetentionPolicy;
-            currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
-            var selectionRules = status.Configuration.SelectionRules;
-            FileBrowser.LoadSelectionRules(selectionRules is { Count: > 0 }
-                ? selectionRules
-                : DeriveSelectionRules(status.Configuration.WatchedFolders));
-            if (FileBrowser.Roots.Count == 0)
+            if (!preserveLocalConfiguration)
             {
-                FileBrowser.LoadRoots();
+                RepositoryPath = status.Configuration.RepositoryPath;
+                MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
+                currentRetentionPolicy = status.Configuration.RetentionPolicy;
+                currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
+                currentCodecPolicy = status.Configuration.CodecPolicy;
+                currentExclusionRules = status.Configuration.ExclusionRules ?? [];
+                var selectionRules = status.Configuration.SelectionRules;
+                FileBrowser.LoadSelectionRules(selectionRules is { Count: > 0 }
+                    ? selectionRules
+                    : DeriveSelectionRules(status.Configuration.WatchedFolders));
+                if (FileBrowser.Roots.Count == 0)
+                {
+                    FileBrowser.LoadRoots();
+                }
             }
 
             var visibleStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}. Last refreshed {DateTime.Now:HH:mm:ss}";
@@ -407,7 +419,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     captureStatus.BlockedReason ?? captureStatus.DelayReason ?? captureStatus.Consistency?.ToString() ?? string.Empty));
             }
 
-            MarkStatusApplied();
+            if (!preserveLocalConfiguration)
+            {
+                MarkStatusApplied();
+            }
         }
         finally
         {
@@ -426,7 +441,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
             WatchedFolders: watchedFolders,
             RetentionPolicy: currentRetentionPolicy,
             CaptureCadencePolicy: currentCaptureCadencePolicy,
-            SelectionRules: selectionRules);
+            CodecPolicy: currentCodecPolicy,
+            SelectionRules: selectionRules,
+            ExclusionRules: currentExclusionRules);
     }
 
     private static IReadOnlyList<ProtectionSelectionRule> DeriveSelectionRules(IReadOnlyList<WatchedFolderConfiguration> watchedFolders)

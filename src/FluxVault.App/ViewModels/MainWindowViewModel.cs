@@ -7,6 +7,7 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
 using WinForms = System.Windows.Forms;
 
@@ -69,9 +70,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
     }
 
     public MainWindowViewModel(IFluxVaultServiceClient client, TimeSpan autoRefreshInterval)
+        : this(client, autoRefreshInterval, new FileBrowserViewModel(new WindowsFileBrowserFileSystem()))
+    {
+    }
+
+    public MainWindowViewModel(
+        IFluxVaultServiceClient client,
+        TimeSpan autoRefreshInterval,
+        FileBrowserViewModel fileBrowser)
     {
         this.client = client;
         this.autoRefreshInterval = autoRefreshInterval;
+        FileBrowser = fileBrowser;
+        FileBrowser.SelectionRulesChanged += (_, _) => MarkConfigurationDirty();
     }
 
     public string CaptureStrategy { get; } =
@@ -86,6 +97,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public ObservableCollection<VersionRow> RecentVersions { get; } = [];
 
     public ObservableCollection<CaptureStatusRow> CaptureStatuses { get; } = [];
+
+    public FileBrowserViewModel FileBrowser { get; }
 
     public IFluxVaultServiceClient ServiceClient => client;
 
@@ -335,6 +348,15 @@ public sealed partial class MainWindowViewModel : ObservableObject
             MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
             currentRetentionPolicy = status.Configuration.RetentionPolicy;
             currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
+            var selectionRules = status.Configuration.SelectionRules;
+            FileBrowser.LoadSelectionRules(selectionRules is { Count: > 0 }
+                ? selectionRules
+                : DeriveSelectionRules(status.Configuration.WatchedFolders));
+            if (FileBrowser.Roots.Count == 0)
+            {
+                FileBrowser.LoadRoots();
+            }
+
             var visibleStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}. Last refreshed {DateTime.Now:HH:mm:ss}";
             SetServiceStatus(visibleStatus, BuildServiceStatusToolTip(visibleStatus, status.DurableChange));
             ApplyDurableChangeHealth(status.DurableChange);
@@ -395,23 +417,54 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private FluxVaultConfiguration BuildConfiguration()
     {
+        var selectionRules = FileBrowser.GetSelectionRules();
+        var watchedFolders = ProtectionSelectionCompiler.Compile(selectionRules);
         return new FluxVaultConfiguration(
             RepositoryPath: RepositoryPath,
             MirrorPath: string.IsNullOrWhiteSpace(MirrorPath) ? null : MirrorPath,
             IsEnabled: true,
-            WatchedFolders: WatchedFolders
-                .Select(folder => new WatchedFolderConfiguration(
+            WatchedFolders: watchedFolders,
+            RetentionPolicy: currentRetentionPolicy,
+            CaptureCadencePolicy: currentCaptureCadencePolicy,
+            SelectionRules: selectionRules);
+    }
+
+    private static IReadOnlyList<ProtectionSelectionRule> DeriveSelectionRules(IReadOnlyList<WatchedFolderConfiguration> watchedFolders)
+    {
+        var rules = new List<ProtectionSelectionRule>();
+        foreach (var folder in watchedFolders)
+        {
+            if (folder.IncludePatterns.Count == 1 && folder.IncludePatterns[0] == "*")
+            {
+                rules.Add(new ProtectionSelectionRule(
                     folder.Id,
                     folder.Path,
-                    Recursive: true,
-                    IncludePatterns: ["*"],
-                    ExcludePatterns: ["~$*"],
+                    folder.Recursive ? ProtectionSelectionMode.RecursiveFolder : ProtectionSelectionMode.ImmediateFiles,
                     folder.Compression,
                     folder.ResourceProfile,
-                    IsEnabled: true))
-                .ToArray(),
-            RetentionPolicy: currentRetentionPolicy,
-            CaptureCadencePolicy: currentCaptureCadencePolicy);
+                    folder.IsEnabled));
+                continue;
+            }
+
+            foreach (var pattern in folder.IncludePatterns)
+            {
+                if (pattern.Contains('*') || pattern.Contains('?'))
+                {
+                    continue;
+                }
+
+                var filePath = Path.Combine(folder.Path, pattern);
+                rules.Add(new ProtectionSelectionRule(
+                    $"{folder.Id}-{pattern}",
+                    filePath,
+                    ProtectionSelectionMode.File,
+                    folder.Compression,
+                    folder.ResourceProfile,
+                    folder.IsEnabled));
+            }
+        }
+
+        return rules;
     }
 
     private static string BuildCaptureHealth(IReadOnlyList<CaptureRuntimeStatus> statuses)

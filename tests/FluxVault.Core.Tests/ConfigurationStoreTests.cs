@@ -30,6 +30,7 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(CodecProfile.Adaptive, configuration.CodecPolicy.Profile);
         Assert.Equal(CompressionPreference.Zstd, configuration.CodecPolicy.Codec);
         Assert.Equal(CompressionPreference.Lz4, configuration.CodecPolicy.HotFileOverride);
+        Assert.Empty(configuration.SelectionRules);
     }
 
     [Fact]
@@ -66,6 +67,64 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(ResourceProfile.Fast, watchedFolder.ResourceProfile);
         Assert.Equal(["*.txt", "*.docx"], watchedFolder.IncludePatterns);
         Assert.True(actual.RetentionPolicy.IsEnabled);
+    }
+
+    [Fact]
+    public async Task Load_old_configuration_without_selection_rules_defaults_to_empty_rules()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var configPath = Path.Combine(workspace.RootPath, "config.json");
+        await File.WriteAllTextAsync(
+            configPath,
+            $$"""
+            {
+              "repositoryPath": "{{Path.Combine(workspace.RootPath, "repository").Replace("\\", "\\\\")}}",
+              "mirrorPath": null,
+              "isEnabled": true,
+              "watchedFolders": []
+            }
+            """);
+        var store = new FileFluxVaultConfigurationStore(configPath, workspace.RootPath);
+
+        var actual = await store.LoadAsync();
+
+        Assert.Empty(actual.SelectionRules);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_file_browser_selection_rules()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(
+            Path.Combine(workspace.RootPath, "config.json"),
+            workspace.RootPath);
+        var expected = new FluxVaultConfiguration(
+            RepositoryPath: Path.Combine(workspace.RootPath, "repository"),
+            MirrorPath: null,
+            IsEnabled: true,
+            WatchedFolders: [],
+            SelectionRules:
+            [
+                new ProtectionSelectionRule(
+                    Id: "root",
+                    Path: Path.Combine(workspace.RootPath, "docs"),
+                    Mode: ProtectionSelectionMode.RecursiveFolder,
+                    Compression: CompressionPreference.Zstd,
+                    ResourceProfile: ResourceProfile.Balanced,
+                    IsEnabled: true),
+                new ProtectionSelectionRule(
+                    Id: "file",
+                    Path: Path.Combine(workspace.RootPath, "docs", "draft.txt"),
+                    Mode: ProtectionSelectionMode.File,
+                    Compression: CompressionPreference.Lz4,
+                    ResourceProfile: ResourceProfile.Fast,
+                    IsEnabled: true)
+            ]);
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+        Assert.Equal(expected.SelectionRules, actual.SelectionRules);
     }
 
     [Fact]

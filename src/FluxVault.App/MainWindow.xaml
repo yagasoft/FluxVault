@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:FluxVault.App.ViewModels"
         mc:Ignorable="d"
         Title="FluxVault" MinHeight="680" MinWidth="1080" Height="760" Width="1220"
         Background="#F4F6F8"
@@ -103,7 +104,6 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="12" />
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -118,21 +118,83 @@
                              Margin="0,0,8,0" Padding="8" />
                     <Button Grid.Row="1" Grid.Column="1" Content="Mirror" Command="{Binding BrowseMirrorCommand}" Margin="0" />
 
-                    <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,0,0,10">
-                        <TextBox Text="{Binding NewWatchedFolderPath, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="520" Padding="8" Margin="0,0,8,0" />
-                        <Button Content="Browse" Command="{Binding BrowseWatchedFolderCommand}" />
-                        <Button Content="Add" Command="{Binding AddWatchedFolderCommand}" />
-                        <Button Content="Remove" Command="{Binding RemoveWatchedFolderCommand}" />
-                        <Button Content="Save" Command="{Binding SaveConfigurationCommand}" />
-                    </StackPanel>
-
-                    <DataGrid Grid.Row="4" Grid.ColumnSpan="2" ItemsSource="{Binding WatchedFolders}" SelectedItem="{Binding SelectedWatchedFolder}">
+                    <DataGrid Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding WatchedFolders}" SelectedItem="{Binding SelectedWatchedFolder}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Folder" Binding="{Binding Path}" Width="*" />
                             <DataGridTextColumn Header="Profile" Binding="{Binding ResourceProfile}" Width="120" />
                             <DataGridTextColumn Header="Compression" Binding="{Binding Compression}" Width="130" />
                             <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="300" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="File browser">
+                <Grid Margin="18" Name="FileBrowserPaneGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1.4*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,0,0,12">
+                        <Button Content="Refresh drives"
+                                Command="{Binding FileBrowser.RefreshRootsCommand}"
+                                ToolTip="Reload drives and top-level folders in the file browser." />
+                        <Button Content="Cycle folder selection"
+                                Command="{Binding FileBrowser.ToggleSelectedFolderCommand}"
+                                ToolTip="Cycle the selected folder between recursive, immediate files only, and not selected." />
+                        <Button Content="Save selections"
+                                Command="{Binding SaveConfigurationCommand}"
+                                ToolTip="Save pending File browser selections to the service configuration." />
+                    </StackPanel>
+
+                    <Border Grid.Row="1" Grid.Column="0" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Margin="0,0,10,0">
+                        <TreeView ItemsSource="{Binding FileBrowser.Roots}"
+                                  SelectedItemChanged="FileBrowserTree_SelectedItemChanged"
+                                  ToolTip="Browse drives and folders. Use the selection button on each folder to cycle protection mode.">
+                            <TreeView.Resources>
+                                <HierarchicalDataTemplate DataType="{x:Type vm:FileBrowserFolderNode}" ItemsSource="{Binding Children}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="{Binding SelectionGlyph}"
+                                                Width="72"
+                                                Padding="4,2"
+                                                Margin="0,0,6,0"
+                                                Click="FolderSelection_Click"
+                                                ToolTip="Cycle this folder between recursive, immediate files only, and not selected." />
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                                <Style TargetType="TreeViewItem">
+                                    <EventSetter Event="Expanded" Handler="FileBrowserFolder_Expanded" />
+                                </Style>
+                            </TreeView.Resources>
+                        </TreeView>
+                    </Border>
+
+                    <DataGrid Grid.Row="1"
+                              Grid.Column="1"
+                              ItemsSource="{Binding FileBrowser.Files}"
+                              ToolTip="Files in the selected folder. Check a file to protect only that file.">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="90" />
+                            <DataGridTextColumn Header="File" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="Bytes" Binding="{Binding Length}" Width="100" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <DataGrid Grid.Row="1"
+                              Grid.Column="2"
+                              ItemsSource="{Binding FileBrowser.PendingChanges}"
+                              ToolTip="Unsaved File browser selection changes. Press Save selections to apply them.">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Change" Binding="{Binding Change}" Width="90" />
+                            <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="*" />
+                            <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="120" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

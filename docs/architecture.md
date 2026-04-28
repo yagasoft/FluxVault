@@ -80,18 +80,24 @@ WinForms cursor and monitor coordinates are converted to WPF device-independent
 units before the pane is clamped inside the visible work area; on very small
 work areas the pane height is reduced instead of opening behind the taskbar.
 
-## Planned file selection UX
+## File selection UX
 
-The planned File browser replaces the older Protection-tab browse/add workflow.
-It is a configuration editing surface, not an immediate service mutation. The
-left pane shows drives and folders, the middle pane shows files in the selected
-folder, and the right pane summarises unsaved selections and unselections.
+The File browser replaces the older Protection-tab browse/add workflow. It is a
+configuration editing surface, not an immediate service mutation. The left pane
+shows drives and folders, the middle pane shows files in the selected folder,
+and the right pane summarises unsaved selections and unselections.
 
 Folder selection is tri-state: recursive selected, immediate files only, and
 not selected. Manual child selections are retained below a parent so they can be
 restored when a recursive parent selection is removed. Parent folders show an
 indicator when descendants have manual selections. The service reloads watched
 selection rules only after the user saves the browser changes.
+
+FluxVault persists browser selections as `ProtectionSelectionRule` records and
+compiles them into existing `WatchedFolderConfiguration` entries before the
+service captures files. Recursive folders compile to recursive watched folders,
+immediate-files selections compile to non-recursive watched folders, and
+individual file selections compile to parent-folder include patterns.
 
 ## Non-interference contract
 

@@ -15,8 +15,8 @@ a tray app, and a per-machine Windows service.
   and off modes for explicit profiles.
 - Local immutable repository plus atomic writes into a user-selected cloud sync folder.
 - Basic restore to original or alternate paths.
-- Planned File browser selection UX with drives, folders, files, and a pending
-  change summary before Save.
+- File browser selection UX with drives, folders, files, and a pending change
+  summary before Save.
 - Local diagnostics only; no hidden telemetry.
 
 ## Repository status
@@ -37,6 +37,8 @@ FluxVault now has a developer-usable MVP loop:
 - A FluxVault app icon, left-navigation dashboard, activity view, tray activity
   pane that stays inside the active monitor working area, and blocked-file
   reporting.
+- A three-pane File browser tab for selecting recursive folders, immediate
+  folder files, or individual files before saving service configuration.
 - Helpful wrapping tooltips across Options so each retention, cadence, and
   compression setting explains its operational impact without clipping.
 
@@ -72,14 +74,16 @@ dotnet test
 .\artifacts\publish\app\FluxVault.App.exe
 ```
 
-In the dashboard, choose a repository folder, optionally choose a cloud-sync
-mirror folder, add a watched folder, save the configuration, run a backup, then
-restore a selected version to an alternate path.
+In the dashboard, choose a repository folder and optionally choose a cloud-sync
+mirror folder. Use **File browser** to select protected folders or files, review
+the pending changes pane, save the configuration, run a backup, then restore a
+selected version to an alternate path.
 
-The planned File browser will replace the older watched-folder browse/add flow
-with a three-pane selector. Folder selection will cycle between recursive
-selected, immediate files only, and not selected; unsaved changes will be shown
-before Save applies them to the service.
+The File browser replaces the older watched-folder browse/add flow with a
+three-pane selector. Folder selection cycles between recursive selected,
+immediate files only, and not selected. Individual file selections are compiled
+into service watched-folder rules, and unsaved changes are shown before Save
+applies them to the service.
 
 Future restore hardening will keep FluxVault history append-only. Restoring an
 older version will create a new version event that records the restored version

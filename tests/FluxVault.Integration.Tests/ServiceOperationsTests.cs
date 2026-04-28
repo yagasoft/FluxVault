@@ -209,6 +209,81 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task File_browser_recursive_folder_selection_backs_up_nested_files()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        var nested = Path.Combine(watched, "nested");
+        Directory.CreateDirectory(nested);
+        var source = Path.Combine(nested, "draft.txt");
+        await File.WriteAllTextAsync(source, "nested");
+        var configuration = NewSelectionConfiguration(
+            workspace,
+            [
+                SelectionRule("docs", watched, ProtectionSelectionMode.RecursiveFolder)
+            ]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        Assert.True(backup.Success);
+        Assert.Equal(source, version.SourcePath);
+    }
+
+    [Fact]
+    public async Task File_browser_immediate_folder_selection_excludes_nested_files()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        var nested = Path.Combine(watched, "nested");
+        Directory.CreateDirectory(nested);
+        var top = Path.Combine(watched, "top.txt");
+        var child = Path.Combine(nested, "child.txt");
+        await File.WriteAllTextAsync(top, "top");
+        await File.WriteAllTextAsync(child, "child");
+        var configuration = NewSelectionConfiguration(
+            workspace,
+            [
+                SelectionRule("docs", watched, ProtectionSelectionMode.ImmediateFiles)
+            ]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        Assert.True(backup.Success);
+        Assert.Equal(top, version.SourcePath);
+    }
+
+    [Fact]
+    public async Task File_browser_selected_file_rule_backs_up_only_that_file()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var selected = Path.Combine(watched, "selected.txt");
+        var ignored = Path.Combine(watched, "ignored.txt");
+        await File.WriteAllTextAsync(selected, "selected");
+        await File.WriteAllTextAsync(ignored, "ignored");
+        var configuration = NewSelectionConfiguration(
+            workspace,
+            [
+                SelectionRule("selected", selected, ProtectionSelectionMode.File)
+            ]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        Assert.True(backup.Success);
+        Assert.Equal(selected, version.SourcePath);
+    }
+
+    [Fact]
     public async Task Export_diagnostics_includes_durable_change_details()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -265,6 +340,32 @@ public sealed class ServiceOperationsTests
                     ResourceProfile: ResourceProfile.Fast,
                     IsEnabled: true)
             ]);
+    }
+
+    private static FluxVaultConfiguration NewSelectionConfiguration(
+        TemporaryWorkspace workspace,
+        IReadOnlyList<ProtectionSelectionRule> selectionRules)
+    {
+        return new FluxVaultConfiguration(
+            RepositoryPath: workspace.RepositoryPath,
+            MirrorPath: null,
+            IsEnabled: true,
+            WatchedFolders: [],
+            SelectionRules: selectionRules);
+    }
+
+    private static ProtectionSelectionRule SelectionRule(
+        string id,
+        string path,
+        ProtectionSelectionMode mode)
+    {
+        return new ProtectionSelectionRule(
+            id,
+            path,
+            mode,
+            CompressionPreference.Zstd,
+            ResourceProfile.Fast,
+            IsEnabled: true);
     }
 
     private static RetentionPolicy ImmediatePrunePolicy()

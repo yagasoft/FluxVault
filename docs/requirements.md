@@ -39,9 +39,6 @@ folder; direct cloud adapters arrive later.
   of only saying unavailable.
 - Developer command-line harness for backing up, listing, inspecting, and
   restoring normal readable files without claiming VSS or USN consistency.
-
-## Planned MVP+ requirements
-
 - File browser tab with three panes: drives/folders, files in the selected
   folder, and pending unsaved selection changes.
 - Folder selection cycles through recursive selected, immediate files only, and

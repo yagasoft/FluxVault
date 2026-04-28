@@ -400,6 +400,164 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Contains("SqlServerWriter", row.Detail);
     }
 
+    [Fact]
+    public async Task Restore_sends_ipc_only_after_destination_selection()
+    {
+        using var workspace = TempFolder.Create();
+        var destination = Path.Combine(workspace.Path, "restored.txt");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
+        var picker = new FakeRestoreDestinationPicker(destination);
+        var confirmation = new FakeRestoreOverwriteConfirmation(confirmOverwrite: true);
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            picker,
+            confirmation);
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+
+        await viewModel.RestoreSelectedCommand.ExecuteAsync(null);
+
+        var request = Assert.Single(client.RestoreRequests);
+        Assert.Equal("v1", request.VersionId);
+        Assert.Equal(destination, request.OutputPath);
+        Assert.Equal(1, picker.PickCount);
+        Assert.Equal(0, confirmation.ConfirmCount);
+        Assert.Contains("restored v1", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Restore_cancelled_destination_does_not_send_ipc_and_preserves_selection()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
+        var picker = new FakeRestoreDestinationPicker((string?)null);
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            picker,
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+
+        await viewModel.RestoreSelectedCommand.ExecuteAsync(null);
+
+        Assert.Empty(client.RestoreRequests);
+        Assert.NotNull(viewModel.SelectedVersion);
+        Assert.Contains("cancelled", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Existing_restore_destination_requires_overwrite_confirmation()
+    {
+        using var workspace = TempFolder.Create();
+        var destination = Path.Combine(workspace.Path, "restored.txt");
+        await File.WriteAllTextAsync(destination, "existing");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
+        var confirmation = new FakeRestoreOverwriteConfirmation(confirmOverwrite: true);
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker(destination),
+            confirmation);
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+
+        await viewModel.RestoreSelectedCommand.ExecuteAsync(null);
+
+        Assert.Single(client.RestoreRequests);
+        Assert.Equal(1, confirmation.ConfirmCount);
+        Assert.Equal(destination, confirmation.LastDestinationPath);
+    }
+
+    [Fact]
+    public async Task Overwrite_denial_cancels_restore_without_ipc()
+    {
+        using var workspace = TempFolder.Create();
+        var destination = Path.Combine(workspace.Path, "restored.txt");
+        await File.WriteAllTextAsync(destination, "existing");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker(destination),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: false));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+
+        await viewModel.RestoreSelectedCommand.ExecuteAsync(null);
+
+        Assert.Empty(client.RestoreRequests);
+        Assert.NotNull(viewModel.SelectedVersion);
+        Assert.Contains("overwrite denied", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Restore_ipc_failure_shows_safe_failure_status_and_preserves_selection()
+    {
+        using var workspace = TempFolder.Create();
+        var destination = Path.Combine(workspace.Path, "restored.txt");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"))
+        {
+            RestoreResponse = FluxVaultIpcResponse.Failure("Destination is locked or access is denied.")
+        };
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker(destination),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+
+        await viewModel.RestoreSelectedCommand.ExecuteAsync(null);
+
+        Assert.NotNull(viewModel.SelectedVersion);
+        Assert.Contains("restore failed", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("access is denied", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Restore_ipc_exception_does_not_crash_dashboard()
+    {
+        using var workspace = TempFolder.Create();
+        var destination = Path.Combine(workspace.Path, "restored.txt");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
+        client.ThrowOnNextRestore(new IOException("Named pipe closed."));
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker(destination),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+
+        await viewModel.RestoreSelectedCommand.ExecuteAsync(null);
+
+        Assert.NotNull(viewModel.SelectedVersion);
+        Assert.Contains("restore failed", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Named pipe closed", viewModel.ServiceStatus);
+    }
+
+    [Fact]
+    public async Task Restore_path_request_selects_matching_version_as_restore_hint()
+    {
+        var hintedPath = Path.GetFullPath(@"D:\Work\hinted.txt");
+        var otherPath = Path.GetFullPath(@"D:\Work\other.txt");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersionSources(("v1", otherPath), ("v2", hintedPath)));
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker((string?)null),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
+
+        viewModel.ApplyRestorePathRequest(hintedPath);
+        await viewModel.RefreshAsync();
+
+        Assert.Equal(hintedPath, viewModel.RestoreHintPath);
+        Assert.NotNull(viewModel.SelectedVersion);
+        Assert.Equal("v2", viewModel.SelectedVersion.VersionId);
+        Assert.Contains("restore request", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static FluxVaultServiceStatus StatusWithVersions(params string[] versionIds)
     {
         var configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault");
@@ -413,6 +571,26 @@ public sealed class MainWindowViewModelRefreshTests
                 .Select(id => new RepositoryVersionSummary(
                     id,
                     @"D:\Work\file.txt",
+                    DateTimeOffset.UtcNow,
+                    CaptureConsistency.BestEffort,
+                    128,
+                    1))
+                .ToArray());
+    }
+
+    private static FluxVaultServiceStatus StatusWithVersionSources(params (string VersionId, string SourcePath)[] versions)
+    {
+        var configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault");
+        return new FluxVaultServiceStatus(
+            IsServiceRunning: true,
+            Configuration: configuration,
+            LastMessage: "Captured 1 file(s).",
+            LastCaptureUtc: DateTimeOffset.UtcNow,
+            WatchedFolders: [],
+            RecentVersions: versions
+                .Select(version => new RepositoryVersionSummary(
+                    version.VersionId,
+                    version.SourcePath,
                     DateTimeOffset.UtcNow,
                     CaptureConsistency.BestEffort,
                     128,
@@ -467,8 +645,13 @@ public sealed class MainWindowViewModelRefreshTests
     {
         private readonly Queue<FluxVaultServiceStatus> statuses = new(statuses);
         private Exception? nextException;
+        private Exception? nextRestoreException;
 
         public List<FluxVaultIpcCommand> Commands { get; } = [];
+
+        public List<(string VersionId, string OutputPath)> RestoreRequests { get; } = [];
+
+        public FluxVaultIpcResponse RestoreResponse { get; init; } = FluxVaultIpcResponse.Ok();
 
         public int GetStatusCount => Commands.Count(command => command == FluxVaultIpcCommand.GetStatus);
 
@@ -482,6 +665,21 @@ public sealed class MainWindowViewModelRefreshTests
                 throw exception;
             }
 
+            if (request.Command == FluxVaultIpcCommand.RestoreVersion)
+            {
+                if (nextRestoreException is not null)
+                {
+                    var exception = nextRestoreException;
+                    nextRestoreException = null;
+                    throw exception;
+                }
+
+                RestoreRequests.Add((
+                    request.VersionId ?? throw new InvalidOperationException("Missing version id."),
+                    request.OutputPath ?? throw new InvalidOperationException("Missing output path.")));
+                return Task.FromResult(RestoreResponse);
+            }
+
             var status = statuses.Count > 1 ? statuses.Dequeue() : statuses.Peek();
             return Task.FromResult(FluxVaultIpcResponse.WithStatus(status));
         }
@@ -489,6 +687,11 @@ public sealed class MainWindowViewModelRefreshTests
         public void ThrowOnNextRequest(Exception exception)
         {
             nextException = exception;
+        }
+
+        public void ThrowOnNextRestore(Exception exception)
+        {
+            nextRestoreException = exception;
         }
     }
 
@@ -560,6 +763,61 @@ public sealed class MainWindowViewModelRefreshTests
         public IReadOnlyList<FileBrowserFileInfo> GetFiles(string path)
         {
             return [];
+        }
+    }
+
+    private sealed class FakeRestoreDestinationPicker(params string?[] destinations) : IRestoreDestinationPicker
+    {
+        private readonly Queue<string?> destinations = new(destinations);
+
+        public int PickCount { get; private set; }
+
+        public VersionRow? LastVersion { get; private set; }
+
+        public string? PickDestination(VersionRow version)
+        {
+            PickCount++;
+            LastVersion = version;
+            return destinations.Count > 1 ? destinations.Dequeue() : destinations.Peek();
+        }
+    }
+
+    private sealed class FakeRestoreOverwriteConfirmation(bool confirmOverwrite) : IRestoreOverwriteConfirmation
+    {
+        public int ConfirmCount { get; private set; }
+
+        public string? LastDestinationPath { get; private set; }
+
+        public bool ConfirmOverwrite(string destinationPath)
+        {
+            ConfirmCount++;
+            LastDestinationPath = destinationPath;
+            return confirmOverwrite;
+        }
+    }
+
+    private sealed class TempFolder : IDisposable
+    {
+        private TempFolder(string path)
+        {
+            Path = path;
+        }
+
+        public string Path { get; }
+
+        public static TempFolder Create()
+        {
+            var path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"FluxVault.App.Tests.{Guid.NewGuid():N}");
+            Directory.CreateDirectory(path);
+            return new TempFolder(path);
+        }
+
+        public void Dispose()
+        {
+            if (Directory.Exists(Path))
+            {
+                Directory.Delete(Path, recursive: true);
+            }
         }
     }
 }

@@ -18,6 +18,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
 {
     private readonly IFluxVaultServiceClient client;
     private readonly IFluxVaultWindowsServiceController windowsServiceController;
+    private readonly IRestoreDestinationPicker restoreDestinationPicker;
+    private readonly IRestoreOverwriteConfirmation restoreOverwriteConfirmation;
     private readonly TimeSpan autoRefreshInterval;
     private readonly SemaphoreSlim refreshGate = new(1, 1);
     private CancellationTokenSource? autoRefreshCancellation;
@@ -70,6 +72,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private VersionRow? selectedVersion;
 
     [ObservableProperty]
+    private string restoreHintPath = string.Empty;
+
+    [ObservableProperty]
     private string diagnosticsText = "Diagnostics are local-only. Use Export diagnostics to write a JSON bundle.";
 
     [ObservableProperty]
@@ -92,7 +97,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new NamedPipeFluxVaultClient(),
             TimeSpan.FromSeconds(5),
             new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
-            new WindowsFluxVaultServiceController())
+            new WindowsFluxVaultServiceController(),
+            new SaveFileRestoreDestinationPicker(),
+            new MessageBoxRestoreOverwriteConfirmation())
     {
     }
 
@@ -101,7 +108,24 @@ public sealed partial class MainWindowViewModel : ObservableObject
             client,
             autoRefreshInterval,
             new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
-            new AssumedRunningWindowsServiceController())
+            new AssumedRunningWindowsServiceController(),
+            new SaveFileRestoreDestinationPicker(),
+            new MessageBoxRestoreOverwriteConfirmation())
+    {
+    }
+
+    public MainWindowViewModel(
+        IFluxVaultServiceClient client,
+        TimeSpan autoRefreshInterval,
+        IRestoreDestinationPicker restoreDestinationPicker,
+        IRestoreOverwriteConfirmation restoreOverwriteConfirmation)
+        : this(
+            client,
+            autoRefreshInterval,
+            new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
+            new AssumedRunningWindowsServiceController(),
+            restoreDestinationPicker,
+            restoreOverwriteConfirmation)
     {
     }
 
@@ -109,7 +133,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
         IFluxVaultServiceClient client,
         TimeSpan autoRefreshInterval,
         FileBrowserViewModel fileBrowser)
-        : this(client, autoRefreshInterval, fileBrowser, new WindowsFluxVaultServiceController())
+        : this(
+            client,
+            autoRefreshInterval,
+            fileBrowser,
+            new WindowsFluxVaultServiceController(),
+            new SaveFileRestoreDestinationPicker(),
+            new MessageBoxRestoreOverwriteConfirmation())
     {
     }
 
@@ -118,9 +148,28 @@ public sealed partial class MainWindowViewModel : ObservableObject
         TimeSpan autoRefreshInterval,
         FileBrowserViewModel fileBrowser,
         IFluxVaultWindowsServiceController windowsServiceController)
+        : this(
+            client,
+            autoRefreshInterval,
+            fileBrowser,
+            windowsServiceController,
+            new SaveFileRestoreDestinationPicker(),
+            new MessageBoxRestoreOverwriteConfirmation())
+    {
+    }
+
+    public MainWindowViewModel(
+        IFluxVaultServiceClient client,
+        TimeSpan autoRefreshInterval,
+        FileBrowserViewModel fileBrowser,
+        IFluxVaultWindowsServiceController windowsServiceController,
+        IRestoreDestinationPicker restoreDestinationPicker,
+        IRestoreOverwriteConfirmation restoreOverwriteConfirmation)
     {
         this.client = client;
         this.windowsServiceController = windowsServiceController;
+        this.restoreDestinationPicker = restoreDestinationPicker;
+        this.restoreOverwriteConfirmation = restoreOverwriteConfirmation;
         this.autoRefreshInterval = autoRefreshInterval;
         FileBrowser = fileBrowser;
         FileBrowser.SelectionRulesChanged += (_, _) => MarkConfigurationDirty();
@@ -173,6 +222,18 @@ public sealed partial class MainWindowViewModel : ObservableObject
         autoRefreshCancellation?.Dispose();
         autoRefreshCancellation = null;
         autoRefreshTask = null;
+    }
+
+    public void ApplyRestorePathRequest(string restorePath)
+    {
+        if (string.IsNullOrWhiteSpace(restorePath))
+        {
+            return;
+        }
+
+        RestoreHintPath = restorePath;
+        SelectedVersion = FindRestoreHintVersion() ?? SelectedVersion;
+        SetServiceStatus($"Service connection: restore request received for {restorePath}");
     }
 
     private async Task AutoRefreshAsync(CancellationToken cancellationToken)
@@ -402,29 +463,41 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task RestoreSelectedAsync()
     {
-        if (SelectedVersion is null)
+        var selectedVersion = SelectedVersion;
+        if (selectedVersion is null)
         {
             return;
         }
 
-        var dialog = new Microsoft.Win32.SaveFileDialog
+        var destination = restoreDestinationPicker.PickDestination(selectedVersion);
+        if (string.IsNullOrWhiteSpace(destination))
         {
-            FileName = Path.GetFileName(SelectedVersion.SourcePath),
-            Title = "Restore FluxVault version"
-        };
-        if (dialog.ShowDialog() != true)
-        {
+            SetServiceStatus("Service connection: restore cancelled.");
             return;
         }
 
-        var response = await client.SendAsync(FluxVaultIpcRequest.RestoreVersion(SelectedVersion.VersionId, dialog.FileName))
-            .ConfigureAwait(true);
-        SetServiceStatus(response.Success
-            ? $"Service connection: restored {SelectedVersion.VersionId}"
-            : $"Service connection: restore failed ({response.ErrorMessage})");
-        if (response.Success)
+        if (File.Exists(destination) && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
         {
-            await RefreshAsync().ConfigureAwait(true);
+            SetServiceStatus("Service connection: restore overwrite denied.");
+            return;
+        }
+
+        try
+        {
+            var response = await client.SendAsync(FluxVaultIpcRequest.RestoreVersion(selectedVersion.VersionId, destination))
+                .ConfigureAwait(true);
+            SetServiceStatus(response.Success
+                ? $"Service connection: restored {selectedVersion.VersionId} to {destination}"
+                : $"Service connection: restore failed ({response.ErrorMessage})");
+            if (response.Success)
+            {
+                await RefreshAsync().ConfigureAwait(true);
+                SetServiceStatus($"Service connection: restored {selectedVersion.VersionId} to {destination}");
+            }
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            SetServiceStatus($"Service connection: restore failed ({ex.Message})");
         }
     }
 
@@ -468,6 +541,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
             }
 
             var visibleStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}. Last refreshed {DateTime.Now:HH:mm:ss}";
+            if (!string.IsNullOrWhiteSpace(RestoreHintPath))
+            {
+                visibleStatus += $". Restore request: {RestoreHintPath}";
+            }
+
             SetServiceStatus(visibleStatus, BuildServiceStatusToolTip(visibleStatus, status.DurableChange));
             if (windowsServiceStatus.State == FluxVaultWindowsServiceState.Running)
             {
@@ -510,8 +588,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             }
 
             SelectedVersion = selectedVersionId is null
-                ? null
-                : RecentVersions.SingleOrDefault(version => version.VersionId == selectedVersionId);
+                ? FindRestoreHintVersion()
+                : RecentVersions.SingleOrDefault(version => version.VersionId == selectedVersionId) ?? FindRestoreHintVersion();
             CaptureStatuses.Clear();
             foreach (var captureStatus in status.CaptureStatuses ?? [])
             {
@@ -552,6 +630,37 @@ public sealed partial class MainWindowViewModel : ObservableObject
             CodecPolicy: currentCodecPolicy,
             SelectionRules: selectionRules,
             ExclusionRules: currentExclusionRules);
+    }
+
+    private VersionRow? FindRestoreHintVersion()
+    {
+        if (string.IsNullOrWhiteSpace(RestoreHintPath))
+        {
+            return null;
+        }
+
+        return RecentVersions.FirstOrDefault(version => SourcePathMatchesRestoreHint(version.SourcePath, RestoreHintPath));
+    }
+
+    private static bool SourcePathMatchesRestoreHint(string sourcePath, string restoreHintPath)
+    {
+        try
+        {
+            var source = Path.GetFullPath(sourcePath);
+            var hint = Path.GetFullPath(restoreHintPath);
+            if (string.Equals(source, hint, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            var hintRoot = hint.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                + Path.DirectorySeparatorChar;
+            return source.StartsWith(hintRoot, StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            return string.Equals(sourcePath, restoreHintPath, StringComparison.OrdinalIgnoreCase);
+        }
     }
 
     private static IReadOnlyList<ProtectionSelectionRule> DeriveSelectionRules(IReadOnlyList<WatchedFolderConfiguration> watchedFolders)

@@ -56,6 +56,26 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
+    public void Options_dialog_exposes_explorer_context_menu_registration_actions()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "OptionsWindow.xaml");
+        var register = document
+            .Descendants(XamlNamespace + "Button")
+            .Single(element => (string?)element.Attribute("Name") == "RegisterExplorerContextMenuButton");
+        var unregister = document
+            .Descendants(XamlNamespace + "Button")
+            .Single(element => (string?)element.Attribute("Name") == "UnregisterExplorerContextMenuButton");
+
+        Assert.Equal("{Binding RegisterExplorerContextMenuCommand}", (string?)register.Attribute("Command"));
+        Assert.Equal("{Binding UnregisterExplorerContextMenuCommand}", (string?)unregister.Attribute("Command"));
+        Assert.False(string.IsNullOrWhiteSpace((string?)register.Attribute("ToolTip")));
+        Assert.False(string.IsNullOrWhiteSpace((string?)unregister.Attribute("ToolTip")));
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "{Binding ExplorerContextMenuStatus}");
+    }
+
+    [Fact]
     public void Options_labels_have_helpful_tooltips()
     {
         var document = LoadXaml("src", "FluxVault.App", "OptionsWindow.xaml");
@@ -222,7 +242,7 @@ public sealed class XamlQualityTests
         Assert.Equal("22", (string?)shell.Attribute("Margin"));
         Assert.Equal("1", (string?)commandBar.Attribute("Grid.Column"));
         Assert.Equal("Left", (string?)workspace.Attribute("TabStripPlacement"));
-        Assert.Equal("1", (string?)workspace.Attribute("SelectedIndex"));
+        Assert.Equal("0", (string?)workspace.Attribute("SelectedIndex"));
         Assert.Contains(workspace.Descendants(XamlNamespace + "TabItem"), element => HasHeader(element, "File browser"));
         Assert.Equal("4", (string?)footer.Attribute("Grid.Row"));
     }

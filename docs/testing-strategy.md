@@ -23,7 +23,13 @@
 - XAML quality checks for compact Activity pane controls, the selected
   operational cockpit shell, prioritised command order, constrained dashboard
   header status text, service availability warning and Start/Stop controls,
-  wrapping USN tooltips, and wrapping Options tooltips.
+  first-tab startup, Options Explorer menu actions, wrapping USN tooltips, and
+  wrapping Options tooltips.
+- Restore workflow view-model tests for destination cancellation, overwrite
+  confirmation, overwrite denial, IPC failure, locked/access-denied failure
+  messaging, and preserving the selected version.
+- Startup request routing tests for `--restore-path` parsing and forwarding a
+  second launch to the primary dashboard instance.
 - About window and branding checks for Yagasoft logo packaging, GitHub/website
   links, roadmap summary, external-link failure handling, and preserving the
   FluxVault application icon.
@@ -55,6 +61,7 @@
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.
+- Restore IPC failure for locked or access-denied destination paths.
 - Service operation persistence of `AppConsistent` capture results and optional
   consistency detail in status/activity.
 - Service-triggered retention and manual `RunRetentionNow`.
@@ -105,7 +112,8 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
   explicit ProgramData/Event Log cleanup switches.
 - Tray/dashboard service connection.
 - Tray activity pane placement inside the active monitor working area.
-- Explorer integration registration.
+- Explorer integration registration from Options, with packaging guards that
+  keep context-menu registration out of install/uninstall scripts.
 - Restore smoke test from installed build.
 - Developer CLI smoke test: back up a file, list versions, inspect the version,
   restore it, and compare hashes.

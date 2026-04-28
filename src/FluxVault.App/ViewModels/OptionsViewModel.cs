@@ -5,14 +5,31 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
+using FluxVault.App.Services;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
 
 namespace FluxVault.App.ViewModels;
 
-public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : ObservableObject
+public sealed partial class OptionsViewModel : ObservableObject
 {
+    private readonly IFluxVaultServiceClient client;
+    private readonly IExplorerContextMenuService explorerContextMenuService;
     private FluxVaultConfiguration? currentConfiguration;
+
+    public OptionsViewModel(IFluxVaultServiceClient client)
+        : this(client, new WindowsExplorerContextMenuService())
+    {
+    }
+
+    public OptionsViewModel(
+        IFluxVaultServiceClient client,
+        IExplorerContextMenuService explorerContextMenuService)
+    {
+        this.client = client;
+        this.explorerContextMenuService = explorerContextMenuService;
+        RefreshExplorerContextMenuStatus();
+    }
 
     [ObservableProperty]
     private bool retentionEnabled;
@@ -81,6 +98,12 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
     private string statusText = "Ready";
 
     [ObservableProperty]
+    private string explorerContextMenuStatus = "Explorer context menu status is checking.";
+
+    [ObservableProperty]
+    private bool isExplorerContextMenuRegistered;
+
+    [ObservableProperty]
     private string newExclusionLabel = string.Empty;
 
     [ObservableProperty]
@@ -105,6 +128,7 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
 
     public async Task InitialiseAsync(CancellationToken cancellationToken = default)
     {
+        RefreshExplorerContextMenuStatus();
         var response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true);
         if (!response.Success || response.Status is null)
         {
@@ -177,6 +201,18 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
         }
 
         StatusText = FormatResult(response.RetentionResult);
+    }
+
+    [RelayCommand]
+    public void RegisterExplorerContextMenu()
+    {
+        ApplyExplorerContextMenuStatus(explorerContextMenuService.Register());
+    }
+
+    [RelayCommand]
+    public void UnregisterExplorerContextMenu()
+    {
+        ApplyExplorerContextMenuStatus(explorerContextMenuService.Unregister());
     }
 
     [RelayCommand]
@@ -294,6 +330,17 @@ public sealed partial class OptionsViewModel(IFluxVaultServiceClient client) : O
         {
             ExclusionRules.Add(rule);
         }
+    }
+
+    private void RefreshExplorerContextMenuStatus()
+    {
+        ApplyExplorerContextMenuStatus(explorerContextMenuService.GetStatus());
+    }
+
+    private void ApplyExplorerContextMenuStatus(ExplorerContextMenuStatus status)
+    {
+        IsExplorerContextMenuRegistered = status.IsRegistered;
+        ExplorerContextMenuStatus = status.Message;
     }
 
     private static string FormatPreview(RepositoryRetentionPreview preview)

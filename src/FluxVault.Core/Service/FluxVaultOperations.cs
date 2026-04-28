@@ -327,11 +327,17 @@ public sealed class FluxVaultOperations(
 
     private async Task<FluxVaultIpcResponse> RestoreVersionResponseAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
     {
-        await RestoreVersionAsync(
-            Require(request.VersionId, "version id"),
-            Require(request.OutputPath, "output path"),
-            cancellationToken).ConfigureAwait(false);
-        return FluxVaultIpcResponse.Ok();
+        var versionId = Require(request.VersionId, "version id");
+        var outputPath = Require(request.OutputPath, "output path");
+        try
+        {
+            await RestoreVersionAsync(versionId, outputPath, cancellationToken).ConfigureAwait(false);
+            return FluxVaultIpcResponse.Ok();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            return FluxVaultIpcResponse.Failure($"Restore failed for {outputPath}: {ex.Message}");
+        }
     }
 
     private async Task<FluxVaultIpcResponse> SetProtectionPausedResponseAsync(CancellationToken cancellationToken)

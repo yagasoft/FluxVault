@@ -2,10 +2,11 @@
 
 ## Installer
 
-FluxVault targets a per-machine installer because the service, writer-aware VSS
-capture, and Explorer integration require machine-level setup. MVP packages may
-be unsigned developer artefacts. V1 public releases require signed binaries and
-installer.
+FluxVault targets a per-machine installer because the service and writer-aware
+VSS capture require machine-level setup. Explorer file/folder entry points are
+currently per-user HKCU registrations managed from the app Options dialog. MVP
+packages may be unsigned developer artefacts. V1 public releases require signed
+binaries and installer.
 
 Developer packages include:
 
@@ -36,6 +37,8 @@ provided.
 
 This is V1 script hardening only. Production installer technology, signing,
 upgrade packages, and full rollback semantics remain release-track work.
+Developer install/uninstall scripts do not register Explorer context-menu
+commands; the dashboard owns those per-user entries through Options.
 
 ## GitHub releases
 

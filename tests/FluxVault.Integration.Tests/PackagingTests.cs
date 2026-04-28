@@ -54,6 +54,21 @@ public sealed class PackagingTests
     }
 
     [Fact]
+    public void Developer_service_scripts_do_not_register_explorer_context_menu()
+    {
+        var root = FindRepositoryRoot();
+        var installScript = File.ReadAllText(Path.Combine(root, "eng", "install-service.ps1"));
+        var uninstallScript = File.ReadAllText(Path.Combine(root, "eng", "uninstall-service.ps1"));
+
+        Assert.DoesNotContain("--restore-path", installScript, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("--restore-path", uninstallScript, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Software\\Classes\\*\\shell", installScript, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Software\\Classes\\*\\shell", uninstallScript, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("RegisterExplorerContextMenu", installScript, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("RegisterExplorerContextMenu", uninstallScript, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void App_icon_is_packaged_as_windows_icon_resource()
     {
         var root = FindRepositoryRoot();

@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
 using WinForms = System.Windows.Forms;
 
@@ -11,11 +12,21 @@ public partial class App : System.Windows.Application
     private WinForms.NotifyIcon? notifyIcon;
     private MainWindow? mainWindow;
     private ActivityPaneWindow? activityPaneWindow;
+    private IAppStartupRequestRouter? startupRequestRouter;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        var startupRequest = AppStartupRequest.Parse(e.Args);
+        startupRequestRouter = new AppStartupRequestRouter();
+        if (!startupRequestRouter.IsPrimaryInstance)
+        {
+            _ = startupRequestRouter.TryForwardToExistingInstanceAsync(startupRequest).GetAwaiter().GetResult();
+            Shutdown();
+            return;
+        }
+
         var viewModel = new MainWindowViewModel();
 
         mainWindow = new MainWindow
@@ -24,6 +35,8 @@ public partial class App : System.Windows.Application
         };
         mainWindow.Activated += (_, _) => _ = viewModel.RefreshAsync();
         mainWindow.Show();
+        startupRequestRouter.StartListeningAsync(HandleStartupRequestAsync).GetAwaiter().GetResult();
+        ApplyStartupRequest(viewModel, startupRequest);
         viewModel.StartAutoRefresh();
         _ = viewModel.RefreshAsync();
 
@@ -52,6 +65,7 @@ public partial class App : System.Windows.Application
         }
 
         notifyIcon?.Dispose();
+        startupRequestRouter?.DisposeAsync().AsTask().GetAwaiter().GetResult();
         base.OnExit(e);
     }
 
@@ -90,6 +104,27 @@ public partial class App : System.Windows.Application
         mainWindow.Show();
         mainWindow.WindowState = WindowState.Normal;
         mainWindow.Activate();
+    }
+
+    private Task HandleStartupRequestAsync(AppStartupRequest request)
+    {
+        Dispatcher.Invoke(() =>
+        {
+            ShowDashboard();
+            if (mainWindow?.DataContext is MainWindowViewModel viewModel)
+            {
+                ApplyStartupRequest(viewModel, request);
+            }
+        });
+        return Task.CompletedTask;
+    }
+
+    private static void ApplyStartupRequest(MainWindowViewModel viewModel, AppStartupRequest request)
+    {
+        if (!string.IsNullOrWhiteSpace(request.RestorePath))
+        {
+            viewModel.ApplyRestorePathRequest(request.RestorePath);
+        }
     }
 
     private void ShowActivityPane()

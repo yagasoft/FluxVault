@@ -48,8 +48,8 @@ one Windows 11 PC.
   copyright/licence text, and brief roadmap milestones. The FluxVault icon
   remains the executable, taskbar, and tray icon.
 - Concept A, the operational cockpit, is the selected runtime dashboard
-  direction: stable header commands, left navigation, File browser as the
-  default workspace, and footer health tiles.
+  direction: stable header commands, left navigation, first-tab startup, and
+  footer health tiles.
 - Helpful Options tooltips and compact health-strip details for durable-change
   fallback reasons.
 - Tray activity pane with recent events, pending work, blocked files, retention
@@ -76,6 +76,11 @@ Expected user-visible result: safe local production use on Windows 11.
   the source path, and otherwise reports successful VSS captures as
   `CrashConsistent`.
 - Restore browser with safer overwrite workflows and Explorer entry points.
+  The first implementation adds app-side destination picking, overwrite
+  confirmation before restore IPC, safe restore failure status, per-user HKCU
+  Explorer file/folder actions managed from Options, and second-launch
+  `--restore-path` handoff to the running dashboard. Restore lineage metadata
+  remains separate.
 - Per-file version graph for restore lineage. Restoring an old version creates
   a new version event that points to the restored version as its fork origin,
   while newer versions remain available.

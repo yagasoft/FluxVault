@@ -47,8 +47,9 @@ one Windows 11 PC.
 - About window with Yagasoft branding, project and website links, app version,
   copyright/licence text, and brief roadmap milestones. The FluxVault icon
   remains the executable, taskbar, and tray icon.
-- UI concept comparison artefacts are maintained before a larger runtime
-  redesign is chosen.
+- Concept A, the operational cockpit, is the selected runtime dashboard
+  direction: stable header commands, left navigation, File browser as the
+  default workspace, and footer health tiles.
 - Helpful Options tooltips and compact health-strip details for durable-change
   fallback reasons.
 - Tray activity pane with recent events, pending work, blocked files, retention

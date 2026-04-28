@@ -203,6 +203,44 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
+    public void Main_window_declares_operational_cockpit_runtime_shell()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var shell = document
+            .Descendants(XamlNamespace + "Grid")
+            .Single(element => (string?)element.Attribute("Name") == "OperationalCockpitShell");
+        var commandBar = document
+            .Descendants(XamlNamespace + "StackPanel")
+            .Single(element => (string?)element.Attribute("Name") == "OperationalCockpitCommandBar");
+        var workspace = document
+            .Descendants(XamlNamespace + "TabControl")
+            .Single(element => (string?)element.Attribute("Name") == "OperationalCockpitWorkspace");
+        var footer = document
+            .Descendants(XamlNamespace + "UniformGrid")
+            .Single(element => (string?)element.Attribute("Name") == "FooterHealthBar");
+
+        Assert.Equal("22", (string?)shell.Attribute("Margin"));
+        Assert.Equal("1", (string?)commandBar.Attribute("Grid.Column"));
+        Assert.Equal("Left", (string?)workspace.Attribute("TabStripPlacement"));
+        Assert.Equal("1", (string?)workspace.Attribute("SelectedIndex"));
+        Assert.Contains(workspace.Descendants(XamlNamespace + "TabItem"), element => HasHeader(element, "File browser"));
+        Assert.Equal("4", (string?)footer.Attribute("Grid.Row"));
+    }
+
+    [Fact]
+    public void Main_command_bar_prioritises_operational_cockpit_actions()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var commandBar = document
+            .Descendants(XamlNamespace + "StackPanel")
+            .Single(element => (string?)element.Attribute("Name") == "OperationalCockpitCommandBar");
+
+        Assert.Equal(
+            ["Refresh", "Run backup now", "Restore", "Options", "About", "Export diagnostics"],
+            CommandButtonLabels(commandBar));
+    }
+
+    [Fact]
     public void Main_commands_and_navigation_include_icons_with_text()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
@@ -352,6 +390,19 @@ public sealed class XamlQualityTests
     private static string Describe(XElement element)
     {
         return $"{element.Name.LocalName}:{(string?)element.Attribute("Content") ?? (string?)element.Attribute("Text") ?? (string?)element.Attribute("Name") ?? element.ToString(SaveOptions.DisableFormatting)}";
+    }
+
+    private static string[] CommandButtonLabels(XElement commandBar)
+    {
+        return commandBar
+            .Elements(XamlNamespace + "Button")
+            .Select(button => button
+                .Descendants(XamlNamespace + "TextBlock")
+                .Select(element => (string?)element.Attribute("Text"))
+                .OfType<string>()
+                .Where(value => value is "Refresh" or "Run backup now" or "Restore" or "Options" or "About" or "Export diagnostics")
+                .Single())
+            .ToArray();
     }
 
     private static bool HasHeader(XElement element, string headerText)

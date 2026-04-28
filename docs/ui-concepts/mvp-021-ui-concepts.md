@@ -1,7 +1,8 @@
 # MVP-021 UI concept comparison
 
-These are static concepts for choosing the next dashboard redesign direction.
-No full runtime redesign is implemented in MVP-021.
+These static concepts were used to choose the next dashboard redesign
+direction. `MVP-030` selects and applies Concept A as the runtime dashboard
+direction.
 
 ## Concept A: Operational cockpit (recommended)
 
@@ -76,7 +77,13 @@ Tradeoff: file selection and restore browsing require another navigation step.
 
 ## Recommendation
 
-Use **Concept A: Operational cockpit** as the next runtime redesign direction.
-It keeps FluxVault quiet by default, makes health always visible, and leaves
-enough main-surface space for the File browser, Repository, Activity, and future
-Sync views without making any one workflow dominate the app.
+Use **Concept A: Operational cockpit** as the runtime redesign direction. It
+keeps FluxVault quiet by default, makes health always visible, and leaves enough
+main-surface space for the File browser, Repository, Activity, and future Sync
+views without making any one workflow dominate the app.
+
+## Selected runtime direction
+
+`MVP-030` implements Concept A as the runtime shell: stable commands in the
+header, left navigation, File browser as the default workspace, and health tiles
+in the footer.

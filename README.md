@@ -37,6 +37,9 @@ FluxVault now has a developer-usable MVP loop:
 - A FluxVault app icon, left-navigation dashboard, activity view, tray activity
   pane that stays inside the active monitor working area, and blocked-file
   reporting.
+- The selected operational cockpit dashboard direction, with a stable command
+  bar, left navigation, File browser as the default workspace, and footer
+  health tiles.
 - Yagasoft branding in the About window, including the project GitHub link,
   Yagasoft website link, application description, and brief roadmap milestones.
 - A three-pane File browser tab for selecting recursive folders, immediate
@@ -107,7 +110,10 @@ and USN targeted captures skip excluded paths too.
 
 UI/UX redesign directions are tracked in
 [`docs/ui-concepts/mvp-021-ui-concepts.md`](docs/ui-concepts/mvp-021-ui-concepts.md).
-The runtime app keeps the current dashboard until a concept is selected.
+Concept A, the operational cockpit, is the selected runtime direction. The
+dashboard therefore keeps primary commands stable in the header, opens on the
+File browser workspace, keeps navigation on the left, and keeps health tiles in
+the footer.
 
 Future restore hardening will keep FluxVault history append-only. Restoring an
 older version will create a new version event that records the restored version

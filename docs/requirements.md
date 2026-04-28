@@ -40,6 +40,28 @@ folder; direct cloud adapters arrive later.
 - Developer command-line harness for backing up, listing, inspecting, and
   restoring normal readable files without claiming VSS or USN consistency.
 
+## Planned MVP+ requirements
+
+- File browser tab with three panes: drives/folders, files in the selected
+  folder, and pending unsaved selection changes.
+- Folder selection cycles through recursive selected, immediate files only, and
+  not selected.
+- Manual child selections are retained when a parent recursive selection is
+  removed, and parents show child-selection indicators.
+- The older watched-folder Browse workflow is removed once the File browser
+  becomes the primary selection workflow.
+- Selection changes must not affect the running service until the user saves.
+
+## Planned V1 and sync requirements
+
+- Restoring an older version preserves newer versions and records the restored
+  version as the fork origin for the new restore event.
+- Version history supports Git-like per-file lineage through FluxVault manifests
+  and chunks, not through a normal `.git` runtime repository.
+- Multi-PC sync must keep a newly selected folder or file pending on each peer
+  until same-path or per-PC override mapping is confirmed.
+- Peers must not create, hydrate, or patch an unconfirmed mapping target.
+
 ## Explicit non-goals for v1
 
 - No client-side encryption.

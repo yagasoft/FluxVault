@@ -33,6 +33,29 @@ A manifest records:
 
 Manifests are written to a temporary file and atomically moved into place.
 
+## Planned lineage metadata
+
+V1 restore hardening adds Git-like per-file history metadata to manifests or a
+closely related version event record:
+
+- parent version id or ids
+- restored-from version id
+- fork origin version id
+- device id
+- operation type, such as capture, restore, sync hydrate, or conflict resolution
+- optional conflict group id
+
+Restoring an older version does not delete, overwrite, or hide newer manifests.
+It creates a new version event that points back to the restored version as the
+fork origin. This lets the restore browser show normal history, forks,
+restored-from links, and conflicts without compromising chunk deduplication.
+
+FluxVault should keep its own content-addressed chunk repository as the live
+storage engine. Actual Git or libgit2 may be evaluated later for export or
+interoperability, but it is not the default runtime store because FluxVault
+needs streaming large-file capture, VSS/open-file handling, retention, mirror
+placement, and a clean repository layout without side `.git` working trees.
+
 ## Retention and garbage collection
 
 Retention deletes manifests first. A version disappears from `list` as soon as

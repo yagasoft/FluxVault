@@ -80,6 +80,19 @@ WinForms cursor and monitor coordinates are converted to WPF device-independent
 units before the pane is clamped inside the visible work area; on very small
 work areas the pane height is reduced instead of opening behind the taskbar.
 
+## Planned file selection UX
+
+The planned File browser replaces the older Protection-tab browse/add workflow.
+It is a configuration editing surface, not an immediate service mutation. The
+left pane shows drives and folders, the middle pane shows files in the selected
+folder, and the right pane summarises unsaved selections and unselections.
+
+Folder selection is tri-state: recursive selected, immediate files only, and
+not selected. Manual child selections are retained below a parent so they can be
+restored when a recursive parent selection is removed. Parent folders show an
+indicator when descendants have manual selections. The service reloads watched
+selection rules only after the user saves the browser changes.
+
 ## Non-interference contract
 
 FluxVault should not make normal user applications wait on backup reads.
@@ -108,12 +121,27 @@ manifest is the authoritative description of one captured file version. Chunks
 are addressed by BLAKE3 digest and may be stored raw or encoded with zstd, lz4,
 Brotli, or LZMA according to policy.
 
+Restore remains append-only in the planned V1 lineage model. Restoring an older
+version creates a new version event that records the restored source version and
+fork origin, while newer versions remain queryable and restorable. This gives
+FluxVault Git-like history semantics without using Git as the live repository
+engine.
+
 Retention is manifest-led. FluxVault groups versions by normalised source path,
 keeps dense recent history, thins older history to hourly and daily buckets,
 and always keeps at least the latest configured number of versions per source
 file. After deleting pruned manifests locally, it garbage-collects only chunks
 and metadata no remaining manifest references. Mirror cleanup is best-effort
 and reported through status and diagnostics.
+
+## Planned multi-PC sync safety
+
+R3 sync publishes device identity, folder mapping metadata, manifests, and
+heartbeats into the shared repository. A newly selected folder or file from one
+PC is only advertised as pending until every peer confirms a same-path mapping
+or chooses a per-PC override. Peers must not hydrate, patch, or create the
+target path before that mapping is confirmed. After confirmation, peers fetch
+only missing chunks and patch safe targets at chunk level.
 
 ## Future release tracks
 

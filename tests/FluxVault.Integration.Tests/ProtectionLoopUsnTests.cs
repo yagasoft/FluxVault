@@ -5,6 +5,7 @@ using FluxVault.Core.Capture;
 using FluxVault.Core.ChangeTracking;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Service;
+using Microsoft.Extensions.Logging;
 
 namespace FluxVault.Integration.Tests;
 
@@ -64,6 +65,28 @@ public sealed class ProtectionLoopUsnTests
         Assert.NotNull(status.DurableChange);
         Assert.Contains("unavailable", status.DurableChange.Status, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("USN journal cannot be queried", status.DurableChange.FallbackReason);
+    }
+
+    [Fact]
+    public async Task Usn_exception_cycle_logs_warning_and_falls_back_to_full_scan()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        await File.WriteAllTextAsync(Path.Combine(watched, "first.txt"), "first");
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        var logger = new CapturingLogger<FileSystemProtectionLoop>();
+        var loop = CreateLoop(workspace, operations, new ThrowingUsnChangeJournalReader(new InvalidDataException("USN failed.")), logger);
+
+        await loop.RunCatchUpCycleAsync();
+
+        Assert.Single(await operations.ListVersionsAsync());
+        Assert.Contains(
+            logger.Entries,
+            entry => entry.Level == LogLevel.Warning
+                && entry.Message.Contains("USN catch-up cycle failed", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -181,12 +204,22 @@ public sealed class ProtectionLoopUsnTests
         FluxVaultOperations operations,
         IUsnChangeJournalReader reader)
     {
+        return CreateLoop(workspace, operations, reader, logger: null);
+    }
+
+    private static FileSystemProtectionLoop CreateLoop(
+        TemporaryWorkspace workspace,
+        FluxVaultOperations operations,
+        IUsnChangeJournalReader reader,
+        ILogger<FileSystemProtectionLoop>? logger)
+    {
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
         var checkpointStore = new FileUsnJournalCheckpointStore(Path.Combine(workspace.RootPath, "state", "usn-checkpoints.json"));
         return new FileSystemProtectionLoop(
             operations,
             store,
-            new UsnCatchUpService(reader, checkpointStore));
+            new UsnCatchUpService(reader, checkpointStore),
+            logger);
     }
 
     private static FluxVaultOperations CreateOperations(TemporaryWorkspace workspace, FluxVaultConfiguration configuration)
@@ -316,6 +349,54 @@ public sealed class ProtectionLoopUsnTests
                     ? UsnChangeJournalReadResult.Active("USN active. Found 0 changed file(s).", [], checkpoints)
                     : results.Dequeue());
             }
+        }
+    }
+
+    private sealed class ThrowingUsnChangeJournalReader(Exception exception) : IUsnChangeJournalReader
+    {
+        public Task<UsnChangeJournalReadResult> ReadChangesAsync(
+            IReadOnlyList<UsnWatchedFolderScope> watchedFolders,
+            IReadOnlyList<UsnJournalCheckpoint> checkpoints,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromException<UsnChangeJournalReadResult>(exception);
+        }
+    }
+
+    private sealed class CapturingLogger<T> : ILogger<T>
+    {
+        public List<LogEntry> Entries { get; } = [];
+
+        public IDisposable BeginScope<TState>(TState state)
+            where TState : notnull
+        {
+            return NullScope.Instance;
+        }
+
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return true;
+        }
+
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            Entries.Add(new LogEntry(logLevel, formatter(state, exception), exception));
+        }
+    }
+
+    private sealed record LogEntry(LogLevel Level, string Message, Exception? Exception);
+
+    private sealed class NullScope : IDisposable
+    {
+        public static NullScope Instance { get; } = new();
+
+        public void Dispose()
+        {
         }
     }
 }

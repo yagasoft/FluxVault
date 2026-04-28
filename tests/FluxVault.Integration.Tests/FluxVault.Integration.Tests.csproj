@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\src\FluxVault.Abstractions\FluxVault.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\FluxVault.Cli\FluxVault.Cli.csproj" />
     <ProjectReference Include="..\..\src\FluxVault.Core\FluxVault.Core.csproj" />
+    <ProjectReference Include="..\..\src\FluxVault.Service\FluxVault.Service.csproj" />
     <ProjectReference Include="..\..\src\FluxVault.Windows\FluxVault.Windows.csproj" />
   </ItemGroup>
 

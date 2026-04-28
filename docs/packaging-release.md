@@ -26,7 +26,15 @@ Developer packages include:
 - `sample-config.json`
 
 The developer service installs as `FluxVaultService` with display name
-`FluxVault Service`.
+`FluxVault Service`. The developer install script registers the
+`FluxVaultService` Windows Event Log source, configures delayed automatic start,
+and sets SCM recovery actions to restart after internal service failure. The
+uninstall script preserves ProgramData and the Event Log source by default; it
+removes them only when `-RemoveProgramData` or `-RemoveEventLogSource` are
+provided.
+
+This is V1 script hardening only. Production installer technology, signing,
+upgrade packages, and full rollback semantics remain release-track work.
 
 ## GitHub releases
 

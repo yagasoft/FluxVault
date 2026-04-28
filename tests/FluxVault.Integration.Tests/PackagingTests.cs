@@ -14,6 +14,46 @@ public sealed class PackagingTests
     }
 
     [Fact]
+    public void Install_script_configures_recovery_delayed_start_event_log_and_waits_for_transitions()
+    {
+        var root = FindRepositoryRoot();
+        var script = File.ReadAllText(Path.Combine(root, "eng", "install-service.ps1"));
+
+        Assert.Contains("function Wait-ServiceStatus", script);
+        Assert.Contains("function Wait-ServiceDeleted", script);
+        Assert.Contains("New-EventLog", script);
+        Assert.Contains("FluxVaultService", script);
+        Assert.Contains("start= delayed-auto", script);
+        Assert.Contains("failureflag", script);
+        Assert.Contains("restart/60000/restart/60000", script);
+    }
+
+    [Fact]
+    public void Install_script_resolves_publish_root_from_source_or_copied_package_location()
+    {
+        var root = FindRepositoryRoot();
+        var script = File.ReadAllText(Path.Combine(root, "eng", "install-service.ps1"));
+
+        Assert.Contains("function Resolve-PublishRoot", script);
+        Assert.Contains("Join-Path $PSScriptRoot \"service\\FluxVault.Service.exe\"", script);
+        Assert.Contains("Join-Path $PSScriptRoot \"..\\artifacts\\publish\\service\\FluxVault.Service.exe\"", script);
+    }
+
+    [Fact]
+    public void Uninstall_script_preserves_state_by_default_and_requires_explicit_cleanup_switches()
+    {
+        var root = FindRepositoryRoot();
+        var script = File.ReadAllText(Path.Combine(root, "eng", "uninstall-service.ps1"));
+
+        Assert.Contains("[switch]$RemoveProgramData", script);
+        Assert.Contains("[switch]$RemoveEventLogSource", script);
+        Assert.Contains("function Wait-ServiceStatus", script);
+        Assert.Contains("function Wait-ServiceDeleted", script);
+        Assert.Contains("if ($RemoveProgramData)", script);
+        Assert.Contains("if ($RemoveEventLogSource)", script);
+    }
+
+    [Fact]
     public void App_icon_is_packaged_as_windows_icon_resource()
     {
         var root = FindRepositoryRoot();

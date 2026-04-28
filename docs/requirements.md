@@ -31,6 +31,10 @@ folder; direct cloud adapters arrive later.
   blocked, failed, and completed capture events.
 - Dashboard service status must remain constrained and must not overlap command
   buttons; full detail should be available through tooltips and diagnostics.
+- Dashboard service availability must be explicit when the Windows service is
+  stopped, not installed, inaccessible, or IPC is unavailable. The app should
+  allow Start/Stop service attempts and report elevated-permission failures
+  clearly.
 - The runtime dashboard follows the selected operational cockpit direction:
   stable primary commands in the header, left navigation, File browser as the
   default workspace, and footer health/status tiles.
@@ -70,6 +74,9 @@ folder; direct cloud adapters arrive later.
 
 ## Planned V1 and sync requirements
 
+- Developer service packaging should configure delayed automatic service start,
+  restart recovery, and Windows Event Log source registration. Internal fatal
+  service failures should be logged before the service exits for SCM recovery.
 - Restoring an older version preserves newer versions and records the restored
   version as the fork origin for the new restore event.
 - Version history supports Git-like per-file lineage through FluxVault manifests

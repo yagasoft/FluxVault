@@ -64,7 +64,11 @@ one Windows 11 PC.
 Expected user-visible result: safe local production use on Windows 11.
 
 - Installer polish, service recovery, clean uninstall, and upgrade/rollback
-  testing.
+  testing. The first hardening slice adds dashboard service availability
+  warnings, Start/Stop service control, Windows Event Log wiring, SCM restart
+  recovery, delayed automatic service start, and safer developer install and
+  uninstall scripts. Production installer technology, signing, upgrade packages,
+  and full rollback semantics remain open V1 work.
 - Better VSS writer handling and app-consistency reporting.
 - Restore browser with safer overwrite workflows and Explorer entry points.
 - Per-file version graph for restore lineage. Restoring an old version creates

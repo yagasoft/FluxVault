@@ -26,6 +26,11 @@ FluxVault now has a developer-usable MVP loop:
 - WPF dashboard connected to the service over local named-pipe IPC.
 - Per-machine Worker Service host with persisted configuration under
   `C:\ProgramData\FluxVault\config.json`.
+- Dashboard service availability warning and Start/Stop service control. If
+  Windows denies service control, the app reports that elevated permissions are
+  required instead of crashing.
+- Windows Event Log provider wiring for service information, warning, and fatal
+  failure events, with SCM recovery configured by the developer install script.
 - Watched-folder backup using file-system notifications, USN journal catch-up,
   and periodic reconciliation fallback.
 - Normal readable-file capture with VSS fallback for locked files when the
@@ -83,6 +88,12 @@ dotnet test
 # Normal desktop session
 .\artifacts\publish\app\FluxVault.App.exe
 ```
+
+The install script registers `FluxVaultService`, creates the `FluxVaultService`
+Windows Event Log source under the Application log, configures delayed automatic
+start, and configures service recovery restart actions. The dashboard shows a
+warning if the service is stopped or unavailable and provides Start/Stop service
+controls.
 
 In the dashboard, choose a repository folder and optionally choose a cloud-sync
 mirror folder. Use **File browser** to select protected folders or files, review
@@ -154,6 +165,10 @@ To remove the unsigned developer service:
 ```powershell
 .\artifacts\publish\uninstall-service.ps1
 ```
+
+The uninstall script preserves `C:\ProgramData\FluxVault` and the Event Log
+source by default. Use `-RemoveProgramData` and `-RemoveEventLogSource` only
+when you intentionally want to remove local machine state and the event source.
 
 ## Local backup harness
 

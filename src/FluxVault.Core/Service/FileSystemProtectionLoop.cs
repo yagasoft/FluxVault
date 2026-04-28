@@ -5,13 +5,15 @@ using FluxVault.Abstractions.Policies;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.ChangeTracking;
 using FluxVault.Core.Policies;
+using Microsoft.Extensions.Logging;
 
 namespace FluxVault.Core.Service;
 
 public sealed class FileSystemProtectionLoop(
     FluxVaultOperations operations,
     IFluxVaultConfigurationStore configurationStore,
-    UsnCatchUpService usnCatchUpService)
+    UsnCatchUpService usnCatchUpService,
+    ILogger<FileSystemProtectionLoop>? logger = null)
 {
     private readonly Lock gate = new();
     private readonly List<FileSystemWatcher> watchers = [];
@@ -116,6 +118,7 @@ public sealed class FileSystemProtectionLoop(
                 Operation: "USN catch-up cycle",
                 Reason: $"USN catch-up cycle failed: {ex.Message}",
                 Win32ErrorCode: null);
+            logger?.LogWarning(ex, "USN catch-up cycle failed; FluxVault will run a reconciliation scan.");
             operations.UpdateDurableChangeStatus(new DurableChangeRuntimeStatus(
                 DateTimeOffset.UtcNow,
                 "USN unavailable.",

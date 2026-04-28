@@ -228,6 +228,32 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
+    public void Main_window_contains_service_warning_and_toggle_controls()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var warning = document
+            .Descendants(XamlNamespace + "Border")
+            .Single(element => (string?)element.Attribute("Name") == "ServiceAvailabilityWarning");
+        var warningText = warning
+            .Descendants(XamlNamespace + "TextBlock")
+            .Single(element => (string?)element.Attribute("Text") == "{Binding ServiceWarningText}");
+        var toggle = document
+            .Descendants(XamlNamespace + "Button")
+            .Single(element => (string?)element.Attribute("Name") == "ServiceControlToggleButton");
+
+        Assert.Contains(
+            warning.Descendants(XamlNamespace + "DataTrigger"),
+            trigger => (string?)trigger.Attribute("Binding") == "{Binding IsServiceWarningVisible}"
+                && (string?)trigger.Attribute("Value") == "True");
+        Assert.Equal("Wrap", (string?)warningText.Attribute("TextWrapping"));
+        Assert.Equal("{Binding ToggleWindowsServiceCommand}", (string?)toggle.Attribute("Command"));
+        Assert.Equal("{Binding IsServiceControlActionEnabled}", (string?)toggle.Attribute("IsEnabled"));
+        Assert.Contains(
+            toggle.Descendants(XamlNamespace + "TextBlock"),
+            text => (string?)text.Attribute("Text") == "{Binding ServiceControlActionLabel}");
+    }
+
+    [Fact]
     public void Main_command_bar_prioritises_operational_cockpit_actions()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
@@ -236,7 +262,7 @@ public sealed class XamlQualityTests
             .Single(element => (string?)element.Attribute("Name") == "OperationalCockpitCommandBar");
 
         Assert.Equal(
-            ["Refresh", "Run backup now", "Restore", "Options", "About", "Export diagnostics"],
+            ["Refresh", "{Binding ServiceControlActionLabel}", "Run backup now", "Restore", "Options", "About", "Export diagnostics"],
             CommandButtonLabels(commandBar));
     }
 
@@ -400,7 +426,13 @@ public sealed class XamlQualityTests
                 .Descendants(XamlNamespace + "TextBlock")
                 .Select(element => (string?)element.Attribute("Text"))
                 .OfType<string>()
-                .Where(value => value is "Refresh" or "Run backup now" or "Restore" or "Options" or "About" or "Export diagnostics")
+                .Where(value => value is "Refresh"
+                    or "{Binding ServiceControlActionLabel}"
+                    or "Run backup now"
+                    or "Restore"
+                    or "Options"
+                    or "About"
+                    or "Export diagnostics")
                 .Single())
             .ToArray();
     }

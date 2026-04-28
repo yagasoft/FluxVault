@@ -58,12 +58,42 @@
                         </ToolTip>
                     </TextBlock.ToolTip>
                 </TextBlock>
+                <Border Name="ServiceAvailabilityWarning"
+                        Background="#FFF4CE"
+                        BorderBrush="#F0B429"
+                        BorderThickness="1"
+                        Padding="8,5"
+                        Margin="0,8,0,0">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsServiceWarningVisible}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock Text="{Binding ServiceWarningText}"
+                               Foreground="#7A4B00"
+                               FontSize="12"
+                               TextWrapping="Wrap" />
+                </Border>
             </StackPanel>
             <StackPanel Grid.Column="1" Name="OperationalCockpitCommandBar" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Command="{Binding RefreshCommand}" ToolTip="Refresh dashboard status and version data.">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⟳" Margin="0,0,6,0" />
                         <TextBlock Text="Refresh" />
+                    </StackPanel>
+                </Button>
+                <Button Name="ServiceControlToggleButton"
+                        Command="{Binding ToggleWindowsServiceCommand}"
+                        IsEnabled="{Binding IsServiceControlActionEnabled}"
+                        ToolTip="{Binding ServiceControlToolTip}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⚠" Margin="0,0,6,0" />
+                        <TextBlock Text="{Binding ServiceControlActionLabel}" />
                     </StackPanel>
                 </Button>
                 <Button Command="{Binding RunBackupNowCommand}" ToolTip="Run a full scan backup now.">

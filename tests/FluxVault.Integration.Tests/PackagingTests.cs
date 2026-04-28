@@ -25,6 +25,19 @@ public sealed class PackagingTests
         Assert.True(new FileInfo(iconPath).Length > 1024);
     }
 
+    [Fact]
+    public void Yagasoft_logo_is_packaged_without_replacing_app_icon()
+    {
+        var root = FindRepositoryRoot();
+        var logoPath = Path.Combine(root, "src", "FluxVault.App", "Assets", "YagasoftLogo.png");
+        var project = File.ReadAllText(Path.Combine(root, "src", "FluxVault.App", "FluxVault.App.csproj"));
+
+        Assert.True(File.Exists(logoPath));
+        Assert.Contains("<ApplicationIcon>Assets\\FluxVault.ico</ApplicationIcon>", project);
+        Assert.Contains("<Content Include=\"Assets\\YagasoftLogo.png\">", project);
+        Assert.True(new FileInfo(logoPath).Length > 1024);
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

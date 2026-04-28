@@ -154,12 +154,23 @@ public sealed class XamlQualityTests
             .ToArray();
 
         Assert.Equal(new[] { "*", "*", "*" }, widths ?? []);
+        Assert.Empty(fileBrowserTab.Descendants(XamlNamespace + "ScrollViewer"));
+
+        var tree = fileBrowserTab
+            .Descendants(XamlNamespace + "TreeView")
+            .Single();
+        Assert.Equal("Auto", (string?)tree.Attribute("ScrollViewer.HorizontalScrollBarVisibility"));
+        Assert.Equal("Auto", (string?)tree.Attribute("ScrollViewer.VerticalScrollBarVisibility"));
+
+        var grids = fileBrowserTab
+            .Descendants(XamlNamespace + "DataGrid")
+            .ToArray();
         Assert.All(
-            fileBrowserTab.Descendants(XamlNamespace + "ScrollViewer"),
-            viewer =>
+            grids,
+            grid =>
             {
-                Assert.Equal("Auto", (string?)viewer.Attribute("HorizontalScrollBarVisibility"));
-                Assert.Equal("Auto", (string?)viewer.Attribute("VerticalScrollBarVisibility"));
+                Assert.Equal("Auto", (string?)grid.Attribute("ScrollViewer.HorizontalScrollBarVisibility"));
+                Assert.Equal("Auto", (string?)grid.Attribute("ScrollViewer.VerticalScrollBarVisibility"));
             });
     }
 
@@ -235,7 +246,7 @@ public sealed class XamlQualityTests
         var interactiveElements = fileBrowserTab
             .Descendants()
             .Where(element => element.Name.Namespace == XamlNamespace
-                              && element.Name.LocalName is "Button" or "TreeView" or "DataGrid")
+                              && element.Name.LocalName is "Button" or "DataGrid")
             .ToArray();
 
         var missingTooltips = interactiveElements
@@ -244,6 +255,81 @@ public sealed class XamlQualityTests
             .ToArray();
 
         Assert.Empty(missingTooltips);
+    }
+
+    [Fact]
+    public void Main_header_contains_about_button_with_accessible_tooltip()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var aboutButton = document
+            .Descendants(XamlNamespace + "Button")
+            .Single(element => (string?)element.Attribute("Click") == "About_Click");
+
+        Assert.Equal("About FluxVault.", (string?)aboutButton.Attribute("ToolTip"));
+        Assert.Contains(
+            aboutButton.Descendants(XamlNamespace + "TextBlock"),
+            text => (string?)text.Attribute("Text") == "About");
+        Assert.Contains(
+            aboutButton.Descendants(XamlNamespace + "TextBlock"),
+            text => (string?)text.Attribute("Text") == "ⓘ");
+    }
+
+    [Fact]
+    public void About_window_contains_yagasoft_branding_links_and_roadmap()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "AboutWindow.xaml");
+
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "Image"),
+            image => ((string?)image.Attribute("Source"))?.Contains("YagasoftLogo.png", StringComparison.OrdinalIgnoreCase) == true);
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "TextBlock"),
+            text => ((string?)text.Attribute("Text"))?.Contains("Yagasoft", StringComparison.OrdinalIgnoreCase) == true);
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "TextBlock"),
+            text => (string?)text.Attribute("Text") == "https://github.com/yagasoft/FluxVault");
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "TextBlock"),
+            text => (string?)text.Attribute("Text") == "https://yagasoft.com/");
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "ItemsControl"),
+            control => (string?)control.Attribute("ItemsSource") == "{Binding RoadmapMilestones}");
+    }
+
+    [Fact]
+    public void File_browser_tree_has_no_broad_tooltip_and_keeps_selection_tooltip()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var fileBrowserTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "File browser"));
+        var tree = fileBrowserTab
+            .Descendants(XamlNamespace + "TreeView")
+            .Single();
+        var selectionButton = tree
+            .Descendants(XamlNamespace + "Button")
+            .Single(element => (string?)element.Attribute("Click") == "FolderSelection_Click");
+
+        Assert.Null((string?)tree.Attribute("ToolTip"));
+        Assert.Equal("{Binding SelectionToolTip}", (string?)selectionButton.Attribute("ToolTip"));
+    }
+
+    [Fact]
+    public void File_browser_grids_are_named_and_wired_for_one_time_auto_fit()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var filesGrid = document
+            .Descendants(XamlNamespace + "DataGrid")
+            .Single(element => (string?)element.Attribute("Name") == "FileBrowserFilesGrid");
+        var pendingGrid = document
+            .Descendants(XamlNamespace + "DataGrid")
+            .Single(element => (string?)element.Attribute("Name") == "FileBrowserPendingChangesGrid");
+        var codeBehind = File.ReadAllText(Path.Combine(FindRepositoryRoot(), "src", "FluxVault.App", "MainWindow.xaml.cs"));
+
+        Assert.Equal("FileBrowserGrid_Loaded", (string?)filesGrid.Attribute("Loaded"));
+        Assert.Equal("FileBrowserGrid_Loaded", (string?)pendingGrid.Attribute("Loaded"));
+        Assert.Contains("AutoFitDataGridColumnsOnce(FileBrowserFilesGrid", codeBehind);
+        Assert.Contains("AutoFitDataGridColumnsOnce(FileBrowserPendingChangesGrid", codeBehind);
     }
 
     private static XDocument LoadXaml(params string[] relativePathParts)

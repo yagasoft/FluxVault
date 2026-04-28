@@ -44,6 +44,9 @@ one Windows 11 PC.
   to full normalised paths before capture.
 - Health tiles live in the footer so the header remains focused on service
   status and commands.
+- About window with Yagasoft branding, project and website links, app version,
+  copyright/licence text, and brief roadmap milestones. The FluxVault icon
+  remains the executable, taskbar, and tray icon.
 - UI concept comparison artefacts are maintained before a larger runtime
   redesign is chosen.
 - Helpful Options tooltips and compact health-strip details for durable-change

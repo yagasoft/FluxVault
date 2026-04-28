@@ -19,6 +19,11 @@
 - Resource profile debounce delays.
 - XAML quality checks for compact Activity pane controls, constrained dashboard
   header status text, wrapping USN tooltips, and wrapping Options tooltips.
+- About window and branding checks for Yagasoft logo packaging, GitHub/website
+  links, roadmap summary, external-link failure handling, and preserving the
+  FluxVault application icon.
+- File browser XAML checks for native tree/grid scrolling, no broad tree
+  tooltip, named auto-fit grids, and first-render column sizing hooks.
 - USN diagnostic formatting for volume-open, unsupported-volume, journal-read,
   and file-id path-resolution failures.
 - Windows interop binding checks for native USN calls such as `DeviceIoControl`.
@@ -95,3 +100,5 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
   restore it, and compare hashes.
 - Developer service package artefacts: install script, uninstall script,
   quickstart, and sample configuration.
+- Branding artefacts: FluxVault icon remains the application icon, and the
+  Yagasoft logo is copied as an app content asset.

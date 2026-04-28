@@ -7,8 +7,7 @@ namespace FluxVault.Service;
 public sealed class Worker(
     ILogger<Worker> logger,
     CapturePipelinePlan capturePlan,
-    NamedPipeFluxVaultServer ipcServer,
-    FileSystemProtectionLoop protectionLoop) : BackgroundService
+    IFluxVaultServiceRuntime runtime) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -17,16 +16,37 @@ public sealed class Worker(
             capturePlan.DurableChangeSource,
             capturePlan.OpenFileReadStrategy);
 
-        var ipcTask = ipcServer.RunAsync(stoppingToken);
-        var protectionTask = protectionLoop.RunAsync(stoppingToken);
-
         try
         {
-            await Task.WhenAll(ipcTask, protectionTask).ConfigureAwait(false);
+            await runtime.RunAsync(stoppingToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
         {
             logger.LogInformation("FluxVault service is stopping.");
         }
+        catch (Exception ex)
+        {
+            logger.LogCritical(
+                ex,
+                "FluxVault service stopped because an internal background task failed. Windows Service recovery should restart it.");
+            throw;
+        }
+    }
+}
+
+public interface IFluxVaultServiceRuntime
+{
+    Task RunAsync(CancellationToken cancellationToken);
+}
+
+public sealed class FluxVaultServiceRuntime(
+    NamedPipeFluxVaultServer ipcServer,
+    FileSystemProtectionLoop protectionLoop) : IFluxVaultServiceRuntime
+{
+    public Task RunAsync(CancellationToken cancellationToken)
+    {
+        var ipcTask = ipcServer.RunAsync(cancellationToken);
+        var protectionTask = protectionLoop.RunAsync(cancellationToken);
+        return Task.WhenAll(ipcTask, protectionTask);
     }
 }

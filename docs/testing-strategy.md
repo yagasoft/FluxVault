@@ -19,7 +19,8 @@
 - Resource profile debounce delays.
 - XAML quality checks for compact Activity pane controls, the selected
   operational cockpit shell, prioritised command order, constrained dashboard
-  header status text, wrapping USN tooltips, and wrapping Options tooltips.
+  header status text, service availability warning and Start/Stop controls,
+  wrapping USN tooltips, and wrapping Options tooltips.
 - About window and branding checks for Yagasoft logo packaging, GitHub/website
   links, roadmap summary, external-link failure handling, and preserving the
   FluxVault application icon.
@@ -63,6 +64,9 @@
   watcher path only when USN reports no changed files.
 - USN unavailable/full-scan-required watcher cycles run one full scan without
   duplicating the same targeted watcher capture.
+- Service worker fatal task failures are logged as critical and rethrown for
+  Windows Service recovery; recoverable USN exceptions are logged as warnings
+  before reconciliation fallback.
 - File browser flow: unsaved selection edits do not change service
   configuration until Save.
 - File browser compiled selections: recursive folders include nested files,
@@ -92,7 +96,8 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
 - Clean install.
 - Upgrade.
 - Uninstall.
-- Service recovery.
+- Service recovery, delayed automatic start, Event Log source registration, and
+  explicit ProgramData/Event Log cleanup switches.
 - Tray/dashboard service connection.
 - Tray activity pane placement inside the active monitor working area.
 - Explorer integration registration.

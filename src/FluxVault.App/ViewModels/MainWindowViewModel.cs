@@ -7,6 +7,7 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
+using FluxVault.App.Services;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
 using WinForms = System.Windows.Forms;
@@ -16,6 +17,7 @@ namespace FluxVault.App.ViewModels;
 public sealed partial class MainWindowViewModel : ObservableObject
 {
     private readonly IFluxVaultServiceClient client;
+    private readonly IFluxVaultWindowsServiceController windowsServiceController;
     private readonly TimeSpan autoRefreshInterval;
     private readonly SemaphoreSlim refreshGate = new(1, 1);
     private CancellationTokenSource? autoRefreshCancellation;
@@ -26,12 +28,31 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private CaptureCadencePolicy currentCaptureCadencePolicy = CaptureCadencePolicy.CreateDefault();
     private CodecPolicy currentCodecPolicy = CodecPolicy.CreateDefault();
     private IReadOnlyList<ProtectionExclusionRule> currentExclusionRules = [];
+    private FluxVaultWindowsServiceStatus windowsServiceStatus = new(
+        WindowsFluxVaultServiceController.DefaultServiceName,
+        FluxVaultWindowsServiceState.Unknown,
+        "FluxVault service status is checking.");
 
     [ObservableProperty]
     private string serviceStatus = "Service connection: checking...";
 
     [ObservableProperty]
     private string serviceStatusToolTip = "Service connection status is checking.";
+
+    [ObservableProperty]
+    private string serviceWarningText = "FluxVault service status is checking.";
+
+    [ObservableProperty]
+    private bool isServiceWarningVisible;
+
+    [ObservableProperty]
+    private string serviceControlActionLabel = "Start service";
+
+    [ObservableProperty]
+    private string serviceControlToolTip = "Start or stop the FluxVault Windows service.";
+
+    [ObservableProperty]
+    private bool isServiceControlActionEnabled;
 
     [ObservableProperty]
     private string repositoryPath = string.Empty;
@@ -67,12 +88,20 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private string captureHealth = "Capture: idle";
 
     public MainWindowViewModel()
-        : this(new NamedPipeFluxVaultClient(), TimeSpan.FromSeconds(5))
+        : this(
+            new NamedPipeFluxVaultClient(),
+            TimeSpan.FromSeconds(5),
+            new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
+            new WindowsFluxVaultServiceController())
     {
     }
 
     public MainWindowViewModel(IFluxVaultServiceClient client, TimeSpan autoRefreshInterval)
-        : this(client, autoRefreshInterval, new FileBrowserViewModel(new WindowsFileBrowserFileSystem()))
+        : this(
+            client,
+            autoRefreshInterval,
+            new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
+            new AssumedRunningWindowsServiceController())
     {
     }
 
@@ -80,8 +109,18 @@ public sealed partial class MainWindowViewModel : ObservableObject
         IFluxVaultServiceClient client,
         TimeSpan autoRefreshInterval,
         FileBrowserViewModel fileBrowser)
+        : this(client, autoRefreshInterval, fileBrowser, new WindowsFluxVaultServiceController())
+    {
+    }
+
+    public MainWindowViewModel(
+        IFluxVaultServiceClient client,
+        TimeSpan autoRefreshInterval,
+        FileBrowserViewModel fileBrowser,
+        IFluxVaultWindowsServiceController windowsServiceController)
     {
         this.client = client;
+        this.windowsServiceController = windowsServiceController;
         this.autoRefreshInterval = autoRefreshInterval;
         FileBrowser = fileBrowser;
         FileBrowser.SelectionRulesChanged += (_, _) => MarkConfigurationDirty();
@@ -165,10 +204,21 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
             try
             {
+                var serviceStatusSnapshot = await RefreshWindowsServiceStatusAsync(cancellationToken).ConfigureAwait(true);
+                if (serviceStatusSnapshot.State is FluxVaultWindowsServiceState.Stopped
+                    or FluxVaultWindowsServiceState.NotInstalled
+                    or FluxVaultWindowsServiceState.StartPending
+                    or FluxVaultWindowsServiceState.StopPending)
+                {
+                    SetServiceStatus($"Service connection: unavailable ({serviceStatusSnapshot.Message})");
+                    return;
+                }
+
                 var response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true);
                 if (!response.Success || response.Status is null)
                 {
                     SetServiceStatus($"Service connection: unavailable ({response.ErrorMessage ?? "no status returned"})");
+                    SetServiceConnectionWarning(response.ErrorMessage ?? "The dashboard cannot connect to the FluxVault service.");
                     return;
                 }
 
@@ -183,6 +233,53 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             SetServiceUnavailable(ex);
         }
+        catch (InvalidOperationException ex)
+        {
+            SetServiceUnavailable(ex);
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanToggleWindowsService))]
+    private async Task ToggleWindowsServiceAsync()
+    {
+        FluxVaultWindowsServiceActionResult result;
+        if (windowsServiceStatus.State == FluxVaultWindowsServiceState.Running)
+        {
+            result = await windowsServiceController.StopAsync().ConfigureAwait(true);
+        }
+        else if (windowsServiceStatus.State == FluxVaultWindowsServiceState.Stopped)
+        {
+            result = await windowsServiceController.StartAsync().ConfigureAwait(true);
+        }
+        else
+        {
+            await RefreshWindowsServiceStatusAsync().ConfigureAwait(true);
+            return;
+        }
+
+        ApplyWindowsServiceStatus(result.Status);
+        if (!result.Success)
+        {
+            SetServiceConnectionWarning(result.Message);
+            SetServiceStatus($"Service connection: unavailable ({result.Message})");
+            return;
+        }
+
+        if (result.Status.State == FluxVaultWindowsServiceState.Running)
+        {
+            IsServiceWarningVisible = false;
+            ServiceWarningText = result.Message;
+            await RefreshAsync().ConfigureAwait(true);
+            return;
+        }
+
+        SetServiceConnectionWarning(result.Message);
+        SetServiceStatus($"Service connection: unavailable ({result.Message})");
+    }
+
+    private bool CanToggleWindowsService()
+    {
+        return IsServiceControlActionEnabled;
     }
 
     partial void OnRepositoryPathChanged(string value)
@@ -236,6 +333,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private void SetServiceUnavailable(Exception ex)
     {
         SetServiceStatus($"Service connection: unavailable ({ex.Message})");
+        SetServiceConnectionWarning($"The dashboard cannot connect to the FluxVault service: {ex.Message}");
     }
 
     [RelayCommand]
@@ -371,6 +469,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
             var visibleStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}. Last refreshed {DateTime.Now:HH:mm:ss}";
             SetServiceStatus(visibleStatus, BuildServiceStatusToolTip(visibleStatus, status.DurableChange));
+            if (windowsServiceStatus.State == FluxVaultWindowsServiceState.Running)
+            {
+                IsServiceWarningVisible = false;
+                ServiceWarningText = windowsServiceStatus.Message;
+            }
+
             ApplyDurableChangeHealth(status.DurableChange);
             RetentionHealth = status.LastRetention is null
                 ? "Retention: waiting"
@@ -519,6 +623,38 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         ServiceStatus = text;
         ServiceStatusToolTip = string.IsNullOrWhiteSpace(toolTip) ? text : toolTip;
+    }
+
+    private async Task<FluxVaultWindowsServiceStatus> RefreshWindowsServiceStatusAsync(CancellationToken cancellationToken = default)
+    {
+        var status = await windowsServiceController.GetStatusAsync(cancellationToken).ConfigureAwait(true);
+        ApplyWindowsServiceStatus(status);
+        return status;
+    }
+
+    private void ApplyWindowsServiceStatus(FluxVaultWindowsServiceStatus status)
+    {
+        windowsServiceStatus = status;
+        ServiceControlActionLabel = status.ActionLabel;
+        ServiceControlToolTip = status.State switch
+        {
+            FluxVaultWindowsServiceState.Running => "Stop the FluxVault Windows service.",
+            FluxVaultWindowsServiceState.Stopped => "Start the FluxVault Windows service.",
+            _ => status.Message
+        };
+        IsServiceControlActionEnabled = status.CanToggle;
+        ToggleWindowsServiceCommand.NotifyCanExecuteChanged();
+
+        if (status.IsWarning)
+        {
+            SetServiceConnectionWarning(status.Message);
+        }
+    }
+
+    private void SetServiceConnectionWarning(string message)
+    {
+        ServiceWarningText = message;
+        IsServiceWarningVisible = true;
     }
 
     private static string BuildServiceStatusToolTip(string visibleStatus, DurableChangeRuntimeStatus? durableChange)
@@ -671,6 +807,33 @@ public sealed partial class MainWindowViewModel : ObservableObject
             Description = "Select folder"
         };
         return dialog.ShowDialog() == WinForms.DialogResult.OK ? dialog.SelectedPath : selectedPath;
+    }
+
+    private sealed class AssumedRunningWindowsServiceController : IFluxVaultWindowsServiceController
+    {
+        private static readonly FluxVaultWindowsServiceStatus RunningStatus = new(
+            WindowsFluxVaultServiceController.DefaultServiceName,
+            FluxVaultWindowsServiceState.Running,
+            "FluxVault service is running.");
+
+        public Task<FluxVaultWindowsServiceStatus> GetStatusAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(RunningStatus);
+        }
+
+        public Task<FluxVaultWindowsServiceActionResult> StartAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new FluxVaultWindowsServiceActionResult(true, RunningStatus, "FluxVault service is already running."));
+        }
+
+        public Task<FluxVaultWindowsServiceActionResult> StopAsync(CancellationToken cancellationToken = default)
+        {
+            var stopped = new FluxVaultWindowsServiceStatus(
+                WindowsFluxVaultServiceController.DefaultServiceName,
+                FluxVaultWindowsServiceState.Stopped,
+                "FluxVault service stopped.");
+            return Task.FromResult(new FluxVaultWindowsServiceActionResult(true, stopped, stopped.Message));
+        }
     }
 }
 

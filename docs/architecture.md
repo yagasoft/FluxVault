@@ -20,6 +20,19 @@ and diagnostics export. Configuration is stored in
 configured local repository, with optional atomic mirroring into a cloud-sync
 folder.
 
+The dashboard checks the Windows service state separately from IPC. If
+`FluxVaultService` is stopped, missing, inaccessible, or running without an
+available pipe, the operational cockpit shows a warning and keeps the app open.
+The dashboard can attempt to start or stop the service through Windows service
+control APIs; access-denied results are surfaced as elevation-required messages.
+
+When installed by the developer script, `FluxVaultService` uses delayed
+automatic start, SCM restart recovery, and the `FluxVaultService` Windows Event
+Log source in the Application log. Service startup and shutdown are information
+events, recoverable runtime fallbacks are warnings, and fatal background task
+failures are logged as critical before being rethrown so SCM recovery can restart
+the service.
+
 ## MVP capture flow
 
 1. Directory notification wakes the service quickly when a watched path changes

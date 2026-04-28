@@ -4,6 +4,7 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
+using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
 using FluxVault.Core.Ipc;
 
@@ -152,6 +153,94 @@ public sealed class MainWindowViewModelRefreshTests
 
         Assert.Single(viewModel.RecentVersions);
         Assert.Contains("unavailable", viewModel.ServiceStatus);
+    }
+
+    [Fact]
+    public async Task Stopped_windows_service_shows_warning_and_skips_ipc_status_request()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
+        var serviceController = new FakeWindowsServiceController(ServiceStatus(FluxVaultWindowsServiceState.Stopped, "FluxVault service is stopped."));
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new EmptyFileBrowserFileSystem()),
+            serviceController);
+
+        await viewModel.RefreshAsync();
+
+        Assert.True(viewModel.IsServiceWarningVisible);
+        Assert.Contains("stopped", viewModel.ServiceWarningText, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("Start service", viewModel.ServiceControlActionLabel);
+        Assert.True(viewModel.IsServiceControlActionEnabled);
+        Assert.Equal(0, client.GetStatusCount);
+    }
+
+    [Fact]
+    public async Task Running_windows_service_with_ipc_failure_reports_unavailable_without_throwing()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
+        client.ThrowOnNextRequest(new InvalidOperationException("pipe startup failed"));
+        var serviceController = new FakeWindowsServiceController(ServiceStatus(FluxVaultWindowsServiceState.Running, "FluxVault service is running."));
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new EmptyFileBrowserFileSystem()),
+            serviceController);
+
+        await viewModel.RefreshAsync();
+
+        Assert.True(viewModel.IsServiceWarningVisible);
+        Assert.Contains("dashboard cannot connect", viewModel.ServiceWarningText, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("unavailable", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("Stop service", viewModel.ServiceControlActionLabel);
+    }
+
+    [Fact]
+    public async Task Toggle_windows_service_starts_stopped_service_and_refreshes_status()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
+        var serviceController = new FakeWindowsServiceController(ServiceStatus(FluxVaultWindowsServiceState.Stopped, "FluxVault service is stopped."))
+        {
+            StartResult = ActionResult(FluxVaultWindowsServiceState.Running, "FluxVault service started.")
+        };
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new EmptyFileBrowserFileSystem()),
+            serviceController);
+        await viewModel.RefreshAsync();
+
+        await viewModel.ToggleWindowsServiceCommand.ExecuteAsync(null);
+
+        Assert.Equal(1, serviceController.StartCount);
+        Assert.Equal("Stop service", viewModel.ServiceControlActionLabel);
+        Assert.False(viewModel.IsServiceWarningVisible);
+    }
+
+    [Fact]
+    public async Task Toggle_windows_service_reports_elevation_required_when_service_control_is_denied()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
+        var serviceController = new FakeWindowsServiceController(ServiceStatus(FluxVaultWindowsServiceState.Stopped, "FluxVault service is stopped."))
+        {
+            StartResult = new FluxVaultWindowsServiceActionResult(
+                Success: false,
+                Status: ServiceStatus(FluxVaultWindowsServiceState.Stopped, "FluxVault service is stopped."),
+                Message: "Starting FluxVaultService requires elevated permissions.")
+        };
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new EmptyFileBrowserFileSystem()),
+            serviceController);
+        await viewModel.RefreshAsync();
+
+        await viewModel.ToggleWindowsServiceCommand.ExecuteAsync(null);
+
+        Assert.Equal(1, serviceController.StartCount);
+        Assert.True(viewModel.IsServiceWarningVisible);
+        Assert.Contains("elevated", viewModel.ServiceWarningText, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("Start service", viewModel.ServiceControlActionLabel);
     }
 
     [Fact]
@@ -333,6 +422,16 @@ public sealed class MainWindowViewModelRefreshTests
         }
     }
 
+    private static FluxVaultWindowsServiceStatus ServiceStatus(FluxVaultWindowsServiceState state, string message)
+    {
+        return new FluxVaultWindowsServiceStatus("FluxVaultService", state, message);
+    }
+
+    private static FluxVaultWindowsServiceActionResult ActionResult(FluxVaultWindowsServiceState state, string message)
+    {
+        return new FluxVaultWindowsServiceActionResult(true, ServiceStatus(state, message), message);
+    }
+
     private sealed class FakeFluxVaultServiceClient(params FluxVaultServiceStatus[] statuses) : IFluxVaultServiceClient
     {
         private readonly Queue<FluxVaultServiceStatus> statuses = new(statuses);
@@ -378,6 +477,58 @@ public sealed class MainWindowViewModelRefreshTests
         public void Release()
         {
             release.SetResult();
+        }
+    }
+
+    private sealed class FakeWindowsServiceController(FluxVaultWindowsServiceStatus initialStatus) : IFluxVaultWindowsServiceController
+    {
+        private FluxVaultWindowsServiceStatus status = initialStatus;
+
+        public FluxVaultWindowsServiceActionResult? StartResult { get; init; }
+
+        public FluxVaultWindowsServiceActionResult? StopResult { get; init; }
+
+        public int StartCount { get; private set; }
+
+        public int StopCount { get; private set; }
+
+        public Task<FluxVaultWindowsServiceStatus> GetStatusAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(status);
+        }
+
+        public Task<FluxVaultWindowsServiceActionResult> StartAsync(CancellationToken cancellationToken = default)
+        {
+            StartCount++;
+            var result = StartResult ?? ActionResult(FluxVaultWindowsServiceState.Running, "FluxVault service started.");
+            status = result.Status;
+            return Task.FromResult(result);
+        }
+
+        public Task<FluxVaultWindowsServiceActionResult> StopAsync(CancellationToken cancellationToken = default)
+        {
+            StopCount++;
+            var result = StopResult ?? ActionResult(FluxVaultWindowsServiceState.Stopped, "FluxVault service stopped.");
+            status = result.Status;
+            return Task.FromResult(result);
+        }
+    }
+
+    private sealed class EmptyFileBrowserFileSystem : IFileBrowserFileSystem
+    {
+        public IReadOnlyList<FileBrowserFolderInfo> GetRoots()
+        {
+            return [];
+        }
+
+        public IReadOnlyList<FileBrowserFolderInfo> GetChildFolders(string path)
+        {
+            return [];
+        }
+
+        public IReadOnlyList<FileBrowserFileInfo> GetFiles(string path)
+        {
+            return [];
         }
     }
 }

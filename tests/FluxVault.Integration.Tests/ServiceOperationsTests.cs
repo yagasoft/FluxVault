@@ -39,6 +39,30 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Restore_ipc_response_reports_locked_or_access_denied_destination_without_throwing()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "first version");
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        await operations.RunBackupNowAsync();
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        var destination = Path.Combine(workspace.RootPath, "restored.txt");
+        await File.WriteAllTextAsync(destination, "locked");
+        await using var lockedDestination = new FileStream(destination, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+
+        var response = await operations.HandleAsync(FluxVaultIpcRequest.RestoreVersion(version.VersionId, destination));
+
+        Assert.False(response.Success);
+        Assert.Contains("restore failed", response.ErrorMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(destination, response.ErrorMessage);
+    }
+
+    [Fact]
     public async Task Repeated_edits_create_multiple_versions_for_same_file()
     {
         using var workspace = TemporaryWorkspace.Create();

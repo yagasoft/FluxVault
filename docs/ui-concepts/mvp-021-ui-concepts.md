@@ -85,5 +85,6 @@ views without making any one workflow dominate the app.
 ## Selected runtime direction
 
 `MVP-030` implements Concept A as the runtime shell: stable commands in the
-header, left navigation, File browser as the default workspace, and health tiles
-in the footer.
+header, left navigation, and health tiles in the footer. `V1-003` keeps Concept
+A but changes startup selection to the first workspace tab, with Explorer
+restore entry points now passing restore hints into the running dashboard.

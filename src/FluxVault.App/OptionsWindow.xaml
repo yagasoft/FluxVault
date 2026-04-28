@@ -106,6 +106,11 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="18" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="160" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
@@ -171,30 +176,46 @@
                                      ToolTip="Chunks smaller than this size are stored without compression." />
                         </StackPanel>
 
-                        <TextBlock Grid.Row="11" Grid.ColumnSpan="2" Text="Path exclusions" FontWeight="SemiBold" Margin="0,0,0,12" />
-                        <TextBlock Grid.Row="12" Text="Label / regex pattern" VerticalAlignment="Center" Margin="0,0,14,8"
+                        <TextBlock Grid.Row="11" Grid.ColumnSpan="2" Text="Explorer context menu" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="12" Grid.ColumnSpan="2" Text="{Binding ExplorerContextMenuStatus}" Foreground="#3C4043" TextWrapping="Wrap" Margin="0,0,0,8"
+                                   ToolTip="Current per-user Explorer context-menu registration status." />
+                        <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Name="RegisterExplorerContextMenuButton"
+                                    Content="Register Explorer menu"
+                                    Command="{Binding RegisterExplorerContextMenuCommand}"
+                                    Padding="14,8" Margin="0,0,8,0"
+                                    ToolTip="Register per-user file and folder Explorer actions that open FluxVault with the selected path as a restore hint." />
+                            <Button Name="UnregisterExplorerContextMenuButton"
+                                    Content="Unregister Explorer menu"
+                                    Command="{Binding UnregisterExplorerContextMenuCommand}"
+                                    Padding="14,8"
+                                    ToolTip="Remove FluxVault per-user file and folder actions from Explorer." />
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="15" Grid.ColumnSpan="2" Text="Path exclusions" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="16" Text="Label / regex pattern" VerticalAlignment="Center" Margin="0,0,14,8"
                                    ToolTip="Optional label and .NET regex matched against full normalised local paths." />
-                        <StackPanel Grid.Row="12" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                        <StackPanel Grid.Row="16" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
                             <TextBox Text="{Binding NewExclusionLabel, UpdateSourceTrigger=PropertyChanged}" Width="120" Padding="8"
                                      ToolTip="Optional friendly label for this exclusion rule." />
                             <TextBox Text="{Binding NewExclusionPattern, UpdateSourceTrigger=PropertyChanged}" Width="260" Padding="8" Margin="8,0,0,0"
                                      ToolTip="Case-insensitive .NET regex. It is matched against full paths, not only file names." />
                         </StackPanel>
-                        <TextBlock Grid.Row="13" Text="Target / description" VerticalAlignment="Center" Margin="0,0,14,8"
+                        <TextBlock Grid.Row="17" Text="Target / description" VerticalAlignment="Center" Margin="0,0,14,8"
                                    ToolTip="Choose whether this regex excludes files, folders, or both, and optionally describe why." />
-                        <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                        <StackPanel Grid.Row="17" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
                             <ComboBox ItemsSource="{Binding ExclusionTargets}" SelectedItem="{Binding NewExclusionTarget}" Width="120"
                                       ToolTip="Folder exclusions also stop recursive scans from descending into matching folders." />
                             <TextBox Text="{Binding NewExclusionDescription, UpdateSourceTrigger=PropertyChanged}" Width="268" Padding="8" Margin="8,0,0,0"
                                      ToolTip="Optional support note explaining why this path pattern is excluded." />
                         </StackPanel>
-                        <StackPanel Grid.Row="14" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,8">
+                        <StackPanel Grid.Row="18" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,8">
                             <Button Content="Add exclusion" Command="{Binding AddExclusionRuleCommand}" Padding="14,8" Margin="0,0,8,0"
                                     ToolTip="Validate and add this exclusion rule to the pending Options changes." />
                             <Button Content="Remove selected" Command="{Binding RemoveSelectedExclusionRuleCommand}" Padding="14,8"
                                     ToolTip="Remove the selected exclusion rule from the pending Options changes." />
                         </StackPanel>
-                        <DataGrid Grid.Row="15" Grid.ColumnSpan="2"
+                        <DataGrid Grid.Row="19" Grid.ColumnSpan="2"
                                   ItemsSource="{Binding ExclusionRules}"
                                   SelectedItem="{Binding SelectedExclusionRule}"
                                   ToolTip="Configured exclusion regex rules. Save options to apply changes to the service.">

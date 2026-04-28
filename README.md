@@ -15,7 +15,8 @@ a tray app, and a per-machine Windows service.
 - Adaptive compression policy with zstd by default, plus lz4, Brotli, LZMA,
   and off modes for explicit profiles.
 - Local immutable repository plus atomic writes into a user-selected cloud sync folder.
-- Basic restore to original or alternate paths.
+- Restore to alternate paths with explicit overwrite confirmation before the
+  service is asked to write.
 - File browser selection UX with drives, folders, files, and a pending change
   summary before Save.
 - Local diagnostics only; no hidden telemetry.
@@ -47,8 +48,7 @@ FluxVault now has a developer-usable MVP loop:
   pane that stays inside the active monitor working area, and blocked-file
   reporting.
 - The selected operational cockpit dashboard direction, with a stable command
-  bar, left navigation, File browser as the default workspace, and footer
-  health tiles.
+  bar, left navigation, first-tab startup, and footer health tiles.
 - Yagasoft branding in the About window, including the project GitHub link,
   Yagasoft website link, application description, and brief roadmap milestones.
 - A three-pane File browser tab for selecting recursive folders, immediate
@@ -60,6 +60,15 @@ FluxVault now has a developer-usable MVP loop:
   caches, temporary files, and other full-path patterns.
 - Helpful wrapping tooltips across Options so each retention, cadence, and
   compression setting explains its operational impact without clipping.
+- Safer restore workflow: the dashboard picks a destination before IPC,
+  requires confirmation before overwriting an existing file, keeps the selected
+  version on cancellation/failure, and reports IPC, locked-file, and
+  access-denied failures without closing the app.
+- Options-managed per-user Explorer file/folder actions. Registration writes
+  HKCU context-menu commands that launch `FluxVault.App.exe --restore-path
+  "%1"` from the current app path; if the dashboard is already running, the new
+  process forwards the restore hint to it and exits. The hint selects or
+  highlights matching versions only; it never restores or overwrites by itself.
 
 The detailed implementation status is tracked in
 [`docs/roadmap-tracker.md`](docs/roadmap-tracker.md). Every future roadmap or
@@ -112,7 +121,9 @@ check is not a CI gate.
 In the dashboard, choose a repository folder and optionally choose a cloud-sync
 mirror folder. Use **File browser** to select protected folders or files, review
 the pending changes pane, save the configuration, run a backup, then restore a
-selected version to an alternate path.
+selected version to an alternate path. Restore asks for a destination and, when
+that file already exists, requires an explicit overwrite confirmation before the
+service restore IPC call is sent.
 
 Use the **About** button for the FluxVault version, Yagasoft copyright,
 [`https://github.com/yagasoft/FluxVault`](https://github.com/yagasoft/FluxVault),
@@ -128,22 +139,25 @@ scrolling works while the cursor is over the tree, and the file/pending-change
 columns auto-size on first render before falling back to horizontal scrolling for
 long paths.
 
-Open **Options** > **Advanced** to add exclusion regex rules. Exclusion rules
-match full normalised paths and can target files, folders, or both. Folder
-rules prevent recursive scans from descending into matching folders; watcher
-and USN targeted captures skip excluded paths too.
+Open **Options** > **Advanced** to add exclusion regex rules and to register or
+unregister FluxVault Explorer context-menu actions for the current Windows
+user. Exclusion rules match full normalised paths and can target files, folders,
+or both. Folder rules prevent recursive scans from descending into matching
+folders; watcher and USN targeted captures skip excluded paths too. Explorer
+actions are app-managed HKCU entries, not install/uninstall script switches.
 
 UI/UX redesign directions are tracked in
 [`docs/ui-concepts/mvp-021-ui-concepts.md`](docs/ui-concepts/mvp-021-ui-concepts.md).
 Concept A, the operational cockpit, is the selected runtime direction. The
 dashboard therefore keeps primary commands stable in the header, opens on the
-File browser workspace, keeps navigation on the left, and keeps health tiles in
-the footer.
+first workspace tab, keeps navigation on the left, and keeps health tiles in the
+footer.
 
-Future restore hardening will keep FluxVault history append-only. Restoring an
-older version will create a new version event that records the restored version
-as the fork origin, while newer versions stay available. This is Git-like
-lineage on FluxVault manifests and chunks, not a normal `.git` repository.
+Future restore lineage hardening will keep FluxVault history append-only.
+Restoring an older version will create a new version event that records the
+restored version as the fork origin, while newer versions stay available. This
+is Git-like lineage on FluxVault manifests and chunks, not a normal `.git`
+repository.
 
 Future multi-PC sync will wait for each peer to confirm the same source path or
 choose a per-PC path override before creating, hydrating, or patching a newly

@@ -26,7 +26,9 @@ folder; direct cloud adapters arrive later.
   implemented with conservative MVP defaults: keep all versions for 24 hours,
   one per hour for 30 days, one per day for 180 days, and at least the latest
   20 versions per source file.
-- Basic restore browser supporting original and alternate restore paths.
+- Restore browser supporting alternate restore paths, destination cancellation,
+  explicit overwrite confirmation, and safe failure status for IPC,
+  locked-destination, and access-denied errors.
 - Local logs and diagnostics export only.
 - Tray activity pane and dashboard Activity view for pending, in-progress,
   blocked, failed, and completed capture events.
@@ -37,8 +39,8 @@ folder; direct cloud adapters arrive later.
   allow Start/Stop service attempts and report elevated-permission failures
   clearly.
 - The runtime dashboard follows the selected operational cockpit direction:
-  stable primary commands in the header, left navigation, File browser as the
-  default workspace, and footer health/status tiles.
+  stable primary commands in the header, left navigation, first-tab startup,
+  and footer health/status tiles.
 - The tray activity pane must open fully inside the active monitor work area,
   including high-DPI and taskbar-edge scenarios.
 - Helpful tooltips for every Options control, covering retention, capture
@@ -83,6 +85,13 @@ folder; direct cloud adapters arrive later.
   metadata covers the source path. Successful snapshots without matching writer
   coverage must be reported as `CrashConsistent`; writer/requester failure must
   fail the capture rather than commit a misleading version.
+- Explorer file/folder entry points are registered per user from Options, not
+  from the developer service scripts. The command launches
+  `FluxVault.App.exe --restore-path "%1"` and treats the path as a restore UI
+  hint only.
+- A second app launch with `--restore-path` must forward the request to the
+  already-running dashboard when possible, bring that dashboard forward, and
+  exit without auto-restoring or overwriting data.
 - Restoring an older version preserves newer versions and records the restored
   version as the fork origin for the new restore event.
 - Version history supports Git-like per-file lineage through FluxVault manifests

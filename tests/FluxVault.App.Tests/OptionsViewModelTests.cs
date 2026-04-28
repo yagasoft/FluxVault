@@ -2,6 +2,7 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
+using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
 using FluxVault.Core.Ipc;
 
@@ -136,6 +137,23 @@ public sealed class OptionsViewModelTests
         Assert.Contains(FluxVaultIpcCommand.RunRetentionNow, client.Commands);
     }
 
+    [Fact]
+    public async Task Explorer_context_menu_can_be_registered_and_unregistered_from_options()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
+        var explorerContextMenu = new FakeExplorerContextMenuService(false, "Explorer context menu is not registered.");
+        var viewModel = new OptionsViewModel(client, explorerContextMenu);
+
+        await viewModel.InitialiseAsync();
+        viewModel.RegisterExplorerContextMenuCommand.Execute(null);
+        viewModel.UnregisterExplorerContextMenuCommand.Execute(null);
+
+        Assert.Equal(1, explorerContextMenu.RegisterCount);
+        Assert.Equal(1, explorerContextMenu.UnregisterCount);
+        Assert.False(viewModel.IsExplorerContextMenuRegistered);
+        Assert.Contains("unregistered", viewModel.ExplorerContextMenuStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static FluxVaultServiceStatus StatusWithPolicy(RetentionPolicy policy)
     {
         return new FluxVaultServiceStatus(
@@ -178,6 +196,34 @@ public sealed class OptionsViewModelTests
         {
             SavedConfigurations.Add(request.Configuration ?? throw new InvalidOperationException("Missing configuration."));
             return Task.FromResult(FluxVaultIpcResponse.Ok());
+        }
+    }
+
+    private sealed class FakeExplorerContextMenuService(bool isRegistered, string message) : IExplorerContextMenuService
+    {
+        private ExplorerContextMenuStatus status = new(isRegistered, message);
+
+        public int RegisterCount { get; private set; }
+
+        public int UnregisterCount { get; private set; }
+
+        public ExplorerContextMenuStatus GetStatus()
+        {
+            return status;
+        }
+
+        public ExplorerContextMenuStatus Register()
+        {
+            RegisterCount++;
+            status = new ExplorerContextMenuStatus(true, "Explorer context menu registered.");
+            return status;
+        }
+
+        public ExplorerContextMenuStatus Unregister()
+        {
+            UnregisterCount++;
+            status = new ExplorerContextMenuStatus(false, "Explorer context menu unregistered.");
+            return status;
         }
     }
 }

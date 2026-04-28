@@ -26,6 +26,14 @@ available pipe, the operational cockpit shows a warning and keeps the app open.
 The dashboard can attempt to start or stop the service through Windows service
 control APIs; access-denied results are surfaced as elevation-required messages.
 
+The app owns per-user Explorer restore entry points. Options registers or
+unregisters HKCU file/folder context-menu commands that launch the current
+`FluxVault.App.exe --restore-path "%1"` path. Startup request routing is
+single-instance: a second app process forwards the restore-path hint to the
+running dashboard through a local named pipe, then exits. The hint is applied to
+the restore UI by selecting a matching recent version where possible; it never
+starts a restore by itself.
+
 When installed by the developer script, `FluxVaultService` uses delayed
 automatic start, SCM restart recovery, and the `FluxVaultService` Windows Event
 Log source in the Application log. Service startup and shutdown are information
@@ -89,9 +97,9 @@ resolution failures.
 Every editable Options control has a native WPF tooltip describing the
 operational effect of the setting; long tooltip text wraps inside a bounded
 width. The selected dashboard direction is Concept A, the operational cockpit:
-stable primary commands in the header, left navigation for workspaces, the File
-browser as the default workspace, and health tiles in the footer. The dashboard
-health strip keeps status compact but exposes detailed durable-change
+stable primary commands in the header, left navigation for workspaces,
+first-tab startup, and health tiles in the footer. The dashboard health strip
+keeps status compact but exposes detailed durable-change
 information through the USN tooltip and diagnostics export. The main header
 constrains long service text with ellipsis trimming so it cannot overlap command
 buttons. The Capture tile is the live watcher/debounce queue; the USN tile is
@@ -156,9 +164,10 @@ FluxVault should not make normal user applications wait on backup reads.
   writer coverage or no-writer-coverage outcomes.
 - Repository and mirror writes are outside the watched source tree unless the
   user explicitly chooses such a layout.
-- Restore and future hydration workflows must avoid unsafe overwrites of open
-  or blocked targets unless the user chooses an alternate path or confirms the
-  operation.
+- Restore asks the dashboard for a destination before IPC and requires explicit
+  confirmation before overwriting an existing destination file. Locked or
+  access-denied destination failures are returned as restore failures rather
+  than crashing the dashboard or committing misleading UI state.
 - Blocked files are surfaced through service status, diagnostics, the dashboard
   Activity view, and the tray activity pane.
 

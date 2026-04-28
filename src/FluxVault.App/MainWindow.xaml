@@ -72,6 +72,12 @@
                         <TextBlock Text="Options" />
                     </StackPanel>
                 </Button>
+                <Button Click="About_Click" ToolTip="About FluxVault.">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="ⓘ" Margin="0,0,6,0" />
+                        <TextBlock Text="About" />
+                    </StackPanel>
+                </Button>
                 <Button Command="{Binding RunBackupNowCommand}" ToolTip="Run a full scan backup now.">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="↥" Margin="0,0,6,0" />
@@ -160,11 +166,11 @@
                                 ToolTip="Discard unsaved File browser and configuration edits, then reload settings from the service." />
                     </StackPanel>
 
-                    <ScrollViewer Grid.Row="1" Grid.Column="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="0,0,10,0">
-                    <Border BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" MinWidth="280">
+                    <Border Grid.Row="1" Grid.Column="0" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Margin="0,0,10,0" MinWidth="0">
                         <TreeView ItemsSource="{Binding FileBrowser.Roots}"
                                   SelectedItemChanged="FileBrowserTree_SelectedItemChanged"
-                                  ToolTip="Browse drives and folders. Use the selection button on each folder to cycle protection mode.">
+                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <TreeView.Resources>
                                 <HierarchicalDataTemplate DataType="{x:Type vm:FileBrowserFolderNode}" ItemsSource="{Binding Children}">
                                     <StackPanel Orientation="Horizontal">
@@ -184,31 +190,39 @@
                             </TreeView.Resources>
                         </TreeView>
                     </Border>
-                    </ScrollViewer>
 
-                    <ScrollViewer Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="0,0,10,0">
-                    <DataGrid MinWidth="320"
+                    <DataGrid Grid.Row="1"
+                              Grid.Column="1"
+                              Name="FileBrowserFilesGrid"
+                              MinWidth="0"
+                              Margin="0,0,10,0"
                               ItemsSource="{Binding FileBrowser.Files}"
+                              Loaded="FileBrowserGrid_Loaded"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                               ToolTip="Files in the selected folder. Check a file to protect only that file.">
                         <DataGrid.Columns>
-                            <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="90" />
-                            <DataGridTextColumn Header="File" Binding="{Binding Name}" Width="*" />
-                            <DataGridTextColumn Header="Bytes" Binding="{Binding Length}" Width="100" />
+                            <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="SizeToCells" MinWidth="90" />
+                            <DataGridTextColumn Header="File" Binding="{Binding Name}" Width="SizeToCells" MinWidth="160" />
+                            <DataGridTextColumn Header="Bytes" Binding="{Binding Length}" Width="SizeToCells" MinWidth="90" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    </ScrollViewer>
 
-                    <ScrollViewer Grid.Row="1" Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                    <DataGrid MinWidth="320"
+                    <DataGrid Grid.Row="1"
+                              Grid.Column="2"
+                              Name="FileBrowserPendingChangesGrid"
+                              MinWidth="0"
                               ItemsSource="{Binding FileBrowser.PendingChanges}"
+                              Loaded="FileBrowserGrid_Loaded"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                               ToolTip="Unsaved File browser selection changes. Press Save selections to apply them.">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Change" Binding="{Binding Change}" Width="90" />
-                            <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="*" />
-                            <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="120" />
+                            <DataGridTextColumn Header="Change" Binding="{Binding Change}" Width="SizeToCells" MinWidth="90" />
+                            <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="SizeToCells" MinWidth="180" />
+                            <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="SizeToCells" MinWidth="120" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    </ScrollViewer>
                 </Grid>
             </TabItem>
 

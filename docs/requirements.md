@@ -47,6 +47,11 @@ folder; direct cloud adapters arrive later.
   removed, and parents show child-selection indicators.
 - File browser panes share available space equally and provide horizontal and
   vertical scrolling for long paths and dense folders.
+- File browser tree hover must not show a broad pane tooltip; selection help
+  remains on the compact selection control. Mouse-wheel scrolling must work when
+  hovered over the tree.
+- File browser file and pending-change columns auto-fit on first render and use
+  horizontal scrolling for long names rather than squeezing columns too narrow.
 - Unsaved File browser changes must survive dashboard refresh, app activation,
   and Options dialog return until the user saves or explicitly discards them.
 - The older watched-folder Browse workflow is removed once the File browser
@@ -56,6 +61,9 @@ folder; direct cloud adapters arrive later.
   full normalised paths and are validated before save.
 - Health/status tiles are displayed in the footer so command buttons and header
   text remain stable.
+- About branding shows Yagasoft copyright, logo, app description, GitHub project
+  link, website link, and brief roadmap milestones without changing the FluxVault
+  executable, taskbar, or tray icon.
 
 ## Planned V1 and sync requirements
 

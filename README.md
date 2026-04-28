@@ -37,10 +37,13 @@ FluxVault now has a developer-usable MVP loop:
 - A FluxVault app icon, left-navigation dashboard, activity view, tray activity
   pane that stays inside the active monitor working area, and blocked-file
   reporting.
+- Yagasoft branding in the About window, including the project GitHub link,
+  Yagasoft website link, application description, and brief roadmap milestones.
 - A three-pane File browser tab for selecting recursive folders, immediate
   folder files, or individual files before saving service configuration.
 - Compact checkbox-style File browser indicators, equal-width scrollable panes,
-  and preserved unsaved selection changes until Save or Discard.
+  first-render column sizing, mouse-wheel tree scrolling, and preserved unsaved
+  selection changes until Save or Discard.
 - Global file/folder exclusion regex rules in Options for generated folders,
   caches, temporary files, and other full-path patterns.
 - Helpful wrapping tooltips across Options so each retention, cadence, and
@@ -83,11 +86,19 @@ mirror folder. Use **File browser** to select protected folders or files, review
 the pending changes pane, save the configuration, run a backup, then restore a
 selected version to an alternate path.
 
+Use the **About** button for the FluxVault version, Yagasoft copyright,
+[`https://github.com/yagasoft/FluxVault`](https://github.com/yagasoft/FluxVault),
+[`https://yagasoft.com/`](https://yagasoft.com/), and the short roadmap summary.
+The FluxVault app icon remains the executable, taskbar, and tray icon.
+
 The File browser replaces the older watched-folder browse/add flow with a
 three-pane selector. Folder selection cycles between recursive selected,
 immediate files only, and not selected. Individual file selections are compiled
 into service watched-folder rules, and unsaved changes are shown before Save
-applies them to the service.
+applies them to the service. The tree pane uses its own scrollbars so mouse-wheel
+scrolling works while the cursor is over the tree, and the file/pending-change
+columns auto-size on first render before falling back to horizontal scrolling for
+long paths.
 
 Open **Options** > **Advanced** to add exclusion regex rules. Exclusion rules
 match full normalised paths and can target files, folders, or both. Folder

@@ -80,6 +80,11 @@ WinForms cursor and monitor coordinates are converted to WPF device-independent
 units before the pane is clamped inside the visible work area; on very small
 work areas the pane height is reduced instead of opening behind the taskbar.
 
+The About window is an app-only branding surface. It uses the Yagasoft logo as
+content, exposes the GitHub project and Yagasoft website links through the
+default browser, and does not replace the FluxVault executable, taskbar, or tray
+icon.
+
 ## File selection UX
 
 The File browser replaces the older Protection-tab browse/add workflow. It is a
@@ -95,6 +100,11 @@ service reloads watched selection rules only after the user saves the browser
 changes. While configuration or File browser edits are dirty, dashboard refresh
 updates runtime status, versions, and activity without replacing local unsaved
 selection rules or clearing the pending-changes pane.
+
+The File browser tree owns its own scrollbars so mouse-wheel scrolling works
+when the cursor is over the folder tree. File and pending-change grids auto-fit
+their columns on first render, then rely on horizontal scrolling for long names
+or paths rather than resizing the three-pane layout.
 
 FluxVault persists browser selections as `ProtectionSelectionRule` records and
 compiles them into existing `WatchedFolderConfiguration` entries before the

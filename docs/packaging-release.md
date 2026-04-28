@@ -11,6 +11,7 @@ Developer packages include:
 - WPF dashboard/tray shell
 - Windows service shell
 - CLI backup harness
+- FluxVault app icon and Yagasoft About-window logo asset
 - install and uninstall PowerShell scripts
 - quickstart and sample configuration
 

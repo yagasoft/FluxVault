@@ -36,7 +36,7 @@ public partial class App : System.Windows.Application
         mainWindow.Activated += (_, _) => _ = viewModel.RefreshAsync();
         mainWindow.Show();
         startupRequestRouter.StartListeningAsync(HandleStartupRequestAsync).GetAwaiter().GetResult();
-        ApplyStartupRequest(viewModel, startupRequest);
+        _ = ApplyStartupRequestAsync(viewModel, startupRequest);
         viewModel.StartAutoRefresh();
         _ = viewModel.RefreshAsync();
 
@@ -113,18 +113,15 @@ public partial class App : System.Windows.Application
             ShowDashboard();
             if (mainWindow?.DataContext is MainWindowViewModel viewModel)
             {
-                ApplyStartupRequest(viewModel, request);
+                _ = ApplyStartupRequestAsync(viewModel, request);
             }
         });
         return Task.CompletedTask;
     }
 
-    private static void ApplyStartupRequest(MainWindowViewModel viewModel, AppStartupRequest request)
+    private static async Task ApplyStartupRequestAsync(MainWindowViewModel viewModel, AppStartupRequest request)
     {
-        if (!string.IsNullOrWhiteSpace(request.RestorePath))
-        {
-            viewModel.ApplyRestorePathRequest(request.RestorePath);
-        }
+        await viewModel.ApplyStartupRequestAsync(request).ConfigureAwait(true);
     }
 
     private void ShowActivityPane()

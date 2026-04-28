@@ -56,8 +56,9 @@ FluxVault now has a developer-usable MVP loop:
 - Compact checkbox-style File browser indicators, equal-width scrollable panes,
   first-render column sizing, mouse-wheel tree scrolling, and preserved unsaved
   selection changes until Save or Discard.
-- Global file/folder exclusion regex rules in Options for generated folders,
-  caches, temporary files, and other full-path patterns.
+- Scoped include/exclude regex rules on selected File browser folders/files.
+  Recursive folder rules apply recursively, immediate folder rules apply only to
+  direct files, and child rules are additive with inherited parent rules.
 - Helpful wrapping tooltips across Options so each retention, cadence, and
   compression setting explains its operational impact without clipping.
 - Safer restore workflow: the dashboard picks a destination before IPC,
@@ -65,10 +66,14 @@ FluxVault now has a developer-usable MVP loop:
   version on cancellation/failure, and reports IPC, locked-file, and
   access-denied failures without closing the app.
 - Options-managed per-user Explorer file/folder actions. Registration writes
-  HKCU context-menu commands that launch `FluxVault.App.exe --restore-path
-  "%1"` from the current app path; if the dashboard is already running, the new
-  process forwards the restore hint to it and exits. The hint selects or
-  highlights matching versions only; it never restores or overwrites by itself.
+  HKCU full-menu commands for `Add to FluxVault`, `Show FluxVault versions`,
+  and `Remove from FluxVault` in that order. `Show FluxVault versions` and the
+  legacy `--restore-path` route forward a version hint to the running dashboard
+  when one exists; they never auto-restore or overwrite. Add/Remove requests
+  save configuration immediately. Windows 11 compact-menu availability is
+  reported in Options; without app identity and an `IExplorerCommand` shell
+  extension, FluxVault registers the full menu and reports compact registration
+  as unavailable.
 
 The detailed implementation status is tracked in
 [`docs/roadmap-tracker.md`](docs/roadmap-tracker.md). Every future roadmap or
@@ -139,12 +144,18 @@ scrolling works while the cursor is over the tree, and the file/pending-change
 columns auto-size on first render before falling back to horizontal scrolling for
 long paths.
 
-Open **Options** > **Advanced** to add exclusion regex rules and to register or
-unregister FluxVault Explorer context-menu actions for the current Windows
-user. Exclusion rules match full normalised paths and can target files, folders,
-or both. Folder rules prevent recursive scans from descending into matching
-folders; watcher and USN targeted captures skip excluded paths too. Explorer
-actions are app-managed HKCU entries, not install/uninstall script switches.
+Use the **File browser** scoped regex strip to add include/exclude regex rules
+to the selected protected folder or file. A folder with local regex rules shows
+an `R` indicator in the tree. Folder tree context menus can show the folder in
+File Explorer; file-grid context menus can open a file in its default app or
+show it selected in File Explorer.
+
+Open **Options** > **Advanced** to register or unregister FluxVault Explorer
+context-menu actions for the current Windows user. Explorer actions are
+app-managed HKCU entries, not install/uninstall script switches. The full menu
+gets Add, Show FluxVault versions, and Remove actions; Windows 11 compact menu
+registration is surfaced as unavailable until the release packaging supplies the
+required app identity and `IExplorerCommand` extension.
 
 UI/UX redesign directions are tracked in
 [`docs/ui-concepts/mvp-021-ui-concepts.md`](docs/ui-concepts/mvp-021-ui-concepts.md).

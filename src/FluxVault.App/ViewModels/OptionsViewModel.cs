@@ -162,7 +162,7 @@ public sealed partial class OptionsViewModel : ObservableObject
             RetentionPolicy = BuildPolicy(),
             CaptureCadencePolicy = BuildCadence(),
             CodecPolicy = BuildCodec(),
-            ExclusionRules = ExclusionRules.ToArray()
+            ExclusionRules = []
         };
         var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(updated), cancellationToken)
             .ConfigureAwait(true);

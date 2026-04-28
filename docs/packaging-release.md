@@ -38,7 +38,11 @@ provided.
 This is V1 script hardening only. Production installer technology, signing,
 upgrade packages, and full rollback semantics remain release-track work.
 Developer install/uninstall scripts do not register Explorer context-menu
-commands; the dashboard owns those per-user entries through Options.
+commands; the dashboard owns those per-user entries through Options. The app
+currently writes HKCU full-menu verbs for `Add to FluxVault`, `Show FluxVault
+versions`, and `Remove from FluxVault`. Windows 11 compact-menu registration is
+reported separately because it requires app identity plus an `IExplorerCommand`
+shell extension; that packaging path remains a release-track decision.
 
 ## GitHub releases
 

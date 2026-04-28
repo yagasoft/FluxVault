@@ -5,6 +5,10 @@ for large files on Windows. The roadmap deliberately separates one-PC
 reliability, mirror fabric, multi-PC sync, write-path optimisation, shell
 integration, and direct cloud adapters.
 
+Implementation status is tracked separately in
+[`docs/roadmap-tracker.md`](roadmap-tracker.md). Keep this roadmap
+product-facing; update the tracker in every PR that changes roadmap status.
+
 ## MVP+ control bundle
 
 Expected user-visible result: FluxVault feels controllable and professional for

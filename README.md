@@ -40,6 +40,11 @@ FluxVault now has a developer-usable MVP loop:
 - Helpful wrapping tooltips across Options so each retention, cadence, and
   compression setting explains its operational impact without clipping.
 
+The detailed implementation status is tracked in
+[`docs/roadmap-tracker.md`](docs/roadmap-tracker.md). Every future roadmap or
+implementation PR should update that tracker with the affected item ids,
+status, and evidence.
+
 VSS captures are reported as crash-consistent in this MVP. Writer-aware
 app-consistency reporting remains a hardening item.
 

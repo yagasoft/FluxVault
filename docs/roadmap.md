@@ -23,6 +23,15 @@ one Windows 11 PC.
 - FluxVault icon in the executable, taskbar, and tray.
 - Left-navigation dashboard with Protection, Repository, Activity, Options, and
   Diagnostics.
+- File browser tab with three panes: drives/folders, files in the selected
+  folder, and pending unsaved selection changes.
+- File browser folder selection cycles through recursive selected, immediate
+  files only, and not selected. Manual child selections are retained when a
+  parent recursive selection is removed, and parent folders show child-selection
+  indicators.
+- Protection-tab folder browse/add controls are removed once the File browser
+  becomes the primary watched-selection workflow. Selection changes apply only
+  after Save.
 - Helpful Options tooltips and compact health-strip details for durable-change
   fallback reasons.
 - Tray activity pane with recent events, pending work, blocked files, retention
@@ -40,6 +49,11 @@ Expected user-visible result: safe local production use on Windows 11.
   testing.
 - Better VSS writer handling and app-consistency reporting.
 - Restore browser with safer overwrite workflows and Explorer entry points.
+- Per-file version graph for restore lineage. Restoring an old version creates
+  a new version event that points to the restored version as its fork origin,
+  while newer versions remain available.
+- Restore history shows linear versions, restored-from links, forks, and
+  conflict groups without hiding later versions.
 - Health dashboard for repository integrity, USN state, mirror state, blocked
   files, and last successful restore rehearsal.
 - Repository scrubber for bit-rot detection and missing-chunk repair from a
@@ -75,6 +89,10 @@ downloading or rewriting whole files unnecessarily.
 - Stable device identity from machine identity plus FluxVault installation id,
   with editable friendly names and repository trust records.
 - Folder mappings use the same source path by default, with per-PC overrides.
+- Newly protected folders or files published by one PC remain pending on other
+  PCs until each peer confirms the same path or chooses a per-PC path override.
+- Peer sync must not create, hydrate, or patch a newly mapped target before the
+  mapping is confirmed.
 - PCs publish manifests, device heartbeats, and folder mapping metadata into
   the shared repository.
 - Other PCs hydrate only missing chunks and patch files at chunk level where

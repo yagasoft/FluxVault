@@ -15,6 +15,8 @@ a tray app, and a per-machine Windows service.
   and off modes for explicit profiles.
 - Local immutable repository plus atomic writes into a user-selected cloud sync folder.
 - Basic restore to original or alternate paths.
+- Planned File browser selection UX with drives, folders, files, and a pending
+  change summary before Save.
 - Local diagnostics only; no hidden telemetry.
 
 ## Repository status
@@ -68,6 +70,20 @@ dotnet test
 In the dashboard, choose a repository folder, optionally choose a cloud-sync
 mirror folder, add a watched folder, save the configuration, run a backup, then
 restore a selected version to an alternate path.
+
+The planned File browser will replace the older watched-folder browse/add flow
+with a three-pane selector. Folder selection will cycle between recursive
+selected, immediate files only, and not selected; unsaved changes will be shown
+before Save applies them to the service.
+
+Future restore hardening will keep FluxVault history append-only. Restoring an
+older version will create a new version event that records the restored version
+as the fork origin, while newer versions stay available. This is Git-like
+lineage on FluxVault manifests and chunks, not a normal `.git` repository.
+
+Future multi-PC sync will wait for each peer to confirm the same source path or
+choose a per-PC path override before creating, hydrating, or patching a newly
+selected folder or file on that peer.
 
 Open **Options** to review retention. The MVP defaults keep every version for
 24 hours, keep one version per hour for 30 days, keep one version per day for

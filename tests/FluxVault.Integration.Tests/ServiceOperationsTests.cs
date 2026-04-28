@@ -191,6 +191,37 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task App_consistent_capture_is_committed_and_reported_with_consistency_detail()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "live content");
+        var configuration = NewConfiguration(workspace, watched);
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var operations = new FluxVaultOperations(
+            store,
+            new StubCaptureProvider(FileCaptureResult.Captured(
+                new MemoryStream(Encoding.UTF8.GetBytes("snapshot content")),
+                CaptureConsistency.AppConsistent,
+                "SqlServerWriter covered D:\\Work\\db.mdf.")));
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        var status = await operations.GetStatusAsync();
+        var activity = operations.GetActivity().Single(item => item.Kind == FluxVaultActivityKind.Captured);
+
+        Assert.True(backup.Success);
+        Assert.Equal(CaptureConsistency.AppConsistent, version.Consistency);
+        var captureStatus = Assert.Single(status.CaptureStatuses!);
+        Assert.Equal(CaptureConsistency.AppConsistent, captureStatus.Consistency);
+        Assert.Contains("SqlServerWriter", captureStatus.ConsistencyDetail);
+        Assert.Contains("SqlServerWriter", activity.Detail);
+    }
+
+    [Fact]
     public async Task Set_protection_paused_toggles_enabled_state()
     {
         using var workspace = TemporaryWorkspace.Create();

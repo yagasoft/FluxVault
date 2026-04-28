@@ -369,6 +369,37 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Contains("Blocked", viewModel.CaptureHealth);
     }
 
+    [Fact]
+    public async Task Refresh_shows_capture_consistency_detail_from_service_status()
+    {
+        var status = StatusWithVersions("v1") with
+        {
+            CaptureStatuses =
+            [
+                new CaptureRuntimeStatus(
+                    @"D:\Work\db.mdf",
+                    "docs",
+                    CaptureRuntimeState.Captured,
+                    DateTimeOffset.UtcNow,
+                    null,
+                    DateTimeOffset.UtcNow,
+                    null,
+                    null,
+                    CaptureConsistency.AppConsistent,
+                    1,
+                    ConsistencyDetail: "SqlServerWriter covered D:\\Work\\db.mdf.")
+            ]
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        var row = Assert.Single(viewModel.CaptureStatuses);
+        Assert.Equal(CaptureRuntimeState.Captured, row.State);
+        Assert.Contains("SqlServerWriter", row.Detail);
+    }
+
     private static FluxVaultServiceStatus StatusWithVersions(params string[] versionIds)
     {
         var configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault");

@@ -15,7 +15,8 @@ folder; direct cloud adapters arrive later.
   and resource profiles.
 - Near-real-time detection using file-system notifications, with USN journal
   catch-up as the durable source of truth.
-- VSS-backed reads for open files.
+- VSS-backed reads for open files, using a writer-aware requester path for the
+  service fallback rather than shelling out to `vssadmin.exe`.
 - Chunked deduplicated storage with BLAKE3 fingerprints.
 - Configurable hot-file cadence with bounded forced snapshots.
 - Non-interfering capture reads that do not take exclusive source-file locks.
@@ -77,6 +78,11 @@ folder; direct cloud adapters arrive later.
 - Developer service packaging should configure delayed automatic service start,
   restart recovery, and Windows Event Log source registration. Internal fatal
   service failures should be logged before the service exits for SCM recovery.
+- VSS capture must coordinate writers through the requester API. FluxVault must
+  report `AppConsistent` only when writer coordination succeeds and writer
+  metadata covers the source path. Successful snapshots without matching writer
+  coverage must be reported as `CrashConsistent`; writer/requester failure must
+  fail the capture rather than commit a misleading version.
 - Restoring an older version preserves newer versions and records the restored
   version as the fork origin for the new restore event.
 - Version history supports Git-like per-file lineage through FluxVault manifests
@@ -119,4 +125,6 @@ minutes by default as a safety net.
 FluxVault detects changed files and then identifies changed content efficiently.
 It must not claim generic changed-byte detection for arbitrary Windows files.
 VSS captures are app-consistent only where relevant VSS writers participate and
-the capture result proves that status.
+the capture result proves that status. Normal readable-file captures remain
+`BestEffort`; writer-aware VSS captures are `AppConsistent` only with matching
+writer coverage and are otherwise `CrashConsistent`.

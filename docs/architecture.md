@@ -45,16 +45,22 @@ the service.
 4. Smart cadence coalesces hot files to avoid repeated full-file reads. If a
    file keeps changing beyond its configured maximum hot-file delay, the service
    queues a snapshot anyway and reports a forced hot-file snapshot.
-5. Normal stream reads capture readable files; the Windows service falls back to
-   VSS through `vssadmin.exe` for locked files when privileges allow it.
-6. Core chunking splits the captured bytes into FastCDC-style chunks.
-7. Chunk fingerprints are compared against the local repository.
-8. New chunks and a manifest are committed atomically.
-9. Repository artefacts are mirrored into the configured cloud sync folder.
-10. Compression is selected by policy. The default adaptive profile uses zstd,
+5. Normal stream reads capture readable files as `BestEffort`; the Windows
+   service falls back to a writer-aware VSS requester for locked files when
+   privileges allow it.
+6. The VSS requester coordinates writers, creates the snapshot through the
+   Windows VSS COM API, reads from the shadow device path, and checks writer
+   metadata. Writer-covered captures are reported as `AppConsistent`; successful
+   snapshots without matching writer coverage are reported as `CrashConsistent`;
+   writer/requester failure fails the capture.
+7. Core chunking splits the captured bytes into FastCDC-style chunks.
+8. Chunk fingerprints are compared against the local repository.
+9. New chunks and a manifest are committed atomically.
+10. Repository artefacts are mirrored into the configured cloud sync folder.
+11. Compression is selected by policy. The default adaptive profile uses zstd,
     skips known compressed file types, uses lz4 for hot files, and keeps Brotli
     and LZMA as explicit ratio/cold-archive choices.
-11. If retention is enabled, the service applies the configured retention policy
+12. If retention is enabled, the service applies the configured retention policy
     after the successful backup and reports kept, pruned, and reclaimed counts
     in service status.
 
@@ -141,7 +147,13 @@ FluxVault should not make normal user applications wait on backup reads.
 
 - Normal capture opens source files read-only with `FileShare.ReadWrite |
   FileShare.Delete`.
-- VSS capture reads from the shadow copy path, not the live source path.
+- VSS capture reads from the shadow copy path, not the live source path. The
+  service uses FluxVault's requester path in `FluxVault.Windows`, not
+  `vssadmin.exe`.
+- Consistency evidence is part of runtime status. `ConsistencyDetail` is an
+  optional IPC field so older clients can ignore it while the dashboard,
+  activity feed, diagnostics export, and newly written responses can explain
+  writer coverage or no-writer-coverage outcomes.
 - Repository and mirror writes are outside the watched source tree unless the
   user explicitly chooses such a layout.
 - Restore and future hydration workflows must avoid unsafe overwrites of open

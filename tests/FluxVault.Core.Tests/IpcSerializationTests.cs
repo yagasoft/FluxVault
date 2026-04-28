@@ -48,7 +48,22 @@ public sealed class IpcSerializationTests
                             Reason: "USN active.",
                             Win32ErrorCode: null)
                     ]
-            });
+            },
+            CaptureStatuses:
+            [
+                new CaptureRuntimeStatus(
+                    @"D:\Work\db.mdf",
+                    "docs",
+                    CaptureRuntimeState.Captured,
+                    checkedAt,
+                    null,
+                    checkedAt,
+                    null,
+                    null,
+                    CaptureConsistency.AppConsistent,
+                    1,
+                    ConsistencyDetail: "SqlServerWriter covered D:\\Work\\db.mdf.")
+            ]);
         var response = FluxVaultIpcResponse.WithStatus(status);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
@@ -61,6 +76,9 @@ public sealed class IpcSerializationTests
         Assert.Equal("USN active.", roundTrip.Status.DurableChange.Status);
         Assert.Equal((long)1000, Assert.Single(roundTrip.Status.DurableChange.Checkpoints).NextUsn);
         Assert.Equal("FSCTL_QUERY_USN_JOURNAL", Assert.Single(roundTrip.Status.DurableChange.Details).Operation);
+        var captureStatus = Assert.Single(roundTrip.Status.CaptureStatuses!);
+        Assert.Equal(CaptureConsistency.AppConsistent, captureStatus.Consistency);
+        Assert.Contains("SqlServerWriter", captureStatus.ConsistencyDetail);
     }
 
     [Fact]

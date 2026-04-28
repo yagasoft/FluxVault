@@ -22,4 +22,5 @@ public sealed record CaptureRuntimeStatus(
     string? DelayReason,
     string? BlockedReason,
     CaptureConsistency? Consistency,
-    int AttemptCount);
+    int AttemptCount,
+    string? ConsistencyDetail = null);

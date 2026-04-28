@@ -128,7 +128,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public string CaptureStrategy { get; } =
         "The service watches configured folders, debounces rapid edits, periodically reconciles missed changes, " +
-        "uses normal reads where possible, and falls back to VSS for locked files.";
+        "uses normal reads where possible, and falls back to writer-aware VSS for locked files.";
 
     public string RepositorySummary { get; } =
         "Versions are stored as immutable BLAKE3-addressed chunks plus manifests. Optional cloud-folder mirroring uses atomic writes.";
@@ -520,7 +520,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     captureStatus.State,
                     captureStatus.LastEventUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") ?? string.Empty,
                     captureStatus.NextForcedCaptureUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") ?? string.Empty,
-                    captureStatus.BlockedReason ?? captureStatus.DelayReason ?? captureStatus.Consistency?.ToString() ?? string.Empty));
+                    captureStatus.BlockedReason
+                        ?? captureStatus.DelayReason
+                        ?? captureStatus.ConsistencyDetail
+                        ?? captureStatus.Consistency?.ToString()
+                        ?? string.Empty));
             }
 
             if (!preserveLocalConfiguration)

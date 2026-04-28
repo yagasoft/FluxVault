@@ -2,9 +2,10 @@
 
 ## Installer
 
-FluxVault targets a per-machine installer because the service, VSS capture, and
-Explorer integration require machine-level setup. MVP packages may be unsigned
-developer artefacts. V1 public releases require signed binaries and installer.
+FluxVault targets a per-machine installer because the service, writer-aware VSS
+capture, and Explorer integration require machine-level setup. MVP packages may
+be unsigned developer artefacts. V1 public releases require signed binaries and
+installer.
 
 Developer packages include:
 

@@ -239,7 +239,8 @@ public sealed class FluxVaultOperations(
         DateTimeOffset? nextForcedCaptureUtc,
         string? delayReason = null,
         string? blockedReason = null,
-        CaptureConsistency? consistency = null)
+        CaptureConsistency? consistency = null,
+        string? consistencyDetail = null)
     {
         var normalisedPath = Path.GetFullPath(sourcePath);
         lock (runtimeGate)
@@ -259,7 +260,8 @@ public sealed class FluxVaultOperations(
                 Consistency: consistency ?? previous?.Consistency,
                 AttemptCount: state is CaptureRuntimeState.Capturing or CaptureRuntimeState.ForcedHotFileSnapshot
                     ? (previous?.AttemptCount ?? 0) + 1
-                    : previous?.AttemptCount ?? 0);
+                    : previous?.AttemptCount ?? 0,
+                ConsistencyDetail: consistencyDetail ?? previous?.ConsistencyDetail);
         }
     }
 
@@ -485,7 +487,8 @@ public sealed class FluxVaultOperations(
             CaptureRuntimeState.Captured,
             lastEventUtc: null,
             nextForcedCaptureUtc: null,
-            consistency: capture.Consistency);
+            consistency: capture.Consistency,
+            consistencyDetail: capture.Message);
         return new CaptureTargetResult(true, null);
     }
 
@@ -648,7 +651,10 @@ public sealed class FluxVaultOperations(
             CaptureRuntimeState.Failed => "Failed",
             _ => "Activity"
         };
-        var detail = status.BlockedReason ?? status.DelayReason ?? Path.GetFileName(status.SourcePath);
+        var detail = status.BlockedReason
+            ?? status.DelayReason
+            ?? status.ConsistencyDetail
+            ?? Path.GetFileName(status.SourcePath);
         return new FluxVaultActivityEvent(
             status.LastCaptureAttemptUtc ?? status.LastEventUtc ?? DateTimeOffset.UtcNow,
             kind,

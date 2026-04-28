@@ -27,7 +27,7 @@ builder.Services.AddSingleton<IUsnChangeJournalReader, WindowsUsnChangeJournalRe
 builder.Services.AddSingleton<UsnCatchUpService>();
 builder.Services.AddSingleton(CapturePipelinePlanner.CreateDefault());
 builder.Services.AddSingleton<IFileCaptureProvider>(
-    _ => new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new VssAdminCaptureProvider()));
+    _ => new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new WriterAwareVssCaptureProvider()));
 builder.Services.AddSingleton<FluxVaultOperations>();
 builder.Services.AddSingleton<IFluxVaultRequestHandler>(provider => provider.GetRequiredService<FluxVaultOperations>());
 builder.Services.AddSingleton<NamedPipeFluxVaultServer>();

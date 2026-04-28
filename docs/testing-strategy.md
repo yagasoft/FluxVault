@@ -14,8 +14,11 @@
 - Configuration load/save/defaults and validation.
 - IPC request/response serialisation.
 - Durable-change detail serialisation for USN fallback diagnostics.
-- Normal-file capture, non-interfering source sharing, and VSS fallback
-  selection.
+- Normal-file capture, non-interfering source sharing, writer-aware VSS
+  fallback selection, and capture consistency evidence.
+- Fake-coordinator VSS requester tests for app-consistent writer coverage,
+  crash-consistent no-writer-coverage snapshots, and writer/requester failure
+  cleanup.
 - Resource profile debounce delays.
 - XAML quality checks for compact Activity pane controls, the selected
   operational cockpit shell, prioritised command order, constrained dashboard
@@ -52,6 +55,8 @@
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.
+- Service operation persistence of `AppConsistent` capture results and optional
+  consistency detail in status/activity.
 - Service-triggered retention and manual `RunRetentionNow`.
 - Mirror cleanup after retention pruning.
 - Options dialog view-model save, preview, and run-retention behaviour with a
@@ -108,3 +113,7 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
   quickstart, and sample configuration.
 - Branding artefacts: FluxVault icon remains the application icon, and the
   Yagasoft logo is copied as an app content asset.
+- Manual elevated VSS smoke check: with the developer service installed, lock a
+  protected file, run a backup, and confirm the Activity/Capture detail reports
+  either writer-covered `AppConsistent` or no-writer-coverage
+  `CrashConsistent`. This is documented evidence, not an automated PR gate.

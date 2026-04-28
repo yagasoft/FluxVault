@@ -8,7 +8,8 @@ a tray app, and a per-machine Windows service.
 
 - Watched local folders with recursive include/exclude policies.
 - USN journal catch-up plus directory notifications for low-latency detection.
-- VSS snapshot reads for open-file capture and app-consistency where writers cooperate.
+- Writer-aware VSS requester reads for locked-file capture and app-consistency
+  where VSS writer metadata covers the source path.
 - FastCDC-style chunking with BLAKE3 chunk fingerprints.
 - Configurable capture cadence with bounded hot-file snapshots.
 - Adaptive compression policy with zstd by default, plus lz4, Brotli, LZMA,
@@ -33,8 +34,11 @@ FluxVault now has a developer-usable MVP loop:
   failure events, with SCM recovery configured by the developer install script.
 - Watched-folder backup using file-system notifications, USN journal catch-up,
   and periodic reconciliation fallback.
-- Normal readable-file capture with VSS fallback for locked files when the
-  service has sufficient Windows privileges.
+- Normal readable-file capture with writer-aware VSS requester fallback for
+  locked files when the service has sufficient Windows privileges.
+- Capture status reports VSS consistency evidence: normal reads are
+  best-effort, covered writer-aware VSS captures are app-consistent, and VSS
+  captures without matching writer coverage are crash-consistent.
 - Version list, inspect, restore, diagnostics export, local repository, and
   optional cloud-folder mirror.
 - Conservative automatic retention, with a WPF Options dialog for previewing
@@ -62,8 +66,11 @@ The detailed implementation status is tracked in
 implementation PR should update that tracker with the affected item ids,
 status, and evidence.
 
-VSS captures are reported as crash-consistent in this MVP. Writer-aware
-app-consistency reporting remains a hardening item.
+VSS captures are app-consistent only when writer coordination completes and
+writer metadata covers the captured source path. Successful VSS snapshots
+without matching writer coverage are reported as crash-consistent with an
+explicit detail message in service status, dashboard activity, diagnostics, and
+newly written IPC responses.
 
 FluxVault opens source files read-only with `FileShare.ReadWrite |
 FileShare.Delete`; VSS captures read from the shadow path. Repository writes
@@ -94,6 +101,13 @@ Windows Event Log source under the Application log, configures delayed automatic
 start, and configures service recovery restart actions. The dashboard shows a
 warning if the service is stopped or unavailable and provides Start/Stop service
 controls.
+
+Manual VSS smoke check for this slice: from an elevated session with the service
+installed, lock a protected file with another process, run **Run backup now**,
+and inspect the dashboard Activity/Capture detail. A writer-covered file should
+show `AppConsistent`; a file without matching writer metadata should show
+`CrashConsistent` and a no-writer-coverage explanation. This live elevated
+check is not a CI gate.
 
 In the dashboard, choose a repository folder and optionally choose a cloud-sync
 mirror folder. Use **File browser** to select protected folders or files, review

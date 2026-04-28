@@ -69,7 +69,12 @@ Expected user-visible result: safe local production use on Windows 11.
   recovery, delayed automatic service start, and safer developer install and
   uninstall scripts. Production installer technology, signing, upgrade packages,
   and full rollback semantics remain open V1 work.
-- Better VSS writer handling and app-consistency reporting.
+- Better VSS writer handling and app-consistency reporting. The first
+  implementation replaces the `vssadmin.exe` fallback with a FluxVault VSS
+  requester that coordinates writers, creates the snapshot through COM, reads
+  from the shadow path, reports `AppConsistent` only when writer metadata covers
+  the source path, and otherwise reports successful VSS captures as
+  `CrashConsistent`.
 - Restore browser with safer overwrite workflows and Explorer entry points.
 - Per-file version graph for restore lineage. Restoring an old version creates
   a new version event that points to the restored version as its fork origin,

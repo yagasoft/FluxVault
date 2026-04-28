@@ -17,7 +17,7 @@ public sealed class CapturePlanningTests
     [Fact]
     public void Vss_shadow_capture_builds_path_under_shadow_volume()
     {
-        var path = VssAdminCaptureProvider.BuildShadowPath(
+        var path = WriterAwareVssCaptureProvider.BuildShadowPath(
             @"D:\",
             @"D:\Work\large.bin",
             @"\\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy42\");

@@ -632,7 +632,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     version.SourcePath,
                     version.CapturedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss"),
                     version.Consistency,
-                    version.ChunkCount));
+                    version.ChunkCount,
+                    FormatLineage(version)));
             }
 
             SelectedVersion = selectedVersionId is null
@@ -709,6 +710,20 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             return string.Equals(sourcePath, restoreHintPath, StringComparison.OrdinalIgnoreCase);
         }
+    }
+
+    private static string FormatLineage(RepositoryVersionSummary version)
+    {
+        return version.OperationType switch
+        {
+            VersionOperationType.Restore when !string.IsNullOrWhiteSpace(version.RestoredFromVersionId)
+                => $"Restored from {version.RestoredFromVersionId}",
+            VersionOperationType.InheritedCopy when !string.IsNullOrWhiteSpace(version.InheritedFromVersionId)
+                => $"Inherited from {version.InheritedFromVersionId}",
+            VersionOperationType.Capture when version.ParentVersionIds is { Count: > 0 }
+                => $"Parent {version.ParentVersionIds[0]}",
+            _ => "Capture"
+        };
     }
 
     private static bool IsDirectoryLike(string path)
@@ -1025,7 +1040,8 @@ public sealed record VersionRow(
     string SourcePath,
     string CapturedAt,
     CaptureConsistency Consistency,
-    int ChunkCount);
+    int ChunkCount,
+    string Lineage = "Capture");
 
 public sealed record CaptureStatusRow(
     string SourcePath,

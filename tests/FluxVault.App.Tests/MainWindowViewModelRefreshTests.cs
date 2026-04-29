@@ -26,6 +26,48 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Refresh_populates_compact_lineage_text_for_version_rows()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersionSummaries(
+            new RepositoryVersionSummary(
+                VersionId: "restore-version",
+                SourcePath: @"D:\Work\file.txt",
+                CapturedAtUtc: DateTimeOffset.UtcNow,
+                Consistency: CaptureConsistency.BestEffort,
+                LogicalLength: 128,
+                ChunkCount: 1,
+                OperationType: VersionOperationType.Restore,
+                ParentVersionIds: [],
+                RestoredFromVersionId: "source-version",
+                ForkOriginVersionId: "source-version",
+                InheritedFromVersionId: null,
+                InheritedFromSourcePath: null,
+                ContentSignature: "sig-v1"),
+            new RepositoryVersionSummary(
+                VersionId: "copy-version",
+                SourcePath: @"D:\Work\copy.txt",
+                CapturedAtUtc: DateTimeOffset.UtcNow,
+                Consistency: CaptureConsistency.BestEffort,
+                LogicalLength: 128,
+                ChunkCount: 1,
+                OperationType: VersionOperationType.InheritedCopy,
+                ParentVersionIds: ["source-version"],
+                RestoredFromVersionId: null,
+                ForkOriginVersionId: "source-version",
+                InheritedFromVersionId: "source-version",
+                InheritedFromSourcePath: @"D:\Work\file.txt",
+                ContentSignature: "sig-v1")));
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        Assert.Contains(viewModel.RecentVersions, version => version.VersionId == "restore-version"
+            && version.Lineage == "Restored from source-version");
+        Assert.Contains(viewModel.RecentVersions, version => version.VersionId == "copy-version"
+            && version.Lineage == "Inherited from source-version");
+    }
+
+    [Fact]
     public async Task Auto_refresh_repeats_status_requests_without_manual_backup()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
@@ -601,6 +643,19 @@ public sealed class MainWindowViewModelRefreshTests
 
     private static FluxVaultServiceStatus StatusWithVersions(params string[] versionIds)
     {
+        return StatusWithVersionSummaries(versionIds
+            .Select(id => new RepositoryVersionSummary(
+                id,
+                @"D:\Work\file.txt",
+                DateTimeOffset.UtcNow,
+                CaptureConsistency.BestEffort,
+                128,
+                1))
+            .ToArray());
+    }
+
+    private static FluxVaultServiceStatus StatusWithVersionSummaries(params RepositoryVersionSummary[] versions)
+    {
         var configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault");
         return new FluxVaultServiceStatus(
             IsServiceRunning: true,
@@ -608,15 +663,7 @@ public sealed class MainWindowViewModelRefreshTests
             LastMessage: "Captured 1 file(s).",
             LastCaptureUtc: DateTimeOffset.UtcNow,
             WatchedFolders: [],
-            RecentVersions: versionIds
-                .Select(id => new RepositoryVersionSummary(
-                    id,
-                    @"D:\Work\file.txt",
-                    DateTimeOffset.UtcNow,
-                    CaptureConsistency.BestEffort,
-                    128,
-                    1))
-                .ToArray());
+            RecentVersions: versions);
     }
 
     private static FluxVaultServiceStatus StatusWithVersionSources(params (string VersionId, string SourcePath)[] versions)

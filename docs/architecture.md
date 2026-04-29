@@ -200,11 +200,14 @@ manifest is the authoritative description of one captured file version. Chunks
 are addressed by BLAKE3 digest and may be stored raw or encoded with zstd, lz4,
 Brotli, or LZMA according to policy.
 
-Restore remains append-only in the planned V1 lineage model. Restoring an older
-version creates a new version event that records the restored source version and
-fork origin, while newer versions remain queryable and restorable. This gives
-FluxVault Git-like history semantics without using Git as the live repository
-engine.
+Restore remains append-only in the V1 lineage model. Restoring an older version
+writes bytes plus a repository-local pending lineage hint; it does not create a
+manifest until the next capture of that destination. That capture records the
+restored source version and fork origin, while newer versions remain queryable
+and restorable. Byte-identical copies into protected paths become visible
+`InheritedCopy` versions that reuse chunks and point to the original history.
+This gives FluxVault Git-like history semantics without using Git as the live
+repository engine.
 
 Retention is manifest-led. FluxVault groups versions by normalised source path,
 keeps dense recent history, thins older history to hourly and daily buckets,

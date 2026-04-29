@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
@@ -66,18 +67,36 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             logicalLength += chunk.Payload.Length;
         }
 
+        var sourcePath = Path.GetFullPath(request.SourcePath);
+        var existingManifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
+        var contentSignature = ComputeContentSignature(logicalLength, chunks);
+        var lineage = ReadRestoreHint(sourcePath) is { } restoreHint
+            ? ResolveRestoreLineage(sourcePath, restoreHint, existingManifests)
+            : ResolveCaptureLineage(sourcePath, contentSignature, existingManifests);
+
         var manifest = new FileVersionManifest(
             VersionId: Guid.CreateVersion7().ToString("N"),
             WatchedFolderId: request.WatchedFolderId,
-            SourcePath: request.SourcePath,
+            SourcePath: sourcePath,
             CapturedAtUtc: request.CapturedAtUtc,
             Consistency: request.Consistency,
             LogicalLength: logicalLength,
-            Chunks: chunks);
+            Chunks: chunks,
+            OperationType: lineage.OperationType,
+            ParentVersionIds: lineage.ParentVersionIds,
+            RestoredFromVersionId: lineage.RestoredFromVersionId,
+            ForkOriginVersionId: lineage.ForkOriginVersionId,
+            InheritedFromVersionId: lineage.InheritedFromVersionId,
+            InheritedFromSourcePath: lineage.InheritedFromSourcePath,
+            ContentSignature: contentSignature);
 
         var manifestBytes = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonOptions);
         AtomicWrite(ManifestPath(rootPath, manifest.VersionId), manifestBytes);
         MirrorManifestIfNeeded(manifest.VersionId, manifestBytes);
+        if (lineage.OperationType == VersionOperationType.Restore)
+        {
+            DeleteRestoreHint(sourcePath);
+        }
 
         return new FileCommitResult(manifest, newChunkCount);
     }
@@ -94,13 +113,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         {
             cancellationToken.ThrowIfCancellationRequested();
             var manifest = await ReadManifestAsync(path, cancellationToken).ConfigureAwait(false);
-            versions.Add(new RepositoryVersionSummary(
-                manifest.VersionId,
-                manifest.SourcePath,
-                manifest.CapturedAtUtc,
-                manifest.Consistency,
-                manifest.LogicalLength,
-                manifest.Chunks.Count));
+            versions.Add(ToSummary(manifest));
         }
 
         return versions
@@ -150,6 +163,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
             output.Close();
             File.Move(tempPath, outputPath, overwrite: true);
+            WriteRestoreHint(outputPath, manifest);
         }
         finally
         {
@@ -310,13 +324,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         CancellationToken cancellationToken)
     {
         var manifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
-        var summaries = manifests.Select(manifest => new RepositoryVersionSummary(
-            manifest.VersionId,
-            manifest.SourcePath,
-            manifest.CapturedAtUtc,
-            manifest.Consistency,
-            manifest.LogicalLength,
-            manifest.Chunks.Count)).ToArray();
+        var summaries = manifests.Select(ToSummary).ToArray();
 
         var decisions = RetentionPlanner.Decide(summaries, policy, nowUtc).ToArray();
         var prunableIds = decisions
@@ -442,9 +450,176 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
     }
 
+    private void WriteRestoreHint(string outputPath, FileVersionManifest sourceManifest)
+    {
+        var destinationPath = Path.GetFullPath(outputPath);
+        var forkOriginVersionId = sourceManifest.ForkOriginVersionId
+            ?? sourceManifest.RestoredFromVersionId
+            ?? sourceManifest.InheritedFromVersionId
+            ?? sourceManifest.VersionId;
+        var hint = new RestoreLineageHint(
+            destinationPath,
+            sourceManifest.VersionId,
+            forkOriginVersionId,
+            sourceManifest.SourcePath,
+            DateTimeOffset.UtcNow);
+        AtomicWriteOverwrite(
+            RestoreHintPath(rootPath, destinationPath),
+            JsonSerializer.SerializeToUtf8Bytes(hint, JsonOptions));
+    }
+
+    private RestoreLineageHint? ReadRestoreHint(string sourcePath)
+    {
+        var hintPath = RestoreHintPath(rootPath, sourcePath);
+        if (!File.Exists(hintPath))
+        {
+            return null;
+        }
+
+        var hint = JsonSerializer.Deserialize<RestoreLineageHint>(File.ReadAllBytes(hintPath), JsonOptions);
+        return hint is not null && PathEquals(hint.DestinationPath, sourcePath) ? hint : null;
+    }
+
+    private void DeleteRestoreHint(string sourcePath)
+    {
+        var hintPath = RestoreHintPath(rootPath, sourcePath);
+        if (File.Exists(hintPath))
+        {
+            File.Delete(hintPath);
+        }
+    }
+
+    private LineageResolution ResolveRestoreLineage(
+        string sourcePath,
+        RestoreLineageHint hint,
+        IReadOnlyList<FileVersionManifest> existingManifests)
+    {
+        var samePathParent = LatestForPath(existingManifests, sourcePath);
+        return new LineageResolution(
+            VersionOperationType.Restore,
+            samePathParent is null ? [] : [samePathParent.VersionId],
+            hint.RestoredFromVersionId,
+            hint.ForkOriginVersionId,
+            null,
+            null);
+    }
+
+    private LineageResolution ResolveCaptureLineage(
+        string sourcePath,
+        string contentSignature,
+        IReadOnlyList<FileVersionManifest> existingManifests)
+    {
+        var samePathParent = LatestForPath(existingManifests, sourcePath);
+        if (samePathParent is not null)
+        {
+            return new LineageResolution(
+                VersionOperationType.Capture,
+                [samePathParent.VersionId],
+                null,
+                GetForkOriginVersionId(samePathParent),
+                null,
+                null);
+        }
+
+        var inheritedFrom = existingManifests
+            .Where(manifest => !PathEquals(manifest.SourcePath, sourcePath))
+            .Where(manifest => string.Equals(GetContentSignature(manifest), contentSignature, StringComparison.Ordinal))
+            .OrderByDescending(manifest => manifest.CapturedAtUtc)
+            .ThenByDescending(manifest => manifest.VersionId, StringComparer.Ordinal)
+            .FirstOrDefault();
+        if (inheritedFrom is not null)
+        {
+            return new LineageResolution(
+                VersionOperationType.InheritedCopy,
+                [inheritedFrom.VersionId],
+                null,
+                GetForkOriginVersionId(inheritedFrom) ?? inheritedFrom.VersionId,
+                inheritedFrom.VersionId,
+                inheritedFrom.SourcePath);
+        }
+
+        return new LineageResolution(VersionOperationType.Capture, [], null, null, null, null);
+    }
+
+    private static FileVersionManifest? LatestForPath(IReadOnlyList<FileVersionManifest> manifests, string sourcePath)
+    {
+        return manifests
+            .Where(manifest => PathEquals(manifest.SourcePath, sourcePath))
+            .OrderByDescending(manifest => manifest.CapturedAtUtc)
+            .ThenByDescending(manifest => manifest.VersionId, StringComparer.Ordinal)
+            .FirstOrDefault();
+    }
+
+    private static string? GetForkOriginVersionId(FileVersionManifest manifest)
+    {
+        return manifest.ForkOriginVersionId
+            ?? manifest.RestoredFromVersionId
+            ?? manifest.InheritedFromVersionId;
+    }
+
+    private RepositoryVersionSummary ToSummary(FileVersionManifest manifest)
+    {
+        return new RepositoryVersionSummary(
+            manifest.VersionId,
+            manifest.SourcePath,
+            manifest.CapturedAtUtc,
+            manifest.Consistency,
+            manifest.LogicalLength,
+            manifest.Chunks.Count,
+            manifest.OperationType,
+            manifest.ParentVersionIds,
+            manifest.RestoredFromVersionId,
+            manifest.ForkOriginVersionId,
+            manifest.InheritedFromVersionId,
+            manifest.InheritedFromSourcePath,
+            GetContentSignature(manifest));
+    }
+
+    private string GetContentSignature(FileVersionManifest manifest)
+    {
+        return manifest.ContentSignature ?? ComputeContentSignature(manifest.LogicalLength, manifest.Chunks);
+    }
+
+    private string ComputeContentSignature(long logicalLength, IReadOnlyList<ManifestChunk> chunks)
+    {
+        var builder = new StringBuilder();
+        builder.Append("fv-content-v1:").Append(logicalLength);
+        foreach (var chunk in chunks.OrderBy(chunk => chunk.Offset))
+        {
+            builder
+                .Append('|')
+                .Append(chunk.Offset)
+                .Append(':')
+                .Append(chunk.Digest)
+                .Append(':')
+                .Append(chunk.Length);
+        }
+
+        return hasher.Hash(Encoding.UTF8.GetBytes(builder.ToString()));
+    }
+
+    private static void AtomicWriteOverwrite(string path, byte[] bytes)
+    {
+        var directory = Path.GetDirectoryName(path) ?? throw new InvalidOperationException($"Path has no directory: {path}");
+        Directory.CreateDirectory(directory);
+
+        var tempPath = Path.Combine(directory, $"{Path.GetFileName(path)}.{Guid.NewGuid():N}.tmp");
+        File.WriteAllBytes(tempPath, bytes);
+        File.Move(tempPath, path, overwrite: true);
+    }
+
+    private static bool PathEquals(string left, string right)
+    {
+        return string.Equals(Path.GetFullPath(left), Path.GetFullPath(right), StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string ChunksPath(string root) => Path.Combine(root, "chunks");
 
     private static string ManifestsPath(string root) => Path.Combine(root, "manifests");
+
+    private static string LineagePath(string root) => Path.Combine(root, "lineage");
+
+    private static string RestoreHintsPath(string root) => Path.Combine(LineagePath(root), "restore-hints");
 
     private static string ChunkPath(string root, string digest)
     {
@@ -461,7 +636,34 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         return Path.Combine(ManifestsPath(root), $"{versionId}.json");
     }
 
+    private static string RestoreHintPath(string root, string sourcePath)
+    {
+        return Path.Combine(RestoreHintsPath(root), $"{HashPathKey(sourcePath)}.json");
+
+        static string HashPathKey(string value)
+        {
+            return Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(
+                    Path.GetFullPath(value).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant())))
+                .ToLowerInvariant();
+        }
+    }
+
     private sealed record PreparedChunk(byte[] Payload, ChunkMetadata Metadata);
+
+    private sealed record RestoreLineageHint(
+        string DestinationPath,
+        string RestoredFromVersionId,
+        string ForkOriginVersionId,
+        string SourcePath,
+        DateTimeOffset CreatedAtUtc);
+
+    private sealed record LineageResolution(
+        VersionOperationType OperationType,
+        IReadOnlyList<string> ParentVersionIds,
+        string? RestoredFromVersionId,
+        string? ForkOriginVersionId,
+        string? InheritedFromVersionId,
+        string? InheritedFromSourcePath);
 
     private sealed record RetentionState(
         IReadOnlyList<RepositoryVersionRetentionDecision> Decisions,

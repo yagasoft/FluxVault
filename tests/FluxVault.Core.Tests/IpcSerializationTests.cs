@@ -112,4 +112,33 @@ public sealed class IpcSerializationTests
         Assert.Equal(1024, roundTrip.RetentionResult.ReclaimedBytes);
         Assert.Equal("mirror warning", Assert.Single(roundTrip.RetentionResult.MirrorWarnings));
     }
+
+    [Fact]
+    public void Version_summary_serialization_preserves_lineage_details()
+    {
+        var version = new RepositoryVersionSummary(
+            VersionId: "restore-version",
+            SourcePath: @"D:\Work\Docs\brief.docx",
+            CapturedAtUtc: new DateTimeOffset(2026, 4, 30, 9, 0, 0, TimeSpan.Zero),
+            Consistency: CaptureConsistency.BestEffort,
+            LogicalLength: 128,
+            ChunkCount: 2,
+            OperationType: VersionOperationType.Restore,
+            ParentVersionIds: ["previous-destination-version"],
+            RestoredFromVersionId: "source-version",
+            ForkOriginVersionId: "source-version",
+            InheritedFromVersionId: null,
+            InheritedFromSourcePath: null,
+            ContentSignature: "sig-v1");
+        var response = FluxVaultIpcResponse.WithVersions([version]);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
+
+        var roundTrippedVersion = Assert.Single(roundTrip.Versions!);
+        Assert.Equal(VersionOperationType.Restore, roundTrippedVersion.OperationType);
+        Assert.Equal(["previous-destination-version"], roundTrippedVersion.ParentVersionIds);
+        Assert.Equal("source-version", roundTrippedVersion.RestoredFromVersionId);
+        Assert.Equal("source-version", roundTrippedVersion.ForkOriginVersionId);
+        Assert.Equal("sig-v1", roundTrippedVersion.ContentSignature);
+    }
 }

@@ -7,7 +7,14 @@ public sealed record FileVersionManifest(
     DateTimeOffset CapturedAtUtc,
     CaptureConsistency Consistency,
     long LogicalLength,
-    IReadOnlyList<ManifestChunk> Chunks);
+    IReadOnlyList<ManifestChunk> Chunks,
+    VersionOperationType OperationType = VersionOperationType.Capture,
+    IReadOnlyList<string>? ParentVersionIds = null,
+    string? RestoredFromVersionId = null,
+    string? ForkOriginVersionId = null,
+    string? InheritedFromVersionId = null,
+    string? InheritedFromSourcePath = null,
+    string? ContentSignature = null);
 
 public sealed record ManifestChunk(
     string Digest,

@@ -45,6 +45,10 @@ FluxVault now has a developer-usable MVP loop:
   captures without matching writer coverage are crash-consistent.
 - Version list, inspect, restore, diagnostics export, local repository, and
   optional cloud-folder mirror.
+- Append-only version lineage in manifests. Same-path captures record parent
+  versions, restores leave a pending lineage hint for the next capture, and
+  identical copied files become visible inherited versions without re-uploading
+  chunks.
 - Conservative automatic retention, with a WPF Options dialog for previewing
   and applying retention settings.
 - A FluxVault app icon, left-navigation dashboard, activity view, tray activity
@@ -177,11 +181,14 @@ dashboard therefore keeps primary commands stable in the header, opens on the
 first workspace tab, keeps navigation on the left, and keeps health tiles in the
 footer.
 
-Future restore lineage hardening will keep FluxVault history append-only.
-Restoring an older version will create a new version event that records the
-restored version as the fork origin, while newer versions stay available. This
-is Git-like lineage on FluxVault manifests and chunks, not a normal `.git`
-repository.
+Restore lineage keeps FluxVault history append-only. Restoring an older version
+does not create a manifest immediately; it writes a repository-local pending
+lineage hint, and the next capture of that destination records the restored
+version and fork origin while newer versions stay available. If a protected
+file is copied from existing FluxVault content, the copy appears as a visible
+inherited version that reuses existing chunks instead of uploading duplicate
+content. This is Git-like lineage on FluxVault manifests and chunks, not a
+normal `.git` repository.
 
 Future multi-PC sync will wait for each peer to confirm the same source path or
 choose a per-PC path override before creating, hydrating, or patching a newly

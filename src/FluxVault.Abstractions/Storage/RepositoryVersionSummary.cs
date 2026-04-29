@@ -6,4 +6,11 @@ public sealed record RepositoryVersionSummary(
     DateTimeOffset CapturedAtUtc,
     CaptureConsistency Consistency,
     long LogicalLength,
-    int ChunkCount);
+    int ChunkCount,
+    VersionOperationType OperationType = VersionOperationType.Capture,
+    IReadOnlyList<string>? ParentVersionIds = null,
+    string? RestoredFromVersionId = null,
+    string? ForkOriginVersionId = null,
+    string? InheritedFromVersionId = null,
+    string? InheritedFromSourcePath = null,
+    string? ContentSignature = null);

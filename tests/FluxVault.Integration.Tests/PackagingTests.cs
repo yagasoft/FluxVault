@@ -143,6 +143,16 @@ public sealed class PackagingTests
     }
 
     [Fact]
+    public void Compact_shell_extension_com_destructors_are_not_declared_as_overrides()
+    {
+        var root = FindRepositoryRoot();
+        var source = File.ReadAllText(Path.Combine(root, "src", "FluxVault.ExplorerCommand", "FluxVaultExplorerCommand.cpp"));
+
+        Assert.DoesNotContain("~FluxVaultExplorerCommand() override", source);
+        Assert.DoesNotContain("~FluxVaultExplorerCommandFactory() override", source);
+    }
+
+    [Fact]
     public void Package_script_publishes_shell_extension_sparse_manifest_and_status_note()
     {
         var root = FindRepositoryRoot();

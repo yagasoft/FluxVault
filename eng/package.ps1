@@ -12,22 +12,51 @@ $root = Split-Path -Parent $PSScriptRoot
 $output = Join-Path $root $OutputRoot
 $statusNote = Join-Path $output "compact-menu-status.txt"
 
-function Resolve-MsBuild {
-    if ($env:MSBUILD_EXE_PATH -and (Test-Path -LiteralPath $env:MSBUILD_EXE_PATH)) {
+function Test-NativeMsBuild([string]$MsBuildPath) {
+    if ([string]::IsNullOrWhiteSpace($MsBuildPath) -or -not (Test-Path -LiteralPath $MsBuildPath)) {
+        return $false
+    }
+
+    $directory = Split-Path -Parent $MsBuildPath
+    while ($directory) {
+        if ((Split-Path -Leaf $directory) -ieq "MSBuild") {
+            $cppDefaultProps = Join-Path $directory "Microsoft\VC\v170\Microsoft.Cpp.Default.props"
+            return Test-Path -LiteralPath $cppDefaultProps
+        }
+
+        $parent = Split-Path -Parent $directory
+        if ($parent -eq $directory) {
+            break
+        }
+
+        $directory = $parent
+    }
+
+    return $false
+}
+
+function Resolve-NativeMsBuild {
+    $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+    if (Test-Path -LiteralPath $vswhere) {
+        $paths = & $vswhere `
+            -latest `
+            -products * `
+            -requires Microsoft.Component.MSBuild Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+            -find "MSBuild\**\Bin\MSBuild.exe"
+        foreach ($path in $paths) {
+            if (Test-NativeMsBuild $path) {
+                return $path
+            }
+        }
+    }
+
+    if ($env:MSBUILD_EXE_PATH -and (Test-NativeMsBuild $env:MSBUILD_EXE_PATH)) {
         return $env:MSBUILD_EXE_PATH
     }
 
     $msbuildCommand = Get-Command msbuild -ErrorAction SilentlyContinue
-    if ($msbuildCommand) {
+    if ($msbuildCommand -and (Test-NativeMsBuild $msbuildCommand.Source)) {
         return $msbuildCommand.Source
-    }
-
-    $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-    if (Test-Path -LiteralPath $vswhere) {
-        $path = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild -find "MSBuild\**\Bin\MSBuild.exe" | Select-Object -First 1
-        if ($path) {
-            return $path
-        }
     }
 
     return $null
@@ -102,7 +131,7 @@ dotnet publish (Join-Path $root "src\FluxVault.Cli\FluxVault.Cli.csproj") `
 $shellExtensionProject = Join-Path $root "src\FluxVault.ExplorerCommand\FluxVault.ExplorerCommand.vcxproj"
 $shellExtensionOutput = Join-Path $output "shell-extension"
 New-Item -ItemType Directory -Force -Path $shellExtensionOutput | Out-Null
-$msbuild = Resolve-MsBuild
+$msbuild = Resolve-NativeMsBuild
 if ($msbuild) {
     & $msbuild $shellExtensionProject `
         /m `
@@ -112,10 +141,10 @@ if ($msbuild) {
     if ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath (Join-Path $shellExtensionOutput "FluxVault.ExplorerCommand.dll"))) {
         $status.Add("Native shell extension: built FluxVault.ExplorerCommand.dll.")
     } else {
-        $status.Add("Native shell extension: MSBuild was found, but Visual C++ build targets were unavailable or the build failed.")
+        $status.Add("Native shell extension: Visual C++ Build Tools were found, but the build failed. See MSBuild output.")
     }
 } else {
-    $status.Add("Native shell extension: MSBuild with Visual C++ tools was not found; compact menu handler was not built.")
+    $status.Add("Native shell extension: Visual C++ Build Tools are missing; install Visual Studio 2022 Build Tools with Desktop development with C++, MSVC v143 x64/x86 tools, and Windows SDK to build FluxVault.ExplorerCommand.dll.")
 }
 
 $sparsePackageSource = Join-Path $root "installer\sparse-package"

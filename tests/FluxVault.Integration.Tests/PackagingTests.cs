@@ -160,6 +160,22 @@ public sealed class PackagingTests
     }
 
     [Fact]
+    public void Package_script_preflights_visual_cpp_targets_before_native_build()
+    {
+        var root = FindRepositoryRoot();
+        var script = File.ReadAllText(Path.Combine(root, "eng", "package.ps1"));
+        var preflightIndex = script.IndexOf("Resolve-NativeMsBuild", StringComparison.Ordinal);
+        var nativeBuildIndex = script.IndexOf("& $msbuild $shellExtensionProject", StringComparison.Ordinal);
+
+        Assert.Contains("Microsoft.VisualStudio.Component.VC.Tools.x86.x64", script);
+        Assert.Contains("Microsoft.Cpp.Default.props", script);
+        Assert.Contains("Visual C++ Build Tools are missing", script);
+        Assert.True(preflightIndex >= 0, "The package script should resolve native MSBuild through a Visual C++ prerequisite preflight.");
+        Assert.True(nativeBuildIndex >= 0, "The package script should still build the native shell extension when prerequisites exist.");
+        Assert.True(preflightIndex < nativeBuildIndex, "The Visual C++ prerequisite preflight should run before invoking native MSBuild.");
+    }
+
+    [Fact]
     public void App_icon_is_packaged_as_windows_icon_resource()
     {
         var root = FindRepositoryRoot();

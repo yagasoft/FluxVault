@@ -52,6 +52,25 @@ events, recoverable runtime fallbacks are warnings, and fatal background task
 failures are logged as critical before being rethrown so SCM recovery can restart
 the service.
 
+Repository maintenance runs inside the service next to IPC and the protection
+loop. `RepositoryMaintenancePolicy` is part of configuration and defaults to
+enabled, a 24-hour interval, automatic repair from a mirror, and restore
+rehearsal of the newest three versions. The maintenance loop persists the last
+health, scrub, and rehearsal results under ProgramData service state so the
+dashboard keeps health evidence after a service restart. Manual IPC commands can
+return the current health snapshot, run a scrub, or run a restore rehearsal
+without changing existing backup/restore contracts.
+
+Repository scrub is repository-owned only. `FileSystemChunkRepository` walks
+remaining manifests, validates referenced chunks, and ignores artefacts already
+made unreachable by retention. A healthy mirror copy may repair a primary
+manifest/chunk, and a healthy primary copy may repair mirror drift. If neither
+side is healthy, FluxVault reports a critical unresolved issue and does not read
+or trust the live source file as a repair source. Restore rehearsal restores
+recent versions to a FluxVault temporary state folder, verifies logical length,
+records pass/fail details, and deletes the temporary output without writing
+restore-lineage hints.
+
 ## MVP capture flow
 
 1. Directory notification wakes the service quickly when a watched path changes
@@ -115,6 +134,11 @@ information through the USN tooltip and diagnostics export. The main header
 constrains long service text with ellipsis trimming so it cannot overlap command
 buttons. The Capture tile is the live watcher/debounce queue; the USN tile is
 the latest durable catch-up result.
+
+The Diagnostics workspace is the detailed health dashboard. It shows repository
+integrity, mirror state, restore rehearsal, USN state, and blocked-file rows, and
+keeps manual Run scrub, Run restore rehearsal, and Export diagnostics actions in
+one place.
 
 The tray activity pane is positioned from the active monitor working area. The
 WinForms cursor and monitor coordinates are converted to WPF device-independent

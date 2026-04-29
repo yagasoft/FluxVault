@@ -139,39 +139,180 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         ArgumentException.ThrowIfNullOrWhiteSpace(outputPath);
 
         var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
+        await RestoreManifestAsync(manifest, outputPath, writeRestoreHint: true, cancellationToken).ConfigureAwait(false);
+    }
 
-        var outputDirectory = Path.GetDirectoryName(outputPath);
-        if (!string.IsNullOrWhiteSpace(outputDirectory))
-        {
-            Directory.CreateDirectory(outputDirectory);
-        }
+    public async Task<RepositoryScrubReport> ScrubAsync(
+        bool autoRepairFromMirror,
+        CancellationToken cancellationToken = default)
+    {
+        var issues = new List<RepositoryScrubIssue>();
+        var manifests = await ReadRepairableManifestsAsync(autoRepairFromMirror, issues, cancellationToken).ConfigureAwait(false);
+        var checkedChunks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        var tempPath = $"{outputPath}.{Guid.NewGuid():N}.tmp";
-        try
+        foreach (var manifest in manifests)
         {
-            await using var output = File.Create(tempPath);
-            foreach (var chunk in manifest.Chunks.OrderBy(chunk => chunk.Offset))
+            foreach (var chunk in manifest.Chunks)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var payload = await File.ReadAllBytesAsync(ChunkPath(rootPath, chunk.Digest), cancellationToken);
-                var bytes = chunk.Encoding == ChunkEncoding.Raw
-                    ? payload
-                    : codec.Decompress(payload, chunk.Length, chunk.Encoding);
+                if (!checkedChunks.Add(chunk.Digest))
+                {
+                    continue;
+                }
 
-                await output.WriteAsync(bytes, cancellationToken);
+                var primary = ValidateChunk(rootPath, chunk);
+                if (!primary.IsHealthy)
+                {
+                    var repaired = false;
+                    if (autoRepairFromMirror && mirrorPath is not null)
+                    {
+                        var mirror = ValidateChunk(mirrorPath, chunk);
+                        if (mirror.IsHealthy)
+                        {
+                            RepairChunk(mirrorPath, rootPath, chunk.Digest);
+                            issues.Add(new RepositoryScrubIssue(
+                                Severity: RepositoryScrubIssueSeverity.Warning,
+                                Kind: primary.IssueKind ?? RepositoryScrubIssueKind.CorruptChunk,
+                                Path: ChunkPath(rootPath, chunk.Digest),
+                                VersionId: manifest.VersionId,
+                                ChunkDigest: chunk.Digest,
+                                Message: "Primary chunk was repaired from a healthy mirror copy.",
+                                RepairAction: RepositoryRepairAction.RepairedPrimaryFromMirror));
+                            repaired = true;
+                        }
+                    }
+
+                    if (!repaired)
+                    {
+                        issues.Add(new RepositoryScrubIssue(
+                            Severity: RepositoryScrubIssueSeverity.Critical,
+                            Kind: primary.IssueKind ?? RepositoryScrubIssueKind.CorruptChunk,
+                            Path: ChunkPath(rootPath, chunk.Digest),
+                            VersionId: manifest.VersionId,
+                            ChunkDigest: chunk.Digest,
+                            Message: primary.Message ?? "Primary chunk is unavailable or corrupt and no healthy repair copy exists.",
+                            RepairAction: RepositoryRepairAction.Unresolved));
+                    }
+
+                    continue;
+                }
+
+                if (mirrorPath is null)
+                {
+                    continue;
+                }
+
+                var mirrorValidation = ValidateChunk(mirrorPath, chunk);
+                if (mirrorValidation.IsHealthy)
+                {
+                    continue;
+                }
+
+                if (autoRepairFromMirror)
+                {
+                    RepairChunk(rootPath, mirrorPath, chunk.Digest);
+                    issues.Add(new RepositoryScrubIssue(
+                        Severity: RepositoryScrubIssueSeverity.Warning,
+                        Kind: RepositoryScrubIssueKind.MirrorDrift,
+                        Path: ChunkPath(mirrorPath, chunk.Digest),
+                        VersionId: manifest.VersionId,
+                        ChunkDigest: chunk.Digest,
+                        Message: "Mirror chunk was repaired from a healthy primary copy.",
+                        RepairAction: RepositoryRepairAction.RepairedMirrorFromPrimary));
+                }
+                else
+                {
+                    issues.Add(new RepositoryScrubIssue(
+                        Severity: RepositoryScrubIssueSeverity.Warning,
+                        Kind: RepositoryScrubIssueKind.MirrorDrift,
+                        Path: ChunkPath(mirrorPath, chunk.Digest),
+                        VersionId: manifest.VersionId,
+                        ChunkDigest: chunk.Digest,
+                        Message: mirrorValidation.Message ?? "Mirror chunk differs from the primary repository.",
+                        RepairAction: RepositoryRepairAction.None));
+                }
             }
+        }
 
-            output.Close();
-            File.Move(tempPath, outputPath, overwrite: true);
-            WriteRestoreHint(outputPath, manifest);
+        var repairedIssueCount = issues.Count(issue => issue.RepairAction is
+            RepositoryRepairAction.RepairedPrimaryFromMirror or RepositoryRepairAction.RepairedMirrorFromPrimary);
+        var healthState = CalculateScrubHealth(issues);
+        return new RepositoryScrubReport(
+            CompletedAtUtc: DateTimeOffset.UtcNow,
+            HealthState: healthState,
+            ManifestCount: manifests.Count,
+            CheckedChunkCount: checkedChunks.Count,
+            IssueCount: issues.Count,
+            RepairedIssueCount: repairedIssueCount,
+            Issues: issues);
+    }
+
+    public async Task<RestoreRehearsalReport> RunRestoreRehearsalAsync(
+        string tempRoot,
+        int maxVersions,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tempRoot);
+        var requested = Math.Max(0, maxVersions);
+        var manifests = (await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false))
+            .OrderByDescending(manifest => manifest.CapturedAtUtc)
+            .ThenByDescending(manifest => manifest.VersionId, StringComparer.Ordinal)
+            .Take(requested)
+            .ToArray();
+        var results = new List<RestoreRehearsalResult>();
+
+        try
+        {
+            Directory.CreateDirectory(tempRoot);
+            foreach (var manifest in manifests)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var fileName = string.IsNullOrWhiteSpace(Path.GetFileName(manifest.SourcePath))
+                    ? $"{manifest.VersionId}.rehearsal"
+                    : $"{manifest.VersionId}-{Path.GetFileName(manifest.SourcePath)}";
+                var outputPath = Path.Combine(tempRoot, fileName);
+                try
+                {
+                    await RestoreManifestAsync(manifest, outputPath, writeRestoreHint: false, cancellationToken)
+                        .ConfigureAwait(false);
+                    var restoredLength = new FileInfo(outputPath).Length;
+                    var success = restoredLength == manifest.LogicalLength;
+                    results.Add(new RestoreRehearsalResult(
+                        manifest.VersionId,
+                        manifest.SourcePath,
+                        success,
+                        manifest.LogicalLength,
+                        success
+                            ? "Restore rehearsal passed."
+                            : $"Restore rehearsal length mismatch: expected {manifest.LogicalLength} byte(s), got {restoredLength}."));
+                }
+                catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException)
+                {
+                    results.Add(new RestoreRehearsalResult(
+                        manifest.VersionId,
+                        manifest.SourcePath,
+                        Success: false,
+                        LogicalLength: manifest.LogicalLength,
+                        Message: exception.Message));
+                }
+            }
         }
         finally
         {
-            if (File.Exists(tempPath))
+            if (Directory.Exists(tempRoot))
             {
-                File.Delete(tempPath);
+                Directory.Delete(tempRoot, recursive: true);
             }
         }
+
+        var failures = results.Count(result => !result.Success);
+        return new RestoreRehearsalReport(
+            CompletedAtUtc: DateTimeOffset.UtcNow,
+            HealthState: failures == 0 ? RepositoryHealthState.Healthy : RepositoryHealthState.Critical,
+            RequestedVersionCount: requested,
+            RehearsedVersionCount: results.Count - failures,
+            FailedVersionCount: failures,
+            Results: results);
     }
 
     public async Task<RepositoryRetentionPreview> PreviewRetentionAsync(
@@ -316,6 +457,214 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         return await JsonSerializer.DeserializeAsync<FileVersionManifest>(manifestStream, JsonOptions, cancellationToken)
             .ConfigureAwait(false)
             ?? throw new InvalidDataException($"Manifest {manifestPath} could not be read.");
+    }
+
+    private async Task RestoreManifestAsync(
+        FileVersionManifest manifest,
+        string outputPath,
+        bool writeRestoreHint,
+        CancellationToken cancellationToken)
+    {
+        var outputDirectory = Path.GetDirectoryName(outputPath);
+        if (!string.IsNullOrWhiteSpace(outputDirectory))
+        {
+            Directory.CreateDirectory(outputDirectory);
+        }
+
+        var tempPath = $"{outputPath}.{Guid.NewGuid():N}.tmp";
+        try
+        {
+            await using var output = File.Create(tempPath);
+            foreach (var chunk in manifest.Chunks.OrderBy(chunk => chunk.Offset))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var payload = await File.ReadAllBytesAsync(ChunkPath(rootPath, chunk.Digest), cancellationToken);
+                var bytes = chunk.Encoding == ChunkEncoding.Raw
+                    ? payload
+                    : codec.Decompress(payload, chunk.Length, chunk.Encoding);
+
+                await output.WriteAsync(bytes, cancellationToken);
+            }
+
+            output.Close();
+            File.Move(tempPath, outputPath, overwrite: true);
+            if (writeRestoreHint)
+            {
+                WriteRestoreHint(outputPath, manifest);
+            }
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+        }
+    }
+
+    private async Task<IReadOnlyList<FileVersionManifest>> ReadRepairableManifestsAsync(
+        bool autoRepairFromMirror,
+        List<RepositoryScrubIssue> issues,
+        CancellationToken cancellationToken)
+    {
+        if (!Directory.Exists(ManifestsPath(rootPath)))
+        {
+            return [];
+        }
+
+        var manifests = new List<FileVersionManifest>();
+        foreach (var path in Directory.EnumerateFiles(ManifestsPath(rootPath), "*.json"))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            try
+            {
+                manifests.Add(await ReadManifestAsync(path, cancellationToken).ConfigureAwait(false));
+            }
+            catch (Exception exception) when (exception is JsonException or IOException or InvalidDataException)
+            {
+                var versionId = Path.GetFileNameWithoutExtension(path);
+                var repaired = false;
+                if (autoRepairFromMirror && mirrorPath is not null)
+                {
+                    var mirrorManifestPath = ManifestPath(mirrorPath, versionId);
+                    if (File.Exists(mirrorManifestPath))
+                    {
+                        try
+                        {
+                            var mirrorManifest = await ReadManifestAsync(mirrorManifestPath, cancellationToken)
+                                .ConfigureAwait(false);
+                            AtomicWriteOverwrite(path, await File.ReadAllBytesAsync(mirrorManifestPath, cancellationToken).ConfigureAwait(false));
+                            manifests.Add(mirrorManifest);
+                            issues.Add(new RepositoryScrubIssue(
+                                RepositoryScrubIssueSeverity.Warning,
+                                RepositoryScrubIssueKind.InvalidManifest,
+                                path,
+                                versionId,
+                                null,
+                                "Primary manifest was repaired from a healthy mirror copy.",
+                                RepositoryRepairAction.RepairedPrimaryFromMirror));
+                            repaired = true;
+                        }
+                        catch (Exception mirrorException) when (mirrorException is JsonException or IOException or InvalidDataException)
+                        {
+                        }
+                    }
+                }
+
+                if (!repaired)
+                {
+                    issues.Add(new RepositoryScrubIssue(
+                        RepositoryScrubIssueSeverity.Critical,
+                        RepositoryScrubIssueKind.InvalidManifest,
+                        path,
+                        versionId,
+                        null,
+                        $"Manifest could not be read: {exception.Message}",
+                        RepositoryRepairAction.Unresolved));
+                }
+            }
+        }
+
+        return manifests;
+    }
+
+    private ChunkValidation ValidateChunk(string root, ManifestChunk chunk)
+    {
+        var chunkPath = ChunkPath(root, chunk.Digest);
+        if (!File.Exists(chunkPath))
+        {
+            return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.MissingChunk, $"Chunk {chunk.Digest} is missing.");
+        }
+
+        try
+        {
+            var metadata = ReadChunkMetadataSafe(root, chunk.Digest);
+            if (metadata is null)
+            {
+                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} metadata is missing or unreadable.");
+            }
+
+            if (!string.Equals(metadata.Digest, chunk.Digest, StringComparison.OrdinalIgnoreCase)
+                || metadata.LogicalLength != chunk.Length
+                || metadata.StoredLength != chunk.StoredLength
+                || metadata.Encoding != chunk.Encoding)
+            {
+                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} metadata does not match the manifest.");
+            }
+
+            var payload = File.ReadAllBytes(chunkPath);
+            if (payload.Length != chunk.StoredLength)
+            {
+                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} stored length mismatch.");
+            }
+
+            byte[] raw;
+            try
+            {
+                raw = chunk.Encoding == ChunkEncoding.Raw
+                    ? payload
+                    : codec.Decompress(payload, chunk.Length, chunk.Encoding);
+            }
+            catch (Exception exception) when (exception is InvalidDataException or IOException)
+            {
+                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} could not be decoded: {exception.Message}");
+            }
+
+            if (raw.Length != chunk.Length)
+            {
+                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} length mismatch.");
+            }
+
+            var digest = hasher.Hash(raw);
+            if (!string.Equals(digest, chunk.Digest, StringComparison.OrdinalIgnoreCase))
+            {
+                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} digest mismatch.");
+            }
+
+            return ChunkValidation.Healthy;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} could not be read: {exception.Message}");
+        }
+    }
+
+    private static ChunkMetadata? ReadChunkMetadataSafe(string root, string digest)
+    {
+        try
+        {
+            return ReadChunkMetadata(root, digest);
+        }
+        catch (Exception exception) when (exception is JsonException or IOException or InvalidDataException)
+        {
+            return null;
+        }
+    }
+
+    private static RepositoryHealthState CalculateScrubHealth(IReadOnlyList<RepositoryScrubIssue> issues)
+    {
+        if (issues.Any(issue => issue.RepairAction == RepositoryRepairAction.Unresolved
+                                || issue.Severity == RepositoryScrubIssueSeverity.Critical))
+        {
+            return RepositoryHealthState.Critical;
+        }
+
+        if (issues.Any(issue => issue.RepairAction == RepositoryRepairAction.None))
+        {
+            return RepositoryHealthState.Warning;
+        }
+
+        return RepositoryHealthState.Healthy;
+    }
+
+    private static void RepairChunk(string sourceRoot, string destinationRoot, string digest)
+    {
+        AtomicWriteOverwrite(ChunkPath(destinationRoot, digest), File.ReadAllBytes(ChunkPath(sourceRoot, digest)));
+        var sourceMetadataPath = MetadataPath(sourceRoot, digest);
+        if (File.Exists(sourceMetadataPath))
+        {
+            AtomicWriteOverwrite(MetadataPath(destinationRoot, digest), File.ReadAllBytes(sourceMetadataPath));
+        }
     }
 
     private async Task<RetentionState> BuildRetentionStateAsync(
@@ -649,6 +998,19 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     }
 
     private sealed record PreparedChunk(byte[] Payload, ChunkMetadata Metadata);
+
+    private sealed record ChunkValidation(
+        bool IsHealthy,
+        RepositoryScrubIssueKind? IssueKind = null,
+        string? Message = null)
+    {
+        public static ChunkValidation Healthy { get; } = new(true);
+
+        public static ChunkValidation Unhealthy(RepositoryScrubIssueKind issueKind, string message)
+        {
+            return new ChunkValidation(false, issueKind, message);
+        }
+    }
 
     private sealed record RestoreLineageHint(
         string DestinationPath,

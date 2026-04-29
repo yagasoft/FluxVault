@@ -23,15 +23,23 @@ builder.Services.AddSingleton<IFluxVaultConfigurationStore>(
     new FileFluxVaultConfigurationStore(Path.Combine(programDataPath, "config.json"), programDataPath));
 builder.Services.AddSingleton<IUsnJournalCheckpointStore>(
     new FileUsnJournalCheckpointStore(Path.Combine(programDataPath, "state", "usn-checkpoints.json")));
+builder.Services.AddSingleton<IRepositoryMaintenanceStateStore>(
+    new FileRepositoryMaintenanceStateStore(Path.Combine(programDataPath, "state", "repository-maintenance.json")));
 builder.Services.AddSingleton<IUsnChangeJournalReader, WindowsUsnChangeJournalReader>();
 builder.Services.AddSingleton<UsnCatchUpService>();
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton(CapturePipelinePlanner.CreateDefault());
 builder.Services.AddSingleton<IFileCaptureProvider>(
     _ => new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new WriterAwareVssCaptureProvider()));
-builder.Services.AddSingleton<FluxVaultOperations>();
+builder.Services.AddSingleton(provider => new FluxVaultOperations(
+    provider.GetRequiredService<IFluxVaultConfigurationStore>(),
+    provider.GetRequiredService<IFileCaptureProvider>(),
+    provider.GetRequiredService<IRepositoryMaintenanceStateStore>(),
+    Path.Combine(programDataPath, "state")));
 builder.Services.AddSingleton<IFluxVaultRequestHandler>(provider => provider.GetRequiredService<FluxVaultOperations>());
 builder.Services.AddSingleton<NamedPipeFluxVaultServer>();
 builder.Services.AddSingleton<FileSystemProtectionLoop>();
+builder.Services.AddSingleton<RepositoryMaintenanceLoop>();
 builder.Services.AddSingleton<IFluxVaultServiceRuntime, FluxVaultServiceRuntime>();
 builder.Services.AddHostedService<Worker>();
 

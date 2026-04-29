@@ -17,5 +17,8 @@ public enum FluxVaultIpcCommand
     PreviewMirrorRebalance = 12,
     RunMirrorRebalance = 13,
     ResolveConflict = 14,
-    GetSyncStatus = 15
+    GetSyncStatus = 15,
+    GetRepositoryHealth = 16,
+    RunRepositoryScrub = 17,
+    RunRestoreRehearsal = 18
 }

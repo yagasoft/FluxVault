@@ -49,6 +49,10 @@ FluxVault now has a developer-usable MVP loop:
   versions, restores leave a pending lineage hint for the next capture, and
   identical copied files become visible inherited versions without re-uploading
   chunks.
+- Repository health dashboard with manual and scheduled scrub/rehearsal. Scrub
+  validates referenced manifests and chunks, repairs only from a healthy
+  primary/mirror counterpart, and restore rehearsal verifies recent versions in
+  FluxVault-owned temporary output.
 - Conservative automatic retention, with a WPF Options dialog for previewing
   and applying retention settings.
 - A FluxVault app icon, left-navigation dashboard, activity view, tray activity
@@ -189,6 +193,17 @@ file is copied from existing FluxVault content, the copy appears as a visible
 inherited version that reuses existing chunks instead of uploading duplicate
 content. This is Git-like lineage on FluxVault manifests and chunks, not a
 normal `.git` repository.
+
+The **Diagnostics** workspace is now the repository health dashboard. It shows
+overall repository health, repository integrity, mirror state, USN state,
+blocked-file status, last scrub, and last restore rehearsal. **Run scrub**
+checks only artefacts still referenced by remaining manifests, repairs primary
+chunks/manifests from a healthy mirror, repairs mirror artefacts from a healthy
+primary copy, and reports unresolved corruption without reading live source
+files. **Run restore rehearsal** restores the newest configured versions to a
+FluxVault temporary state folder, verifies logical length, records pass/fail
+results, then removes the temporary output without creating repository versions
+or restore-lineage hints.
 
 Future multi-PC sync will wait for each peer to confirm the same source path or
 choose a per-PC path override before creating, hydrating, or patching a newly

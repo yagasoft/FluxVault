@@ -224,6 +224,33 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
+    public void Diagnostics_tab_exposes_repository_health_dashboard_and_manual_maintenance_actions()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var diagnosticsTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "Diagnostics"));
+
+        Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "{Binding RepositoryHealthStatus}");
+        Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "DataGrid"),
+            element => (string?)element.Attribute("ItemsSource") == "{Binding RepositoryHealthRows}");
+        Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Content") == "Run scrub"
+                && (string?)element.Attribute("Command") == "{Binding RunRepositoryScrubCommand}");
+        Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Content") == "Run restore rehearsal"
+                && (string?)element.Attribute("Command") == "{Binding RunRestoreRehearsalCommand}");
+        Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding ExportDiagnosticsCommand}");
+    }
+
+    [Fact]
     public void File_browser_exposes_scoped_regex_editor_and_folder_indicator()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");

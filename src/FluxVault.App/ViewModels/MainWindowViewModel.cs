@@ -30,6 +30,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private CaptureCadencePolicy currentCaptureCadencePolicy = CaptureCadencePolicy.CreateDefault();
     private CodecPolicy currentCodecPolicy = CodecPolicy.CreateDefault();
     private IReadOnlyList<ProtectionExclusionRule> currentExclusionRules = [];
+    private RepositoryScrubReport? currentScrubReport;
+    private RestoreRehearsalReport? currentRestoreRehearsalReport;
     private FluxVaultWindowsServiceStatus windowsServiceStatus = new(
         WindowsFluxVaultServiceController.DefaultServiceName,
         FluxVaultWindowsServiceState.Unknown,
@@ -76,6 +78,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string diagnosticsText = "Diagnostics are local-only. Use Export diagnostics to write a JSON bundle.";
+
+    [ObservableProperty]
+    private string repositoryHealthStatus = "Repository health: waiting";
 
     [ObservableProperty]
     private string usnHealth = "USN: checking";
@@ -187,6 +192,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public ObservableCollection<VersionRow> RecentVersions { get; } = [];
 
     public ObservableCollection<CaptureStatusRow> CaptureStatuses { get; } = [];
+
+    public ObservableCollection<RepositoryHealthRow> RepositoryHealthRows { get; } = [];
 
     public FileBrowserViewModel FileBrowser { get; }
 
@@ -564,6 +571,60 @@ public sealed partial class MainWindowViewModel : ObservableObject
             : $"Diagnostics export failed: {response.ErrorMessage}";
     }
 
+    [RelayCommand]
+    private async Task RunRepositoryScrubAsync()
+    {
+        try
+        {
+            var response = await client.SendAsync(FluxVaultIpcRequest.RunRepositoryScrub()).ConfigureAwait(true);
+            if (!response.Success || response.RepositoryScrub is null)
+            {
+                RepositoryHealthStatus = $"Repository scrub failed: {response.ErrorMessage ?? "no scrub report returned"}";
+                return;
+            }
+
+            currentScrubReport = response.RepositoryScrub;
+            ApplyRepositoryHealth(new RepositoryHealthSnapshot(
+                DateTimeOffset.UtcNow,
+                CombineHealth(currentScrubReport.HealthState, currentRestoreRehearsalReport?.HealthState),
+                "Repository scrub completed.",
+                currentScrubReport,
+                currentRestoreRehearsalReport));
+            RepositoryHealthStatus = $"Repository scrub completed - {response.RepositoryScrub.HealthState}";
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            RepositoryHealthStatus = $"Repository scrub failed: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private async Task RunRestoreRehearsalAsync()
+    {
+        try
+        {
+            var response = await client.SendAsync(FluxVaultIpcRequest.RunRestoreRehearsal()).ConfigureAwait(true);
+            if (!response.Success || response.RestoreRehearsal is null)
+            {
+                RepositoryHealthStatus = $"Restore rehearsal failed: {response.ErrorMessage ?? "no rehearsal report returned"}";
+                return;
+            }
+
+            currentRestoreRehearsalReport = response.RestoreRehearsal;
+            ApplyRepositoryHealth(new RepositoryHealthSnapshot(
+                DateTimeOffset.UtcNow,
+                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport.HealthState),
+                "Restore rehearsal completed.",
+                currentScrubReport,
+                currentRestoreRehearsalReport));
+            RepositoryHealthStatus = $"Restore rehearsal completed - {response.RestoreRehearsal.HealthState}";
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            RepositoryHealthStatus = $"Restore rehearsal failed: {ex.Message}";
+        }
+    }
+
     private void ApplyStatus(FluxVaultServiceStatus status, bool preserveLocalConfiguration)
     {
         var selectedVersionId = SelectedVersion?.VersionId;
@@ -609,6 +670,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 ? "Mirror: local only"
                 : $"Mirror: {status.Configuration.MirrorPath}";
             CaptureHealth = BuildCaptureHealth(status.CaptureStatuses ?? []);
+            ApplyRepositoryHealth(status.RepositoryHealth);
             WatchedFolders.Clear();
             foreach (var folder in status.Configuration.WatchedFolders)
             {
@@ -795,6 +857,91 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         var pending = statuses.Count(status => status.State is CaptureRuntimeState.WaitingForQuietWindow or CaptureRuntimeState.ForcedHotFileSnapshot);
         return pending > 0 ? $"Capture: pending {pending}" : "Capture: idle";
+    }
+
+    private void ApplyRepositoryHealth(RepositoryHealthSnapshot? health)
+    {
+        if (health is null)
+        {
+            RepositoryHealthStatus = "Repository health: waiting";
+            RepositoryHealthRows.Clear();
+            RepositoryHealthRows.Add(new RepositoryHealthRow("Repository integrity", "Waiting for scrub", "No scrub report has been recorded yet."));
+            RepositoryHealthRows.Add(new RepositoryHealthRow("Restore rehearsal", "Waiting for rehearsal", "No restore rehearsal has been recorded yet."));
+            RepositoryHealthRows.Add(new RepositoryHealthRow("USN state", UsnHealth, UsnHealthToolTip));
+            RepositoryHealthRows.Add(new RepositoryHealthRow("Blocked files", CaptureHealth, "Blocked and pending capture state is shown in Activity."));
+            return;
+        }
+
+        currentScrubReport = health.LastScrub;
+        currentRestoreRehearsalReport = health.LastRestoreRehearsal;
+        RepositoryHealthStatus = $"Repository health: {health.OverallState} - {health.Summary}";
+        RepositoryHealthRows.Clear();
+        RepositoryHealthRows.Add(BuildScrubRow(health.LastScrub));
+        RepositoryHealthRows.Add(BuildMirrorRow(health.LastScrub));
+        RepositoryHealthRows.Add(BuildRehearsalRow(health.LastRestoreRehearsal));
+        RepositoryHealthRows.Add(new RepositoryHealthRow("USN state", UsnHealth, UsnHealthToolTip));
+        RepositoryHealthRows.Add(new RepositoryHealthRow("Blocked files", CaptureHealth, "Blocked and pending capture state is shown in Activity."));
+    }
+
+    private static RepositoryHealthRow BuildScrubRow(RepositoryScrubReport? report)
+    {
+        if (report is null)
+        {
+            return new RepositoryHealthRow("Repository integrity", "Waiting for scrub", "No scrub report has been recorded yet.");
+        }
+
+        var status = report.RepairedIssueCount > 0
+            ? $"{report.HealthState} - repaired {report.RepairedIssueCount} issue(s)"
+            : $"{report.HealthState} - {report.IssueCount} issue(s)";
+        var detail = $"Checked {report.CheckedChunkCount} chunk(s) across {report.ManifestCount} manifest(s) at {report.CompletedAtUtc.ToLocalTime():yyyy-MM-dd HH:mm:ss}.";
+        return new RepositoryHealthRow("Repository integrity", status, detail);
+    }
+
+    private static RepositoryHealthRow BuildMirrorRow(RepositoryScrubReport? report)
+    {
+        if (report is null)
+        {
+            return new RepositoryHealthRow("Mirror state", "Waiting for scrub", "Mirror drift is checked during repository scrub.");
+        }
+
+        var mirrorIssues = report.Issues.Count(issue => issue.Kind == RepositoryScrubIssueKind.MirrorDrift);
+        var repairedMirror = report.Issues.Count(issue => issue.RepairAction == RepositoryRepairAction.RepairedMirrorFromPrimary);
+        var status = mirrorIssues == 0
+            ? "Healthy"
+            : $"Repaired {repairedMirror} mirror issue(s)";
+        return new RepositoryHealthRow("Mirror state", status, "Mirror artefacts are compared against referenced primary repository artefacts.");
+    }
+
+    private static RepositoryHealthRow BuildRehearsalRow(RestoreRehearsalReport? report)
+    {
+        if (report is null)
+        {
+            return new RepositoryHealthRow("Restore rehearsal", "Waiting for rehearsal", "No restore rehearsal has been recorded yet.");
+        }
+
+        var status = report.FailedVersionCount == 0
+            ? $"{report.HealthState} - passed {report.RehearsedVersionCount} version(s)"
+            : $"{report.HealthState} - failed {report.FailedVersionCount} version(s)";
+        var detail = $"Requested newest {report.RequestedVersionCount} version(s); completed at {report.CompletedAtUtc.ToLocalTime():yyyy-MM-dd HH:mm:ss}.";
+        return new RepositoryHealthRow("Restore rehearsal", status, detail);
+    }
+
+    private static RepositoryHealthState CombineHealth(params RepositoryHealthState?[] states)
+    {
+        var actual = states.Where(state => state is not null).Select(state => state!.Value).ToArray();
+        if (actual.Length == 0)
+        {
+            return RepositoryHealthState.Warning;
+        }
+
+        if (actual.Contains(RepositoryHealthState.Critical))
+        {
+            return RepositoryHealthState.Critical;
+        }
+
+        return actual.Contains(RepositoryHealthState.Warning)
+            ? RepositoryHealthState.Warning
+            : RepositoryHealthState.Healthy;
     }
 
     private void ApplyDurableChangeHealth(DurableChangeRuntimeStatus? durableChange)
@@ -1048,4 +1195,9 @@ public sealed record CaptureStatusRow(
     CaptureRuntimeState State,
     string LastEvent,
     string NextForcedCapture,
+    string Detail);
+
+public sealed record RepositoryHealthRow(
+    string Name,
+    string Status,
     string Detail);

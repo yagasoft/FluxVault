@@ -199,6 +199,83 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Repository_scrub_ipc_repairs_missing_chunk_and_updates_health_status()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var mirror = Path.Combine(workspace.RootPath, "mirror");
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "repairable");
+        var configuration = NewConfiguration(workspace, watched) with { MirrorPath = mirror };
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        await operations.RunBackupNowAsync();
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        var digest = Assert.Single((await operations.InspectVersionAsync(version.VersionId)).Manifest.Chunks).Digest;
+        File.Delete(ChunkPath(workspace.RepositoryPath, digest));
+
+        var response = await operations.HandleAsync(FluxVaultIpcRequest.RunRepositoryScrub());
+        var status = await operations.GetStatusAsync();
+
+        Assert.True(response.Success);
+        Assert.NotNull(response.RepositoryScrub);
+        Assert.Equal(RepositoryRepairAction.RepairedPrimaryFromMirror, Assert.Single(response.RepositoryScrub.Issues).RepairAction);
+        Assert.Equal(RepositoryHealthState.Healthy, status.RepositoryHealth!.OverallState);
+        Assert.True(File.Exists(ChunkPath(workspace.RepositoryPath, digest)));
+    }
+
+    [Fact]
+    public async Task Restore_rehearsal_ipc_updates_health_status_without_leaving_temp_files()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "rehearsal");
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        await operations.RunBackupNowAsync();
+
+        var response = await operations.HandleAsync(FluxVaultIpcRequest.RunRestoreRehearsal());
+        var status = await operations.GetStatusAsync();
+        var rehearsalTempRoot = Path.Combine(workspace.RootPath, "state", "restore-rehearsal");
+
+        Assert.True(response.Success);
+        Assert.NotNull(response.RestoreRehearsal);
+        Assert.Equal(RepositoryHealthState.Healthy, response.RestoreRehearsal.HealthState);
+        Assert.Equal(RepositoryHealthState.Healthy, status.RepositoryHealth!.OverallState);
+        Assert.False(Directory.Exists(rehearsalTempRoot) && Directory.EnumerateFiles(rehearsalTempRoot, "*", SearchOption.AllDirectories).Any());
+    }
+
+    [Fact]
+    public async Task Repository_maintenance_loop_runs_when_due_and_skips_when_recent()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        await File.WriteAllTextAsync(Path.Combine(watched, "draft.txt"), "scheduled");
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var stateStore = new InMemoryRepositoryMaintenanceStateStore();
+        var operations = new FluxVaultOperations(
+            store,
+            new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()),
+            stateStore,
+            Path.Combine(workspace.RootPath, "state"));
+        var loop = new RepositoryMaintenanceLoop(operations, store, stateStore, TimeProvider.System);
+        await operations.SaveConfigurationAsync(NewConfiguration(workspace, watched));
+        await operations.RunBackupNowAsync();
+
+        var firstRun = await loop.RunDueMaintenanceOnceAsync();
+        var secondRun = await loop.RunDueMaintenanceOnceAsync();
+
+        Assert.True(firstRun);
+        Assert.False(secondRun);
+        Assert.NotNull((await operations.GetStatusAsync()).RepositoryHealth!.LastRestoreRehearsal);
+    }
+
+    [Fact]
     public async Task Successful_backup_triggers_enabled_retention()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -682,11 +759,32 @@ public sealed class ServiceOperationsTests
         return Convert.ToHexString(await SHA256.HashDataAsync(stream));
     }
 
+    private static string ChunkPath(string root, string digest)
+    {
+        return Path.Combine(root, "chunks", digest[..2], $"{digest}.chunk");
+    }
+
     private sealed class StubCaptureProvider(FileCaptureResult result) : IFileCaptureProvider
     {
         public Task<FileCaptureResult> CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(result);
+        }
+    }
+
+    private sealed class InMemoryRepositoryMaintenanceStateStore : IRepositoryMaintenanceStateStore
+    {
+        private RepositoryMaintenanceState state = RepositoryMaintenanceState.Empty;
+
+        public Task<RepositoryMaintenanceState> LoadAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(state);
+        }
+
+        public Task SaveAsync(RepositoryMaintenanceState state, CancellationToken cancellationToken = default)
+        {
+            this.state = state;
+            return Task.CompletedTask;
         }
     }
 }

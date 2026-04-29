@@ -30,6 +30,10 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(CodecProfile.Adaptive, configuration.CodecPolicy.Profile);
         Assert.Equal(CompressionPreference.Zstd, configuration.CodecPolicy.Codec);
         Assert.Equal(CompressionPreference.Lz4, configuration.CodecPolicy.HotFileOverride);
+        Assert.True(configuration.RepositoryMaintenancePolicy.IsEnabled);
+        Assert.Equal(TimeSpan.FromHours(24), configuration.RepositoryMaintenancePolicy.Interval);
+        Assert.True(configuration.RepositoryMaintenancePolicy.AutoRepairFromMirror);
+        Assert.Equal(3, configuration.RepositoryMaintenancePolicy.RestoreRehearsalVersionCount);
         Assert.Empty(configuration.SelectionRules);
         Assert.Empty(configuration.ExclusionRules);
     }
@@ -91,6 +95,8 @@ public sealed class ConfigurationStoreTests
 
         Assert.Empty(actual.SelectionRules);
         Assert.Empty(actual.ExclusionRules);
+        Assert.True(actual.RepositoryMaintenancePolicy.IsEnabled);
+        Assert.Equal(TimeSpan.FromHours(24), actual.RepositoryMaintenancePolicy.Interval);
     }
 
     [Fact]

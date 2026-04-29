@@ -141,4 +141,64 @@ public sealed class IpcSerializationTests
         Assert.Equal("source-version", roundTrippedVersion.ForkOriginVersionId);
         Assert.Equal("sig-v1", roundTrippedVersion.ContentSignature);
     }
+
+    [Theory]
+    [InlineData(FluxVaultIpcCommand.GetRepositoryHealth)]
+    [InlineData(FluxVaultIpcCommand.RunRepositoryScrub)]
+    [InlineData(FluxVaultIpcCommand.RunRestoreRehearsal)]
+    public void Repository_maintenance_request_serialization_preserves_command(FluxVaultIpcCommand command)
+    {
+        var request = new FluxVaultIpcRequest(command, null, null, null, null);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeRequest(FluxVaultIpcSerializer.SerializeRequest(request));
+
+        Assert.Equal(command, roundTrip.Command);
+    }
+
+    [Fact]
+    public void Repository_health_response_serialization_preserves_scrub_and_rehearsal_results()
+    {
+        var scrub = new RepositoryScrubReport(
+            CompletedAtUtc: new DateTimeOffset(2026, 4, 30, 10, 0, 0, TimeSpan.Zero),
+            HealthState: RepositoryHealthState.Warning,
+            ManifestCount: 2,
+            CheckedChunkCount: 3,
+            IssueCount: 1,
+            RepairedIssueCount: 1,
+            Issues:
+            [
+                new RepositoryScrubIssue(
+                    RepositoryScrubIssueSeverity.Warning,
+                    RepositoryScrubIssueKind.MirrorDrift,
+                    @"D:\Vault\chunks\aa\chunk.chunk",
+                    "version-1",
+                    "chunk-digest",
+                    "Mirror chunk was repaired.",
+                    RepositoryRepairAction.RepairedMirrorFromPrimary)
+            ]);
+        var rehearsal = new RestoreRehearsalReport(
+            CompletedAtUtc: new DateTimeOffset(2026, 4, 30, 10, 1, 0, TimeSpan.Zero),
+            HealthState: RepositoryHealthState.Healthy,
+            RequestedVersionCount: 3,
+            RehearsedVersionCount: 1,
+            FailedVersionCount: 0,
+            Results:
+            [
+                new RestoreRehearsalResult("version-1", @"D:\Work\Docs\brief.docx", true, 128, "Restore rehearsal passed.")
+            ]);
+        var health = new RepositoryHealthSnapshot(
+            CheckedAtUtc: new DateTimeOffset(2026, 4, 30, 10, 2, 0, TimeSpan.Zero),
+            OverallState: RepositoryHealthState.Warning,
+            Summary: "Repository repaired 1 issue.",
+            LastScrub: scrub,
+            LastRestoreRehearsal: rehearsal);
+        var response = FluxVaultIpcResponse.WithRepositoryHealth(health);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
+
+        Assert.NotNull(roundTrip.RepositoryHealth);
+        Assert.Equal(RepositoryHealthState.Warning, roundTrip.RepositoryHealth.OverallState);
+        Assert.Equal(RepositoryRepairAction.RepairedMirrorFromPrimary, Assert.Single(roundTrip.RepositoryHealth.LastScrub!.Issues).RepairAction);
+        Assert.True(Assert.Single(roundTrip.RepositoryHealth.LastRestoreRehearsal!.Results).Success);
+    }
 }

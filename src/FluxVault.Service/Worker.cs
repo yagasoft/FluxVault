@@ -41,12 +41,14 @@ public interface IFluxVaultServiceRuntime
 
 public sealed class FluxVaultServiceRuntime(
     NamedPipeFluxVaultServer ipcServer,
-    FileSystemProtectionLoop protectionLoop) : IFluxVaultServiceRuntime
+    FileSystemProtectionLoop protectionLoop,
+    RepositoryMaintenanceLoop repositoryMaintenanceLoop) : IFluxVaultServiceRuntime
 {
     public Task RunAsync(CancellationToken cancellationToken)
     {
         var ipcTask = ipcServer.RunAsync(cancellationToken);
         var protectionTask = protectionLoop.RunAsync(cancellationToken);
-        return Task.WhenAll(ipcTask, protectionTask);
+        var maintenanceTask = repositoryMaintenanceLoop.RunAsync(cancellationToken);
+        return Task.WhenAll(ipcTask, protectionTask, maintenanceTask);
     }
 }

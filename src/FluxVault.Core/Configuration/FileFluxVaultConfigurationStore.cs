@@ -87,6 +87,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             RetentionPolicy = configuration.RetentionPolicy ?? RetentionPolicy.CreateDefault(),
             CaptureCadencePolicy = configuration.CaptureCadencePolicy ?? CaptureCadencePolicy.CreateDefault(),
             CodecPolicy = configuration.CodecPolicy ?? CodecPolicy.CreateDefault(),
+            RepositoryMaintenancePolicy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault(),
             SelectionRules = selectionRules,
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0

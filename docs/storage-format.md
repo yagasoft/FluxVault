@@ -10,6 +10,8 @@ repository/
       digest.json
   manifests/
     version-id.json
+  lineage/
+    restore-hints/
 ```
 
 ## Chunk records
@@ -74,6 +76,24 @@ version pruning.
 Cloud-folder mirrors use the same layout. Local pruning is authoritative; mirror
 deletion is best-effort and any mirror cleanup warnings are surfaced in service
 status and diagnostics.
+
+## Maintenance state and health
+
+Repository health results are service state, not repository history. The service
+stores the last health snapshot, scrub report, and restore rehearsal report under
+ProgramData state so restarting the service does not erase diagnostics evidence.
+These files are outside the chunk/manifests repository and are additive runtime
+metadata.
+
+Scrub validates only manifests and chunks still referenced by remaining
+manifests. Missing or corrupt primary artefacts can be repaired from a healthy
+mirror copy, and missing or corrupt mirror artefacts can be repaired from a
+healthy primary copy. If neither side has a healthy copy, the scrub report marks
+the issue critical and unresolved. Scrub never repairs from live source files.
+
+Restore rehearsal writes temporary restored output under FluxVault service state,
+verifies the restored logical length, records pass/fail details, and deletes the
+temporary files. It does not write restore hints and does not create manifests.
 
 ## CLI repository operations
 

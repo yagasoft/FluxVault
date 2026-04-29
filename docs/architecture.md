@@ -18,7 +18,9 @@ configuration save, manual backup, version listing, version inspection, restore,
 and diagnostics export. Configuration is stored in
 `C:\ProgramData\FluxVault\config.json`; repository artefacts are written to the
 configured local repository, with optional atomic mirroring into a cloud-sync
-folder.
+folder. On Windows, the service creates the IPC pipe with an explicit ACL:
+LocalSystem and Administrators retain full control, while Authenticated Users
+and packaged app tokens receive read/write pipe access.
 
 The dashboard checks the Windows service state separately from IPC. If
 `FluxVaultService` is stopped, missing, inaccessible, or running without an

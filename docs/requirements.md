@@ -38,6 +38,9 @@ folder; direct cloud adapters arrive later.
   stopped, not installed, inaccessible, or IPC is unavailable. The app should
   allow Start/Stop service attempts and report elevated-permission failures
   clearly.
+- Packaged and unpackaged dashboard runs must be able to connect to the local
+  service IPC pipe as the logged-in desktop user, without granting service
+  control or ProgramData write access through that IPC permission.
 - The runtime dashboard follows the selected operational cockpit direction:
   stable primary commands in the header, left navigation, first-tab startup,
   and footer health/status tiles.

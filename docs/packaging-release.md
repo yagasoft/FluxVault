@@ -35,14 +35,18 @@ uninstall script preserves ProgramData and the Event Log source by default; it
 removes them only when `-RemoveProgramData` or `-RemoveEventLogSource` are
 provided.
 
-This is V1 script hardening only. Production installer technology, signing,
-upgrade packages, and full rollback semantics remain release-track work.
+This is V1 script hardening plus the first compact Explorer menu packaging
+foundation. Production installer technology, signing, upgrade packages, and
+full rollback semantics remain release-track work.
 Developer install/uninstall scripts do not register Explorer context-menu
 commands; the dashboard owns those per-user entries through Options. The app
 currently writes HKCU full-menu verbs for `Add to FluxVault`, `Show FluxVault
-versions`, and `Remove from FluxVault`. Windows 11 compact-menu registration is
-reported separately because it requires app identity plus an `IExplorerCommand`
-shell extension; that packaging path remains a release-track decision.
+versions`, and `Remove from FluxVault`. Developer packaging now also includes a
+sparse package manifest and native `FluxVault.ExplorerCommand.dll` scaffold for
+Windows 11 compact menus. The package script writes `compact-menu-status.txt`
+when Visual C++ build targets, MakeAppx, SignTool, or a signing certificate are
+missing, so the full-menu path remains usable even before production packaging
+is final.
 
 ## GitHub releases
 

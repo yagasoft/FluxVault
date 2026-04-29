@@ -181,6 +181,23 @@ public sealed class OptionsViewModelTests
         Assert.Contains("compact", viewModel.ExplorerContextMenuStatus, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void Windows_explorer_context_menu_status_uses_compact_package_detection()
+    {
+        var compactRegistration = new FakeCompactExplorerContextMenuRegistration(isRegistered: true);
+        var explorerContextMenu = new WindowsExplorerContextMenuService(
+            @"C:\FluxVault\FluxVault.App.exe",
+            compactRegistration);
+
+        var status = explorerContextMenu.GetStatus();
+
+        Assert.True(status.IsRegistered);
+        Assert.False(status.IsClassicRegistered);
+        Assert.True(status.IsCompactRegistered);
+        Assert.Contains("compact", status.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("unavailable", status.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static FluxVaultServiceStatus StatusWithPolicy(RetentionPolicy policy)
     {
         return new FluxVaultServiceStatus(
@@ -257,6 +274,28 @@ public sealed class OptionsViewModelTests
                 IsCompactRegistered: false,
                 Message: "Explorer context menu unregistered.");
             return status;
+        }
+    }
+
+    private sealed class FakeCompactExplorerContextMenuRegistration(bool isRegistered) : ICompactExplorerContextMenuRegistration
+    {
+        public bool IsRegistered()
+        {
+            return isRegistered;
+        }
+
+        public bool TryRegister(out string message)
+        {
+            isRegistered = true;
+            message = "Windows 11 compact menu registration is active.";
+            return true;
+        }
+
+        public bool TryUnregister(out string message)
+        {
+            isRegistered = false;
+            message = "Windows 11 compact menu registration is inactive.";
+            return true;
         }
     }
 }

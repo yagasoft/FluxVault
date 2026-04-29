@@ -103,9 +103,9 @@ folder; direct cloud adapters arrive later.
   possible, bring that dashboard forward, and exit without auto-restoring or
   overwriting data.
 - Windows 11 compact context-menu registration requires app identity and an
-  `IExplorerCommand` shell extension. Until release packaging supplies that
-  identity, Options must report compact registration as unavailable and still
-  register the full menu.
+  `IExplorerCommand` shell extension. Options remains the single user-facing
+  control, registering the full menu and reporting compact-menu availability
+  from package identity plus the shell-extension artefact.
 - Restoring an older version preserves newer versions and records the restored
   version as the fork origin for the new restore event.
 - Version history supports Git-like per-file lineage through FluxVault manifests

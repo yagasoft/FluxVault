@@ -124,8 +124,9 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
 - Tray activity pane placement inside the active monitor working area.
 - Explorer integration registration from Options, with packaging guards that
   keep context-menu registration out of install/uninstall scripts, assert the
-  ordered Add/Show FluxVault versions/Remove full-menu verbs, and report Windows
-  11 compact-menu availability separately.
+  ordered Add/Show FluxVault versions/Remove full-menu verbs, verify the sparse
+  package manifest, native `IExplorerCommand` scaffold, package-script output,
+  and compact-menu status detection separately.
 - Restore smoke test from installed build.
 - Developer CLI smoke test: back up a file, list versions, inspect the version,
   restore it, and compare hashes.

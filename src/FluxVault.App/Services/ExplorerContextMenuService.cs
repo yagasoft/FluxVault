@@ -1,5 +1,6 @@
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
 namespace FluxVault.App.Services;
@@ -19,7 +20,16 @@ public interface IExplorerContextMenuService
     ExplorerContextMenuStatus Unregister();
 }
 
-public sealed class WindowsExplorerContextMenuService(string? applicationPath = null) : IExplorerContextMenuService
+public interface ICompactExplorerContextMenuRegistration
+{
+    bool IsRegistered();
+
+    bool TryRegister(out string message);
+
+    bool TryUnregister(out string message);
+}
+
+public sealed class WindowsExplorerContextMenuService : IExplorerContextMenuService
 {
     private const string CommandSubKeyName = "command";
     private const string FileShellRoot = @"Software\Classes\*\shell";
@@ -32,17 +42,31 @@ public sealed class WindowsExplorerContextMenuService(string? applicationPath = 
         new("FluxVault03Remove", "Remove from FluxVault", "--remove-path")
     ];
 
-    private readonly string applicationPath = applicationPath
-        ?? Environment.ProcessPath
-        ?? Assembly.GetEntryAssembly()?.Location
-        ?? Path.Combine(AppContext.BaseDirectory, "FluxVault.App.exe");
+    private readonly string applicationPath;
+    private readonly ICompactExplorerContextMenuRegistration compactRegistration;
+
+    public WindowsExplorerContextMenuService(string? applicationPath = null)
+        : this(applicationPath, new WindowsCompactExplorerContextMenuRegistration())
+    {
+    }
+
+    internal WindowsExplorerContextMenuService(
+        string? applicationPath,
+        ICompactExplorerContextMenuRegistration compactRegistration)
+    {
+        this.applicationPath = applicationPath
+            ?? Environment.ProcessPath
+            ?? Assembly.GetEntryAssembly()?.Location
+            ?? Path.Combine(AppContext.BaseDirectory, "FluxVault.App.exe");
+        this.compactRegistration = compactRegistration;
+    }
 
     public ExplorerContextMenuStatus GetStatus()
     {
         try
         {
             var classicRegistered = IsClassicRegistered();
-            var compactRegistered = IsCompactRegistered();
+            var compactRegistered = compactRegistration.IsRegistered();
             return BuildStatus(classicRegistered, compactRegistered);
         }
         catch (Exception ex) when (ex is UnauthorizedAccessException or System.Security.SecurityException or IOException)
@@ -67,7 +91,7 @@ public sealed class WindowsExplorerContextMenuService(string? applicationPath = 
                 }
             }
 
-            var compactRegistered = TryRegisterCompactMenu(out var compactMessage);
+            var compactRegistered = compactRegistration.TryRegister(out var compactMessage);
             var status = BuildStatus(IsClassicRegistered(), compactRegistered);
             return status with
             {
@@ -98,7 +122,7 @@ public sealed class WindowsExplorerContextMenuService(string? applicationPath = 
                 }
             }
 
-            _ = TryUnregisterCompactMenu(out _);
+            _ = compactRegistration.TryUnregister(out _);
             return new ExplorerContextMenuStatus(
                 IsRegistered: false,
                 IsClassicRegistered: false,
@@ -144,28 +168,6 @@ public sealed class WindowsExplorerContextMenuService(string? applicationPath = 
         return $"\"{applicationPath}\" {verb.ArgumentName} \"%1\"";
     }
 
-    private static bool IsCompactRegistered()
-    {
-        return false;
-    }
-
-    private static bool TryRegisterCompactMenu(out string message)
-    {
-        // Windows 11 compact menus require an IExplorerCommand implementation registered through
-        // package identity/sparse package metadata. FluxVault currently runs as an unpackaged WPF
-        // app, so the app exposes a clear unavailable status while still registering the classic
-        // full menu. The production installer decision can replace this shim with a packaged COM
-        // extension without changing the Options surface.
-        message = "Windows 11 compact menu registration needs an app identity and IExplorerCommand shell extension; full menu registration is active.";
-        return false;
-    }
-
-    private static bool TryUnregisterCompactMenu(out string message)
-    {
-        message = "Windows 11 compact menu registration was not active.";
-        return false;
-    }
-
     private static ExplorerContextMenuStatus BuildStatus(bool classicRegistered, bool compactRegistered)
     {
         var isRegistered = classicRegistered || compactRegistered;
@@ -183,4 +185,71 @@ public sealed class WindowsExplorerContextMenuService(string? applicationPath = 
         string RegistryKey,
         string Label,
         string ArgumentName);
+}
+
+internal sealed class WindowsCompactExplorerContextMenuRegistration : ICompactExplorerContextMenuRegistration
+{
+    private const int AppModelErrorNoPackage = 15700;
+    private const int ErrorInsufficientBuffer = 122;
+    private const string ShellExtensionFileName = "FluxVault.ExplorerCommand.dll";
+
+    public bool IsRegistered()
+    {
+        return HasPackageIdentity()
+            && File.Exists(ResolveShellExtensionPath());
+    }
+
+    public bool TryRegister(out string message)
+    {
+        if (IsRegistered())
+        {
+            message = "Windows 11 compact menu registration is active through the FluxVault package identity.";
+            return true;
+        }
+
+        message = HasPackageIdentity()
+            ? "Windows 11 compact menu package identity is active, but FluxVault.ExplorerCommand.dll was not found beside the package artefacts."
+            : "Windows 11 compact menu registration needs the FluxVault sparse package identity and IExplorerCommand shell extension; full menu registration is active.";
+        return false;
+    }
+
+    public bool TryUnregister(out string message)
+    {
+        message = IsRegistered()
+            ? "Windows 11 compact menu registration is package-owned; uninstall or unregister the FluxVault sparse package to remove it."
+            : "Windows 11 compact menu registration was not active.";
+        return false;
+    }
+
+    private static string ResolveShellExtensionPath()
+    {
+        var baseDirectory = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var publishRoot = string.Equals(Path.GetFileName(baseDirectory), "app", StringComparison.OrdinalIgnoreCase)
+            ? Directory.GetParent(baseDirectory)?.FullName ?? baseDirectory
+            : baseDirectory;
+
+        return Path.Combine(publishRoot, "shell-extension", ShellExtensionFileName);
+    }
+
+    private static bool HasPackageIdentity()
+    {
+        var length = 0;
+        var result = GetCurrentPackageFullName(ref length, null);
+        if (result == AppModelErrorNoPackage)
+        {
+            return false;
+        }
+
+        if (result != ErrorInsufficientBuffer || length <= 0)
+        {
+            return false;
+        }
+
+        var packageFullName = new char[length];
+        result = GetCurrentPackageFullName(ref length, packageFullName);
+        return result == 0;
+    }
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    private static extern int GetCurrentPackageFullName(ref int packageFullNameLength, char[]? packageFullName);
 }

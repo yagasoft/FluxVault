@@ -92,6 +92,74 @@ public sealed class PackagingTests
     }
 
     [Fact]
+    public void Sparse_package_manifest_declares_compact_explorer_context_menu_identity()
+    {
+        var root = FindRepositoryRoot();
+        var manifestPath = Path.Combine(root, "installer", "sparse-package", "AppxManifest.xml");
+
+        Assert.True(File.Exists(manifestPath));
+        var manifest = File.ReadAllText(manifestPath);
+
+        Assert.Contains("<Identity Name=\"Yagasoft.FluxVault\"", manifest);
+        Assert.Contains("<uap10:AllowExternalContent>true</uap10:AllowExternalContent>", manifest);
+        Assert.DoesNotContain("EntryPoint=\"Windows.FullTrustApplication\"", manifest);
+        Assert.Contains("<rescap:Capability Name=\"runFullTrust\" />", manifest);
+        Assert.Contains("<rescap:Capability Name=\"unvirtualizedResources\" />", manifest);
+        Assert.Contains("<com:Extension Category=\"windows.comServer\">", manifest);
+        Assert.Contains("FluxVault.ExplorerCommand.dll", manifest);
+        Assert.Contains("FluxVaultExplorerCommandHandler", manifest);
+        Assert.Contains("<desktop4:Extension Category=\"windows.fileExplorerContextMenus\">", manifest);
+        Assert.Contains("<desktop5:ItemType Type=\"*\">", manifest);
+        Assert.Contains("<desktop5:ItemType Type=\"Directory\">", manifest);
+        Assert.Contains("FluxVault01Add", manifest);
+        Assert.Contains("FluxVault02ShowVersions", manifest);
+        Assert.Contains("FluxVault03Remove", manifest);
+    }
+
+    [Fact]
+    public void Compact_shell_extension_source_declares_verbs_and_forwarding_arguments()
+    {
+        var root = FindRepositoryRoot();
+        var projectPath = Path.Combine(root, "src", "FluxVault.ExplorerCommand", "FluxVault.ExplorerCommand.vcxproj");
+        var sourcePath = Path.Combine(root, "src", "FluxVault.ExplorerCommand", "FluxVaultExplorerCommand.cpp");
+
+        Assert.True(File.Exists(projectPath));
+        Assert.True(File.Exists(sourcePath));
+        var project = File.ReadAllText(projectPath);
+        var source = File.ReadAllText(sourcePath);
+
+        Assert.Contains("DynamicLibrary", project);
+        Assert.Contains("FluxVault.ExplorerCommand.dll", project);
+        Assert.Contains("IExplorerCommand", source);
+        Assert.Contains("IExplorerCommandState", source);
+        Assert.Contains("Add to FluxVault", source);
+        Assert.Contains("Show FluxVault versions", source);
+        Assert.Contains("Remove from FluxVault", source);
+        Assert.Contains("--add-path", source);
+        Assert.Contains("--show-versions", source);
+        Assert.Contains("--remove-path", source);
+        Assert.Contains("ShellExecuteW", source);
+        Assert.Contains("FluxVault.App.exe", source);
+    }
+
+    [Fact]
+    public void Package_script_publishes_shell_extension_sparse_manifest_and_status_note()
+    {
+        var root = FindRepositoryRoot();
+        var script = File.ReadAllText(Path.Combine(root, "eng", "package.ps1"));
+
+        Assert.Contains("FluxVault.ExplorerCommand.vcxproj", script);
+        Assert.Contains("shell-extension", script);
+        Assert.Contains("installer\\sparse-package", script);
+        Assert.Contains("AppxManifest.xml", script);
+        Assert.Contains("compact-menu-status.txt", script);
+        Assert.Contains("MakeAppx.exe", script);
+        Assert.Contains("/nv", script);
+        Assert.Contains("SignTool.exe", script);
+        Assert.Contains("MakeAppx.exe was found, but package creation failed", script);
+    }
+
+    [Fact]
     public void App_icon_is_packaged_as_windows_icon_resource()
     {
         var root = FindRepositoryRoot();

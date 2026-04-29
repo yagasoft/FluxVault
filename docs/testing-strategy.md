@@ -94,6 +94,11 @@
   regex include/exclude rules filter full and targeted backup candidates.
 - Planned sync mapping gate: remote peers do not hydrate, patch, or create a
   newly selected target until mapping is confirmed.
+- Planned sync change discovery: peer head changes cause only missing immutable
+  operation records to be fetched from that peer, local per-peer cursors prevent
+  replay after restart, corrupt or missing operation records surface as peer
+  lag or warnings rather than crashing sync, and operation-origin metadata stops
+  a node from applying its own published operation as a new remote change.
 - Planned sync loop prevention: a remotely hydrated version is not republished
   as a new local version when watcher/USN observes FluxVault's own sync-applied
   write.

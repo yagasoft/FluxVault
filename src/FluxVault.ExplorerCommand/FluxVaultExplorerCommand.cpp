@@ -175,7 +175,7 @@ namespace
             InterlockedIncrement(&g_objectCount);
         }
 
-        ~FluxVaultExplorerCommand() override
+        ~FluxVaultExplorerCommand()
         {
             InterlockedDecrement(&g_objectCount);
         }
@@ -287,7 +287,7 @@ namespace
             InterlockedIncrement(&g_objectCount);
         }
 
-        ~FluxVaultExplorerCommandFactory() override
+        ~FluxVaultExplorerCommandFactory()
         {
             InterlockedDecrement(&g_objectCount);
         }

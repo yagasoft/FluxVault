@@ -54,8 +54,10 @@
 - Exclusion rules: config round-trip, legacy global regex validation,
   case-insensitive file and folder matching, disabled-rule handling, and scoped
   selection regex inheritance for recursive, immediate, and child selections.
-- Planned restore lineage: restored versions preserve newer versions and record
-  the restored-from and fork-origin version ids.
+- Restore and inherited-copy lineage: old manifests default to normal captures,
+  same-path captures record parents, restore records a pending hint consumed by
+  the next capture, byte-identical copies become visible inherited versions,
+  and later edits retain fork-origin lineage.
 
 ## Integration tests
 

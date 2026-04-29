@@ -109,10 +109,16 @@ folder; direct cloud adapters arrive later.
   `IExplorerCommand` shell extension. Options remains the single user-facing
   control, registering the full menu and reporting compact-menu availability
   from package identity plus the shell-extension artefact.
-- Restoring an older version preserves newer versions and records the restored
-  version as the fork origin for the new restore event.
+- Restoring an older version preserves newer versions. Restore writes the bytes
+  and a repository-local pending lineage hint; the next capture of the
+  destination records the restored-from and fork-origin version ids.
 - Version history supports Git-like per-file lineage through FluxVault manifests
   and chunks, not through a normal `.git` runtime repository.
+- When a protected file is copied from existing FluxVault content and remains
+  byte-identical, FluxVault should create a visible inherited version that
+  references the original history and reuses chunks rather than uploading the
+  content again. A later edit to that copy starts a normal path-specific version
+  chain with lineage back to the inherited source.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.

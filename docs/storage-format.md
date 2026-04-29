@@ -30,25 +30,33 @@ A manifest records:
 - logical file length
 - ordered chunk list
 - chunk encoding used for each chunk
+- operation type: `Capture`, `Restore`, or `InheritedCopy`
+- parent version id or ids
+- restored-from version id
+- fork-origin version id
+- inherited-from version id and source path
+- deterministic content signature based on logical length and ordered chunk
+  identity
 
 Manifests are written to a temporary file and atomically moved into place.
 
-## Planned lineage metadata
+## Lineage metadata
 
-V1 restore hardening adds Git-like per-file history metadata to manifests or a
-closely related version event record:
+V1 restore hardening adds Git-like per-file history metadata to manifests.
+Existing manifests without lineage fields are treated as normal `Capture`
+versions with no parent ids.
 
-- parent version id or ids
-- restored-from version id
-- fork origin version id
-- device id
-- operation type, such as capture, restore, sync hydrate, or conflict resolution
-- optional conflict group id
+Same-path captures record the latest previous same-path version as the parent.
+Restoring a version writes the requested bytes and stores a small
+repository-local pending restore hint under the lineage metadata area. The next
+capture of that destination consumes the hint and writes a `Restore` manifest
+with restored-from and fork-origin version ids.
 
-Restoring an older version does not delete, overwrite, or hide newer manifests.
-It creates a new version event that points back to the restored version as the
-fork origin. This lets the restore browser show normal history, forks,
-restored-from links, and conflicts without compromising chunk deduplication.
+When a protected file is copied from existing FluxVault content and the copied
+bytes still match an existing content signature, FluxVault writes a visible
+`InheritedCopy` manifest for the new path. It reuses the existing chunks,
+records the inherited source version/path, and gives later edits a parent/fork
+origin without republishing duplicate content.
 
 FluxVault should keep its own content-addressed chunk repository as the live
 storage engine. Actual Git or libgit2 may be evaluated later for export or

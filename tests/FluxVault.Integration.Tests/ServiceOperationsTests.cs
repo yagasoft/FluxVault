@@ -83,6 +83,56 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Restored_file_records_lineage_on_next_capture_without_immediate_version()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        var restored = Path.Combine(watched, "restored.txt");
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        await File.WriteAllTextAsync(source, "first version");
+        await operations.RunBackupNowAsync();
+        var original = Assert.Single(await operations.ListVersionsAsync());
+
+        await operations.RestoreVersionAsync(original.VersionId, restored);
+
+        Assert.Single(await operations.ListVersionsAsync());
+
+        await operations.RunBackupNowAsync();
+
+        var versions = await operations.ListVersionsAsync();
+        var restoredVersion = Assert.Single(versions, version => version.SourcePath == restored);
+        Assert.Equal(VersionOperationType.Restore, restoredVersion.OperationType);
+        Assert.Equal(original.VersionId, restoredVersion.RestoredFromVersionId);
+    }
+
+    [Fact]
+    public async Task Copied_file_records_visible_inherited_version_without_new_chunks()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        var copy = Path.Combine(watched, "copy.txt");
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        await File.WriteAllTextAsync(source, "same content");
+        await operations.RunBackupNowAsync();
+        var original = Assert.Single(await operations.ListVersionsAsync());
+
+        File.Copy(source, copy);
+        await operations.RunBackupNowAsync();
+
+        var inherited = Assert.Single(await operations.ListVersionsAsync(), version => version.SourcePath == copy);
+        Assert.Equal(VersionOperationType.InheritedCopy, inherited.OperationType);
+        Assert.Equal(original.VersionId, inherited.InheritedFromVersionId);
+    }
+
+    [Fact]
     public async Task Targeted_backup_commits_only_matching_existing_files_once()
     {
         using var workspace = TemporaryWorkspace.Create();

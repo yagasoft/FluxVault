@@ -331,6 +331,7 @@
                             <DataGridTextColumn Header="File" Binding="{Binding SourcePath}" Width="*" />
                             <DataGridTextColumn Header="Captured" Binding="{Binding CapturedAt}" Width="170" />
                             <DataGridTextColumn Header="Consistency" Binding="{Binding Consistency}" Width="140" />
+                            <DataGridTextColumn Header="Lineage" Binding="{Binding Lineage}" Width="190" />
                             <DataGridTextColumn Header="Chunks" Binding="{Binding ChunkCount}" Width="80" />
                         </DataGrid.Columns>
                     </DataGrid>

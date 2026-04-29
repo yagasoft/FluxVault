@@ -88,12 +88,13 @@ Expected user-visible result: safe local production use on Windows 11.
   dashboard. Windows 11 compact-menu registration appears through the same
   Options status. A sparse package manifest and native `IExplorerCommand`
   handler scaffold provide the compact-menu packaging path, while unpackaged
-  builds still use the full menu. Restore lineage metadata remains separate.
-- Per-file version graph for restore lineage. Restoring an old version creates
-  a new version event that points to the restored version as its fork origin,
-  while newer versions remain available.
-- Restore history shows linear versions, restored-from links, forks, and
-  conflict groups without hiding later versions.
+  builds still use the full menu.
+- Per-file version graph for restore and inherited-copy lineage. Same-path
+  captures record parent versions. Restoring an old version writes a pending
+  lineage hint, and the next capture records the restored version as the fork
+  origin while newer versions remain available.
+- Restore history shows linear versions, restored-from links, inherited-copy
+  links, forks, and conflict groups without hiding later versions.
 - Health dashboard for repository integrity, USN state, mirror state, blocked
   files, and last successful restore rehearsal.
 - Repository scrubber for bit-rot detection and missing-chunk repair from a
@@ -142,6 +143,9 @@ downloading or rewriting whole files unnecessarily.
   since their local per-peer cursor. Operation records reference FluxVault
   versions, manifests, chunks, operation ids, source device ids, and source
   version metadata rather than duplicating file content.
+- Lineage content signatures from V1 let sync describe copied or restored
+  byte-identical files as metadata/chunk references instead of republishing the
+  same content payload.
 - Other PCs hydrate only missing chunks and patch files at chunk level where
   the target file can be safely opened.
 - Sync loop prevention is required: peers must use chunk existence checks plus

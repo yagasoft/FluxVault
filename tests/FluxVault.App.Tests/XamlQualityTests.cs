@@ -210,6 +210,20 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
+    public void Repository_versions_grid_surfaces_lineage_column()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var repositoryTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "Repository"));
+
+        Assert.Contains(
+            repositoryTab.Descendants(XamlNamespace + "DataGridTextColumn"),
+            column => (string?)column.Attribute("Header") == "Lineage"
+                && (string?)column.Attribute("Binding") == "{Binding Lineage}");
+    }
+
+    [Fact]
     public void File_browser_exposes_scoped_regex_editor_and_folder_indicator()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");

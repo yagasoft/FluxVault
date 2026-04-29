@@ -17,6 +17,14 @@ Developer packages include:
 - install and uninstall PowerShell scripts
 - quickstart and sample configuration
 
+Developer packaging prerequisites:
+
+- .NET SDK 10.0.x for the managed app, service, CLI, and tests
+- Windows SDK for MakeAppx and SignTool
+- Visual Studio 2022 Build Tools with **Desktop development with C++**, MSVC
+  v143 x64/x86 tools, and the Windows SDK to build the Windows 11 compact-menu
+  `FluxVault.ExplorerCommand.dll`
+
 `eng/package.ps1` publishes the developer artefacts to `artifacts\publish`:
 
 - `service`
@@ -47,6 +55,10 @@ Windows 11 compact menus. The package script writes `compact-menu-status.txt`
 when Visual C++ build targets, MakeAppx, SignTool, or a signing certificate are
 missing, so the full-menu path remains usable even before production packaging
 is final.
+If the native C++ targets are missing, `eng/package.ps1` now detects that before
+calling MSBuild, skips only the compact-menu DLL build, and continues publishing
+the managed artefacts and sparse package files. Production signing, installer
+technology, upgrade, and rollback decisions remain separate release-track work.
 
 ## GitHub releases
 

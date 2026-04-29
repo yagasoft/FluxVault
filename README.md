@@ -111,6 +111,13 @@ dotnet test
 .\artifacts\publish\app\FluxVault.App.exe
 ```
 
+The base developer package needs the .NET SDK. Building the Windows 11 compact
+Explorer-menu DLL additionally requires Visual Studio 2022 Build Tools with
+**Desktop development with C++**, MSVC v143 x64/x86 tools, and the Windows SDK.
+When those native C++ prerequisites are missing, `eng\package.ps1` skips the
+compact-menu DLL build, still publishes the app/service/CLI and sparse package
+files, and records the missing prerequisite in `compact-menu-status.txt`.
+
 The install script registers `FluxVaultService`, creates the `FluxVaultService`
 Windows Event Log source under the Application log, configures delayed automatic
 start, and configures service recovery restart actions. The dashboard shows a

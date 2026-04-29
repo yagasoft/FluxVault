@@ -134,6 +134,13 @@ downloading or rewriting whole files unnecessarily.
   mapping is confirmed.
 - PCs publish manifests, device heartbeats, and folder mapping metadata into
   the shared repository.
+- Each PC owns its own sync-control area in the shared repository, publishing a
+  compact peer head plus immutable operation records rather than rewriting a
+  shared global changelog.
+- Peers poll compact peer heads first, then fetch only missing operation records
+  since their local per-peer cursor. Operation records reference FluxVault
+  versions, manifests, chunks, operation ids, source device ids, and source
+  version metadata rather than duplicating file content.
 - Other PCs hydrate only missing chunks and patch files at chunk level where
   the target file can be safely opened.
 - Sync loop prevention is required: peers must use chunk existence checks plus
@@ -143,7 +150,10 @@ downloading or rewriting whole files unnecessarily.
 - Conflicts preserve both versions and show a `Resolve conflict` action with
   keep local, keep remote, restore as copy, open both, and mark resolved.
 - Sync status shows pending remote versions, missing chunks, hydration progress,
-  conflicts, blocked files, and last peer seen.
+  conflicts, blocked files, peer lag, and last peer seen.
+- Direct cloud adapters may later optimise discovery with provider-native
+  change feeds, but R3 multi-PC sync must work with ordinary cloud-sync folders
+  using repository-owned peer metadata.
 
 ## R4 WinFsp performance workspace
 

@@ -28,6 +28,9 @@ FluxVault now has a developer-usable MVP loop:
 - WPF dashboard connected to the service over local named-pipe IPC.
 - Per-machine Worker Service host with persisted configuration under
   `C:\ProgramData\FluxVault\config.json`.
+- The service IPC pipe grants explicit local desktop and packaged-app access,
+  so sparse-packaged FluxVault can connect without weakening service-control or
+  ProgramData permissions.
 - Dashboard service availability warning and Start/Stop service control. If
   Windows denies service control, the app reports that elevated permissions are
   required instead of crashing.

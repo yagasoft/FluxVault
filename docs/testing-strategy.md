@@ -13,6 +13,8 @@
 - Retention decisions.
 - Configuration load/save/defaults and validation.
 - IPC request/response serialisation.
+- IPC pipe security for LocalSystem, Administrators, desktop users, and
+  packaged app tokens.
 - Durable-change detail serialisation for USN fallback diagnostics.
 - Normal-file capture, non-interfering source sharing, writer-aware VSS
   fallback selection, and capture consistency evidence.

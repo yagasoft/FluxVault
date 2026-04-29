@@ -1,4 +1,7 @@
 using System.IO.Pipes;
+using System.Runtime.Versioning;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using FluxVault.Abstractions.Ipc;
 
 namespace FluxVault.Core.Ipc;
@@ -11,12 +14,7 @@ public sealed class NamedPipeFluxVaultServer(IFluxVaultRequestHandler handler, s
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            await using var pipe = new NamedPipeServerStream(
-                pipeName,
-                PipeDirection.InOut,
-                maxNumberOfServerInstances: 1,
-                PipeTransmissionMode.Byte,
-                PipeOptions.Asynchronous);
+            await using var pipe = CreateServerStreamForCurrentPlatform(pipeName);
 
             try
             {
@@ -34,6 +32,54 @@ public sealed class NamedPipeFluxVaultServer(IFluxVaultRequestHandler handler, s
                 return;
             }
         }
+    }
+
+    private static NamedPipeServerStream CreateServerStreamForCurrentPlatform(string pipeName)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return CreateServerStream(pipeName);
+        }
+
+        return new NamedPipeServerStream(
+            pipeName,
+            PipeDirection.InOut,
+            maxNumberOfServerInstances: 1,
+            PipeTransmissionMode.Byte,
+            PipeOptions.Asynchronous);
+    }
+
+    [SupportedOSPlatform("windows")]
+    internal static NamedPipeServerStream CreateServerStream(string pipeName)
+    {
+        return NamedPipeServerStreamAcl.Create(
+            pipeName,
+            PipeDirection.InOut,
+            maxNumberOfServerInstances: 1,
+            PipeTransmissionMode.Byte,
+            PipeOptions.Asynchronous,
+            inBufferSize: 0,
+            outBufferSize: 0,
+            CreateDefaultPipeSecurity(),
+            HandleInheritability.None);
+    }
+
+    [SupportedOSPlatform("windows")]
+    internal static PipeSecurity CreateDefaultPipeSecurity()
+    {
+        var security = new PipeSecurity();
+        AddAllowRule(security, WellKnownSidType.LocalSystemSid, PipeAccessRights.FullControl);
+        AddAllowRule(security, WellKnownSidType.BuiltinAdministratorsSid, PipeAccessRights.FullControl);
+        AddAllowRule(security, WellKnownSidType.AuthenticatedUserSid, PipeAccessRights.ReadWrite);
+        AddAllowRule(security, WellKnownSidType.WinBuiltinAnyPackageSid, PipeAccessRights.ReadWrite);
+        return security;
+    }
+
+    [SupportedOSPlatform("windows")]
+    private static void AddAllowRule(PipeSecurity security, WellKnownSidType sidType, PipeAccessRights rights)
+    {
+        var sid = new SecurityIdentifier(sidType, null);
+        security.AddAccessRule(new PipeAccessRule(sid, rights, AccessControlType.Allow));
     }
 
     private async Task<FluxVaultIpcResponse> HandleSafeAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)

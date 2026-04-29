@@ -12,6 +12,15 @@ public interface IChunkRepository
 
     Task RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default);
 
+    Task<RepositoryScrubReport> ScrubAsync(
+        bool autoRepairFromMirror,
+        CancellationToken cancellationToken = default);
+
+    Task<RestoreRehearsalReport> RunRestoreRehearsalAsync(
+        string tempRoot,
+        int maxVersions,
+        CancellationToken cancellationToken = default);
+
     Task<RepositoryRetentionPreview> PreviewRetentionAsync(
         RetentionPolicy policy,
         DateTimeOffset nowUtc,

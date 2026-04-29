@@ -13,7 +13,10 @@ public sealed record FluxVaultIpcResponse(
     RepositoryRetentionPreview? RetentionPreview = null,
     RepositoryRetentionResult? RetentionResult = null,
     IReadOnlyList<FluxVaultActivityEvent>? ActivityEvents = null,
-    IReadOnlyList<CaptureRuntimeStatus>? BlockedFiles = null)
+    IReadOnlyList<CaptureRuntimeStatus>? BlockedFiles = null,
+    RepositoryHealthSnapshot? RepositoryHealth = null,
+    RepositoryScrubReport? RepositoryScrub = null,
+    RestoreRehearsalReport? RestoreRehearsal = null)
 {
     public static FluxVaultIpcResponse Ok()
     {
@@ -63,6 +66,45 @@ public sealed record FluxVaultIpcResponse(
     public static FluxVaultIpcResponse WithBlockedFiles(IReadOnlyList<CaptureRuntimeStatus> blockedFiles)
     {
         return new FluxVaultIpcResponse(true, null, null, null, null, null, null, null, null, null, blockedFiles);
+    }
+
+    public static FluxVaultIpcResponse WithRepositoryHealth(RepositoryHealthSnapshot health)
+    {
+        return new FluxVaultIpcResponse(
+            true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            RepositoryHealth: health);
+    }
+
+    public static FluxVaultIpcResponse WithRepositoryScrub(RepositoryScrubReport report)
+    {
+        return new FluxVaultIpcResponse(
+            true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            RepositoryScrub: report);
+    }
+
+    public static FluxVaultIpcResponse WithRestoreRehearsal(RestoreRehearsalReport report)
+    {
+        return new FluxVaultIpcResponse(
+            true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            RestoreRehearsal: report);
     }
 
     public static FluxVaultIpcResponse Failure(string errorMessage)

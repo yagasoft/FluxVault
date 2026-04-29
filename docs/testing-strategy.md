@@ -58,6 +58,11 @@
   same-path captures record parents, restore records a pending hint consumed by
   the next capture, byte-identical copies become visible inherited versions,
   and later edits retain fork-origin lineage.
+- Repository maintenance model tests for default policy values, IPC
+  serialisation of health/scrub/rehearsal results, healthy scrub, primary repair
+  from mirror, mirror repair from primary, unresolved corruption, ignored
+  retention-pruned artefacts, restore rehearsal length verification, failure
+  reporting, and temporary-output cleanup.
 
 ## Integration tests
 
@@ -72,6 +77,8 @@
 - Restore IPC failure for locked or access-denied destination paths.
 - Service operation persistence of `AppConsistent` capture results and optional
   consistency detail in status/activity.
+- Service operations for manual repository scrub, manual restore rehearsal,
+  health status updates, and scheduled maintenance due/not-due behaviour.
 - Service-triggered retention and manual `RunRetentionNow`.
 - Mirror cleanup after retention pruning.
 - Options dialog view-model save, preview, and run-retention behaviour with a

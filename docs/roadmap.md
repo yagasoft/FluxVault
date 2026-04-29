@@ -96,10 +96,16 @@ Expected user-visible result: safe local production use on Windows 11.
 - Restore history shows linear versions, restored-from links, inherited-copy
   links, forks, and conflict groups without hiding later versions.
 - Health dashboard for repository integrity, USN state, mirror state, blocked
-  files, and last successful restore rehearsal.
+  files, and last successful restore rehearsal. The first implementation expands
+  Diagnostics into the health dashboard and adds manual scrub/rehearsal actions.
 - Repository scrubber for bit-rot detection and missing-chunk repair from a
-  healthy mirror.
-- Scheduled restore rehearsal to a temporary location.
+  healthy mirror. Scrub checks only artefacts referenced by remaining manifests,
+  repairs primary artefacts from a healthy mirror, repairs mirror artefacts from
+  a healthy primary copy, and reports critical unresolved issues when neither
+  side is healthy.
+- Scheduled restore rehearsal to a temporary location. Rehearsal restores recent
+  versions into FluxVault-owned service state, verifies logical length, deletes
+  the temporary output, and does not overwrite user files or create versions.
 - Policy presets for Office, CAD/BIM, Adobe/video, developer workspaces, and
   generic large files.
 

@@ -69,4 +69,19 @@ public sealed record FluxVaultIpcRequest(
     {
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.SetProtectionPaused, null, null, null, null);
     }
+
+    public static FluxVaultIpcRequest GetRepositoryHealth()
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.GetRepositoryHealth, null, null, null, null);
+    }
+
+    public static FluxVaultIpcRequest RunRepositoryScrub()
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.RunRepositoryScrub, null, null, null, null);
+    }
+
+    public static FluxVaultIpcRequest RunRestoreRehearsal()
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.RunRestoreRehearsal, null, null, null, null);
+    }
 }

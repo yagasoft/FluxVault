@@ -374,9 +374,62 @@
 
             <TabItem Header="▣ Diagnostics">
                 <Grid Margin="18">
-                    <TextBox Text="{Binding DiagnosticsText}" IsReadOnly="True" TextWrapping="Wrap"
-                             VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="13"
-                             BorderBrush="#DADCE0" Padding="12" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="12" />
+                        <RowDefinition Height="220" />
+                        <RowDefinition Height="12" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" MinWidth="0">
+                            <TextBlock Text="{Binding RepositoryHealthStatus}"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Foreground="#202124"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding DiagnosticsText}"
+                                       Foreground="#5F6368"
+                                       Margin="0,4,0,0"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="12,0,0,0">
+                            <Button Content="Run scrub"
+                                    Command="{Binding RunRepositoryScrubCommand}"
+                                    ToolTip="Check referenced repository and mirror artefacts, repairing from a healthy counterpart when possible." />
+                            <Button Content="Run restore rehearsal"
+                                    Command="{Binding RunRestoreRehearsalCommand}"
+                                    ToolTip="Restore recent versions to a temporary FluxVault folder, verify length, then delete the temporary output." />
+                            <Button Content="Export diagnostics"
+                                    Command="{Binding ExportDiagnosticsCommand}"
+                                    ToolTip="Export local service status, diagnostics, and health details." />
+                        </StackPanel>
+                    </Grid>
+
+                    <DataGrid Grid.Row="2"
+                              ItemsSource="{Binding RepositoryHealthRows}"
+                              ToolTip="Repository health, mirror, USN, blocked-file, scrub, and restore rehearsal status.">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Area" Binding="{Binding Name}" Width="180" />
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="220" />
+                            <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <TextBox Grid.Row="4"
+                             Text="{Binding DiagnosticsText}"
+                             IsReadOnly="True"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             FontFamily="Consolas"
+                             FontSize="13"
+                             BorderBrush="#DADCE0"
+                             Padding="12" />
                 </Grid>
             </TabItem>
         </TabControl>

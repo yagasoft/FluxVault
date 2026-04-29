@@ -412,6 +412,59 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Refresh_populates_repository_health_dashboard_rows()
+    {
+        var status = StatusWithVersions("v1") with
+        {
+            RepositoryHealth = HealthSnapshot(
+                RepositoryHealthState.Warning,
+                "Repository repaired 1 issue.",
+                ScrubReport(RepositoryHealthState.Warning, repaired: 1),
+                RehearsalReport(RepositoryHealthState.Healthy, failed: 0))
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        Assert.Contains("Warning", viewModel.RepositoryHealthStatus);
+        Assert.Contains(viewModel.RepositoryHealthRows, row => row.Name == "Repository integrity" && row.Status.Contains("repaired", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(viewModel.RepositoryHealthRows, row => row.Name == "Restore rehearsal" && row.Status.Contains("passed", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public async Task Run_repository_scrub_command_requests_scrub_and_updates_health_rows()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"))
+        {
+            RepositoryScrubResponse = FluxVaultIpcResponse.WithRepositoryScrub(ScrubReport(RepositoryHealthState.Healthy, repaired: 1))
+        };
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RunRepositoryScrubCommand.ExecuteAsync(null);
+
+        Assert.Contains(FluxVaultIpcCommand.RunRepositoryScrub, client.Commands);
+        Assert.Contains("scrub completed", viewModel.RepositoryHealthStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(viewModel.RepositoryHealthRows, row => row.Name == "Repository integrity" && row.Status.Contains("repaired 1", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public async Task Run_restore_rehearsal_command_requests_rehearsal_and_updates_health_rows()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"))
+        {
+            RestoreRehearsalResponse = FluxVaultIpcResponse.WithRestoreRehearsal(RehearsalReport(RepositoryHealthState.Healthy, failed: 0))
+        };
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RunRestoreRehearsalCommand.ExecuteAsync(null);
+
+        Assert.Contains(FluxVaultIpcCommand.RunRestoreRehearsal, client.Commands);
+        Assert.Contains("restore rehearsal completed", viewModel.RepositoryHealthStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(viewModel.RepositoryHealthRows, row => row.Name == "Restore rehearsal" && row.Status.Contains("passed", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
     public async Task Refresh_shows_capture_consistency_detail_from_service_status()
     {
         var status = StatusWithVersions("v1") with
@@ -729,6 +782,38 @@ public sealed class MainWindowViewModelRefreshTests
         return new FluxVaultWindowsServiceActionResult(true, ServiceStatus(state, message), message);
     }
 
+    private static RepositoryHealthSnapshot HealthSnapshot(
+        RepositoryHealthState state,
+        string summary,
+        RepositoryScrubReport? scrub,
+        RestoreRehearsalReport? rehearsal)
+    {
+        return new RepositoryHealthSnapshot(DateTimeOffset.UtcNow, state, summary, scrub, rehearsal);
+    }
+
+    private static RepositoryScrubReport ScrubReport(RepositoryHealthState state, int repaired)
+    {
+        return new RepositoryScrubReport(
+            DateTimeOffset.UtcNow,
+            state,
+            ManifestCount: 2,
+            CheckedChunkCount: 3,
+            IssueCount: repaired,
+            RepairedIssueCount: repaired,
+            Issues: []);
+    }
+
+    private static RestoreRehearsalReport RehearsalReport(RepositoryHealthState state, int failed)
+    {
+        return new RestoreRehearsalReport(
+            DateTimeOffset.UtcNow,
+            state,
+            RequestedVersionCount: 3,
+            RehearsedVersionCount: 3 - failed,
+            FailedVersionCount: failed,
+            Results: []);
+    }
+
     private sealed class FakeFluxVaultServiceClient(params FluxVaultServiceStatus[] statuses) : IFluxVaultServiceClient
     {
         private readonly Queue<FluxVaultServiceStatus> statuses = new(statuses);
@@ -742,6 +827,10 @@ public sealed class MainWindowViewModelRefreshTests
         public List<FluxVaultConfiguration> SavedConfigurations { get; } = [];
 
         public FluxVaultIpcResponse RestoreResponse { get; init; } = FluxVaultIpcResponse.Ok();
+
+        public FluxVaultIpcResponse RepositoryScrubResponse { get; init; } = FluxVaultIpcResponse.Ok();
+
+        public FluxVaultIpcResponse RestoreRehearsalResponse { get; init; } = FluxVaultIpcResponse.Ok();
 
         public int GetStatusCount => Commands.Count(command => command == FluxVaultIpcCommand.GetStatus);
 
@@ -774,6 +863,16 @@ public sealed class MainWindowViewModelRefreshTests
             {
                 SavedConfigurations.Add(request.Configuration ?? throw new InvalidOperationException("Missing configuration."));
                 return Task.FromResult(FluxVaultIpcResponse.Ok());
+            }
+
+            if (request.Command == FluxVaultIpcCommand.RunRepositoryScrub)
+            {
+                return Task.FromResult(RepositoryScrubResponse);
+            }
+
+            if (request.Command == FluxVaultIpcCommand.RunRestoreRehearsal)
+            {
+                return Task.FromResult(RestoreRehearsalResponse);
             }
 
             var status = statuses.Count > 1 ? statuses.Dequeue() : statuses.Peek();

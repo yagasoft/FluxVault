@@ -17,9 +17,16 @@ namespace FluxVault.Core.Service;
 
 public sealed class FluxVaultOperations(
     IFluxVaultConfigurationStore configurationStore,
-    IFileCaptureProvider captureProvider) : IFluxVaultRequestHandler
+    IFileCaptureProvider captureProvider,
+    IRepositoryMaintenanceStateStore? repositoryMaintenanceStateStore = null,
+    string? maintenanceStateRoot = null) : IFluxVaultRequestHandler
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private readonly IRepositoryMaintenanceStateStore repositoryMaintenanceStateStore =
+        repositoryMaintenanceStateStore ?? new InMemoryRepositoryMaintenanceStateStore();
+    private readonly string restoreRehearsalRoot = Path.Combine(
+        maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
+        "restore-rehearsal");
     private DateTimeOffset? lastCaptureUtc;
     private string lastMessage = "Ready";
     private DurableChangeRuntimeStatus? durableChange;
@@ -175,6 +182,40 @@ public sealed class FluxVaultOperations(
         return result;
     }
 
+    public async Task<RepositoryHealthSnapshot> GetRepositoryHealthAsync(CancellationToken cancellationToken = default)
+    {
+        var state = await repositoryMaintenanceStateStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        return state.LastHealth
+            ?? BuildRepositoryHealthSnapshot(
+                state.LastScrub,
+                state.LastRestoreRehearsal,
+                "Repository health has not run yet.");
+    }
+
+    public async Task<RepositoryScrubReport> RunRepositoryScrubAsync(CancellationToken cancellationToken = default)
+    {
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var policy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault();
+        var report = await CreateRepository(configuration)
+            .ScrubAsync(policy.AutoRepairFromMirror, cancellationToken)
+            .ConfigureAwait(false);
+        await SaveRepositoryMaintenanceResultAsync(report, null, cancellationToken).ConfigureAwait(false);
+        lastMessage = FormatScrubSummary(report);
+        return report;
+    }
+
+    public async Task<RestoreRehearsalReport> RunRestoreRehearsalAsync(CancellationToken cancellationToken = default)
+    {
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var policy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault();
+        var report = await CreateRepository(configuration)
+            .RunRestoreRehearsalAsync(restoreRehearsalRoot, policy.RestoreRehearsalVersionCount, cancellationToken)
+            .ConfigureAwait(false);
+        await SaveRepositoryMaintenanceResultAsync(null, report, cancellationToken).ConfigureAwait(false);
+        lastMessage = FormatRestoreRehearsalSummary(report);
+        return report;
+    }
+
     public async Task<string> ExportDiagnosticsAsync(string exportPath, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(exportPath);
@@ -291,7 +332,8 @@ public sealed class FluxVaultOperations(
             RecentVersions: versions.Take(50).ToArray(),
             LastRetention: lastRetention,
             DurableChange: durableChange,
-            CaptureStatuses: GetCaptureStatuses());
+            CaptureStatuses: GetCaptureStatuses(),
+            RepositoryHealth: await GetRepositoryHealthAsync(cancellationToken).ConfigureAwait(false));
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -310,6 +352,9 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.GetActivity => FluxVaultIpcResponse.WithActivity(GetActivity()),
             FluxVaultIpcCommand.ListBlockedFiles => FluxVaultIpcResponse.WithBlockedFiles(ListBlockedFiles()),
             FluxVaultIpcCommand.SetProtectionPaused => await SetProtectionPausedResponseAsync(cancellationToken).ConfigureAwait(false),
+            FluxVaultIpcCommand.GetRepositoryHealth => FluxVaultIpcResponse.WithRepositoryHealth(await GetRepositoryHealthAsync(cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.RunRepositoryScrub => FluxVaultIpcResponse.WithRepositoryScrub(await RunRepositoryScrubAsync(cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.RunRestoreRehearsal => FluxVaultIpcResponse.WithRestoreRehearsal(await RunRestoreRehearsalAsync(cancellationToken).ConfigureAwait(false)),
             _ => FluxVaultIpcResponse.Failure($"Unsupported command: {request.Command}")
         };
     }
@@ -376,6 +421,88 @@ public sealed class FluxVaultOperations(
     private static string FormatRetentionSummary(RepositoryRetentionResult result)
     {
         return $"Retention kept {result.KeptVersionCount} version(s), pruned {result.PrunedVersionCount}, reclaimed {FormatBytes(result.ReclaimedBytes)}.";
+    }
+
+    private async Task SaveRepositoryMaintenanceResultAsync(
+        RepositoryScrubReport? scrub,
+        RestoreRehearsalReport? rehearsal,
+        CancellationToken cancellationToken)
+    {
+        var state = await repositoryMaintenanceStateStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var nextScrub = scrub ?? state.LastScrub;
+        var nextRehearsal = rehearsal ?? state.LastRestoreRehearsal;
+        var health = BuildRepositoryHealthSnapshot(nextScrub, nextRehearsal);
+        await repositoryMaintenanceStateStore.SaveAsync(
+            state with
+            {
+                LastHealth = health,
+                LastScrub = nextScrub,
+                LastRestoreRehearsal = nextRehearsal
+            },
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private static RepositoryHealthSnapshot BuildRepositoryHealthSnapshot(
+        RepositoryScrubReport? scrub,
+        RestoreRehearsalReport? rehearsal,
+        string? summaryOverride = null)
+    {
+        var state = CombineHealth(scrub?.HealthState, rehearsal?.HealthState);
+        return new RepositoryHealthSnapshot(
+            CheckedAtUtc: DateTimeOffset.UtcNow,
+            OverallState: state,
+            Summary: summaryOverride ?? BuildRepositoryHealthSummary(scrub, rehearsal, state),
+            LastScrub: scrub,
+            LastRestoreRehearsal: rehearsal);
+    }
+
+    private static RepositoryHealthState CombineHealth(params RepositoryHealthState?[] states)
+    {
+        var actual = states.Where(state => state is not null).Select(state => state!.Value).ToArray();
+        if (actual.Length == 0)
+        {
+            return RepositoryHealthState.Warning;
+        }
+
+        if (actual.Contains(RepositoryHealthState.Critical))
+        {
+            return RepositoryHealthState.Critical;
+        }
+
+        return actual.Contains(RepositoryHealthState.Warning)
+            ? RepositoryHealthState.Warning
+            : RepositoryHealthState.Healthy;
+    }
+
+    private static string BuildRepositoryHealthSummary(
+        RepositoryScrubReport? scrub,
+        RestoreRehearsalReport? rehearsal,
+        RepositoryHealthState state)
+    {
+        var parts = new List<string>();
+        if (scrub is not null)
+        {
+            parts.Add($"scrub {scrub.HealthState.ToString().ToLowerInvariant()}, repaired {scrub.RepairedIssueCount} issue(s)");
+        }
+
+        if (rehearsal is not null)
+        {
+            parts.Add($"restore rehearsal {rehearsal.HealthState.ToString().ToLowerInvariant()}, failed {rehearsal.FailedVersionCount}");
+        }
+
+        return parts.Count == 0
+            ? "Repository health has not run yet."
+            : $"Repository health {state.ToString().ToLowerInvariant()}: {string.Join("; ", parts)}.";
+    }
+
+    private static string FormatScrubSummary(RepositoryScrubReport report)
+    {
+        return $"Repository scrub completed: checked {report.CheckedChunkCount} chunk(s), repaired {report.RepairedIssueCount}, unresolved {report.Issues.Count(issue => issue.RepairAction == RepositoryRepairAction.Unresolved)}.";
+    }
+
+    private static string FormatRestoreRehearsalSummary(RestoreRehearsalReport report)
+    {
+        return $"Restore rehearsal completed: passed {report.RehearsedVersionCount}, failed {report.FailedVersionCount}.";
     }
 
     private static string FormatBytes(long bytes)
@@ -672,5 +799,21 @@ public sealed class FluxVaultOperations(
             title,
             detail,
             status.SourcePath);
+    }
+
+    private sealed class InMemoryRepositoryMaintenanceStateStore : IRepositoryMaintenanceStateStore
+    {
+        private RepositoryMaintenanceState state = RepositoryMaintenanceState.Empty;
+
+        public Task<RepositoryMaintenanceState> LoadAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(state);
+        }
+
+        public Task SaveAsync(RepositoryMaintenanceState state, CancellationToken cancellationToken = default)
+        {
+            this.state = state;
+            return Task.CompletedTask;
+        }
     }
 }

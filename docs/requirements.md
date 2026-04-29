@@ -119,6 +119,17 @@ folder; direct cloud adapters arrive later.
   references the original history and reuses chunks rather than uploading the
   content again. A later edit to that copy starts a normal path-specific version
   chain with lineage back to the inherited source.
+- Repository health must be visible in Diagnostics, including repository
+  integrity, mirror state, USN state, blocked files, last scrub, and last restore
+  rehearsal. Manual scrub and restore rehearsal actions must be available.
+- Repository scrub must validate only artefacts referenced by remaining
+  manifests. It may automatically repair repository or mirror artefacts only from
+  a healthy counterpart; it must never repair from live source files.
+- Restore rehearsal must restore recent versions only into FluxVault-owned
+  temporary output, verify logical length, record pass/fail details, delete
+  temporary files, and avoid creating restore hints or new versions.
+- Scheduled maintenance defaults to enabled, runs every 24 hours, repairs from a
+  mirror when possible, and rehearses the newest three versions.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.

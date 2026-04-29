@@ -85,9 +85,10 @@ Expected user-visible result: safe local production use on Windows 11.
   Explorer file/folder actions managed from Options, ordered Add/Show FluxVault
   versions/Remove full-menu verbs, immediate Add/Remove configuration saves, and
   second-launch `--restore-path`/`--show-versions` handoff to the running
-  dashboard. Windows 11 compact-menu registration is reported as unavailable
-  until release packaging supplies app identity and an `IExplorerCommand` shell
-  extension. Restore lineage metadata remains separate.
+  dashboard. Windows 11 compact-menu registration appears through the same
+  Options status. A sparse package manifest and native `IExplorerCommand`
+  handler scaffold provide the compact-menu packaging path, while unpackaged
+  builds still use the full menu. Restore lineage metadata remains separate.
 - Per-file version graph for restore lineage. Restoring an old version creates
   a new version event that points to the restored version as its fork origin,
   while newer versions remain available.

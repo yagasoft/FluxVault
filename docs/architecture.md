@@ -36,8 +36,12 @@ accepted. Startup request routing is single-instance: a second app process
 forwards the request to the running dashboard through a local named pipe, then
 exits. Version hints select a matching recent version where possible; they never
 start a restore by themselves. Windows 11 compact menus require app identity and
-an `IExplorerCommand` shell extension, so the current unpackaged app reports
-compact registration as unavailable while still registering the full menu.
+an `IExplorerCommand` shell extension. FluxVault keeps the Options surface as
+the control point: unpackaged runs register the full menu and report compact
+registration as unavailable, while packaged runs can report compact registration
+as active when the sparse package identity and `FluxVault.ExplorerCommand.dll`
+artefact are present. The shell extension only forwards selected paths to the
+same app startup arguments; it does not perform backup, remove, or restore work.
 
 When installed by the developer script, `FluxVaultService` uses delayed
 automatic start, SCM restart recovery, and the `FluxVaultService` Windows Event

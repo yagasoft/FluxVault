@@ -1,0 +1,4 @@
+LIBRARY "FluxVault.ExplorerCommand"
+EXPORTS
+    DllCanUnloadNow PRIVATE
+    DllGetClassObject PRIVATE

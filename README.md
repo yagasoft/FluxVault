@@ -70,10 +70,11 @@ FluxVault now has a developer-usable MVP loop:
   and `Remove from FluxVault` in that order. `Show FluxVault versions` and the
   legacy `--restore-path` route forward a version hint to the running dashboard
   when one exists; they never auto-restore or overwrite. Add/Remove requests
-  save configuration immediately. Windows 11 compact-menu availability is
-  reported in Options; without app identity and an `IExplorerCommand` shell
-  extension, FluxVault registers the full menu and reports compact registration
-  as unavailable.
+  save configuration immediately. Windows 11 compact-menu support now has a
+  sparse package manifest and native `IExplorerCommand` handler scaffold; the
+  same Options buttons continue to report whether package identity and the
+  handler are active. Unpackaged developer runs still register the full menu and
+  report compact registration as unavailable.
 
 The detailed implementation status is tracked in
 [`docs/roadmap-tracker.md`](docs/roadmap-tracker.md). Every future roadmap or
@@ -153,9 +154,11 @@ show it selected in File Explorer.
 Open **Options** > **Advanced** to register or unregister FluxVault Explorer
 context-menu actions for the current Windows user. Explorer actions are
 app-managed HKCU entries, not install/uninstall script switches. The full menu
-gets Add, Show FluxVault versions, and Remove actions; Windows 11 compact menu
-registration is surfaced as unavailable until the release packaging supplies the
-required app identity and `IExplorerCommand` extension.
+gets Add, Show FluxVault versions, and Remove actions. Developer packaging also
+publishes a sparse package manifest and `FluxVault.ExplorerCommand.dll`
+scaffold for the Windows 11 compact menu. The compact menu is package-owned:
+Options reports it as active only when FluxVault is running with package
+identity and the shell-extension artefact is present.
 
 UI/UX redesign directions are tracked in
 [`docs/ui-concepts/mvp-021-ui-concepts.md`](docs/ui-concepts/mvp-021-ui-concepts.md).

@@ -16,25 +16,14 @@ jobs:
           dotnet-version: 10.0.x
       - name: Packaging tests
         run: dotnet test tests\FluxVault.Integration.Tests\FluxVault.Integration.Tests.csproj --filter PackagingTests
-      - name: Decode signing certificate
-        shell: pwsh
-        env:
-          PACKAGE_CERTIFICATE: ${{ secrets.PACKAGE_CERTIFICATE }}
-        run: |
-          if (-not [string]::IsNullOrWhiteSpace($env:PACKAGE_CERTIFICATE)) {
-            New-Item -ItemType Directory -Force -Path artifacts | Out-Null
-            [IO.File]::WriteAllBytes("artifacts\release-signing.pfx", [Convert]::FromBase64String($env:PACKAGE_CERTIFICATE))
-          }
       - name: Build release package
         shell: pwsh
-        env:
-          PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PASSWORD }}
+        run: .\eng\release-package.ps1 -Configuration Release
+      - name: Verify branded setup exists
+        shell: pwsh
         run: |
-          $cert = "artifacts\release-signing.pfx"
-          if (Test-Path -LiteralPath $cert) {
-            .\eng\release-package.ps1 -Configuration Release -PackageCertificatePath $cert -PackageCertificatePassword $env:PACKAGE_CERTIFICATE_PASSWORD -RequireSigning
-          } else {
-            .\eng\release-package.ps1 -Configuration Release
+          if (-not (Test-Path -LiteralPath artifacts\release\Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe)) {
+            throw "Missing unsigned consumer setup artefact."
           }
       - name: Upload release artefacts
         uses: actions/upload-artifact@v4

@@ -72,9 +72,10 @@ Expected user-visible result: safe local production use on Windows 11.
   warnings, Start/Stop service control, Windows Event Log wiring, SCM restart
   recovery, delayed automatic service start, and safer developer install and
   uninstall scripts. The completion slice adds a WiX per-machine MSI, a WiX
-  Burn bootstrapper, signed sparse MSIX package support for Windows 11 compact
-  Explorer identity, stable major-upgrade metadata, ProgramData preservation,
-  and release-package validation separate from the feature PR gate.
+  Burn bootstrapper, stable major-upgrade metadata, ProgramData preservation,
+  and release-package validation separate from the feature PR gate. The default
+  consumer release is one unsigned bootstrapper that chains only the MSI and
+  warns about Unknown publisher and SmartScreen prompts.
 - Better VSS writer handling and app-consistency reporting. The first
   implementation replaces the `vssadmin.exe` fallback with a FluxVault VSS
   requester that coordinates writers, creates the snapshot through COM, reads
@@ -92,8 +93,9 @@ Expected user-visible result: safe local production use on Windows 11.
   second-launch `--restore-path`/`--show-versions` handoff to the running
   dashboard. Windows 11 compact-menu registration appears through the same
   Options status. A sparse package manifest and native `IExplorerCommand`
-  handler scaffold provide the compact-menu packaging path, while unpackaged
-  builds still use the full menu.
+  handler scaffold provide the compact-menu packaging path for developer/future
+  signed package profiles, while unpackaged and unsigned consumer builds still
+  use the full menu.
 - Per-file version graph for restore and inherited-copy lineage. Same-path
   captures record parent versions. Restoring an old version writes a pending
   lineage hint, and the next capture records the restored version as the fork

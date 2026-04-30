@@ -2,10 +2,7 @@ param(
     [string]$Configuration = "Release",
     [string]$Runtime = "win-x64",
     [string]$OutputRoot = "artifacts\release",
-    [string]$PublishRoot = "artifacts\publish",
-    [string]$PackageCertificatePath = "",
-    [string]$PackageCertificatePassword = "",
-    [switch]$RequireSigning
+    [string]$PublishRoot = "artifacts\publish"
 )
 
 $ErrorActionPreference = "Stop"
@@ -13,7 +10,14 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 $publishRootFull = Join-Path $root $PublishRoot
 $releaseRoot = Join-Path $root $OutputRoot
-$ReleasePackageRoot = $releaseRoot
+$stagingRoot = Join-Path $releaseRoot "_staging"
+$ReleasePackageRoot = $stagingRoot
+$version = "v1.0.0"
+$artifactPrefix = "Yagasoft-FluxVault-$version-$Runtime"
+$setupArtifact = "$artifactPrefix-Setup.exe"
+$checksumArtifact = "$artifactPrefix-checksums-sha256.txt"
+$notesArtifact = "$artifactPrefix-release-notes.md"
+$statusArtifact = "$artifactPrefix-release-status.txt"
 
 function Invoke-Checked([scriptblock]$Command, [string]$Description) {
     & $Command
@@ -22,23 +26,17 @@ function Invoke-Checked([scriptblock]$Command, [string]$Description) {
     }
 }
 
-if ($RequireSigning -and [string]::IsNullOrWhiteSpace($PackageCertificatePath)) {
-    throw "PackageCertificatePath is required when -RequireSigning is supplied."
-}
-
 & (Join-Path $PSScriptRoot "package.ps1") `
     -Configuration $Configuration `
     -Runtime $Runtime `
-    -OutputRoot $PublishRoot `
-    -PackageCertificatePath $PackageCertificatePath `
-    -PackageCertificatePassword $PackageCertificatePassword
+    -OutputRoot $PublishRoot
 
 if (Test-Path -LiteralPath $releaseRoot) {
     Remove-Item -LiteralPath $releaseRoot -Recurse -Force
 }
 
 New-Item -ItemType Directory -Force -Path $releaseRoot | Out-Null
-Copy-Item -LiteralPath (Join-Path $publishRootFull "FluxVault.SparsePackage.msix") -Destination (Join-Path $releaseRoot "FluxVault.SparsePackage.msix") -Force
+New-Item -ItemType Directory -Force -Path $stagingRoot | Out-Null
 
 $installerProject = Join-Path $root "installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj"
 $bundleProject = Join-Path $root "installer\wix\FluxVault.Bundle\FluxVault.Bundle.wixproj"
@@ -47,51 +45,65 @@ Invoke-Checked {
     dotnet build $installerProject `
         --configuration $Configuration `
         /p:PublishRoot=$publishRootFull `
-        /p:ReleasePackageRoot=$releaseRoot `
-        /p:OutputPath=$releaseRoot\
+        /p:ReleasePackageRoot=$stagingRoot `
+        /p:OutputPath=$stagingRoot\
 } "FluxVault.Installer.wixproj build"
 
 Invoke-Checked {
     dotnet build $bundleProject `
         --configuration $Configuration `
         /p:PublishRoot=$publishRootFull `
-        /p:ReleasePackageRoot=$releaseRoot `
-        /p:OutputPath=$releaseRoot\
+        /p:ReleasePackageRoot=$stagingRoot `
+        /p:OutputPath=$stagingRoot\
 } "FluxVault.Bundle.wixproj build"
 
-$signTool = Get-ChildItem -LiteralPath "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Recurse -Filter "SignTool.exe" -ErrorAction SilentlyContinue |
-    Where-Object { $_.FullName -match "\\x64\\SignTool.exe$" } |
-    Sort-Object FullName -Descending |
-    Select-Object -First 1 -ExpandProperty FullName
+$setupSource = Join-Path $stagingRoot "FluxVault.Setup.exe"
+$setupDestination = Join-Path $releaseRoot $setupArtifact
+Copy-Item -LiteralPath $setupSource -Destination $setupDestination -Force
 
-if ($PackageCertificatePath -and $signTool) {
-    $signArguments = @("sign", "/fd", "SHA256", "/f", $PackageCertificatePath)
-    if ($PackageCertificatePassword) {
-        $signArguments += @("/p", $PackageCertificatePassword)
-    }
+$releaseNotesPath = Join-Path $releaseRoot $notesArtifact
+@"
+# FluxVault $version unsigned Windows installer
 
-    foreach ($artifact in @(
-        (Join-Path $releaseRoot "FluxVault.Installer.msi"),
-        (Join-Path $releaseRoot "FluxVault.Setup.exe"),
-        (Join-Path $releaseRoot "FluxVault.SparsePackage.msix")
-    )) {
-        if (Test-Path -LiteralPath $artifact) {
-            & $signTool @signArguments $artifact | Out-Host
-        }
-    }
-} elseif ($RequireSigning) {
-    throw "SignTool.exe was not found; install the Windows SDK to sign release packages."
-}
+This release contains the unsigned Yagasoft FluxVault Windows installer.
 
+## Install
+
+Run ``$setupArtifact``. The installer sets up the FluxVault dashboard, Windows service, CLI, ProgramData folder, delayed service start, service recovery, and Application Event Log source.
+
+## Explorer integration
+
+The Options-managed full Explorer menu remains available under **Show more options** after registering Explorer integration from the FluxVault dashboard.
+
+The Windows 11 compact Explorer context menu is not included in this unsigned consumer installer because compact-menu package identity requires signed MSIX packaging for a non-developer distribution path.
+
+## Windows warning
+
+This installer is unsigned. Windows will show Unknown publisher and may show SmartScreen warnings before installation.
+"@ | Set-Content -LiteralPath $releaseNotesPath -Encoding UTF8
+
+$statusPath = Join-Path $releaseRoot $statusArtifact
 @(
-    "FluxVault release packaging status"
+    "Yagasoft FluxVault unsigned consumer release status"
     "Generated: $([DateTimeOffset]::Now.ToString('u'))"
+    "Version: $version"
+    "Runtime: $Runtime"
+    "Configuration: $Configuration"
     "Publish root: $publishRootFull"
     "ReleasePackageRoot: $ReleasePackageRoot"
     "Installer project: FluxVault.Installer.wixproj"
     "Bundle project: FluxVault.Bundle.wixproj"
-    "Sparse package: FluxVault.SparsePackage.msix"
-    "Signing required: $($RequireSigning.IsPresent)"
-) | Set-Content -LiteralPath (Join-Path $releaseRoot "release-package-status.txt") -Encoding UTF8
+    "Consumer setup: $setupArtifact"
+    "Signing: not used for this unsigned consumer release profile"
+    "Windows warning: Unknown publisher and SmartScreen warnings are expected"
+    "Explorer full menu: available through Options-managed HKCU registration"
+    "Windows 11 compact Explorer context menu is not included in this unsigned consumer installer"
+) | Set-Content -LiteralPath $statusPath -Encoding UTF8
 
-Write-Host "Published FluxVault release artefacts to $releaseRoot"
+$checksumsPath = Join-Path $releaseRoot $checksumArtifact
+Get-FileHash -Algorithm SHA256 -LiteralPath $setupDestination, $releaseNotesPath, $statusPath |
+    ForEach-Object { "$($_.Hash)  $(Split-Path -Leaf $_.Path)" } |
+    Set-Content -LiteralPath $checksumsPath -Encoding UTF8
+
+Write-Host "Published FluxVault unsigned consumer release artefacts to $releaseRoot"
+Write-Host "Consumer installer: $setupArtifact"

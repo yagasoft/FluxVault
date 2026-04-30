@@ -4,10 +4,10 @@
 
 FluxVault targets a per-machine installer because the service and writer-aware
 VSS capture require machine-level setup. Explorer file/folder entry points are
-per-user HKCU registrations managed from the app Options dialog. The production
-package path is a WiX per-machine MSI plus a WiX Burn bootstrapper that also
-carries the sparse MSIX package used for Windows 11 compact Explorer menu
-identity.
+per-user HKCU registrations managed from the app Options dialog. The default
+consumer release path is one unsigned WiX Burn bootstrapper EXE wrapping a
+per-machine WiX MSI. This unsigned profile deliberately does not install the
+sparse MSIX package identity used by Windows 11 compact Explorer menus.
 
 Developer packages include:
 
@@ -44,27 +44,27 @@ uninstall script preserves ProgramData and the Event Log source by default; it
 removes them only when `-RemoveProgramData` or `-RemoveEventLogSource` are
 provided.
 
-Developer scripts remain developer tooling. Production releases use
-`eng/release-package.ps1`, which builds:
+Developer scripts remain developer tooling. Consumer releases use
+`eng/release-package.ps1`, which builds branded files under
+`artifacts\release`:
 
-- `FluxVault.Installer.msi`
-- `FluxVault.Setup.exe`
-- `FluxVault.SparsePackage.msix`
-- `release-package-status.txt`
+- `Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe`
+- `Yagasoft-FluxVault-v1.0.0-win-x64-checksums-sha256.txt`
+- `Yagasoft-FluxVault-v1.0.0-win-x64-release-notes.md`
+- `Yagasoft-FluxVault-v1.0.0-win-x64-release-status.txt`
 
-The MSI installs the app, service, CLI, and native Explorer command DLL under
-Program Files, creates the ProgramData folder as permanent/never-overwrite
-state, installs `FluxVaultService`, starts it on install, sets delayed
-automatic start, configures SCM restart recovery, and registers the Application
-Event Log source. The stable `MajorUpgrade` metadata gives future releases a
-single upgrade path while preserving `C:\ProgramData\FluxVault`.
+The MSI installs the app, service, and CLI under Program Files, creates the
+ProgramData folder as permanent/never-overwrite state, installs
+`FluxVaultService`, starts it on install, sets delayed automatic start,
+configures SCM restart recovery, and registers the Application Event Log
+source. The stable `MajorUpgrade` metadata gives future releases a single
+upgrade path while preserving `C:\ProgramData\FluxVault`.
 
-The Burn bundle wraps the MSI and runs the signed sparse MSIX installation for
-the installing user. The sparse package leg is marked permanent because Burn
-does not have a reliable built-in detector for this PowerShell-driven sparse
-MSIX install. Removing package identity remains an explicit
-`Remove-AppxPackage` operation, separate from MSI rollback and from repository
-state preservation.
+The unsigned consumer Burn bundle chains only the MSI. It does not run
+`Add-AppxPackage`, it does not include `FluxVault.SparsePackage.msix`, and it
+does not require the native compact-menu DLL. Windows will show Unknown
+publisher and may show Microsoft Defender SmartScreen warnings because this
+profile is intentionally unsigned.
 
 Developer install/uninstall scripts do not register Explorer context-menu
 commands; the dashboard owns those per-user entries through Options. The app
@@ -79,15 +79,15 @@ If the native C++ targets are missing, `eng/package.ps1` now detects that before
 calling MSBuild, skips only the compact-menu DLL build, and continues publishing
 the managed artefacts and sparse package files.
 
-Release signing:
+Unsigned release behaviour:
 
-- `eng/release-package.ps1 -RequireSigning` fails unless a package certificate
-  path is supplied.
-- When `-PackageCertificatePath` is supplied, the script signs the MSI, bundle,
-  and sparse MSIX using SignTool.
-- The `release-package` workflow is manual/opt-in. It may build unsigned
-  validation artefacts without signing secrets, but public release runs should
-  provide the certificate and password secrets and use the required-signing path.
+- `eng/release-package.ps1 -Configuration Release` produces the unsigned
+  consumer setup EXE and supporting checksum, notes, and status files.
+- The release workflow does not require certificate secrets for this draft
+  unsigned profile.
+- The Windows 11 compact Explorer menu remains a future signed/package-identity
+  distribution path. The normal full Explorer menu under **Show more options**
+  remains available from Options in the unsigned consumer install.
 
 ## GitHub releases
 
@@ -103,8 +103,8 @@ Windows service.
   weekly schedule, and manual dispatch.
 - MVP feature PRs wait only for `build-test`. Do not wait for CodeQL unless the
   PR is explicitly promoted to a final release or production-readiness gate.
-- Package validation, dependency review, SBOM generation, signing, and release
-  artefact upload are V1/release-track gates.
+- Package validation, dependency review, SBOM generation, and release artefact
+  upload are V1/release-track gates. Signing is a future production-hardening
+  track, not a prerequisite for the current unsigned consumer draft.
 - The `release-package` workflow is separate from pull request `build-test` so
-  normal feature PRs do not depend on release signing secrets or installer
-  elevation.
+  normal feature PRs do not depend on release packaging or installer elevation.

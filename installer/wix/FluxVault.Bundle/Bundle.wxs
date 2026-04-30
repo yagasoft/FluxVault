@@ -14,14 +14,6 @@
           Id="FluxVaultMsi"
           SourceFile="$(var.ReleasePackageRoot)\FluxVault.Installer.msi"
           Compressed="yes" />
-      <ExePackage
-          Id="FluxVaultSparsePackage"
-          DisplayName="Yagasoft.FluxVault sparse package"
-          SourceFile="$(env.SystemRoot)\System32\WindowsPowerShell\v1.0\powershell.exe"
-          InstallArguments="-NoProfile -ExecutionPolicy Bypass -Command &quot;Add-AppxPackage -Path '&quot;$(var.ReleasePackageRoot)\FluxVault.SparsePackage.msix&quot;' -ExternalLocation '&quot;$(var.PublishRoot)&quot;'&quot;"
-          PerMachine="yes"
-          Permanent="yes"
-          Vital="no" />
     </Chain>
   </Bundle>
 </Wix>

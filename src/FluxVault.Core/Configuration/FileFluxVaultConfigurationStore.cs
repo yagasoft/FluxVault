@@ -88,11 +88,20 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             CaptureCadencePolicy = configuration.CaptureCadencePolicy ?? CaptureCadencePolicy.CreateDefault(),
             CodecPolicy = configuration.CodecPolicy ?? CodecPolicy.CreateDefault(),
             RepositoryMaintenancePolicy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault(),
-            SelectionRules = selectionRules,
+            WorkloadPolicy = configuration.WorkloadPolicy ?? WorkloadPolicyConfiguration.CreateDefault(),
+            SelectionRules = selectionRules.Select(NormaliseSelectionRule).ToArray(),
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0
                 ? configuration.WatchedFolders
-                : ProtectionSelectionCompiler.Compile(selectionRules)
+                : ProtectionSelectionCompiler.Compile(selectionRules.Select(NormaliseSelectionRule).ToArray())
+        };
+    }
+
+    private static ProtectionSelectionRule NormaliseSelectionRule(ProtectionSelectionRule rule)
+    {
+        return rule with
+        {
+            WorkloadPreset = rule.WorkloadPreset ?? WorkloadPolicyPresetId.GeneralPurpose
         };
     }
 }

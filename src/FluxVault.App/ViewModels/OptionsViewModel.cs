@@ -8,6 +8,7 @@ using FluxVault.Abstractions.Storage;
 using FluxVault.App.Services;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
+using FluxVault.Core.Policies;
 
 namespace FluxVault.App.ViewModels;
 
@@ -95,6 +96,9 @@ public sealed partial class OptionsViewModel : ObservableObject
     private string codecSkipExtensionsText = string.Empty;
 
     [ObservableProperty]
+    private WorkloadPolicyPresetId defaultWorkloadPreset = WorkloadPolicyPresetId.GeneralPurpose;
+
+    [ObservableProperty]
     private bool maintenanceEnabled;
 
     [ObservableProperty]
@@ -137,6 +141,8 @@ public sealed partial class OptionsViewModel : ObservableObject
 
     public IReadOnlyList<CompressionPreference> Codecs { get; } = Enum.GetValues<CompressionPreference>();
 
+    public IReadOnlyList<WorkloadPolicyPresetOption> WorkloadPresets { get; } = WorkloadPolicyPresetCatalog.PresetOptions;
+
     public IReadOnlyList<ProtectionExclusionTarget> ExclusionTargets { get; } = Enum.GetValues<ProtectionExclusionTarget>();
 
     public ObservableCollection<ProtectionExclusionRule> ExclusionRules { get; } = [];
@@ -156,6 +162,7 @@ public sealed partial class OptionsViewModel : ObservableObject
         ApplyCadence(currentConfiguration.CaptureCadencePolicy);
         ApplyCodec(currentConfiguration.CodecPolicy);
         ApplyMaintenance(currentConfiguration.RepositoryMaintenancePolicy);
+        ApplyWorkload(currentConfiguration.WorkloadPolicy);
         ApplyExclusions(currentConfiguration.ExclusionRules ?? []);
         StatusText = "Options loaded.";
     }
@@ -179,6 +186,7 @@ public sealed partial class OptionsViewModel : ObservableObject
             CaptureCadencePolicy = BuildCadence(),
             CodecPolicy = BuildCodec(),
             RepositoryMaintenancePolicy = BuildMaintenance(),
+            WorkloadPolicy = BuildWorkload(),
             ExclusionRules = []
         };
         var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(updated), cancellationToken)
@@ -350,6 +358,11 @@ public sealed partial class OptionsViewModel : ObservableObject
         RestoreRehearsalVersionCount = Math.Max(0, policy.RestoreRehearsalVersionCount);
     }
 
+    private void ApplyWorkload(WorkloadPolicyConfiguration policy)
+    {
+        DefaultWorkloadPreset = policy.DefaultPreset;
+    }
+
     private RepositoryMaintenancePolicy BuildMaintenance()
     {
         return new RepositoryMaintenancePolicy(
@@ -357,6 +370,11 @@ public sealed partial class OptionsViewModel : ObservableObject
             Interval: TimeSpan.FromHours(Math.Max(1, MaintenanceIntervalHours)),
             AutoRepairFromMirror: MaintenanceAutoRepairFromMirror,
             RestoreRehearsalVersionCount: Math.Max(0, RestoreRehearsalVersionCount));
+    }
+
+    private WorkloadPolicyConfiguration BuildWorkload()
+    {
+        return new WorkloadPolicyConfiguration(DefaultWorkloadPreset);
     }
 
     private static IReadOnlyList<string> ParseSkipExtensions(string text)

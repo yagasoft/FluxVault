@@ -143,6 +143,35 @@ public sealed class OptionsViewModelTests
     }
 
     [Fact]
+    public async Task Initialise_loads_default_workload_policy_preset_from_service_status()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithConfiguration(configuration => configuration with
+        {
+            WorkloadPolicy = new WorkloadPolicyConfiguration(WorkloadPolicyPresetId.DeveloperWorkspace)
+        }));
+        var viewModel = new OptionsViewModel(client);
+
+        await viewModel.InitialiseAsync();
+
+        Assert.Equal(WorkloadPolicyPresetId.DeveloperWorkspace, viewModel.DefaultWorkloadPreset);
+        Assert.Contains(viewModel.WorkloadPresets, preset => preset.Id == WorkloadPolicyPresetId.CadBim);
+    }
+
+    [Fact]
+    public async Task Save_persists_default_workload_policy_preset()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
+        var viewModel = new OptionsViewModel(client);
+        await viewModel.InitialiseAsync();
+        viewModel.DefaultWorkloadPreset = WorkloadPolicyPresetId.AdobeVideo;
+
+        await viewModel.SaveAsync();
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        Assert.Equal(WorkloadPolicyPresetId.AdobeVideo, saved.WorkloadPolicy.DefaultPreset);
+    }
+
+    [Fact]
     public async Task Save_removes_old_global_exclusion_rules_from_options_payload()
     {
         var existingRule = new ProtectionExclusionRule(

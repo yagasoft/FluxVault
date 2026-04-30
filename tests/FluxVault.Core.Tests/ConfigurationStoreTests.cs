@@ -34,6 +34,7 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(TimeSpan.FromHours(24), configuration.RepositoryMaintenancePolicy.Interval);
         Assert.True(configuration.RepositoryMaintenancePolicy.AutoRepairFromMirror);
         Assert.Equal(3, configuration.RepositoryMaintenancePolicy.RestoreRehearsalVersionCount);
+        Assert.Equal(WorkloadPolicyPresetId.GeneralPurpose, configuration.WorkloadPolicy.DefaultPreset);
         Assert.Empty(configuration.SelectionRules);
         Assert.Empty(configuration.ExclusionRules);
     }
@@ -97,6 +98,7 @@ public sealed class ConfigurationStoreTests
         Assert.Empty(actual.ExclusionRules);
         Assert.True(actual.RepositoryMaintenancePolicy.IsEnabled);
         Assert.Equal(TimeSpan.FromHours(24), actual.RepositoryMaintenancePolicy.Interval);
+        Assert.Equal(WorkloadPolicyPresetId.GeneralPurpose, actual.WorkloadPolicy.DefaultPreset);
     }
 
     [Fact]
@@ -119,20 +121,43 @@ public sealed class ConfigurationStoreTests
                     Mode: ProtectionSelectionMode.RecursiveFolder,
                     Compression: CompressionPreference.Zstd,
                     ResourceProfile: ResourceProfile.Balanced,
-                    IsEnabled: true),
+                    IsEnabled: true,
+                    WorkloadPreset: WorkloadPolicyPresetId.GeneralPurpose),
                 new ProtectionSelectionRule(
                     Id: "file",
                     Path: Path.Combine(workspace.RootPath, "docs", "draft.txt"),
                     Mode: ProtectionSelectionMode.File,
                     Compression: CompressionPreference.Lz4,
                     ResourceProfile: ResourceProfile.Fast,
-                    IsEnabled: true)
+                    IsEnabled: true,
+                    WorkloadPreset: WorkloadPolicyPresetId.DeveloperWorkspace)
             ]);
 
         await store.SaveAsync(expected);
 
         var actual = await store.LoadAsync();
         Assert.Equal(expected.SelectionRules, actual.SelectionRules);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_workload_policy()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(
+            Path.Combine(workspace.RootPath, "config.json"),
+            workspace.RootPath);
+        var expected = new FluxVaultConfiguration(
+            RepositoryPath: Path.Combine(workspace.RootPath, "repository"),
+            MirrorPath: null,
+            IsEnabled: true,
+            WatchedFolders: [],
+            WorkloadPolicy: new WorkloadPolicyConfiguration(WorkloadPolicyPresetId.CadBim));
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+
+        Assert.Equal(WorkloadPolicyPresetId.CadBim, actual.WorkloadPolicy.DefaultPreset);
     }
 
     [Fact]

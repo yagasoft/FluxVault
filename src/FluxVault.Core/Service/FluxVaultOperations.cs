@@ -65,10 +65,10 @@ public sealed class FluxVaultOperations(
 
             foreach (var file in EnumerateIncludedFiles(folder, configuration))
             {
-                targets.Add(new FileBackupTarget(
-                    folder,
-                    file,
-                    CodecPolicySelector.Select(configuration.CodecPolicy, file, new FileInfo(file).Length, isHotFile: false)));
+                if (TryCreateTarget(configuration, folder, file, out var target))
+                {
+                    targets.Add(target);
+                }
             }
         }
 
@@ -118,10 +118,10 @@ public sealed class FluxVaultOperations(
 
             if (TryFindIncludedFolder(configuration, path, out var folder))
             {
-                targets.Add(new FileBackupTarget(
-                    folder,
-                    path,
-                    CodecPolicySelector.Select(configuration.CodecPolicy, path, new FileInfo(path).Length, isHotFile: false)));
+                if (TryCreateTarget(configuration, folder, path, out var target))
+                {
+                    targets.Add(target);
+                }
             }
         }
 
@@ -612,7 +612,7 @@ public sealed class FluxVaultOperations(
             CapturedAtUtc: DateTimeOffset.UtcNow,
             Consistency: capture.Consistency,
             Compression: target.Compression,
-            MinimumCompressionBytes: 0,
+            MinimumCompressionBytes: target.MinimumCompressionBytes,
             Content: capture.Content), cancellationToken).ConfigureAwait(false);
         UpdateCaptureRuntimeStatus(
             target.Path,
@@ -740,7 +740,33 @@ public sealed class FluxVaultOperations(
             : value;
     }
 
-    private sealed record FileBackupTarget(WatchedFolderConfiguration Folder, string Path, CompressionPreference Compression);
+    private static bool TryCreateTarget(
+        FluxVaultConfiguration configuration,
+        WatchedFolderConfiguration folder,
+        string path,
+        out FileBackupTarget target)
+    {
+        var resolved = WorkloadPolicyResolver.Resolve(
+            configuration,
+            folder,
+            path,
+            new FileInfo(path).Length,
+            isHotFile: false);
+        if (resolved.IsExcluded)
+        {
+            target = null!;
+            return false;
+        }
+
+        target = new FileBackupTarget(folder, path, resolved.Compression, resolved.MinimumCompressionBytes);
+        return true;
+    }
+
+    private sealed record FileBackupTarget(
+        WatchedFolderConfiguration Folder,
+        string Path,
+        CompressionPreference Compression,
+        int MinimumCompressionBytes);
     private sealed record CaptureTargetResult(bool Success, string? Message);
 
     private IReadOnlyList<CaptureRuntimeStatus> GetCaptureStatuses()

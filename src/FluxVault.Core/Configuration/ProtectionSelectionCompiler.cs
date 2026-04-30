@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using FluxVault.Abstractions.Configuration;
+using FluxVault.Core.Policies;
 
 namespace FluxVault.Core.Configuration;
 
@@ -28,14 +29,23 @@ public static class ProtectionSelectionCompiler
                 continue;
             }
 
+            var resourceProfile = rule.ResourceProfile;
+            var compression = rule.Compression;
+            if (rule.WorkloadPreset is { } presetId)
+            {
+                var preset = WorkloadPolicyPresetCatalog.Get(presetId);
+                resourceProfile = preset.ResourceProfile;
+                compression = preset.Compression;
+            }
+
             compiled.Add(new WatchedFolderConfiguration(
                 rule.Id,
                 rule.Path,
                 Recursive: rule.Mode == ProtectionSelectionMode.RecursiveFolder,
                 IncludePatterns: DefaultIncludePatterns,
                 ExcludePatterns: DefaultExcludePatterns,
-                rule.Compression,
-                rule.ResourceProfile,
+                compression,
+                resourceProfile,
                 IsEnabled: true));
         }
 
@@ -47,6 +57,15 @@ public static class ProtectionSelectionCompiler
                      .Where(group => !string.IsNullOrWhiteSpace(group.Key)))
         {
             var first = group.First();
+            var resourceProfile = first.ResourceProfile;
+            var compression = first.Compression;
+            if (first.WorkloadPreset is { } presetId)
+            {
+                var preset = WorkloadPolicyPresetCatalog.Get(presetId);
+                resourceProfile = preset.ResourceProfile;
+                compression = preset.Compression;
+            }
+
             compiled.Add(new WatchedFolderConfiguration(
                 StableFileGroupId(group.Key),
                 group.Key,
@@ -58,8 +77,8 @@ public static class ProtectionSelectionCompiler
                     .Order(StringComparer.OrdinalIgnoreCase)
                     .ToArray(),
                 ExcludePatterns: DefaultExcludePatterns,
-                first.Compression,
-                first.ResourceProfile,
+                compression,
+                resourceProfile,
                 IsEnabled: true));
         }
 

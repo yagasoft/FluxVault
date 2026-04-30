@@ -29,6 +29,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private RetentionPolicy currentRetentionPolicy = RetentionPolicy.CreateDefault();
     private CaptureCadencePolicy currentCaptureCadencePolicy = CaptureCadencePolicy.CreateDefault();
     private CodecPolicy currentCodecPolicy = CodecPolicy.CreateDefault();
+    private WorkloadPolicyConfiguration currentWorkloadPolicy = WorkloadPolicyConfiguration.CreateDefault();
     private IReadOnlyList<ProtectionExclusionRule> currentExclusionRules = [];
     private RepositoryScrubReport? currentScrubReport;
     private RestoreRehearsalReport? currentRestoreRehearsalReport;
@@ -638,7 +639,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 currentRetentionPolicy = status.Configuration.RetentionPolicy;
                 currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
                 currentCodecPolicy = status.Configuration.CodecPolicy;
+                currentWorkloadPolicy = status.Configuration.WorkloadPolicy ?? WorkloadPolicyConfiguration.CreateDefault();
                 currentExclusionRules = status.Configuration.ExclusionRules ?? [];
+                FileBrowser.DefaultWorkloadPreset = currentWorkloadPolicy.DefaultPreset;
                 var selectionRules = status.Configuration.SelectionRules;
                 FileBrowser.LoadSelectionRules(selectionRules is { Count: > 0 }
                     ? selectionRules
@@ -740,7 +743,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             CaptureCadencePolicy: currentCaptureCadencePolicy,
             CodecPolicy: currentCodecPolicy,
             SelectionRules: selectionRules,
-            ExclusionRules: currentExclusionRules);
+            ExclusionRules: currentExclusionRules,
+            WorkloadPolicy: currentWorkloadPolicy);
     }
 
     private VersionRow? FindRestoreHintVersion()
@@ -816,7 +820,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     folder.Recursive ? ProtectionSelectionMode.RecursiveFolder : ProtectionSelectionMode.ImmediateFiles,
                     folder.Compression,
                     folder.ResourceProfile,
-                    folder.IsEnabled));
+                    folder.IsEnabled,
+                    WorkloadPreset: WorkloadPolicyPresetId.GeneralPurpose));
                 continue;
             }
 
@@ -834,7 +839,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     ProtectionSelectionMode.File,
                     folder.Compression,
                     folder.ResourceProfile,
-                    folder.IsEnabled));
+                    folder.IsEnabled,
+                    WorkloadPreset: WorkloadPolicyPresetId.GeneralPurpose));
             }
         }
 

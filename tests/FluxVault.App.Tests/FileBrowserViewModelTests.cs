@@ -125,6 +125,39 @@ public sealed class FileBrowserViewModelTests
     }
 
     [Fact]
+    public void New_folder_selection_uses_configured_default_workload_preset()
+    {
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []))
+        {
+            DefaultWorkloadPreset = WorkloadPolicyPresetId.DeveloperWorkspace
+        };
+        viewModel.LoadSelectionRules([]);
+
+        viewModel.AddPathSelection(@"D:\Work\Repo", isDirectory: true);
+
+        var rule = Assert.Single(viewModel.GetSelectionRules());
+        Assert.Equal(WorkloadPolicyPresetId.DeveloperWorkspace, rule.WorkloadPreset);
+    }
+
+    [Fact]
+    public void Selected_rule_workload_preset_change_is_pending_until_saved()
+    {
+        var folder = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        viewModel.LoadSelectionRules([Rule("work", @"D:\Work", ProtectionSelectionMode.RecursiveFolder) with
+        {
+            WorkloadPreset = WorkloadPolicyPresetId.GeneralPurpose
+        }]);
+
+        viewModel.SelectedFolder = folder;
+        viewModel.SelectedWorkloadPreset = WorkloadPolicyPresetId.CadBim;
+
+        var rule = Assert.Single(viewModel.GetSelectionRules());
+        Assert.Equal(WorkloadPolicyPresetId.CadBim, rule.WorkloadPreset);
+        Assert.Contains(viewModel.PendingChanges, row => row.Change == "Changed" && row.Detail.Contains("CAD", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
     public void Explorer_add_file_creates_file_selection_and_is_idempotent()
     {
         var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));

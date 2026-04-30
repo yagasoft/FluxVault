@@ -56,6 +56,10 @@ FluxVault now has a developer-usable MVP loop:
 - Conservative automatic retention and scheduled repository maintenance, with a
   WPF Options dialog for previewing retention, running retention, editing
   maintenance cadence, and controlling mirror repair/rehearsal defaults.
+- Conservative workload policy presets for general, Office, CAD/BIM,
+  Adobe/video, developer, and generic-large-file selections. Options controls
+  the default preset for new selections, and the File browser can change the
+  preset for each protected folder or file before saving.
 - A FluxVault app icon, left-navigation dashboard, activity view, tray activity
   pane that stays inside the active monitor working area, and blocked-file
   reporting.
@@ -169,7 +173,9 @@ Use the **File browser** scoped regex strip to add include/exclude regex rules
 to the selected protected folder or file. A folder with local regex rules shows
 an `R` indicator in the tree. Folder tree context menus can show the folder in
 File Explorer; file-grid context menus can open a file in its default app or
-show it selected in File Explorer.
+show it selected in File Explorer. The same strip exposes the selected
+folder/file workload preset, which resolves cadence, compression, compression
+thresholds, and common generated/cache exclusions.
 
 Open **Options** > **Advanced** to register or unregister FluxVault Explorer
 context-menu actions for the current Windows user. Explorer actions are
@@ -213,7 +219,8 @@ selected folder or file on that peer. Sync will also record source version,
 operation, origin device, and applied-version metadata so a remote hydration
 write is not republished forever as a new local change.
 
-Open **Options** to review retention and scheduled maintenance. The MVP
+Open **Options** to review retention, scheduled maintenance, and the default
+workload preset assigned to newly protected folders/files. The MVP
 retention defaults keep every version for 24 hours, keep one version per hour
 for 30 days, keep one version per day for 180 days, and always keep at least
 the latest 20 versions per source file. Retention is enabled by default and
@@ -224,7 +231,8 @@ rehearses the newest three versions unless changed in Options.
 
 The **Advanced** options page controls capture cadence and compression. It also
 edits the skip-extension list used to avoid compressing formats such as archives
-or media that are already compressed. The default watcher poll is 5 seconds,
+or media that are already compressed. Workload presets use this skip list as the
+final no-compression guardrail. The default watcher poll is 5 seconds,
 reconciliation is 10 minutes, and hot files are forced after 30 seconds, 2
 minutes, or 10 minutes for Fast, Balanced, and Quiet profiles. The Capture tile
 shows live watcher/debounce work such as

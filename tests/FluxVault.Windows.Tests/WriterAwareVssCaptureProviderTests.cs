@@ -69,6 +69,33 @@ public sealed class WriterAwareVssCaptureProviderTests
         Assert.Equal(1, coordinator.CleanupCount);
     }
 
+    [Fact]
+    public void Non_recursive_writer_wildcard_does_not_cover_nested_files()
+    {
+        using var workspace = TemporaryTestFolder.Create();
+        var writerRoot = Path.Combine(workspace.RootPath, "watched");
+        var writer = new VssWriterEvidence(
+            "SqlServerWriter",
+            [Path.Combine(writerRoot, "*.mdf")]);
+
+        Assert.True(writer.Covers(Path.Combine(writerRoot, "db.mdf")));
+        Assert.False(writer.Covers(Path.Combine(writerRoot, "nested", "db.mdf")));
+    }
+
+    [Fact]
+    public void Recursive_writer_wildcard_covers_nested_files()
+    {
+        using var workspace = TemporaryTestFolder.Create();
+        var writerRoot = Path.Combine(workspace.RootPath, "watched");
+        var writer = new VssWriterEvidence(
+            "SqlServerWriter",
+            [Path.Combine(writerRoot, "**", "*.mdf")]);
+
+        Assert.True(writer.Covers(Path.Combine(writerRoot, "db.mdf")));
+        Assert.True(writer.Covers(Path.Combine(writerRoot, "nested", "db.mdf")));
+        Assert.False(writer.Covers(Path.Combine(writerRoot, "nested", "notes.txt")));
+    }
+
     private sealed class FakeVssSnapshotCoordinator : IVssSnapshotCoordinator
     {
         private readonly string? sourcePath;

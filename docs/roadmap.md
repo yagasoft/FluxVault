@@ -78,7 +78,10 @@ Expected user-visible result: safe local production use on Windows 11.
   requester that coordinates writers, creates the snapshot through COM, reads
   from the shadow path, reports `AppConsistent` only when writer metadata covers
   the source path, and otherwise reports successful VSS captures as
-  `CrashConsistent`.
+  `CrashConsistent`. The completion slice adds CI-friendly requester adapter
+  tests for call order, writer metadata interpretation, writer-status failure,
+  cleanup, and failed-capture no-commit behaviour; FluxVault does not claim
+  certification for every third-party VSS writer workload.
 - Restore browser with safer overwrite workflows and Explorer entry points.
   The first implementation adds app-side destination picking, overwrite
   confirmation before restore IPC, safe restore failure status, per-user HKCU

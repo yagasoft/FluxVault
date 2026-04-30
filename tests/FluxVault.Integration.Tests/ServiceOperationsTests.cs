@@ -342,6 +342,31 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Failed_writer_aware_vss_capture_does_not_commit_version_or_captured_activity()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "live content");
+        var configuration = NewConfiguration(workspace, watched);
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var operations = new FluxVaultOperations(
+            store,
+            new StubCaptureProvider(FileCaptureResult.Failed("VSS requester failed: VSS writer SqlServerWriter reported state 5.")));
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+        var versions = await operations.ListVersionsAsync();
+        var capturedActivity = operations.GetActivity().Where(item => item.Kind == FluxVaultActivityKind.Captured);
+
+        Assert.False(backup.Success);
+        Assert.Empty(versions);
+        Assert.Empty(capturedActivity);
+        Assert.Contains("failed", backup.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task App_consistent_capture_is_committed_and_reported_with_consistency_detail()
     {
         using var workspace = TemporaryWorkspace.Create();

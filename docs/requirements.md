@@ -99,7 +99,9 @@ folder; direct cloud adapters arrive later.
   report `AppConsistent` only when writer coordination succeeds and writer
   metadata covers the source path. Successful snapshots without matching writer
   coverage must be reported as `CrashConsistent`; writer/requester failure must
-  fail the capture rather than commit a misleading version.
+  fail the capture rather than commit a misleading version. Completion evidence
+  must be robust and CI-friendly, using deterministic requester/metadata tests
+  rather than mandatory manual elevated live-writer smoke checks.
 - Explorer file/folder entry points are registered per user from Options, not
   from the developer service scripts. Full-menu verbs are ordered `Add to
   FluxVault`, `Show FluxVault versions`, then `Remove from FluxVault`.

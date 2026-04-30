@@ -53,12 +53,12 @@ Developer scripts remain developer tooling. Consumer releases use
 - `Yagasoft-FluxVault-v1.0.0-win-x64-release-notes.md`
 - `Yagasoft-FluxVault-v1.0.0-win-x64-release-status.txt`
 
-The MSI installs the app, service, and CLI under Program Files, creates the
-ProgramData folder as permanent/never-overwrite state, installs
-`FluxVaultService`, starts it on install, sets delayed automatic start,
-configures SCM restart recovery, and registers the Application Event Log
-source. The stable `MajorUpgrade` metadata gives future releases a single
-upgrade path while preserving `C:\ProgramData\FluxVault`.
+The MSI installs the full published app, service, and CLI payloads under
+Program Files, creates the ProgramData folder as permanent/never-overwrite
+state, installs `FluxVaultService`, starts it on install, sets delayed
+automatic start, configures SCM restart recovery, and registers the Application
+Event Log source. The stable `MajorUpgrade` metadata gives future releases a
+single upgrade path while preserving `C:\ProgramData\FluxVault`.
 
 The unsigned consumer Burn bundle chains only the MSI. It does not run
 `Add-AppxPackage`, it does not include `FluxVault.SparsePackage.msix`, and it
@@ -88,6 +88,33 @@ Unsigned release behaviour:
 - The Windows 11 compact Explorer menu remains a future signed/package-identity
   distribution path. The normal full Explorer menu under **Show more options**
   remains available from Options in the unsigned consumer install.
+
+## Release smoke validation
+
+`eng\smoke-release-install.ps1 -UninstallAfter` is the repeatable local
+validation gate for the unsigned consumer setup. It must be run from an elevated
+PowerShell session on a clean validation machine/session because it installs and
+uninstalls the per-machine bundle.
+
+The harness verifies the setup checksum, refuses to overwrite an existing
+`FluxVaultService` or existing `C:\ProgramData\FluxVault` by default, installs
+the Burn bundle silently with logs under `artifacts\release-smoke`, verifies
+service startup, delayed automatic start, full Program Files payloads,
+ProgramData creation, Event Log source registration, and an installed CLI
+backup/list/restore round trip, then uninstalls and checks that ProgramData
+remains. Use `-AllowExistingProgramData` only when deliberately collecting
+non-clean evidence against preserved existing machine state.
+
+This smoke check proves installer mechanics for the current unsigned package.
+It does not prove SmartScreen reputation, Authenticode signing, Windows 11
+compact-menu package identity, first-run product guidance, or third-party VSS
+writer certification.
+
+Current local evidence: the corrected release package built on 2026-04-30,
+the MSI administrative extraction contained the full app/service/CLI payloads,
+and an elevated `eng\smoke-release-install.ps1 -UninstallAfter` run passed
+install, service startup, installed CLI backup/list/restore, uninstall, service
+removal, and ProgramData preservation.
 
 ## GitHub releases
 

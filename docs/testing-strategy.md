@@ -149,10 +149,19 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
   delayed auto-start, SCM recovery, Event Log source registration, permanent
   ProgramData preservation, stable major-upgrade metadata, unsigned
   consumer-bundle MSI-only chaining, absence of `Add-AppxPackage`, no sparse
-  MSIX dependency, and narrow WiX warning suppressions.
+  MSIX dependency, recursive full-publish payload harvesting, and narrow WiX
+  warning suppressions.
 - Release package validation builds developer artefacts, MSI, unsigned Burn
   bundle, branded setup/checksum/notes/status files, and unsigned-release
   warnings without installing elevated components or requiring signing secrets.
+- Elevated release install/uninstall smoke validation uses
+  `eng\smoke-release-install.ps1 -UninstallAfter` on a clean validation
+  machine/session to verify checksum, install, service startup, delayed
+  automatic start, installed payloads, ProgramData creation and preservation,
+  Event Log source registration, installed CLI backup/list/restore, and bundle
+  uninstall. The harness refuses an existing service or ProgramData by default
+  so clean-release evidence does not mutate an existing FluxVault machine
+  state.
 - Tray/dashboard service connection.
 - Tray activity pane placement inside the active monitor working area.
 - Explorer integration registration from Options, with packaging guards that

@@ -33,10 +33,16 @@
       <Component Id="AppComponent" Directory="APPFOLDER" Guid="D7B2375D-C7B7-4D9F-B517-E93FF9EF473F">
         <File Id="FluxVaultAppExe" Source="$(var.PublishRoot)\app\FluxVault.App.exe" KeyPath="yes" />
       </Component>
+      <Files Directory="APPFOLDER" Include="$(var.PublishRoot)\app\**">
+        <Exclude Files="$(var.PublishRoot)\app\FluxVault.App.exe" />
+      </Files>
 
       <Component Id="CliComponent" Directory="CLIFOLDER" Guid="6DEB8FEA-2D1D-41FC-A96A-22D13652F662">
         <File Id="FluxVaultCliExe" Source="$(var.PublishRoot)\cli\FluxVault.Cli.exe" KeyPath="yes" />
       </Component>
+      <Files Directory="CLIFOLDER" Include="$(var.PublishRoot)\cli\**">
+        <Exclude Files="$(var.PublishRoot)\cli\FluxVault.Cli.exe" />
+      </Files>
 
       <Component Id="ServiceComponent" Directory="SERVICEFOLDER" Guid="C2E20BC9-715D-4820-846D-B9E4EF9F78B3">
         <File Id="FluxVaultServiceExe" Source="$(var.PublishRoot)\service\FluxVault.Service.exe" KeyPath="yes" />
@@ -74,6 +80,9 @@
             EventMessageFile="[SERVICEFOLDER]FluxVault.Service.exe" />
         <RegistryValue Root="HKLM" Key="Software\FluxVault" Name="InstallFolder" Type="string" Value="[INSTALLFOLDER]" />
       </Component>
+      <Files Directory="SERVICEFOLDER" Include="$(var.PublishRoot)\service\**">
+        <Exclude Files="$(var.PublishRoot)\service\FluxVault.Service.exe" />
+      </Files>
     </ComponentGroup>
   </Package>
 </Wix>

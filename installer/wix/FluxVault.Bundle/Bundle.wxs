@@ -3,7 +3,7 @@
   <Bundle
       Name="FluxVault"
       Manufacturer="Yagasoft"
-      Version="1.0.0.0"
+      Version="$(var.ProductVersion)"
       UpgradeCode="E710C91A-FACD-49C7-8B74-89F86C7E8C51">
     <BootstrapperApplication>
       <bal:WixStandardBootstrapperApplication LicenseUrl="" Theme="hyperlinkLicense" />

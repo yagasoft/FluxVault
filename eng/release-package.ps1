@@ -1,5 +1,6 @@
 param(
     [string]$Configuration = "Release",
+    [string]$ReleaseVersion = "v1.0.1",
     [string]$Runtime = "win-x64",
     [string]$OutputRoot = "artifacts\release",
     [string]$PublishRoot = "artifacts\publish"
@@ -12,7 +13,31 @@ $publishRootFull = Join-Path $root $PublishRoot
 $releaseRoot = Join-Path $root $OutputRoot
 $stagingRoot = Join-Path $releaseRoot "_staging"
 $ReleasePackageRoot = $stagingRoot
-$version = "v1.0.0"
+
+function Normalize-ReleaseVersion([string]$ReleaseVersion) {
+    if ([string]::IsNullOrWhiteSpace($ReleaseVersion)) {
+        throw "ReleaseVersion is required."
+    }
+
+    $trimmed = $ReleaseVersion.Trim()
+    if ($trimmed -notmatch '^v?\d+\.\d+\.\d+$') {
+        throw "ReleaseVersion must be in vMAJOR.MINOR.PATCH format, for example v1.0.1."
+    }
+
+    if ($trimmed.StartsWith("v", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return "v$($trimmed.Substring(1))"
+    }
+
+    return "v$trimmed"
+}
+
+function ConvertTo-ProductVersion([string]$Version) {
+    $normalized = Normalize-ReleaseVersion $Version
+    return "$($normalized.Substring(1)).0"
+}
+
+$version = Normalize-ReleaseVersion $ReleaseVersion
+$productVersion = ConvertTo-ProductVersion $version
 $artifactPrefix = "Yagasoft-FluxVault-$version-$Runtime"
 $setupArtifact = "$artifactPrefix-Setup.exe"
 $checksumArtifact = "$artifactPrefix-checksums-sha256.txt"
@@ -45,6 +70,7 @@ Invoke-Checked {
     dotnet build $installerProject `
         --configuration $Configuration `
         /p:PublishRoot=$publishRootFull `
+        /p:ProductVersion=$productVersion `
         /p:ReleasePackageRoot=$stagingRoot `
         /p:OutputPath=$stagingRoot\
 } "FluxVault.Installer.wixproj build"
@@ -53,6 +79,7 @@ Invoke-Checked {
     dotnet build $bundleProject `
         --configuration $Configuration `
         /p:PublishRoot=$publishRootFull `
+        /p:ProductVersion=$productVersion `
         /p:ReleasePackageRoot=$stagingRoot `
         /p:OutputPath=$stagingRoot\
 } "FluxVault.Bundle.wixproj build"
@@ -87,6 +114,7 @@ $statusPath = Join-Path $releaseRoot $statusArtifact
     "Yagasoft FluxVault unsigned consumer release status"
     "Generated: $([DateTimeOffset]::Now.ToString('u'))"
     "Version: $version"
+    "Product version: $productVersion"
     "Runtime: $Runtime"
     "Configuration: $Configuration"
     "Publish root: $publishRootFull"

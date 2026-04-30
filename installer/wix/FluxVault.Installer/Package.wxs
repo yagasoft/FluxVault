@@ -3,7 +3,7 @@
   <Package
       Name="FluxVault"
       Manufacturer="Yagasoft"
-      Version="1.0.0.0"
+      Version="$(var.ProductVersion)"
       UpgradeCode="4B89B6E7-D41E-49E6-BE42-09C10D6570D6"
       Scope="perMachine">
     <MajorUpgrade DowngradeErrorMessage="A newer version of FluxVault is already installed." />

@@ -2,6 +2,12 @@ name: release-package
 
 on:
   workflow_dispatch:
+    inputs:
+      release_version:
+        description: Release version tag, for example v1.0.1
+        required: true
+        default: v1.0.1
+        type: string
 
 permissions:
   contents: read
@@ -18,11 +24,12 @@ jobs:
         run: dotnet test tests\FluxVault.Integration.Tests\FluxVault.Integration.Tests.csproj --filter PackagingTests
       - name: Build release package
         shell: pwsh
-        run: .\eng\release-package.ps1 -Configuration Release
+        run: .\eng\release-package.ps1 -Configuration Release -ReleaseVersion "${{ inputs.release_version }}"
       - name: Verify branded setup exists
         shell: pwsh
         run: |
-          if (-not (Test-Path -LiteralPath artifacts\release\Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe)) {
+          $releaseVersion = "${{ inputs.release_version }}"
+          if (-not (Test-Path -LiteralPath "artifacts\release\Yagasoft-FluxVault-$releaseVersion-win-x64-Setup.exe")) {
             throw "Missing unsigned consumer setup artefact."
           }
       - name: Upload release artefacts

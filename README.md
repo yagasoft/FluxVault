@@ -145,8 +145,9 @@ controls.
 
 Consumer packaging uses WiX. `eng\release-package.ps1` first publishes the
 developer artefacts, then builds an unsigned Burn bootstrapper named
-`Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe` under `artifacts\release`,
-plus matching checksum, release-notes, and status files. The MSI inside that
+`Yagasoft-FluxVault-v1.0.1-win-x64-Setup.exe` under `artifacts\release`
+by default, plus matching checksum, release-notes, and status files. Pass
+`-ReleaseVersion vX.Y.Z` to build a different release version. The MSI inside that
 bootstrapper installs the app, service, and CLI per-machine, preserves
 `C:\ProgramData\FluxVault` across major upgrades and uninstall, and configures
 service delayed auto-start, SCM recovery, and the Event Log source. This
@@ -158,7 +159,7 @@ To smoke-validate the unsigned consumer installer on a clean elevated Windows
 session, run:
 
 ```powershell
-.\eng\smoke-release-install.ps1 -UninstallAfter
+.\eng\smoke-release-install.ps1 -ReleaseVersion v1.0.1 -UninstallAfter
 ```
 
 The smoke harness verifies the setup checksum, refuses to run over an existing

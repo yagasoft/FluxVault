@@ -202,8 +202,12 @@ public sealed class PackagingTests
 
         Assert.Contains("WixToolset.Sdk/7.0.0", project);
         Assert.Contains("WixToolset.Util.wixext", project);
+        Assert.Contains("<ProductVersion Condition=\"'$(ProductVersion)' == ''\">1.0.1.0</ProductVersion>", project);
+        Assert.Contains("ProductVersion=$(ProductVersion)", project);
         Assert.Contains("<SuppressSpecificWarnings>1149</SuppressSpecificWarnings>", project);
         Assert.DoesNotContain("<SuppressAllWarnings>true</SuppressAllWarnings>", project);
+        Assert.Contains("Version=\"$(var.ProductVersion)\"", package);
+        Assert.DoesNotContain("Version=\"1.0.0.0\"", package);
         Assert.Contains("MajorUpgrade", package);
         Assert.Contains("UpgradeCode=\"4B89B6E7-D41E-49E6-BE42-09C10D6570D6\"", package);
         Assert.Contains("FluxVaultService", package);
@@ -255,8 +259,12 @@ public sealed class PackagingTests
 
         Assert.Contains("WixToolset.Sdk/7.0.0", project);
         Assert.Contains("WixToolset.Bal.wixext", project);
+        Assert.Contains("<ProductVersion Condition=\"'$(ProductVersion)' == ''\">1.0.1.0</ProductVersion>", project);
+        Assert.Contains("ProductVersion=$(ProductVersion)", project);
         Assert.Contains("<SuppressSpecificWarnings>1161</SuppressSpecificWarnings>", project);
         Assert.DoesNotContain("<SuppressAllWarnings>true</SuppressAllWarnings>", project);
+        Assert.Contains("Version=\"$(var.ProductVersion)\"", bundle);
+        Assert.DoesNotContain("Version=\"1.0.0.0\"", bundle);
         Assert.Contains("MsiPackage", bundle);
         Assert.Contains("FluxVault.Installer.msi", bundle);
         Assert.DoesNotContain("DisplayInternalUI", bundle);
@@ -289,8 +297,12 @@ public sealed class PackagingTests
         Assert.DoesNotContain("SignTool.exe", script);
         Assert.Contains("dotnet build", script);
         Assert.Contains("ReleasePackageRoot", script);
+        Assert.Contains("[string]$ReleaseVersion = \"v1.0.1\"", script);
         Assert.Contains("[string]$Runtime = \"win-x64\"", script);
-        Assert.Contains("$version = \"v1.0.0\"", script);
+        Assert.DoesNotContain("$version = \"v1.0.0\"", script);
+        Assert.Contains("ConvertTo-ProductVersion", script);
+        Assert.Contains("$productVersion = ConvertTo-ProductVersion $version", script);
+        Assert.Contains("/p:ProductVersion=$productVersion", script);
         Assert.Contains("$artifactPrefix = \"Yagasoft-FluxVault-$version-$Runtime\"", script);
         Assert.Contains("$setupArtifact = \"$artifactPrefix-Setup.exe\"", script);
         Assert.Contains("$checksumArtifact = \"$artifactPrefix-checksums-sha256.txt\"", script);
@@ -310,8 +322,13 @@ public sealed class PackagingTests
         Assert.True(File.Exists(scriptPath));
         var script = File.ReadAllText(scriptPath);
 
-        Assert.Contains("Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe", script);
-        Assert.Contains("Yagasoft-FluxVault-v1.0.0-win-x64-checksums-sha256.txt", script);
+        Assert.Contains("[string]$ReleaseVersion = \"v1.0.1\"", script);
+        Assert.Contains("[string]$Runtime = \"win-x64\"", script);
+        Assert.Contains("$artifactPrefix = \"Yagasoft-FluxVault-$releaseVersion-$Runtime\"", script);
+        Assert.Contains("$setupArtifactName = \"$artifactPrefix-Setup.exe\"", script);
+        Assert.Contains("$checksumArtifactName = \"$artifactPrefix-checksums-sha256.txt\"", script);
+        Assert.DoesNotContain("Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe", script);
+        Assert.DoesNotContain("Yagasoft-FluxVault-v1.0.0-win-x64-checksums-sha256.txt", script);
         Assert.Contains("Test-Administrator", script);
         Assert.Contains("Administrator rights are required", script);
         Assert.Contains("FluxVaultService already exists", script);
@@ -346,12 +363,15 @@ public sealed class PackagingTests
         var workflow = File.ReadAllText(workflowPath);
 
         Assert.Contains("workflow_dispatch", workflow);
+        Assert.Contains("release_version", workflow);
+        Assert.Contains("default: v1.0.1", workflow);
         Assert.DoesNotContain("pull_request", workflow);
-        Assert.Contains("eng\\release-package.ps1", workflow);
+        Assert.Contains("-ReleaseVersion \"${{ inputs.release_version }}\"", workflow);
         Assert.Contains("PackagingTests", workflow);
         Assert.DoesNotContain("PACKAGE_CERTIFICATE", workflow);
         Assert.DoesNotContain("PACKAGE_CERTIFICATE_PASSWORD", workflow);
-        Assert.Contains("Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe", workflow);
+        Assert.Contains("Yagasoft-FluxVault-$releaseVersion-win-x64-Setup.exe", workflow);
+        Assert.DoesNotContain("Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe", workflow);
         Assert.Contains("actions/upload-artifact", workflow);
         Assert.Contains("artifacts/release", workflow);
     }

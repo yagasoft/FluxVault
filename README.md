@@ -53,8 +53,9 @@ FluxVault now has a developer-usable MVP loop:
   validates referenced manifests and chunks, repairs only from a healthy
   primary/mirror counterpart, and restore rehearsal verifies recent versions in
   FluxVault-owned temporary output.
-- Conservative automatic retention, with a WPF Options dialog for previewing
-  and applying retention settings.
+- Conservative automatic retention and scheduled repository maintenance, with a
+  WPF Options dialog for previewing retention, running retention, editing
+  maintenance cadence, and controlling mirror repair/rehearsal defaults.
 - A FluxVault app icon, left-navigation dashboard, activity view, tray activity
   pane that stays inside the active monitor working area, and blocked-file
   reporting.
@@ -70,8 +71,9 @@ FluxVault now has a developer-usable MVP loop:
 - Scoped include/exclude regex rules on selected File browser folders/files.
   Recursive folder rules apply recursively, immediate folder rules apply only to
   direct files, and child rules are additive with inherited parent rules.
-- Helpful wrapping tooltips across Options so each retention, cadence, and
-  compression setting explains its operational impact without clipping.
+- Helpful wrapping tooltips across Options so each retention, maintenance,
+  cadence, and compression setting explains its operational impact without
+  clipping.
 - Safer restore workflow: the dashboard picks a destination before IPC,
   requires confirmation before overwriting an existing file, keeps the selected
   version on cancellation/failure, and reports IPC, locked-file, and
@@ -211,16 +213,21 @@ selected folder or file on that peer. Sync will also record source version,
 operation, origin device, and applied-version metadata so a remote hydration
 write is not republished forever as a new local change.
 
-Open **Options** to review retention. The MVP defaults keep every version for
-24 hours, keep one version per hour for 30 days, keep one version per day for
-180 days, and always keep at least the latest 20 versions per source file.
-Retention is enabled by default and runs after successful service backups; the
-dialog can preview reclaimable repository space and run retention immediately.
+Open **Options** to review retention and scheduled maintenance. The MVP
+retention defaults keep every version for 24 hours, keep one version per hour
+for 30 days, keep one version per day for 180 days, and always keep at least
+the latest 20 versions per source file. Retention is enabled by default and
+runs after successful service backups; the dialog can preview reclaimable
+repository space and run retention immediately. Maintenance is enabled by
+default, runs every 24 hours, repairs from a healthy mirror when possible, and
+rehearses the newest three versions unless changed in Options.
 
-The **Advanced** options page controls capture cadence and compression. The
-default watcher poll is 5 seconds, reconciliation is 10 minutes, and hot files
-are forced after 30 seconds, 2 minutes, or 10 minutes for Fast, Balanced, and
-Quiet profiles. The Capture tile shows live watcher/debounce work such as
+The **Advanced** options page controls capture cadence and compression. It also
+edits the skip-extension list used to avoid compressing formats such as archives
+or media that are already compressed. The default watcher poll is 5 seconds,
+reconciliation is 10 minutes, and hot files are forced after 30 seconds, 2
+minutes, or 10 minutes for Fast, Balanced, and Quiet profiles. The Capture tile
+shows live watcher/debounce work such as
 pending files; the USN tile shows the latest durable catch-up check and its
 last checked time. Mature watcher changes trigger a USN catch-up before
 FluxVault falls back to the watcher path, so the two tiles stay understandable

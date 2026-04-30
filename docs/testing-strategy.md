@@ -26,7 +26,8 @@
   operational cockpit shell, prioritised command order, constrained dashboard
   header status text, service availability warning and Start/Stop controls,
   first-tab startup, Options Explorer menu actions, File browser context menus,
-  scoped regex controls, wrapping USN tooltips, and wrapping Options tooltips.
+  scoped regex controls, repository maintenance Options controls, compression
+  skip-extension editing, wrapping USN tooltips, and wrapping Options tooltips.
 - Restore workflow view-model tests for destination cancellation, overwrite
   confirmation, overwrite denial, IPC failure, locked/access-denied failure
   messaging, and preserving the selected version.
@@ -81,8 +82,9 @@
   health status updates, and scheduled maintenance due/not-due behaviour.
 - Service-triggered retention and manual `RunRetentionNow`.
 - Mirror cleanup after retention pruning.
-- Options dialog view-model save, preview, and run-retention behaviour with a
-  fake service client.
+- Options dialog view-model save, preview, run-retention, repository
+  maintenance policy, and compression skip-extension behaviour with a fake
+  service client.
 - Activity pane view-model loading for recent events and blocked files.
 - Diagnostics export containing durable-change fallback details.
 - CodeQL workflow trigger guard: no `pull_request` trigger.

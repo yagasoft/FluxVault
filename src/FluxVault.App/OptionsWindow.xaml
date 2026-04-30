@@ -47,6 +47,12 @@
                             <RowDefinition Height="16" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="16" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="260" />
@@ -77,11 +83,31 @@
                         <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding MinimumVersionsPerFile, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
                                  ToolTip="Minimum number of latest versions to keep for each protected file, regardless of age." />
 
-                        <Border Grid.Row="6" Grid.ColumnSpan="2" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Padding="12">
+                        <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Text="Repository maintenance" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+                        <CheckBox Grid.Row="7" Grid.ColumnSpan="2" Content="Enable scheduled repository maintenance"
+                                  IsChecked="{Binding MaintenanceEnabled}" Margin="0,0,0,14"
+                                  ToolTip="Run repository scrub and restore rehearsal automatically on the configured interval." />
+
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Maintenance interval hours" VerticalAlignment="Center" Margin="0,0,14,10"
+                                   ToolTip="Minimum number of hours between scheduled repository scrub and restore rehearsal runs." />
+                        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding MaintenanceIntervalHours, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
+                                 ToolTip="FluxVault clamps this to at least 1 hour." />
+
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Restore rehearsal versions" VerticalAlignment="Center" Margin="0,0,14,10"
+                                   ToolTip="Number of newest versions to restore into a temporary FluxVault-owned folder during rehearsal." />
+                        <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding RestoreRehearsalVersionCount, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
+                                 ToolTip="Use 0 to disable version rehearsal while keeping repository scrub enabled." />
+
+                        <CheckBox Grid.Row="10" Grid.ColumnSpan="2" Content="Repair automatically from mirror"
+                                  IsChecked="{Binding MaintenanceAutoRepairFromMirror}" Margin="0,0,0,0"
+                                  ToolTip="Repair repository artefacts from a healthy mirror copy, and repair mirror drift from a healthy primary copy." />
+
+                        <Border Grid.Row="12" Grid.ColumnSpan="2" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Padding="12">
                             <TextBlock Text="{Binding PreviewText}" TextWrapping="Wrap" Foreground="#3C4043" />
                         </Border>
 
-                        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+                        <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
                             <Button Content="Preview" Command="{Binding PreviewRetentionCommand}" Padding="14,8" Margin="0,0,8,0"
                                     ToolTip="Calculate what retention would prune without deleting anything." />
                             <Button Content="Run retention now" Command="{Binding RunRetentionNowCommand}" Padding="14,8"
@@ -97,6 +123,7 @@
                               HorizontalScrollBarVisibility="Disabled">
                     <Grid Margin="18">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -175,10 +202,22 @@
                                      ToolTip="Chunks smaller than this size are stored without compression." />
                         </StackPanel>
 
-                        <TextBlock Grid.Row="11" Grid.ColumnSpan="2" Text="Explorer context menu" FontWeight="SemiBold" Margin="0,0,0,12" />
-                        <TextBlock Grid.Row="12" Grid.ColumnSpan="2" Text="{Binding ExplorerContextMenuStatus}" Foreground="#3C4043" TextWrapping="Wrap" Margin="0,0,0,8"
+                        <TextBlock Grid.Row="10" Text="Skip extensions" VerticalAlignment="Top" Margin="0,0,14,18"
+                                   ToolTip="File extensions that are already compressed or not worth compressing. Separate entries with new lines, commas, or semicolons." />
+                        <TextBox Grid.Row="10" Grid.Column="1"
+                                 Text="{Binding CodecSkipExtensionsText, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 MinHeight="86"
+                                 Padding="8"
+                                 Margin="0,0,0,18"
+                                 ToolTip="FluxVault normalises entries to extensions such as .zip and removes duplicates when saving." />
+
+                        <TextBlock Grid.Row="12" Grid.ColumnSpan="2" Text="Explorer context menu" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="13" Grid.ColumnSpan="2" Text="{Binding ExplorerContextMenuStatus}" Foreground="#3C4043" TextWrapping="Wrap" Margin="0,0,0,8"
                                    ToolTip="Current per-user Explorer full-menu and Windows 11 compact-menu registration status." />
-                        <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <StackPanel Grid.Row="14" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Name="RegisterExplorerContextMenuButton"
                                     Content="Register Explorer menu"
                                     Command="{Binding RegisterExplorerContextMenuCommand}"
@@ -197,7 +236,7 @@
 
         <StackPanel Grid.Row="4" Name="OptionsStickyFooter" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Save" Command="{Binding SaveCommand}" Padding="16,8" Margin="0,0,8,0"
-                    ToolTip="Save the current retention, cadence, compression, and Explorer options to the service configuration." />
+                    ToolTip="Save the current retention, maintenance, cadence, compression, and Explorer options to the service configuration." />
             <Button Content="Close" Click="Close_Click" Padding="16,8"
                     ToolTip="Close Options without applying any unsaved changes." />
         </StackPanel>

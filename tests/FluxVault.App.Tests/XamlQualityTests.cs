@@ -144,7 +144,10 @@ public sealed class XamlQualityTests
             "Minimum same-file interval seconds",
             "Maximum concurrent captures",
             "Profile / default / hot-file",
-            "Level / minimum KB"
+            "Level / minimum KB",
+            "Maintenance interval hours",
+            "Restore rehearsal versions",
+            "Skip extensions"
         ];
 
         foreach (var label in optionLabels)
@@ -154,6 +157,43 @@ public sealed class XamlQualityTests
                 .Single(element => (string?)element.Attribute("Text") == label);
             Assert.False(string.IsNullOrWhiteSpace((string?)textBlock.Attribute("ToolTip")), label);
         }
+    }
+
+    [Fact]
+    public void Options_dialog_exposes_repository_maintenance_controls()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "OptionsWindow.xaml");
+
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "Repository maintenance");
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "CheckBox"),
+            element => (string?)element.Attribute("Content") == "Enable scheduled repository maintenance"
+                       && (string?)element.Attribute("IsChecked") == "{Binding MaintenanceEnabled}");
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "CheckBox"),
+            element => (string?)element.Attribute("Content") == "Repair automatically from mirror"
+                       && (string?)element.Attribute("IsChecked") == "{Binding MaintenanceAutoRepairFromMirror}");
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "TextBox"),
+            element => (string?)element.Attribute("Text") == "{Binding MaintenanceIntervalHours, UpdateSourceTrigger=PropertyChanged}");
+        Assert.Contains(
+            document.Descendants(XamlNamespace + "TextBox"),
+            element => (string?)element.Attribute("Text") == "{Binding RestoreRehearsalVersionCount, UpdateSourceTrigger=PropertyChanged}");
+    }
+
+    [Fact]
+    public void Options_dialog_exposes_codec_skip_extension_editor()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "OptionsWindow.xaml");
+        var editor = document
+            .Descendants(XamlNamespace + "TextBox")
+            .Single(element => (string?)element.Attribute("Text") == "{Binding CodecSkipExtensionsText, UpdateSourceTrigger=PropertyChanged}");
+
+        Assert.Equal("True", (string?)editor.Attribute("AcceptsReturn"));
+        Assert.Equal("Auto", (string?)editor.Attribute("VerticalScrollBarVisibility"));
+        Assert.False(string.IsNullOrWhiteSpace((string?)editor.Attribute("ToolTip")));
     }
 
     [Fact]

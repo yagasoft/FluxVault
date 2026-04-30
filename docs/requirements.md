@@ -46,8 +46,13 @@ folder; direct cloud adapters arrive later.
   and footer health/status tiles.
 - The tray activity pane must open fully inside the active monitor work area,
   including high-DPI and taskbar-edge scenarios.
-- Helpful tooltips for every Options control, covering retention, capture
-  cadence, compression, preview, apply, save, and close behaviours.
+- Helpful tooltips for every Options control, covering retention, repository
+  maintenance, capture cadence, compression, Explorer integration, preview,
+  apply, save, and close behaviours.
+- Operationally meaningful configurable behaviour should be represented by a
+  typed, defaulted configuration model and exposed in Options when it has clear
+  user semantics. Dormant or internal fields should not be exposed before they
+  have a real runtime effect.
 - USN health must show exact fallback reasons in the UI and diagnostics instead
   of only saying unavailable.
 - Developer command-line harness for backing up, listing, inspecting, and
@@ -130,6 +135,10 @@ folder; direct cloud adapters arrive later.
   temporary files, and avoid creating restore hints or new versions.
 - Scheduled maintenance defaults to enabled, runs every 24 hours, repairs from a
   mirror when possible, and rehearses the newest three versions.
+- Options must allow users to change scheduled maintenance enablement, interval,
+  automatic mirror repair, and restore rehearsal version count.
+- Options must allow users to edit the active compression skip-extension list,
+  with normalisation on save.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.

@@ -87,6 +87,62 @@ public sealed class OptionsViewModelTests
     }
 
     [Fact]
+    public async Task Initialise_loads_repository_maintenance_policy_from_service_status()
+    {
+        var policy = new RepositoryMaintenancePolicy(
+            IsEnabled: false,
+            Interval: TimeSpan.FromHours(6),
+            AutoRepairFromMirror: false,
+            RestoreRehearsalVersionCount: 5);
+        var client = new FakeFluxVaultServiceClient(StatusWithConfiguration(configuration => configuration with
+        {
+            RepositoryMaintenancePolicy = policy
+        }));
+        var viewModel = new OptionsViewModel(client);
+
+        await viewModel.InitialiseAsync();
+
+        Assert.False(viewModel.MaintenanceEnabled);
+        Assert.Equal(6, viewModel.MaintenanceIntervalHours);
+        Assert.False(viewModel.MaintenanceAutoRepairFromMirror);
+        Assert.Equal(5, viewModel.RestoreRehearsalVersionCount);
+    }
+
+    [Fact]
+    public async Task Save_persists_repository_maintenance_policy()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
+        var viewModel = new OptionsViewModel(client);
+        await viewModel.InitialiseAsync();
+        viewModel.MaintenanceEnabled = false;
+        viewModel.MaintenanceIntervalHours = 0;
+        viewModel.MaintenanceAutoRepairFromMirror = false;
+        viewModel.RestoreRehearsalVersionCount = -2;
+
+        await viewModel.SaveAsync();
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        Assert.False(saved.RepositoryMaintenancePolicy.IsEnabled);
+        Assert.Equal(TimeSpan.FromHours(1), saved.RepositoryMaintenancePolicy.Interval);
+        Assert.False(saved.RepositoryMaintenancePolicy.AutoRepairFromMirror);
+        Assert.Equal(0, saved.RepositoryMaintenancePolicy.RestoreRehearsalVersionCount);
+    }
+
+    [Fact]
+    public async Task Save_persists_codec_skip_extensions_from_options_text()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
+        var viewModel = new OptionsViewModel(client);
+        await viewModel.InitialiseAsync();
+        viewModel.CodecSkipExtensionsText = "zip\r\n JPG ;.rar, mp4\r\nzip";
+
+        await viewModel.SaveAsync();
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        Assert.Equal([".zip", ".jpg", ".rar", ".mp4"], saved.CodecPolicy.SkipExtensions);
+    }
+
+    [Fact]
     public async Task Save_removes_old_global_exclusion_rules_from_options_payload()
     {
         var existingRule = new ProtectionExclusionRule(
@@ -200,12 +256,17 @@ public sealed class OptionsViewModelTests
 
     private static FluxVaultServiceStatus StatusWithPolicy(RetentionPolicy policy)
     {
+        return StatusWithConfiguration(configuration => configuration with
+        {
+            RetentionPolicy = policy
+        });
+    }
+
+    private static FluxVaultServiceStatus StatusWithConfiguration(Func<FluxVaultConfiguration, FluxVaultConfiguration> configure)
+    {
         return new FluxVaultServiceStatus(
             IsServiceRunning: true,
-            Configuration: FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
-            {
-                RetentionPolicy = policy
-            },
+            Configuration: configure(FluxVaultConfiguration.CreateDefault(@"D:\Vault")),
             LastMessage: "Ready",
             LastCaptureUtc: null,
             WatchedFolders: [],

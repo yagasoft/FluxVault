@@ -141,12 +141,11 @@ start, and configures service recovery restart actions. The dashboard shows a
 warning if the service is stopped or unavailable and provides Start/Stop service
 controls.
 
-Manual VSS smoke check for this slice: from an elevated session with the service
-installed, lock a protected file with another process, run **Run backup now**,
-and inspect the dashboard Activity/Capture detail. A writer-covered file should
-show `AppConsistent`; a file without matching writer metadata should show
-`CrashConsistent` and a no-writer-coverage explanation. This live elevated
-check is not a CI gate.
+The writer-aware VSS requester has deterministic CI coverage for requester call
+order, writer metadata coverage, writer status failures, snapshot cleanup, and
+the rule that failed writer/requester captures do not commit a version. This
+proves FluxVault's VSS behaviour without requiring elevated live app-writer
+tests in CI; it does not certify every third-party VSS writer workload.
 
 In the dashboard, choose a repository folder and optionally choose a cloud-sync
 mirror folder. Use **File browser** to select protected folders or files, review

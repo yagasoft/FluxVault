@@ -93,7 +93,10 @@ restore-lineage hints.
    Windows VSS COM API, reads from the shadow device path, and checks writer
    metadata. Writer-covered captures are reported as `AppConsistent`; successful
    snapshots without matching writer coverage are reported as `CrashConsistent`;
-   writer/requester failure fails the capture.
+   writer/requester failure fails the capture. The native COM calls sit behind
+   an internal VSS backup-session adapter so CI can verify requester sequencing,
+   metadata interpretation, writer-status failure handling, and cleanup without
+   elevated live writers.
 7. Core chunking splits the captured bytes into FastCDC-style chunks.
 8. Chunk fingerprints are compared against the local repository.
 9. New chunks and a manifest are committed atomically.

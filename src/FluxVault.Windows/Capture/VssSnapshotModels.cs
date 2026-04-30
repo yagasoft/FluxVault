@@ -35,7 +35,21 @@ public sealed record VssWriterEvidence(string WriterName, IReadOnlyList<string> 
                 return false;
             }
 
-            return IsUnderDirectory(sourcePath, Path.GetFullPath(directory))
+            var recursive = string.Equals(Path.GetFileName(directory), "**", StringComparison.Ordinal);
+            if (recursive)
+            {
+                directory = Path.GetDirectoryName(directory);
+                if (string.IsNullOrWhiteSpace(directory))
+                {
+                    return false;
+                }
+            }
+
+            var sourceDirectory = Path.GetDirectoryName(sourcePath);
+            return !string.IsNullOrWhiteSpace(sourceDirectory)
+                && (recursive
+                    ? IsUnderDirectory(sourcePath, Path.GetFullPath(directory))
+                    : IsSameDirectory(sourceDirectory, Path.GetFullPath(directory)))
                 && FileSystemName.MatchesSimpleExpression(pattern, Path.GetFileName(sourcePath), ignoreCase: true);
         }
 
@@ -54,6 +68,13 @@ public sealed record VssWriterEvidence(string WriterName, IReadOnlyList<string> 
         return string.Equals(sourcePath, normalisedDirectory, StringComparison.OrdinalIgnoreCase)
             || sourcePath.StartsWith(normalisedDirectory + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
             || sourcePath.StartsWith(normalisedDirectory + Path.AltDirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsSameDirectory(string left, string right)
+    {
+        var normalisedLeft = left.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var normalisedRight = right.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        return string.Equals(normalisedLeft, normalisedRight, StringComparison.OrdinalIgnoreCase);
     }
 }
 

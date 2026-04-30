@@ -24,6 +24,10 @@
 - Fake-coordinator VSS requester tests for app-consistent writer coverage,
   crash-consistent no-writer-coverage snapshots, and writer/requester failure
   cleanup.
+- CI-friendly VSS requester adapter tests for call order, writer metadata
+  coverage rules, writer-status failure, snapshot cleanup, and failed-capture
+  no-commit behaviour. These tests prove FluxVault's requester logic without
+  requiring live elevated VSS writers in CI.
 - Resource profile debounce delays.
 - XAML quality checks for compact Activity pane controls, the selected
   operational cockpit shell, prioritised command order, constrained dashboard
@@ -156,7 +160,6 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
   quickstart, and sample configuration.
 - Branding artefacts: FluxVault icon remains the application icon, and the
   Yagasoft logo is copied as an app content asset.
-- Manual elevated VSS smoke check: with the developer service installed, lock a
-  protected file, run a backup, and confirm the Activity/Capture detail reports
-  either writer-covered `AppConsistent` or no-writer-coverage
-  `CrashConsistent`. This is documented evidence, not an automated PR gate.
+- Optional elevated VSS smoke check: with the developer service installed, lock
+  a protected file, run a backup, and inspect Activity/Capture consistency
+  detail. This is troubleshooting evidence only, not a V1 completion or CI gate.

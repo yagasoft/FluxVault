@@ -92,9 +92,18 @@ folder; direct cloud adapters arrive later.
 
 ## Planned V1 and sync requirements
 
-- Developer service packaging should configure delayed automatic service start,
-  restart recovery, and Windows Event Log source registration. Internal fatal
-  service failures should be logged before the service exits for SCM recovery.
+- Developer service packaging and production MSI packaging should configure
+  delayed automatic service start, restart recovery, and Windows Event Log
+  source registration. Internal fatal service failures should be logged before
+  the service exits for SCM recovery.
+- Production releases should use a per-machine WiX MSI plus a WiX Burn bundle.
+  The MSI must install app, service, CLI, and shell-extension artefacts under
+  Program Files, preserve `C:\ProgramData\FluxVault` across upgrade/uninstall,
+  and define stable major-upgrade metadata. The Burn bundle should carry the
+  sparse MSIX identity package needed by Windows 11 compact Explorer menus.
+- Release package generation must support signing inputs and fail in required
+  signing mode when those inputs are missing. The release packaging workflow is
+  manual/opt-in and separate from normal pull request `build-test`.
 - VSS capture must coordinate writers through the requester API. FluxVault must
   report `AppConsistent` only when writer coordination succeeds and writer
   metadata covers the source path. Successful snapshots without matching writer

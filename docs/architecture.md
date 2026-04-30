@@ -45,12 +45,20 @@ as active when the sparse package identity and `FluxVault.ExplorerCommand.dll`
 artefact are present. The shell extension only forwards selected paths to the
 same app startup arguments; it does not perform backup, remove, or restore work.
 
-When installed by the developer script, `FluxVaultService` uses delayed
-automatic start, SCM restart recovery, and the `FluxVaultService` Windows Event
-Log source in the Application log. Service startup and shutdown are information
-events, recoverable runtime fallbacks are warnings, and fatal background task
-failures are logged as critical before being rethrown so SCM recovery can restart
-the service.
+When installed by the developer script or production MSI, `FluxVaultService`
+uses delayed automatic start, SCM restart recovery, and the `FluxVaultService`
+Windows Event Log source in the Application log. Service startup and shutdown
+are information events, recoverable runtime fallbacks are warnings, and fatal
+background task failures are logged as critical before being rethrown so SCM
+recovery can restart the service.
+
+Production packaging is split deliberately. The WiX MSI owns machine-level
+state: app, service, CLI, shell-extension binaries, service install/recovery,
+Event Log source, and permanent ProgramData preservation. The WiX Burn bundle
+wraps that MSI and the sparse MSIX package required for Windows 11 compact menu
+identity. Options remains the user-facing Explorer integration control after
+install; the shell extension forwards selected paths into the same app startup
+arguments used by the classic menu.
 
 Repository maintenance runs inside the service next to IPC and the protection
 loop. `RepositoryMaintenancePolicy` is part of configuration and defaults to

@@ -174,6 +174,7 @@ public sealed class PackagingTests
     {
         var root = FindRepositoryRoot();
         var script = File.ReadAllText(Path.Combine(root, "eng", "package.ps1"));
+        var nativeDefinition = File.ReadAllText(Path.Combine(root, "src", "FluxVault.ExplorerCommand", "FluxVault.ExplorerCommand.def"));
         var preflightIndex = script.IndexOf("Resolve-NativeMsBuild", StringComparison.Ordinal);
         var nativeBuildIndex = script.IndexOf("& $msbuild $shellExtensionProject", StringComparison.Ordinal);
 
@@ -183,6 +184,111 @@ public sealed class PackagingTests
         Assert.True(preflightIndex >= 0, "The package script should resolve native MSBuild through a Visual C++ prerequisite preflight.");
         Assert.True(nativeBuildIndex >= 0, "The package script should still build the native shell extension when prerequisites exist.");
         Assert.True(preflightIndex < nativeBuildIndex, "The Visual C++ prerequisite preflight should run before invoking native MSBuild.");
+        Assert.DoesNotContain("LIBRARY", nativeDefinition);
+    }
+
+    [Fact]
+    public void Production_wix_installer_declares_service_recovery_upgrade_and_state_preservation()
+    {
+        var root = FindRepositoryRoot();
+        var projectPath = Path.Combine(root, "installer", "wix", "FluxVault.Installer", "FluxVault.Installer.wixproj");
+        var packagePath = Path.Combine(root, "installer", "wix", "FluxVault.Installer", "Package.wxs");
+
+        Assert.True(File.Exists(projectPath));
+        Assert.True(File.Exists(packagePath));
+        var project = File.ReadAllText(projectPath);
+        var package = File.ReadAllText(packagePath);
+        var normalizedPackage = package.Replace("\r\n", "\n", StringComparison.Ordinal);
+
+        Assert.Contains("WixToolset.Sdk/7.0.0", project);
+        Assert.Contains("WixToolset.Util.wixext", project);
+        Assert.Contains("<SuppressSpecificWarnings>1149</SuppressSpecificWarnings>", project);
+        Assert.DoesNotContain("<SuppressAllWarnings>true</SuppressAllWarnings>", project);
+        Assert.Contains("MajorUpgrade", package);
+        Assert.Contains("UpgradeCode=\"4B89B6E7-D41E-49E6-BE42-09C10D6570D6\"", package);
+        Assert.Contains("FluxVaultService", package);
+        Assert.Contains("<ServiceInstall", package);
+        Assert.Contains("<ServiceControl", package);
+        Assert.Contains("<ServiceConfig", package);
+        Assert.Contains("DelayedAutoStart=\"yes\"", package);
+        Assert.Contains("util:ServiceConfig", package);
+        Assert.DoesNotContain("util:ServiceConfig\n            ServiceName=\"FluxVaultService\"\n            DelayedAutoStart=\"yes\"", normalizedPackage);
+        Assert.Contains("util:EventSource", package);
+        Assert.Contains("Name=\"FluxVaultService\"", package);
+        Assert.Contains("Log=\"Application\"", package);
+        Assert.DoesNotContain("SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\FluxVaultService", package);
+        Assert.Contains("CommonAppDataFolder", package);
+        Assert.Contains("Permanent=\"yes\"", package);
+        Assert.Contains("NeverOverwrite=\"yes\"", package);
+    }
+
+    [Fact]
+    public void Production_bundle_wraps_msi_and_signed_sparse_package()
+    {
+        var root = FindRepositoryRoot();
+        var projectPath = Path.Combine(root, "installer", "wix", "FluxVault.Bundle", "FluxVault.Bundle.wixproj");
+        var bundlePath = Path.Combine(root, "installer", "wix", "FluxVault.Bundle", "Bundle.wxs");
+
+        Assert.True(File.Exists(projectPath));
+        Assert.True(File.Exists(bundlePath));
+        var project = File.ReadAllText(projectPath);
+        var bundle = File.ReadAllText(bundlePath);
+
+        Assert.Contains("WixToolset.Sdk/7.0.0", project);
+        Assert.Contains("WixToolset.Bal.wixext", project);
+        Assert.Contains("<SuppressSpecificWarnings>1161</SuppressSpecificWarnings>", project);
+        Assert.DoesNotContain("<SuppressAllWarnings>true</SuppressAllWarnings>", project);
+        Assert.Contains("MsiPackage", bundle);
+        Assert.Contains("FluxVault.Installer.msi", bundle);
+        Assert.DoesNotContain("DisplayInternalUI", bundle);
+        Assert.Contains("ExePackage", bundle);
+        Assert.Contains("$(env.SystemRoot)\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", bundle);
+        Assert.DoesNotContain("$(var.SystemFolder)", bundle);
+        Assert.Contains("Add-AppxPackage", bundle);
+        Assert.DoesNotContain("-AllowUnsigned", bundle);
+        Assert.Contains("FluxVault.SparsePackage.msix", bundle);
+        Assert.Contains("Yagasoft.FluxVault", bundle);
+        Assert.Contains("Permanent=\"yes\"", bundle);
+        Assert.DoesNotContain("DetectCondition=\"FluxVaultPackageName\"", bundle);
+        Assert.DoesNotContain("UninstallArguments", bundle);
+    }
+
+    [Fact]
+    public void Release_package_script_builds_signed_msi_bundle_and_sparse_package()
+    {
+        var root = FindRepositoryRoot();
+        var scriptPath = Path.Combine(root, "eng", "release-package.ps1");
+
+        Assert.True(File.Exists(scriptPath));
+        var script = File.ReadAllText(scriptPath);
+
+        Assert.Contains("[switch]$RequireSigning", script);
+        Assert.Contains("PackageCertificatePath is required", script);
+        Assert.Contains("PackageCertificatePassword", script);
+        Assert.Contains("FluxVault.Installer.wixproj", script);
+        Assert.Contains("FluxVault.Bundle.wixproj", script);
+        Assert.Contains("FluxVault.SparsePackage.msix", script);
+        Assert.Contains("SignTool.exe", script);
+        Assert.Contains("dotnet build", script);
+        Assert.Contains("ReleasePackageRoot", script);
+    }
+
+    [Fact]
+    public void Release_packaging_workflow_is_opt_in_and_not_a_pull_request_gate()
+    {
+        var root = FindRepositoryRoot();
+        var workflowPath = Path.Combine(root, ".github", "workflows", "release-package.yml");
+
+        Assert.True(File.Exists(workflowPath));
+        var workflow = File.ReadAllText(workflowPath);
+
+        Assert.Contains("workflow_dispatch", workflow);
+        Assert.DoesNotContain("pull_request", workflow);
+        Assert.Contains("eng\\release-package.ps1", workflow);
+        Assert.Contains("PackagingTests", workflow);
+        Assert.Contains("PACKAGE_CERTIFICATE", workflow);
+        Assert.Contains("actions/upload-artifact", workflow);
+        Assert.Contains("artifacts/release", workflow);
     }
 
     [Fact]

@@ -1,6 +1,8 @@
 param(
-    [string]$SetupPath = (Join-Path $PSScriptRoot "..\artifacts\release\Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe"),
-    [string]$ChecksumPath = (Join-Path $PSScriptRoot "..\artifacts\release\Yagasoft-FluxVault-v1.0.0-win-x64-checksums-sha256.txt"),
+    [string]$ReleaseVersion = "v1.0.1",
+    [string]$Runtime = "win-x64",
+    [string]$SetupPath,
+    [string]$ChecksumPath,
     [string]$SmokeRoot = (Join-Path $PSScriptRoot "..\artifacts\release-smoke"),
     [switch]$UninstallAfter,
     [switch]$AllowExistingProgramData
@@ -11,8 +13,28 @@ $ErrorActionPreference = "Stop"
 
 $serviceName = "FluxVaultService"
 $programDataPath = "C:\ProgramData\FluxVault"
-$setupArtifactName = "Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe"
-$checksumArtifactName = "Yagasoft-FluxVault-v1.0.0-win-x64-checksums-sha256.txt"
+
+function Normalize-ReleaseVersion([string]$ReleaseVersion) {
+    if ([string]::IsNullOrWhiteSpace($ReleaseVersion)) {
+        throw "ReleaseVersion is required."
+    }
+
+    $trimmed = $ReleaseVersion.Trim()
+    if ($trimmed -notmatch '^v?\d+\.\d+\.\d+$') {
+        throw "ReleaseVersion must be in vMAJOR.MINOR.PATCH format, for example v1.0.1."
+    }
+
+    if ($trimmed.StartsWith("v", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return "v$($trimmed.Substring(1))"
+    }
+
+    return "v$trimmed"
+}
+
+$releaseVersion = Normalize-ReleaseVersion $ReleaseVersion
+$artifactPrefix = "Yagasoft-FluxVault-$releaseVersion-$Runtime"
+$setupArtifactName = "$artifactPrefix-Setup.exe"
+$checksumArtifactName = "$artifactPrefix-checksums-sha256.txt"
 
 function Test-Administrator {
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
@@ -186,6 +208,14 @@ function Invoke-CliSmoke {
     if ($sourceHash -ne $restoreHash) {
         throw "CLI restore hash did not match the source file hash."
     }
+}
+
+if ([string]::IsNullOrWhiteSpace($SetupPath)) {
+    $SetupPath = Join-Path $PSScriptRoot "..\artifacts\release\$setupArtifactName"
+}
+
+if ([string]::IsNullOrWhiteSpace($ChecksumPath)) {
+    $ChecksumPath = Join-Path $PSScriptRoot "..\artifacts\release\$checksumArtifactName"
 }
 
 if (-not (Test-Administrator)) {

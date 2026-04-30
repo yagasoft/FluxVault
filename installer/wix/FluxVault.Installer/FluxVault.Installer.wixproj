@@ -3,10 +3,11 @@
     <OutputName>FluxVault.Installer</OutputName>
     <OutputType>Package</OutputType>
     <InstallerPlatform>x64</InstallerPlatform>
+    <ProductVersion Condition="'$(ProductVersion)' == ''">1.0.1.0</ProductVersion>
     <SuppressValidation>true</SuppressValidation>
     <SuppressSpecificWarnings>1149</SuppressSpecificWarnings>
     <AcceptEula>wix7</AcceptEula>
-    <DefineConstants>PublishRoot=$(PublishRoot);ReleasePackageRoot=$(ReleasePackageRoot)</DefineConstants>
+    <DefineConstants>PublishRoot=$(PublishRoot);ReleasePackageRoot=$(ReleasePackageRoot);ProductVersion=$(ProductVersion)</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

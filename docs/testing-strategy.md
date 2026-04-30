@@ -175,10 +175,10 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
   restore it, and compare hashes.
 - Developer service package artefacts: install script, uninstall script,
   quickstart, and sample configuration.
-- Release package artefacts: `Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe`,
-  `Yagasoft-FluxVault-v1.0.0-win-x64-checksums-sha256.txt`,
-  `Yagasoft-FluxVault-v1.0.0-win-x64-release-notes.md`, and
-  `Yagasoft-FluxVault-v1.0.0-win-x64-release-status.txt`.
+- Release package artefacts: `Yagasoft-FluxVault-v1.0.1-win-x64-Setup.exe`,
+  `Yagasoft-FluxVault-v1.0.1-win-x64-checksums-sha256.txt`,
+  `Yagasoft-FluxVault-v1.0.1-win-x64-release-notes.md`, and
+  `Yagasoft-FluxVault-v1.0.1-win-x64-release-status.txt`.
 - Branding artefacts: FluxVault icon remains the application icon, and the
   Yagasoft logo is copied as an app content asset.
 - Optional elevated VSS smoke check: with the developer service installed, lock

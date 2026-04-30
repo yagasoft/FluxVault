@@ -48,10 +48,14 @@ Developer scripts remain developer tooling. Consumer releases use
 `eng/release-package.ps1`, which builds branded files under
 `artifacts\release`:
 
-- `Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe`
-- `Yagasoft-FluxVault-v1.0.0-win-x64-checksums-sha256.txt`
-- `Yagasoft-FluxVault-v1.0.0-win-x64-release-notes.md`
-- `Yagasoft-FluxVault-v1.0.0-win-x64-release-status.txt`
+- `Yagasoft-FluxVault-v1.0.1-win-x64-Setup.exe`
+- `Yagasoft-FluxVault-v1.0.1-win-x64-checksums-sha256.txt`
+- `Yagasoft-FluxVault-v1.0.1-win-x64-release-notes.md`
+- `Yagasoft-FluxVault-v1.0.1-win-x64-release-status.txt`
+
+The script defaults to `-ReleaseVersion v1.0.1` and derives WiX product version
+`1.0.1.0` for the MSI and Burn bundle. Use `-ReleaseVersion vX.Y.Z` for a
+later release without editing the script.
 
 The MSI installs the full published app, service, and CLI payloads under
 Program Files, creates the ProgramData folder as permanent/never-overwrite
@@ -81,20 +85,25 @@ the managed artefacts and sparse package files.
 
 Unsigned release behaviour:
 
-- `eng/release-package.ps1 -Configuration Release` produces the unsigned
-  consumer setup EXE and supporting checksum, notes, and status files.
+- `eng\release-package.ps1 -Configuration Release -ReleaseVersion v1.0.1`
+  produces the corrective unsigned consumer setup EXE and supporting checksum,
+  notes, and status files.
 - The release workflow does not require certificate secrets for this draft
   unsigned profile.
 - The Windows 11 compact Explorer menu remains a future signed/package-identity
   distribution path. The normal full Explorer menu under **Show more options**
   remains available from Options in the unsigned consumer install.
+- The public `v1.0.0` release is superseded by `v1.0.1` because its original
+  setup asset omitted dependency payloads and could fail while starting the
+  service. Keep the `v1.0.0` tag/assets for audit history, but point users to
+  `v1.0.1`.
 
 ## Release smoke validation
 
-`eng\smoke-release-install.ps1 -UninstallAfter` is the repeatable local
-validation gate for the unsigned consumer setup. It must be run from an elevated
-PowerShell session on a clean validation machine/session because it installs and
-uninstalls the per-machine bundle.
+`eng\smoke-release-install.ps1 -ReleaseVersion v1.0.1 -UninstallAfter` is the
+repeatable local validation gate for the unsigned consumer setup. It must be run
+from an elevated PowerShell session on a clean validation machine/session
+because it installs and uninstalls the per-machine bundle.
 
 The harness verifies the setup checksum, refuses to overwrite an existing
 `FluxVaultService` or existing `C:\ProgramData\FluxVault` by default, installs
@@ -115,6 +124,13 @@ the MSI administrative extraction contained the full app/service/CLI payloads,
 and an elevated `eng\smoke-release-install.ps1 -UninstallAfter` run passed
 install, service startup, installed CLI backup/list/restore, uninstall, service
 removal, and ProgramData preservation.
+
+For the `v1.0.1` corrective release, an elevated
+`eng\smoke-release-install.ps1 -ReleaseVersion v1.0.1 -UninstallAfter -AllowExistingProgramData`
+run passed on 2026-04-30 because the validation machine already had preserved
+ProgramData. The logs showed install and uninstall exit code `0x0`, the bundle
+version was `1.0.1.0`, the installed CLI backup/list/restore round trip passed,
+the service was removed after uninstall, and ProgramData remained preserved.
 
 ## GitHub releases
 

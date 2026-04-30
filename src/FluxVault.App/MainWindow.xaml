@@ -108,7 +108,7 @@
                         <TextBlock Text="Restore" />
                     </StackPanel>
                 </Button>
-                <Button Click="Options_Click" ToolTip="Open retention, capture, compression, and exclusion settings.">
+                <Button Click="Options_Click" ToolTip="Open retention, maintenance, capture, compression, and Explorer settings.">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⚙" Margin="0,0,6,0" />
                         <TextBlock Text="Options" />

@@ -59,7 +59,10 @@ rehearsal of the newest three versions. The maintenance loop persists the last
 health, scrub, and rehearsal results under ProgramData service state so the
 dashboard keeps health evidence after a service restart. Manual IPC commands can
 return the current health snapshot, run a scrub, or run a restore rehearsal
-without changing existing backup/restore contracts.
+without changing existing backup/restore contracts. The Options dialog exposes
+scheduled maintenance enablement, interval, mirror repair, and restore
+rehearsal count so these active service behaviours are configurable without
+editing `config.json` by hand.
 
 Repository scrub is repository-owned only. `FileSystemChunkRepository` walks
 remaining manifests, validates referenced chunks, and ignores artefacts already
@@ -96,8 +99,9 @@ restore-lineage hints.
 9. New chunks and a manifest are committed atomically.
 10. Repository artefacts are mirrored into the configured cloud sync folder.
 11. Compression is selected by policy. The default adaptive profile uses zstd,
-    skips known compressed file types, uses lz4 for hot files, and keeps Brotli
-    and LZMA as explicit ratio/cold-archive choices.
+    skips known compressed file types from the configurable skip-extension
+    list, uses lz4 for hot files, and keeps Brotli and LZMA as explicit
+    ratio/cold-archive choices.
 12. If retention is enabled, the service applies the configured retention policy
     after the successful backup and reports kept, pruned, and reclaimed counts
     in service status.
@@ -126,14 +130,18 @@ resolution failures.
 
 Every editable Options control has a native WPF tooltip describing the
 operational effect of the setting; long tooltip text wraps inside a bounded
-width. The selected dashboard direction is Concept A, the operational cockpit:
-stable primary commands in the header, left navigation for workspaces,
-first-tab startup, and health tiles in the footer. The dashboard health strip
-keeps status compact but exposes detailed durable-change
-information through the USN tooltip and diagnostics export. The main header
-constrains long service text with ellipsis trimming so it cannot overlap command
-buttons. The Capture tile is the live watcher/debounce queue; the USN tile is
-the latest durable catch-up result.
+width. Options now covers retention, scheduled maintenance, capture cadence,
+active compression choices, compression skip extensions, and Explorer
+integration. Future user-meaningful operational settings should follow the
+same pattern: typed defaults, compatibility for existing config files,
+Options load/save tests, and no exposed dormant fields. The selected dashboard
+direction is Concept A, the operational cockpit: stable primary commands in the
+header, left navigation for workspaces, first-tab startup, and health tiles in
+the footer. The dashboard health strip keeps status compact but exposes
+detailed durable-change information through the USN tooltip and diagnostics
+export. The main header constrains long service text with ellipsis trimming so
+it cannot overlap command buttons. The Capture tile is the live
+watcher/debounce queue; the USN tile is the latest durable catch-up result.
 
 The Diagnostics workspace is the detailed health dashboard. It shows repository
 integrity, mirror state, restore rehearsal, USN state, and blocked-file rows, and

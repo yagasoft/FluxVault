@@ -92,6 +92,21 @@ public sealed partial class OptionsViewModel : ObservableObject
     private int codecMinimumKb;
 
     [ObservableProperty]
+    private string codecSkipExtensionsText = string.Empty;
+
+    [ObservableProperty]
+    private bool maintenanceEnabled;
+
+    [ObservableProperty]
+    private int maintenanceIntervalHours;
+
+    [ObservableProperty]
+    private bool maintenanceAutoRepairFromMirror;
+
+    [ObservableProperty]
+    private int restoreRehearsalVersionCount;
+
+    [ObservableProperty]
     private string previewText = "Retention preview has not been run.";
 
     [ObservableProperty]
@@ -140,6 +155,7 @@ public sealed partial class OptionsViewModel : ObservableObject
         ApplyPolicy(currentConfiguration.RetentionPolicy);
         ApplyCadence(currentConfiguration.CaptureCadencePolicy);
         ApplyCodec(currentConfiguration.CodecPolicy);
+        ApplyMaintenance(currentConfiguration.RepositoryMaintenancePolicy);
         ApplyExclusions(currentConfiguration.ExclusionRules ?? []);
         StatusText = "Options loaded.";
     }
@@ -162,6 +178,7 @@ public sealed partial class OptionsViewModel : ObservableObject
             RetentionPolicy = BuildPolicy(),
             CaptureCadencePolicy = BuildCadence(),
             CodecPolicy = BuildCodec(),
+            RepositoryMaintenancePolicy = BuildMaintenance(),
             ExclusionRules = []
         };
         var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(updated), cancellationToken)
@@ -308,6 +325,7 @@ public sealed partial class OptionsViewModel : ObservableObject
         HotFileCodec = policy.HotFileOverride;
         CodecLevel = Math.Max(1, policy.Level);
         CodecMinimumKb = Math.Max(0, (int)Math.Round(policy.MinimumBytes / 1024d));
+        CodecSkipExtensionsText = string.Join(Environment.NewLine, policy.SkipExtensions);
     }
 
     private CodecPolicy BuildCodec()
@@ -319,8 +337,45 @@ public sealed partial class OptionsViewModel : ObservableObject
             Profile = CodecProfile,
             Level = Math.Clamp(CodecLevel, 1, 22),
             MinimumBytes = Math.Max(0, CodecMinimumKb) * 1024L,
+            SkipExtensions = ParseSkipExtensions(CodecSkipExtensionsText),
             HotFileOverride = HotFileCodec
         };
+    }
+
+    private void ApplyMaintenance(RepositoryMaintenancePolicy policy)
+    {
+        MaintenanceEnabled = policy.IsEnabled;
+        MaintenanceIntervalHours = Math.Max(1, (int)Math.Round(policy.Interval.TotalHours));
+        MaintenanceAutoRepairFromMirror = policy.AutoRepairFromMirror;
+        RestoreRehearsalVersionCount = Math.Max(0, policy.RestoreRehearsalVersionCount);
+    }
+
+    private RepositoryMaintenancePolicy BuildMaintenance()
+    {
+        return new RepositoryMaintenancePolicy(
+            IsEnabled: MaintenanceEnabled,
+            Interval: TimeSpan.FromHours(Math.Max(1, MaintenanceIntervalHours)),
+            AutoRepairFromMirror: MaintenanceAutoRepairFromMirror,
+            RestoreRehearsalVersionCount: Math.Max(0, RestoreRehearsalVersionCount));
+    }
+
+    private static IReadOnlyList<string> ParseSkipExtensions(string text)
+    {
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var extensions = new List<string>();
+        foreach (var token in text.Split(new[] { '\r', '\n', ',', ';' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+        {
+            var extension = token.StartsWith(".", StringComparison.Ordinal) ? token : "." + token;
+            extension = extension.ToLowerInvariant();
+            if (extension == "." || !seen.Add(extension))
+            {
+                continue;
+            }
+
+            extensions.Add(extension);
+        }
+
+        return extensions;
     }
 
     private void ApplyExclusions(IReadOnlyList<ProtectionExclusionRule> rules)

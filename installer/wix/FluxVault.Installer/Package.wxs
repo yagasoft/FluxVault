@@ -1,0 +1,84 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+  <Package
+      Name="FluxVault"
+      Manufacturer="Yagasoft"
+      Version="1.0.0.0"
+      UpgradeCode="4B89B6E7-D41E-49E6-BE42-09C10D6570D6"
+      Scope="perMachine">
+    <MajorUpgrade DowngradeErrorMessage="A newer version of FluxVault is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="Main" Title="FluxVault" Level="1">
+      <ComponentGroupRef Id="FluxVaultComponents" />
+    </Feature>
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="FluxVault">
+        <Directory Id="APPFOLDER" Name="app" />
+        <Directory Id="SERVICEFOLDER" Name="service" />
+        <Directory Id="CLIFOLDER" Name="cli" />
+        <Directory Id="SHELLEXTFOLDER" Name="shell-extension" />
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="CommonAppDataFolder">
+      <Directory Id="PROGRAMDATAFOLDER" Name="FluxVault" />
+    </StandardDirectory>
+
+    <ComponentGroup Id="FluxVaultComponents">
+      <Component Id="ProgramDataComponent" Directory="PROGRAMDATAFOLDER" Guid="B1179843-6358-4D18-9D9A-3C07BFA838DA" Permanent="yes" NeverOverwrite="yes">
+        <CreateFolder />
+      </Component>
+
+      <Component Id="AppComponent" Directory="APPFOLDER" Guid="D7B2375D-C7B7-4D9F-B517-E93FF9EF473F">
+        <File Id="FluxVaultAppExe" Source="$(var.PublishRoot)\app\FluxVault.App.exe" KeyPath="yes" />
+      </Component>
+
+      <Component Id="CliComponent" Directory="CLIFOLDER" Guid="6DEB8FEA-2D1D-41FC-A96A-22D13652F662">
+        <File Id="FluxVaultCliExe" Source="$(var.PublishRoot)\cli\FluxVault.Cli.exe" KeyPath="yes" />
+      </Component>
+
+      <Component Id="ShellExtensionComponent" Directory="SHELLEXTFOLDER" Guid="54D3EB01-4907-480D-9A9C-C54323E59D31">
+        <File Id="FluxVaultExplorerCommandDll" Source="$(var.PublishRoot)\shell-extension\FluxVault.ExplorerCommand.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="ServiceComponent" Directory="SERVICEFOLDER" Guid="C2E20BC9-715D-4820-846D-B9E4EF9F78B3">
+        <File Id="FluxVaultServiceExe" Source="$(var.PublishRoot)\service\FluxVault.Service.exe" KeyPath="yes" />
+        <ServiceInstall
+            Id="FluxVaultServiceInstall"
+            Type="ownProcess"
+            Name="FluxVaultService"
+            DisplayName="FluxVault Service"
+            Description="FluxVault local backup and repository service"
+            Start="auto"
+            Account="LocalSystem"
+            ErrorControl="normal" />
+        <ServiceControl
+            Id="FluxVaultServiceControl"
+            Name="FluxVaultService"
+            Start="install"
+            Stop="both"
+            Remove="uninstall"
+            Wait="yes" />
+        <ServiceConfig
+            ServiceName="FluxVaultService"
+            DelayedAutoStart="yes"
+            OnInstall="yes"
+            OnReinstall="yes" />
+        <util:ServiceConfig
+            ServiceName="FluxVaultService"
+            FirstFailureActionType="restart"
+            SecondFailureActionType="restart"
+            ThirdFailureActionType="none"
+            RestartServiceDelayInSeconds="60"
+            ResetPeriodInDays="1" />
+        <util:EventSource
+            Name="FluxVaultService"
+            Log="Application"
+            EventMessageFile="[SERVICEFOLDER]FluxVault.Service.exe" />
+        <RegistryValue Root="HKLM" Key="Software\FluxVault" Name="InstallFolder" Type="string" Value="[INSTALLFOLDER]" />
+      </Component>
+    </ComponentGroup>
+  </Package>
+</Wix>

@@ -35,7 +35,8 @@ FluxVault now has a developer-usable MVP loop:
   Windows denies service control, the app reports that elevated permissions are
   required instead of crashing.
 - Windows Event Log provider wiring for service information, warning, and fatal
-  failure events, with SCM recovery configured by the developer install script.
+  failure events, with SCM recovery configured by the developer script and the
+  WiX production installer.
 - Watched-folder backup using file-system notifications, USN journal catch-up,
   and periodic reconciliation fallback.
 - Normal readable-file capture with writer-aware VSS requester fallback for
@@ -141,6 +142,16 @@ start, and configures service recovery restart actions. The dashboard shows a
 warning if the service is stopped or unavailable and provides Start/Stop service
 controls.
 
+Production packaging uses WiX. `eng\release-package.ps1` first publishes the
+developer artefacts, then builds `FluxVault.Installer.msi`,
+`FluxVault.Setup.exe`, and `FluxVault.SparsePackage.msix` under
+`artifacts\release`. The MSI installs the app, service, CLI, and native Explorer
+command DLL per-machine, preserves `C:\ProgramData\FluxVault` across major
+upgrades and uninstall, and configures service delayed auto-start, SCM recovery,
+and the Event Log source. Supplying `-RequireSigning` makes release packaging
+fail unless certificate inputs are provided; when signing inputs are present,
+the script signs the MSI, bundle, and sparse MSIX.
+
 The writer-aware VSS requester has deterministic CI coverage for requester call
 order, writer metadata coverage, writer status failures, snapshot cleanup, and
 the rule that failed writer/requester captures do not commit a version. This
@@ -184,6 +195,12 @@ publishes a sparse package manifest and `FluxVault.ExplorerCommand.dll`
 scaffold for the Windows 11 compact menu. The compact menu is package-owned:
 Options reports it as active only when FluxVault is running with package
 identity and the shell-extension artefact is present.
+
+The WiX Burn bundle carries the sparse MSIX identity package needed by the
+compact menu. Because that PowerShell-driven sparse package leg has no reliable
+Burn detector, it is treated as a permanent package action; removing package
+identity remains an explicit `Remove-AppxPackage` step and does not remove
+repository data.
 
 UI/UX redesign directions are tracked in
 [`docs/ui-concepts/mvp-021-ui-concepts.md`](docs/ui-concepts/mvp-021-ui-concepts.md).
@@ -257,6 +274,8 @@ To remove the unsigned developer service:
 The uninstall script preserves `C:\ProgramData\FluxVault` and the Event Log
 source by default. Use `-RemoveProgramData` and `-RemoveEventLogSource` only
 when you intentionally want to remove local machine state and the event source.
+The production MSI similarly preserves ProgramData by default through permanent
+state components.
 
 ## Local backup harness
 

@@ -71,8 +71,10 @@ Expected user-visible result: safe local production use on Windows 11.
   testing. The first hardening slice adds dashboard service availability
   warnings, Start/Stop service control, Windows Event Log wiring, SCM restart
   recovery, delayed automatic service start, and safer developer install and
-  uninstall scripts. Production installer technology, signing, upgrade packages,
-  and full rollback semantics remain open V1 work.
+  uninstall scripts. The completion slice adds a WiX per-machine MSI, a WiX
+  Burn bootstrapper, signed sparse MSIX package support for Windows 11 compact
+  Explorer identity, stable major-upgrade metadata, ProgramData preservation,
+  and release-package validation separate from the feature PR gate.
 - Better VSS writer handling and app-consistency reporting. The first
   implementation replaces the `vssadmin.exe` fallback with a FluxVault VSS
   requester that coordinates writers, creates the snapshot through COM, reads

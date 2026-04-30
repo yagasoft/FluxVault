@@ -1,0 +1,15 @@
+<Project Sdk="WixToolset.Sdk/7.0.0">
+  <PropertyGroup>
+    <OutputName>FluxVault.Setup</OutputName>
+    <OutputType>Bundle</OutputType>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <SuppressValidation>true</SuppressValidation>
+    <SuppressSpecificWarnings>1161</SuppressSpecificWarnings>
+    <AcceptEula>wix7</AcceptEula>
+    <DefineConstants>ReleasePackageRoot=$(ReleasePackageRoot);PublishRoot=$(PublishRoot)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Bal.wixext" />
+  </ItemGroup>
+</Project>

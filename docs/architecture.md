@@ -130,10 +130,10 @@ resolution failures.
 
 Every editable Options control has a native WPF tooltip describing the
 operational effect of the setting; long tooltip text wraps inside a bounded
-width. Options now covers retention, scheduled maintenance, capture cadence,
-active compression choices, compression skip extensions, and Explorer
-integration. Future user-meaningful operational settings should follow the
-same pattern: typed defaults, compatibility for existing config files,
+width. Options now covers retention, scheduled maintenance, default workload
+preset, capture cadence, active compression choices, compression skip
+extensions, and Explorer integration. Future user-meaningful operational
+settings should follow the same pattern: typed defaults, compatibility for existing config files,
 Options load/save tests, and no exposed dormant fields. The selected dashboard
 direction is Concept A, the operational cockpit: stable primary commands in the
 header, left navigation for workspaces, first-tab startup, and health tiles in
@@ -186,7 +186,10 @@ FluxVault persists browser selections as `ProtectionSelectionRule` records and
 compiles them into existing `WatchedFolderConfiguration` entries before the
 service captures files. Recursive folders compile to recursive watched folders,
 immediate-files selections compile to non-recursive watched folders, and
-individual file selections compile to parent-folder include patterns.
+individual file selections compile to parent-folder include patterns. Each
+selection can carry a workload preset. Missing preset fields from older config
+files default to the general-purpose preset, while Options controls the preset
+used for new File browser and Explorer Add selections.
 
 Scoped `ProtectionScopedRegexRule` lists complement each selected folder or
 file. Recursive folder regex rules apply to descendants; immediate-folder rules
@@ -196,6 +199,23 @@ and any matching exclude rule suppresses the file before capture. Folders with
 local scoped regex rules show an `R` indicator in the tree. Legacy global
 `ProtectionExclusionRule` records are still understood by the service for
 backward compatibility, but the Options global regex editor has been removed.
+
+## Workload policy presets
+
+`WorkloadPolicyConfiguration` stores the default preset for newly protected
+items. Built-in preset metadata lives in the core policy catalogue and is
+resolved at capture time with the selected rule nearest to the file path. This
+keeps parent recursive selections and child selections additive: a child folder
+or file can use a different preset without changing its parent.
+
+The conservative catalogue covers general purpose, Office documents, CAD/BIM,
+Adobe/video, developer workspaces, and generic large files. Presets resolve to
+a resource profile, compression preference, minimum compression threshold,
+folder exclusions, extension exclusions, no-compression extensions, and
+extension-specific overrides. Generated or cache folders such as developer
+dependency trees and creative media caches are skipped before capture when they
+belong to the selected root. Global compression skip extensions remain the last
+no-compression guardrail.
 
 ## Non-interference contract
 

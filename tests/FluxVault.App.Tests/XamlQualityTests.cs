@@ -147,6 +147,7 @@ public sealed class XamlQualityTests
             "Level / minimum KB",
             "Maintenance interval hours",
             "Restore rehearsal versions",
+            "Default workload preset",
             "Skip extensions"
         ];
 
@@ -194,6 +195,20 @@ public sealed class XamlQualityTests
         Assert.Equal("True", (string?)editor.Attribute("AcceptsReturn"));
         Assert.Equal("Auto", (string?)editor.Attribute("VerticalScrollBarVisibility"));
         Assert.False(string.IsNullOrWhiteSpace((string?)editor.Attribute("ToolTip")));
+    }
+
+    [Fact]
+    public void Options_dialog_exposes_default_workload_preset_control()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "OptionsWindow.xaml");
+        var selector = document
+            .Descendants(XamlNamespace + "ComboBox")
+            .Single(element => (string?)element.Attribute("SelectedValue") == "{Binding DefaultWorkloadPreset}");
+
+        Assert.Equal("{Binding WorkloadPresets}", (string?)selector.Attribute("ItemsSource"));
+        Assert.Equal("Id", (string?)selector.Attribute("SelectedValuePath"));
+        Assert.Equal("DisplayName", (string?)selector.Attribute("DisplayMemberPath"));
+        Assert.False(string.IsNullOrWhiteSpace((string?)selector.Attribute("ToolTip")));
     }
 
     [Fact]
@@ -310,6 +325,26 @@ public sealed class XamlQualityTests
         Assert.Contains(
             fileBrowserTab.Descendants(XamlNamespace + "TextBlock"),
             element => (string?)element.Attribute("Text") == "{Binding RegexIndicator}");
+    }
+
+    [Fact]
+    public void File_browser_exposes_workload_preset_editor()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var fileBrowserTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "File browser"));
+        var selector = fileBrowserTab
+            .Descendants(XamlNamespace + "ComboBox")
+            .Single(element => (string?)element.Attribute("SelectedValue") == "{Binding FileBrowser.SelectedWorkloadPreset}");
+
+        Assert.Equal("{Binding FileBrowser.WorkloadPresets}", (string?)selector.Attribute("ItemsSource"));
+        Assert.Equal("Id", (string?)selector.Attribute("SelectedValuePath"));
+        Assert.Equal("DisplayName", (string?)selector.Attribute("DisplayMemberPath"));
+        Assert.False(string.IsNullOrWhiteSpace((string?)selector.Attribute("ToolTip")));
+        Assert.Contains(
+            fileBrowserTab.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "{Binding FileBrowser.SelectedWorkloadPresetDescription}");
     }
 
     [Fact]

@@ -53,6 +53,9 @@
                             <RowDefinition Height="16" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="16" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="260" />
@@ -103,11 +106,24 @@
                                   IsChecked="{Binding MaintenanceAutoRepairFromMirror}" Margin="0,0,0,0"
                                   ToolTip="Repair repository artefacts from a healthy mirror copy, and repair mirror drift from a healthy primary copy." />
 
-                        <Border Grid.Row="12" Grid.ColumnSpan="2" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Padding="12">
+                        <TextBlock Grid.Row="12" Grid.ColumnSpan="2" Text="Workload presets" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+                        <TextBlock Grid.Row="13" Grid.Column="0" Text="Default workload preset" VerticalAlignment="Center" Margin="0,0,14,10"
+                                   ToolTip="Preset used for newly selected folders and files from the File browser or Explorer Add action." />
+                        <ComboBox Grid.Row="13" Grid.Column="1"
+                                  ItemsSource="{Binding WorkloadPresets}"
+                                  SelectedValue="{Binding DefaultWorkloadPreset}"
+                                  SelectedValuePath="Id"
+                                  DisplayMemberPath="DisplayName"
+                                  Padding="6"
+                                  Margin="0,0,0,10"
+                                  ToolTip="Choose the conservative built-in workload policy assigned to new protection selections." />
+
+                        <Border Grid.Row="15" Grid.ColumnSpan="2" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Padding="12">
                             <TextBlock Text="{Binding PreviewText}" TextWrapping="Wrap" Foreground="#3C4043" />
                         </Border>
 
-                        <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+                        <StackPanel Grid.Row="16" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
                             <Button Content="Preview" Command="{Binding PreviewRetentionCommand}" Padding="14,8" Margin="0,0,8,0"
                                     ToolTip="Calculate what retention would prune without deleting anything." />
                             <Button Content="Run retention now" Command="{Binding RunRetentionNowCommand}" Padding="14,8"
@@ -236,7 +252,7 @@
 
         <StackPanel Grid.Row="4" Name="OptionsStickyFooter" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Save" Command="{Binding SaveCommand}" Padding="16,8" Margin="0,0,8,0"
-                    ToolTip="Save the current retention, maintenance, cadence, compression, and Explorer options to the service configuration." />
+                    ToolTip="Save the current retention, maintenance, workload, cadence, compression, and Explorer options to the service configuration." />
             <Button Content="Close" Click="Close_Click" Padding="16,8"
                     ToolTip="Close Options without applying any unsaved changes." />
         </StackPanel>

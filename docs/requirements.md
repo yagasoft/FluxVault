@@ -47,8 +47,8 @@ folder; direct cloud adapters arrive later.
 - The tray activity pane must open fully inside the active monitor work area,
   including high-DPI and taskbar-edge scenarios.
 - Helpful tooltips for every Options control, covering retention, repository
-  maintenance, capture cadence, compression, Explorer integration, preview,
-  apply, save, and close behaviours.
+  maintenance, default workload preset, capture cadence, compression, Explorer
+  integration, preview, apply, save, and close behaviours.
 - Operationally meaningful configurable behaviour should be represented by a
   typed, defaulted configuration model and exposed in Options when it has clear
   user semantics. Dormant or internal fields should not be exposed before they
@@ -79,6 +79,9 @@ folder; direct cloud adapters arrive later.
   files. Recursive folder regex applies recursively, immediate folder regex
   applies only to direct files, and child regex rules are additive with inherited
   parent rules. Folders with local regex rules show a tree indicator.
+- Selected File browser folders/files expose a workload preset. The preset is
+  an unsaved selection edit until Save, and it controls conservative cadence,
+  compression, compression thresholds, and common generated/cache exclusions.
 - File browser context menus provide `Show in File Explorer` for folders and
   `Open in default app` plus `Show in File Explorer` for files.
 - Health/status tiles are displayed in the footer so command buttons and header
@@ -139,6 +142,13 @@ folder; direct cloud adapters arrive later.
   automatic mirror repair, and restore rehearsal version count.
 - Options must allow users to edit the active compression skip-extension list,
   with normalisation on save.
+- Options must allow users to choose the default workload preset for new File
+  browser and Explorer Add selections.
+- Built-in workload presets must cover general purpose, Office documents,
+  CAD/BIM, Adobe/video, developer workspaces, and generic large files. The
+  conservative catalogue should skip generated/cache folders where safe, store
+  already-compressed formats without extra compression, and keep global
+  skip-extension entries as the final no-compression guardrail.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.

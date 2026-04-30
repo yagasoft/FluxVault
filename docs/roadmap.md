@@ -106,8 +106,11 @@ Expected user-visible result: safe local production use on Windows 11.
 - Scheduled restore rehearsal to a temporary location. Rehearsal restores recent
   versions into FluxVault-owned service state, verifies logical length, deletes
   the temporary output, and does not overwrite user files or create versions.
-- Policy presets for Office, CAD/BIM, Adobe/video, developer workspaces, and
-  generic large files.
+- Workload policy presets for general purpose, Office, CAD/BIM, Adobe/video,
+  developer workspaces, and generic large files. The implemented conservative
+  catalogue is selectable per protected File browser item, Options controls the
+  default for new selections, generated/cache folders are skipped where safe,
+  and global skip extensions remain the final no-compression guardrail.
 
 ## R2 distributed mirror fabric
 

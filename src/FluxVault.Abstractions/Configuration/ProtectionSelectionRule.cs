@@ -10,4 +10,5 @@ public sealed record ProtectionSelectionRule(
     ResourceProfile ResourceProfile,
     bool IsEnabled,
     IReadOnlyList<ProtectionScopedRegexRule>? IncludeRegexRules = null,
-    IReadOnlyList<ProtectionScopedRegexRule>? ExcludeRegexRules = null);
+    IReadOnlyList<ProtectionScopedRegexRule>? ExcludeRegexRules = null,
+    WorkloadPolicyPresetId? WorkloadPreset = null);

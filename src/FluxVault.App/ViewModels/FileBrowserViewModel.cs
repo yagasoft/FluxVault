@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Policies;
+using FluxVault.Core.Policies;
 
 namespace FluxVault.App.ViewModels;
 
@@ -32,11 +33,24 @@ public sealed partial class FileBrowserViewModel(
     [ObservableProperty]
     private string selectedRegexStatus = "Select a protected folder or file to manage scoped regex rules.";
 
+    [ObservableProperty]
+    private WorkloadPolicyPresetId defaultWorkloadPreset = WorkloadPolicyPresetId.GeneralPurpose;
+
+    [ObservableProperty]
+    private WorkloadPolicyPresetId selectedWorkloadPreset = WorkloadPolicyPresetId.GeneralPurpose;
+
+    [ObservableProperty]
+    private string selectedWorkloadPresetDescription = "Select a protected folder or file to manage its workload preset.";
+
+    private bool isLoadingSelectedWorkloadPreset;
+
     public ObservableCollection<FileBrowserFolderNode> Roots { get; } = [];
 
     public ObservableCollection<FileBrowserFileRow> Files { get; } = [];
 
     public ObservableCollection<PendingSelectionChangeRow> PendingChanges { get; } = [];
+
+    public IReadOnlyList<WorkloadPolicyPresetOption> WorkloadPresets { get; } = WorkloadPolicyPresetCatalog.PresetOptions;
 
     public event EventHandler? SelectionRulesChanged;
 
@@ -116,13 +130,15 @@ public sealed partial class FileBrowserViewModel(
         }
         else
         {
+            var preset = WorkloadPolicyPresetCatalog.Get(DefaultWorkloadPreset);
             ReplaceSelectionRule(new ProtectionSelectionRule(
                 StableRuleId("folder", folder.Path),
                 folder.Path,
                 next.Value,
-                CompressionPreference.Zstd,
-                ResourceProfile.Balanced,
-                IsEnabled: true));
+                preset.Compression,
+                preset.ResourceProfile,
+                IsEnabled: true,
+                WorkloadPreset: DefaultWorkloadPreset));
         }
 
         ApplySelectionToTree([folder]);
@@ -133,13 +149,15 @@ public sealed partial class FileBrowserViewModel(
     {
         if (file.IsSelected)
         {
+            var preset = WorkloadPolicyPresetCatalog.Get(DefaultWorkloadPreset);
             ReplaceSelectionRule(new ProtectionSelectionRule(
                 StableRuleId("file", file.Path),
                 file.Path,
                 ProtectionSelectionMode.File,
-                CompressionPreference.Zstd,
-                ResourceProfile.Balanced,
-                IsEnabled: true));
+                preset.Compression,
+                preset.ResourceProfile,
+                IsEnabled: true,
+                WorkloadPreset: DefaultWorkloadPreset));
         }
         else
         {
@@ -158,13 +176,15 @@ public sealed partial class FileBrowserViewModel(
         }
 
         var mode = isDirectory ? ProtectionSelectionMode.ImmediateFiles : ProtectionSelectionMode.File;
+        var preset = WorkloadPolicyPresetCatalog.Get(DefaultWorkloadPreset);
         ReplaceSelectionRule(new ProtectionSelectionRule(
             StableRuleId(isDirectory ? "folder" : "file", fullPath),
             fullPath,
             mode,
-            CompressionPreference.Zstd,
-            ResourceProfile.Balanced,
-            IsEnabled: true));
+            preset.Compression,
+            preset.ResourceProfile,
+            IsEnabled: true,
+            WorkloadPreset: DefaultWorkloadPreset));
         ApplySelectionToTree(Roots);
     }
 
@@ -315,6 +335,7 @@ public sealed partial class FileBrowserViewModel(
             SelectedFile = null;
             SelectFolder(value);
             LoadRegexText(value.Path);
+            LoadWorkloadPresetText(value.Path);
         }
     }
 
@@ -323,7 +344,40 @@ public sealed partial class FileBrowserViewModel(
         if (value is not null)
         {
             LoadRegexText(value.Path);
+            LoadWorkloadPresetText(value.Path);
         }
+    }
+
+    partial void OnSelectedWorkloadPresetChanged(WorkloadPolicyPresetId value)
+    {
+        if (isLoadingSelectedWorkloadPreset)
+        {
+            return;
+        }
+
+        var path = SelectedFile?.Path ?? SelectedFolder?.Path;
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            SelectedWorkloadPresetDescription = "Select a protected folder or file to manage its workload preset.";
+            return;
+        }
+
+        var fullPath = Path.GetFullPath(path);
+        if (!currentRules.TryGetValue(fullPath, out var rule))
+        {
+            SelectedWorkloadPresetDescription = "Add this item before assigning a workload preset.";
+            return;
+        }
+
+        var preset = WorkloadPolicyPresetCatalog.Get(value);
+        ReplaceSelectionRule(rule with
+        {
+            WorkloadPreset = value,
+            Compression = preset.Compression,
+            ResourceProfile = preset.ResourceProfile
+        });
+        RefreshTreeIndicators(Roots);
+        SelectedWorkloadPresetDescription = preset.Description;
     }
 
     private void LoadFiles(FileBrowserFolderNode folder)
@@ -407,10 +461,11 @@ public sealed partial class FileBrowserViewModel(
             else if (baseline.Mode != rule.Mode
                      || baseline.Compression != rule.Compression
                      || baseline.ResourceProfile != rule.ResourceProfile
+                     || (baseline.WorkloadPreset ?? WorkloadPolicyPresetId.GeneralPurpose) != (rule.WorkloadPreset ?? WorkloadPolicyPresetId.GeneralPurpose)
                      || !RegexRulesEqual(baseline.IncludeRegexRules, rule.IncludeRegexRules)
                      || !RegexRulesEqual(baseline.ExcludeRegexRules, rule.ExcludeRegexRules))
             {
-                PendingChanges.Add(new PendingSelectionChangeRow("Changed", rule.Path, $"{baseline.Mode} -> {rule.Mode}"));
+                PendingChanges.Add(new PendingSelectionChangeRow("Changed", rule.Path, FormatChangeDetail(baseline, rule)));
             }
         }
 
@@ -440,7 +495,8 @@ public sealed partial class FileBrowserViewModel(
         {
             Path = Path.GetFullPath(rule.Path),
             IncludeRegexRules = rule.IncludeRegexRules ?? [],
-            ExcludeRegexRules = rule.ExcludeRegexRules ?? []
+            ExcludeRegexRules = rule.ExcludeRegexRules ?? [],
+            WorkloadPreset = rule.WorkloadPreset ?? WorkloadPolicyPresetId.GeneralPurpose
         };
     }
 
@@ -497,6 +553,41 @@ public sealed partial class FileBrowserViewModel(
         SelectedIncludeRegexText = string.Join(Environment.NewLine, (rule.IncludeRegexRules ?? []).Select(regex => regex.Pattern));
         SelectedExcludeRegexText = string.Join(Environment.NewLine, (rule.ExcludeRegexRules ?? []).Select(regex => regex.Pattern));
         SelectedRegexStatus = "Scoped regex rules are local to the selected folder or file.";
+    }
+
+    private void LoadWorkloadPresetText(string path)
+    {
+        isLoadingSelectedWorkloadPreset = true;
+        try
+        {
+            if (!currentRules.TryGetValue(Path.GetFullPath(path), out var rule))
+            {
+                SelectedWorkloadPreset = DefaultWorkloadPreset;
+                SelectedWorkloadPresetDescription = "This item is not directly selected. Add it before assigning a workload preset.";
+                return;
+            }
+
+            var presetId = rule.WorkloadPreset ?? WorkloadPolicyPresetId.GeneralPurpose;
+            var preset = WorkloadPolicyPresetCatalog.Get(presetId);
+            SelectedWorkloadPreset = presetId;
+            SelectedWorkloadPresetDescription = preset.Description;
+        }
+        finally
+        {
+            isLoadingSelectedWorkloadPreset = false;
+        }
+    }
+
+    private static string FormatChangeDetail(ProtectionSelectionRule baseline, ProtectionSelectionRule rule)
+    {
+        var baselinePreset = baseline.WorkloadPreset ?? WorkloadPolicyPresetId.GeneralPurpose;
+        var rulePreset = rule.WorkloadPreset ?? WorkloadPolicyPresetId.GeneralPurpose;
+        if (baselinePreset != rulePreset)
+        {
+            return $"{WorkloadPolicyPresetCatalog.Get(baselinePreset).DisplayName} -> {WorkloadPolicyPresetCatalog.Get(rulePreset).DisplayName}";
+        }
+
+        return $"{baseline.Mode} -> {rule.Mode}";
     }
 
     private static bool HasRegexRules(ProtectionSelectionRule rule)

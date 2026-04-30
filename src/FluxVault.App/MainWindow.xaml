@@ -207,6 +207,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="130" />
@@ -215,19 +216,34 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Include regex" VerticalAlignment="Center" Margin="0,0,8,8" />
-                            <TextBox Grid.Row="0" Grid.Column="1"
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Workload preset" VerticalAlignment="Center" Margin="0,0,8,8" />
+                            <ComboBox Grid.Row="0" Grid.Column="1"
+                                      ItemsSource="{Binding FileBrowser.WorkloadPresets}"
+                                      SelectedValue="{Binding FileBrowser.SelectedWorkloadPreset}"
+                                      SelectedValuePath="Id"
+                                      DisplayMemberPath="DisplayName"
+                                      Padding="6"
+                                      Margin="0,0,12,8"
+                                      ToolTip="Built-in conservative workload policy for the selected protected folder or file." />
+                            <TextBlock Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3"
+                                       Text="{Binding FileBrowser.SelectedWorkloadPresetDescription}"
+                                       Foreground="#5F6368"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,0,8" />
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Include regex" VerticalAlignment="Center" Margin="0,0,8,8" />
+                            <TextBox Grid.Row="1" Grid.Column="1"
                                      Text="{Binding FileBrowser.SelectedIncludeRegexText, UpdateSourceTrigger=PropertyChanged}"
                                      Padding="7"
                                      Margin="0,0,12,8"
                                      ToolTip="One .NET regex per line. Inherited include regex rules are additive." />
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Exclude regex" VerticalAlignment="Center" Margin="0,0,8,8" />
-                            <TextBox Grid.Row="0" Grid.Column="3"
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="Exclude regex" VerticalAlignment="Center" Margin="0,0,8,8" />
+                            <TextBox Grid.Row="1" Grid.Column="3"
                                      Text="{Binding FileBrowser.SelectedExcludeRegexText, UpdateSourceTrigger=PropertyChanged}"
                                      Padding="7"
                                      Margin="0,0,12,8"
                                      ToolTip="One .NET regex per line. Exclude rules from selected parents and children are additive." />
-                            <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal" Margin="0,0,0,8">
+                            <StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal" Margin="0,0,0,8">
                                 <Button Content="Apply regex"
                                         Command="{Binding FileBrowser.ApplySelectedRegexRulesCommand}"
                                         ToolTip="Apply the regex lists to the currently selected protected folder or file." />
@@ -235,7 +251,7 @@
                                         Command="{Binding FileBrowser.ClearSelectedRegexRulesCommand}"
                                         ToolTip="Clear local regex lists from the currently selected protected folder or file." />
                             </StackPanel>
-                            <TextBlock Grid.Row="1" Grid.ColumnSpan="5"
+                            <TextBlock Grid.Row="2" Grid.ColumnSpan="5"
                                        Text="{Binding FileBrowser.SelectedRegexStatus}"
                                        Foreground="#5F6368"
                                        TextWrapping="Wrap" />

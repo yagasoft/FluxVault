@@ -623,6 +623,66 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Workload_preset_excludes_generated_developer_folders_before_capture()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        var sourceFolder = Path.Combine(watched, "src");
+        var generatedFolder = Path.Combine(watched, "node_modules", "package");
+        Directory.CreateDirectory(sourceFolder);
+        Directory.CreateDirectory(generatedFolder);
+        var included = Path.Combine(sourceFolder, "app.cs");
+        var excluded = Path.Combine(generatedFolder, "index.js");
+        await File.WriteAllTextAsync(included, "source");
+        await File.WriteAllTextAsync(excluded, "generated dependency");
+        var configuration = NewSelectionConfiguration(
+            workspace,
+            [
+                SelectionRule(
+                    "repo",
+                    watched,
+                    ProtectionSelectionMode.RecursiveFolder,
+                    WorkloadPolicyPresetId.DeveloperWorkspace)
+            ]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        Assert.True(backup.Success);
+        Assert.Equal(included, version.SourcePath);
+    }
+
+    [Fact]
+    public async Task Workload_preset_commit_uses_resolved_minimum_compression_threshold()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "large.dat");
+        await File.WriteAllBytesAsync(source, Enumerable.Repeat((byte)'A', 512 * 1024).ToArray());
+        var configuration = NewSelectionConfiguration(
+            workspace,
+            [
+                SelectionRule(
+                    "large",
+                    watched,
+                    ProtectionSelectionMode.RecursiveFolder,
+                    WorkloadPolicyPresetId.GenericLargeFiles)
+            ]);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        var inspected = await operations.InspectVersionAsync(version.VersionId);
+
+        Assert.True(backup.Success);
+        Assert.All(inspected.Manifest.Chunks, chunk => Assert.Equal(ChunkEncoding.Raw, chunk.Encoding));
+    }
+
+    [Fact]
     public async Task Export_diagnostics_includes_durable_change_details()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -700,13 +760,23 @@ public sealed class ServiceOperationsTests
         string path,
         ProtectionSelectionMode mode)
     {
+        return SelectionRule(id, path, mode, WorkloadPolicyPresetId.GeneralPurpose);
+    }
+
+    private static ProtectionSelectionRule SelectionRule(
+        string id,
+        string path,
+        ProtectionSelectionMode mode,
+        WorkloadPolicyPresetId preset)
+    {
         return new ProtectionSelectionRule(
             id,
             path,
             mode,
             CompressionPreference.Zstd,
             ResourceProfile.Fast,
-            IsEnabled: true);
+            IsEnabled: true,
+            WorkloadPreset: preset);
     }
 
     private static ProtectionExclusionRule ExclusionRule(

@@ -12,7 +12,8 @@ public sealed record FluxVaultConfiguration(
     CodecPolicy CodecPolicy = null!,
     IReadOnlyList<ProtectionSelectionRule> SelectionRules = null!,
     IReadOnlyList<ProtectionExclusionRule> ExclusionRules = null!,
-    RepositoryMaintenancePolicy RepositoryMaintenancePolicy = null!)
+    RepositoryMaintenancePolicy RepositoryMaintenancePolicy = null!,
+    WorkloadPolicyConfiguration WorkloadPolicy = null!)
 {
     public static FluxVaultConfiguration CreateDefault(string programDataPath)
     {
@@ -27,6 +28,7 @@ public sealed record FluxVaultConfiguration(
             CodecPolicy: CodecPolicy.CreateDefault(),
             SelectionRules: [],
             ExclusionRules: [],
-            RepositoryMaintenancePolicy: RepositoryMaintenancePolicy.CreateDefault());
+            RepositoryMaintenancePolicy: RepositoryMaintenancePolicy.CreateDefault(),
+            WorkloadPolicy: WorkloadPolicyConfiguration.CreateDefault());
     }
 }

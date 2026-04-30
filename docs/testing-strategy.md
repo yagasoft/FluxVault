@@ -3,6 +3,9 @@
 ## Unit tests
 
 - Policy resolution and inheritance.
+- Workload policy preset catalogue and resolver behaviour, including nearest
+  selected rule precedence, conservative generated/cache exclusions, global
+  skip-extension precedence, and minimum compression thresholds.
 - Chunk boundary validity and deterministic chunking.
 - BLAKE3 fingerprinting.
 - zstd, lz4, Brotli, and LZMA round-trip compression.
@@ -26,8 +29,9 @@
   operational cockpit shell, prioritised command order, constrained dashboard
   header status text, service availability warning and Start/Stop controls,
   first-tab startup, Options Explorer menu actions, File browser context menus,
-  scoped regex controls, repository maintenance Options controls, compression
-  skip-extension editing, wrapping USN tooltips, and wrapping Options tooltips.
+  scoped regex controls, workload preset controls, repository maintenance
+  Options controls, compression skip-extension editing, wrapping USN tooltips,
+  and wrapping Options tooltips.
 - Restore workflow view-model tests for destination cancellation, overwrite
   confirmation, overwrite denial, IPC failure, locked/access-denied failure
   messaging, and preserving the selected version.
@@ -48,8 +52,9 @@
 - File browser selection model: tri-state folder toggling, immediate files
   only, recursive selection, retained manual child selections, parent
   child-selection indicators, checkbox-style visual states, scoped regex
-  indicators, Explorer Add/Remove selection mutations, shell-launch context
-  commands, pending-change summaries, discard/reload, and Save-only application.
+  indicators, per-selection workload presets, Explorer Add/Remove selection
+  mutations, shell-launch context commands, pending-change summaries,
+  discard/reload, and Save-only application.
 - Dirty File browser and configuration edits are preserved across automatic
   refresh, manual refresh, app activation, and Options return.
 - Exclusion rules: config round-trip, legacy global regex validation,
@@ -83,8 +88,8 @@
 - Service-triggered retention and manual `RunRetentionNow`.
 - Mirror cleanup after retention pruning.
 - Options dialog view-model save, preview, run-retention, repository
-  maintenance policy, and compression skip-extension behaviour with a fake
-  service client.
+  maintenance policy, default workload preset, and compression skip-extension
+  behaviour with a fake service client.
 - Activity pane view-model loading for recent events and blocked files.
 - Diagnostics export containing durable-change fallback details.
 - CodeQL workflow trigger guard: no `pull_request` trigger.
@@ -105,6 +110,9 @@
   selections skip excluded files, selected-file rules are filtered, targeted
   backup paths from watcher/USN are ignored when excluded, and scoped selection
   regex include/exclude rules filter full and targeted backup candidates.
+- Workload policy capture behaviour: generated/cache paths excluded by the
+  selected preset are not captured, and committed versions use the resolved
+  compression codec and minimum compression threshold.
 - Planned sync mapping gate: remote peers do not hydrate, patch, or create a
   newly selected target until mapping is confirmed.
 - Planned sync change discovery: peer head changes cause only missing immutable

@@ -39,11 +39,12 @@ forwards the request to the running dashboard through a local named pipe, then
 exits. Version hints select a matching recent version where possible; they never
 start a restore by themselves. Windows 11 compact menus require app identity and
 an `IExplorerCommand` shell extension. FluxVault keeps the Options surface as
-the control point: unpackaged runs register the full menu and report compact
-registration as unavailable, while packaged runs can report compact registration
-as active when the sparse package identity and `FluxVault.ExplorerCommand.dll`
-artefact are present. The shell extension only forwards selected paths to the
-same app startup arguments; it does not perform backup, remove, or restore work.
+the control point: unpackaged runs and unsigned consumer installs register the
+full menu and report compact registration as unavailable, while packaged runs
+can report compact registration as active when the sparse package identity and
+`FluxVault.ExplorerCommand.dll` artefact are present. The shell extension only
+forwards selected paths to the same app startup arguments; it does not perform
+backup, remove, or restore work.
 
 When installed by the developer script or production MSI, `FluxVaultService`
 uses delayed automatic start, SCM restart recovery, and the `FluxVaultService`
@@ -52,13 +53,14 @@ are information events, recoverable runtime fallbacks are warnings, and fatal
 background task failures are logged as critical before being rethrown so SCM
 recovery can restart the service.
 
-Production packaging is split deliberately. The WiX MSI owns machine-level
-state: app, service, CLI, shell-extension binaries, service install/recovery,
-Event Log source, and permanent ProgramData preservation. The WiX Burn bundle
-wraps that MSI and the sparse MSIX package required for Windows 11 compact menu
-identity. Options remains the user-facing Explorer integration control after
-install; the shell extension forwards selected paths into the same app startup
-arguments used by the classic menu.
+Production packaging is split deliberately. The unsigned consumer WiX MSI owns
+machine-level state: app, service, CLI, service install/recovery, Event Log
+source, and permanent ProgramData preservation. The unsigned consumer WiX Burn
+bundle wraps only that MSI and does not install sparse MSIX package identity.
+Options remains the user-facing Explorer integration control after install: the
+classic full Explorer menu works through HKCU registration, while the Windows 11
+compact menu remains available only through a future signed/package-identity
+distribution path.
 
 Repository maintenance runs inside the service next to IPC and the protection
 loop. `RepositoryMaintenancePolicy` is part of configuration and defaults to

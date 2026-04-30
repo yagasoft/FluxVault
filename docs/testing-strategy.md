@@ -147,10 +147,12 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
   explicit ProgramData/Event Log cleanup switches.
 - Production WiX packaging source checks for per-machine service install,
   delayed auto-start, SCM recovery, Event Log source registration, permanent
-  ProgramData preservation, stable major-upgrade metadata, sparse MSIX bundle
-  inclusion, signing enforcement, and narrow WiX warning suppressions.
-- Release package validation builds developer artefacts, native Explorer command
-  DLL, sparse MSIX, MSI, and Burn bundle without installing elevated components.
+  ProgramData preservation, stable major-upgrade metadata, unsigned
+  consumer-bundle MSI-only chaining, absence of `Add-AppxPackage`, no sparse
+  MSIX dependency, and narrow WiX warning suppressions.
+- Release package validation builds developer artefacts, MSI, unsigned Burn
+  bundle, branded setup/checksum/notes/status files, and unsigned-release
+  warnings without installing elevated components or requiring signing secrets.
 - Tray/dashboard service connection.
 - Tray activity pane placement inside the active monitor working area.
 - Explorer integration registration from Options, with packaging guards that
@@ -164,8 +166,10 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
   restore it, and compare hashes.
 - Developer service package artefacts: install script, uninstall script,
   quickstart, and sample configuration.
-- Release package artefacts: `FluxVault.Installer.msi`, `FluxVault.Setup.exe`,
-  `FluxVault.SparsePackage.msix`, and `release-package-status.txt`.
+- Release package artefacts: `Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe`,
+  `Yagasoft-FluxVault-v1.0.0-win-x64-checksums-sha256.txt`,
+  `Yagasoft-FluxVault-v1.0.0-win-x64-release-notes.md`, and
+  `Yagasoft-FluxVault-v1.0.0-win-x64-release-status.txt`.
 - Branding artefacts: FluxVault icon remains the application icon, and the
   Yagasoft logo is copied as an app content asset.
 - Optional elevated VSS smoke check: with the developer service installed, lock

@@ -220,10 +220,12 @@ public sealed class PackagingTests
         Assert.Contains("CommonAppDataFolder", package);
         Assert.Contains("Permanent=\"yes\"", package);
         Assert.Contains("NeverOverwrite=\"yes\"", package);
+        Assert.DoesNotContain("SHELLEXTFOLDER", package);
+        Assert.DoesNotContain("FluxVaultExplorerCommandDll", package);
     }
 
     [Fact]
-    public void Production_bundle_wraps_msi_and_signed_sparse_package()
+    public void Unsigned_consumer_bundle_wraps_only_the_msi()
     {
         var root = FindRepositoryRoot();
         var projectPath = Path.Combine(root, "installer", "wix", "FluxVault.Bundle", "FluxVault.Bundle.wixproj");
@@ -241,20 +243,19 @@ public sealed class PackagingTests
         Assert.Contains("MsiPackage", bundle);
         Assert.Contains("FluxVault.Installer.msi", bundle);
         Assert.DoesNotContain("DisplayInternalUI", bundle);
-        Assert.Contains("ExePackage", bundle);
-        Assert.Contains("$(env.SystemRoot)\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", bundle);
+        Assert.DoesNotContain("ExePackage", bundle);
+        Assert.DoesNotContain("$(env.SystemRoot)\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", bundle);
         Assert.DoesNotContain("$(var.SystemFolder)", bundle);
-        Assert.Contains("Add-AppxPackage", bundle);
+        Assert.DoesNotContain("Add-AppxPackage", bundle);
         Assert.DoesNotContain("-AllowUnsigned", bundle);
-        Assert.Contains("FluxVault.SparsePackage.msix", bundle);
-        Assert.Contains("Yagasoft.FluxVault", bundle);
-        Assert.Contains("Permanent=\"yes\"", bundle);
+        Assert.DoesNotContain("FluxVault.SparsePackage.msix", bundle);
+        Assert.DoesNotContain("Yagasoft.FluxVault", bundle);
         Assert.DoesNotContain("DetectCondition=\"FluxVaultPackageName\"", bundle);
         Assert.DoesNotContain("UninstallArguments", bundle);
     }
 
     [Fact]
-    public void Release_package_script_builds_signed_msi_bundle_and_sparse_package()
+    public void Release_package_script_emits_unsigned_branded_consumer_artefacts()
     {
         var root = FindRepositoryRoot();
         var scriptPath = Path.Combine(root, "eng", "release-package.ps1");
@@ -262,19 +263,29 @@ public sealed class PackagingTests
         Assert.True(File.Exists(scriptPath));
         var script = File.ReadAllText(scriptPath);
 
-        Assert.Contains("[switch]$RequireSigning", script);
-        Assert.Contains("PackageCertificatePath is required", script);
-        Assert.Contains("PackageCertificatePassword", script);
+        Assert.DoesNotContain("[switch]$RequireSigning", script);
+        Assert.DoesNotContain("PackageCertificatePath is required", script);
+        Assert.DoesNotContain("PackageCertificatePassword", script);
         Assert.Contains("FluxVault.Installer.wixproj", script);
         Assert.Contains("FluxVault.Bundle.wixproj", script);
-        Assert.Contains("FluxVault.SparsePackage.msix", script);
-        Assert.Contains("SignTool.exe", script);
+        Assert.DoesNotContain("FluxVault.SparsePackage.msix", script);
+        Assert.DoesNotContain("SignTool.exe", script);
         Assert.Contains("dotnet build", script);
         Assert.Contains("ReleasePackageRoot", script);
+        Assert.Contains("[string]$Runtime = \"win-x64\"", script);
+        Assert.Contains("$version = \"v1.0.0\"", script);
+        Assert.Contains("$artifactPrefix = \"Yagasoft-FluxVault-$version-$Runtime\"", script);
+        Assert.Contains("$setupArtifact = \"$artifactPrefix-Setup.exe\"", script);
+        Assert.Contains("$checksumArtifact = \"$artifactPrefix-checksums-sha256.txt\"", script);
+        Assert.Contains("$notesArtifact = \"$artifactPrefix-release-notes.md\"", script);
+        Assert.Contains("$statusArtifact = \"$artifactPrefix-release-status.txt\"", script);
+        Assert.Contains("Unknown publisher", script);
+        Assert.Contains("SmartScreen", script);
+        Assert.Contains("Windows 11 compact Explorer context menu is not included", script);
     }
 
     [Fact]
-    public void Release_packaging_workflow_is_opt_in_and_not_a_pull_request_gate()
+    public void Release_packaging_workflow_builds_draft_unsigned_consumer_package_without_signing_secrets()
     {
         var root = FindRepositoryRoot();
         var workflowPath = Path.Combine(root, ".github", "workflows", "release-package.yml");
@@ -286,7 +297,9 @@ public sealed class PackagingTests
         Assert.DoesNotContain("pull_request", workflow);
         Assert.Contains("eng\\release-package.ps1", workflow);
         Assert.Contains("PackagingTests", workflow);
-        Assert.Contains("PACKAGE_CERTIFICATE", workflow);
+        Assert.DoesNotContain("PACKAGE_CERTIFICATE", workflow);
+        Assert.DoesNotContain("PACKAGE_CERTIFICATE_PASSWORD", workflow);
+        Assert.Contains("Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe", workflow);
         Assert.Contains("actions/upload-artifact", workflow);
         Assert.Contains("artifacts/release", workflow);
     }

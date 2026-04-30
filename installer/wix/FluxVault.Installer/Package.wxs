@@ -18,7 +18,6 @@
         <Directory Id="APPFOLDER" Name="app" />
         <Directory Id="SERVICEFOLDER" Name="service" />
         <Directory Id="CLIFOLDER" Name="cli" />
-        <Directory Id="SHELLEXTFOLDER" Name="shell-extension" />
       </Directory>
     </StandardDirectory>
 
@@ -37,10 +36,6 @@
 
       <Component Id="CliComponent" Directory="CLIFOLDER" Guid="6DEB8FEA-2D1D-41FC-A96A-22D13652F662">
         <File Id="FluxVaultCliExe" Source="$(var.PublishRoot)\cli\FluxVault.Cli.exe" KeyPath="yes" />
-      </Component>
-
-      <Component Id="ShellExtensionComponent" Directory="SHELLEXTFOLDER" Guid="54D3EB01-4907-480D-9A9C-C54323E59D31">
-        <File Id="FluxVaultExplorerCommandDll" Source="$(var.PublishRoot)\shell-extension\FluxVault.ExplorerCommand.dll" KeyPath="yes" />
       </Component>
 
       <Component Id="ServiceComponent" Directory="SERVICEFOLDER" Guid="C2E20BC9-715D-4820-846D-B9E4EF9F78B3">

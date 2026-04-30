@@ -96,14 +96,15 @@ folder; direct cloud adapters arrive later.
   delayed automatic service start, restart recovery, and Windows Event Log
   source registration. Internal fatal service failures should be logged before
   the service exits for SCM recovery.
-- Production releases should use a per-machine WiX MSI plus a WiX Burn bundle.
-  The MSI must install app, service, CLI, and shell-extension artefacts under
-  Program Files, preserve `C:\ProgramData\FluxVault` across upgrade/uninstall,
-  and define stable major-upgrade metadata. The Burn bundle should carry the
-  sparse MSIX identity package needed by Windows 11 compact Explorer menus.
-- Release package generation must support signing inputs and fail in required
-  signing mode when those inputs are missing. The release packaging workflow is
-  manual/opt-in and separate from normal pull request `build-test`.
+- The default consumer release should use one unsigned WiX Burn bootstrapper
+  wrapping a per-machine WiX MSI. The MSI must install app, service, and CLI
+  artefacts under Program Files, preserve `C:\ProgramData\FluxVault` across
+  upgrade/uninstall, configure service recovery and the Event Log source, and
+  define stable major-upgrade metadata.
+- Release package generation must emit branded setup, checksum, release-notes,
+  and status files without requiring signing secrets. Release notes and status
+  must warn that Windows can show Unknown publisher and SmartScreen prompts for
+  the unsigned installer.
 - VSS capture must coordinate writers through the requester API. FluxVault must
   report `AppConsistent` only when writer coordination succeeds and writer
   metadata covers the source path. Successful snapshots without matching writer
@@ -127,7 +128,9 @@ folder; direct cloud adapters arrive later.
 - Windows 11 compact context-menu registration requires app identity and an
   `IExplorerCommand` shell extension. Options remains the single user-facing
   control, registering the full menu and reporting compact-menu availability
-  from package identity plus the shell-extension artefact.
+  from package identity plus the shell-extension artefact. The unsigned
+  consumer release profile does not install that package identity, so compact
+  menu support is unavailable there while the full menu remains supported.
 - Restoring an older version preserves newer versions. Restore writes the bytes
   and a repository-local pending lineage hint; the next capture of the
   destination records the restored-from and fork-origin version ids.

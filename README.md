@@ -91,8 +91,9 @@ FluxVault now has a developer-usable MVP loop:
   save configuration immediately. Windows 11 compact-menu support now has a
   sparse package manifest and native `IExplorerCommand` handler scaffold; the
   same Options buttons continue to report whether package identity and the
-  handler are active. Unpackaged developer runs still register the full menu and
-  report compact registration as unavailable.
+  handler are active. Unpackaged developer runs and the unsigned consumer
+  installer still register the full menu and report compact registration as
+  unavailable.
 
 The detailed implementation status is tracked in
 [`docs/roadmap-tracker.md`](docs/roadmap-tracker.md). Every future roadmap or
@@ -142,15 +143,16 @@ start, and configures service recovery restart actions. The dashboard shows a
 warning if the service is stopped or unavailable and provides Start/Stop service
 controls.
 
-Production packaging uses WiX. `eng\release-package.ps1` first publishes the
-developer artefacts, then builds `FluxVault.Installer.msi`,
-`FluxVault.Setup.exe`, and `FluxVault.SparsePackage.msix` under
-`artifacts\release`. The MSI installs the app, service, CLI, and native Explorer
-command DLL per-machine, preserves `C:\ProgramData\FluxVault` across major
-upgrades and uninstall, and configures service delayed auto-start, SCM recovery,
-and the Event Log source. Supplying `-RequireSigning` makes release packaging
-fail unless certificate inputs are provided; when signing inputs are present,
-the script signs the MSI, bundle, and sparse MSIX.
+Consumer packaging uses WiX. `eng\release-package.ps1` first publishes the
+developer artefacts, then builds an unsigned Burn bootstrapper named
+`Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe` under `artifacts\release`,
+plus matching checksum, release-notes, and status files. The MSI inside that
+bootstrapper installs the app, service, and CLI per-machine, preserves
+`C:\ProgramData\FluxVault` across major upgrades and uninstall, and configures
+service delayed auto-start, SCM recovery, and the Event Log source. This
+consumer profile does not require signing secrets and does not install the
+sparse MSIX/package-identity leg, so Windows may show Unknown publisher and
+SmartScreen warnings.
 
 The writer-aware VSS requester has deterministic CI coverage for requester call
 order, writer metadata coverage, writer status failures, snapshot cleanup, and
@@ -196,11 +198,11 @@ scaffold for the Windows 11 compact menu. The compact menu is package-owned:
 Options reports it as active only when FluxVault is running with package
 identity and the shell-extension artefact is present.
 
-The WiX Burn bundle carries the sparse MSIX identity package needed by the
-compact menu. Because that PowerShell-driven sparse package leg has no reliable
-Burn detector, it is treated as a permanent package action; removing package
-identity remains an explicit `Remove-AppxPackage` step and does not remove
-repository data.
+The unsigned consumer WiX Burn bundle wraps only the MSI. It intentionally does
+not install `FluxVault.SparsePackage.msix` or the native compact-menu handler,
+so the Windows 11 compact menu is unavailable in that package profile. The
+classic full Explorer menu under **Show more options** remains available from
+Options.
 
 UI/UX redesign directions are tracked in
 [`docs/ui-concepts/mvp-021-ui-concepts.md`](docs/ui-concepts/mvp-021-ui-concepts.md).

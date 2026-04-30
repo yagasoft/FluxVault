@@ -154,6 +154,23 @@ consumer profile does not require signing secrets and does not install the
 sparse MSIX/package-identity leg, so Windows may show Unknown publisher and
 SmartScreen warnings.
 
+To smoke-validate the unsigned consumer installer on a clean elevated Windows
+session, run:
+
+```powershell
+.\eng\smoke-release-install.ps1 -UninstallAfter
+```
+
+The smoke harness verifies the setup checksum, refuses to run over an existing
+`FluxVaultService` or existing `C:\ProgramData\FluxVault` by default, installs
+the bundle, checks service state, full Program Files payloads, ProgramData
+creation, Event Log source registration, and an installed CLI backup/list/restore
+round trip, then uninstalls and confirms ProgramData is preserved. Because it
+mutates Program Files, Windows service state, HKLM Event Log registration, and
+`C:\ProgramData\FluxVault`, run it only on a disposable or otherwise clean
+validation machine/session. Use `-AllowExistingProgramData` only when you
+intentionally want non-clean evidence against preserved existing machine state.
+
 The writer-aware VSS requester has deterministic CI coverage for requester call
 order, writer metadata coverage, writer status failures, snapshot cleanup, and
 the rule that failed writer/requester captures do not commit a version. This

@@ -225,6 +225,23 @@ public sealed class PackagingTests
     }
 
     [Fact]
+    public void Production_wix_installer_harvests_full_published_app_service_and_cli_payloads()
+    {
+        var root = FindRepositoryRoot();
+        var packagePath = Path.Combine(root, "installer", "wix", "FluxVault.Installer", "Package.wxs");
+
+        Assert.True(File.Exists(packagePath));
+        var package = File.ReadAllText(packagePath);
+
+        Assert.Contains("<Files Directory=\"APPFOLDER\" Include=\"$(var.PublishRoot)\\app\\**\">", package);
+        Assert.Contains("<Exclude Files=\"$(var.PublishRoot)\\app\\FluxVault.App.exe\" />", package);
+        Assert.Contains("<Files Directory=\"CLIFOLDER\" Include=\"$(var.PublishRoot)\\cli\\**\">", package);
+        Assert.Contains("<Exclude Files=\"$(var.PublishRoot)\\cli\\FluxVault.Cli.exe\" />", package);
+        Assert.Contains("<Files Directory=\"SERVICEFOLDER\" Include=\"$(var.PublishRoot)\\service\\**\">", package);
+        Assert.Contains("<Exclude Files=\"$(var.PublishRoot)\\service\\FluxVault.Service.exe\" />", package);
+    }
+
+    [Fact]
     public void Unsigned_consumer_bundle_wraps_only_the_msi()
     {
         var root = FindRepositoryRoot();
@@ -282,6 +299,41 @@ public sealed class PackagingTests
         Assert.Contains("Unknown publisher", script);
         Assert.Contains("SmartScreen", script);
         Assert.Contains("Windows 11 compact Explorer context menu is not included", script);
+    }
+
+    [Fact]
+    public void Release_smoke_script_requires_elevation_and_validates_install_uninstall_contract()
+    {
+        var root = FindRepositoryRoot();
+        var scriptPath = Path.Combine(root, "eng", "smoke-release-install.ps1");
+
+        Assert.True(File.Exists(scriptPath));
+        var script = File.ReadAllText(scriptPath);
+
+        Assert.Contains("Yagasoft-FluxVault-v1.0.0-win-x64-Setup.exe", script);
+        Assert.Contains("Yagasoft-FluxVault-v1.0.0-win-x64-checksums-sha256.txt", script);
+        Assert.Contains("Test-Administrator", script);
+        Assert.Contains("Administrator rights are required", script);
+        Assert.Contains("FluxVaultService already exists", script);
+        Assert.Contains("Get-FileHash", script);
+        Assert.Contains("artifacts\\release-smoke", script);
+        Assert.Contains("-quiet", script);
+        Assert.Contains("-log", script);
+        Assert.Contains("Wait-ServiceStatus", script);
+        Assert.Contains("DelayedAutoStart", script);
+        Assert.Contains("FluxVault.App.exe", script);
+        Assert.Contains("FluxVault.Service.exe", script);
+        Assert.Contains("FluxVault.Cli.exe", script);
+        Assert.Contains("[System.Diagnostics.EventLog]::SourceExists", script);
+        Assert.Contains("C:\\ProgramData\\FluxVault", script);
+        Assert.Contains("[switch]$AllowExistingProgramData", script);
+        Assert.Contains("ProgramData already exists", script);
+        Assert.Contains("backup --source", script);
+        Assert.Contains("list --repository", script);
+        Assert.Contains("restore --repository", script);
+        Assert.Contains("[switch]$UninstallAfter", script);
+        Assert.Contains("-uninstall", script);
+        Assert.Contains("ProgramData preserved", script);
     }
 
     [Fact]

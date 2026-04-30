@@ -73,6 +73,11 @@
   from mirror, mirror repair from primary, unresolved corruption, ignored
   retention-pruned artefacts, restore rehearsal length verification, failure
   reporting, and temporary-output cleanup.
+- MirrorSet configuration tests for default empty nodes, legacy `mirrorPath`
+  migration, multi-node save/load round-trip, and validation.
+- Mirrors workspace view-model and XAML tests for editable node lists,
+  repository/protection summary replacement, workspace navigation, and absence
+  of dormant R2-002 controls.
 
 ## Integration tests
 
@@ -80,7 +85,10 @@
 - Open and locked file reads.
 - Rapid edits and service restart catch-up.
 - VSS unavailable or failed.
-- Atomic cloud-folder mirror writes.
+- Atomic cloud-folder mirror writes and multi-node full-copy MirrorSet writes.
+- Mirror warning behaviour when a node is unavailable: the primary backup still
+  succeeds, status records a node-specific warning, and no temporary files are
+  left in healthy mirror nodes.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

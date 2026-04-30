@@ -29,6 +29,7 @@ public sealed class FluxVaultOperations(
         "restore-rehearsal");
     private DateTimeOffset? lastCaptureUtc;
     private string lastMessage = "Ready";
+    private IReadOnlyList<string> lastMirrorWarnings = [];
     private DurableChangeRuntimeStatus? durableChange;
     private RepositoryRetentionResult? lastRetention;
     private readonly Lock runtimeGate = new();
@@ -37,6 +38,7 @@ public sealed class FluxVaultOperations(
     public async Task SaveConfigurationAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken = default)
     {
         await configurationStore.SaveAsync(configuration, cancellationToken).ConfigureAwait(false);
+        lastMirrorWarnings = [];
         lastMessage = "Configuration saved.";
     }
 
@@ -45,6 +47,7 @@ public sealed class FluxVaultOperations(
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         if (!configuration.IsEnabled)
         {
+            lastMirrorWarnings = [];
             return CompleteBackup(true, "Protection is disabled.", 0, 0);
         }
 
@@ -72,7 +75,7 @@ public sealed class FluxVaultOperations(
             }
         }
 
-        var (captured, captureFailed, captureMessages) = await CaptureTargetsAsync(
+        var (captured, captureFailed, captureMessages, mirrorWarnings) = await CaptureTargetsAsync(
                 repository,
                 targets,
                 configuration.CaptureCadencePolicy.MaximumConcurrentCaptures,
@@ -84,6 +87,13 @@ public sealed class FluxVaultOperations(
         var message = messages.Count == 0
             ? $"Captured {captured} file(s)."
             : string.Join(" ", messages);
+        var distinctMirrorWarnings = mirrorWarnings.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        if (distinctMirrorWarnings.Length > 0)
+        {
+            message = $"{message} Mirror warning(s): {distinctMirrorWarnings.Length} mirror write issue(s).";
+        }
+
+        lastMirrorWarnings = distinctMirrorWarnings;
         if (success)
         {
             message = await ApplyRetentionAfterSuccessfulBackupAsync(repository, configuration, message, cancellationToken)
@@ -101,6 +111,7 @@ public sealed class FluxVaultOperations(
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         if (!configuration.IsEnabled)
         {
+            lastMirrorWarnings = [];
             return CompleteBackup(true, "Protection is disabled.", 0, 0);
         }
 
@@ -125,7 +136,7 @@ public sealed class FluxVaultOperations(
             }
         }
 
-        var (captured, failed, messages) = await CaptureTargetsAsync(
+        var (captured, failed, messages, mirrorWarnings) = await CaptureTargetsAsync(
                 CreateRepository(configuration),
                 targets,
                 configuration.CaptureCadencePolicy.MaximumConcurrentCaptures,
@@ -135,6 +146,13 @@ public sealed class FluxVaultOperations(
         var message = messages.Count == 0
             ? $"Captured {captured} changed file(s)."
             : string.Join(" ", messages);
+        var distinctMirrorWarnings = mirrorWarnings.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        if (distinctMirrorWarnings.Length > 0)
+        {
+            message = $"{message} Mirror warning(s): {distinctMirrorWarnings.Length} mirror write issue(s).";
+        }
+
+        lastMirrorWarnings = distinctMirrorWarnings;
         if (success)
         {
             message = await ApplyRetentionAfterSuccessfulBackupAsync(CreateRepository(configuration), configuration, message, cancellationToken)
@@ -333,7 +351,8 @@ public sealed class FluxVaultOperations(
             LastRetention: lastRetention,
             DurableChange: durableChange,
             CaptureStatuses: GetCaptureStatuses(),
-            RepositoryHealth: await GetRepositoryHealthAsync(cancellationToken).ConfigureAwait(false));
+            RepositoryHealth: await GetRepositoryHealthAsync(cancellationToken).ConfigureAwait(false),
+            MirrorWarnings: lastMirrorWarnings);
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -519,7 +538,7 @@ public sealed class FluxVaultOperations(
         return unit == 0 ? $"{bytes} B" : $"{value:0.0} {units[unit]}";
     }
 
-    private async Task<(int Captured, int Failed, IReadOnlyList<string> Messages)> CaptureTargetsAsync(
+    private async Task<(int Captured, int Failed, IReadOnlyList<string> Messages, IReadOnlyList<string> MirrorWarnings)> CaptureTargetsAsync(
         IChunkRepository repository,
         IReadOnlyList<FileBackupTarget> targets,
         int maximumConcurrentCaptures,
@@ -528,10 +547,12 @@ public sealed class FluxVaultOperations(
         var captured = 0;
         var failed = 0;
         var messages = new List<string>();
+        var mirrorWarnings = new List<string>();
         if (maximumConcurrentCaptures > 1)
         {
             using var semaphore = new SemaphoreSlim(maximumConcurrentCaptures);
             var parallelMessages = new System.Collections.Concurrent.ConcurrentBag<string>();
+            var parallelMirrorWarnings = new System.Collections.Concurrent.ConcurrentBag<string>();
             var tasks = targets.Select(async target =>
             {
                 await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
@@ -541,6 +562,10 @@ public sealed class FluxVaultOperations(
                     if (result.Success)
                     {
                         Interlocked.Increment(ref captured);
+                        foreach (var warning in result.MirrorWarnings)
+                        {
+                            parallelMirrorWarnings.Add(warning);
+                        }
                     }
                     else
                     {
@@ -557,7 +582,11 @@ public sealed class FluxVaultOperations(
                 }
             });
             await Task.WhenAll(tasks).ConfigureAwait(false);
-            return (captured, failed, parallelMessages.Order(StringComparer.OrdinalIgnoreCase).ToArray());
+            return (
+                captured,
+                failed,
+                parallelMessages.Order(StringComparer.OrdinalIgnoreCase).ToArray(),
+                parallelMirrorWarnings.Order(StringComparer.OrdinalIgnoreCase).ToArray());
         }
 
         foreach (var target in targets)
@@ -567,6 +596,7 @@ public sealed class FluxVaultOperations(
             if (result.Success)
             {
                 captured++;
+                mirrorWarnings.AddRange(result.MirrorWarnings);
             }
             else
             {
@@ -578,7 +608,7 @@ public sealed class FluxVaultOperations(
             }
         }
 
-        return (captured, failed, messages);
+        return (captured, failed, messages, mirrorWarnings);
     }
 
     private async Task<CaptureTargetResult> CaptureTargetAsync(
@@ -603,10 +633,10 @@ public sealed class FluxVaultOperations(
                 lastEventUtc: null,
                 nextForcedCaptureUtc: null,
                 blockedReason: IsBlockedFailure(capture.Message) ? capture.Message : null);
-            return new CaptureTargetResult(false, $"{target.Path}: {capture.Message}");
+            return new CaptureTargetResult(false, $"{target.Path}: {capture.Message}", []);
         }
 
-        await repository.CommitAsync(new FileCommitRequest(
+        var commit = await repository.CommitAsync(new FileCommitRequest(
             WatchedFolderId: target.Folder.Id,
             SourcePath: Path.GetFullPath(target.Path),
             CapturedAtUtc: DateTimeOffset.UtcNow,
@@ -622,7 +652,7 @@ public sealed class FluxVaultOperations(
             nextForcedCaptureUtc: null,
             consistency: capture.Consistency,
             consistencyDetail: capture.Message);
-        return new CaptureTargetResult(true, null);
+        return new CaptureTargetResult(true, null, commit.MirrorWarnings);
     }
 
     private static IEnumerable<string> EnumerateIncludedFiles(
@@ -730,7 +760,7 @@ public sealed class FluxVaultOperations(
             new FastCdcChunker(new ChunkingOptions(64 * 1024, 256 * 1024, 1024 * 1024)),
             new Blake3ContentHasher(),
             new ZstdChunkCodec(),
-            string.IsNullOrWhiteSpace(configuration.MirrorPath) ? null : configuration.MirrorPath);
+            configuration.MirrorSet);
     }
 
     private static string Require(string? value, string name)
@@ -767,7 +797,7 @@ public sealed class FluxVaultOperations(
         string Path,
         CompressionPreference Compression,
         int MinimumCompressionBytes);
-    private sealed record CaptureTargetResult(bool Success, string? Message);
+    private sealed record CaptureTargetResult(bool Success, string? Message, IReadOnlyList<string> MirrorWarnings);
 
     private IReadOnlyList<CaptureRuntimeStatus> GetCaptureStatuses()
     {

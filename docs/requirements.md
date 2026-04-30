@@ -163,6 +163,19 @@ folder; direct cloud adapters arrive later.
   conservative catalogue should skip generated/cache folders where safe, store
   already-compressed formats without extra compression, and keep global
   skip-extension entries as the final no-compression guardrail.
+- Mirror configuration must use a typed `MirrorSet` with mirror node id, label,
+  path, and enabled state. Older `mirrorPath` configuration must remain loadable
+  and migrate into one enabled full-copy mirror node.
+- The dashboard must provide a dedicated Mirrors workspace for editing mirror
+  nodes. The Protection workspace should show a summary and navigation to
+  Mirrors instead of an editable mirror-path textbox.
+- Repository commits must write the primary repository first, then mirror new
+  chunks, metadata, and manifests to every enabled full-copy node. Mirror write
+  failures must be reported as node-specific warnings and must not fail an
+  otherwise successful primary backup.
+- Capacity-aware placement, redundancy counts, drain/remove, rebalance preview,
+  and repair movement remain future R2 mirror-fabric work and should not appear
+  as dormant controls.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.

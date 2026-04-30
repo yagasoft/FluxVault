@@ -131,7 +131,7 @@
 
         <TabControl Grid.Row="2"
                     Name="OperationalCockpitWorkspace"
-                    SelectedIndex="0"
+                    SelectedIndex="{Binding SelectedWorkspaceIndex}"
                     TabStripPlacement="Left"
                     Background="#FFFFFF"
                     BorderBrush="#DADCE0">
@@ -159,9 +159,11 @@
                     <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding RepositoryPath, UpdateSourceTrigger=PropertyChanged}"
                              Margin="0,0,8,8" Padding="8" />
                     <Button Grid.Row="0" Grid.Column="1" Content="Repository" Command="{Binding BrowseRepositoryCommand}" Margin="0,0,0,8" />
-                    <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding MirrorPath, UpdateSourceTrigger=PropertyChanged}"
-                             Margin="0,0,8,0" Padding="8" />
-                    <Button Grid.Row="1" Grid.Column="1" Content="Mirror" Command="{Binding BrowseMirrorCommand}" Margin="0" />
+                    <Border Grid.Row="1" Grid.Column="0" Margin="0,0,8,0" Padding="8"
+                            BorderBrush="#DADCE0" BorderThickness="1" Background="#F8F9FA">
+                        <TextBlock Text="{Binding MirrorSummary}" TextWrapping="Wrap" />
+                    </Border>
+                    <Button Grid.Row="1" Grid.Column="1" Content="Open Mirrors" Command="{Binding OpenMirrorsWorkspaceCommand}" Margin="0" />
 
                     <DataGrid Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding WatchedFolders}" SelectedItem="{Binding SelectedWatchedFolder}">
                         <DataGrid.Columns>
@@ -351,6 +353,51 @@
                             <DataGridTextColumn Header="Chunks" Binding="{Binding ChunkCount}" Width="80" />
                         </DataGrid.Columns>
                     </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="🪞 Mirrors">
+                <Grid Margin="18">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="12" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="12" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding MirrorSummary}" VerticalAlignment="Center" Foreground="#3C4043" Margin="0,0,12,0" />
+                        <Button Content="Add mirror" Command="{Binding AddMirrorCommand}" Margin="0,0,8,0"
+                                ToolTip="Add a full-copy mirror node." />
+                        <Button Content="Browse path" Command="{Binding BrowseSelectedMirrorCommand}" Margin="0,0,8,0"
+                                ToolTip="Choose the folder for the selected mirror node." />
+                        <Button Content="Remove mirror" Command="{Binding RemoveMirrorCommand}"
+                                ToolTip="Remove the selected mirror node from configuration." />
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="2"
+                              ItemsSource="{Binding MirrorNodes}"
+                              SelectedItem="{Binding SelectedMirrorNode}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              IsReadOnly="False"
+                              ToolTip="Configured full-copy mirror nodes.">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Label" Binding="{Binding Label, UpdateSourceTrigger=PropertyChanged}" Width="180" />
+                            <DataGridTextColumn Header="Path" Binding="{Binding Path, UpdateSourceTrigger=PropertyChanged}" Width="*" />
+                            <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Width="90" />
+                            <DataGridTextColumn Header="Mode" Binding="{Binding Status}" Width="150" IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Save mirrors" Command="{Binding SaveConfigurationCommand}" Margin="0,0,8,0"
+                                ToolTip="Save mirror configuration." />
+                        <Button Content="Discard changes" Command="{Binding DiscardConfigurationChangesCommand}"
+                                ToolTip="Reload mirror configuration from the service." />
+                    </StackPanel>
                 </Grid>
             </TabItem>
 

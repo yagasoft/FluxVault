@@ -13,7 +13,8 @@ public sealed record FluxVaultConfiguration(
     IReadOnlyList<ProtectionSelectionRule> SelectionRules = null!,
     IReadOnlyList<ProtectionExclusionRule> ExclusionRules = null!,
     RepositoryMaintenancePolicy RepositoryMaintenancePolicy = null!,
-    WorkloadPolicyConfiguration WorkloadPolicy = null!)
+    WorkloadPolicyConfiguration WorkloadPolicy = null!,
+    MirrorSetConfiguration MirrorSet = null!)
 {
     public static FluxVaultConfiguration CreateDefault(string programDataPath)
     {
@@ -29,6 +30,7 @@ public sealed record FluxVaultConfiguration(
             SelectionRules: [],
             ExclusionRules: [],
             RepositoryMaintenancePolicy: RepositoryMaintenancePolicy.CreateDefault(),
-            WorkloadPolicy: WorkloadPolicyConfiguration.CreateDefault());
+            WorkloadPolicy: WorkloadPolicyConfiguration.CreateDefault(),
+            MirrorSet: MirrorSetConfiguration.CreateDefault());
     }
 }

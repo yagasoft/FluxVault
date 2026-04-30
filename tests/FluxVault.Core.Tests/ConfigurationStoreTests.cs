@@ -37,6 +37,7 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(WorkloadPolicyPresetId.GeneralPurpose, configuration.WorkloadPolicy.DefaultPreset);
         Assert.Empty(configuration.SelectionRules);
         Assert.Empty(configuration.ExclusionRules);
+        Assert.Empty(configuration.MirrorSet.Nodes);
     }
 
     [Fact]
@@ -48,7 +49,7 @@ public sealed class ConfigurationStoreTests
             workspace.RootPath);
         var expected = new FluxVaultConfiguration(
             RepositoryPath: Path.Combine(workspace.RootPath, "repository"),
-            MirrorPath: Path.Combine(workspace.RootPath, "mirror"),
+            MirrorPath: null,
             IsEnabled: true,
             WatchedFolders:
             [
@@ -61,18 +62,89 @@ public sealed class ConfigurationStoreTests
                     Compression: CompressionPreference.Zstd,
                     ResourceProfile: ResourceProfile.Fast,
                     IsEnabled: true)
-            ]);
+            ],
+            MirrorSet: new MirrorSetConfiguration(
+            [
+                new MirrorNodeConfiguration(
+                    Id: "cloud",
+                    Label: "Cloud copy",
+                    Path: Path.Combine(workspace.RootPath, "mirror"),
+                    IsEnabled: true)
+            ]));
 
         await store.SaveAsync(expected);
 
         var actual = await store.LoadAsync();
         Assert.Equal(expected.RepositoryPath, actual.RepositoryPath);
-        Assert.Equal(expected.MirrorPath, actual.MirrorPath);
+        Assert.Null(actual.MirrorPath);
+        Assert.Equal(expected.MirrorSet.Nodes, actual.MirrorSet.Nodes);
         var watchedFolder = Assert.Single(actual.WatchedFolders);
         Assert.Equal("docs", watchedFolder.Id);
         Assert.Equal(ResourceProfile.Fast, watchedFolder.ResourceProfile);
         Assert.Equal(["*.txt", "*.docx"], watchedFolder.IncludePatterns);
         Assert.True(actual.RetentionPolicy.IsEnabled);
+    }
+
+    [Fact]
+    public async Task Load_legacy_mirror_path_migrates_to_enabled_mirror_set_node()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var configPath = Path.Combine(workspace.RootPath, "config.json");
+        var legacyMirrorPath = Path.Combine(workspace.RootPath, "legacy-mirror");
+        await File.WriteAllTextAsync(
+            configPath,
+            $$"""
+            {
+              "repositoryPath": "{{Path.Combine(workspace.RootPath, "repository").Replace("\\", "\\\\")}}",
+              "mirrorPath": "{{legacyMirrorPath.Replace("\\", "\\\\")}}",
+              "isEnabled": true,
+              "watchedFolders": []
+            }
+            """);
+        var store = new FileFluxVaultConfigurationStore(configPath, workspace.RootPath);
+
+        var actual = await store.LoadAsync();
+
+        Assert.Null(actual.MirrorPath);
+        var node = Assert.Single(actual.MirrorSet.Nodes);
+        Assert.False(string.IsNullOrWhiteSpace(node.Id));
+        Assert.Equal("Default mirror", node.Label);
+        Assert.Equal(legacyMirrorPath, node.Path);
+        Assert.True(node.IsEnabled);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_multiple_mirror_set_nodes()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(
+            Path.Combine(workspace.RootPath, "config.json"),
+            workspace.RootPath);
+        var expected = new FluxVaultConfiguration(
+            RepositoryPath: Path.Combine(workspace.RootPath, "repository"),
+            MirrorPath: null,
+            IsEnabled: true,
+            WatchedFolders: [],
+            MirrorSet: new MirrorSetConfiguration(
+            [
+                new MirrorNodeConfiguration(
+                    Id: "cloud",
+                    Label: "Cloud copy",
+                    Path: Path.Combine(workspace.RootPath, "cloud"),
+                    IsEnabled: true),
+                new MirrorNodeConfiguration(
+                    Id: "usb",
+                    Label: "USB shelf copy",
+                    Path: Path.Combine(workspace.RootPath, "usb"),
+                    IsEnabled: false)
+            ]));
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+
+        Assert.Null(actual.MirrorPath);
+        Assert.Equal(expected.MirrorSet.Nodes, actual.MirrorSet.Nodes);
     }
 
     [Fact]

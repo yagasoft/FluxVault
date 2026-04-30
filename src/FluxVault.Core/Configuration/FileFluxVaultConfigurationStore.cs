@@ -76,14 +76,26 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         {
             throw new InvalidDataException(string.Join(" ", exclusionValidation.Errors));
         }
+
+        ValidateMirrorSet(configuration.MirrorSet);
     }
 
     private static FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
     {
         var selectionRules = configuration.SelectionRules ?? [];
         var exclusionRules = configuration.ExclusionRules ?? [];
+        var mirrorSet = configuration.MirrorSet is null
+            ? MirrorSetConfiguration.FromLegacyPath(configuration.MirrorPath)
+            : configuration.MirrorSet.Normalise();
+        if ((mirrorSet.Nodes.Count == 0) && !string.IsNullOrWhiteSpace(configuration.MirrorPath))
+        {
+            mirrorSet = MirrorSetConfiguration.FromLegacyPath(configuration.MirrorPath);
+        }
+
         return configuration with
         {
+            MirrorPath = null,
+            MirrorSet = mirrorSet,
             RetentionPolicy = configuration.RetentionPolicy ?? RetentionPolicy.CreateDefault(),
             CaptureCadencePolicy = configuration.CaptureCadencePolicy ?? CaptureCadencePolicy.CreateDefault(),
             CodecPolicy = configuration.CodecPolicy ?? CodecPolicy.CreateDefault(),
@@ -95,6 +107,28 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
                 ? configuration.WatchedFolders
                 : ProtectionSelectionCompiler.Compile(selectionRules.Select(NormaliseSelectionRule).ToArray())
         };
+    }
+
+    private static void ValidateMirrorSet(MirrorSetConfiguration mirrorSet)
+    {
+        var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var node in mirrorSet.Nodes)
+        {
+            if (string.IsNullOrWhiteSpace(node.Id))
+            {
+                throw new InvalidDataException("Mirror node id is required.");
+            }
+
+            if (!ids.Add(node.Id))
+            {
+                throw new InvalidDataException($"Mirror node id is duplicated: {node.Id}.");
+            }
+
+            if (node.IsEnabled && string.IsNullOrWhiteSpace(node.Path))
+            {
+                throw new InvalidDataException($"Mirror path is required for enabled mirror node {node.Label}.");
+            }
+        }
     }
 
     private static ProtectionSelectionRule NormaliseSelectionRule(ProtectionSelectionRule rule)

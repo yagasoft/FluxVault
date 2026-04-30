@@ -17,10 +17,10 @@ The current MVP service exposes a local named-pipe JSON IPC surface for status,
 configuration save, manual backup, version listing, version inspection, restore,
 and diagnostics export. Configuration is stored in
 `C:\ProgramData\FluxVault\config.json`; repository artefacts are written to the
-configured local repository, with optional atomic mirroring into a cloud-sync
-folder. On Windows, the service creates the IPC pipe with an explicit ACL:
-LocalSystem and Administrators retain full control, while Authenticated Users
-and packaged app tokens receive read/write pipe access.
+configured local repository, with optional atomic mirroring into enabled
+full-copy `MirrorSet` nodes. On Windows, the service creates the IPC pipe with
+an explicit ACL: LocalSystem and Administrators retain full control, while
+Authenticated Users and packaged app tokens receive read/write pipe access.
 
 The dashboard checks the Windows service state separately from IPC. If
 `FluxVaultService` is stopped, missing, inaccessible, or running without an
@@ -110,7 +110,8 @@ restore-lineage hints.
 7. Core chunking splits the captured bytes into FastCDC-style chunks.
 8. Chunk fingerprints are compared against the local repository.
 9. New chunks and a manifest are committed atomically.
-10. Repository artefacts are mirrored into the configured cloud sync folder.
+10. Repository artefacts are mirrored into every enabled full-copy mirror node.
+    Mirror failures are captured as warnings after the primary commit succeeds.
 11. Compression is selected by policy. The default adaptive profile uses zstd,
     skips known compressed file types from the configurable skip-extension
     list, uses lz4 for hot files, and keeps Brotli and LZMA as explicit
@@ -160,6 +161,13 @@ The Diagnostics workspace is the detailed health dashboard. It shows repository
 integrity, mirror state, restore rehearsal, USN state, and blocked-file rows, and
 keeps manual Run scrub, Run restore rehearsal, and Export diagnostics actions in
 one place.
+
+The Mirrors workspace owns mirror configuration. The Protection workspace shows
+a concise mirror summary and links into Mirrors; it no longer exposes the
+legacy editable mirror-path textbox. Mirror nodes currently have id, label,
+path, and enabled state, and all enabled nodes use full-copy placement. Capacity
+balancing, redundancy counts, drain/remove, and rebalance preview remain later
+R2 work.
 
 The tray activity pane is positioned from the active monitor working area. The
 WinForms cursor and monitor coordinates are converted to WPF device-independent
@@ -281,6 +289,14 @@ file. After deleting pruned manifests locally, it garbage-collects only chunks
 and metadata no remaining manifest references. Mirror cleanup is best-effort
 and reported through status and diagnostics.
 
+`MirrorSetConfiguration` is the active mirror configuration model. Older
+`mirrorPath` configuration files are loaded for compatibility and normalised
+into one enabled full-copy mirror node. During commit, chunks, metadata, and
+manifests are written to the primary repository first. The repository then
+attempts atomic writes to each enabled mirror node. A failed mirror write
+records a node-specific warning in the commit result and service status, but it
+does not roll back or fail the primary backup.
+
 ## Planned multi-PC sync safety
 
 R3 sync publishes device identity, folder mapping metadata, manifests, and
@@ -300,6 +316,10 @@ diverged afterward.
 
 ## Future release tracks
 
-R2 introduces a WinFsp managed workspace for high-frequency large-file workloads.
-R3 introduces Cloud Files API / ProjFS sync-root integration. These are separate
-tracks because they change the namespace and write-path assumptions.
+R2 is the distributed mirror fabric. The first slice establishes `MirrorSet`
+full-copy nodes and warning semantics; later R2 work adds capacity-aware
+placement, redundancy policy, drain/remove, repair movement, and rebalance
+preview. R3 is multi-PC sync over repository-owned peer metadata. R4 introduces
+a WinFsp managed workspace for high-frequency large-file workloads. R5
+introduces Cloud Files API / ProjFS sync-root integration. R4 and R5 are
+separate tracks because they change the namespace and write-path assumptions.

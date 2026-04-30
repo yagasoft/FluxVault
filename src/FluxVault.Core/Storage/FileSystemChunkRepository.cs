@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
@@ -16,7 +17,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     };
 
     private readonly string rootPath;
-    private readonly string? mirrorPath;
+    private readonly IReadOnlyList<MirrorNodeConfiguration> mirrorNodes;
     private readonly StreamingFastCdcChunker streamingChunker;
     private readonly Blake3ContentHasher hasher;
     private readonly ZstdChunkCodec codec;
@@ -27,12 +28,22 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         Blake3ContentHasher hasher,
         ZstdChunkCodec codec,
         string? mirrorPath = null)
+        : this(rootPath, chunker, hasher, codec, MirrorSetConfiguration.FromLegacyPath(mirrorPath))
+    {
+    }
+
+    public FileSystemChunkRepository(
+        string rootPath,
+        FastCdcChunker chunker,
+        Blake3ContentHasher hasher,
+        ZstdChunkCodec codec,
+        MirrorSetConfiguration? mirrorSet)
     {
         this.rootPath = rootPath;
         streamingChunker = new StreamingFastCdcChunker(chunker.Options);
         this.hasher = hasher;
         this.codec = codec;
-        this.mirrorPath = mirrorPath;
+        mirrorNodes = (mirrorSet ?? MirrorSetConfiguration.CreateDefault()).Normalise().EnabledNodes;
     }
 
     public async Task<FileCommitResult> CommitAsync(FileCommitRequest request, CancellationToken cancellationToken = default)
@@ -43,6 +54,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
         await using var content = request.Content;
         var chunks = new List<ManifestChunk>();
+        var mirrorWarnings = new List<string>();
         var newChunkCount = 0;
         var logicalLength = 0L;
 
@@ -58,7 +70,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 var prepared = PreparePayload(raw, digest, request.Compression, request.MinimumCompressionBytes);
                 AtomicWrite(ChunkPath(rootPath, digest), prepared.Payload);
                 AtomicWrite(MetadataPath(rootPath, digest), JsonSerializer.SerializeToUtf8Bytes(prepared.Metadata, JsonOptions));
-                MirrorChunkIfNeeded(digest, prepared);
+                mirrorWarnings.AddRange(MirrorChunkIfNeeded(digest, prepared));
                 metadata = prepared.Metadata;
                 newChunkCount++;
             }
@@ -92,13 +104,13 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
         var manifestBytes = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonOptions);
         AtomicWrite(ManifestPath(rootPath, manifest.VersionId), manifestBytes);
-        MirrorManifestIfNeeded(manifest.VersionId, manifestBytes);
+        mirrorWarnings.AddRange(MirrorManifestIfNeeded(manifest.VersionId, manifestBytes));
         if (lineage.OperationType == VersionOperationType.Restore)
         {
             DeleteRestoreHint(sourcePath);
         }
 
-        return new FileCommitResult(manifest, newChunkCount);
+        return new FileCommitResult(manifest, newChunkCount, CondenseMirrorWarnings(mirrorWarnings));
     }
 
     public async Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default)
@@ -164,21 +176,27 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 if (!primary.IsHealthy)
                 {
                     var repaired = false;
-                    if (autoRepairFromMirror && mirrorPath is not null)
+                    if (autoRepairFromMirror)
                     {
-                        var mirror = ValidateChunk(mirrorPath, chunk);
-                        if (mirror.IsHealthy)
+                        foreach (var mirrorNode in mirrorNodes)
                         {
-                            RepairChunk(mirrorPath, rootPath, chunk.Digest);
+                            var mirror = ValidateChunk(mirrorNode.Path, chunk);
+                            if (!mirror.IsHealthy)
+                            {
+                                continue;
+                            }
+
+                            RepairChunk(mirrorNode.Path, rootPath, chunk.Digest);
                             issues.Add(new RepositoryScrubIssue(
                                 Severity: RepositoryScrubIssueSeverity.Warning,
                                 Kind: primary.IssueKind ?? RepositoryScrubIssueKind.CorruptChunk,
                                 Path: ChunkPath(rootPath, chunk.Digest),
                                 VersionId: manifest.VersionId,
                                 ChunkDigest: chunk.Digest,
-                                Message: "Primary chunk was repaired from a healthy mirror copy.",
-                                RepairAction: RepositoryRepairAction.RepairedPrimaryFromMirror));
+                                Message: $"Primary chunk was repaired from mirror '{mirrorNode.Label}'.",
+                            RepairAction: RepositoryRepairAction.RepairedPrimaryFromMirror));
                             repaired = true;
+                            break;
                         }
                     }
 
@@ -197,39 +215,37 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                     continue;
                 }
 
-                if (mirrorPath is null)
+                foreach (var mirrorNode in mirrorNodes)
                 {
-                    continue;
-                }
+                    var mirrorValidation = ValidateChunk(mirrorNode.Path, chunk);
+                    if (mirrorValidation.IsHealthy)
+                    {
+                        continue;
+                    }
 
-                var mirrorValidation = ValidateChunk(mirrorPath, chunk);
-                if (mirrorValidation.IsHealthy)
-                {
-                    continue;
-                }
-
-                if (autoRepairFromMirror)
-                {
-                    RepairChunk(rootPath, mirrorPath, chunk.Digest);
-                    issues.Add(new RepositoryScrubIssue(
-                        Severity: RepositoryScrubIssueSeverity.Warning,
-                        Kind: RepositoryScrubIssueKind.MirrorDrift,
-                        Path: ChunkPath(mirrorPath, chunk.Digest),
-                        VersionId: manifest.VersionId,
-                        ChunkDigest: chunk.Digest,
-                        Message: "Mirror chunk was repaired from a healthy primary copy.",
-                        RepairAction: RepositoryRepairAction.RepairedMirrorFromPrimary));
-                }
-                else
-                {
-                    issues.Add(new RepositoryScrubIssue(
-                        Severity: RepositoryScrubIssueSeverity.Warning,
-                        Kind: RepositoryScrubIssueKind.MirrorDrift,
-                        Path: ChunkPath(mirrorPath, chunk.Digest),
-                        VersionId: manifest.VersionId,
-                        ChunkDigest: chunk.Digest,
-                        Message: mirrorValidation.Message ?? "Mirror chunk differs from the primary repository.",
-                        RepairAction: RepositoryRepairAction.None));
+                    if (autoRepairFromMirror)
+                    {
+                        RepairChunk(rootPath, mirrorNode.Path, chunk.Digest);
+                        issues.Add(new RepositoryScrubIssue(
+                            Severity: RepositoryScrubIssueSeverity.Warning,
+                            Kind: RepositoryScrubIssueKind.MirrorDrift,
+                            Path: ChunkPath(mirrorNode.Path, chunk.Digest),
+                            VersionId: manifest.VersionId,
+                            ChunkDigest: chunk.Digest,
+                            Message: $"Mirror '{mirrorNode.Label}' chunk was repaired from a healthy primary copy.",
+                            RepairAction: RepositoryRepairAction.RepairedMirrorFromPrimary));
+                    }
+                    else
+                    {
+                        issues.Add(new RepositoryScrubIssue(
+                            Severity: RepositoryScrubIssueSeverity.Warning,
+                            Kind: RepositoryScrubIssueKind.MirrorDrift,
+                            Path: ChunkPath(mirrorNode.Path, chunk.Digest),
+                            VersionId: manifest.VersionId,
+                            ChunkDigest: chunk.Digest,
+                            Message: mirrorValidation.Message ?? $"Mirror '{mirrorNode.Label}' chunk differs from the primary repository.",
+                            RepairAction: RepositoryRepairAction.None));
+                    }
                 }
             }
         }
@@ -408,25 +424,51 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         };
     }
 
-    private void MirrorChunkIfNeeded(string digest, PreparedChunk prepared)
+    private IReadOnlyList<string> MirrorChunkIfNeeded(string digest, PreparedChunk prepared)
     {
-        if (mirrorPath is null)
+        if (mirrorNodes.Count == 0)
         {
-            return;
+            return [];
         }
 
-        AtomicWrite(ChunkPath(mirrorPath, digest), prepared.Payload);
-        AtomicWrite(MetadataPath(mirrorPath, digest), JsonSerializer.SerializeToUtf8Bytes(prepared.Metadata, JsonOptions));
+        var warnings = new List<string>();
+        foreach (var mirrorNode in mirrorNodes)
+        {
+            try
+            {
+                AtomicWrite(ChunkPath(mirrorNode.Path, digest), prepared.Payload);
+                AtomicWrite(MetadataPath(mirrorNode.Path, digest), JsonSerializer.SerializeToUtf8Bytes(prepared.Metadata, JsonOptions));
+            }
+            catch (Exception exception) when (IsMirrorIoFailure(exception))
+            {
+                warnings.Add(FormatMirrorWarning(mirrorNode, $"write chunk {digest}", exception));
+            }
+        }
+
+        return warnings;
     }
 
-    private void MirrorManifestIfNeeded(string versionId, byte[] manifestBytes)
+    private IReadOnlyList<string> MirrorManifestIfNeeded(string versionId, byte[] manifestBytes)
     {
-        if (mirrorPath is null)
+        if (mirrorNodes.Count == 0)
         {
-            return;
+            return [];
         }
 
-        AtomicWrite(ManifestPath(mirrorPath, versionId), manifestBytes);
+        var warnings = new List<string>();
+        foreach (var mirrorNode in mirrorNodes)
+        {
+            try
+            {
+                AtomicWrite(ManifestPath(mirrorNode.Path, versionId), manifestBytes);
+            }
+            catch (Exception exception) when (IsMirrorIoFailure(exception))
+            {
+                warnings.Add(FormatMirrorWarning(mirrorNode, $"write manifest {versionId}", exception));
+            }
+        }
+
+        return warnings;
     }
 
     private static ChunkMetadata? ReadChunkMetadata(string root, string digest)
@@ -524,11 +566,16 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             {
                 var versionId = Path.GetFileNameWithoutExtension(path);
                 var repaired = false;
-                if (autoRepairFromMirror && mirrorPath is not null)
+                if (autoRepairFromMirror)
                 {
-                    var mirrorManifestPath = ManifestPath(mirrorPath, versionId);
-                    if (File.Exists(mirrorManifestPath))
+                    foreach (var mirrorNode in mirrorNodes)
                     {
+                        var mirrorManifestPath = ManifestPath(mirrorNode.Path, versionId);
+                        if (!File.Exists(mirrorManifestPath))
+                        {
+                            continue;
+                        }
+
                         try
                         {
                             var mirrorManifest = await ReadManifestAsync(mirrorManifestPath, cancellationToken)
@@ -541,9 +588,10 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                                 path,
                                 versionId,
                                 null,
-                                "Primary manifest was repaired from a healthy mirror copy.",
+                                $"Primary manifest was repaired from mirror '{mirrorNode.Label}'.",
                                 RepositoryRepairAction.RepairedPrimaryFromMirror));
                             repaired = true;
+                            break;
                         }
                         catch (Exception mirrorException) when (mirrorException is JsonException or IOException or InvalidDataException)
                         {
@@ -751,25 +799,49 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     private void DeleteMirrorFile(Func<string, string, string> pathFactory, string key, List<string> warnings)
     {
-        if (mirrorPath is null)
+        foreach (var mirrorNode in mirrorNodes)
         {
-            return;
+            var path = pathFactory(mirrorNode.Path, key);
+            if (!File.Exists(path))
+            {
+                continue;
+            }
+
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception exception) when (IsMirrorIoFailure(exception))
+            {
+                warnings.Add(FormatMirrorWarning(mirrorNode, $"delete artefact {path}", exception));
+            }
+        }
+    }
+
+    private static bool IsMirrorIoFailure(Exception exception)
+    {
+        return exception is IOException or UnauthorizedAccessException or NotSupportedException;
+    }
+
+    private static string FormatMirrorWarning(MirrorNodeConfiguration mirrorNode, string operation, Exception exception)
+    {
+        return $"Mirror '{mirrorNode.Label}' at {mirrorNode.Path} is unavailable. Last error while trying to {operation}: {exception.Message}";
+    }
+
+    private static IReadOnlyList<string> CondenseMirrorWarnings(IEnumerable<string> warnings)
+    {
+        var seenNodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var condensed = new List<string>();
+        foreach (var warning in warnings)
+        {
+            var key = warning.Split(" Last error ", 2, StringSplitOptions.None)[0];
+            if (seenNodes.Add(key))
+            {
+                condensed.Add(warning);
+            }
         }
 
-        var path = pathFactory(mirrorPath, key);
-        if (!File.Exists(path))
-        {
-            return;
-        }
-
-        try
-        {
-            File.Delete(path);
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
-        {
-            warnings.Add($"Could not delete mirror artefact {path}: {exception.Message}");
-        }
+        return condensed;
     }
 
     private static long GetFileLength(string path)

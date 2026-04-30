@@ -14,7 +14,8 @@ a tray app, and a per-machine Windows service.
 - Configurable capture cadence with bounded hot-file snapshots.
 - Adaptive compression policy with zstd by default, plus lz4, Brotli, LZMA,
   and off modes for explicit profiles.
-- Local immutable repository plus atomic writes into a user-selected cloud sync folder.
+- Local immutable repository plus atomic writes into enabled full-copy mirror
+  nodes such as cloud sync folders or removable storage.
 - Restore to alternate paths with explicit overwrite confirmation before the
   service is asked to write.
 - File browser selection UX with drives, folders, files, and a pending change
@@ -44,8 +45,8 @@ FluxVault now has a developer-usable MVP loop:
 - Capture status reports VSS consistency evidence: normal reads are
   best-effort, covered writer-aware VSS captures are app-consistent, and VSS
   captures without matching writer coverage are crash-consistent.
-- Version list, inspect, restore, diagnostics export, local repository, and
-  optional cloud-folder mirror.
+- Version list, inspect, restore, diagnostics export, local repository, and a
+  `MirrorSet` for optional full-copy mirrors.
 - Append-only version lineage in manifests. Same-path captures record parent
   versions, restores leave a pending lineage hint for the next capture, and
   identical copied files become visible inherited versions without re-uploading
@@ -57,6 +58,10 @@ FluxVault now has a developer-usable MVP loop:
 - Conservative automatic retention and scheduled repository maintenance, with a
   WPF Options dialog for previewing retention, running retention, editing
   maintenance cadence, and controlling mirror repair/rehearsal defaults.
+- Dedicated Mirrors workspace for editing mirror node label, path, and enabled
+  state. Existing legacy `mirrorPath` configuration is migrated into one
+  enabled full-copy mirror node, and mirror write failures are reported as
+  warnings without failing the primary backup.
 - Conservative workload policy presets for general, Office, CAD/BIM,
   Adobe/video, developer, and generic-large-file selections. Options controls
   the default preset for new selections, and the File browser can change the
@@ -178,12 +183,12 @@ the rule that failed writer/requester captures do not commit a version. This
 proves FluxVault's VSS behaviour without requiring elevated live app-writer
 tests in CI; it does not certify every third-party VSS writer workload.
 
-In the dashboard, choose a repository folder and optionally choose a cloud-sync
-mirror folder. Use **File browser** to select protected folders or files, review
-the pending changes pane, save the configuration, run a backup, then restore a
-selected version to an alternate path. Restore asks for a destination and, when
-that file already exists, requires an explicit overwrite confirmation before the
-service restore IPC call is sent.
+In the dashboard, choose a repository folder, then use **Mirrors** if you want
+one or more full-copy mirror nodes. Use **File browser** to select protected
+folders or files, review the pending changes pane, save the configuration, run
+a backup, then restore a selected version to an alternate path. Restore asks for
+a destination and, when that file already exists, requires an explicit overwrite
+confirmation before the service restore IPC call is sent.
 
 Use the **About** button for the FluxVault version, Yagasoft copyright,
 [`https://github.com/yagasoft/FluxVault`](https://github.com/yagasoft/FluxVault),
@@ -248,6 +253,12 @@ files. **Run restore rehearsal** restores the newest configured versions to a
 FluxVault temporary state folder, verifies logical length, records pass/fail
 results, then removes the temporary output without creating repository versions
 or restore-lineage hints.
+
+Mirror writes are secondary to the primary repository commit. FluxVault commits
+chunks, metadata, and manifests to the primary repository first, then copies
+new artefacts to each enabled full-copy mirror node. If a mirror folder is
+offline or unavailable, the backup remains successful and the node is reported
+through mirror warnings in status/health.
 
 Future multi-PC sync will wait for each peer to confirm the same source path or
 choose a per-PC path override before creating, hydrating, or patching a newly

@@ -176,6 +176,37 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Mirror_set_warning_is_reported_without_failing_primary_backup()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        await File.WriteAllTextAsync(Path.Combine(watched, "draft.txt"), string.Concat(Enumerable.Repeat("offline mirror ", 600)));
+        var unavailableMirror = Path.Combine(workspace.RootPath, "unavailable-mirror");
+        await File.WriteAllTextAsync(unavailableMirror, "this file blocks directory creation");
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            MirrorSet = new MirrorSetConfiguration(
+            [
+                new MirrorNodeConfiguration("offline", "Offline mirror", unavailableMirror, IsEnabled: true)
+            ])
+        };
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var backup = await operations.RunBackupNowAsync();
+        var versions = await operations.ListVersionsAsync();
+        var status = await operations.GetStatusAsync();
+
+        Assert.True(backup.Success);
+        Assert.Single(versions);
+        var warning = Assert.Single(status.MirrorWarnings ?? []);
+        Assert.Contains("Offline mirror", warning);
+        Assert.Contains(unavailableMirror, warning);
+        Assert.Contains("mirror", backup.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task Run_retention_now_returns_summary_and_updates_status()
     {
         using var workspace = TemporaryWorkspace.Create();

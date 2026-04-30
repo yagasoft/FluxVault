@@ -1,5 +1,6 @@
 using System.IO;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluxVault.Abstractions.ChangeTracking;
@@ -16,6 +17,7 @@ namespace FluxVault.App.ViewModels;
 
 public sealed partial class MainWindowViewModel : ObservableObject
 {
+    private const int MirrorsWorkspaceIndex = 3;
     private readonly IFluxVaultServiceClient client;
     private readonly IFluxVaultWindowsServiceController windowsServiceController;
     private readonly IRestoreDestinationPicker restoreDestinationPicker;
@@ -63,7 +65,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private string repositoryPath = string.Empty;
 
     [ObservableProperty]
-    private string mirrorPath = string.Empty;
+    private int selectedWorkspaceIndex;
+
+    [ObservableProperty]
+    private string mirrorSummary = "Mirrors: local only";
+
+    [ObservableProperty]
+    private MirrorNodeRow? selectedMirrorNode;
 
     [ObservableProperty]
     private string newWatchedFolderPath = string.Empty;
@@ -195,6 +203,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public ObservableCollection<CaptureStatusRow> CaptureStatuses { get; } = [];
 
     public ObservableCollection<RepositoryHealthRow> RepositoryHealthRows { get; } = [];
+
+    public ObservableCollection<MirrorNodeRow> MirrorNodes { get; } = [];
 
     public FileBrowserViewModel FileBrowser { get; }
 
@@ -377,11 +387,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
         MarkConfigurationDirty();
     }
 
-    partial void OnMirrorPathChanged(string value)
-    {
-        MarkConfigurationDirty();
-    }
-
     partial void OnNewWatchedFolderPathChanged(string value)
     {
         MarkConfigurationDirty();
@@ -423,6 +428,48 @@ public sealed partial class MainWindowViewModel : ObservableObject
         hasLocalConfigurationChanges = false;
     }
 
+    private void ReplaceMirrorNodes(IReadOnlyList<MirrorNodeConfiguration> nodes)
+    {
+        foreach (var row in MirrorNodes)
+        {
+            row.PropertyChanged -= MirrorNode_PropertyChanged;
+        }
+
+        MirrorNodes.Clear();
+        foreach (var node in nodes)
+        {
+            AddMirrorRow(new MirrorNodeRow(node.Id, node.Label, node.Path, node.IsEnabled));
+        }
+
+        SelectedMirrorNode = MirrorNodes.FirstOrDefault();
+        UpdateMirrorSummary();
+    }
+
+    private void AddMirrorRow(MirrorNodeRow row)
+    {
+        row.PropertyChanged += MirrorNode_PropertyChanged;
+        MirrorNodes.Add(row);
+    }
+
+    private void MirrorNode_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        MarkConfigurationDirty();
+        UpdateMirrorSummary();
+    }
+
+    private void UpdateMirrorSummary()
+    {
+        var total = MirrorNodes.Count;
+        if (total == 0)
+        {
+            MirrorSummary = "Mirrors: local only";
+            return;
+        }
+
+        var enabled = MirrorNodes.Count(node => node.IsEnabled);
+        MirrorSummary = $"Mirrors: {enabled} of {total} enabled full-copy node(s)";
+    }
+
     private void SetServiceUnavailable(Exception ex)
     {
         SetServiceStatus($"Service connection: unavailable ({ex.Message})");
@@ -433,12 +480,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private void BrowseRepository()
     {
         RepositoryPath = BrowseFolder(RepositoryPath);
-    }
-
-    [RelayCommand]
-    private void BrowseMirror()
-    {
-        MirrorPath = BrowseFolder(MirrorPath);
     }
 
     [RelayCommand]
@@ -473,6 +514,52 @@ public sealed partial class MainWindowViewModel : ObservableObject
             WatchedFolders.Remove(SelectedWatchedFolder);
             hasLocalConfigurationChanges = true;
         }
+    }
+
+    [RelayCommand]
+    private void OpenMirrorsWorkspace()
+    {
+        SelectedWorkspaceIndex = MirrorsWorkspaceIndex;
+    }
+
+    [RelayCommand]
+    private void AddMirror()
+    {
+        var row = new MirrorNodeRow(
+            Guid.NewGuid().ToString("N"),
+            "New mirror",
+            string.Empty,
+            isEnabled: false);
+        AddMirrorRow(row);
+        SelectedMirrorNode = row;
+        MarkConfigurationDirty();
+        UpdateMirrorSummary();
+    }
+
+    [RelayCommand]
+    private void RemoveMirror()
+    {
+        if (SelectedMirrorNode is null)
+        {
+            return;
+        }
+
+        SelectedMirrorNode.PropertyChanged -= MirrorNode_PropertyChanged;
+        MirrorNodes.Remove(SelectedMirrorNode);
+        SelectedMirrorNode = MirrorNodes.FirstOrDefault();
+        MarkConfigurationDirty();
+        UpdateMirrorSummary();
+    }
+
+    [RelayCommand]
+    private void BrowseSelectedMirror()
+    {
+        if (SelectedMirrorNode is null)
+        {
+            return;
+        }
+
+        SelectedMirrorNode.Path = BrowseFolder(SelectedMirrorNode.Path);
     }
 
     [RelayCommand]
@@ -635,7 +722,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             if (!preserveLocalConfiguration)
             {
                 RepositoryPath = status.Configuration.RepositoryPath;
-                MirrorPath = status.Configuration.MirrorPath ?? string.Empty;
+                ReplaceMirrorNodes((status.Configuration.MirrorSet
+                    ?? MirrorSetConfiguration.FromLegacyPath(status.Configuration.MirrorPath)).Nodes);
                 currentRetentionPolicy = status.Configuration.RetentionPolicy;
                 currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
                 currentCodecPolicy = status.Configuration.CodecPolicy;
@@ -669,9 +757,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             RetentionHealth = status.LastRetention is null
                 ? "Retention: waiting"
                 : $"Retention: kept {status.LastRetention.KeptVersionCount}, pruned {status.LastRetention.PrunedVersionCount}";
-            MirrorHealth = string.IsNullOrWhiteSpace(status.Configuration.MirrorPath)
-                ? "Mirror: local only"
-                : $"Mirror: {status.Configuration.MirrorPath}";
+            MirrorHealth = BuildMirrorHealth(status.MirrorWarnings ?? [], status.Configuration);
             CaptureHealth = BuildCaptureHealth(status.CaptureStatuses ?? []);
             ApplyRepositoryHealth(status.RepositoryHealth);
             WatchedFolders.Clear();
@@ -736,7 +822,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         var watchedFolders = ProtectionSelectionCompiler.Compile(selectionRules);
         return new FluxVaultConfiguration(
             RepositoryPath: RepositoryPath,
-            MirrorPath: string.IsNullOrWhiteSpace(MirrorPath) ? null : MirrorPath,
+            MirrorPath: null,
             IsEnabled: true,
             WatchedFolders: watchedFolders,
             RetentionPolicy: currentRetentionPolicy,
@@ -744,7 +830,14 @@ public sealed partial class MainWindowViewModel : ObservableObject
             CodecPolicy: currentCodecPolicy,
             SelectionRules: selectionRules,
             ExclusionRules: currentExclusionRules,
-            WorkloadPolicy: currentWorkloadPolicy);
+            WorkloadPolicy: currentWorkloadPolicy,
+            MirrorSet: new MirrorSetConfiguration(MirrorNodes
+                .Select(node => new MirrorNodeConfiguration(
+                    node.Id,
+                    node.Label,
+                    node.Path,
+                    node.IsEnabled))
+                .ToArray()));
     }
 
     private VersionRow? FindRestoreHintVersion()
@@ -863,6 +956,24 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         var pending = statuses.Count(status => status.State is CaptureRuntimeState.WaitingForQuietWindow or CaptureRuntimeState.ForcedHotFileSnapshot);
         return pending > 0 ? $"Capture: pending {pending}" : "Capture: idle";
+    }
+
+    private static string BuildMirrorHealth(IReadOnlyList<string> warnings, FluxVaultConfiguration configuration)
+    {
+        if (warnings.Count > 0)
+        {
+            return $"Mirror: {warnings.Count} warning(s)";
+        }
+
+        var mirrorSet = configuration.MirrorSet ?? MirrorSetConfiguration.FromLegacyPath(configuration.MirrorPath);
+        var total = mirrorSet.Nodes.Count;
+        if (total == 0)
+        {
+            return "Mirror: local only";
+        }
+
+        var enabled = mirrorSet.Nodes.Count(node => node.IsEnabled);
+        return $"Mirror: {enabled} of {total} enabled";
     }
 
     private void ApplyRepositoryHealth(RepositoryHealthSnapshot? health)
@@ -1202,6 +1313,36 @@ public sealed record CaptureStatusRow(
     string LastEvent,
     string NextForcedCapture,
     string Detail);
+
+public sealed partial class MirrorNodeRow : ObservableObject
+{
+    [ObservableProperty]
+    private string id;
+
+    [ObservableProperty]
+    private string label;
+
+    [ObservableProperty]
+    private string path;
+
+    [ObservableProperty]
+    private bool isEnabled;
+
+    public MirrorNodeRow(string id, string label, string path, bool isEnabled)
+    {
+        this.id = id;
+        this.label = label;
+        this.path = path;
+        this.isEnabled = isEnabled;
+    }
+
+    public string Status => IsEnabled ? "Enabled full-copy" : "Disabled";
+
+    partial void OnIsEnabledChanged(bool value)
+    {
+        OnPropertyChanged(nameof(Status));
+    }
+}
 
 public sealed record RepositoryHealthRow(
     string Name,

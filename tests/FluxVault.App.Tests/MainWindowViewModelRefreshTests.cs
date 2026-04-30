@@ -130,6 +130,60 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Refresh_populates_mirrors_workspace_from_service_status()
+    {
+        var status = StatusWithVersions() with
+        {
+            Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+            {
+                MirrorSet = new MirrorSetConfiguration(
+                [
+                    new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true),
+                    new MirrorNodeConfiguration("usb", "USB shelf copy", @"E:\FluxVault", IsEnabled: false)
+                ])
+            },
+            MirrorWarnings = ["Offline mirror D:\\Mirrors\\Cloud is unavailable."]
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+        viewModel.OpenMirrorsWorkspaceCommand.Execute(null);
+
+        Assert.Equal(3, viewModel.SelectedWorkspaceIndex);
+        Assert.Equal(2, viewModel.MirrorNodes.Count);
+        Assert.Equal("Cloud copy", viewModel.MirrorNodes[0].Label);
+        Assert.Equal(@"D:\Mirrors\Cloud", viewModel.MirrorNodes[0].Path);
+        Assert.True(viewModel.MirrorNodes[0].IsEnabled);
+        Assert.Contains("1 of 2", viewModel.MirrorSummary);
+        Assert.Contains("warning", viewModel.MirrorHealth, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Save_configuration_persists_mirror_set_nodes_and_clears_legacy_mirror_path()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions());
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+
+        viewModel.AddMirrorCommand.Execute(null);
+        var mirror = Assert.Single(viewModel.MirrorNodes);
+        mirror.Id = "cloud";
+        mirror.Label = "Cloud copy";
+        mirror.Path = @"D:\Mirrors\Cloud";
+        mirror.IsEnabled = true;
+        await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        Assert.Null(saved.MirrorPath);
+        var node = Assert.Single(saved.MirrorSet.Nodes);
+        Assert.Equal("cloud", node.Id);
+        Assert.Equal("Cloud copy", node.Label);
+        Assert.Equal(@"D:\Mirrors\Cloud", node.Path);
+        Assert.True(node.IsEnabled);
+    }
+
+    [Fact]
     public async Task Manual_refresh_does_not_overwrite_dirty_file_browser_changes()
     {
         var client = new FakeFluxVaultServiceClient(

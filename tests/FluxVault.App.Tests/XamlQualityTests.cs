@@ -279,6 +279,64 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
+    public void Main_window_contains_mirrors_workspace_and_repository_summary_link()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var mirrorsTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "Mirrors"));
+        var protectionTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "Protection"));
+
+        Assert.DoesNotContain(
+            protectionTab.Descendants(XamlNamespace + "TextBox"),
+            element => ((string?)element.Attribute("Text"))?.Contains("MirrorPath", StringComparison.OrdinalIgnoreCase) == true);
+        Assert.Contains(
+            protectionTab.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "{Binding MirrorSummary}");
+        Assert.Contains(
+            protectionTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding OpenMirrorsWorkspaceCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "DataGrid"),
+            element => (string?)element.Attribute("ItemsSource") == "{Binding MirrorNodes}"
+                && (string?)element.Attribute("SelectedItem") == "{Binding SelectedMirrorNode}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding AddMirrorCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding RemoveMirrorCommand}");
+    }
+
+    [Fact]
+    public void Mirrors_workspace_does_not_expose_future_r2_controls()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var mirrorsTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "Mirrors"));
+        var text = string.Join(
+            " ",
+            mirrorsTab
+                .Descendants()
+                .SelectMany(element => new[]
+                {
+                    (string?)element.Attribute("Text"),
+                    (string?)element.Attribute("Content"),
+                    (string?)element.Attribute("Header")
+                })
+                .OfType<string>());
+
+        Assert.DoesNotContain("capacity", text, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("rebalance", text, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("redundancy", text, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("required", text, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("drain", text, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void Diagnostics_tab_exposes_repository_health_dashboard_and_manual_maintenance_actions()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
@@ -459,7 +517,7 @@ public sealed class XamlQualityTests
         Assert.Equal("22", (string?)shell.Attribute("Margin"));
         Assert.Equal("1", (string?)commandBar.Attribute("Grid.Column"));
         Assert.Equal("Left", (string?)workspace.Attribute("TabStripPlacement"));
-        Assert.Equal("0", (string?)workspace.Attribute("SelectedIndex"));
+        Assert.Equal("{Binding SelectedWorkspaceIndex}", (string?)workspace.Attribute("SelectedIndex"));
         Assert.Contains(workspace.Descendants(XamlNamespace + "TabItem"), element => HasHeader(element, "File browser"));
         Assert.Equal("4", (string?)footer.Attribute("Grid.Row"));
     }

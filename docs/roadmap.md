@@ -25,8 +25,8 @@ one Windows 11 PC.
   folders unless explicitly configured.
 - Blocked-file status in diagnostics, dashboard activity, and tray activity.
 - FluxVault icon in the executable, taskbar, and tray.
-- Left-navigation dashboard with Protection, Repository, Activity, Options, and
-  Diagnostics.
+- Left-navigation dashboard with Protection, File browser, Repository, Mirrors,
+  Activity, Options, and Diagnostics.
 - File browser tab with three panes: drives/folders, files in the selected
   folder, and pending unsaved selection changes.
 - File browser folder selection cycles through recursive selected, immediate
@@ -124,10 +124,17 @@ Expected user-visible result: safe local production use on Windows 11.
 Expected user-visible result: multiple local or cloud-sync folders behave like
 one storage fabric.
 
-- Replace the single mirror path with a `MirrorSet`.
-- Mirror nodes have id, path, label, capacity budget, priority, health,
-  online/offline state, include/exclude constraints, and placement profile.
-- Placement profiles: `CapacityBalanced`, `Redundant`, `FullCopy`, and
+- Replace the single mirror path with a `MirrorSet`. The first implemented
+  slice migrates legacy `mirrorPath` config into one enabled full-copy mirror
+  node and adds a dedicated Mirrors workspace for node label, path, and enabled
+  state.
+- Primary repository commits remain authoritative. Enabled full-copy mirror
+  nodes receive committed chunks, metadata, and manifests after the primary
+  commit succeeds; unavailable mirrors report node-specific warnings without
+  failing the backup.
+- Future mirror nodes add capacity budget, priority, health, online/offline
+  state, include/exclude constraints, and placement profile.
+- Future placement profiles: `CapacityBalanced`, `Redundant`, `FullCopy`, and
   `Custom`.
 - Capacity mode uses weighted rendezvous hashing with capacity watermarks and
   a configurable excluded mirror fraction. With two mirrors, chunks for a file

@@ -305,7 +305,7 @@ not repair the primary.
 
 FluxVault now creates a stable local device identity and local trusted-device
 record as the first R3 sync foundation. Repository-owned sync metadata can also
-store immutable per-peer operation records, compact peer heads, and local
+store immutable per-peer operation records, compact peer heads, local
 per-peer cursors, and mapping confirmation records; Diagnostics shows the local
 device id, trusted-device count, peer-head count, cursor count, and pending
 mapping count. A newly selected remote folder or file remains blocked from
@@ -313,7 +313,11 @@ hydration until this PC confirms the same source path or records a per-PC path
 override. Remote-applied versions can now carry source version, source
 operation, origin device, and applied-version metadata in the manifest and sync
 status so later chunk hydration can avoid republishing FluxVault's own remote
-write as a fresh local change.
+write as a fresh local change. The local sync hydrator can copy only missing
+chunk and metadata artefacts from a peer repository, apply a confirmed remote
+version when the target is safe, leave locked targets blocked, and record
+non-destructive conflicts with keep-local, keep-remote, restore-as-copy, and
+mark-resolved actions.
 
 Open **Options** to review retention, scheduled maintenance, and the default
 workload preset assigned to newly protected folders/files. The MVP

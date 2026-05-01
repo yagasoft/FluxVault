@@ -117,6 +117,31 @@ public sealed class IpcSerializationTests
                         ContentSignature: "sig-42",
                         AppliedAtUtc: checkedAt,
                         MappingId: "mapping-1")
+                ],
+                Hydrations:
+                [
+                    new SyncHydrationRecord(
+                        HydrationId: "hydration-1",
+                        SourceDeviceId: "device-laptop",
+                        SourceOperationId: "operation-42",
+                        SourceVersionId: "remote-version-42",
+                        LocalPath: @"E:\Protected\brief.docx",
+                        State: SyncHydrationState.Conflict,
+                        Message: "Target has local changes.",
+                        CompletedAtUtc: checkedAt,
+                        ConflictId: "conflict-1")
+                ],
+                Conflicts:
+                [
+                    new SyncConflictRecord(
+                        ConflictId: "conflict-1",
+                        LocalPath: @"E:\Protected\brief.docx",
+                        SourceDeviceId: "device-laptop",
+                        SourceVersionId: "remote-version-42",
+                        SourceOperationId: "operation-42",
+                        DetectedAtUtc: checkedAt,
+                        Status: SyncConflictStatus.Open,
+                        AvailableActions: [SyncConflictAction.KeepLocal, SyncConflictAction.KeepRemote])
                 ]));
         var response = FluxVaultIpcResponse.WithStatus(status);
 
@@ -142,6 +167,8 @@ public sealed class IpcSerializationTests
         Assert.Equal("device-laptop", Assert.Single(roundTrip.Status.Sync.Cursors).PeerDeviceId);
         Assert.Equal(SyncMappingStatus.PendingConfirmation, Assert.Single(roundTrip.Status.Sync.Mappings!).Status);
         Assert.Equal("remote-version-42", Assert.Single(roundTrip.Status.Sync.AppliedRemoteVersions!).SourceVersionId);
+        Assert.Equal(SyncHydrationState.Conflict, Assert.Single(roundTrip.Status.Sync.Hydrations!).State);
+        Assert.Equal(SyncConflictStatus.Open, Assert.Single(roundTrip.Status.Sync.Conflicts!).Status);
     }
 
     [Fact]
@@ -237,6 +264,18 @@ public sealed class IpcSerializationTests
         Assert.Equal("cloud", preview.MirrorNodeId);
         Assert.Equal(FluxVaultIpcCommand.RunMirrorDrain, run.Command);
         Assert.Equal("cloud", run.MirrorNodeId);
+    }
+
+    [Fact]
+    public void Sync_conflict_request_helper_preserves_conflict_action()
+    {
+        var request = FluxVaultIpcRequest.ResolveConflict("conflict-1", SyncConflictAction.KeepLocal);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeRequest(FluxVaultIpcSerializer.SerializeRequest(request));
+
+        Assert.Equal(FluxVaultIpcCommand.ResolveConflict, roundTrip.Command);
+        Assert.Equal("conflict-1", roundTrip.ConflictId);
+        Assert.Equal(SyncConflictAction.KeepLocal, roundTrip.ConflictAction);
     }
 
     [Fact]

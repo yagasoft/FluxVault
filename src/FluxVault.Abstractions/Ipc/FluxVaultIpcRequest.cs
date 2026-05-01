@@ -1,4 +1,5 @@
 using FluxVault.Abstractions.Configuration;
+using FluxVault.Abstractions.Sync;
 
 namespace FluxVault.Abstractions.Ipc;
 
@@ -8,7 +9,9 @@ public sealed record FluxVaultIpcRequest(
     string? VersionId,
     string? OutputPath,
     string? ExportPath,
-    string? MirrorNodeId = null)
+    string? MirrorNodeId = null,
+    string? ConflictId = null,
+    SyncConflictAction? ConflictAction = null)
 {
     public static FluxVaultIpcRequest GetStatus()
     {
@@ -106,5 +109,11 @@ public sealed record FluxVaultIpcRequest(
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(mirrorNodeId);
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.RunMirrorDrain, null, null, null, null, mirrorNodeId);
+    }
+
+    public static FluxVaultIpcRequest ResolveConflict(string conflictId, SyncConflictAction action)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(conflictId);
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.ResolveConflict, null, null, null, null, ConflictId: conflictId, ConflictAction: action);
     }
 }

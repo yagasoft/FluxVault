@@ -341,7 +341,7 @@ target issue. On a healthy completion the selected mirror node is disabled in
 configuration. Manifests continue to follow normal manifest mirroring; drain
 does not act as a destructive repository purge.
 
-## Planned multi-PC sync safety
+## Multi-PC sync safety
 
 R3 sync starts with a stable local device identity and trusted-device records
 stored in typed configuration. Legacy configurations normalise to one local
@@ -373,6 +373,17 @@ from being advertised as fresh local captures. Later chunk hydration must use
 that metadata together with chunk existence checks so the peer does not publish
 the same remote version as a new local change unless the local file diverged
 afterward.
+
+R3 chunk hydration is local and repository-driven. The hydrator copies missing
+chunk and metadata artefacts from a peer repository into the local repository,
+reconstructs the remote version, and commits the local target as a `RemoteSync`
+version with sync-origin metadata. Target writes are atomic. Locked or
+unavailable targets produce blocked hydration records and are not overwritten.
+If the target already has different local content, FluxVault records an open
+sync conflict under `sync/conflicts/`, leaves the target unchanged, and exposes
+keep-local, keep-remote, restore-as-copy, and mark-resolved actions. Conflict
+resolution records the selected action without destructively rewriting the file
+in this foundation slice.
 
 ## Future release tracks
 

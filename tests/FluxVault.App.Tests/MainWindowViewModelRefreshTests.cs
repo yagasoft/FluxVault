@@ -225,6 +225,28 @@ public sealed class MainWindowViewModelRefreshTests
                         @"D:\Work\Docs\brief.docx",
                         "sig-42",
                         DateTimeOffset.UtcNow)
+                ],
+                [
+                    new SyncHydrationRecord(
+                        "hydration-1",
+                        "device-laptop",
+                        "operation-42",
+                        "remote-version-42",
+                        @"D:\Work\Docs\brief.docx",
+                        SyncHydrationState.Blocked,
+                        "Target is locked.",
+                        DateTimeOffset.UtcNow)
+                ],
+                [
+                    new SyncConflictRecord(
+                        "conflict-1",
+                        @"D:\Work\Docs\brief.docx",
+                        "device-laptop",
+                        "remote-version-42",
+                        "operation-42",
+                        DateTimeOffset.UtcNow,
+                        SyncConflictStatus.Open,
+                        [SyncConflictAction.KeepLocal, SyncConflictAction.KeepRemote])
                 ])
         };
         var client = new FakeFluxVaultServiceClient(status);
@@ -232,7 +254,7 @@ public sealed class MainWindowViewModelRefreshTests
 
         await viewModel.RefreshAsync();
 
-        Assert.Equal("Sync: 2 peer head(s), 1 cursor(s), 1 pending mapping(s), 1 applied remote version(s)", viewModel.SyncPeerSummary);
+        Assert.Equal("Sync: 2 peer head(s), 1 cursor(s), 1 pending mapping(s), 1 applied remote version(s), 1 blocked target(s), 1 conflict(s)", viewModel.SyncPeerSummary);
     }
 
     [Fact]

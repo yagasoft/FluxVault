@@ -467,6 +467,8 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.RunMirrorRepair => FluxVaultIpcResponse.WithMirrorRepair(await RunMirrorRepairAsync(request.MirrorNodeId, cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.PreviewMirrorDrain => FluxVaultIpcResponse.WithMirrorRebalance(await PreviewMirrorDrainAsync(Require(request.MirrorNodeId, "mirror node id"), cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunMirrorDrain => FluxVaultIpcResponse.WithMirrorRebalance(await RunMirrorDrainAsync(Require(request.MirrorNodeId, "mirror node id"), cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.GetSyncStatus => FluxVaultIpcResponse.WithStatus(await GetStatusAsync(cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.ResolveConflict => await ResolveConflictResponseAsync(request, cancellationToken).ConfigureAwait(false),
             _ => FluxVaultIpcResponse.Failure($"Unsupported command: {request.Command}")
         };
     }
@@ -500,6 +502,22 @@ public sealed class FluxVaultOperations(
     private async Task<FluxVaultIpcResponse> SetProtectionPausedResponseAsync(CancellationToken cancellationToken)
     {
         await SetProtectionPausedAsync(cancellationToken).ConfigureAwait(false);
+        return FluxVaultIpcResponse.Ok();
+    }
+
+    private async Task<FluxVaultIpcResponse> ResolveConflictResponseAsync(
+        FluxVaultIpcRequest request,
+        CancellationToken cancellationToken)
+    {
+        var conflictId = Require(request.ConflictId, "conflict id");
+        if (request.ConflictAction is null)
+        {
+            return FluxVaultIpcResponse.Failure("Conflict action is required.");
+        }
+
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var conflicts = new FileSyncConflictStore(configuration.RepositoryPath);
+        await conflicts.ResolveConflictAsync(conflictId, request.ConflictAction.Value, cancellationToken).ConfigureAwait(false);
         return FluxVaultIpcResponse.Ok();
     }
 
@@ -702,12 +720,16 @@ public sealed class FluxVaultOperations(
         var journal = new FilePeerSyncJournal(configuration.RepositoryPath);
         var mappings = new FileSyncMappingStore(configuration.RepositoryPath);
         var applied = new FileSyncApplicationStore(configuration.RepositoryPath);
+        var hydrations = new FileSyncHydrationStore(configuration.RepositoryPath);
+        var conflicts = new FileSyncConflictStore(configuration.RepositoryPath);
         return new SyncRuntimeStatus(
             configuration.Sync.LocalDevice.DeviceId,
             await journal.ListPeerHeadsAsync(cancellationToken).ConfigureAwait(false),
             await journal.ListCursorsAsync(cancellationToken).ConfigureAwait(false),
             await mappings.ListMappingsAsync(cancellationToken).ConfigureAwait(false),
-            await applied.ListAppliedVersionsAsync(cancellationToken).ConfigureAwait(false));
+            await applied.ListAppliedVersionsAsync(cancellationToken).ConfigureAwait(false),
+            await hydrations.ListHydrationsAsync(cancellationToken).ConfigureAwait(false),
+            await conflicts.ListConflictsAsync(cancellationToken).ConfigureAwait(false));
     }
 
     private static string FormatBytes(long bytes)

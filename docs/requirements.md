@@ -217,6 +217,14 @@ folder; direct cloud adapters arrive later.
   sync-origin metadata, repository sync metadata must record applied remote
   versions, and a publish gate must suppress remote-applied versions from
   being advertised as fresh local captures.
+- Multi-PC sync hydration must copy missing chunk and metadata artefacts from a
+  peer repository before applying a remote version locally.
+- Sync hydration must not overwrite locked or unavailable targets. Such targets
+  must be reported as blocked and kept unchanged.
+- Sync conflict handling must preserve both sides. If the target has local
+  content that differs from the incoming remote version, FluxVault must keep the
+  local target unchanged and record conflict actions for keeping local, keeping
+  remote, restoring remote as a copy, or marking the conflict resolved.
 
 ## Explicit non-goals for v1
 

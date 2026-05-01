@@ -45,4 +45,6 @@ public sealed record SyncRuntimeStatus(
     IReadOnlyList<PeerHeadRecord> PeerHeads,
     IReadOnlyList<PeerCursorRecord> Cursors,
     IReadOnlyList<SyncMappingRecord>? Mappings = null,
-    IReadOnlyList<SyncAppliedVersionRecord>? AppliedRemoteVersions = null);
+    IReadOnlyList<SyncAppliedVersionRecord>? AppliedRemoteVersions = null,
+    IReadOnlyList<SyncHydrationRecord>? Hydrations = null,
+    IReadOnlyList<SyncConflictRecord>? Conflicts = null);

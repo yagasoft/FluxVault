@@ -710,6 +710,68 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Status_exposes_sync_hydration_and_conflict_records()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var configuration = NewConfiguration(workspace, watched);
+        await new FileSyncHydrationStore(workspace.RepositoryPath).RecordHydrationAsync(new SyncHydrationRecord(
+            HydrationId: "hydration-1",
+            SourceDeviceId: "device-laptop",
+            SourceOperationId: "operation-42",
+            SourceVersionId: "remote-version-42",
+            LocalPath: @"D:\Work\Docs\brief.docx",
+            State: SyncHydrationState.Blocked,
+            Message: "Target is locked.",
+            CompletedAtUtc: new DateTimeOffset(2026, 5, 1, 12, 0, 0, TimeSpan.Zero)));
+        await new FileSyncConflictStore(workspace.RepositoryPath).RecordConflictAsync(new SyncConflictRecord(
+            ConflictId: "conflict-1",
+            LocalPath: @"D:\Work\Docs\brief.docx",
+            SourceDeviceId: "device-laptop",
+            SourceVersionId: "remote-version-42",
+            SourceOperationId: "operation-42",
+            DetectedAtUtc: new DateTimeOffset(2026, 5, 1, 12, 1, 0, TimeSpan.Zero),
+            Status: SyncConflictStatus.Open,
+            AvailableActions: [SyncConflictAction.KeepLocal, SyncConflictAction.KeepRemote]));
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var status = await operations.GetStatusAsync();
+
+        Assert.NotNull(status.Sync);
+        Assert.Equal(SyncHydrationState.Blocked, Assert.Single(status.Sync.Hydrations!).State);
+        Assert.Equal(SyncConflictStatus.Open, Assert.Single(status.Sync.Conflicts!).Status);
+    }
+
+    [Fact]
+    public async Task Resolve_conflict_command_updates_sync_conflict_status()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var configuration = NewConfiguration(workspace, watched);
+        await new FileSyncConflictStore(workspace.RepositoryPath).RecordConflictAsync(new SyncConflictRecord(
+            ConflictId: "conflict-1",
+            LocalPath: @"D:\Work\Docs\brief.docx",
+            SourceDeviceId: "device-laptop",
+            SourceVersionId: "remote-version-42",
+            SourceOperationId: "operation-42",
+            DetectedAtUtc: new DateTimeOffset(2026, 5, 1, 12, 1, 0, TimeSpan.Zero),
+            Status: SyncConflictStatus.Open,
+            AvailableActions: [SyncConflictAction.KeepLocal, SyncConflictAction.KeepRemote]));
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var response = await operations.HandleAsync(FluxVaultIpcRequest.ResolveConflict("conflict-1", SyncConflictAction.KeepLocal));
+
+        Assert.True(response.Success);
+        var resolved = Assert.Single((await operations.GetStatusAsync()).Sync!.Conflicts!);
+        Assert.Equal(SyncConflictStatus.Resolved, resolved.Status);
+        Assert.Equal(SyncConflictAction.KeepLocal, resolved.ResolutionAction);
+    }
+
+    [Fact]
     public async Task File_browser_recursive_folder_selection_backs_up_nested_files()
     {
         using var workspace = TemporaryWorkspace.Create();

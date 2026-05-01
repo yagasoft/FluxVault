@@ -136,6 +136,12 @@
   service status round-trips the latest applied records, Diagnostics shows the
   applied remote-version count, and the publish gate suppresses remote-applied
   versions from local publication.
+- Sync hydration and conflict behaviour: missing remote chunks and metadata are
+  copied from the peer repository before hydration, successful hydrations commit
+  a `RemoteSync` version, locked targets are recorded as blocked without
+  overwriting, conflicting targets are preserved with open conflict metadata,
+  conflict actions can mark a record resolved, IPC round-trips conflict
+  resolution requests, and Diagnostics shows blocked/conflict counts.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.
@@ -172,11 +178,6 @@
 - Workload policy capture behaviour: generated/cache paths excluded by the
   selected preset are not captured, and committed versions use the resolved
   compression codec and minimum compression threshold.
-- Planned sync change discovery: peer head changes cause only missing immutable
-  operation records to be fetched from that peer, local per-peer cursors prevent
-  replay after restart, corrupt or missing operation records surface as peer
-  lag or warnings rather than crashing sync, and operation-origin metadata stops
-  a node from applying its own published operation as a new remote change.
 ## Benchmarks
 
 Benchmark 1 GB, 10 GB, and 100 GB patterns:

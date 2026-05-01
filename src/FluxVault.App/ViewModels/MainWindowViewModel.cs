@@ -1243,7 +1243,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         var mappings = status.Mappings ?? [];
         var appliedRemoteVersions = status.AppliedRemoteVersions ?? [];
+        var hydrations = status.Hydrations ?? [];
+        var conflicts = status.Conflicts ?? [];
         var pendingMappings = mappings.Count(mapping => mapping.Status == SyncMappingStatus.PendingConfirmation);
+        var blockedTargets = hydrations.Count(hydration => hydration.State == SyncHydrationState.Blocked);
+        var openConflicts = conflicts.Count(conflict => conflict.Status == SyncConflictStatus.Open);
         var parts = new List<string>
         {
             $"Sync: {status.PeerHeads.Count} peer head(s)",
@@ -1257,6 +1261,16 @@ public sealed partial class MainWindowViewModel : ObservableObject
         if (appliedRemoteVersions.Count > 0)
         {
             parts.Add($"{appliedRemoteVersions.Count} applied remote version(s)");
+        }
+
+        if (blockedTargets > 0)
+        {
+            parts.Add($"{blockedTargets} blocked target(s)");
+        }
+
+        if (openConflicts > 0)
+        {
+            parts.Add($"{openConflicts} conflict(s)");
         }
 
         return string.Join(", ", parts);

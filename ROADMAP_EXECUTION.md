@@ -164,3 +164,35 @@ Assumptions:
 
 - `R3-004` provides loop-prevention metadata and gates only; actual remote hydration and watcher suppression are completed in `R3-003`.
 - Applied remote-version records are repository metadata, not user-editable Options configuration.
+
+## R3-003: chunk-level sync, blocked targets, and conflicts
+
+Status: complete.
+
+Plan:
+
+- Add sync hydration records, blocked state, conflict records, and conflict actions.
+- Add a local repository-to-repository sync hydrator that copies missing chunk/metadata artefacts from a peer repository and commits safe targets as `RemoteSync`.
+- Detect locked/unavailable targets and record blocked hydration without overwriting target files.
+- Detect local-content conflicts, preserve the existing target, and record conflict actions.
+- Add resolve-conflict IPC metadata that records the selected resolution action without destructive file changes.
+- Expose hydration and conflict records through service status/IPC and show compact blocked/conflict counts in Diagnostics.
+- Update README and roadmap docs/tracker for `R3-003`.
+
+Evidence:
+
+- Red evidence: `dotnet test tests\FluxVault.Core.Tests\FluxVault.Core.Tests.csproj --filter "FullyQualifiedName~SyncHydrationTests|FullyQualifiedName~IpcSerializationTests"` initially failed because `SyncHydrationRecord`, `SyncHydrationState`, `SyncConflictRecord`, `SyncConflictStatus`, `SyncConflictAction`, `FileSyncHydrator`, `FileSyncHydrationStore`, `FileSyncConflictStore`, `FluxVaultIpcRequest.ResolveConflict`, and `SyncRuntimeStatus.Hydrations/Conflicts` did not exist.
+- Green targeted evidence: core hydration/conflict/IPC tests passed, 24 total.
+- Green targeted evidence: integration sync status and conflict command tests passed, 3 total.
+- Green targeted evidence: app sync summary/XAML tests passed, 34 total.
+- Full verification: `dotnet test` passed across App/Core/Integration/Windows test projects: 117 App, 137 Core, 78 Integration, 17 Windows.
+- Whitespace verification: `git diff --check` passed.
+
+Blockers:
+
+- None.
+
+Assumptions:
+
+- `R3-003` implements local sync hydration contracts and safety behaviour; live peer transport/background polling remains future polish.
+- Conflict resolution actions are recorded safely first; this slice does not destructively apply keep-remote or restore-as-copy file operations through the UI.

@@ -175,16 +175,16 @@ downloading or rewriting whole files unnecessarily.
 - Lineage content signatures from V1 let sync describe copied or restored
   byte-identical files as metadata/chunk references instead of republishing the
   same content payload.
-- Other PCs hydrate only missing chunks and patch files at chunk level where
-  the target file can be safely opened.
-- Later chunk hydration must use the loop-prevention metadata above together
-  with chunk existence checks so a remotely applied change is not republished
-  forever as a new local version.
-- Open or locked target files become blocked rather than overwritten.
-- Conflicts preserve both versions and show a `Resolve conflict` action with
-  keep local, keep remote, restore as copy, open both, and mark resolved.
-- Sync status shows pending remote versions, missing chunks, hydration progress,
-  conflicts, blocked files, peer lag, and last peer seen.
+- Implemented: a local sync hydrator can copy only missing chunk/metadata
+  artefacts from a peer repository, reconstruct the remote version, and commit
+  the local result as a remote-applied version with loop-prevention metadata.
+- Implemented: open or locked target files become blocked rather than
+  overwritten. Conflicts preserve the existing target and record keep-local,
+  keep-remote, restore-as-copy, and mark-resolved actions.
+- Sync status shows peer heads, cursors, pending mappings, applied remote
+  versions, hydration progress, conflicts, and blocked targets.
+- Live peer transport, background polling, file patch optimisation, and
+  full conflict UI workflow remain future sync polish built on these contracts.
 - Direct cloud adapters may later optimise discovery with provider-native
   change feeds, but R3 multi-PC sync must work with ordinary cloud-sync folders
   using repository-owned peer metadata.

@@ -480,6 +480,88 @@ public sealed class RepositoryMaintenanceTests
         AssertNoTemporaryFiles(workspace.RootPath);
     }
 
+    [Fact]
+    public async Task Mirror_drain_preview_reports_required_copy_and_selected_node_deletes_without_writing()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var repository = CreateRepository(workspace.RepositoryPath, MirrorSet(firstMirror, secondMirror));
+        var commit = await repository.CommitAsync(NewRequest("mirror drain preview content"));
+        var chunk = Assert.Single(commit.Manifest.Chunks);
+        File.Delete(ChunkPath(secondMirror, chunk.Digest));
+        File.Delete(MetadataPath(secondMirror, chunk.Digest));
+
+        var report = await repository.PreviewMirrorDrainAsync("mirror");
+
+        Assert.Equal(MirrorRebalanceOperation.Drain, report.Operation);
+        Assert.True(report.IsPreview);
+        Assert.Equal("mirror", report.RequestedMirrorNodeId);
+        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
+        Assert.Contains(report.Actions, action =>
+            action.Action == MirrorRebalanceActionKind.CopyToMirror
+            && action.MirrorNodeId == "second"
+            && action.ChunkDigest == chunk.Digest);
+        Assert.Contains(report.Actions, action =>
+            action.Action == MirrorRebalanceActionKind.DeleteFromMirror
+            && action.MirrorNodeId == "mirror"
+            && action.ChunkDigest == chunk.Digest);
+        Assert.False(File.Exists(ChunkPath(secondMirror, chunk.Digest)));
+        Assert.True(File.Exists(ChunkPath(firstMirror, chunk.Digest)));
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
+    [Fact]
+    public async Task Mirror_drain_run_copies_to_remaining_targets_then_deletes_selected_node_artifacts()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var repository = CreateRepository(workspace.RepositoryPath, MirrorSet(firstMirror, secondMirror));
+        var commit = await repository.CommitAsync(NewRequest("mirror drain run content"));
+        var chunk = Assert.Single(commit.Manifest.Chunks);
+        File.Delete(ChunkPath(secondMirror, chunk.Digest));
+        File.Delete(MetadataPath(secondMirror, chunk.Digest));
+
+        var report = await repository.RunMirrorDrainAsync("mirror");
+
+        Assert.Equal(MirrorRebalanceOperation.Drain, report.Operation);
+        Assert.False(report.IsPreview);
+        Assert.Equal(RepositoryHealthState.Healthy, report.HealthState);
+        Assert.Empty(report.Actions);
+        Assert.True(File.Exists(ChunkPath(secondMirror, chunk.Digest)));
+        Assert.True(File.Exists(MetadataPath(secondMirror, chunk.Digest)));
+        Assert.False(File.Exists(ChunkPath(firstMirror, chunk.Digest)));
+        Assert.False(File.Exists(MetadataPath(firstMirror, chunk.Digest)));
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
+    [Fact]
+    public async Task Mirror_drain_run_preserves_selected_node_artifacts_when_remaining_target_is_unavailable()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var repository = CreateRepository(workspace.RepositoryPath, MirrorSet(firstMirror, secondMirror));
+        var commit = await repository.CommitAsync(NewRequest("mirror drain blocked content"));
+        var chunk = Assert.Single(commit.Manifest.Chunks);
+        Directory.Delete(secondMirror, recursive: true);
+
+        var report = await repository.RunMirrorDrainAsync("mirror");
+
+        Assert.Equal(MirrorRebalanceOperation.Drain, report.Operation);
+        Assert.False(report.IsPreview);
+        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
+        Assert.Contains(report.Actions, action =>
+            action.Action == MirrorRebalanceActionKind.Unresolved
+            && action.MirrorNodeId == "second"
+            && action.ChunkDigest == chunk.Digest);
+        Assert.True(File.Exists(ChunkPath(firstMirror, chunk.Digest)));
+        Assert.True(File.Exists(MetadataPath(firstMirror, chunk.Digest)));
+        Assert.False(Directory.Exists(secondMirror));
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
     private static FileSystemChunkRepository CreateRepository(string path, string? mirrorPath = null)
     {
         return new FileSystemChunkRepository(

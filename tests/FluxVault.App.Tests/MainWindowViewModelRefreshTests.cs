@@ -331,6 +331,45 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Mirror_drain_commands_send_selected_node_and_update_health()
+    {
+        var status = StatusWithVersions() with
+        {
+            Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+            {
+                MirrorSet = new MirrorSetConfiguration(
+                [
+                    new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true)
+                ])
+            }
+        };
+        var client = new FakeFluxVaultServiceClient(status)
+        {
+            MirrorRebalanceResponse = FluxVaultIpcResponse.WithMirrorRebalance(
+                MirrorRebalanceReport(
+                    "cloud",
+                    "Cloud copy",
+                    @"D:\Mirrors\Cloud",
+                    MirrorRebalanceActionKind.DeleteFromMirror,
+                    operation: MirrorRebalanceOperation.Drain,
+                    isPreview: false,
+                    requestedMirrorNodeId: "cloud"))
+        };
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedMirrorNode = Assert.Single(viewModel.MirrorNodes);
+
+        await viewModel.PreviewSelectedMirrorDrainCommand.ExecuteAsync(null);
+        await viewModel.RunSelectedMirrorDrainCommand.ExecuteAsync(null);
+
+        Assert.Contains((FluxVaultIpcCommand.PreviewMirrorDrain, "cloud"), client.MirrorRebalanceRequests);
+        Assert.Contains((FluxVaultIpcCommand.RunMirrorDrain, "cloud"), client.MirrorRebalanceRequests);
+        Assert.Contains("Mirror drain", viewModel.RepositoryHealthStatus);
+        var mirror = Assert.Single(viewModel.MirrorNodes);
+        Assert.Contains("Warning", mirror.PlacementStatus);
+    }
+
+    [Fact]
     public async Task Save_configuration_persists_mirror_set_nodes_and_clears_legacy_mirror_path()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions());
@@ -1103,7 +1142,10 @@ public sealed class MainWindowViewModelRefreshTests
         string nodeId,
         string nodeLabel,
         string nodePath,
-        MirrorRebalanceActionKind action)
+        MirrorRebalanceActionKind action,
+        MirrorRebalanceOperation operation = MirrorRebalanceOperation.Placement,
+        bool isPreview = true,
+        string? requestedMirrorNodeId = null)
     {
         return new MirrorRebalancePreviewReport(
             DateTimeOffset.UtcNow,
@@ -1135,7 +1177,10 @@ public sealed class MainWindowViewModelRefreshTests
                     "chunk-digest",
                     512,
                     "Placement action required.")
-            ]);
+            ],
+            Operation: operation,
+            IsPreview: isPreview,
+            RequestedMirrorNodeId: requestedMirrorNodeId);
     }
 
     private static FluxVaultIpcResponse MirrorRebalanceHealthyResponse(
@@ -1189,6 +1234,8 @@ public sealed class MainWindowViewModelRefreshTests
 
         public List<(FluxVaultIpcCommand Command, string? MirrorNodeId)> MirrorRepairRequests { get; } = [];
 
+        public List<(FluxVaultIpcCommand Command, string? MirrorNodeId)> MirrorRebalanceRequests { get; } = [];
+
         public int GetStatusCount => Commands.Count(command => command == FluxVaultIpcCommand.GetStatus);
 
         public Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -1238,8 +1285,12 @@ public sealed class MainWindowViewModelRefreshTests
                 return Task.FromResult(MirrorRepairResponse);
             }
 
-            if (request.Command is FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.RunMirrorRebalance)
+            if (request.Command is FluxVaultIpcCommand.PreviewMirrorRebalance
+                or FluxVaultIpcCommand.RunMirrorRebalance
+                or FluxVaultIpcCommand.PreviewMirrorDrain
+                or FluxVaultIpcCommand.RunMirrorDrain)
             {
+                MirrorRebalanceRequests.Add((request.Command, request.MirrorNodeId));
                 return Task.FromResult(MirrorRebalanceResponse);
             }
 

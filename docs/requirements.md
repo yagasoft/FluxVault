@@ -191,8 +191,13 @@ folder; direct cloud adapters arrive later.
   from the healthy primary repository to target mirrors before deleting extra
   non-target mirror artefacts. It must not delete extra mirror copies for a
   chunk while any required target copy or unresolved node issue remains.
-- Drain/remove workflows remain future R2 mirror-fabric work and must not appear
-  as dormant controls.
+- Mirror drain/remove must be safely distinct from ordinary configuration
+  removal. Selected-node drain preview must not write files. Selected-node
+  drain run must copy required chunk/metadata artefacts from the healthy
+  primary repository to remaining target mirrors first, then delete the
+  selected mirror's chunk/metadata artefacts only when those required copies
+  are satisfied and no unresolved node issue remains. A healthy drain must
+  disable the selected mirror node in configuration.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.

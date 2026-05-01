@@ -820,6 +820,61 @@ public sealed partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task PreviewSelectedMirrorDrainAsync()
+    {
+        if (SelectedMirrorNode is null)
+        {
+            RepositoryHealthStatus = "Mirror drain preview failed: no mirror is selected.";
+            return;
+        }
+
+        await RunMirrorDrainCoreAsync(isPreview: true, SelectedMirrorNode.Id).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task RunSelectedMirrorDrainAsync()
+    {
+        if (SelectedMirrorNode is null)
+        {
+            RepositoryHealthStatus = "Mirror drain failed: no mirror is selected.";
+            return;
+        }
+
+        await RunMirrorDrainCoreAsync(isPreview: false, SelectedMirrorNode.Id).ConfigureAwait(true);
+    }
+
+    private async Task RunMirrorDrainCoreAsync(bool isPreview, string mirrorNodeId)
+    {
+        try
+        {
+            var request = isPreview
+                ? FluxVaultIpcRequest.PreviewMirrorDrain(mirrorNodeId)
+                : FluxVaultIpcRequest.RunMirrorDrain(mirrorNodeId);
+            var response = await client.SendAsync(request).ConfigureAwait(true);
+            if (!response.Success || response.MirrorRebalance is null)
+            {
+                RepositoryHealthStatus = $"{(isPreview ? "Mirror drain preview" : "Mirror drain")} failed: {response.ErrorMessage ?? "no mirror drain report returned"}";
+                return;
+            }
+
+            currentMirrorRebalanceReport = response.MirrorRebalance;
+            ApplyRepositoryHealth(new RepositoryHealthSnapshot(
+                DateTimeOffset.UtcNow,
+                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport?.HealthState, currentMirrorRebalanceReport.HealthState),
+                isPreview ? "Mirror drain preview completed." : "Mirror drain completed.",
+                currentScrubReport,
+                currentRestoreRehearsalReport,
+                currentMirrorRepairReport,
+                currentMirrorRebalanceReport));
+            RepositoryHealthStatus = $"{(isPreview ? "Mirror drain preview" : "Mirror drain")} completed - {response.MirrorRebalance.HealthState}";
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            RepositoryHealthStatus = $"{(isPreview ? "Mirror drain preview" : "Mirror drain")} failed: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
     private async Task PreviewMirrorRebalanceAsync()
     {
         try
@@ -1243,7 +1298,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         var status = $"{report.HealthState} - {report.ActionCount} action(s)";
         var detail = $"Checked {report.CheckedChunkCount} chunk(s) at {report.CompletedAtUtc.ToLocalTime():yyyy-MM-dd HH:mm:ss}. Copy {FormatBytes(report.EstimatedCopyBytes)}, delete {FormatBytes(report.EstimatedDeleteBytes)}.";
-        return new RepositoryHealthRow("Mirror placement", status, detail);
+        var name = report.Operation == MirrorRebalanceOperation.Drain ? "Mirror drain" : "Mirror placement";
+        return new RepositoryHealthRow(name, status, detail);
     }
 
     private void ApplyMirrorRepairToNodes(MirrorRepairReport? report)
@@ -1270,20 +1326,23 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private void ApplyMirrorPlacementToNodes(MirrorRebalancePreviewReport? report)
     {
+        var isDrain = report?.Operation == MirrorRebalanceOperation.Drain;
         foreach (var node in MirrorNodes)
         {
             var nodeReport = report?.Nodes.FirstOrDefault(reportNode =>
                 string.Equals(reportNode.NodeId, node.Id, StringComparison.OrdinalIgnoreCase));
             if (nodeReport is null)
             {
-                node.PlacementStatus = "No placement preview";
-                node.PlacementDetail = "Run mirror placement preview to check this node.";
+                node.PlacementStatus = isDrain ? "No drain preview" : "No placement preview";
+                node.PlacementDetail = isDrain
+                    ? "Run mirror drain preview to check this node."
+                    : "Run mirror placement preview to check this node.";
                 continue;
             }
 
             node.PlacementStatus = $"{nodeReport.HealthState} - {nodeReport.ActionCount} action(s)";
             node.PlacementDetail = nodeReport.ActionCount == 0
-                ? "No mirror placement movement is required."
+                ? isDrain ? "No mirror drain movement is required." : "No mirror placement movement is required."
                 : $"{nodeReport.Label}: copy {FormatBytes(nodeReport.EstimatedCopyBytes)}, delete {FormatBytes(nodeReport.EstimatedDeleteBytes)}.";
         }
     }

@@ -141,13 +141,13 @@ one storage fabric.
   mirror; with more mirrors, chunks distribute across selected eligible nodes.
 - Redundancy mode overrides capacity-only placement by requiring a configured
   minimum mirror copy count.
-- Future mirror maintenance can take a node offline, drain/remove it after
-  consolidation, and apply previewed movement.
 - The repair foundation provides explicit preview and repair actions for
   primary/mirror drift and per-node mirror health. The placement foundation
   applies the configured policy to new commits, previews existing placement
-  movement without writing files, and executes safe copy/delete rebalancing.
-  Drain/remove remains later R2 work.
+  movement without writing files, executes safe copy/delete rebalancing, and
+  drains a selected mirror by copying required artefacts elsewhere before
+  disabling the node. Ordinary mirror row removal remains a separate
+  configuration edit.
 
 ## R3 multi-PC sync
 

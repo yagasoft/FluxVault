@@ -954,13 +954,13 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     public async Task<MirrorRebalancePreviewReport> PreviewMirrorRebalanceAsync(
         CancellationToken cancellationToken = default)
     {
-        return await BuildMirrorRebalanceReportAsync(cancellationToken).ConfigureAwait(false);
+        return await BuildMirrorRebalanceReportAsync(cancellationToken, isPreview: true).ConfigureAwait(false);
     }
 
     public async Task<MirrorRebalancePreviewReport> RunMirrorRebalanceAsync(
         CancellationToken cancellationToken = default)
     {
-        var initial = await BuildMirrorRebalanceReportAsync(cancellationToken).ConfigureAwait(false);
+        var initial = await BuildMirrorRebalanceReportAsync(cancellationToken, isPreview: true).ConfigureAwait(false);
         foreach (var action in initial.Actions.Where(action => action.Action == MirrorRebalanceActionKind.CopyToMirror))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -975,7 +975,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             AtomicWrite(action.Path, await File.ReadAllBytesAsync(sourcePath, cancellationToken).ConfigureAwait(false));
         }
 
-        var afterCopies = await BuildMirrorRebalanceReportAsync(cancellationToken).ConfigureAwait(false);
+        var afterCopies = await BuildMirrorRebalanceReportAsync(cancellationToken, isPreview: false).ConfigureAwait(false);
         var blockedChunks = afterCopies.Actions
             .Where(action => action.Action is MirrorRebalanceActionKind.CopyToMirror or MirrorRebalanceActionKind.Unresolved)
             .Select(action => action.ChunkDigest)
@@ -995,11 +995,64 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             }
         }
 
-        return await BuildMirrorRebalanceReportAsync(cancellationToken).ConfigureAwait(false);
+        return await BuildMirrorRebalanceReportAsync(cancellationToken, isPreview: false).ConfigureAwait(false);
+    }
+
+    public async Task<MirrorRebalancePreviewReport> PreviewMirrorDrainAsync(
+        string mirrorNodeId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(mirrorNodeId);
+        return await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId, isPreview: true).ConfigureAwait(false);
+    }
+
+    public async Task<MirrorRebalancePreviewReport> RunMirrorDrainAsync(
+        string mirrorNodeId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(mirrorNodeId);
+        var initial = await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId, isPreview: true).ConfigureAwait(false);
+        foreach (var action in initial.Actions.Where(action => action.Action == MirrorRebalanceActionKind.CopyToMirror))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var sourcePath = action.ArtefactKind == MirrorRebalanceArtefactKind.Chunk
+                ? ChunkPath(rootPath, action.ChunkDigest)
+                : MetadataPath(rootPath, action.ChunkDigest);
+            if (!File.Exists(sourcePath))
+            {
+                continue;
+            }
+
+            AtomicWrite(action.Path, await File.ReadAllBytesAsync(sourcePath, cancellationToken).ConfigureAwait(false));
+        }
+
+        var afterCopies = await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId, isPreview: false).ConfigureAwait(false);
+        var blockedChunks = afterCopies.Actions
+            .Where(action => action.Action is MirrorRebalanceActionKind.CopyToMirror or MirrorRebalanceActionKind.Unresolved)
+            .Select(action => action.ChunkDigest)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var action in afterCopies.Actions.Where(action => action.Action == MirrorRebalanceActionKind.DeleteFromMirror))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (blockedChunks.Contains(action.ChunkDigest))
+            {
+                continue;
+            }
+
+            if (File.Exists(action.Path))
+            {
+                File.Delete(action.Path);
+            }
+        }
+
+        return await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId, isPreview: false).ConfigureAwait(false);
     }
 
     private async Task<MirrorRebalancePreviewReport> BuildMirrorRebalanceReportAsync(
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string? drainMirrorNodeId = null,
+        bool isPreview = true)
     {
         var manifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
         var chunks = manifests
@@ -1007,11 +1060,54 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             .GroupBy(chunk => chunk.Digest, StringComparer.OrdinalIgnoreCase)
             .Select(group => group.First())
             .ToArray();
+        var operation = string.IsNullOrWhiteSpace(drainMirrorNodeId)
+            ? MirrorRebalanceOperation.Placement
+            : MirrorRebalanceOperation.Drain;
+        var drainNode = operation == MirrorRebalanceOperation.Drain
+            ? mirrorNodes.FirstOrDefault(node => string.Equals(node.Id, drainMirrorNodeId, StringComparison.OrdinalIgnoreCase))
+            : null;
         var nodeActions = mirrorNodes.ToDictionary(
             node => node.Id,
             _ => new List<MirrorRebalanceAction>(),
             StringComparer.OrdinalIgnoreCase);
         var usedBytes = GetMirrorNodeUsedBytes();
+
+        if (operation == MirrorRebalanceOperation.Drain && drainNode is null)
+        {
+            var invalidNodeActions = new[]
+            {
+                new MirrorRebalanceAction(
+                    MirrorRebalanceActionKind.Unresolved,
+                    MirrorRebalanceArtefactKind.Chunk,
+                    drainMirrorNodeId!,
+                    drainMirrorNodeId!,
+                    string.Empty,
+                    string.Empty,
+                    0,
+                    $"Mirror node '{drainMirrorNodeId}' is not an enabled configured mirror.")
+            };
+
+            return new MirrorRebalancePreviewReport(
+                DateTimeOffset.UtcNow,
+                RepositoryHealthState.Warning,
+                chunks.Length,
+                invalidNodeActions.Length,
+                0,
+                0,
+                mirrorNodes.Select(node => BuildMirrorNodeRebalancePreview(node, nodeActions[node.Id])).ToArray(),
+                invalidNodeActions,
+                operation,
+                isPreview,
+                drainMirrorNodeId);
+        }
+
+        var planningMirrorSet = operation == MirrorRebalanceOperation.Drain
+            ? new MirrorSetConfiguration(
+                mirrorSet.Nodes
+                    .Where(node => !string.Equals(node.Id, drainMirrorNodeId, StringComparison.OrdinalIgnoreCase))
+                    .ToArray(),
+                mirrorSet.PlacementPolicy).Normalise()
+            : mirrorSet;
 
         foreach (var chunk in chunks)
         {
@@ -1020,15 +1116,41 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             var selection = mirrorPlacementPlanner.SelectChunkTargets(
                 chunk.Digest,
                 chunk.StoredLength,
-                mirrorSet,
+                planningMirrorSet,
                 usedBytes);
             var targetIds = selection.TargetNodeIds.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            if (operation == MirrorRebalanceOperation.Drain && targetIds.Count == 0 && drainNode is not null)
+            {
+                AddDrainWithoutTargetAction(nodeActions[drainNode.Id], drainNode, chunk.Digest);
+            }
 
             foreach (var node in mirrorNodes)
             {
                 if (!nodeActions.TryGetValue(node.Id, out var currentNodeActions))
                 {
                     continue;
+                }
+
+                if (operation == MirrorRebalanceOperation.Drain)
+                {
+                    if (string.Equals(node.Id, drainMirrorNodeId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!Directory.Exists(node.Path))
+                        {
+                            AddUnavailableNodeAction(currentNodeActions, node, chunk.Digest);
+                            continue;
+                        }
+
+                        AddDrainDeleteAction(currentNodeActions, node, chunk, ChunkPath(node.Path, chunk.Digest), MirrorRebalanceArtefactKind.Chunk);
+                        AddDrainDeleteAction(currentNodeActions, node, chunk, MetadataPath(node.Path, chunk.Digest), MirrorRebalanceArtefactKind.Metadata);
+                        continue;
+                    }
+
+                    if (!targetIds.Contains(node.Id))
+                    {
+                        continue;
+                    }
                 }
 
                 if (!Directory.Exists(node.Path))
@@ -1064,7 +1186,10 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             actions.Where(action => action.Action == MirrorRebalanceActionKind.CopyToMirror).Sum(action => action.EstimatedBytes),
             actions.Where(action => action.Action == MirrorRebalanceActionKind.DeleteFromMirror).Sum(action => action.EstimatedBytes),
             nodes,
-            actions);
+            actions,
+            operation,
+            isPreview,
+            drainMirrorNodeId);
     }
 
     private IReadOnlyList<string> MirrorManifestIfNeeded(string versionId, byte[] manifestBytes)
@@ -1171,6 +1296,51 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             chunk.Digest,
             GetFileLength(path),
             $"Mirror '{node.Label}' has non-target {artefactKind.ToString().ToLowerInvariant()} for chunk {chunk.Digest}."));
+    }
+
+    private static void AddDrainDeleteAction(
+        List<MirrorRebalanceAction> actions,
+        MirrorNodeConfiguration node,
+        ManifestChunk chunk,
+        string path,
+        MirrorRebalanceArtefactKind artefactKind)
+    {
+        if (!File.Exists(path))
+        {
+            return;
+        }
+
+        actions.Add(new MirrorRebalanceAction(
+            MirrorRebalanceActionKind.DeleteFromMirror,
+            artefactKind,
+            node.Id,
+            node.Label,
+            path,
+            chunk.Digest,
+            GetFileLength(path),
+            $"Mirror '{node.Label}' will delete drained {artefactKind.ToString().ToLowerInvariant()} for chunk {chunk.Digest} after required copies exist elsewhere."));
+    }
+
+    private static void AddDrainWithoutTargetAction(
+        List<MirrorRebalanceAction> actions,
+        MirrorNodeConfiguration node,
+        string chunkDigest)
+    {
+        if (actions.Any(action => action.Action == MirrorRebalanceActionKind.Unresolved
+                                  && string.Equals(action.ChunkDigest, chunkDigest, StringComparison.OrdinalIgnoreCase)))
+        {
+            return;
+        }
+
+        actions.Add(new MirrorRebalanceAction(
+            MirrorRebalanceActionKind.Unresolved,
+            MirrorRebalanceArtefactKind.Chunk,
+            node.Id,
+            node.Label,
+            node.Path,
+            chunkDigest,
+            0,
+            $"Mirror '{node.Label}' cannot be drained for chunk {chunkDigest} because no remaining enabled mirror can hold the required copy."));
     }
 
     private static MirrorNodeRebalancePreview BuildMirrorNodeRebalancePreview(

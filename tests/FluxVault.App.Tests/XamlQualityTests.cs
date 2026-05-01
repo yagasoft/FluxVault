@@ -341,7 +341,7 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
-    public void Mirrors_workspace_does_not_expose_future_r2_drain_controls()
+    public void Mirrors_workspace_exposes_selected_node_drain_controls_without_remove_execution_labels()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
         var mirrorsTab = document
@@ -359,7 +359,14 @@ public sealed class XamlQualityTests
                 })
                 .OfType<string>());
 
-        Assert.DoesNotContain("drain", text, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding PreviewSelectedMirrorDrainCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding RunSelectedMirrorDrainCommand}");
+        Assert.Contains("drain", text, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("delete mirror", text, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

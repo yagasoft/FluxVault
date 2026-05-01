@@ -383,8 +383,12 @@
                                 ToolTip="Add a mirror node." />
                         <Button Content="Browse path" Command="{Binding BrowseSelectedMirrorCommand}" Margin="0,0,8,0"
                                 ToolTip="Choose the folder for the selected mirror node." />
-                        <Button Content="Remove mirror" Command="{Binding RemoveMirrorCommand}" Margin="0,0,8,0"
-                                ToolTip="Remove the selected mirror node from configuration." />
+                        <Button Content="Remove from configuration" Command="{Binding RemoveMirrorCommand}" Margin="0,0,8,0"
+                                ToolTip="Remove the selected mirror node from configuration without moving existing mirror data." />
+                        <Button Content="Preview drain" Command="{Binding PreviewSelectedMirrorDrainCommand}" Margin="0,0,8,0"
+                                ToolTip="Preview safe copy and delete actions for draining the selected mirror node." />
+                        <Button Content="Drain selected" Command="{Binding RunSelectedMirrorDrainCommand}" Margin="0,0,8,0"
+                                ToolTip="Copy required artefacts to remaining mirrors, then disable the selected mirror after safe cleanup." />
                         <Button Content="Preview placement" Command="{Binding PreviewMirrorRebalanceCommand}" Margin="0,0,8,0"
                                 ToolTip="Preview mirror copy and cleanup actions needed to match the current placement policy." />
                         <Button Content="Apply placement" Command="{Binding RunMirrorRebalanceCommand}" Margin="0,0,8,0"

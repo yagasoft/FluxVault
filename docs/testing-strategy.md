@@ -84,10 +84,13 @@
 - Mirror placement preview tests for missing required copies, extra non-target
   copies, offline nodes, estimated movement, read-only behaviour, and
   temporary-file cleanup.
+- Mirror drain tests for selected-node preview, copy-before-delete execution,
+  blocked deletes when remaining targets are unresolved, configuration disable
+  after healthy drain, and temporary-file cleanup.
 - Mirrors workspace view-model and XAML tests for editable node lists,
   repository/protection summary replacement, workspace navigation, per-node
-  repair status/actions, placement controls/status, preview action, and absence
-  of dormant R2 drain/remove controls.
+  repair status/actions, placement controls/status, preview/apply action, and
+  selected-node drain controls.
 
 ## Integration tests
 
@@ -111,6 +114,10 @@
   healthy primary before deleting extra non-target mirror artefacts, preserve
   extra copies when a required target or primary artefact is unresolved, persist
   the latest run report, and leave no temporary files.
+- Mirror drain IPC behaviour: preview/run return a drain report for the
+  selected node, run disables the node only after healthy copy/delete
+  completion, persists the latest drain report in repository health, and leaves
+  no temporary files.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

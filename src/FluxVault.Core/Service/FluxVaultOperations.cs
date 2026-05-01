@@ -284,6 +284,40 @@ public sealed class FluxVaultOperations(
         return report;
     }
 
+    public async Task<MirrorRebalancePreviewReport> PreviewMirrorDrainAsync(
+        string mirrorNodeId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(mirrorNodeId);
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var report = await CreateRepository(configuration)
+            .PreviewMirrorDrainAsync(mirrorNodeId, cancellationToken)
+            .ConfigureAwait(false);
+        await SaveRepositoryMaintenanceResultAsync(null, null, null, report, cancellationToken).ConfigureAwait(false);
+        lastMessage = FormatMirrorRebalanceSummary(report);
+        return report;
+    }
+
+    public async Task<MirrorRebalancePreviewReport> RunMirrorDrainAsync(
+        string mirrorNodeId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(mirrorNodeId);
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var report = await CreateRepository(configuration)
+            .RunMirrorDrainAsync(mirrorNodeId, cancellationToken)
+            .ConfigureAwait(false);
+        if (IsDrainComplete(report))
+        {
+            await configurationStore.SaveAsync(DisableMirrorNode(configuration, mirrorNodeId), cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        await SaveRepositoryMaintenanceResultAsync(null, null, null, report, cancellationToken).ConfigureAwait(false);
+        lastMessage = FormatMirrorRebalanceSummary(report);
+        return report;
+    }
+
     public async Task<string> ExportDiagnosticsAsync(string exportPath, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(exportPath);
@@ -428,6 +462,8 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.RunMirrorRebalance => FluxVaultIpcResponse.WithMirrorRebalance(await RunMirrorRebalanceAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.PreviewMirrorRepair => FluxVaultIpcResponse.WithMirrorRepair(await PreviewMirrorRepairAsync(request.MirrorNodeId, cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunMirrorRepair => FluxVaultIpcResponse.WithMirrorRepair(await RunMirrorRepairAsync(request.MirrorNodeId, cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.PreviewMirrorDrain => FluxVaultIpcResponse.WithMirrorRebalance(await PreviewMirrorDrainAsync(Require(request.MirrorNodeId, "mirror node id"), cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.RunMirrorDrain => FluxVaultIpcResponse.WithMirrorRebalance(await RunMirrorDrainAsync(Require(request.MirrorNodeId, "mirror node id"), cancellationToken).ConfigureAwait(false)),
             _ => FluxVaultIpcResponse.Failure($"Unsupported command: {request.Command}")
         };
     }
@@ -609,7 +645,35 @@ public sealed class FluxVaultOperations(
 
     private static string FormatMirrorRebalanceSummary(MirrorRebalancePreviewReport report)
     {
-        return $"Mirror placement preview completed: {report.ActionCount} action(s), copy {FormatBytes(report.EstimatedCopyBytes)}, delete {FormatBytes(report.EstimatedDeleteBytes)}.";
+        var operation = report.Operation == MirrorRebalanceOperation.Drain ? "Mirror drain" : "Mirror placement";
+        var phase = report.IsPreview ? "preview" : "apply";
+        return $"{operation} {phase} completed: {report.ActionCount} action(s), copy {FormatBytes(report.EstimatedCopyBytes)}, delete {FormatBytes(report.EstimatedDeleteBytes)}.";
+    }
+
+    private static bool IsDrainComplete(MirrorRebalancePreviewReport report)
+    {
+        return report.Operation == MirrorRebalanceOperation.Drain
+               && !report.IsPreview
+               && report.HealthState == RepositoryHealthState.Healthy
+               && report.ActionCount == 0
+               && !string.IsNullOrWhiteSpace(report.RequestedMirrorNodeId);
+    }
+
+    private static FluxVaultConfiguration DisableMirrorNode(
+        FluxVaultConfiguration configuration,
+        string mirrorNodeId)
+    {
+        var mirrorSet = (configuration.MirrorSet ?? MirrorSetConfiguration.FromLegacyPath(configuration.MirrorPath)).Normalise();
+        var updatedNodes = mirrorSet.Nodes
+            .Select(node => string.Equals(node.Id, mirrorNodeId, StringComparison.OrdinalIgnoreCase)
+                ? node with { IsEnabled = false }
+                : node)
+            .ToArray();
+        return configuration with
+        {
+            MirrorPath = null,
+            MirrorSet = new MirrorSetConfiguration(updatedNodes, mirrorSet.PlacementPolicy).Normalise()
+        };
     }
 
     private static string FormatBytes(long bytes)

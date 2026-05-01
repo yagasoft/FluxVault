@@ -379,6 +379,51 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Mirror_drain_ipc_runs_selected_node_and_disables_it_after_safe_drain()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, string.Concat(Enumerable.Repeat("drain selected mirror ", 80)));
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            MirrorSet = new MirrorSetConfiguration(
+            [
+                new MirrorNodeConfiguration("first", "First mirror", firstMirror, IsEnabled: true),
+                new MirrorNodeConfiguration("second", "Second mirror", secondMirror, IsEnabled: true)
+            ])
+        };
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        await operations.RunBackupNowAsync();
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        var chunk = Assert.Single((await operations.InspectVersionAsync(version.VersionId)).Manifest.Chunks);
+        File.Delete(ChunkPath(secondMirror, chunk.Digest));
+        File.Delete(MetadataPath(secondMirror, chunk.Digest));
+
+        var preview = await operations.HandleAsync(FluxVaultIpcRequest.PreviewMirrorDrain("first"));
+        var run = await operations.HandleAsync(FluxVaultIpcRequest.RunMirrorDrain("first"));
+        var status = await operations.GetStatusAsync();
+
+        Assert.True(preview.Success);
+        Assert.Equal(MirrorRebalanceOperation.Drain, preview.MirrorRebalance!.Operation);
+        Assert.True(preview.MirrorRebalance.IsPreview);
+        Assert.Equal("first", preview.MirrorRebalance.RequestedMirrorNodeId);
+        Assert.True(run.Success);
+        Assert.False(run.MirrorRebalance!.IsPreview);
+        Assert.Equal(RepositoryHealthState.Healthy, run.MirrorRebalance.HealthState);
+        Assert.False(File.Exists(ChunkPath(firstMirror, chunk.Digest)));
+        Assert.True(File.Exists(ChunkPath(secondMirror, chunk.Digest)));
+        Assert.False(status.Configuration.MirrorSet.Nodes.Single(node => node.Id == "first").IsEnabled);
+        Assert.True(status.Configuration.MirrorSet.Nodes.Single(node => node.Id == "second").IsEnabled);
+        Assert.Equal(MirrorRebalanceOperation.Drain, status.RepositoryHealth!.LastMirrorRebalance!.Operation);
+        Assert.Equal("first", status.RepositoryHealth.LastMirrorRebalance.RequestedMirrorNodeId);
+    }
+
+    [Fact]
     public async Task Repository_maintenance_loop_runs_when_due_and_skips_when_recent()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -986,6 +1031,11 @@ public sealed class ServiceOperationsTests
     private static string ChunkPath(string root, string digest)
     {
         return Path.Combine(root, "chunks", digest[..2], $"{digest}.chunk");
+    }
+
+    private static string MetadataPath(string root, string digest)
+    {
+        return Path.Combine(root, "chunks", digest[..2], $"{digest}.json");
     }
 
     private sealed class StubCaptureProvider(FileCaptureResult result) : IFileCaptureProvider

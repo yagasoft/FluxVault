@@ -13,6 +13,12 @@ public enum MirrorRebalanceArtefactKind
     Metadata = 1
 }
 
+public enum MirrorRebalanceOperation
+{
+    Placement = 0,
+    Drain = 1
+}
+
 public sealed record MirrorRebalanceAction(
     MirrorRebalanceActionKind Action,
     MirrorRebalanceArtefactKind ArtefactKind,
@@ -41,4 +47,7 @@ public sealed record MirrorRebalancePreviewReport(
     long EstimatedCopyBytes,
     long EstimatedDeleteBytes,
     IReadOnlyList<MirrorNodeRebalancePreview> Nodes,
-    IReadOnlyList<MirrorRebalanceAction> Actions);
+    IReadOnlyList<MirrorRebalanceAction> Actions,
+    MirrorRebalanceOperation Operation = MirrorRebalanceOperation.Placement,
+    bool IsPreview = true,
+    string? RequestedMirrorNodeId = null);

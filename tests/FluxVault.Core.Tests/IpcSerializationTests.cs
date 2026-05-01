@@ -150,6 +150,8 @@ public sealed class IpcSerializationTests
     [InlineData(FluxVaultIpcCommand.RunMirrorRebalance)]
     [InlineData(FluxVaultIpcCommand.PreviewMirrorRepair)]
     [InlineData(FluxVaultIpcCommand.RunMirrorRepair)]
+    [InlineData(FluxVaultIpcCommand.PreviewMirrorDrain)]
+    [InlineData(FluxVaultIpcCommand.RunMirrorDrain)]
     public void Repository_maintenance_request_serialization_preserves_command(FluxVaultIpcCommand command)
     {
         var request = new FluxVaultIpcRequest(command, null, null, null, null, MirrorNodeId: "mirror-1");
@@ -158,6 +160,20 @@ public sealed class IpcSerializationTests
 
         Assert.Equal(command, roundTrip.Command);
         Assert.Equal("mirror-1", roundTrip.MirrorNodeId);
+    }
+
+    [Fact]
+    public void Mirror_drain_request_helpers_preserve_selected_node()
+    {
+        var preview = FluxVaultIpcSerializer.DeserializeRequest(
+            FluxVaultIpcSerializer.SerializeRequest(FluxVaultIpcRequest.PreviewMirrorDrain("cloud")));
+        var run = FluxVaultIpcSerializer.DeserializeRequest(
+            FluxVaultIpcSerializer.SerializeRequest(FluxVaultIpcRequest.RunMirrorDrain("cloud")));
+
+        Assert.Equal(FluxVaultIpcCommand.PreviewMirrorDrain, preview.Command);
+        Assert.Equal("cloud", preview.MirrorNodeId);
+        Assert.Equal(FluxVaultIpcCommand.RunMirrorDrain, run.Command);
+        Assert.Equal("cloud", run.MirrorNodeId);
     }
 
     [Fact]
@@ -204,6 +220,32 @@ public sealed class IpcSerializationTests
         var action = Assert.Single(roundTrip.MirrorRebalance.Actions);
         Assert.Equal(MirrorRebalanceActionKind.CopyToMirror, action.Action);
         Assert.Equal("cloud", action.MirrorNodeId);
+    }
+
+    [Fact]
+    public void Mirror_drain_response_serialization_preserves_operation_and_selected_node()
+    {
+        var report = new MirrorRebalancePreviewReport(
+            CompletedAtUtc: new DateTimeOffset(2026, 5, 1, 10, 0, 0, TimeSpan.Zero),
+            HealthState: RepositoryHealthState.Warning,
+            CheckedChunkCount: 1,
+            ActionCount: 1,
+            EstimatedCopyBytes: 0,
+            EstimatedDeleteBytes: 512,
+            Nodes: [],
+            Actions: [],
+            Operation: MirrorRebalanceOperation.Drain,
+            IsPreview: true,
+            RequestedMirrorNodeId: "cloud");
+        var response = FluxVaultIpcResponse.WithMirrorRebalance(report);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
+
+        Assert.True(roundTrip.Success);
+        Assert.NotNull(roundTrip.MirrorRebalance);
+        Assert.Equal(MirrorRebalanceOperation.Drain, roundTrip.MirrorRebalance.Operation);
+        Assert.True(roundTrip.MirrorRebalance.IsPreview);
+        Assert.Equal("cloud", roundTrip.MirrorRebalance.RequestedMirrorNodeId);
     }
 
     [Fact]

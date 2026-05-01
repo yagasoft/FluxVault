@@ -163,7 +163,8 @@ watcher/debounce queue; the USN tile is the latest durable catch-up result.
 The Diagnostics workspace is the detailed health dashboard. It shows repository
 integrity, mirror state, restore rehearsal, USN state, and blocked-file rows, and
 keeps manual Run scrub, Preview mirror repair, Run mirror repair, Preview mirror
-placement, Run restore rehearsal, and Export diagnostics actions in one place.
+placement, Apply mirror placement, Run restore rehearsal, and Export
+diagnostics actions in one place.
 
 The Mirrors workspace owns mirror configuration. The Protection workspace shows
 a concise mirror summary and links into Mirrors; it no longer exposes the
@@ -172,11 +173,12 @@ state, optional capacity budget, and priority. The workspace saves the active
 placement profile (`FullCopy`, `CapacityBalanced`, or `Redundant`) and minimum
 mirror copy count. It also exposes a read-only placement preview and compact
 per-node placement status, plus an Apply placement action that executes the
-same copy/delete plan conservatively. Drain/remove remains later R2 work and is
-not surfaced. The workspace also shows compact per-node mirror repair status and
-allows selected-node preview/repair. Selected-node repair only repairs that
-mirror from the healthy primary repository; primary repair remains a repair-all
-operation.
+same copy/delete plan conservatively. Selected-node drain preview/run copies
+required artefacts to remaining mirrors before deleting drained chunk/metadata
+copies and disabling the node. The workspace also shows compact per-node mirror
+repair status and allows selected-node preview/repair. Selected-node repair
+only repairs that mirror from the healthy primary repository; primary repair
+remains a repair-all operation.
 
 The tray activity pane is positioned from the active monitor working area. The
 WinForms cursor and monitor coordinates are converted to WPF device-independent
@@ -329,6 +331,16 @@ primary repository using the same atomic write pattern, recomputes placement,
 then deletes extra non-target mirror artefacts only for chunks whose required
 target copies are satisfied and have no unresolved node issue.
 
+Mirror drain is selected-node maintenance, not the same operation as deleting a
+row from mirror configuration. Drain preview plans the copy and delete work
+needed to take one enabled mirror out of chunk/metadata placement. Drain
+execution copies required artefacts from the healthy primary repository to the
+remaining target mirrors first, recomputes state, and deletes the selected
+mirror's chunk/metadata artefacts only for chunks with no unresolved required
+target issue. On a healthy completion the selected mirror node is disabled in
+configuration. Manifests continue to follow normal manifest mirroring; drain
+does not act as a destructive repository purge.
+
 ## Planned multi-PC sync safety
 
 R3 sync publishes device identity, folder mapping metadata, manifests, and
@@ -352,8 +364,8 @@ R2 is the distributed mirror fabric. The first slice establishes `MirrorSet`
 full-copy nodes and warning semantics. The repair foundation adds explicit
 preview/run repair and per-node mirror health. The placement foundation adds
 real full-copy, capacity-balanced, and redundant placement for new commits plus
-read-only movement preview and safe rebalance execution for existing artefacts.
-Later R2 work adds drain/remove workflows. R3 is multi-PC sync over
+read-only movement preview, safe rebalance execution for existing artefacts,
+and selected-node drain/remove execution. R3 is multi-PC sync over
 repository-owned peer metadata. R4 introduces a WinFsp managed workspace for
 high-frequency large-file workloads. R5 introduces Cloud Files API / ProjFS
 sync-root integration. R4 and R5 are separate tracks because they change the

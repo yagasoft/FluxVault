@@ -95,4 +95,16 @@ public sealed record FluxVaultIpcRequest(
     {
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.RunMirrorRepair, null, null, null, null, mirrorNodeId);
     }
+
+    public static FluxVaultIpcRequest PreviewMirrorDrain(string mirrorNodeId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(mirrorNodeId);
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.PreviewMirrorDrain, null, null, null, null, mirrorNodeId);
+    }
+
+    public static FluxVaultIpcRequest RunMirrorDrain(string mirrorNodeId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(mirrorNodeId);
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.RunMirrorDrain, null, null, null, null, mirrorNodeId);
+    }
 }

@@ -4,7 +4,9 @@
 
 FluxVault protects large Windows workstation files with frequent, versioned
 backups while users continue working. The first cloud path is a local cloud sync
-folder; direct cloud adapters arrive later.
+folder; a disabled-by-default direct cloud adapter foundation now covers Azure
+Blob, S3-compatible storage, Dropbox, Google Drive, and OneDrive through
+credential-reference-only configuration and fake-client-tested contracts.
 
 ## MVP requirements
 

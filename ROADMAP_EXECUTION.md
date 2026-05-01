@@ -328,3 +328,28 @@ Assumptions:
 - This is a safe foundation slice only; repository artefacts remain plain until a later explicit encryption execution item.
 - Key material must not be stored in FluxVault configuration; configuration stores references to keys or credential locations only.
 - Fleet policy work is local schema/status only; no remote management plane, tenant registration, or device enrolment calls are made.
+
+## POST-ROADMAP-001: documentation consistency sweep
+
+Status: complete.
+
+Plan:
+
+- Re-scan the tracker, roadmap, README, and requirements after the full roadmap pass.
+- Add a docs consistency test for the stale requirements product-goal wording that still described direct cloud adapters as later work.
+- Update the requirements product goal so it reflects the implemented disabled-by-default R6 direct-cloud adapter foundation without claiming live credentials or cloud calls.
+
+Evidence:
+
+- Red evidence: targeted app docs test failed because `docs/requirements.md` still contained `direct cloud adapters arrive later`.
+- Green evidence: targeted app docs test passed after updating the requirements product goal.
+- Full verification: `dotnet test` passed across App/Core/Integration/Windows test projects after the docs correction.
+- Whitespace verification: `git diff --check` passed.
+
+Blockers:
+
+- None.
+
+Assumptions:
+
+- This item changes documentation consistency only. It does not change roadmap capability status, runtime behaviour, packaging, installer output, credentials, cloud calls, or machine-wide state.

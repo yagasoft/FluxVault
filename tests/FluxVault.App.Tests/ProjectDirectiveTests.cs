@@ -28,6 +28,17 @@ public sealed class ProjectDirectiveTests
         Assert.Contains("EnterpriseFleetConfiguration", text, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Requirements_product_goal_reflects_direct_cloud_adapter_foundation()
+    {
+        var path = Path.Combine(FindRepositoryRoot(), "docs", "requirements.md");
+
+        var text = File.ReadAllText(path);
+
+        Assert.DoesNotContain("direct cloud adapters arrive later", text, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("direct cloud adapter foundation", text, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

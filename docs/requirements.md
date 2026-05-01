@@ -252,10 +252,20 @@ folder; direct cloud adapters arrive later.
 - R6 status must expose configured adapter count, SDK/provider readiness, and a
   clear live-validation-deferred state until credentials and account access are
   explicitly provided.
+- Later security posture configuration must be typed, defaulted, and disabled
+  by default. It must store encryption key references only, reject obvious
+  inline key material, expose client-side encryption readiness through
+  status/Diagnostics, and keep repository artefacts plain until an explicit
+  encryption execution slice exists.
+- Later enterprise/fleet configuration must be typed, defaulted, and disabled
+  by default. It must store local policy source, assignments, and local status
+  records without contacting a remote management plane. Status/Diagnostics must
+  make remote fleet management deferral explicit.
 
 ## Explicit non-goals for v1
 
-- No client-side encryption.
+- No client-side encryption execution in v1; the LATER foundation stores only
+  references and status contracts.
 - No live direct cloud account upload or credential validation in the unsigned
   consumer foundation.
 - No support commitment for Windows 10, Windows Server, network shares, or NAS.

@@ -419,6 +419,18 @@ is deferred. FluxVault does not load credentials, contact cloud accounts, or
 upload repository artefacts through direct adapters without explicit future
 approval.
 
+The LATER security and fleet foundations are contract-only runtime surfaces.
+`SecurityPostureConfiguration` stores disabled-by-default client-side
+encryption policy, metadata mode, and key references that point to external key
+or credential locations without storing raw key material. `ContentEncryptionPlan`
+describes whether encryption is disabled, missing a key reference, or ready for
+a later execution path; it does not transform repository chunks. `EnterpriseFleetConfiguration`
+stores disabled-by-default local policy source, assignments, and local status
+records. `FleetPolicyDocument` and `FleetPolicyEvaluation` let tests and future
+services reason about policy compliance locally. Service status projects both
+surfaces into Diagnostics and explicitly reports encryption execution and
+remote management as deferred.
+
 ## Future release tracks
 
 R2 is the distributed mirror fabric. The first slice establishes `MirrorSet`

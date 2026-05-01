@@ -245,6 +245,22 @@ public sealed class MainWindowViewModelRefreshTests
                         IsEnabled: true,
                         "Ready; credentials not loaded during status refresh.")
                 ]),
+            SecurityPosture = new SecurityPostureRuntimeStatus(
+                IsClientSideEncryptionEnabled: true,
+                Algorithm: ClientSideEncryptionAlgorithm.Aes256Gcm,
+                MetadataMode: EncryptionMetadataMode.ProtectedMetadata,
+                ActiveKeyReferenceId: "repository-key",
+                KeyReferenceCount: 1,
+                Status: "Client-side encryption planned; execution deferred.",
+                IsEncryptionExecutionDeferred: true),
+            Fleet = new FleetRuntimeStatus(
+                IsEnabled: true,
+                Mode: FleetPolicyMode.LocalManaged,
+                PolicySource: "file://fleet-policy.json",
+                AssignmentCount: 1,
+                LocalStatusCount: 1,
+                Status: "Local fleet policy loaded; remote management deferred.",
+                IsRemoteManagementDeferred: true),
             Sync = new SyncRuntimeStatus(
                 "device-local",
                 [
@@ -306,6 +322,8 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Equal("Performance workspace: WinFsp prepared, driver check deferred", viewModel.PerformanceWorkspaceStatus);
         Assert.Equal("Shell integration: CloudFilesApi prepared, registration deferred", viewModel.ShellIntegrationStatus);
         Assert.Equal("Direct cloud: 1 enabled adapter(s), live validation deferred", viewModel.DirectCloudStatus);
+        Assert.Equal("Security: encryption planned, 1 key reference(s), execution deferred", viewModel.SecurityPostureStatus);
+        Assert.Equal("Fleet: LocalManaged enabled, 1 assignment(s), remote management deferred", viewModel.FleetPolicyStatus);
     }
 
     [Fact]
@@ -599,13 +617,51 @@ public sealed class MainWindowViewModelRefreshTests
                     CredentialReference: "fv-onedrive-oauth",
                     IsEnabled: true)
             ]);
+        var checkedAt = new DateTimeOffset(2026, 5, 1, 13, 0, 0, TimeSpan.Zero);
+        var expectedSecurity = new SecurityPostureConfiguration(
+            ClientSideEncryption: new ClientSideEncryptionConfiguration(
+                IsEnabled: true,
+                Algorithm: ClientSideEncryptionAlgorithm.Aes256Gcm,
+                MetadataMode: EncryptionMetadataMode.ProtectedMetadata,
+                ActiveKeyReferenceId: "repository-key",
+                KeyReferences:
+                [
+                    new EncryptionKeyReferenceConfiguration(
+                        Id: "repository-key",
+                        Provider: EncryptionKeyProvider.WindowsDpapi,
+                        ReferenceName: "FluxVault\\Keys\\Repository",
+                        Purpose: EncryptionKeyPurpose.RepositoryContent)
+                ]));
+        var expectedFleet = new EnterpriseFleetConfiguration(
+            IsEnabled: true,
+            Mode: FleetPolicyMode.LocalManaged,
+            PolicySource: "file://fleet-policy.json",
+            Assignments:
+            [
+                new FleetPolicyAssignmentConfiguration(
+                    Id: "assignment-1",
+                    PolicyId: "policy-1",
+                    TargetDeviceId: "device-local",
+                    AssignedAtUtc: checkedAt)
+            ],
+            LocalStatuses:
+            [
+                new FleetDeviceStatusConfiguration(
+                    DeviceId: "device-local",
+                    PolicyId: "policy-1",
+                    State: FleetPolicyComplianceState.Compliant,
+                    CheckedAtUtc: checkedAt,
+                    Detail: "Local policy accepted.")
+            ]);
         var status = StatusWithVersions() with
         {
             Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
             {
                 PerformanceWorkspace = expectedPerformance,
                 ShellIntegration = expectedShell,
-                DirectCloud = expectedDirectCloud
+                DirectCloud = expectedDirectCloud,
+                SecurityPosture = expectedSecurity,
+                Fleet = expectedFleet
             }
         };
         var client = new FakeFluxVaultServiceClient(status);
@@ -618,6 +674,8 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Equal(expectedPerformance, saved.PerformanceWorkspace);
         Assert.Equal(expectedShell, saved.ShellIntegration);
         Assert.Equal(expectedDirectCloud, saved.DirectCloud);
+        Assert.Equal(expectedSecurity, saved.SecurityPosture);
+        Assert.Equal(expectedFleet, saved.Fleet);
     }
 
     [Fact]

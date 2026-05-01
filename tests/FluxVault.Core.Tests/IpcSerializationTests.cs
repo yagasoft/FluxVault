@@ -190,7 +190,23 @@ public sealed class IpcSerializationTests
                         "Azure archive",
                         IsEnabled: true,
                         "Ready; credentials not loaded during status refresh.")
-                ]));
+                ]),
+            SecurityPosture: new SecurityPostureRuntimeStatus(
+                IsClientSideEncryptionEnabled: true,
+                Algorithm: ClientSideEncryptionAlgorithm.Aes256Gcm,
+                MetadataMode: EncryptionMetadataMode.ProtectedMetadata,
+                ActiveKeyReferenceId: "repository-key",
+                KeyReferenceCount: 1,
+                Status: "Client-side encryption planned; key reference configured.",
+                IsEncryptionExecutionDeferred: true),
+            Fleet: new FleetRuntimeStatus(
+                IsEnabled: true,
+                Mode: FleetPolicyMode.LocalManaged,
+                PolicySource: "file://fleet-policy.json",
+                AssignmentCount: 1,
+                LocalStatusCount: 1,
+                Status: "Local fleet policy loaded.",
+                IsRemoteManagementDeferred: true));
         var response = FluxVaultIpcResponse.WithStatus(status);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
@@ -228,6 +244,13 @@ public sealed class IpcSerializationTests
         Assert.True(roundTrip.Status.DirectCloud.IsLiveValidationDeferred);
         Assert.Equal(2, roundTrip.Status.DirectCloud.Providers.Count);
         Assert.Equal(DirectCloudProvider.AzureBlob, Assert.Single(roundTrip.Status.DirectCloud.Adapters).Provider);
+        Assert.NotNull(roundTrip.Status.SecurityPosture);
+        Assert.True(roundTrip.Status.SecurityPosture.IsClientSideEncryptionEnabled);
+        Assert.Equal(ClientSideEncryptionAlgorithm.Aes256Gcm, roundTrip.Status.SecurityPosture.Algorithm);
+        Assert.True(roundTrip.Status.SecurityPosture.IsEncryptionExecutionDeferred);
+        Assert.NotNull(roundTrip.Status.Fleet);
+        Assert.Equal(FleetPolicyMode.LocalManaged, roundTrip.Status.Fleet.Mode);
+        Assert.True(roundTrip.Status.Fleet.IsRemoteManagementDeferred);
     }
 
     [Fact]

@@ -18,7 +18,9 @@ public sealed record FluxVaultConfiguration(
     SyncConfiguration Sync = null!,
     PerformanceWorkspaceConfiguration PerformanceWorkspace = null!,
     ShellIntegrationConfiguration ShellIntegration = null!,
-    DirectCloudConfiguration DirectCloud = null!)
+    DirectCloudConfiguration DirectCloud = null!,
+    SecurityPostureConfiguration SecurityPosture = null!,
+    EnterpriseFleetConfiguration Fleet = null!)
 {
     public static FluxVaultConfiguration CreateDefault(string programDataPath)
     {
@@ -39,6 +41,8 @@ public sealed record FluxVaultConfiguration(
             Sync: SyncConfiguration.CreateDefault(programDataPath),
             PerformanceWorkspace: PerformanceWorkspaceConfiguration.CreateDefault(programDataPath),
             ShellIntegration: ShellIntegrationConfiguration.CreateDefault(programDataPath),
-            DirectCloud: DirectCloudConfiguration.CreateDefault());
+            DirectCloud: DirectCloudConfiguration.CreateDefault(),
+            SecurityPosture: SecurityPostureConfiguration.CreateDefault(),
+            Fleet: EnterpriseFleetConfiguration.CreateDefault());
     }
 }

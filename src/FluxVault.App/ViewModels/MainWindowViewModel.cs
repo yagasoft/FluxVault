@@ -36,6 +36,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private PerformanceWorkspaceConfiguration currentPerformanceWorkspace = PerformanceWorkspaceConfiguration.CreateDefault(AppContext.BaseDirectory);
     private ShellIntegrationConfiguration currentShellIntegration = ShellIntegrationConfiguration.CreateDefault(AppContext.BaseDirectory);
     private DirectCloudConfiguration currentDirectCloud = DirectCloudConfiguration.CreateDefault();
+    private SecurityPostureConfiguration currentSecurityPosture = SecurityPostureConfiguration.CreateDefault();
+    private EnterpriseFleetConfiguration currentFleet = EnterpriseFleetConfiguration.CreateDefault();
     private IReadOnlyList<ProtectionExclusionRule> currentExclusionRules = [];
     private RepositoryScrubReport? currentScrubReport;
     private RestoreRehearsalReport? currentRestoreRehearsalReport;
@@ -120,6 +122,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string directCloudStatus = "Direct cloud: waiting";
+
+    [ObservableProperty]
+    private string securityPostureStatus = "Security: waiting";
+
+    [ObservableProperty]
+    private string fleetPolicyStatus = "Fleet: waiting";
 
     [ObservableProperty]
     private string usnHealth = "USN: checking";
@@ -988,6 +996,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     ?? ShellIntegrationConfiguration.CreateDefault(AppContext.BaseDirectory);
                 currentDirectCloud = status.Configuration.DirectCloud
                     ?? DirectCloudConfiguration.CreateDefault();
+                currentSecurityPosture = status.Configuration.SecurityPosture
+                    ?? SecurityPostureConfiguration.CreateDefault();
+                currentFleet = status.Configuration.Fleet
+                    ?? EnterpriseFleetConfiguration.CreateDefault();
                 currentExclusionRules = status.Configuration.ExclusionRules ?? [];
                 FileBrowser.DefaultWorkloadPreset = currentWorkloadPolicy.DefaultPreset;
                 var selectionRules = status.Configuration.SelectionRules;
@@ -1024,6 +1036,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ApplyPerformanceWorkspaceStatus(status.PerformanceWorkspace);
             ApplyShellIntegrationStatus(status.ShellIntegration);
             ApplyDirectCloudStatus(status.DirectCloud);
+            ApplySecurityPostureStatus(status.SecurityPosture);
+            ApplyFleetStatus(status.Fleet);
             ApplyRepositoryHealth(status.RepositoryHealth);
             WatchedFolders.Clear();
             foreach (var folder in status.Configuration.WatchedFolders)
@@ -1108,7 +1122,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile, MinimumMirrorCopies)),
             PerformanceWorkspace: currentPerformanceWorkspace,
             ShellIntegration: currentShellIntegration,
-            DirectCloud: currentDirectCloud);
+            DirectCloud: currentDirectCloud,
+            SecurityPosture: currentSecurityPosture,
+            Fleet: currentFleet);
     }
 
     private VersionRow? FindRestoreHintVersion()
@@ -1337,6 +1353,32 @@ public sealed partial class MainWindowViewModel : ObservableObject
         var enabled = status.Adapters.Count(adapter => adapter.IsEnabled);
         var validation = status.IsLiveValidationDeferred ? "live validation deferred" : status.Status;
         DirectCloudStatus = $"Direct cloud: {enabled} enabled adapter(s), {validation}";
+    }
+
+    private void ApplySecurityPostureStatus(SecurityPostureRuntimeStatus? status)
+    {
+        if (status is null)
+        {
+            SecurityPostureStatus = "Security: waiting";
+            return;
+        }
+
+        var state = status.IsClientSideEncryptionEnabled ? "encryption planned" : "encryption disabled";
+        var execution = status.IsEncryptionExecutionDeferred ? "execution deferred" : status.Status;
+        SecurityPostureStatus = $"Security: {state}, {status.KeyReferenceCount} key reference(s), {execution}";
+    }
+
+    private void ApplyFleetStatus(FleetRuntimeStatus? status)
+    {
+        if (status is null)
+        {
+            FleetPolicyStatus = "Fleet: waiting";
+            return;
+        }
+
+        var state = status.IsEnabled ? "enabled" : "disabled";
+        var management = status.IsRemoteManagementDeferred ? "remote management deferred" : status.Status;
+        FleetPolicyStatus = $"Fleet: {status.Mode} {state}, {status.AssignmentCount} assignment(s), {management}";
     }
 
     private static string BuildMirrorHealth(IReadOnlyList<string> warnings, FluxVaultConfiguration configuration)

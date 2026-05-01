@@ -21,7 +21,9 @@ public sealed record FluxVaultServiceStatus(
     SyncRuntimeStatus? Sync = null,
     PerformanceWorkspaceRuntimeStatus? PerformanceWorkspace = null,
     ShellIntegrationRuntimeStatus? ShellIntegration = null,
-    DirectCloudRuntimeStatus? DirectCloud = null);
+    DirectCloudRuntimeStatus? DirectCloud = null,
+    SecurityPostureRuntimeStatus? SecurityPosture = null,
+    FleetRuntimeStatus? Fleet = null);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,
@@ -95,3 +97,21 @@ public sealed record DirectCloudAdapterRuntimeStatus(
     string DisplayName,
     bool IsEnabled,
     string Status);
+
+public sealed record SecurityPostureRuntimeStatus(
+    bool IsClientSideEncryptionEnabled,
+    ClientSideEncryptionAlgorithm Algorithm,
+    EncryptionMetadataMode MetadataMode,
+    string? ActiveKeyReferenceId,
+    int KeyReferenceCount,
+    string Status,
+    bool IsEncryptionExecutionDeferred);
+
+public sealed record FleetRuntimeStatus(
+    bool IsEnabled,
+    FleetPolicyMode Mode,
+    string? PolicySource,
+    int AssignmentCount,
+    int LocalStatusCount,
+    string Status,
+    bool IsRemoteManagementDeferred);

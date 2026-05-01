@@ -81,6 +81,8 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         ValidatePerformanceWorkspace(configuration.PerformanceWorkspace);
         ValidateShellIntegration(configuration.ShellIntegration);
         ValidateDirectCloud(configuration.DirectCloud);
+        ValidateSecurityPosture(configuration.SecurityPosture);
+        ValidateFleet(configuration.Fleet);
     }
 
     private FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
@@ -108,6 +110,8 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             PerformanceWorkspace = (configuration.PerformanceWorkspace ?? PerformanceWorkspaceConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
             ShellIntegration = (configuration.ShellIntegration ?? ShellIntegrationConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
             DirectCloud = (configuration.DirectCloud ?? DirectCloudConfiguration.CreateDefault()).Normalise(),
+            SecurityPosture = (configuration.SecurityPosture ?? SecurityPostureConfiguration.CreateDefault()).Normalise(),
+            Fleet = (configuration.Fleet ?? EnterpriseFleetConfiguration.CreateDefault()).Normalise(),
             SelectionRules = selectionRules.Select(NormaliseSelectionRule).ToArray(),
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0
@@ -189,6 +193,92 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
                 throw new InvalidDataException($"Credential reference is required for enabled direct cloud adapter {adapter.DisplayName}.");
             }
         }
+    }
+
+    private static void ValidateSecurityPosture(SecurityPostureConfiguration configuration)
+    {
+        var encryption = configuration.ClientSideEncryption;
+        if (encryption.IsEnabled)
+        {
+            if (string.IsNullOrWhiteSpace(encryption.ActiveKeyReferenceId))
+            {
+                throw new InvalidDataException("Active encryption key reference is required when client-side encryption is enabled.");
+            }
+
+            if (encryption.KeyReferences.Count == 0)
+            {
+                throw new InvalidDataException("At least one encryption key reference is required when client-side encryption is enabled.");
+            }
+        }
+
+        var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var reference in encryption.KeyReferences)
+        {
+            if (string.IsNullOrWhiteSpace(reference.Id))
+            {
+                throw new InvalidDataException("Encryption key reference id is required.");
+            }
+
+            if (!ids.Add(reference.Id))
+            {
+                throw new InvalidDataException($"Encryption key reference id is duplicated: {reference.Id}.");
+            }
+
+            if (string.IsNullOrWhiteSpace(reference.ReferenceName))
+            {
+                throw new InvalidDataException($"Encryption key reference name is required for {reference.Id}.");
+            }
+
+            if (LooksLikeInlineSecret(reference.ReferenceName))
+            {
+                throw new InvalidDataException($"Encryption key reference {reference.Id} appears to contain inline key material.");
+            }
+        }
+
+        if (encryption.IsEnabled && !ids.Contains(encryption.ActiveKeyReferenceId!))
+        {
+            throw new InvalidDataException($"Active encryption key reference was not found: {encryption.ActiveKeyReferenceId}.");
+        }
+    }
+
+    private static void ValidateFleet(EnterpriseFleetConfiguration configuration)
+    {
+        if (configuration.IsEnabled && string.IsNullOrWhiteSpace(configuration.PolicySource))
+        {
+            throw new InvalidDataException("Fleet policy source is required when fleet policy is enabled.");
+        }
+
+        var assignmentIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var assignment in configuration.Assignments)
+        {
+            if (string.IsNullOrWhiteSpace(assignment.Id)
+                || string.IsNullOrWhiteSpace(assignment.PolicyId)
+                || string.IsNullOrWhiteSpace(assignment.TargetDeviceId))
+            {
+                throw new InvalidDataException("Fleet policy assignment id, policy id, and target device id are required.");
+            }
+
+            if (!assignmentIds.Add(assignment.Id))
+            {
+                throw new InvalidDataException($"Fleet policy assignment id is duplicated: {assignment.Id}.");
+            }
+        }
+
+        foreach (var status in configuration.LocalStatuses)
+        {
+            if (string.IsNullOrWhiteSpace(status.DeviceId) || string.IsNullOrWhiteSpace(status.PolicyId))
+            {
+                throw new InvalidDataException("Fleet status device id and policy id are required.");
+            }
+        }
+    }
+
+    private static bool LooksLikeInlineSecret(string value)
+    {
+        return value.Contains("BEGIN ", StringComparison.OrdinalIgnoreCase)
+               || value.Contains("PRIVATE KEY", StringComparison.OrdinalIgnoreCase)
+               || value.Contains('\n')
+               || value.Contains('\r');
     }
 
     private static ProtectionSelectionRule NormaliseSelectionRule(ProtectionSelectionRule rule)

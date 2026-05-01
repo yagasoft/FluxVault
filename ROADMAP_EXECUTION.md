@@ -294,3 +294,37 @@ Assumptions:
 
 - R6-001 is a safe direct-adapter foundation: SDK packages and client-type bindings are compile-checked, fake clients exercise behaviour, and no credentials or live provider calls are used.
 - Provider credentials are represented as references only; no secret values are stored in configuration or tests.
+
+## LATER-001: client-side encryption and enterprise/fleet foundations
+
+Status: complete.
+
+Plan:
+
+- Add disabled-by-default typed security-posture configuration with client-side encryption mode, algorithm, metadata mode, active key-reference id, and key-reference records that carry references only, not raw key material.
+- Add disabled-by-default typed enterprise/fleet configuration with local policy mode, policy source, policy assignments, and local fleet status records.
+- Add pure security/fleet contract helpers that can plan encryption readiness and evaluate a local fleet policy document without touching repository payloads, credentials, remote services, or machine-wide state.
+- Expose security posture and fleet policy state through IPC/service status and Diagnostics.
+- Preserve non-editable security/fleet configuration during dashboard save/discard flows.
+- Update README, roadmap docs, security docs, testing strategy, and tracker for `LATER-001`, clearly noting that encryption execution, key provider integration, and remote enterprise control remain future implementation.
+
+Evidence:
+
+- Baseline evidence: `dotnet test` passed before LATER-001 changes across App/Core/Integration/Windows test projects: 118 App, 145 Core, 84 Integration, 17 Windows. Restore/test used NuGet package/cache/scratch paths under the LATER worktree.
+- Red evidence: targeted core tests failed because `FluxVault.Abstractions.Security`, `FluxVault.Core.Security`, security/fleet configuration, security/fleet IPC status, and related contracts did not exist.
+- Red evidence: targeted app/docs tests failed because `LATER-001` was still `Deferred` in `docs/roadmap-tracker.md`.
+- Green targeted evidence: core configuration, IPC, encryption planning, and local fleet policy tests passed, 26 total.
+- Green targeted evidence: integration service status test passed, 1 total.
+- Green targeted evidence: app Diagnostics, dashboard-save preservation, XAML, and tracker tests passed, 4 total.
+- Full verification: `dotnet test` passed across App/Core/Integration/Windows test projects: 119 App, 151 Core, 85 Integration, 17 Windows. Restore/test used NuGet package/cache/scratch paths under the LATER worktree.
+- Whitespace verification: `git diff --check` passed. Git reported LF-to-CRLF working-copy warnings only.
+
+Blockers:
+
+- None.
+
+Assumptions:
+
+- This is a safe foundation slice only; repository artefacts remain plain until a later explicit encryption execution item.
+- Key material must not be stored in FluxVault configuration; configuration stores references to keys or credential locations only.
+- Fleet policy work is local schema/status only; no remote management plane, tenant registration, or device enrolment calls are made.

@@ -254,8 +254,14 @@ on a sync folder.
 
 ## Later be-all-end-all features
 
-- Client-side encryption with device recovery keys.
-- Enterprise policy templates and fleet monitoring.
+- Implemented foundation: disabled-by-default client-side encryption
+  configuration, key-reference records, encryption planning contracts, and
+  Diagnostics security status. Future work performs repository encryption,
+  recovery-key flows, and key-provider integration.
+- Implemented foundation: disabled-by-default enterprise/fleet policy
+  configuration, local policy/status contracts, and Diagnostics fleet status.
+  Future work adds remote policy distribution, device enrolment, and fleet
+  monitoring.
 - Per-application optimisers.
 - Timeline restore with calendar/search view.
 - `What changed?` chunk-level version analytics.

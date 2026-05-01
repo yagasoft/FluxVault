@@ -386,6 +386,26 @@ public sealed class ConfigurationStoreTests
     }
 
     [Fact]
+    public async Task Default_configuration_has_disabled_security_and_fleet_foundations()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+
+        var configuration = await store.LoadAsync();
+
+        Assert.False(configuration.SecurityPosture.ClientSideEncryption.IsEnabled);
+        Assert.Equal(ClientSideEncryptionAlgorithm.Aes256Gcm, configuration.SecurityPosture.ClientSideEncryption.Algorithm);
+        Assert.Equal(EncryptionMetadataMode.PlainMetadata, configuration.SecurityPosture.ClientSideEncryption.MetadataMode);
+        Assert.Null(configuration.SecurityPosture.ClientSideEncryption.ActiveKeyReferenceId);
+        Assert.Empty(configuration.SecurityPosture.ClientSideEncryption.KeyReferences);
+        Assert.False(configuration.Fleet.IsEnabled);
+        Assert.Equal(FleetPolicyMode.LocalOnly, configuration.Fleet.Mode);
+        Assert.Null(configuration.Fleet.PolicySource);
+        Assert.Empty(configuration.Fleet.Assignments);
+        Assert.Empty(configuration.Fleet.LocalStatuses);
+    }
+
+    [Fact]
     public async Task Save_and_load_round_trips_winfsp_performance_workspace()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -456,6 +476,94 @@ public sealed class ConfigurationStoreTests
         Assert.True(actual.DirectCloud.BlockOnMeteredNetwork);
         Assert.Equal(2_000_000, actual.DirectCloud.BandwidthLimitBytesPerSecond);
         Assert.Equal(expected.DirectCloud.Adapters, actual.DirectCloud.Adapters);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_security_and_fleet_foundations()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var now = new DateTimeOffset(2026, 5, 1, 10, 0, 0, TimeSpan.Zero);
+        var expected = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            SecurityPosture = new SecurityPostureConfiguration(
+                ClientSideEncryption: new ClientSideEncryptionConfiguration(
+                    IsEnabled: true,
+                    Algorithm: ClientSideEncryptionAlgorithm.Aes256Gcm,
+                    MetadataMode: EncryptionMetadataMode.ProtectedMetadata,
+                    ActiveKeyReferenceId: "local-key",
+                    KeyReferences:
+                    [
+                        new EncryptionKeyReferenceConfiguration(
+                            Id: "local-key",
+                            Provider: EncryptionKeyProvider.WindowsDpapi,
+                            ReferenceName: "FluxVault\\Keys\\Local",
+                            Purpose: EncryptionKeyPurpose.RepositoryContent)
+                    ])),
+            Fleet = new EnterpriseFleetConfiguration(
+                IsEnabled: true,
+                Mode: FleetPolicyMode.LocalManaged,
+                PolicySource: "file://fleet-policy.json",
+                Assignments:
+                [
+                    new FleetPolicyAssignmentConfiguration(
+                        Id: "default",
+                        PolicyId: "policy-2026-05",
+                        TargetDeviceId: "device-local",
+                        AssignedAtUtc: now)
+                ],
+                LocalStatuses:
+                [
+                    new FleetDeviceStatusConfiguration(
+                        DeviceId: "device-local",
+                        PolicyId: "policy-2026-05",
+                        State: FleetPolicyComplianceState.Compliant,
+                        CheckedAtUtc: now,
+                        Detail: "Local policy accepted.")
+                ])
+        };
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+        Assert.Equal(expected.SecurityPosture.ClientSideEncryption.IsEnabled, actual.SecurityPosture.ClientSideEncryption.IsEnabled);
+        Assert.Equal(expected.SecurityPosture.ClientSideEncryption.Algorithm, actual.SecurityPosture.ClientSideEncryption.Algorithm);
+        Assert.Equal(expected.SecurityPosture.ClientSideEncryption.MetadataMode, actual.SecurityPosture.ClientSideEncryption.MetadataMode);
+        Assert.Equal(expected.SecurityPosture.ClientSideEncryption.ActiveKeyReferenceId, actual.SecurityPosture.ClientSideEncryption.ActiveKeyReferenceId);
+        Assert.Equal(
+            expected.SecurityPosture.ClientSideEncryption.KeyReferences,
+            actual.SecurityPosture.ClientSideEncryption.KeyReferences);
+        Assert.Equal(expected.Fleet.IsEnabled, actual.Fleet.IsEnabled);
+        Assert.Equal(expected.Fleet.Mode, actual.Fleet.Mode);
+        Assert.Equal(expected.Fleet.PolicySource, actual.Fleet.PolicySource);
+        Assert.Equal(expected.Fleet.Assignments, actual.Fleet.Assignments);
+        Assert.Equal(expected.Fleet.LocalStatuses, actual.Fleet.LocalStatuses);
+    }
+
+    [Fact]
+    public async Task Save_rejects_inline_encryption_key_material()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            SecurityPosture = new SecurityPostureConfiguration(
+                ClientSideEncryption: new ClientSideEncryptionConfiguration(
+                    IsEnabled: true,
+                    ActiveKeyReferenceId: "bad-key",
+                    KeyReferences:
+                    [
+                        new EncryptionKeyReferenceConfiguration(
+                            Id: "bad-key",
+                            Provider: EncryptionKeyProvider.ExternalSecret,
+                            ReferenceName: "-----BEGIN PRIVATE KEY-----abc",
+                            Purpose: EncryptionKeyPurpose.RepositoryContent)
+                    ]))
+        };
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => store.SaveAsync(configuration));
+        Assert.Contains("key reference", error.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("inline", error.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

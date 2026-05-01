@@ -91,6 +91,10 @@
   repository/protection summary replacement, workspace navigation, per-node
   repair status/actions, placement controls/status, preview/apply action, and
   selected-node drain controls.
+- Security/fleet foundation tests for disabled defaults, configuration
+  round-trip, rejection of inline encryption key material, key-reference-only
+  encryption planning, local fleet policy evaluation, IPC serialisation, and
+  Diagnostics bindings.
 
 ## Integration tests
 
@@ -161,6 +165,11 @@
   calls; service status and IPC expose provider readiness with live validation
   deferred; Diagnostics shows the direct-cloud status; and package tests prove
   no credential material is declared in project files.
+- Security/fleet foundation: service status exposes client-side encryption
+  readiness and local fleet-policy state with encryption execution and remote
+  management explicitly deferred; dashboard saves preserve non-editable
+  security/fleet configuration; and tests avoid key material, credentials,
+  remote management calls, or repository encryption mutation.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

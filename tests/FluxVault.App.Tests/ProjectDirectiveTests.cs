@@ -16,6 +16,18 @@ public sealed class ProjectDirectiveTests
         Assert.Contains("dormant", text, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void Roadmap_tracker_marks_later_security_and_fleet_foundation_as_implemented()
+    {
+        var path = Path.Combine(FindRepositoryRoot(), "docs", "roadmap-tracker.md");
+
+        var text = File.ReadAllText(path);
+
+        Assert.Contains("| LATER-001 | Later | Client-side encryption and enterprise/fleet features | Implemented |", text, StringComparison.Ordinal);
+        Assert.Contains("SecurityPostureConfiguration", text, StringComparison.Ordinal);
+        Assert.Contains("EnterpriseFleetConfiguration", text, StringComparison.Ordinal);
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

@@ -877,6 +877,68 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Status_exposes_security_and_fleet_foundations_without_runtime_execution()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var checkedAt = new DateTimeOffset(2026, 5, 1, 12, 0, 0, TimeSpan.Zero);
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            SecurityPosture = new SecurityPostureConfiguration(
+                ClientSideEncryption: new ClientSideEncryptionConfiguration(
+                    IsEnabled: true,
+                    Algorithm: ClientSideEncryptionAlgorithm.Aes256Gcm,
+                    MetadataMode: EncryptionMetadataMode.ProtectedMetadata,
+                    ActiveKeyReferenceId: "repository-key",
+                    KeyReferences:
+                    [
+                        new EncryptionKeyReferenceConfiguration(
+                            Id: "repository-key",
+                            Provider: EncryptionKeyProvider.WindowsDpapi,
+                            ReferenceName: "FluxVault\\Keys\\Repository",
+                            Purpose: EncryptionKeyPurpose.RepositoryContent)
+                    ])),
+            Fleet = new EnterpriseFleetConfiguration(
+                IsEnabled: true,
+                Mode: FleetPolicyMode.LocalManaged,
+                PolicySource: "file://fleet-policy.json",
+                Assignments:
+                [
+                    new FleetPolicyAssignmentConfiguration(
+                        Id: "assignment-1",
+                        PolicyId: "policy-1",
+                        TargetDeviceId: "device-local",
+                        AssignedAtUtc: checkedAt)
+                ],
+                LocalStatuses:
+                [
+                    new FleetDeviceStatusConfiguration(
+                        DeviceId: "device-local",
+                        PolicyId: "policy-1",
+                        State: FleetPolicyComplianceState.Compliant,
+                        CheckedAtUtc: checkedAt,
+                        Detail: "Local policy accepted.")
+                ])
+        };
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var status = await operations.GetStatusAsync();
+
+        Assert.NotNull(status.SecurityPosture);
+        Assert.True(status.SecurityPosture.IsClientSideEncryptionEnabled);
+        Assert.True(status.SecurityPosture.IsEncryptionExecutionDeferred);
+        Assert.Contains("deferred", status.SecurityPosture.Status, StringComparison.OrdinalIgnoreCase);
+        Assert.NotNull(status.Fleet);
+        Assert.True(status.Fleet.IsEnabled);
+        Assert.Equal(FleetPolicyMode.LocalManaged, status.Fleet.Mode);
+        Assert.True(status.Fleet.IsRemoteManagementDeferred);
+        Assert.Equal(1, status.Fleet.AssignmentCount);
+        Assert.Equal(1, status.Fleet.LocalStatusCount);
+    }
+
+    [Fact]
     public async Task File_browser_recursive_folder_selection_backs_up_nested_files()
     {
         using var workspace = TemporaryWorkspace.Create();

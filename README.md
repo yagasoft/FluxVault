@@ -341,6 +341,13 @@ SDK/provider readiness with live validation deferred, and fake-client tests
 exercise the provider-neutral object adapter contract. No credentials are used
 and no live cloud account calls run in tests or normal app flows.
 
+FluxVault now has safe foundations for later client-side encryption and
+enterprise/fleet policy. Configuration can store encryption key references
+without inline key material, security/fleet status appears in Diagnostics, and
+pure contract tests cover encryption planning and local fleet policy
+evaluation. Repository artefacts remain plain until a future encryption
+execution slice.
+
 Open **Options** to review retention, scheduled maintenance, and the default
 workload preset assigned to newly protected folders/files. The MVP
 retention defaults keep every version for 24 hours, keep one version per hour

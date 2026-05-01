@@ -443,7 +443,9 @@ public sealed class FluxVaultOperations(
             Sync: await BuildSyncStatusAsync(configuration, cancellationToken).ConfigureAwait(false),
             PerformanceWorkspace: BuildPerformanceWorkspaceStatus(configuration.PerformanceWorkspace),
             ShellIntegration: BuildShellIntegrationStatus(configuration.ShellIntegration),
-            DirectCloud: BuildDirectCloudStatus(configuration.DirectCloud));
+            DirectCloud: BuildDirectCloudStatus(configuration.DirectCloud),
+            SecurityPosture: BuildSecurityPostureStatus(configuration.SecurityPosture),
+            Fleet: BuildFleetStatus(configuration.Fleet));
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -805,6 +807,38 @@ public sealed class FluxVaultOperations(
             IsLiveValidationDeferred: true,
             providers,
             adapters);
+    }
+
+    private static SecurityPostureRuntimeStatus BuildSecurityPostureStatus(SecurityPostureConfiguration configuration)
+    {
+        var encryption = configuration.Normalise().ClientSideEncryption;
+        var status = encryption.IsEnabled
+            ? "Client-side encryption planned; execution deferred."
+            : "Client-side encryption disabled; repository artefacts remain plain.";
+        return new SecurityPostureRuntimeStatus(
+            encryption.IsEnabled,
+            encryption.Algorithm,
+            encryption.MetadataMode,
+            encryption.ActiveKeyReferenceId,
+            encryption.KeyReferences.Count,
+            status,
+            IsEncryptionExecutionDeferred: true);
+    }
+
+    private static FleetRuntimeStatus BuildFleetStatus(EnterpriseFleetConfiguration configuration)
+    {
+        var normalised = configuration.Normalise();
+        var status = normalised.IsEnabled
+            ? "Local fleet policy configured; remote management deferred."
+            : "Fleet policy disabled; local-only operation.";
+        return new FleetRuntimeStatus(
+            normalised.IsEnabled,
+            normalised.Mode,
+            normalised.PolicySource,
+            normalised.Assignments.Count,
+            normalised.LocalStatuses.Count,
+            status,
+            IsRemoteManagementDeferred: true);
     }
 
     private static string FormatBytes(long bytes)

@@ -303,6 +303,34 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Mirror_rebalance_run_command_updates_health_and_node_placement_status()
+    {
+        var status = StatusWithVersions() with
+        {
+            Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+            {
+                MirrorSet = new MirrorSetConfiguration(
+                [
+                    new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true)
+                ])
+            }
+        };
+        var client = new FakeFluxVaultServiceClient(status)
+        {
+            MirrorRebalanceResponse = MirrorRebalanceHealthyResponse("cloud", "Cloud copy", @"D:\Mirrors\Cloud")
+        };
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+
+        await viewModel.RunMirrorRebalanceCommand.ExecuteAsync(null);
+
+        Assert.Contains(FluxVaultIpcCommand.RunMirrorRebalance, client.Commands);
+        var mirror = Assert.Single(viewModel.MirrorNodes);
+        Assert.Contains("Healthy", mirror.PlacementStatus);
+        Assert.Contains("Mirror placement apply completed", viewModel.RepositoryHealthStatus);
+    }
+
+    [Fact]
     public async Task Save_configuration_persists_mirror_set_nodes_and_clears_legacy_mirror_path()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions());
@@ -1110,6 +1138,33 @@ public sealed class MainWindowViewModelRefreshTests
             ]);
     }
 
+    private static FluxVaultIpcResponse MirrorRebalanceHealthyResponse(
+        string nodeId,
+        string nodeLabel,
+        string nodePath)
+    {
+        return FluxVaultIpcResponse.WithMirrorRebalance(new MirrorRebalancePreviewReport(
+            DateTimeOffset.UtcNow,
+            RepositoryHealthState.Healthy,
+            CheckedChunkCount: 1,
+            ActionCount: 0,
+            EstimatedCopyBytes: 0,
+            EstimatedDeleteBytes: 0,
+            Nodes:
+            [
+                new MirrorNodeRebalancePreview(
+                    nodeId,
+                    nodeLabel,
+                    nodePath,
+                    IsEnabled: true,
+                    RepositoryHealthState.Healthy,
+                    ActionCount: 0,
+                    EstimatedCopyBytes: 0,
+                    EstimatedDeleteBytes: 0)
+            ],
+            Actions: []));
+    }
+
     private sealed class FakeFluxVaultServiceClient(params FluxVaultServiceStatus[] statuses) : IFluxVaultServiceClient
     {
         private readonly Queue<FluxVaultServiceStatus> statuses = new(statuses);
@@ -1183,7 +1238,7 @@ public sealed class MainWindowViewModelRefreshTests
                 return Task.FromResult(MirrorRepairResponse);
             }
 
-            if (request.Command == FluxVaultIpcCommand.PreviewMirrorRebalance)
+            if (request.Command is FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.RunMirrorRebalance)
             {
                 return Task.FromResult(MirrorRebalanceResponse);
             }

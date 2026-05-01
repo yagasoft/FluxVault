@@ -853,6 +853,40 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    private async Task RunMirrorRebalanceAsync()
+    {
+        try
+        {
+            var response = await client.SendAsync(new FluxVaultIpcRequest(
+                FluxVaultIpcCommand.RunMirrorRebalance,
+                null,
+                null,
+                null,
+                null)).ConfigureAwait(true);
+            if (!response.Success || response.MirrorRebalance is null)
+            {
+                RepositoryHealthStatus = $"Mirror placement apply failed: {response.ErrorMessage ?? "no placement report returned"}";
+                return;
+            }
+
+            currentMirrorRebalanceReport = response.MirrorRebalance;
+            ApplyRepositoryHealth(new RepositoryHealthSnapshot(
+                DateTimeOffset.UtcNow,
+                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport?.HealthState, currentMirrorRebalanceReport.HealthState),
+                "Mirror placement apply completed.",
+                currentScrubReport,
+                currentRestoreRehearsalReport,
+                currentMirrorRepairReport,
+                currentMirrorRebalanceReport));
+            RepositoryHealthStatus = $"Mirror placement apply completed - {response.MirrorRebalance.HealthState}";
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            RepositoryHealthStatus = $"Mirror placement apply failed: {ex.Message}";
+        }
+    }
+
     private void ApplyStatus(FluxVaultServiceStatus status, bool preserveLocalConfiguration)
     {
         var selectedVersionId = SelectedVersion?.VersionId;

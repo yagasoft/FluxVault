@@ -375,6 +375,111 @@ public sealed class RepositoryMaintenanceTests
         AssertNoTemporaryFiles(workspace.RootPath);
     }
 
+    [Fact]
+    public async Task Mirror_rebalance_run_copies_missing_required_copies_and_deletes_extra_non_targets()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var fullCopyRepository = CreateRepository(workspace.RepositoryPath, MirrorSet(firstMirror, secondMirror));
+        var commit = await fullCopyRepository.CommitAsync(NewRequest("rebalance execution content"));
+        var chunk = Assert.Single(commit.Manifest.Chunks);
+        var placementMirrorSet = MirrorSet(
+            new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced),
+            firstMirror,
+            secondMirror);
+        var targetNodeId = new MirrorPlacementPlanner()
+            .SelectChunkTargets(chunk.Digest, chunk.StoredLength, placementMirrorSet, new Dictionary<string, long>())
+            .TargetNodeIds
+            .Single();
+        var targetPath = targetNodeId == "mirror" ? firstMirror : secondMirror;
+        var extraPath = targetNodeId == "mirror" ? secondMirror : firstMirror;
+        File.Delete(ChunkPath(targetPath, chunk.Digest));
+        File.Delete(MetadataPath(targetPath, chunk.Digest));
+        var placementRepository = CreateRepository(workspace.RepositoryPath, placementMirrorSet);
+
+        var report = await placementRepository.RunMirrorRebalanceAsync();
+
+        Assert.Equal(RepositoryHealthState.Healthy, report.HealthState);
+        Assert.Empty(report.Actions);
+        Assert.True(File.Exists(ChunkPath(targetPath, chunk.Digest)));
+        Assert.True(File.Exists(MetadataPath(targetPath, chunk.Digest)));
+        Assert.False(File.Exists(ChunkPath(extraPath, chunk.Digest)));
+        Assert.False(File.Exists(MetadataPath(extraPath, chunk.Digest)));
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
+    [Fact]
+    public async Task Mirror_rebalance_run_preserves_extra_non_targets_when_required_target_is_unavailable()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var fullCopyRepository = CreateRepository(workspace.RepositoryPath, MirrorSet(firstMirror, secondMirror));
+        var commit = await fullCopyRepository.CommitAsync(NewRequest("rebalance unavailable content"));
+        var chunk = Assert.Single(commit.Manifest.Chunks);
+        var placementMirrorSet = MirrorSet(
+            new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced),
+            firstMirror,
+            secondMirror);
+        var targetNodeId = new MirrorPlacementPlanner()
+            .SelectChunkTargets(chunk.Digest, chunk.StoredLength, placementMirrorSet, new Dictionary<string, long>())
+            .TargetNodeIds
+            .Single();
+        var targetPath = targetNodeId == "mirror" ? firstMirror : secondMirror;
+        var extraPath = targetNodeId == "mirror" ? secondMirror : firstMirror;
+        Directory.Delete(targetPath, recursive: true);
+        var placementRepository = CreateRepository(workspace.RepositoryPath, placementMirrorSet);
+
+        var report = await placementRepository.RunMirrorRebalanceAsync();
+
+        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
+        Assert.Contains(report.Actions, action =>
+            action.MirrorNodeId == targetNodeId
+            && action.Action == MirrorRebalanceActionKind.Unresolved);
+        Assert.True(File.Exists(ChunkPath(extraPath, chunk.Digest)));
+        Assert.True(File.Exists(MetadataPath(extraPath, chunk.Digest)));
+        Assert.False(Directory.Exists(targetPath));
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
+    [Fact]
+    public async Task Mirror_rebalance_run_reports_missing_primary_and_preserves_mirror_copies()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var fullCopyRepository = CreateRepository(workspace.RepositoryPath, MirrorSet(firstMirror, secondMirror));
+        var commit = await fullCopyRepository.CommitAsync(NewRequest("rebalance missing primary content"));
+        var chunk = Assert.Single(commit.Manifest.Chunks);
+        var placementMirrorSet = MirrorSet(
+            new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced),
+            firstMirror,
+            secondMirror);
+        var targetNodeId = new MirrorPlacementPlanner()
+            .SelectChunkTargets(chunk.Digest, chunk.StoredLength, placementMirrorSet, new Dictionary<string, long>())
+            .TargetNodeIds
+            .Single();
+        var targetPath = targetNodeId == "mirror" ? firstMirror : secondMirror;
+        var extraPath = targetNodeId == "mirror" ? secondMirror : firstMirror;
+        File.Delete(ChunkPath(targetPath, chunk.Digest));
+        File.Delete(MetadataPath(targetPath, chunk.Digest));
+        File.Delete(ChunkPath(workspace.RepositoryPath, chunk.Digest));
+        var placementRepository = CreateRepository(workspace.RepositoryPath, placementMirrorSet);
+
+        var report = await placementRepository.RunMirrorRebalanceAsync();
+
+        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
+        Assert.Contains(report.Actions, action =>
+            action.MirrorNodeId == targetNodeId
+            && action.Action == MirrorRebalanceActionKind.Unresolved
+            && action.Message.Contains("primary", StringComparison.OrdinalIgnoreCase));
+        Assert.False(File.Exists(ChunkPath(targetPath, chunk.Digest)));
+        Assert.True(File.Exists(ChunkPath(extraPath, chunk.Digest)));
+        Assert.True(File.Exists(MetadataPath(extraPath, chunk.Digest)));
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
     private static FileSystemChunkRepository CreateRepository(string path, string? mirrorPath = null)
     {
         return new FileSystemChunkRepository(

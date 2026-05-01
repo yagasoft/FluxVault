@@ -273,6 +273,17 @@ public sealed class FluxVaultOperations(
         return report;
     }
 
+    public async Task<MirrorRebalancePreviewReport> RunMirrorRebalanceAsync(CancellationToken cancellationToken = default)
+    {
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var report = await CreateRepository(configuration)
+            .RunMirrorRebalanceAsync(cancellationToken)
+            .ConfigureAwait(false);
+        await SaveRepositoryMaintenanceResultAsync(null, null, null, report, cancellationToken).ConfigureAwait(false);
+        lastMessage = FormatMirrorRebalanceSummary(report);
+        return report;
+    }
+
     public async Task<string> ExportDiagnosticsAsync(string exportPath, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(exportPath);
@@ -414,7 +425,7 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.RunRepositoryScrub => FluxVaultIpcResponse.WithRepositoryScrub(await RunRepositoryScrubAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunRestoreRehearsal => FluxVaultIpcResponse.WithRestoreRehearsal(await RunRestoreRehearsalAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.PreviewMirrorRebalance => FluxVaultIpcResponse.WithMirrorRebalance(await PreviewMirrorRebalanceAsync(cancellationToken).ConfigureAwait(false)),
-            FluxVaultIpcCommand.RunMirrorRebalance => FluxVaultIpcResponse.Failure("RunMirrorRebalance is unsupported until mirror rebalance execution is implemented."),
+            FluxVaultIpcCommand.RunMirrorRebalance => FluxVaultIpcResponse.WithMirrorRebalance(await RunMirrorRebalanceAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.PreviewMirrorRepair => FluxVaultIpcResponse.WithMirrorRepair(await PreviewMirrorRepairAsync(request.MirrorNodeId, cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunMirrorRepair => FluxVaultIpcResponse.WithMirrorRepair(await RunMirrorRepairAsync(request.MirrorNodeId, cancellationToken).ConfigureAwait(false)),
             _ => FluxVaultIpcResponse.Failure($"Unsupported command: {request.Command}")

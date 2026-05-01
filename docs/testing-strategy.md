@@ -87,7 +87,7 @@
 - Mirrors workspace view-model and XAML tests for editable node lists,
   repository/protection summary replacement, workspace navigation, per-node
   repair status/actions, placement controls/status, preview action, and absence
-  of dormant R2 drain/remove or run-rebalance execution controls.
+  of dormant R2 drain/remove controls.
 
 ## Integration tests
 
@@ -106,7 +106,11 @@
   mirror repair report.
 - Mirror placement preview IPC behaviour: preview returns planned copy/delete
   actions, persists the latest preview in repository health, and leaves
-  `RunMirrorRebalance` unsupported and non-mutating.
+  `RunMirrorRebalance` as an explicit manual execution action.
+- Mirror rebalance execution behaviour: copy required artefacts from the
+  healthy primary before deleting extra non-target mirror artefacts, preserve
+  extra copies when a required target or primary artefact is unresolved, persist
+  the latest run report, and leave no temporary files.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

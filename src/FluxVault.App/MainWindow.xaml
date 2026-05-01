@@ -387,6 +387,8 @@
                                 ToolTip="Remove the selected mirror node from configuration." />
                         <Button Content="Preview placement" Command="{Binding PreviewMirrorRebalanceCommand}" Margin="0,0,8,0"
                                 ToolTip="Preview mirror copy and cleanup actions needed to match the current placement policy." />
+                        <Button Content="Apply placement" Command="{Binding RunMirrorRebalanceCommand}" Margin="0,0,8,0"
+                                ToolTip="Apply mirror copy and cleanup actions needed to match the current placement policy." />
                         <Button Content="Preview selected repair" Command="{Binding PreviewSelectedMirrorRepairCommand}" Margin="8,0,8,0"
                                 ToolTip="Preview repairable drift for the selected mirror node." />
                         <Button Content="Repair selected" Command="{Binding RunSelectedMirrorRepairCommand}" Margin="0,0,8,0"
@@ -498,6 +500,9 @@
                             <Button Content="Preview mirror placement"
                                     Command="{Binding PreviewMirrorRebalanceCommand}"
                                     ToolTip="Preview mirror copy and cleanup actions needed to match the current placement policy." />
+                            <Button Content="Apply mirror placement"
+                                    Command="{Binding RunMirrorRebalanceCommand}"
+                                    ToolTip="Apply mirror copy and cleanup actions needed to match the current placement policy." />
                             <Button Content="Run mirror repair"
                                     Command="{Binding RunMirrorRepairCommand}"
                                     ToolTip="Repair primary artefacts from healthy mirrors and repair enabled mirrors from the healthy primary." />

@@ -67,9 +67,9 @@ FluxVault now has a developer-usable MVP loop:
 - Mirror repair preview and repair actions report per-node mirror health.
   Diagnostics can preview or repair all enabled mirrors; the Mirrors workspace
   can preview or repair the selected node from the healthy primary repository.
-- Mirror placement preview reports planned copy/delete work for existing mirror
-  artefacts without writing files. Rebalance execution and drain/remove
-  workflows remain future R2 work.
+- Mirror placement preview and apply actions report and execute safe mirror
+  copy/delete work for existing mirror artefacts. Drain/remove workflows remain
+  future R2 work.
 - Conservative workload policy presets for general, Office, CAD/BIM,
   Adobe/video, developer, and generic-large-file selections. Options controls
   the default preset for new selections, and the File browser can change the
@@ -280,8 +280,11 @@ mirror warnings in status/health.
 **Preview mirror placement** is a read-only check for existing repository
 artefacts. It reports missing required chunk/metadata copies, extra non-target
 copies, offline nodes, estimated movement, and per-node placement summaries
-without writing files or leaving temporary artefacts. `RunMirrorRebalance`
-remains unsupported until rebalance execution is implemented.
+without writing files or leaving temporary artefacts. **Apply mirror placement**
+copies missing required artefacts from the healthy primary repository first,
+then deletes extra non-target mirror chunk/metadata artefacts only when required
+target copies are satisfied. Unavailable mirrors or unhealthy primary artefacts
+remain warnings for repair rather than failed backup or destructive cleanup.
 
 Mirror repair is an explicit manual operation, not a scheduled placement or
 rebalance policy. **Preview mirror repair** reports repairable primary and

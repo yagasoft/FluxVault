@@ -324,6 +324,9 @@ public sealed class XamlQualityTests
             mirrorsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Command") == "{Binding PreviewMirrorRebalanceCommand}");
         Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding RunMirrorRebalanceCommand}");
+        Assert.Contains(
             mirrorsTab.Descendants(XamlNamespace + "DataGridTextColumn"),
             element => (string?)element.Attribute("Binding") == "{Binding RepairStatus}");
         Assert.Contains(
@@ -338,7 +341,7 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
-    public void Mirrors_workspace_does_not_expose_future_r2_execution_controls()
+    public void Mirrors_workspace_does_not_expose_future_r2_drain_controls()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
         var mirrorsTab = document
@@ -357,10 +360,6 @@ public sealed class XamlQualityTests
                 .OfType<string>());
 
         Assert.DoesNotContain("drain", text, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("Run rebalance", text, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain(
-            mirrorsTab.Descendants(XamlNamespace + "Button"),
-            element => (string?)element.Attribute("Command") == "{Binding RunMirrorRebalanceCommand}");
     }
 
     [Fact]
@@ -394,7 +393,7 @@ public sealed class XamlQualityTests
         Assert.Contains(
             diagnosticsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Command") == "{Binding PreviewMirrorRebalanceCommand}");
-        Assert.DoesNotContain(
+        Assert.Contains(
             diagnosticsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Command") == "{Binding RunMirrorRebalanceCommand}");
         Assert.Contains(

@@ -145,9 +145,9 @@ one storage fabric.
   consolidation, and apply previewed movement.
 - The repair foundation provides explicit preview and repair actions for
   primary/mirror drift and per-node mirror health. The placement foundation
-  applies the configured policy to new commits and previews existing placement
-  movement without writing files. Drain/remove and rebalance execution remain
-  later R2 work.
+  applies the configured policy to new commits, previews existing placement
+  movement without writing files, and executes safe copy/delete rebalancing.
+  Drain/remove remains later R2 work.
 
 ## R3 multi-PC sync
 

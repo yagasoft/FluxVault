@@ -322,7 +322,7 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
-    public async Task Mirror_rebalance_preview_ipc_returns_report_updates_health_and_run_stays_unsupported()
+    public async Task Mirror_rebalance_preview_and_run_ipc_return_reports_and_update_health()
     {
         using var workspace = TemporaryWorkspace.Create();
         var watched = Path.Combine(workspace.RootPath, "watched");
@@ -370,9 +370,12 @@ public sealed class ServiceOperationsTests
         Assert.True(preview.Success);
         Assert.NotNull(preview.MirrorRebalance);
         Assert.NotEmpty(preview.MirrorRebalance.Actions);
+        Assert.True(run.Success);
+        Assert.NotNull(run.MirrorRebalance);
+        Assert.Equal(RepositoryHealthState.Healthy, run.MirrorRebalance.HealthState);
+        Assert.Empty(run.MirrorRebalance.Actions);
         Assert.NotNull(status.RepositoryHealth!.LastMirrorRebalance);
-        Assert.False(run.Success);
-        Assert.Contains("unsupported", run.ErrorMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(RepositoryHealthState.Healthy, status.RepositoryHealth.LastMirrorRebalance.HealthState);
     }
 
     [Fact]

@@ -2,6 +2,7 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Abstractions.Sync;
 using FluxVault.Core.Ipc;
 
 namespace FluxVault.Core.Tests;
@@ -74,6 +75,25 @@ public sealed class IpcSerializationTests
                         DeviceTrustState.Local,
                         new DateTimeOffset(2026, 4, 27, 12, 2, 0, TimeSpan.Zero),
                         checkedAt)
+                ]),
+            Sync: new SyncRuntimeStatus(
+                LocalDeviceId: "device-local",
+                PeerHeads:
+                [
+                    new PeerHeadRecord(
+                        "device-local",
+                        "Studio PC",
+                        HeadSequenceNumber: 3,
+                        HeadOperationId: "operation-3",
+                        UpdatedAtUtc: checkedAt)
+                ],
+                Cursors:
+                [
+                    new PeerCursorRecord(
+                        "device-laptop",
+                        LastSeenSequenceNumber: 2,
+                        LastSeenOperationId: "operation-2",
+                        UpdatedAtUtc: checkedAt)
                 ]));
         var response = FluxVaultIpcResponse.WithStatus(status);
 
@@ -93,6 +113,10 @@ public sealed class IpcSerializationTests
         Assert.NotNull(roundTrip.Status.DeviceIdentity);
         Assert.Equal("device-local", roundTrip.Status.DeviceIdentity.DeviceId);
         Assert.Equal(DeviceTrustState.Local, Assert.Single(roundTrip.Status.DeviceIdentity.TrustedDevices).TrustState);
+        Assert.NotNull(roundTrip.Status.Sync);
+        Assert.Equal("device-local", roundTrip.Status.Sync.LocalDeviceId);
+        Assert.Equal("operation-3", Assert.Single(roundTrip.Status.Sync.PeerHeads).HeadOperationId);
+        Assert.Equal("device-laptop", Assert.Single(roundTrip.Status.Sync.Cursors).PeerDeviceId);
     }
 
     [Fact]

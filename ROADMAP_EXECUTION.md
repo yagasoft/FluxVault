@@ -72,3 +72,33 @@ Assumptions:
 
 - `R3-001` is a local identity/trust foundation only; peer operation logs, mapping gates, and sync hydration remain later R3 items.
 - Device identity is shown in Diagnostics, not editable in Options yet, because trust editing has no safe runtime workflow before the later sync slices.
+
+## R3-005: peer heads, immutable operation records, and local cursors
+
+Status: complete.
+
+Plan:
+
+- Add sync abstractions for immutable peer operation records, compact peer heads, and local per-peer cursors.
+- Add a repository-owned file sync journal under the repository path with atomic writes and append-only operation records.
+- Expose peer heads and cursors through service status/IPC.
+- Show compact sync peer-head/cursor status in Diagnostics.
+- Update README and docs/tracker for `R3-005`.
+
+Evidence:
+
+- Red evidence: `dotnet test tests\FluxVault.Core.Tests\FluxVault.Core.Tests.csproj --filter "FullyQualifiedName~PeerSyncJournalTests|FullyQualifiedName~IpcSerializationTests"` initially failed because `FluxVault.Abstractions.Sync` and `FluxVault.Core.Sync` did not exist.
+- Green targeted evidence: peer journal/IPC tests passed, 22 total.
+- Green targeted evidence: service status tests passed in the ServiceOperationsTests filter, 35 total.
+- Green targeted evidence: app view-model/XAML tests passed, 74 total.
+- Full verification: `dotnet test` passed across App/Core/Integration/Windows test projects: 117 App, 127 Core, 74 Integration, 17 Windows.
+- Whitespace verification: `git diff --check` passed.
+
+Blockers:
+
+- None.
+
+Assumptions:
+
+- `R3-005` is metadata discovery foundation only; mapping confirmation, loop prevention, hydration, blocked targets, and conflict actions remain later R3 items.
+- Operation records reference versions and metadata but do not duplicate chunk payloads.

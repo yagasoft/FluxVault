@@ -8,9 +8,11 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Abstractions.Sync;
 using FluxVault.Core.Capture;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Service;
+using FluxVault.Core.Sync;
 
 namespace FluxVault.Integration.Tests;
 
@@ -609,6 +611,38 @@ public sealed class ServiceOperationsTests
         var trusted = Assert.Single(first.DeviceIdentity.TrustedDevices);
         Assert.Equal(first.DeviceIdentity.DeviceId, trusted.DeviceId);
         Assert.Equal(DeviceTrustState.Local, trusted.TrustState);
+    }
+
+    [Fact]
+    public async Task Status_exposes_peer_heads_and_local_cursors()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            Sync = new SyncConfiguration(
+                new DeviceIdentityConfiguration("device-local", "Studio PC", new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero)),
+                [
+                    new TrustedDeviceConfiguration("device-local", "Studio PC", DeviceTrustState.Local, new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero))
+                ])
+        };
+        var journal = new FilePeerSyncJournal(workspace.RepositoryPath);
+        var operation = await journal.AppendOperationAsync(
+            configuration.Sync.LocalDevice,
+            new PeerOperationDraft(PeerOperationKind.VersionCommitted, VersionId: "version-1"));
+        await journal.SaveCursorAsync(new PeerCursorRecord("device-laptop", 7, "remote-operation-7", DateTimeOffset.UtcNow));
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var status = await operations.GetStatusAsync();
+
+        Assert.NotNull(status.Sync);
+        Assert.Equal("device-local", status.Sync.LocalDeviceId);
+        var head = Assert.Single(status.Sync.PeerHeads);
+        Assert.Equal(operation.OperationId, head.HeadOperationId);
+        var cursor = Assert.Single(status.Sync.Cursors);
+        Assert.Equal("device-laptop", cursor.PeerDeviceId);
     }
 
     [Fact]

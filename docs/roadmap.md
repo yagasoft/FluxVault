@@ -163,15 +163,12 @@ downloading or rewriting whole files unnecessarily.
   PCs until each peer confirms the same path or chooses a per-PC path override.
 - Peer sync must not create, hydrate, or patch a newly mapped target before the
   mapping is confirmed.
-- PCs publish manifests, device heartbeats, and folder mapping metadata into
-  the shared repository.
-- Each PC owns its own sync-control area in the shared repository, publishing a
-  compact peer head plus immutable operation records rather than rewriting a
-  shared global changelog.
-- Peers poll compact peer heads first, then fetch only missing operation records
-  since their local per-peer cursor. Operation records reference FluxVault
-  versions, manifests, chunks, operation ids, source device ids, and source
-  version metadata rather than duplicating file content.
+- Implemented: each PC can own a sync-control area in the repository with a
+  compact peer head, immutable operation records, and local per-peer cursors.
+- Peers will poll compact peer heads first, then fetch only missing operation
+  records since their local per-peer cursor. Operation records reference
+  FluxVault versions, manifests, chunks, operation ids, source device ids, and
+  source version metadata rather than duplicating file content.
 - Lineage content signatures from V1 let sync describe copied or restored
   byte-identical files as metadata/chunk references instead of republishing the
   same content payload.

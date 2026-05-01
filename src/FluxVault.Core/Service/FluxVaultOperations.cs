@@ -12,6 +12,7 @@ using FluxVault.Core.Content;
 using FluxVault.Core.Ipc;
 using FluxVault.Core.Policies;
 using FluxVault.Core.Storage;
+using FluxVault.Core.Sync;
 
 namespace FluxVault.Core.Service;
 
@@ -437,7 +438,8 @@ public sealed class FluxVaultOperations(
             CaptureStatuses: GetCaptureStatuses(),
             RepositoryHealth: await GetRepositoryHealthAsync(cancellationToken).ConfigureAwait(false),
             MirrorWarnings: lastMirrorWarnings,
-            DeviceIdentity: BuildDeviceIdentityStatus(configuration.Sync));
+            DeviceIdentity: BuildDeviceIdentityStatus(configuration.Sync),
+            Sync: await BuildSyncStatusAsync(configuration, cancellationToken).ConfigureAwait(false));
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -691,6 +693,17 @@ public sealed class FluxVaultOperations(
                     device.TrustedAtUtc,
                     device.LastSeenAtUtc))
                 .ToArray());
+    }
+
+    private static async Task<SyncRuntimeStatus> BuildSyncStatusAsync(
+        FluxVaultConfiguration configuration,
+        CancellationToken cancellationToken)
+    {
+        var journal = new FilePeerSyncJournal(configuration.RepositoryPath);
+        return new SyncRuntimeStatus(
+            configuration.Sync.LocalDevice.DeviceId,
+            await journal.ListPeerHeadsAsync(cancellationToken).ConfigureAwait(false),
+            await journal.ListCursorsAsync(cancellationToken).ConfigureAwait(false));
     }
 
     private static string FormatBytes(long bytes)

@@ -349,8 +349,15 @@ trusted record so later peer metadata can reference a stable device id before
 operation logs, mapping gates, or hydration exist. Diagnostics shows the local
 device id and trusted-device count for support visibility.
 
+R3 sync metadata is repository-owned. Each peer owns a `sync/peers/<device>/`
+area with immutable operation records and a compact `head.json`; local cursors
+under `sync/cursors/` record how far this device has processed each peer. Peer
+operation records reference FluxVault versions, source paths, content
+signatures, operation ids, and optional metadata; they do not duplicate chunk
+payloads.
+
 R3 sync will publish folder mapping metadata, manifests, and heartbeats into
-the shared repository. A newly selected folder or file from one PC is only
+that peer metadata area. A newly selected folder or file from one PC is only
 advertised as pending until every peer confirms a same-path mapping or chooses
 a per-PC override. Peers must not hydrate, patch, or create the target path
 before that mapping is confirmed. After confirmation, peers fetch only missing

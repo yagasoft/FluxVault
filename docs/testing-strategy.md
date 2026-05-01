@@ -122,6 +122,10 @@
   normalise to a stable local device id, trusted-device records round-trip
   through configuration and IPC, service status exposes the identity, and
   Diagnostics shows compact local identity/trust status.
+- Peer sync journal behaviour: appending operations writes immutable records,
+  updates compact peer heads, rejects duplicate operation ids, filters
+  operations from local cursors, exposes peer heads/cursors through IPC, and
+  shows compact peer status in Diagnostics.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

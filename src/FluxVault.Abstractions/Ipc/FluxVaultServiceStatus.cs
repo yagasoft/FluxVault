@@ -1,6 +1,7 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Abstractions.Sync;
 
 namespace FluxVault.Abstractions.Ipc;
 
@@ -16,7 +17,8 @@ public sealed record FluxVaultServiceStatus(
     IReadOnlyList<CaptureRuntimeStatus>? CaptureStatuses = null,
     RepositoryHealthSnapshot? RepositoryHealth = null,
     IReadOnlyList<string>? MirrorWarnings = null,
-    DeviceIdentityRuntimeStatus? DeviceIdentity = null);
+    DeviceIdentityRuntimeStatus? DeviceIdentity = null,
+    SyncRuntimeStatus? Sync = null);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,
@@ -37,3 +39,8 @@ public sealed record TrustedDeviceRuntimeStatus(
     DeviceTrustState TrustState,
     DateTimeOffset TrustedAtUtc,
     DateTimeOffset? LastSeenAtUtc);
+
+public sealed record SyncRuntimeStatus(
+    string LocalDeviceId,
+    IReadOnlyList<PeerHeadRecord> PeerHeads,
+    IReadOnlyList<PeerCursorRecord> Cursors);

@@ -4,6 +4,7 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Abstractions.Sync;
 using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
 using FluxVault.Core.Ipc;
@@ -189,6 +190,29 @@ public sealed class MainWindowViewModelRefreshTests
 
         Assert.Equal("Device: Studio PC (device-local)", viewModel.DeviceIdentityStatus);
         Assert.Equal("Trusted devices: 2 trusted, 0 blocked", viewModel.TrustedDeviceSummary);
+    }
+
+    [Fact]
+    public async Task Refresh_shows_sync_peer_head_and_cursor_summary()
+    {
+        var status = StatusWithVersions() with
+        {
+            Sync = new SyncRuntimeStatus(
+                "device-local",
+                [
+                    new PeerHeadRecord("device-local", "Studio PC", 4, "operation-4", DateTimeOffset.UtcNow),
+                    new PeerHeadRecord("device-laptop", "Laptop", 2, "remote-operation-2", DateTimeOffset.UtcNow)
+                ],
+                [
+                    new PeerCursorRecord("device-laptop", 2, "remote-operation-2", DateTimeOffset.UtcNow)
+                ])
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        Assert.Equal("Sync: 2 peer head(s), 1 cursor(s)", viewModel.SyncPeerSummary);
     }
 
     [Fact]

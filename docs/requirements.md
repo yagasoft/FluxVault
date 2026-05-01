@@ -202,6 +202,10 @@ folder; direct cloud adapters arrive later.
   trusted-device records. Existing configurations without sync identity must
   load with one local trusted-device record, and service status must expose the
   local device id, display name, and trust summary for Diagnostics.
+- Multi-PC sync metadata must use repository-owned peer heads, immutable
+  per-peer operation records, and local per-peer cursors. Operation records
+  must be append-only, reference versions and metadata instead of duplicating
+  chunk payloads, and expose peer-head/cursor status through Diagnostics.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.

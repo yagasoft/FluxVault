@@ -106,6 +106,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private string trustedDeviceSummary = "Trusted devices: waiting";
 
     [ObservableProperty]
+    private string syncPeerSummary = "Sync: waiting";
+
+    [ObservableProperty]
     private string usnHealth = "USN: checking";
 
     [ObservableProperty]
@@ -998,6 +1001,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             MirrorHealth = BuildMirrorHealth(status.MirrorWarnings ?? [], status.Configuration);
             CaptureHealth = BuildCaptureHealth(status.CaptureStatuses ?? []);
             ApplyDeviceIdentity(status);
+            ApplySyncStatus(status.Sync);
             ApplyRepositoryHealth(status.RepositoryHealth);
             WatchedFolders.Clear();
             foreach (var folder in status.Configuration.WatchedFolders)
@@ -1225,6 +1229,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     device.TrustedAtUtc,
                     device.LastSeenAtUtc))
                 .ToArray());
+    }
+
+    private void ApplySyncStatus(SyncRuntimeStatus? status)
+    {
+        SyncPeerSummary = status is null
+            ? "Sync: waiting"
+            : $"Sync: {status.PeerHeads.Count} peer head(s), {status.Cursors.Count} cursor(s)";
     }
 
     private static string BuildMirrorHealth(IReadOnlyList<string> warnings, FluxVaultConfiguration configuration)

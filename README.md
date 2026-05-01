@@ -326,6 +326,14 @@ static `eng/winfsp` setup manifests/scripts for review. Those scripts are not
 run by tests or normal app flows; WinFsp driver installation and OS-level
 registration still require explicit future approval.
 
+FluxVault also has the first R5 Cloud Files API / ProjFS shell-integration
+foundation. The typed configuration and Diagnostics status can describe a
+prepared sync-root path, display name, hydration policy, and placeholder state
+path, and the repository includes static `eng/shell-integration`
+manifests/scripts for review. Those scripts do not register providers, create
+placeholders, register sync roots, or mutate machine state during tests or
+normal app flows.
+
 Open **Options** to review retention, scheduled maintenance, and the default
 workload preset assigned to newly protected folders/files. The MVP
 retention defaults keep every version for 24 hours, keep one version per hour

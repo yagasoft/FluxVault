@@ -426,6 +426,35 @@ public sealed class PackagingTests
         Assert.Contains("\"machineMutation\": false", manifest);
     }
 
+    [Fact]
+    public void Cloud_files_shell_integration_assets_are_static_and_not_self_executing()
+    {
+        var root = FindRepositoryRoot();
+        var registerPath = Path.Combine(root, "eng", "shell-integration", "Register-FluxVaultShellIntegration.ps1");
+        var unregisterPath = Path.Combine(root, "eng", "shell-integration", "Unregister-FluxVaultShellIntegration.ps1");
+        var manifestPath = Path.Combine(root, "eng", "shell-integration", "FluxVault.CloudFiles.ProjFs.manifest.json");
+
+        Assert.True(File.Exists(registerPath));
+        Assert.True(File.Exists(unregisterPath));
+        Assert.True(File.Exists(manifestPath));
+        var register = File.ReadAllText(registerPath);
+        var unregister = File.ReadAllText(unregisterPath);
+        var manifest = File.ReadAllText(manifestPath);
+
+        Assert.Contains("SupportsShouldProcess", register);
+        Assert.Contains("-WhatIf", register);
+        Assert.Contains("SupportsShouldProcess", unregister);
+        Assert.DoesNotContain("CfRegisterSyncRoot", register, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("PrjStartVirtualizing", register, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("reg add", register, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Add-AppxPackage", register, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Start-Process", register, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("FluxVault.CloudFiles.ProjFs", manifest);
+        Assert.Contains("\"cloudFilesApi\": true", manifest);
+        Assert.Contains("\"projFs\": true", manifest);
+        Assert.Contains("\"machineMutation\": false", manifest);
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

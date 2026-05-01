@@ -393,6 +393,9 @@ public sealed class XamlQualityTests
             diagnosticsTab.Descendants(XamlNamespace + "TextBlock"),
             element => (string?)element.Attribute("Text") == "{Binding PerformanceWorkspaceStatus}");
         Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "{Binding ShellIntegrationStatus}");
+        Assert.Contains(
             diagnosticsTab.Descendants(XamlNamespace + "DataGrid"),
             element => (string?)element.Attribute("ItemsSource") == "{Binding RepositoryHealthRows}");
         Assert.Contains(

@@ -147,6 +147,13 @@
   prepared/deferred driver state, Diagnostics shows the workspace status, and
   `eng/winfsp` setup assets are covered by static tests that prove they are not
   self-executing driver or machine registration scripts.
+- Cloud Files API / ProjFS shell-integration foundation: configuration
+  defaults disabled and round-trips sync-root path/display/hydration/state
+  fields, service status and IPC expose prepared/deferred registration state,
+  Diagnostics shows the shell status, dashboard saves preserve non-editable
+  native workspace settings, and `eng/shell-integration` setup assets are
+  covered by static tests that prove they are not self-executing sync-root,
+  provider, placeholder, or machine registration scripts.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

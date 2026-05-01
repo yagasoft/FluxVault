@@ -226,3 +226,39 @@ Assumptions:
 
 - R4-001 prepares the WinFsp workspace contract and repo assets only; no driver installation, mount registration, or machine-wide mutation is run.
 - The configuration is not exposed in Options yet because the real WinFsp write path is not active in this safe foundation slice.
+
+## R5-001: Cloud Files API / ProjFS shell integration foundation
+
+Status: complete.
+
+Plan:
+
+- Add disabled-by-default typed shell integration configuration for Cloud Files API and ProjFS modes, including sync-root path, display name, hydration policy, and placeholder state root.
+- Expose prepared/deferred Cloud Files / ProjFS status through IPC/service status and Diagnostics.
+- Add repo-owned static registration manifests and setup/unsetup scripts for review/static tests only.
+- Ensure scripts/manifests do not register sync roots, register providers, create placeholders, install drivers, or mutate machine-wide state in tests or normal app flows.
+- Keep Explorer context menu behaviour unchanged; R5 prepares the namespace/hydration contract without changing the unsigned consumer release profile.
+- Update README and roadmap docs/tracker for `R5-001`.
+
+Evidence:
+
+- Baseline evidence: `dotnet test` passed before R5 changes across App/Core/Integration/Windows test projects: 117 App, 139 Core, 80 Integration, 17 Windows.
+- Red evidence: targeted core, integration, and app tests initially failed because `ShellIntegrationConfiguration`, `ShellIntegrationRuntimeStatus`, `ShellIntegrationMode`, `ShellHydrationPolicy`, `FluxVaultConfiguration.ShellIntegration`, `FluxVaultServiceStatus.ShellIntegration`, and `MainWindowViewModel.ShellIntegrationStatus` did not exist.
+- Green targeted evidence: core configuration/IPC tests passed, 3 total.
+- Green targeted evidence: integration service status and static shell-integration asset tests passed, 2 total.
+- Green targeted evidence: app Diagnostics status/XAML/native-configuration preservation tests passed, 3 total.
+- Full verification: `dotnet test` passed across App/Core/Integration/Windows test projects: 118 App, 141 Core, 82 Integration, 17 Windows.
+- Whitespace verification: `git diff --check` passed.
+
+Blockers:
+
+- None.
+
+Notes:
+
+- A parallel targeted `dotnet test` retry hit transient compiler DLL locks from simultaneous builds. The root cause was concurrent project builds in the same worktree; sequential reruns passed, and subsequent FluxVault test runs for this item were kept serial.
+
+Assumptions:
+
+- R5-001 is a safe shell-integration foundation only; no sync-root registration, ProjFS provider registration, placeholder creation, or machine-wide mutation is run.
+- The configuration is not exposed in Options yet because the real shell write/hydration path is not active in this safe foundation slice.

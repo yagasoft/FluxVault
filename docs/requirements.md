@@ -234,6 +234,16 @@ folder; direct cloud adapters arrive later.
 - R4 setup scripts and manifests may be authored in the repository, but tests
   and normal app flows must not install drivers, register mounts, or mutate
   machine-wide state.
+- R5 Cloud Files API / ProjFS shell-integration configuration must be typed,
+  defaulted, and disabled by default. It must record sync-root path, display
+  name, hydration policy, and placeholder state path without assuming provider
+  registration exists.
+- R5 status must expose whether shell integration is prepared and must clearly
+  report that sync-root registration, provider registration, and placeholder
+  creation are deferred until explicitly approved.
+- R5 setup scripts and manifests may be authored in the repository, but tests
+  and normal app flows must not register sync roots, register providers, create
+  placeholders, or mutate machine-wide state.
 
 ## Explicit non-goals for v1
 

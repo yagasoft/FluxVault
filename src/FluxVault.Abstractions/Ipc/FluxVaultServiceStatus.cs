@@ -19,7 +19,8 @@ public sealed record FluxVaultServiceStatus(
     IReadOnlyList<string>? MirrorWarnings = null,
     DeviceIdentityRuntimeStatus? DeviceIdentity = null,
     SyncRuntimeStatus? Sync = null,
-    PerformanceWorkspaceRuntimeStatus? PerformanceWorkspace = null);
+    PerformanceWorkspaceRuntimeStatus? PerformanceWorkspace = null,
+    ShellIntegrationRuntimeStatus? ShellIntegration = null);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,
@@ -60,3 +61,16 @@ public sealed record PerformanceWorkspaceRuntimeStatus(
     string ManifestPath,
     string Status,
     bool IsDriverCheckDeferred);
+
+public sealed record ShellIntegrationRuntimeStatus(
+    bool IsEnabled,
+    ShellIntegrationMode Mode,
+    string SyncRootPath,
+    string DisplayName,
+    ShellHydrationPolicy HydrationPolicy,
+    string PlaceholderStatePath,
+    string RegisterScriptPath,
+    string ManifestPath,
+    string Status,
+    bool IsRegistrationDeferred,
+    bool IsPlaceholderCreationDeferred);

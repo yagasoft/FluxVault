@@ -357,6 +357,21 @@ public sealed class ConfigurationStoreTests
     }
 
     [Fact]
+    public async Task Default_configuration_has_disabled_cloud_files_shell_integration()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+
+        var configuration = await store.LoadAsync();
+
+        Assert.False(configuration.ShellIntegration.IsEnabled);
+        Assert.Equal(ShellIntegrationMode.CloudFilesApi, configuration.ShellIntegration.Mode);
+        Assert.Equal(ShellHydrationPolicy.OnDemand, configuration.ShellIntegration.HydrationPolicy);
+        Assert.Equal(Path.Combine(workspace.RootPath, "shell-integration", "sync-root"), configuration.ShellIntegration.SyncRootPath);
+        Assert.Equal(Path.Combine(workspace.RootPath, "shell-integration", "state"), configuration.ShellIntegration.PlaceholderStatePath);
+    }
+
+    [Fact]
     public async Task Save_and_load_round_trips_winfsp_performance_workspace()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -375,6 +390,28 @@ public sealed class ConfigurationStoreTests
 
         var actual = await store.LoadAsync();
         Assert.Equal(expected.PerformanceWorkspace, actual.PerformanceWorkspace);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_cloud_files_shell_integration()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var expected = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            ShellIntegration = new ShellIntegrationConfiguration(
+                IsEnabled: true,
+                Mode: ShellIntegrationMode.ProjFs,
+                SyncRootPath: Path.Combine(workspace.RootPath, "native-root"),
+                DisplayName: "FluxVault Native",
+                HydrationPolicy: ShellHydrationPolicy.Manual,
+                PlaceholderStatePath: Path.Combine(workspace.RootPath, "placeholder-state"))
+        };
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+        Assert.Equal(expected.ShellIntegration, actual.ShellIntegration);
     }
 
     [Fact]

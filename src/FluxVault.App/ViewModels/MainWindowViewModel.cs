@@ -33,6 +33,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private CaptureCadencePolicy currentCaptureCadencePolicy = CaptureCadencePolicy.CreateDefault();
     private CodecPolicy currentCodecPolicy = CodecPolicy.CreateDefault();
     private WorkloadPolicyConfiguration currentWorkloadPolicy = WorkloadPolicyConfiguration.CreateDefault();
+    private PerformanceWorkspaceConfiguration currentPerformanceWorkspace = PerformanceWorkspaceConfiguration.CreateDefault(AppContext.BaseDirectory);
+    private ShellIntegrationConfiguration currentShellIntegration = ShellIntegrationConfiguration.CreateDefault(AppContext.BaseDirectory);
     private IReadOnlyList<ProtectionExclusionRule> currentExclusionRules = [];
     private RepositoryScrubReport? currentScrubReport;
     private RestoreRehearsalReport? currentRestoreRehearsalReport;
@@ -111,6 +113,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string performanceWorkspaceStatus = "Performance workspace: waiting";
+
+    [ObservableProperty]
+    private string shellIntegrationStatus = "Shell integration: waiting";
 
     [ObservableProperty]
     private string usnHealth = "USN: checking";
@@ -973,6 +978,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
                 currentCodecPolicy = status.Configuration.CodecPolicy;
                 currentWorkloadPolicy = status.Configuration.WorkloadPolicy ?? WorkloadPolicyConfiguration.CreateDefault();
+                currentPerformanceWorkspace = status.Configuration.PerformanceWorkspace
+                    ?? PerformanceWorkspaceConfiguration.CreateDefault(AppContext.BaseDirectory);
+                currentShellIntegration = status.Configuration.ShellIntegration
+                    ?? ShellIntegrationConfiguration.CreateDefault(AppContext.BaseDirectory);
                 currentExclusionRules = status.Configuration.ExclusionRules ?? [];
                 FileBrowser.DefaultWorkloadPreset = currentWorkloadPolicy.DefaultPreset;
                 var selectionRules = status.Configuration.SelectionRules;
@@ -1007,6 +1016,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ApplyDeviceIdentity(status);
             ApplySyncStatus(status.Sync);
             ApplyPerformanceWorkspaceStatus(status.PerformanceWorkspace);
+            ApplyShellIntegrationStatus(status.ShellIntegration);
             ApplyRepositoryHealth(status.RepositoryHealth);
             WatchedFolders.Clear();
             foreach (var folder in status.Configuration.WatchedFolders)
@@ -1088,7 +1098,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     node.CapacityBudgetBytes,
                     node.Priority))
                 .ToArray(),
-                new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile, MinimumMirrorCopies)));
+                new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile, MinimumMirrorCopies)),
+            PerformanceWorkspace: currentPerformanceWorkspace,
+            ShellIntegration: currentShellIntegration);
     }
 
     private VersionRow? FindRestoreHintVersion()
@@ -1291,6 +1303,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
         var state = status.IsEnabled ? "prepared" : "disabled";
         var driver = status.IsDriverCheckDeferred ? "driver check deferred" : status.Status;
         PerformanceWorkspaceStatus = $"Performance workspace: {status.Mode} {state}, {driver}";
+    }
+
+    private void ApplyShellIntegrationStatus(ShellIntegrationRuntimeStatus? status)
+    {
+        if (status is null)
+        {
+            ShellIntegrationStatus = "Shell integration: waiting";
+            return;
+        }
+
+        var state = status.IsEnabled ? "prepared" : "disabled";
+        var registration = status.IsRegistrationDeferred ? "registration deferred" : status.Status;
+        ShellIntegrationStatus = $"Shell integration: {status.Mode} {state}, {registration}";
     }
 
     private static string BuildMirrorHealth(IReadOnlyList<string> warnings, FluxVaultConfiguration configuration)

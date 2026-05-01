@@ -152,7 +152,19 @@ public sealed class IpcSerializationTests
                 SetupScriptPath: @"D:\Repo\eng\winfsp\Register-FluxVaultWinFspWorkspace.ps1",
                 ManifestPath: @"D:\Repo\eng\winfsp\FluxVault.WinFsp.Workspace.manifest.json",
                 Status: "Prepared; WinFsp driver install not executed.",
-                IsDriverCheckDeferred: true));
+                IsDriverCheckDeferred: true),
+            ShellIntegration: new ShellIntegrationRuntimeStatus(
+                IsEnabled: true,
+                Mode: ShellIntegrationMode.CloudFilesApi,
+                SyncRootPath: @"D:\FluxVaultCloudFiles",
+                DisplayName: "FluxVault",
+                HydrationPolicy: ShellHydrationPolicy.OnDemand,
+                PlaceholderStatePath: @"D:\FluxVaultCloudFiles\.fluxvault",
+                RegisterScriptPath: @"D:\Repo\eng\shell-integration\Register-FluxVaultShellIntegration.ps1",
+                ManifestPath: @"D:\Repo\eng\shell-integration\FluxVault.CloudFiles.ProjFs.manifest.json",
+                Status: "Prepared; shell registration not executed.",
+                IsRegistrationDeferred: true,
+                IsPlaceholderCreationDeferred: true));
         var response = FluxVaultIpcResponse.WithStatus(status);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
@@ -182,6 +194,10 @@ public sealed class IpcSerializationTests
         Assert.NotNull(roundTrip.Status.PerformanceWorkspace);
         Assert.Equal(PerformanceWorkspaceMode.WinFsp, roundTrip.Status.PerformanceWorkspace.Mode);
         Assert.True(roundTrip.Status.PerformanceWorkspace.IsDriverCheckDeferred);
+        Assert.NotNull(roundTrip.Status.ShellIntegration);
+        Assert.Equal(ShellIntegrationMode.CloudFilesApi, roundTrip.Status.ShellIntegration.Mode);
+        Assert.True(roundTrip.Status.ShellIntegration.IsRegistrationDeferred);
+        Assert.True(roundTrip.Status.ShellIntegration.IsPlaceholderCreationDeferred);
     }
 
     [Fact]

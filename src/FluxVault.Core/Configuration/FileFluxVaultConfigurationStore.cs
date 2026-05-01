@@ -79,6 +79,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
 
         ValidateMirrorSet(configuration.MirrorSet);
         ValidatePerformanceWorkspace(configuration.PerformanceWorkspace);
+        ValidateShellIntegration(configuration.ShellIntegration);
     }
 
     private FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
@@ -104,6 +105,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             WorkloadPolicy = configuration.WorkloadPolicy ?? WorkloadPolicyConfiguration.CreateDefault(),
             Sync = (configuration.Sync ?? SyncConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
             PerformanceWorkspace = (configuration.PerformanceWorkspace ?? PerformanceWorkspaceConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
+            ShellIntegration = (configuration.ShellIntegration ?? ShellIntegrationConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
             SelectionRules = selectionRules.Select(NormaliseSelectionRule).ToArray(),
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0
@@ -144,6 +146,19 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         if (configuration.CacheSizeMegabytes < 128)
         {
             throw new InvalidDataException("Performance workspace cache size must be at least 128 MB.");
+        }
+    }
+
+    private static void ValidateShellIntegration(ShellIntegrationConfiguration configuration)
+    {
+        if (configuration.IsEnabled && string.IsNullOrWhiteSpace(configuration.SyncRootPath))
+        {
+            throw new InvalidDataException("Shell integration sync root path is required when shell integration is enabled.");
+        }
+
+        if (configuration.IsEnabled && string.IsNullOrWhiteSpace(configuration.PlaceholderStatePath))
+        {
+            throw new InvalidDataException("Shell integration placeholder state path is required when shell integration is enabled.");
         }
     }
 

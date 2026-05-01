@@ -215,10 +215,20 @@ changing files.
 Expected user-visible result: Windows-native placeholder, hydration, and
 Explorer behaviour.
 
-- Sync-root registration, placeholder files, hydration status, Explorer badges,
-  and context menu restore/version actions.
-- `Always keep on this device` and `free up local space` workflows.
-- Built on the R3 sync engine and R2 mirror fabric.
+- Implemented: typed shell-integration configuration records Cloud Files API
+  or ProjFS mode, sync-root path, display name, hydration policy, and
+  placeholder state path with disabled-by-default compatibility.
+- Implemented: service status and Diagnostics expose the prepared shell
+  integration state and explicitly report that registration and placeholder
+  creation are deferred.
+- Implemented: repo-owned `eng/shell-integration` setup scripts and a
+  manifest are present for review and static tests only; they do not run during
+  tests or normal app flows.
+- Future work can perform signed/package-aware sync-root registration,
+  placeholder creation, hydration status, Explorer badges, context menu
+  restore/version actions, `Always keep on this device`, and `free up local
+  space` workflows.
+- R5 remains built on the R3 sync engine and R2 mirror fabric.
 
 ## R6 direct cloud adapters
 

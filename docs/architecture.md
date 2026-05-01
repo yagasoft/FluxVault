@@ -395,6 +395,17 @@ review artefacts in this slice; they emit plans and are covered by tests, but
 FluxVault does not install WinFsp, register a file system, or mount a workspace
 without explicit future approval.
 
+R5 Cloud Files API / ProjFS shell integration also starts as a prepared,
+non-mutating foundation. `ShellIntegrationConfiguration` records Cloud Files API
+or ProjFS mode, sync-root path, display name, hydration policy, and placeholder
+state path while defaulting disabled for existing users. Service status projects
+a `ShellIntegrationRuntimeStatus` that tells the dashboard whether shell
+integration is enabled and that sync-root registration and placeholder creation
+are deferred. The `eng/shell-integration` scripts and manifest are static
+review artefacts in this slice; they emit plans and are covered by tests, but
+FluxVault does not register a provider, register a sync root, create
+placeholders, or mutate machine state without explicit future approval.
+
 ## Future release tracks
 
 R2 is the distributed mirror fabric. The first slice establishes `MirrorSet`

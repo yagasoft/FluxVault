@@ -440,7 +440,8 @@ public sealed class FluxVaultOperations(
             MirrorWarnings: lastMirrorWarnings,
             DeviceIdentity: BuildDeviceIdentityStatus(configuration.Sync),
             Sync: await BuildSyncStatusAsync(configuration, cancellationToken).ConfigureAwait(false),
-            PerformanceWorkspace: BuildPerformanceWorkspaceStatus(configuration.PerformanceWorkspace));
+            PerformanceWorkspace: BuildPerformanceWorkspaceStatus(configuration.PerformanceWorkspace),
+            ShellIntegration: BuildShellIntegrationStatus(configuration.ShellIntegration));
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -750,6 +751,27 @@ public sealed class FluxVaultOperations(
                 ? "Prepared; WinFsp driver install not executed."
                 : "Disabled; WinFsp driver install not executed.",
             IsDriverCheckDeferred: true);
+    }
+
+    private static ShellIntegrationRuntimeStatus BuildShellIntegrationStatus(
+        ShellIntegrationConfiguration configuration)
+    {
+        var scriptPath = Path.Combine(AppContext.BaseDirectory, "eng", "shell-integration", "Register-FluxVaultShellIntegration.ps1");
+        var manifestPath = Path.Combine(AppContext.BaseDirectory, "eng", "shell-integration", "FluxVault.CloudFiles.ProjFs.manifest.json");
+        return new ShellIntegrationRuntimeStatus(
+            configuration.IsEnabled,
+            configuration.Mode,
+            configuration.SyncRootPath,
+            configuration.DisplayName,
+            configuration.HydrationPolicy,
+            configuration.PlaceholderStatePath,
+            scriptPath,
+            manifestPath,
+            configuration.IsEnabled
+                ? "Prepared; shell registration not executed."
+                : "Disabled; shell registration not executed.",
+            IsRegistrationDeferred: true,
+            IsPlaceholderCreationDeferred: true);
     }
 
     private static string FormatBytes(long bytes)

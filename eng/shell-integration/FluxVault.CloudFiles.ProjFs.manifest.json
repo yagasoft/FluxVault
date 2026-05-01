@@ -1,0 +1,11 @@
+{
+  "id": "FluxVault.CloudFiles.ProjFs",
+  "displayName": "FluxVault shell integration foundation",
+  "cloudFilesApi": true,
+  "projFs": true,
+  "syncRootRegistration": "deferred",
+  "providerRegistration": "deferred",
+  "placeholderCreation": "deferred",
+  "machineMutation": false,
+  "notes": "Static review manifest only. Runtime registration waits for an explicit future signed/package-aware setup path."
+}

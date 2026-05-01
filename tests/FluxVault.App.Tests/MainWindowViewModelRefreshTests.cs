@@ -207,6 +207,18 @@ public sealed class MainWindowViewModelRefreshTests
                 ManifestPath: @"D:\Repo\eng\winfsp\FluxVault.WinFsp.Workspace.manifest.json",
                 Status: "Prepared; WinFsp driver install not executed.",
                 IsDriverCheckDeferred: true),
+            ShellIntegration = new ShellIntegrationRuntimeStatus(
+                IsEnabled: true,
+                Mode: ShellIntegrationMode.CloudFilesApi,
+                SyncRootPath: @"D:\FluxVaultShell",
+                DisplayName: "FluxVault",
+                HydrationPolicy: ShellHydrationPolicy.OnDemand,
+                PlaceholderStatePath: @"D:\FluxVaultShell\.fluxvault",
+                RegisterScriptPath: @"D:\Repo\eng\shell-integration\Register-FluxVaultShellIntegration.ps1",
+                ManifestPath: @"D:\Repo\eng\shell-integration\FluxVault.CloudFiles.ProjFs.manifest.json",
+                Status: "Prepared; shell registration not executed.",
+                IsRegistrationDeferred: true,
+                IsPlaceholderCreationDeferred: true),
             Sync = new SyncRuntimeStatus(
                 "device-local",
                 [
@@ -266,6 +278,7 @@ public sealed class MainWindowViewModelRefreshTests
 
         Assert.Equal("Sync: 2 peer head(s), 1 cursor(s), 1 pending mapping(s), 1 applied remote version(s), 1 blocked target(s), 1 conflict(s)", viewModel.SyncPeerSummary);
         Assert.Equal("Performance workspace: WinFsp prepared, driver check deferred", viewModel.PerformanceWorkspaceStatus);
+        Assert.Equal("Shell integration: CloudFilesApi prepared, registration deferred", viewModel.ShellIntegrationStatus);
     }
 
     [Fact]
@@ -527,6 +540,41 @@ public sealed class MainWindowViewModelRefreshTests
         var node = Assert.Single(saved.MirrorSet.Nodes);
         Assert.Equal(1_000_000_000, node.CapacityBudgetBytes);
         Assert.Equal(250, node.Priority);
+    }
+
+    [Fact]
+    public async Task Save_configuration_preserves_native_workspace_configuration_not_edited_in_dashboard()
+    {
+        var expectedPerformance = new PerformanceWorkspaceConfiguration(
+            IsEnabled: true,
+            Mode: PerformanceWorkspaceMode.WinFsp,
+            WorkspacePath: @"D:\FluxVaultFast",
+            CacheSizeMegabytes: 2048,
+            MountName: "FluxVaultFast");
+        var expectedShell = new ShellIntegrationConfiguration(
+            IsEnabled: true,
+            Mode: ShellIntegrationMode.CloudFilesApi,
+            SyncRootPath: @"D:\FluxVaultShell",
+            DisplayName: "FluxVault Shell",
+            HydrationPolicy: ShellHydrationPolicy.OnDemand,
+            PlaceholderStatePath: @"D:\FluxVaultShell\.fluxvault");
+        var status = StatusWithVersions() with
+        {
+            Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+            {
+                PerformanceWorkspace = expectedPerformance,
+                ShellIntegration = expectedShell
+            }
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+
+        await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        Assert.Equal(expectedPerformance, saved.PerformanceWorkspace);
+        Assert.Equal(expectedShell, saved.ShellIntegration);
     }
 
     [Fact]

@@ -799,6 +799,35 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Status_exposes_cloud_files_shell_integration_preparation()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            ShellIntegration = new ShellIntegrationConfiguration(
+                IsEnabled: true,
+                Mode: ShellIntegrationMode.CloudFilesApi,
+                SyncRootPath: Path.Combine(workspace.RootPath, "cloud-files-root"),
+                DisplayName: "FluxVault Cloud Files",
+                HydrationPolicy: ShellHydrationPolicy.OnDemand,
+                PlaceholderStatePath: Path.Combine(workspace.RootPath, "cloud-files-state"))
+        };
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var status = await operations.GetStatusAsync();
+
+        Assert.NotNull(status.ShellIntegration);
+        Assert.True(status.ShellIntegration.IsEnabled);
+        Assert.Equal(ShellIntegrationMode.CloudFilesApi, status.ShellIntegration.Mode);
+        Assert.True(status.ShellIntegration.IsRegistrationDeferred);
+        Assert.True(status.ShellIntegration.IsPlaceholderCreationDeferred);
+        Assert.Contains("not executed", status.ShellIntegration.Status, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task File_browser_recursive_folder_selection_backs_up_nested_files()
     {
         using var workspace = TemporaryWorkspace.Create();

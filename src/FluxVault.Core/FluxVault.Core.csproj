@@ -5,8 +5,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" />
+    <PackageReference Include="Azure.Storage.Blobs" />
     <PackageReference Include="Blake3" />
+    <PackageReference Include="Dropbox.Api" />
+    <PackageReference Include="Google.Apis.Drive.v3" />
     <PackageReference Include="K4os.Compression.LZ4.Streams" />
+    <PackageReference Include="Microsoft.Graph" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="SharpCompress" />
     <PackageReference Include="ZstdSharp.Port" />

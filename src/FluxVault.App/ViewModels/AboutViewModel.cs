@@ -62,7 +62,7 @@ public sealed partial class AboutViewModel : ObservableObject
         "R2: distributed mirror fabric with capacity-aware placement, redundancy, drain, and repair.",
         "R3: multi-PC sync with mapping confirmation, chunk-level hydration, blocked files, and conflict handling.",
         "R4/R5: WinFsp performance workspace plus Cloud Files API and ProjFS shell integration.",
-        "R6: direct cloud adapters for Azure Blob, S3-compatible storage, and provider APIs."
+        "R6: direct cloud adapters for Azure Blob, S3-compatible storage, Dropbox, Google Drive, and OneDrive."
     ];
 
     public IAsyncRelayCommand OpenGitHubCommand { get; }

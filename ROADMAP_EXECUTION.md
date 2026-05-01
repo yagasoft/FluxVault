@@ -262,3 +262,35 @@ Assumptions:
 
 - R5-001 is a safe shell-integration foundation only; no sync-root registration, ProjFS provider registration, placeholder creation, or machine-wide mutation is run.
 - The configuration is not exposed in Options yet because the real shell write/hydration path is not active in this safe foundation slice.
+
+## R6-001: direct cloud adapters
+
+Status: complete.
+
+Plan:
+
+- Add typed direct-cloud configuration for Azure Blob, S3-compatible storage, Dropbox, Google Drive, and OneDrive adapters, including credential references, endpoint/container/root metadata, bandwidth/metered policy fields, and disabled-by-default compatibility.
+- Add cloud object adapter contracts and a provider-neutral adapter implementation that can be tested with fake clients without credentials or live provider calls.
+- Add provider SDK descriptors bound to official SDK package/client types so adapter wiring is real and compile-checked while live credential flows remain deferred.
+- Expose direct-cloud provider/adaptor readiness through IPC/service status and Diagnostics, clearly reporting that live validation is deferred.
+- Update README and roadmap docs/tracker for `R6-001`; note that live provider validation, resumable transfer execution, and credential configuration require explicit future permission.
+
+Evidence:
+
+- Baseline evidence: `dotnet test` passed before R6 changes across App/Core/Integration/Windows test projects: 118 App, 141 Core, 82 Integration, 17 Windows. Restore/test used NuGet package/cache/scratch paths under the R6 worktree to honour the no-outside-boundaries instruction.
+- Red evidence: targeted core tests failed because `FluxVault.Abstractions.Cloud`, `FluxVault.Core.Cloud`, direct-cloud configuration, provider enums, adapter contracts, SDK catalogue, and direct-cloud IPC status did not exist.
+- Red evidence: targeted integration and app tests failed because `FluxVaultConfiguration.DirectCloud`, `FluxVaultServiceStatus.DirectCloud`, direct-cloud runtime status rows, and `MainWindowViewModel.DirectCloudStatus` did not exist.
+- Green targeted evidence: core configuration, SDK catalogue, fake-client adapter, and IPC tests passed, 5 total.
+- Green targeted evidence: integration service status and package declaration tests passed, 2 total.
+- Green targeted evidence: app Diagnostics/native-configuration/About roadmap tests passed, 4 total.
+- Full verification: `dotnet test` passed across App/Core/Integration/Windows test projects: 118 App, 145 Core, 84 Integration, 17 Windows. Restore/test used NuGet package/cache/scratch paths under the R6 worktree.
+- Whitespace verification: `git diff --check` passed.
+
+Blockers:
+
+- None.
+
+Assumptions:
+
+- R6-001 is a safe direct-adapter foundation: SDK packages and client-type bindings are compile-checked, fake clients exercise behaviour, and no credentials or live provider calls are used.
+- Provider credentials are represented as references only; no secret values are stored in configuration or tests.

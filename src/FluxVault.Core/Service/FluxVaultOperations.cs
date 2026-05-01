@@ -7,6 +7,7 @@ using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
+using FluxVault.Core.Cloud;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Content;
 using FluxVault.Core.Ipc;
@@ -441,7 +442,8 @@ public sealed class FluxVaultOperations(
             DeviceIdentity: BuildDeviceIdentityStatus(configuration.Sync),
             Sync: await BuildSyncStatusAsync(configuration, cancellationToken).ConfigureAwait(false),
             PerformanceWorkspace: BuildPerformanceWorkspaceStatus(configuration.PerformanceWorkspace),
-            ShellIntegration: BuildShellIntegrationStatus(configuration.ShellIntegration));
+            ShellIntegration: BuildShellIntegrationStatus(configuration.ShellIntegration),
+            DirectCloud: BuildDirectCloudStatus(configuration.DirectCloud));
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -772,6 +774,37 @@ public sealed class FluxVaultOperations(
                 : "Disabled; shell registration not executed.",
             IsRegistrationDeferred: true,
             IsPlaceholderCreationDeferred: true);
+    }
+
+    private static DirectCloudRuntimeStatus BuildDirectCloudStatus(DirectCloudConfiguration configuration)
+    {
+        var providers = DirectCloudAdapterCatalog.Descriptors
+            .Select(descriptor => new DirectCloudProviderRuntimeStatus(
+                descriptor.Provider,
+                descriptor.PackageId,
+                descriptor.SdkClientType.FullName ?? descriptor.SdkClientType.Name,
+                IsSdkAvailable: true))
+            .ToArray();
+        var adapters = configuration.Adapters
+            .Select(adapter => new DirectCloudAdapterRuntimeStatus(
+                adapter.Id,
+                adapter.Provider,
+                adapter.DisplayName,
+                adapter.IsEnabled,
+                adapter.IsEnabled
+                    ? "Ready; credentials not loaded during status refresh."
+                    : "Disabled; credentials not loaded during status refresh."))
+            .ToArray();
+        var enabled = adapters.Count(adapter => adapter.IsEnabled);
+        var status = configuration.IsEnabled
+            ? $"Direct cloud adapters configured; {enabled} enabled adapter(s); live validation deferred."
+            : "Direct cloud adapters disabled; live validation deferred.";
+        return new DirectCloudRuntimeStatus(
+            configuration.IsEnabled,
+            status,
+            IsLiveValidationDeferred: true,
+            providers,
+            adapters);
     }
 
     private static string FormatBytes(long bytes)

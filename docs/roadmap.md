@@ -235,10 +235,22 @@ Explorer behaviour.
 Expected user-visible result: FluxVault can use object storage without relying
 on a sync folder.
 
-- Azure Blob, S3-compatible storage, and later OneDrive/Google Drive APIs.
-- Resumable uploads, bandwidth windows, metered-network policy, object-lock
-  support where available, and lifecycle policy alignment.
-- Repository portability between cloud-folder and direct-adapter modes.
+- Implemented: typed direct-cloud configuration records Azure Blob,
+  S3-compatible, Dropbox, Google Drive, and OneDrive adapter metadata with
+  credential references, root/container/prefix fields, bandwidth policy, and
+  metered-network policy while defaulting disabled.
+- Implemented: provider-neutral object adapter contracts can be exercised with
+  fake clients, so tests cover object write/read/metadata/list/delete without
+  credentials or live account calls.
+- Implemented: provider SDK descriptors are compile-checked against official
+  package/client types for Azure Blob, S3-compatible storage, Dropbox, Google
+  Drive, and OneDrive.
+- Implemented: service status and Diagnostics expose direct-cloud readiness and
+  explicitly report that live validation is deferred.
+- Future work can add credential acquisition, resumable upload execution,
+  bandwidth windows, provider-native change feeds, metered-network runtime
+  enforcement, object-lock support where available, lifecycle policy alignment,
+  and live repository portability between cloud-folder and direct-adapter modes.
 
 ## Later be-all-end-all features
 

@@ -35,6 +35,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private WorkloadPolicyConfiguration currentWorkloadPolicy = WorkloadPolicyConfiguration.CreateDefault();
     private PerformanceWorkspaceConfiguration currentPerformanceWorkspace = PerformanceWorkspaceConfiguration.CreateDefault(AppContext.BaseDirectory);
     private ShellIntegrationConfiguration currentShellIntegration = ShellIntegrationConfiguration.CreateDefault(AppContext.BaseDirectory);
+    private DirectCloudConfiguration currentDirectCloud = DirectCloudConfiguration.CreateDefault();
     private IReadOnlyList<ProtectionExclusionRule> currentExclusionRules = [];
     private RepositoryScrubReport? currentScrubReport;
     private RestoreRehearsalReport? currentRestoreRehearsalReport;
@@ -116,6 +117,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string shellIntegrationStatus = "Shell integration: waiting";
+
+    [ObservableProperty]
+    private string directCloudStatus = "Direct cloud: waiting";
 
     [ObservableProperty]
     private string usnHealth = "USN: checking";
@@ -982,6 +986,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     ?? PerformanceWorkspaceConfiguration.CreateDefault(AppContext.BaseDirectory);
                 currentShellIntegration = status.Configuration.ShellIntegration
                     ?? ShellIntegrationConfiguration.CreateDefault(AppContext.BaseDirectory);
+                currentDirectCloud = status.Configuration.DirectCloud
+                    ?? DirectCloudConfiguration.CreateDefault();
                 currentExclusionRules = status.Configuration.ExclusionRules ?? [];
                 FileBrowser.DefaultWorkloadPreset = currentWorkloadPolicy.DefaultPreset;
                 var selectionRules = status.Configuration.SelectionRules;
@@ -1017,6 +1023,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ApplySyncStatus(status.Sync);
             ApplyPerformanceWorkspaceStatus(status.PerformanceWorkspace);
             ApplyShellIntegrationStatus(status.ShellIntegration);
+            ApplyDirectCloudStatus(status.DirectCloud);
             ApplyRepositoryHealth(status.RepositoryHealth);
             WatchedFolders.Clear();
             foreach (var folder in status.Configuration.WatchedFolders)
@@ -1100,7 +1107,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 .ToArray(),
                 new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile, MinimumMirrorCopies)),
             PerformanceWorkspace: currentPerformanceWorkspace,
-            ShellIntegration: currentShellIntegration);
+            ShellIntegration: currentShellIntegration,
+            DirectCloud: currentDirectCloud);
     }
 
     private VersionRow? FindRestoreHintVersion()
@@ -1316,6 +1324,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
         var state = status.IsEnabled ? "prepared" : "disabled";
         var registration = status.IsRegistrationDeferred ? "registration deferred" : status.Status;
         ShellIntegrationStatus = $"Shell integration: {status.Mode} {state}, {registration}";
+    }
+
+    private void ApplyDirectCloudStatus(DirectCloudRuntimeStatus? status)
+    {
+        if (status is null)
+        {
+            DirectCloudStatus = "Direct cloud: waiting";
+            return;
+        }
+
+        var enabled = status.Adapters.Count(adapter => adapter.IsEnabled);
+        var validation = status.IsLiveValidationDeferred ? "live validation deferred" : status.Status;
+        DirectCloudStatus = $"Direct cloud: {enabled} enabled adapter(s), {validation}";
     }
 
     private static string BuildMirrorHealth(IReadOnlyList<string> warnings, FluxVaultConfiguration configuration)

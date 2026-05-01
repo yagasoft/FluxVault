@@ -219,6 +219,32 @@ public sealed class MainWindowViewModelRefreshTests
                 Status: "Prepared; shell registration not executed.",
                 IsRegistrationDeferred: true,
                 IsPlaceholderCreationDeferred: true),
+            DirectCloud = new DirectCloudRuntimeStatus(
+                IsEnabled: true,
+                Status: "Direct cloud adapters configured; live validation deferred.",
+                IsLiveValidationDeferred: true,
+                Providers:
+                [
+                    new DirectCloudProviderRuntimeStatus(
+                        DirectCloudProvider.AzureBlob,
+                        "Azure.Storage.Blobs",
+                        "Azure.Storage.Blobs.BlobContainerClient",
+                        IsSdkAvailable: true),
+                    new DirectCloudProviderRuntimeStatus(
+                        DirectCloudProvider.Dropbox,
+                        "Dropbox.Api",
+                        "Dropbox.Api.DropboxClient",
+                        IsSdkAvailable: true)
+                ],
+                Adapters:
+                [
+                    new DirectCloudAdapterRuntimeStatus(
+                        "azure",
+                        DirectCloudProvider.AzureBlob,
+                        "Azure archive",
+                        IsEnabled: true,
+                        "Ready; credentials not loaded during status refresh.")
+                ]),
             Sync = new SyncRuntimeStatus(
                 "device-local",
                 [
@@ -279,6 +305,7 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Equal("Sync: 2 peer head(s), 1 cursor(s), 1 pending mapping(s), 1 applied remote version(s), 1 blocked target(s), 1 conflict(s)", viewModel.SyncPeerSummary);
         Assert.Equal("Performance workspace: WinFsp prepared, driver check deferred", viewModel.PerformanceWorkspaceStatus);
         Assert.Equal("Shell integration: CloudFilesApi prepared, registration deferred", viewModel.ShellIntegrationStatus);
+        Assert.Equal("Direct cloud: 1 enabled adapter(s), live validation deferred", viewModel.DirectCloudStatus);
     }
 
     [Fact]
@@ -558,12 +585,27 @@ public sealed class MainWindowViewModelRefreshTests
             DisplayName: "FluxVault Shell",
             HydrationPolicy: ShellHydrationPolicy.OnDemand,
             PlaceholderStatePath: @"D:\FluxVaultShell\.fluxvault");
+        var expectedDirectCloud = new DirectCloudConfiguration(
+            IsEnabled: true,
+            Adapters:
+            [
+                new DirectCloudAdapterConfiguration(
+                    Id: "onedrive",
+                    Provider: DirectCloudProvider.OneDrive,
+                    DisplayName: "OneDrive archive",
+                    Endpoint: null,
+                    ContainerOrBucket: "FluxVault",
+                    RootPrefix: "repository",
+                    CredentialReference: "fv-onedrive-oauth",
+                    IsEnabled: true)
+            ]);
         var status = StatusWithVersions() with
         {
             Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
             {
                 PerformanceWorkspace = expectedPerformance,
-                ShellIntegration = expectedShell
+                ShellIntegration = expectedShell,
+                DirectCloud = expectedDirectCloud
             }
         };
         var client = new FakeFluxVaultServiceClient(status);
@@ -575,6 +617,7 @@ public sealed class MainWindowViewModelRefreshTests
         var saved = Assert.Single(client.SavedConfigurations);
         Assert.Equal(expectedPerformance, saved.PerformanceWorkspace);
         Assert.Equal(expectedShell, saved.ShellIntegration);
+        Assert.Equal(expectedDirectCloud, saved.DirectCloud);
     }
 
     [Fact]

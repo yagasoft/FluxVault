@@ -334,6 +334,13 @@ manifests/scripts for review. Those scripts do not register providers, create
 placeholders, register sync roots, or mutate machine state during tests or
 normal app flows.
 
+FluxVault now has the first R6 direct-cloud adapter foundation for Azure Blob,
+S3-compatible storage, Dropbox, Google Drive, and OneDrive. The configuration
+stores provider metadata and credential references only, service status reports
+SDK/provider readiness with live validation deferred, and fake-client tests
+exercise the provider-neutral object adapter contract. No credentials are used
+and no live cloud account calls run in tests or normal app flows.
+
 Open **Options** to review retention, scheduled maintenance, and the default
 workload preset assigned to newly protected folders/files. The MVP
 retention defaults keep every version for 24 hours, keep one version per hour

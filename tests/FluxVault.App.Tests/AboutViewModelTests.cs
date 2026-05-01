@@ -20,6 +20,9 @@ public sealed class AboutViewModelTests
         Assert.Contains(viewModel.RoadmapMilestones, milestone => milestone.Contains("MVP", StringComparison.OrdinalIgnoreCase));
         Assert.Contains(viewModel.RoadmapMilestones, milestone => milestone.Contains("R3", StringComparison.OrdinalIgnoreCase));
         Assert.Contains(viewModel.RoadmapMilestones, milestone => milestone.Contains("direct cloud", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(viewModel.RoadmapMilestones, milestone => milestone.Contains("Dropbox", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(viewModel.RoadmapMilestones, milestone => milestone.Contains("Google Drive", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(viewModel.RoadmapMilestones, milestone => milestone.Contains("OneDrive", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]

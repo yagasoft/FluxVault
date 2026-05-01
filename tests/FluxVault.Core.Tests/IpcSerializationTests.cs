@@ -164,7 +164,33 @@ public sealed class IpcSerializationTests
                 ManifestPath: @"D:\Repo\eng\shell-integration\FluxVault.CloudFiles.ProjFs.manifest.json",
                 Status: "Prepared; shell registration not executed.",
                 IsRegistrationDeferred: true,
-                IsPlaceholderCreationDeferred: true));
+                IsPlaceholderCreationDeferred: true),
+            DirectCloud: new DirectCloudRuntimeStatus(
+                IsEnabled: true,
+                Status: "Direct cloud adapters configured; live validation deferred.",
+                IsLiveValidationDeferred: true,
+                Providers:
+                [
+                    new DirectCloudProviderRuntimeStatus(
+                        DirectCloudProvider.AzureBlob,
+                        "Azure.Storage.Blobs",
+                        "Azure.Storage.Blobs.BlobContainerClient",
+                        IsSdkAvailable: true),
+                    new DirectCloudProviderRuntimeStatus(
+                        DirectCloudProvider.OneDrive,
+                        "Microsoft.Graph",
+                        "Microsoft.Graph.GraphServiceClient",
+                        IsSdkAvailable: true)
+                ],
+                Adapters:
+                [
+                    new DirectCloudAdapterRuntimeStatus(
+                        "azure",
+                        DirectCloudProvider.AzureBlob,
+                        "Azure archive",
+                        IsEnabled: true,
+                        "Ready; credentials not loaded during status refresh.")
+                ]));
         var response = FluxVaultIpcResponse.WithStatus(status);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
@@ -198,6 +224,10 @@ public sealed class IpcSerializationTests
         Assert.Equal(ShellIntegrationMode.CloudFilesApi, roundTrip.Status.ShellIntegration.Mode);
         Assert.True(roundTrip.Status.ShellIntegration.IsRegistrationDeferred);
         Assert.True(roundTrip.Status.ShellIntegration.IsPlaceholderCreationDeferred);
+        Assert.NotNull(roundTrip.Status.DirectCloud);
+        Assert.True(roundTrip.Status.DirectCloud.IsLiveValidationDeferred);
+        Assert.Equal(2, roundTrip.Status.DirectCloud.Providers.Count);
+        Assert.Equal(DirectCloudProvider.AzureBlob, Assert.Single(roundTrip.Status.DirectCloud.Adapters).Provider);
     }
 
     [Fact]

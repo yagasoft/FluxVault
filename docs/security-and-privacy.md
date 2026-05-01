@@ -13,8 +13,11 @@ is not implemented in v1.
 
 ## Secrets
 
-Cloud-folder mode does not require FluxVault cloud secrets. Future direct cloud
-adapters must keep secrets outside repository manifests and outside logs.
+Cloud-folder mode does not require FluxVault cloud secrets. Direct cloud
+adapter configuration stores credential references only; secret values must stay
+outside repository manifests, configuration examples, project files, tests, and
+logs. Live credential validation is deferred until explicit account access is
+provided.
 
 ## Consistency claims
 

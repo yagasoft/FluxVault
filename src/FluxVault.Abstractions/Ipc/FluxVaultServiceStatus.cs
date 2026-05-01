@@ -20,7 +20,8 @@ public sealed record FluxVaultServiceStatus(
     DeviceIdentityRuntimeStatus? DeviceIdentity = null,
     SyncRuntimeStatus? Sync = null,
     PerformanceWorkspaceRuntimeStatus? PerformanceWorkspace = null,
-    ShellIntegrationRuntimeStatus? ShellIntegration = null);
+    ShellIntegrationRuntimeStatus? ShellIntegration = null,
+    DirectCloudRuntimeStatus? DirectCloud = null);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,
@@ -74,3 +75,23 @@ public sealed record ShellIntegrationRuntimeStatus(
     string Status,
     bool IsRegistrationDeferred,
     bool IsPlaceholderCreationDeferred);
+
+public sealed record DirectCloudRuntimeStatus(
+    bool IsEnabled,
+    string Status,
+    bool IsLiveValidationDeferred,
+    IReadOnlyList<DirectCloudProviderRuntimeStatus> Providers,
+    IReadOnlyList<DirectCloudAdapterRuntimeStatus> Adapters);
+
+public sealed record DirectCloudProviderRuntimeStatus(
+    DirectCloudProvider Provider,
+    string PackageId,
+    string SdkClientType,
+    bool IsSdkAvailable);
+
+public sealed record DirectCloudAdapterRuntimeStatus(
+    string Id,
+    DirectCloudProvider Provider,
+    string DisplayName,
+    bool IsEnabled,
+    string Status);

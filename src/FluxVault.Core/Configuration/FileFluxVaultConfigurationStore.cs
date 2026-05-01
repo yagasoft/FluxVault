@@ -80,6 +80,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         ValidateMirrorSet(configuration.MirrorSet);
         ValidatePerformanceWorkspace(configuration.PerformanceWorkspace);
         ValidateShellIntegration(configuration.ShellIntegration);
+        ValidateDirectCloud(configuration.DirectCloud);
     }
 
     private FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
@@ -106,6 +107,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             Sync = (configuration.Sync ?? SyncConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
             PerformanceWorkspace = (configuration.PerformanceWorkspace ?? PerformanceWorkspaceConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
             ShellIntegration = (configuration.ShellIntegration ?? ShellIntegrationConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
+            DirectCloud = (configuration.DirectCloud ?? DirectCloudConfiguration.CreateDefault()).Normalise(),
             SelectionRules = selectionRules.Select(NormaliseSelectionRule).ToArray(),
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0
@@ -159,6 +161,33 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         if (configuration.IsEnabled && string.IsNullOrWhiteSpace(configuration.PlaceholderStatePath))
         {
             throw new InvalidDataException("Shell integration placeholder state path is required when shell integration is enabled.");
+        }
+    }
+
+    private static void ValidateDirectCloud(DirectCloudConfiguration configuration)
+    {
+        if (configuration.IsEnabled && configuration.Adapters.Count == 0)
+        {
+            throw new InvalidDataException("At least one direct cloud adapter is required when direct cloud mode is enabled.");
+        }
+
+        var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var adapter in configuration.Adapters)
+        {
+            if (string.IsNullOrWhiteSpace(adapter.Id))
+            {
+                throw new InvalidDataException("Direct cloud adapter id is required.");
+            }
+
+            if (!ids.Add(adapter.Id))
+            {
+                throw new InvalidDataException($"Direct cloud adapter id is duplicated: {adapter.Id}.");
+            }
+
+            if (adapter.IsEnabled && string.IsNullOrWhiteSpace(adapter.CredentialReference))
+            {
+                throw new InvalidDataException($"Credential reference is required for enabled direct cloud adapter {adapter.DisplayName}.");
+            }
         }
     }
 

@@ -244,11 +244,20 @@ folder; direct cloud adapters arrive later.
 - R5 setup scripts and manifests may be authored in the repository, but tests
   and normal app flows must not register sync roots, register providers, create
   placeholders, or mutate machine-wide state.
+- R6 direct cloud adapter configuration must be typed, defaulted, and disabled
+  by default. It must cover Azure Blob, S3-compatible storage, Dropbox, Google
+  Drive, and OneDrive using credential references rather than secret values.
+- R6 adapter contracts must be testable with fake clients and must not require
+  credentials or live provider calls in tests.
+- R6 status must expose configured adapter count, SDK/provider readiness, and a
+  clear live-validation-deferred state until credentials and account access are
+  explicitly provided.
 
 ## Explicit non-goals for v1
 
 - No client-side encryption.
-- No direct cloud API upload.
+- No live direct cloud account upload or credential validation in the unsigned
+  consumer foundation.
 - No support commitment for Windows 10, Windows Server, network shares, or NAS.
 - No FluxVault-owned kernel driver.
 - No hidden telemetry.

@@ -372,6 +372,20 @@ public sealed class ConfigurationStoreTests
     }
 
     [Fact]
+    public async Task Default_configuration_has_disabled_direct_cloud_adapters()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+
+        var configuration = await store.LoadAsync();
+
+        Assert.False(configuration.DirectCloud.IsEnabled);
+        Assert.True(configuration.DirectCloud.BlockOnMeteredNetwork);
+        Assert.Null(configuration.DirectCloud.BandwidthLimitBytesPerSecond);
+        Assert.Empty(configuration.DirectCloud.Adapters);
+    }
+
+    [Fact]
     public async Task Save_and_load_round_trips_winfsp_performance_workspace()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -412,6 +426,36 @@ public sealed class ConfigurationStoreTests
 
         var actual = await store.LoadAsync();
         Assert.Equal(expected.ShellIntegration, actual.ShellIntegration);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_direct_cloud_adapters_for_all_required_providers()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var expected = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            DirectCloud = new DirectCloudConfiguration(
+                IsEnabled: true,
+                Adapters:
+                [
+                    Adapter("azure", DirectCloudProvider.AzureBlob, "Azure archive", "https://acct.blob.core.windows.net", "vault", "fv-azure-secret"),
+                    Adapter("s3", DirectCloudProvider.S3Compatible, "S3 archive", "https://s3.example.test", "fluxvault", "fv-s3-secret"),
+                    Adapter("dropbox", DirectCloudProvider.Dropbox, "Dropbox archive", null, "/FluxVault", "fv-dropbox-oauth"),
+                    Adapter("google", DirectCloudProvider.GoogleDrive, "Google Drive archive", null, "FluxVault", "fv-google-oauth"),
+                    Adapter("onedrive", DirectCloudProvider.OneDrive, "OneDrive archive", null, "FluxVault", "fv-onedrive-oauth")
+                ],
+                BlockOnMeteredNetwork: true,
+                BandwidthLimitBytesPerSecond: 2_000_000)
+        };
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+        Assert.True(actual.DirectCloud.IsEnabled);
+        Assert.True(actual.DirectCloud.BlockOnMeteredNetwork);
+        Assert.Equal(2_000_000, actual.DirectCloud.BandwidthLimitBytesPerSecond);
+        Assert.Equal(expected.DirectCloud.Adapters, actual.DirectCloud.Adapters);
     }
 
     [Fact]
@@ -463,5 +507,24 @@ public sealed class ConfigurationStoreTests
             WatchedFolders: []);
 
         await Assert.ThrowsAsync<InvalidDataException>(() => store.SaveAsync(configuration));
+    }
+
+    private static DirectCloudAdapterConfiguration Adapter(
+        string id,
+        DirectCloudProvider provider,
+        string displayName,
+        string? endpoint,
+        string rootOrContainer,
+        string credentialReference)
+    {
+        return new DirectCloudAdapterConfiguration(
+            Id: id,
+            Provider: provider,
+            DisplayName: displayName,
+            Endpoint: endpoint,
+            ContainerOrBucket: rootOrContainer,
+            RootPrefix: "fluxvault/repository",
+            CredentialReference: credentialReference,
+            IsEnabled: true);
     }
 }

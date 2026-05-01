@@ -455,6 +455,27 @@ public sealed class PackagingTests
         Assert.Contains("\"machineMutation\": false", manifest);
     }
 
+    [Fact]
+    public void Direct_cloud_adapter_sdk_packages_are_declared_without_credentials()
+    {
+        var root = FindRepositoryRoot();
+        var packages = File.ReadAllText(Path.Combine(root, "Directory.Packages.props"));
+        var coreProject = File.ReadAllText(Path.Combine(root, "src", "FluxVault.Core", "FluxVault.Core.csproj"));
+
+        Assert.Contains("Azure.Storage.Blobs", packages);
+        Assert.Contains("AWSSDK.S3", packages);
+        Assert.Contains("Dropbox.Api", packages);
+        Assert.Contains("Google.Apis.Drive.v3", packages);
+        Assert.Contains("Microsoft.Graph", packages);
+        Assert.Contains("<PackageReference Include=\"Azure.Storage.Blobs\"", coreProject);
+        Assert.Contains("<PackageReference Include=\"AWSSDK.S3\"", coreProject);
+        Assert.Contains("<PackageReference Include=\"Dropbox.Api\"", coreProject);
+        Assert.Contains("<PackageReference Include=\"Google.Apis.Drive.v3\"", coreProject);
+        Assert.Contains("<PackageReference Include=\"Microsoft.Graph\"", coreProject);
+        Assert.DoesNotContain("AccountKey=", coreProject, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("client_secret", coreProject, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

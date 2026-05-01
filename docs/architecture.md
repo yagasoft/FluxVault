@@ -406,6 +406,19 @@ review artefacts in this slice; they emit plans and are covered by tests, but
 FluxVault does not register a provider, register a sync root, create
 placeholders, or mutate machine state without explicit future approval.
 
+R6 direct cloud adapters start as a typed, credential-reference-only foundation.
+`DirectCloudConfiguration` records whether direct cloud use is enabled, the
+configured Azure Blob, S3-compatible, Dropbox, Google Drive, and OneDrive
+adapter records, metered-network policy, and an optional bandwidth limit. The
+core cloud boundary is `ICloudObjectAdapter`, which exposes object put, read,
+metadata, list, and delete operations and is tested with fake clients. Provider
+SDK descriptors in `DirectCloudAdapterCatalog` bind the implementation to the
+official SDK package/client types at compile time, while service status
+projects `DirectCloudRuntimeStatus` and explicitly reports that live validation
+is deferred. FluxVault does not load credentials, contact cloud accounts, or
+upload repository artefacts through direct adapters without explicit future
+approval.
+
 ## Future release tracks
 
 R2 is the distributed mirror fabric. The first slice establishes `MirrorSet`

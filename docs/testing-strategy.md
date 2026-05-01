@@ -154,6 +154,13 @@
   native workspace settings, and `eng/shell-integration` setup assets are
   covered by static tests that prove they are not self-executing sync-root,
   provider, placeholder, or machine registration scripts.
+- Direct cloud adapter foundation: configuration defaults disabled and
+  round-trips Azure Blob, S3-compatible, Dropbox, Google Drive, and OneDrive
+  adapter records; SDK package/client bindings are compile-checked; fake-client
+  object adapter tests cover put/read/metadata/list/delete without live account
+  calls; service status and IPC expose provider readiness with live validation
+  deferred; Diagnostics shows the direct-cloud status; and package tests prove
+  no credential material is declared in project files.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

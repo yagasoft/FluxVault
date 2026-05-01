@@ -17,7 +17,8 @@ public sealed record FluxVaultConfiguration(
     MirrorSetConfiguration MirrorSet = null!,
     SyncConfiguration Sync = null!,
     PerformanceWorkspaceConfiguration PerformanceWorkspace = null!,
-    ShellIntegrationConfiguration ShellIntegration = null!)
+    ShellIntegrationConfiguration ShellIntegration = null!,
+    DirectCloudConfiguration DirectCloud = null!)
 {
     public static FluxVaultConfiguration CreateDefault(string programDataPath)
     {
@@ -37,6 +38,7 @@ public sealed record FluxVaultConfiguration(
             MirrorSet: MirrorSetConfiguration.CreateDefault(),
             Sync: SyncConfiguration.CreateDefault(programDataPath),
             PerformanceWorkspace: PerformanceWorkspaceConfiguration.CreateDefault(programDataPath),
-            ShellIntegration: ShellIntegrationConfiguration.CreateDefault(programDataPath));
+            ShellIntegration: ShellIntegrationConfiguration.CreateDefault(programDataPath),
+            DirectCloud: DirectCloudConfiguration.CreateDefault());
     }
 }

@@ -828,6 +828,55 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Status_exposes_direct_cloud_adapter_readiness_without_live_validation()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            DirectCloud = new DirectCloudConfiguration(
+                IsEnabled: true,
+                Adapters:
+                [
+                    new DirectCloudAdapterConfiguration(
+                        Id: "azure",
+                        Provider: DirectCloudProvider.AzureBlob,
+                        DisplayName: "Azure archive",
+                        Endpoint: "https://acct.blob.core.windows.net",
+                        ContainerOrBucket: "vault",
+                        RootPrefix: "fluxvault/repository",
+                        CredentialReference: "fv-azure-secret",
+                        IsEnabled: true),
+                    new DirectCloudAdapterConfiguration(
+                        Id: "dropbox",
+                        Provider: DirectCloudProvider.Dropbox,
+                        DisplayName: "Dropbox archive",
+                        Endpoint: null,
+                        ContainerOrBucket: "/FluxVault",
+                        RootPrefix: "repository",
+                        CredentialReference: "fv-dropbox-oauth",
+                        IsEnabled: false)
+                ])
+        };
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var status = await operations.GetStatusAsync();
+
+        Assert.NotNull(status.DirectCloud);
+        Assert.True(status.DirectCloud.IsEnabled);
+        Assert.True(status.DirectCloud.IsLiveValidationDeferred);
+        Assert.Equal(5, status.DirectCloud.Providers.Count);
+        Assert.Equal(2, status.DirectCloud.Adapters.Count);
+        Assert.Contains(status.DirectCloud.Providers, provider => provider.Provider == DirectCloudProvider.OneDrive
+            && provider.PackageId == "Microsoft.Graph");
+        Assert.Contains(status.DirectCloud.Adapters, adapter => adapter.Id == "azure"
+            && adapter.Provider == DirectCloudProvider.AzureBlob
+            && adapter.IsEnabled);
+    }
+
+    [Fact]
     public async Task File_browser_recursive_folder_selection_backs_up_nested_files()
     {
         using var workspace = TemporaryWorkspace.Create();

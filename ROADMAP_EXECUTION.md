@@ -100,7 +100,7 @@ Blockers:
 
 Assumptions:
 
-- `R3-005` is metadata discovery foundation only; mapping confirmation, loop prevention, hydration, blocked targets, and conflict actions remain later R3 items.
+- `R3-005` is metadata discovery foundation only; mapping confirmation, loop prevention, hydration, blocked targets, and conflict actions remained later R3 items at the time it was implemented.
 - Operation records reference versions and metadata but do not duplicate chunk payloads.
 
 ## R3-002: sync mapping confirmation gate
@@ -133,3 +133,34 @@ Assumptions:
 
 - `R3-002` is a confirmation gate and status foundation only; actual chunk hydration, blocked target handling, and conflict actions remain `R3-003`.
 - Mapping confirmation is represented in repository metadata and Diagnostics, not as an editable Options setting.
+
+## R3-004: sync idempotency and loop-prevention metadata
+
+Status: complete.
+
+Plan:
+
+- Add sync-origin metadata for remote-applied versions: source device, source operation, source version, optional mapping, and applied timestamp.
+- Mark remote-applied repository commits distinctly and preserve sync-origin metadata in manifests and version summaries.
+- Add repository-owned applied remote-version records under sync metadata, keyed by source operation for deduplication.
+- Add a publish gate that suppresses remote-applied manifests from being republished as fresh local captures.
+- Expose applied remote-version records through service status/IPC and show compact applied count in Diagnostics.
+- Update README and roadmap docs/tracker for `R3-004`.
+
+Evidence:
+
+- Red evidence: `dotnet test tests\FluxVault.Core.Tests\FluxVault.Core.Tests.csproj --filter "FullyQualifiedName~SyncLoopPreventionTests|FullyQualifiedName~IpcSerializationTests"` initially failed because `SyncOriginMetadata`, `SyncAppliedVersionRecord`, `FileSyncApplicationStore`, `SyncPublishGate`, `VersionOperationType.RemoteSync`, `FileCommitRequest.SyncOrigin`, `FileVersionManifest.SyncOrigin`, `RepositoryVersionSummary.SyncOrigin`, and `SyncRuntimeStatus.AppliedRemoteVersions` did not exist.
+- Green targeted evidence: core loop-prevention/IPC tests passed, 21 total.
+- Green targeted evidence: integration service status tests passed, 2 total.
+- Green targeted evidence: app sync summary/XAML tests passed, 34 total.
+- Full verification: `dotnet test` passed across App/Core/Integration/Windows test projects: 117 App, 132 Core, 76 Integration, 17 Windows.
+- Whitespace verification: `git diff --check` passed.
+
+Blockers:
+
+- None.
+
+Assumptions:
+
+- `R3-004` provides loop-prevention metadata and gates only; actual remote hydration and watcher suppression are completed in `R3-003`.
+- Applied remote-version records are repository metadata, not user-editable Options configuration.

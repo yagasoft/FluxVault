@@ -1,3 +1,5 @@
+using FluxVault.Abstractions.Sync;
+
 namespace FluxVault.Abstractions.Storage;
 
 public sealed record FileVersionManifest(
@@ -14,7 +16,8 @@ public sealed record FileVersionManifest(
     string? ForkOriginVersionId = null,
     string? InheritedFromVersionId = null,
     string? InheritedFromSourcePath = null,
-    string? ContentSignature = null);
+    string? ContentSignature = null,
+    SyncOriginMetadata? SyncOrigin = null);
 
 public sealed record ManifestChunk(
     string Digest,

@@ -364,13 +364,15 @@ path, so later sync hydration cannot create, patch, or overwrite an
 unconfirmed target. After confirmation, peers fetch only missing chunks and
 patch safe targets at chunk level.
 
-Sync loop prevention must be metadata-led. A peer first checks whether required
-chunks already exist locally, but it also records source version id, operation
-id, origin device id, and applied remote-version metadata. Writes performed by
-FluxVault during remote hydration must be suppressed or classified as sync
-applications when local change detection observes them, so the peer does not
-publish the same remote version as a new local change unless the local file
-diverged afterward.
+Sync loop prevention is metadata-led. Remote-applied versions carry sync-origin
+metadata in the manifest: source device id, source operation id, source version
+id, optional mapping id, and applied timestamp. Repository sync metadata also
+stores applied remote-version records under `sync/applied/`, keyed by source
+device and operation. A publish gate suppresses these remote-applied manifests
+from being advertised as fresh local captures. Later chunk hydration must use
+that metadata together with chunk existence checks so the peer does not publish
+the same remote version as a new local change unless the local file diverged
+afterward.
 
 ## Future release tracks
 

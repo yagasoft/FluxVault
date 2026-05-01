@@ -44,4 +44,5 @@ public sealed record SyncRuntimeStatus(
     string LocalDeviceId,
     IReadOnlyList<PeerHeadRecord> PeerHeads,
     IReadOnlyList<PeerCursorRecord> Cursors,
-    IReadOnlyList<SyncMappingRecord>? Mappings = null);
+    IReadOnlyList<SyncMappingRecord>? Mappings = null,
+    IReadOnlyList<SyncAppliedVersionRecord>? AppliedRemoteVersions = null);

@@ -130,6 +130,12 @@
   pending mappings block hydration, confirmed mappings store the local target
   path and allow hydration, mapping records round-trip through IPC/status, and
   Diagnostics shows pending mapping count.
+- Sync loop-prevention behaviour: commits with sync-origin metadata are stored
+  as remote-applied versions, summaries preserve source device/operation/version
+  metadata, applied remote-version records deduplicate by source operation,
+  service status round-trips the latest applied records, Diagnostics shows the
+  applied remote-version count, and the publish gate suppresses remote-applied
+  versions from local publication.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.
@@ -171,10 +177,6 @@
   replay after restart, corrupt or missing operation records surface as peer
   lag or warnings rather than crashing sync, and operation-origin metadata stops
   a node from applying its own published operation as a new remote change.
-- Planned sync loop prevention: a remotely hydrated version is not republished
-  as a new local version when watcher/USN observes FluxVault's own sync-applied
-  write.
-
 ## Benchmarks
 
 Benchmark 1 GB, 10 GB, and 100 GB patterns:

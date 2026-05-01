@@ -164,6 +164,10 @@ downloading or rewriting whole files unnecessarily.
   folders or files pending until each peer confirms the same path or chooses a
   per-PC override. The sync mapping gate blocks hydration unless the mapping is
   confirmed and has a local target path.
+- Implemented: remote-applied versions can carry source version id, source
+  operation id, origin device id, mapping id, and applied-version metadata.
+  A publish gate can suppress those remote-applied manifests so FluxVault does
+  not republish its own sync hydration writes as new local changes.
 - Peers will poll compact peer heads first, then fetch only missing operation
   records since their local per-peer cursor. Operation records reference
   FluxVault versions, manifests, chunks, operation ids, source device ids, and
@@ -173,9 +177,9 @@ downloading or rewriting whole files unnecessarily.
   same content payload.
 - Other PCs hydrate only missing chunks and patch files at chunk level where
   the target file can be safely opened.
-- Sync loop prevention is required: peers must use chunk existence checks plus
-  source version id, operation id, sync origin, and device metadata so a
-  remotely applied change is not republished forever as a new local version.
+- Later chunk hydration must use the loop-prevention metadata above together
+  with chunk existence checks so a remotely applied change is not republished
+  forever as a new local version.
 - Open or locked target files become blocked rather than overwritten.
 - Conflicts preserve both versions and show a `Resolve conflict` action with
   keep local, keep remote, restore as copy, open both, and mark resolved.

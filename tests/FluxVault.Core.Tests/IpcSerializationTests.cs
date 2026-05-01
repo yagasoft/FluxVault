@@ -105,6 +105,18 @@ public sealed class IpcSerializationTests
                         LocalPath: @"E:\Protected\brief.docx",
                         Status: SyncMappingStatus.PendingConfirmation,
                         CreatedAtUtc: checkedAt)
+                ],
+                AppliedRemoteVersions:
+                [
+                    new SyncAppliedVersionRecord(
+                        SourceDeviceId: "device-laptop",
+                        SourceOperationId: "operation-42",
+                        SourceVersionId: "remote-version-42",
+                        LocalVersionId: "local-version-1",
+                        LocalPath: @"E:\Protected\brief.docx",
+                        ContentSignature: "sig-42",
+                        AppliedAtUtc: checkedAt,
+                        MappingId: "mapping-1")
                 ]));
         var response = FluxVaultIpcResponse.WithStatus(status);
 
@@ -129,6 +141,7 @@ public sealed class IpcSerializationTests
         Assert.Equal("operation-3", Assert.Single(roundTrip.Status.Sync.PeerHeads).HeadOperationId);
         Assert.Equal("device-laptop", Assert.Single(roundTrip.Status.Sync.Cursors).PeerDeviceId);
         Assert.Equal(SyncMappingStatus.PendingConfirmation, Assert.Single(roundTrip.Status.Sync.Mappings!).Status);
+        Assert.Equal("remote-version-42", Assert.Single(roundTrip.Status.Sync.AppliedRemoteVersions!).SourceVersionId);
     }
 
     [Fact]

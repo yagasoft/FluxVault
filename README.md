@@ -310,10 +310,10 @@ per-peer cursors, and mapping confirmation records; Diagnostics shows the local
 device id, trusted-device count, peer-head count, cursor count, and pending
 mapping count. A newly selected remote folder or file remains blocked from
 hydration until this PC confirms the same source path or records a per-PC path
-override. Future chunk hydration will use that confirmation gate before
-creating, hydrating, or patching targets, and will record source version,
-operation, origin device, and applied-version metadata so a remote hydration
-write is not republished forever as a new local change.
+override. Remote-applied versions can now carry source version, source
+operation, origin device, and applied-version metadata in the manifest and sync
+status so later chunk hydration can avoid republishing FluxVault's own remote
+write as a fresh local change.
 
 Open **Options** to review retention, scheduled maintenance, and the default
 workload preset assigned to newly protected folders/files. The MVP

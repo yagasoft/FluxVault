@@ -4,5 +4,6 @@ public enum VersionOperationType
 {
     Capture,
     Restore,
-    InheritedCopy
+    InheritedCopy,
+    RemoteSync
 }

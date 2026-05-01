@@ -1,4 +1,5 @@
 using FluxVault.Abstractions.Policies;
+using FluxVault.Abstractions.Sync;
 
 namespace FluxVault.Abstractions.Storage;
 
@@ -9,4 +10,5 @@ public sealed record FileCommitRequest(
     CaptureConsistency Consistency,
     CompressionPreference Compression,
     int MinimumCompressionBytes,
-    Stream Content);
+    Stream Content,
+    SyncOriginMetadata? SyncOrigin = null);

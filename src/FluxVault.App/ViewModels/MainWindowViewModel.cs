@@ -1242,10 +1242,24 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private static string BuildSyncSummary(SyncRuntimeStatus status)
     {
         var mappings = status.Mappings ?? [];
+        var appliedRemoteVersions = status.AppliedRemoteVersions ?? [];
         var pendingMappings = mappings.Count(mapping => mapping.Status == SyncMappingStatus.PendingConfirmation);
-        return pendingMappings == 0
-            ? $"Sync: {status.PeerHeads.Count} peer head(s), {status.Cursors.Count} cursor(s)"
-            : $"Sync: {status.PeerHeads.Count} peer head(s), {status.Cursors.Count} cursor(s), {pendingMappings} pending mapping(s)";
+        var parts = new List<string>
+        {
+            $"Sync: {status.PeerHeads.Count} peer head(s)",
+            $"{status.Cursors.Count} cursor(s)"
+        };
+        if (pendingMappings > 0)
+        {
+            parts.Add($"{pendingMappings} pending mapping(s)");
+        }
+
+        if (appliedRemoteVersions.Count > 0)
+        {
+            parts.Add($"{appliedRemoteVersions.Count} applied remote version(s)");
+        }
+
+        return string.Join(", ", parts);
     }
 
     private static string BuildMirrorHealth(IReadOnlyList<string> warnings, FluxVaultConfiguration configuration)

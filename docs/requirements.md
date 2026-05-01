@@ -213,7 +213,10 @@ folder; direct cloud adapters arrive later.
   local target path, and Diagnostics must expose pending mapping count.
 - Multi-PC sync must prevent recursive re-publication loops by recording source
   version, operation, origin device, and applied remote-version metadata. Chunk
-  existence checks alone are not enough.
+  existence checks alone are not enough. Remote-applied manifests must carry
+  sync-origin metadata, repository sync metadata must record applied remote
+  versions, and a publish gate must suppress remote-applied versions from
+  being advertised as fresh local captures.
 
 ## Explicit non-goals for v1
 

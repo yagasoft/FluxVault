@@ -85,7 +85,9 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         var sourcePath = Path.GetFullPath(request.SourcePath);
         var existingManifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
         var contentSignature = ComputeContentSignature(logicalLength, chunks);
-        var lineage = ReadRestoreHint(sourcePath) is { } restoreHint
+        var lineage = request.SyncOrigin is not null
+            ? ResolveSyncLineage(sourcePath, existingManifests)
+            : ReadRestoreHint(sourcePath) is { } restoreHint
             ? ResolveRestoreLineage(sourcePath, restoreHint, existingManifests)
             : ResolveCaptureLineage(sourcePath, contentSignature, existingManifests);
 
@@ -103,7 +105,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             ForkOriginVersionId: lineage.ForkOriginVersionId,
             InheritedFromVersionId: lineage.InheritedFromVersionId,
             InheritedFromSourcePath: lineage.InheritedFromSourcePath,
-            ContentSignature: contentSignature);
+            ContentSignature: contentSignature,
+            SyncOrigin: request.SyncOrigin);
 
         var manifestBytes = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonOptions);
         AtomicWrite(ManifestPath(rootPath, manifest.VersionId), manifestBytes);
@@ -1857,6 +1860,20 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         return new LineageResolution(VersionOperationType.Capture, [], null, null, null, null);
     }
 
+    private LineageResolution ResolveSyncLineage(
+        string sourcePath,
+        IReadOnlyList<FileVersionManifest> existingManifests)
+    {
+        var samePathParent = LatestForPath(existingManifests, sourcePath);
+        return new LineageResolution(
+            VersionOperationType.RemoteSync,
+            samePathParent is null ? [] : [samePathParent.VersionId],
+            null,
+            samePathParent is null ? null : GetForkOriginVersionId(samePathParent),
+            null,
+            null);
+    }
+
     private static FileVersionManifest? LatestForPath(IReadOnlyList<FileVersionManifest> manifests, string sourcePath)
     {
         return manifests
@@ -1888,7 +1905,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             manifest.ForkOriginVersionId,
             manifest.InheritedFromVersionId,
             manifest.InheritedFromSourcePath,
-            GetContentSignature(manifest));
+            GetContentSignature(manifest),
+            manifest.SyncOrigin);
     }
 
     private string GetContentSignature(FileVersionManifest manifest)

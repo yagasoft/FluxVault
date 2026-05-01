@@ -1,3 +1,5 @@
+using FluxVault.Abstractions.Sync;
+
 namespace FluxVault.Abstractions.Storage;
 
 public sealed record RepositoryVersionSummary(
@@ -13,4 +15,5 @@ public sealed record RepositoryVersionSummary(
     string? ForkOriginVersionId = null,
     string? InheritedFromVersionId = null,
     string? InheritedFromSourcePath = null,
-    string? ContentSignature = null);
+    string? ContentSignature = null,
+    SyncOriginMetadata? SyncOrigin = null);

@@ -677,6 +677,39 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Status_exposes_applied_remote_versions_for_loop_prevention()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            Sync = new SyncConfiguration(
+                new DeviceIdentityConfiguration("device-local", "Studio PC", new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero)),
+                [
+                    new TrustedDeviceConfiguration("device-local", "Studio PC", DeviceTrustState.Local, new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero))
+                ])
+        };
+        var applied = new FileSyncApplicationStore(workspace.RepositoryPath);
+        await applied.RecordAppliedVersionAsync(new SyncAppliedVersionRecord(
+            SourceDeviceId: "device-laptop",
+            SourceOperationId: "operation-42",
+            SourceVersionId: "remote-version-42",
+            LocalVersionId: "local-version-1",
+            LocalPath: @"D:\Work\Docs\brief.docx",
+            ContentSignature: "sig-42",
+            AppliedAtUtc: new DateTimeOffset(2026, 5, 1, 12, 0, 0, TimeSpan.Zero)));
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var status = await operations.GetStatusAsync();
+
+        Assert.NotNull(status.Sync);
+        var record = Assert.Single(status.Sync.AppliedRemoteVersions!);
+        Assert.Equal("operation-42", record.SourceOperationId);
+    }
+
+    [Fact]
     public async Task File_browser_recursive_folder_selection_backs_up_nested_files()
     {
         using var workspace = TemporaryWorkspace.Create();

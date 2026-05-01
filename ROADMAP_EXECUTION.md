@@ -102,3 +102,34 @@ Assumptions:
 
 - `R3-005` is metadata discovery foundation only; mapping confirmation, loop prevention, hydration, blocked targets, and conflict actions remain later R3 items.
 - Operation records reference versions and metadata but do not duplicate chunk payloads.
+
+## R3-002: sync mapping confirmation gate
+
+Status: complete.
+
+Plan:
+
+- Add repository-owned sync mapping records with pending, confirmed, and blocked states.
+- Add a pure mapping gate that only allows hydration for confirmed mappings with a local target path.
+- Persist mappings under repository sync metadata with atomic JSON writes.
+- Expose mapping records through service status/IPC and show pending mapping count in Diagnostics.
+- Update README and roadmap docs/tracker for `R3-002`.
+
+Evidence:
+
+- Red evidence: `dotnet test tests\FluxVault.Core.Tests\FluxVault.Core.Tests.csproj --filter "FullyQualifiedName~SyncMappingStoreTests|FullyQualifiedName~IpcSerializationTests"` initially failed because `SyncMappingRecord`, `SyncMappingStatus`, `SyncMappingGate`, `FileSyncMappingStore`, and `SyncRuntimeStatus.Mappings` did not exist.
+- Green targeted evidence: core mapping/IPC tests passed, 22 total.
+- Green targeted evidence: integration service status mapping tests passed, 2 total.
+- Green targeted evidence: app sync summary/XAML tests passed, 34 total.
+- Green focused evidence after integration: core sync/IPC tests passed, 25 total; integration status tests passed, 3 total; app sync/XAML tests passed, 34 total.
+- Full verification: `dotnet test` passed across App/Core/Integration/Windows test projects: 117 App, 130 Core, 75 Integration, 17 Windows.
+- Whitespace verification: `git diff --check` passed.
+
+Blockers:
+
+- None.
+
+Assumptions:
+
+- `R3-002` is a confirmation gate and status foundation only; actual chunk hydration, blocked target handling, and conflict actions remain `R3-003`.
+- Mapping confirmation is represented in repository metadata and Diagnostics, not as an editable Options setting.

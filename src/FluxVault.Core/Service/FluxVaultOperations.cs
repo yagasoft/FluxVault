@@ -700,10 +700,12 @@ public sealed class FluxVaultOperations(
         CancellationToken cancellationToken)
     {
         var journal = new FilePeerSyncJournal(configuration.RepositoryPath);
+        var mappings = new FileSyncMappingStore(configuration.RepositoryPath);
         return new SyncRuntimeStatus(
             configuration.Sync.LocalDevice.DeviceId,
             await journal.ListPeerHeadsAsync(cancellationToken).ConfigureAwait(false),
-            await journal.ListCursorsAsync(cancellationToken).ConfigureAwait(false));
+            await journal.ListCursorsAsync(cancellationToken).ConfigureAwait(false),
+            await mappings.ListMappingsAsync(cancellationToken).ConfigureAwait(false));
     }
 
     private static string FormatBytes(long bytes)

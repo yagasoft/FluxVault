@@ -8,6 +8,7 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Abstractions.Sync;
 using FluxVault.App.Services;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
@@ -1235,7 +1236,16 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         SyncPeerSummary = status is null
             ? "Sync: waiting"
-            : $"Sync: {status.PeerHeads.Count} peer head(s), {status.Cursors.Count} cursor(s)";
+            : BuildSyncSummary(status);
+    }
+
+    private static string BuildSyncSummary(SyncRuntimeStatus status)
+    {
+        var mappings = status.Mappings ?? [];
+        var pendingMappings = mappings.Count(mapping => mapping.Status == SyncMappingStatus.PendingConfirmation);
+        return pendingMappings == 0
+            ? $"Sync: {status.PeerHeads.Count} peer head(s), {status.Cursors.Count} cursor(s)"
+            : $"Sync: {status.PeerHeads.Count} peer head(s), {status.Cursors.Count} cursor(s), {pendingMappings} pending mapping(s)";
     }
 
     private static string BuildMirrorHealth(IReadOnlyList<string> warnings, FluxVaultConfiguration configuration)

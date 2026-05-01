@@ -206,9 +206,11 @@ folder; direct cloud adapters arrive later.
   per-peer operation records, and local per-peer cursors. Operation records
   must be append-only, reference versions and metadata instead of duplicating
   chunk payloads, and expose peer-head/cursor status through Diagnostics.
-- Multi-PC sync must keep a newly selected folder or file pending on each peer
-  until same-path or per-PC override mapping is confirmed.
-- Peers must not create, hydrate, or patch an unconfirmed mapping target.
+- Multi-PC sync mapping records must keep a newly selected folder or file
+  pending on each peer until same-path or per-PC override mapping is confirmed.
+- Peers must not create, hydrate, or patch an unconfirmed mapping target. The
+  sync mapping gate must allow hydration only for confirmed mappings with a
+  local target path, and Diagnostics must expose pending mapping count.
 - Multi-PC sync must prevent recursive re-publication loops by recording source
   version, operation, origin device, and applied remote-version metadata. Chunk
   existence checks alone are not enough.

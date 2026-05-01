@@ -126,6 +126,10 @@
   updates compact peer heads, rejects duplicate operation ids, filters
   operations from local cursors, exposes peer heads/cursors through IPC, and
   shows compact peer status in Diagnostics.
+- Sync mapping gate behaviour: proposed mappings are pending by default,
+  pending mappings block hydration, confirmed mappings store the local target
+  path and allow hydration, mapping records round-trip through IPC/status, and
+  Diagnostics shows pending mapping count.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.
@@ -162,8 +166,6 @@
 - Workload policy capture behaviour: generated/cache paths excluded by the
   selected preset are not captured, and committed versions use the resolved
   compression codec and minimum compression threshold.
-- Planned sync mapping gate: remote peers do not hydrate, patch, or create a
-  newly selected target until mapping is confirmed.
 - Planned sync change discovery: peer head changes cause only missing immutable
   operation records to be fetched from that peer, local per-peer cursors prevent
   replay after restart, corrupt or missing operation records surface as peer

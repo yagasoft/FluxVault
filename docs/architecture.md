@@ -356,12 +356,13 @@ operation records reference FluxVault versions, source paths, content
 signatures, operation ids, and optional metadata; they do not duplicate chunk
 payloads.
 
-R3 sync will publish folder mapping metadata, manifests, and heartbeats into
-that peer metadata area. A newly selected folder or file from one PC is only
-advertised as pending until every peer confirms a same-path mapping or chooses
-a per-PC override. Peers must not hydrate, patch, or create the target path
-before that mapping is confirmed. After confirmation, peers fetch only missing
-chunks and patch safe targets at chunk level.
+R3 sync mapping metadata is also repository-owned under `sync/mappings/`. A
+newly selected folder or file from one PC is stored as a pending mapping until
+this peer confirms a same-path mapping or chooses a per-PC override. The sync
+mapping gate allows hydration only for confirmed mappings with a local target
+path, so later sync hydration cannot create, patch, or overwrite an
+unconfirmed target. After confirmation, peers fetch only missing chunks and
+patch safe targets at chunk level.
 
 Sync loop prevention must be metadata-led. A peer first checks whether required
 chunks already exist locally, but it also records source version id, operation

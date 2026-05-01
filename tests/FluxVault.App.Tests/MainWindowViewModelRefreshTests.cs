@@ -205,6 +205,16 @@ public sealed class MainWindowViewModelRefreshTests
                 ],
                 [
                     new PeerCursorRecord("device-laptop", 2, "remote-operation-2", DateTimeOffset.UtcNow)
+                ],
+                [
+                    new SyncMappingRecord(
+                        "mapping-1",
+                        "device-laptop",
+                        @"D:\Work\Docs\brief.docx",
+                        "device-local",
+                        @"D:\Work\Docs\brief.docx",
+                        SyncMappingStatus.PendingConfirmation,
+                        DateTimeOffset.UtcNow)
                 ])
         };
         var client = new FakeFluxVaultServiceClient(status);
@@ -212,7 +222,7 @@ public sealed class MainWindowViewModelRefreshTests
 
         await viewModel.RefreshAsync();
 
-        Assert.Equal("Sync: 2 peer head(s), 1 cursor(s)", viewModel.SyncPeerSummary);
+        Assert.Equal("Sync: 2 peer head(s), 1 cursor(s), 1 pending mapping(s)", viewModel.SyncPeerSummary);
     }
 
     [Fact]

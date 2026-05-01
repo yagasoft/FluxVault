@@ -158,13 +158,12 @@ downloading or rewriting whole files unnecessarily.
   Legacy configurations normalise to one local trusted device, and Diagnostics
   shows the device id and trust summary.
 - Future sync UI can add safe trust editing once peer exchange workflows exist.
-- Folder mappings use the same source path by default, with per-PC overrides.
-- Newly protected folders or files published by one PC remain pending on other
-  PCs until each peer confirms the same path or chooses a per-PC path override.
-- Peer sync must not create, hydrate, or patch a newly mapped target before the
-  mapping is confirmed.
 - Implemented: each PC can own a sync-control area in the repository with a
   compact peer head, immutable operation records, and local per-peer cursors.
+- Implemented: repository-owned mapping records keep newly protected remote
+  folders or files pending until each peer confirms the same path or chooses a
+  per-PC override. The sync mapping gate blocks hydration unless the mapping is
+  confirmed and has a local target path.
 - Peers will poll compact peer heads first, then fetch only missing operation
   records since their local per-peer cursor. Operation records reference
   FluxVault versions, manifests, chunks, operation ids, source device ids, and

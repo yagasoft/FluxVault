@@ -646,6 +646,37 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Status_exposes_sync_mapping_confirmation_records()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            Sync = new SyncConfiguration(
+                new DeviceIdentityConfiguration("device-local", "Studio PC", new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero)),
+                [
+                    new TrustedDeviceConfiguration("device-local", "Studio PC", DeviceTrustState.Local, new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero))
+                ])
+        };
+        var mappings = new FileSyncMappingStore(workspace.RepositoryPath);
+        var mapping = await mappings.ProposeMappingAsync(
+            "device-laptop",
+            @"D:\Work\Docs\brief.docx",
+            configuration.Sync.LocalDevice.DeviceId,
+            @"D:\Work\Docs\brief.docx");
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var status = await operations.GetStatusAsync();
+
+        Assert.NotNull(status.Sync);
+        var stored = Assert.Single(status.Sync.Mappings!);
+        Assert.Equal(mapping.MappingId, stored.MappingId);
+        Assert.Equal(SyncMappingStatus.PendingConfirmation, stored.Status);
+    }
+
+    [Fact]
     public async Task File_browser_recursive_folder_selection_backs_up_nested_files()
     {
         using var workspace = TemporaryWorkspace.Create();

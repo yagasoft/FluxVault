@@ -94,6 +94,17 @@ public sealed class IpcSerializationTests
                         LastSeenSequenceNumber: 2,
                         LastSeenOperationId: "operation-2",
                         UpdatedAtUtc: checkedAt)
+                ],
+                Mappings:
+                [
+                    new SyncMappingRecord(
+                        MappingId: "mapping-1",
+                        SourceDeviceId: "device-laptop",
+                        SourcePath: @"D:\Work\Docs\brief.docx",
+                        LocalDeviceId: "device-local",
+                        LocalPath: @"E:\Protected\brief.docx",
+                        Status: SyncMappingStatus.PendingConfirmation,
+                        CreatedAtUtc: checkedAt)
                 ]));
         var response = FluxVaultIpcResponse.WithStatus(status);
 
@@ -117,6 +128,7 @@ public sealed class IpcSerializationTests
         Assert.Equal("device-local", roundTrip.Status.Sync.LocalDeviceId);
         Assert.Equal("operation-3", Assert.Single(roundTrip.Status.Sync.PeerHeads).HeadOperationId);
         Assert.Equal("device-laptop", Assert.Single(roundTrip.Status.Sync.Cursors).PeerDeviceId);
+        Assert.Equal(SyncMappingStatus.PendingConfirmation, Assert.Single(roundTrip.Status.Sync.Mappings!).Status);
     }
 
     [Fact]

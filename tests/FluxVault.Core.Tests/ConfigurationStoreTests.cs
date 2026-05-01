@@ -40,6 +40,25 @@ public sealed class ConfigurationStoreTests
         Assert.Empty(configuration.MirrorSet.Nodes);
         Assert.Equal(MirrorPlacementProfile.FullCopy, configuration.MirrorSet.PlacementPolicy.Profile);
         Assert.Equal(1, configuration.MirrorSet.PlacementPolicy.MinimumMirrorCopies);
+        Assert.False(string.IsNullOrWhiteSpace(configuration.Sync.LocalDevice.DeviceId));
+        Assert.Equal(Environment.MachineName, configuration.Sync.LocalDevice.DisplayName);
+        var localTrustedDevice = Assert.Single(configuration.Sync.TrustedDevices);
+        Assert.Equal(configuration.Sync.LocalDevice.DeviceId, localTrustedDevice.DeviceId);
+        Assert.Equal(DeviceTrustState.Local, localTrustedDevice.TrustState);
+    }
+
+    [Fact]
+    public async Task Missing_configuration_uses_stable_local_device_identity()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var programData = Path.Combine(workspace.RootPath, "ProgramData");
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(programData, "config.json"), programData);
+
+        var first = await store.LoadAsync();
+        var second = await store.LoadAsync();
+
+        Assert.Equal(first.Sync.LocalDevice.DeviceId, second.Sync.LocalDevice.DeviceId);
+        Assert.StartsWith("fv-device-", first.Sync.LocalDevice.DeviceId, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -159,6 +178,33 @@ public sealed class ConfigurationStoreTests
     }
 
     [Fact]
+    public async Task Save_and_load_round_trips_device_identity_and_trusted_devices()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(
+            Path.Combine(workspace.RootPath, "config.json"),
+            workspace.RootPath);
+        var expected = new FluxVaultConfiguration(
+            RepositoryPath: Path.Combine(workspace.RootPath, "repository"),
+            MirrorPath: null,
+            IsEnabled: true,
+            WatchedFolders: [],
+            Sync: new SyncConfiguration(
+                new DeviceIdentityConfiguration("device-local", "Studio PC", new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero)),
+                [
+                    new TrustedDeviceConfiguration("device-local", "Studio PC", DeviceTrustState.Local, new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero)),
+                    new TrustedDeviceConfiguration("device-laptop", "Laptop", DeviceTrustState.Trusted, new DateTimeOffset(2026, 5, 1, 8, 5, 0, TimeSpan.Zero))
+                ]));
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+
+        Assert.Equal(expected.Sync.LocalDevice, actual.Sync.LocalDevice);
+        Assert.Equal(expected.Sync.TrustedDevices, actual.Sync.TrustedDevices);
+    }
+
+    [Fact]
     public async Task Load_old_configuration_without_selection_rules_defaults_to_empty_rules()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -182,6 +228,8 @@ public sealed class ConfigurationStoreTests
         Assert.True(actual.RepositoryMaintenancePolicy.IsEnabled);
         Assert.Equal(TimeSpan.FromHours(24), actual.RepositoryMaintenancePolicy.Interval);
         Assert.Equal(WorkloadPolicyPresetId.GeneralPurpose, actual.WorkloadPolicy.DefaultPreset);
+        Assert.False(string.IsNullOrWhiteSpace(actual.Sync.LocalDevice.DeviceId));
+        Assert.Equal(actual.Sync.LocalDevice.DeviceId, Assert.Single(actual.Sync.TrustedDevices).DeviceId);
     }
 
     [Fact]

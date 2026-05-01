@@ -343,12 +343,18 @@ does not act as a destructive repository purge.
 
 ## Planned multi-PC sync safety
 
-R3 sync publishes device identity, folder mapping metadata, manifests, and
-heartbeats into the shared repository. A newly selected folder or file from one
-PC is only advertised as pending until every peer confirms a same-path mapping
-or chooses a per-PC override. Peers must not hydrate, patch, or create the
-target path before that mapping is confirmed. After confirmation, peers fetch
-only missing chunks and patch safe targets at chunk level.
+R3 sync starts with a stable local device identity and trusted-device records
+stored in typed configuration. Legacy configurations normalise to one local
+trusted record so later peer metadata can reference a stable device id before
+operation logs, mapping gates, or hydration exist. Diagnostics shows the local
+device id and trusted-device count for support visibility.
+
+R3 sync will publish folder mapping metadata, manifests, and heartbeats into
+the shared repository. A newly selected folder or file from one PC is only
+advertised as pending until every peer confirms a same-path mapping or chooses
+a per-PC override. Peers must not hydrate, patch, or create the target path
+before that mapping is confirmed. After confirmation, peers fetch only missing
+chunks and patch safe targets at chunk level.
 
 Sync loop prevention must be metadata-led. A peer first checks whether required
 chunks already exist locally, but it also records source version id, operation

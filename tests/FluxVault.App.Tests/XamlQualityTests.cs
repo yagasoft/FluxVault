@@ -381,6 +381,12 @@ public sealed class XamlQualityTests
             diagnosticsTab.Descendants(XamlNamespace + "TextBlock"),
             element => (string?)element.Attribute("Text") == "{Binding RepositoryHealthStatus}");
         Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "{Binding DeviceIdentityStatus}");
+        Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "{Binding TrustedDeviceSummary}");
+        Assert.Contains(
             diagnosticsTab.Descendants(XamlNamespace + "DataGrid"),
             element => (string?)element.Attribute("ItemsSource") == "{Binding RepositoryHealthRows}");
         Assert.Contains(

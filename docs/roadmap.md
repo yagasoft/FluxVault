@@ -154,8 +154,10 @@ one storage fabric.
 Expected user-visible result: several PCs share protected folders without
 downloading or rewriting whole files unnecessarily.
 
-- Stable device identity from machine identity plus FluxVault installation id,
-  with editable friendly names and repository trust records.
+- Implemented: stable local device identity plus typed trusted-device records.
+  Legacy configurations normalise to one local trusted device, and Diagnostics
+  shows the device id and trust summary.
+- Future sync UI can add safe trust editing once peer exchange workflows exist.
 - Folder mappings use the same source path by default, with per-PC overrides.
 - Newly protected folders or files published by one PC remain pending on other
   PCs until each peer confirms the same path or chooses a per-PC path override.

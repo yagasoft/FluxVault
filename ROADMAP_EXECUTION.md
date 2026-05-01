@@ -42,3 +42,33 @@ Assumptions:
 - Drain execution is selected-node only.
 - Drain/rebalance operates on chunk and metadata placement; manifests remain mirrored by normal manifest mirroring.
 - A successful drain disables the selected mirror node in configuration; simple configuration removal remains a separate unsaved edit path.
+
+## R3-001: stable device identity and trusted device records
+
+Status: complete.
+
+Plan:
+
+- Add typed sync identity configuration with a stable local device id, display name, created timestamp, and trusted-device records.
+- Default and legacy configurations must normalise to one local trusted-device record without breaking existing config files.
+- Expose local device identity and trusted-device records through service status/IPC.
+- Show compact local identity and trusted-device summary in Diagnostics.
+- Update README and docs/tracker for `R3-001`.
+
+Evidence:
+
+- Red evidence: `dotnet test tests\FluxVault.Core.Tests\FluxVault.Core.Tests.csproj --filter "FullyQualifiedName~ConfigurationStoreTests|FullyQualifiedName~IpcSerializationTests"` initially failed because `Sync`, `DeviceTrustState`, `DeviceIdentityRuntimeStatus`, and `FluxVaultServiceStatus.DeviceIdentity` did not exist.
+- Green targeted evidence: core configuration/IPC tests passed, 32 total.
+- Green targeted evidence: service status tests passed in the ServiceOperationsTests filter, 34 total.
+- Green targeted evidence: app view-model/XAML tests passed, 73 total.
+- Full verification: `dotnet test` passed across App/Core/Integration/Windows test projects: 116 App, 124 Core, 73 Integration, 17 Windows.
+- Whitespace verification: `git diff --check` passed.
+
+Blockers:
+
+- None.
+
+Assumptions:
+
+- `R3-001` is a local identity/trust foundation only; peer operation logs, mapping gates, and sync hydration remain later R3 items.
+- Device identity is shown in Diagnostics, not editable in Options yet, because trust editing has no safe runtime workflow before the later sync slices.

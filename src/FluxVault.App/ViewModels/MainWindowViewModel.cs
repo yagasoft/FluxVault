@@ -100,6 +100,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private string repositoryHealthStatus = "Repository health: waiting";
 
     [ObservableProperty]
+    private string deviceIdentityStatus = "Device: waiting";
+
+    [ObservableProperty]
+    private string trustedDeviceSummary = "Trusted devices: waiting";
+
+    [ObservableProperty]
     private string usnHealth = "USN: checking";
 
     [ObservableProperty]
@@ -991,6 +997,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 : $"Retention: kept {status.LastRetention.KeptVersionCount}, pruned {status.LastRetention.PrunedVersionCount}";
             MirrorHealth = BuildMirrorHealth(status.MirrorWarnings ?? [], status.Configuration);
             CaptureHealth = BuildCaptureHealth(status.CaptureStatuses ?? []);
+            ApplyDeviceIdentity(status);
             ApplyRepositoryHealth(status.RepositoryHealth);
             WatchedFolders.Clear();
             foreach (var folder in status.Configuration.WatchedFolders)
@@ -1191,6 +1198,33 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         var pending = statuses.Count(status => status.State is CaptureRuntimeState.WaitingForQuietWindow or CaptureRuntimeState.ForcedHotFileSnapshot);
         return pending > 0 ? $"Capture: pending {pending}" : "Capture: idle";
+    }
+
+    private void ApplyDeviceIdentity(FluxVaultServiceStatus status)
+    {
+        var identity = status.DeviceIdentity ?? BuildDeviceIdentityStatus(status.Configuration.Sync);
+        DeviceIdentityStatus = $"Device: {identity.DisplayName} ({identity.DeviceId})";
+        var trusted = identity.TrustedDevices.Count(device =>
+            device.TrustState is DeviceTrustState.Local or DeviceTrustState.Trusted);
+        var blocked = identity.TrustedDevices.Count(device => device.TrustState == DeviceTrustState.Blocked);
+        TrustedDeviceSummary = $"Trusted devices: {trusted} trusted, {blocked} blocked";
+    }
+
+    private static DeviceIdentityRuntimeStatus BuildDeviceIdentityStatus(SyncConfiguration sync)
+    {
+        var normalised = (sync ?? SyncConfiguration.CreateDefault(AppContext.BaseDirectory))
+            .Normalise(AppContext.BaseDirectory);
+        return new DeviceIdentityRuntimeStatus(
+            normalised.LocalDevice.DeviceId,
+            normalised.LocalDevice.DisplayName,
+            normalised.TrustedDevices
+                .Select(device => new TrustedDeviceRuntimeStatus(
+                    device.DeviceId,
+                    device.DisplayName,
+                    device.TrustState,
+                    device.TrustedAtUtc,
+                    device.LastSeenAtUtc))
+                .ToArray());
     }
 
     private static string BuildMirrorHealth(IReadOnlyList<string> warnings, FluxVaultConfiguration configuration)

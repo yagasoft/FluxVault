@@ -80,7 +80,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         ValidateMirrorSet(configuration.MirrorSet);
     }
 
-    private static FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
+    private FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
     {
         var selectionRules = configuration.SelectionRules ?? [];
         var exclusionRules = configuration.ExclusionRules ?? [];
@@ -101,6 +101,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             CodecPolicy = configuration.CodecPolicy ?? CodecPolicy.CreateDefault(),
             RepositoryMaintenancePolicy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault(),
             WorkloadPolicy = configuration.WorkloadPolicy ?? WorkloadPolicyConfiguration.CreateDefault(),
+            Sync = (configuration.Sync ?? SyncConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
             SelectionRules = selectionRules.Select(NormaliseSelectionRule).ToArray(),
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0

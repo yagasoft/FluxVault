@@ -118,6 +118,10 @@
   selected node, run disables the node only after healthy copy/delete
   completion, persists the latest drain report in repository health, and leaves
   no temporary files.
+- Device identity and trust behaviour: default and legacy configurations
+  normalise to a stable local device id, trusted-device records round-trip
+  through configuration and IPC, service status exposes the identity, and
+  Diagnostics shows compact local identity/trust status.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

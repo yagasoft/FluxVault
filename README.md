@@ -303,11 +303,14 @@ healthy primary. The Mirrors workspace also provides selected-node preview and
 repair; selected-node repair only repairs that mirror from the primary and does
 not repair the primary.
 
-Future multi-PC sync will wait for each peer to confirm the same source path or
-choose a per-PC path override before creating, hydrating, or patching a newly
-selected folder or file on that peer. Sync will also record source version,
-operation, origin device, and applied-version metadata so a remote hydration
-write is not republished forever as a new local change.
+FluxVault now creates a stable local device identity and local trusted-device
+record as the first R3 sync foundation. Diagnostics shows the local device id
+and trusted-device count. Future multi-PC sync will wait for each peer to
+confirm the same source path or choose a per-PC path override before creating,
+hydrating, or patching a newly selected folder or file on that peer. Sync will
+also record source version, operation, origin device, and applied-version
+metadata so a remote hydration write is not republished forever as a new local
+change.
 
 Open **Options** to review retention, scheduled maintenance, and the default
 workload preset assigned to newly protected folders/files. The MVP

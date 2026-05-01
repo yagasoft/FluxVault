@@ -63,7 +63,18 @@ public sealed class IpcSerializationTests
                     CaptureConsistency.AppConsistent,
                     1,
                     ConsistencyDetail: "SqlServerWriter covered D:\\Work\\db.mdf.")
-            ]);
+            ],
+            DeviceIdentity: new DeviceIdentityRuntimeStatus(
+                "device-local",
+                "Studio PC",
+                [
+                    new TrustedDeviceRuntimeStatus(
+                        "device-local",
+                        "Studio PC",
+                        DeviceTrustState.Local,
+                        new DateTimeOffset(2026, 4, 27, 12, 2, 0, TimeSpan.Zero),
+                        checkedAt)
+                ]));
         var response = FluxVaultIpcResponse.WithStatus(status);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
@@ -79,6 +90,9 @@ public sealed class IpcSerializationTests
         var captureStatus = Assert.Single(roundTrip.Status.CaptureStatuses!);
         Assert.Equal(CaptureConsistency.AppConsistent, captureStatus.Consistency);
         Assert.Contains("SqlServerWriter", captureStatus.ConsistencyDetail);
+        Assert.NotNull(roundTrip.Status.DeviceIdentity);
+        Assert.Equal("device-local", roundTrip.Status.DeviceIdentity.DeviceId);
+        Assert.Equal(DeviceTrustState.Local, Assert.Single(roundTrip.Status.DeviceIdentity.TrustedDevices).TrustState);
     }
 
     [Fact]

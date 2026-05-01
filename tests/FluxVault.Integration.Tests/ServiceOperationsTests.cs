@@ -591,6 +591,27 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Status_exposes_stable_local_device_identity_and_trusted_records()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var first = await operations.GetStatusAsync();
+        var second = await operations.GetStatusAsync();
+
+        Assert.NotNull(first.DeviceIdentity);
+        Assert.Equal(first.Configuration.Sync.LocalDevice.DeviceId, first.DeviceIdentity.DeviceId);
+        Assert.Equal(first.DeviceIdentity.DeviceId, second.DeviceIdentity!.DeviceId);
+        var trusted = Assert.Single(first.DeviceIdentity.TrustedDevices);
+        Assert.Equal(first.DeviceIdentity.DeviceId, trusted.DeviceId);
+        Assert.Equal(DeviceTrustState.Local, trusted.TrustState);
+    }
+
+    [Fact]
     public async Task File_browser_recursive_folder_selection_backs_up_nested_files()
     {
         using var workspace = TemporaryWorkspace.Create();

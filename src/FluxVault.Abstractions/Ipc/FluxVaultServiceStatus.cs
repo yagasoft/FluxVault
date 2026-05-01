@@ -15,7 +15,8 @@ public sealed record FluxVaultServiceStatus(
     DurableChangeRuntimeStatus? DurableChange = null,
     IReadOnlyList<CaptureRuntimeStatus>? CaptureStatuses = null,
     RepositoryHealthSnapshot? RepositoryHealth = null,
-    IReadOnlyList<string>? MirrorWarnings = null);
+    IReadOnlyList<string>? MirrorWarnings = null,
+    DeviceIdentityRuntimeStatus? DeviceIdentity = null);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,
@@ -24,3 +25,15 @@ public sealed record WatchedFolderRuntimeStatus(
     bool IsEnabled,
     string Status,
     string DurableChangeStatus = "Unknown");
+
+public sealed record DeviceIdentityRuntimeStatus(
+    string DeviceId,
+    string DisplayName,
+    IReadOnlyList<TrustedDeviceRuntimeStatus> TrustedDevices);
+
+public sealed record TrustedDeviceRuntimeStatus(
+    string DeviceId,
+    string DisplayName,
+    DeviceTrustState TrustState,
+    DateTimeOffset TrustedAtUtc,
+    DateTimeOffset? LastSeenAtUtc);

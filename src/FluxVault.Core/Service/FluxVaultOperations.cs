@@ -436,7 +436,8 @@ public sealed class FluxVaultOperations(
             DurableChange: durableChange,
             CaptureStatuses: GetCaptureStatuses(),
             RepositoryHealth: await GetRepositoryHealthAsync(cancellationToken).ConfigureAwait(false),
-            MirrorWarnings: lastMirrorWarnings);
+            MirrorWarnings: lastMirrorWarnings,
+            DeviceIdentity: BuildDeviceIdentityStatus(configuration.Sync));
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -674,6 +675,22 @@ public sealed class FluxVaultOperations(
             MirrorPath = null,
             MirrorSet = new MirrorSetConfiguration(updatedNodes, mirrorSet.PlacementPolicy).Normalise()
         };
+    }
+
+    private static DeviceIdentityRuntimeStatus BuildDeviceIdentityStatus(SyncConfiguration sync)
+    {
+        var normalised = sync.Normalise(AppContext.BaseDirectory);
+        return new DeviceIdentityRuntimeStatus(
+            normalised.LocalDevice.DeviceId,
+            normalised.LocalDevice.DisplayName,
+            normalised.TrustedDevices
+                .Select(device => new TrustedDeviceRuntimeStatus(
+                    device.DeviceId,
+                    device.DisplayName,
+                    device.TrustState,
+                    device.TrustedAtUtc,
+                    device.LastSeenAtUtc))
+                .ToArray());
     }
 
     private static string FormatBytes(long bytes)

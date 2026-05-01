@@ -198,6 +198,10 @@ folder; direct cloud adapters arrive later.
   selected mirror's chunk/metadata artefacts only when those required copies
   are satisfied and no unresolved node issue remains. A healthy drain must
   disable the selected mirror node in configuration.
+- Multi-PC sync must start from a stable local device identity and typed
+  trusted-device records. Existing configurations without sync identity must
+  load with one local trusted-device record, and service status must expose the
+  local device id, display name, and trust summary for Diagnostics.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.

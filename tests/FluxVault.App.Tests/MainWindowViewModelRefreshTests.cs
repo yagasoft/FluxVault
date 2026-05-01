@@ -160,6 +160,38 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Refresh_shows_device_identity_and_trusted_device_summary()
+    {
+        var localDevice = new DeviceIdentityConfiguration("device-local", "Studio PC", new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero));
+        var status = StatusWithVersions() with
+        {
+            Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+            {
+                Sync = new SyncConfiguration(
+                    localDevice,
+                    [
+                        new TrustedDeviceConfiguration("device-local", "Studio PC", DeviceTrustState.Local, new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero)),
+                        new TrustedDeviceConfiguration("device-laptop", "Laptop", DeviceTrustState.Trusted, new DateTimeOffset(2026, 5, 1, 8, 5, 0, TimeSpan.Zero))
+                    ])
+            },
+            DeviceIdentity = new DeviceIdentityRuntimeStatus(
+                "device-local",
+                "Studio PC",
+                [
+                    new TrustedDeviceRuntimeStatus("device-local", "Studio PC", DeviceTrustState.Local, new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero), null),
+                    new TrustedDeviceRuntimeStatus("device-laptop", "Laptop", DeviceTrustState.Trusted, new DateTimeOffset(2026, 5, 1, 8, 5, 0, TimeSpan.Zero), null)
+                ])
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        Assert.Equal("Device: Studio PC (device-local)", viewModel.DeviceIdentityStatus);
+        Assert.Equal("Trusted devices: 2 trusted, 0 blocked", viewModel.TrustedDeviceSummary);
+    }
+
+    [Fact]
     public async Task Refresh_populates_mirror_repair_status_in_diagnostics_and_mirrors()
     {
         var mirrorRepair = MirrorRepairReport(

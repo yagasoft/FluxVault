@@ -144,6 +144,10 @@ one storage fabric.
   minimum copy count.
 - Mirror maintenance can take a node offline, drain/remove it after
   consolidation, repair missing chunks, and preview movement before applying.
+- The repair foundation provides explicit preview and repair actions for
+  primary/mirror drift and per-node mirror health. Capacity placement,
+  redundancy policy, drain/remove, movement preview, and rebalance execution
+  remain later R2 work.
 
 ## R3 multi-PC sync
 

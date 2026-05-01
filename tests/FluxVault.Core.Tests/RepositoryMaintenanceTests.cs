@@ -1,4 +1,5 @@
 using System.Text;
+using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
@@ -153,6 +154,119 @@ public sealed class RepositoryMaintenanceTests
         Assert.False(Directory.Exists(tempRoot) && Directory.EnumerateFiles(tempRoot, "*", SearchOption.AllDirectories).Any());
     }
 
+    [Fact]
+    public async Task Mirror_repair_preview_reports_mirror_chunk_metadata_and_manifest_drift_without_writing()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var mirrorPath = Path.Combine(workspace.RootPath, "mirror");
+        var repository = CreateRepository(workspace.RepositoryPath, MirrorSet(mirrorPath));
+        var commit = await repository.CommitAsync(NewRequest("mirrored content"));
+        var digest = Assert.Single(commit.Manifest.Chunks).Digest;
+        File.Delete(ChunkPath(mirrorPath, digest));
+        await File.WriteAllTextAsync(MetadataPath(mirrorPath, digest), "corrupt metadata");
+        await File.WriteAllTextAsync(ManifestPath(mirrorPath, commit.Manifest.VersionId), "corrupt manifest");
+
+        var report = await repository.PreviewMirrorRepairAsync();
+
+        var node = Assert.Single(report.Nodes);
+        Assert.True(report.IsPreview);
+        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
+        Assert.Equal("mirror", node.NodeId);
+        Assert.Contains(node.Issues, issue => issue.ArtefactKind == MirrorRepairArtefactKind.Chunk);
+        Assert.Contains(node.Issues, issue => issue.ArtefactKind == MirrorRepairArtefactKind.Metadata);
+        Assert.Contains(node.Issues, issue => issue.ArtefactKind == MirrorRepairArtefactKind.Manifest);
+        Assert.All(node.Issues, issue => Assert.Equal(MirrorRepairAction.None, issue.RepairAction));
+        Assert.False(File.Exists(ChunkPath(mirrorPath, digest)));
+        Assert.Equal("corrupt metadata", await File.ReadAllTextAsync(MetadataPath(mirrorPath, digest)));
+        Assert.Equal("corrupt manifest", await File.ReadAllTextAsync(ManifestPath(mirrorPath, commit.Manifest.VersionId)));
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
+    [Fact]
+    public async Task Mirror_repair_all_repairs_primary_and_all_mirror_drift()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var repository = CreateRepository(workspace.RepositoryPath, MirrorSet(firstMirror, secondMirror));
+        var commit = await repository.CommitAsync(NewRequest("mirrored content"));
+        var digest = Assert.Single(commit.Manifest.Chunks).Digest;
+        File.Delete(ChunkPath(workspace.RepositoryPath, digest));
+        File.Delete(ChunkPath(secondMirror, digest));
+
+        var report = await repository.RunMirrorRepairAsync();
+
+        Assert.False(report.IsPreview);
+        Assert.Equal(RepositoryHealthState.Healthy, report.HealthState);
+        Assert.Contains(report.Issues, issue => issue.RepairAction == MirrorRepairAction.RepairedPrimaryFromMirror);
+        Assert.Contains(report.Nodes.Single(node => node.NodeId == "second").Issues,
+            issue => issue.RepairAction == MirrorRepairAction.RepairedMirrorFromPrimary);
+        Assert.True(File.Exists(ChunkPath(workspace.RepositoryPath, digest)));
+        Assert.True(File.Exists(ChunkPath(secondMirror, digest)));
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
+    [Fact]
+    public async Task Selected_mirror_repair_repairs_only_selected_mirror()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var repository = CreateRepository(workspace.RepositoryPath, MirrorSet(firstMirror, secondMirror));
+        var commit = await repository.CommitAsync(NewRequest("mirrored content"));
+        var digest = Assert.Single(commit.Manifest.Chunks).Digest;
+        File.Delete(ChunkPath(firstMirror, digest));
+        File.Delete(ChunkPath(secondMirror, digest));
+
+        var report = await repository.RunMirrorRepairAsync("second");
+
+        Assert.Equal("second", report.RequestedMirrorNodeId);
+        Assert.True(File.Exists(ChunkPath(secondMirror, digest)));
+        Assert.False(File.Exists(ChunkPath(firstMirror, digest)));
+        Assert.Equal(RepositoryHealthState.Warning, report.Nodes.Single(node => node.NodeId == "mirror").HealthState);
+        Assert.Equal(RepositoryHealthState.Healthy, report.Nodes.Single(node => node.NodeId == "second").HealthState);
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
+    [Fact]
+    public async Task Selected_mirror_repair_does_not_repair_corrupt_primary()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var mirrorPath = Path.Combine(workspace.RootPath, "mirror");
+        var repository = CreateRepository(workspace.RepositoryPath, MirrorSet(mirrorPath));
+        var commit = await repository.CommitAsync(NewRequest("mirrored content"));
+        var digest = Assert.Single(commit.Manifest.Chunks).Digest;
+        File.Delete(ChunkPath(workspace.RepositoryPath, digest));
+
+        var report = await repository.RunMirrorRepairAsync("mirror");
+
+        Assert.False(File.Exists(ChunkPath(workspace.RepositoryPath, digest)));
+        var issue = Assert.Single(report.Issues);
+        Assert.Equal(MirrorRepairAction.Unresolved, issue.RepairAction);
+        Assert.Contains("repair all", issue.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Offline_mirror_repair_reports_unresolved_node_without_failing()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var unavailableMirror = Path.Combine(workspace.RootPath, "unavailable-mirror");
+        await File.WriteAllTextAsync(unavailableMirror, "this file blocks directory access");
+        var repository = CreateRepository(workspace.RepositoryPath, new MirrorSetConfiguration(
+        [
+            new MirrorNodeConfiguration("offline", "Offline mirror", unavailableMirror, IsEnabled: true)
+        ]));
+        await repository.CommitAsync(NewRequest("local content"));
+
+        var report = await repository.RunMirrorRepairAsync();
+
+        var node = Assert.Single(report.Nodes);
+        Assert.Equal("offline", node.NodeId);
+        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
+        Assert.Contains(node.Issues, issue => issue.RepairAction == MirrorRepairAction.Unresolved);
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
     private static FileSystemChunkRepository CreateRepository(string path, string? mirrorPath = null)
     {
         return new FileSystemChunkRepository(
@@ -161,6 +275,27 @@ public sealed class RepositoryMaintenanceTests
             new Blake3ContentHasher(),
             new ZstdChunkCodec(),
             mirrorPath);
+    }
+
+    private static FileSystemChunkRepository CreateRepository(string path, MirrorSetConfiguration mirrorSet)
+    {
+        return new FileSystemChunkRepository(
+            path,
+            new FastCdcChunker(new ChunkingOptions(128, 256, 512)),
+            new Blake3ContentHasher(),
+            new ZstdChunkCodec(),
+            mirrorSet);
+    }
+
+    private static MirrorSetConfiguration MirrorSet(params string[] paths)
+    {
+        return new MirrorSetConfiguration(paths
+            .Select((path, index) => new MirrorNodeConfiguration(
+                Id: index == 0 ? "mirror" : index == 1 ? "second" : $"mirror-{index + 1}",
+                Label: index == 0 ? "Mirror" : $"Mirror {index + 1}",
+                Path: path,
+                IsEnabled: true))
+            .ToArray());
     }
 
     private static FileCommitRequest NewRequest(string payload, DateTimeOffset? capturedAtUtc = null)
@@ -185,5 +320,20 @@ public sealed class RepositoryMaintenanceTests
     private static string ChunkPath(string root, string digest)
     {
         return Path.Combine(root, "chunks", digest[..2], $"{digest}.chunk");
+    }
+
+    private static string MetadataPath(string root, string digest)
+    {
+        return Path.Combine(root, "chunks", digest[..2], $"{digest}.json");
+    }
+
+    private static string ManifestPath(string root, string versionId)
+    {
+        return Path.Combine(root, "manifests", $"{versionId}.json");
+    }
+
+    private static void AssertNoTemporaryFiles(string root)
+    {
+        Assert.False(Directory.EnumerateFiles(root, "*.tmp", SearchOption.AllDirectories).Any());
     }
 }

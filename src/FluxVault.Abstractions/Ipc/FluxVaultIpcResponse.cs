@@ -16,7 +16,8 @@ public sealed record FluxVaultIpcResponse(
     IReadOnlyList<CaptureRuntimeStatus>? BlockedFiles = null,
     RepositoryHealthSnapshot? RepositoryHealth = null,
     RepositoryScrubReport? RepositoryScrub = null,
-    RestoreRehearsalReport? RestoreRehearsal = null)
+    RestoreRehearsalReport? RestoreRehearsal = null,
+    MirrorRepairReport? MirrorRepair = null)
 {
     public static FluxVaultIpcResponse Ok()
     {
@@ -105,6 +106,19 @@ public sealed record FluxVaultIpcResponse(
             null,
             null,
             RestoreRehearsal: report);
+    }
+
+    public static FluxVaultIpcResponse WithMirrorRepair(MirrorRepairReport report)
+    {
+        return new FluxVaultIpcResponse(
+            true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            MirrorRepair: report);
     }
 
     public static FluxVaultIpcResponse Failure(string errorMessage)

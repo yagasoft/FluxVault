@@ -173,9 +173,13 @@ folder; direct cloud adapters arrive later.
   chunks, metadata, and manifests to every enabled full-copy node. Mirror write
   failures must be reported as node-specific warnings and must not fail an
   otherwise successful primary backup.
-- Capacity-aware placement, redundancy counts, drain/remove, rebalance preview,
-  and repair movement remain future R2 mirror-fabric work and should not appear
-  as dormant controls.
+- Mirror repair must provide explicit preview and run actions. Preview must not
+  write artefacts. Repair-all may repair primary artefacts from any healthy
+  enabled mirror and repair enabled mirrors from the healthy primary.
+  Selected-node repair is mirror-only and must not repair the primary.
+- Capacity-aware placement, redundancy counts, drain/remove, rebalance
+  execution, movement preview, and placement profiles remain future R2
+  mirror-fabric work and should not appear as dormant controls.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.

@@ -62,6 +62,9 @@ FluxVault now has a developer-usable MVP loop:
   state. Existing legacy `mirrorPath` configuration is migrated into one
   enabled full-copy mirror node, and mirror write failures are reported as
   warnings without failing the primary backup.
+- Mirror repair preview and repair actions report per-node mirror health.
+  Diagnostics can preview or repair all enabled mirrors; the Mirrors workspace
+  can preview or repair the selected node from the healthy primary repository.
 - Conservative workload policy presets for general, Office, CAD/BIM,
   Adobe/video, developer, and generic-large-file selections. Options controls
   the default preset for new selections, and the File browser can change the
@@ -259,6 +262,14 @@ chunks, metadata, and manifests to the primary repository first, then copies
 new artefacts to each enabled full-copy mirror node. If a mirror folder is
 offline or unavailable, the backup remains successful and the node is reported
 through mirror warnings in status/health.
+
+Mirror repair is an explicit manual operation, not a scheduled placement or
+rebalance policy. **Preview mirror repair** reports repairable primary and
+mirror drift without writing artefacts. **Run mirror repair** repairs primary
+artefacts from any healthy enabled mirror and repairs enabled mirrors from the
+healthy primary. The Mirrors workspace also provides selected-node preview and
+repair; selected-node repair only repairs that mirror from the primary and does
+not repair the primary.
 
 Future multi-PC sync will wait for each peer to confirm the same source path or
 choose a per-PC path override before creating, hydrating, or patching a newly

@@ -70,4 +70,5 @@ public sealed record RepositoryHealthSnapshot(
     RepositoryHealthState OverallState,
     string Summary,
     RepositoryScrubReport? LastScrub = null,
-    RestoreRehearsalReport? LastRestoreRehearsal = null);
+    RestoreRehearsalReport? LastRestoreRehearsal = null,
+    MirrorRepairReport? LastMirrorRepair = null);

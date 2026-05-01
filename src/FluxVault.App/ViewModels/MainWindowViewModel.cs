@@ -35,6 +35,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private IReadOnlyList<ProtectionExclusionRule> currentExclusionRules = [];
     private RepositoryScrubReport? currentScrubReport;
     private RestoreRehearsalReport? currentRestoreRehearsalReport;
+    private MirrorRepairReport? currentMirrorRepairReport;
     private FluxVaultWindowsServiceStatus windowsServiceStatus = new(
         WindowsFluxVaultServiceController.DefaultServiceName,
         FluxVaultWindowsServiceState.Unknown,
@@ -443,6 +444,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         SelectedMirrorNode = MirrorNodes.FirstOrDefault();
         UpdateMirrorSummary();
+        ApplyMirrorRepairToNodes(currentMirrorRepairReport);
     }
 
     private void AddMirrorRow(MirrorNodeRow row)
@@ -674,10 +676,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
             currentScrubReport = response.RepositoryScrub;
             ApplyRepositoryHealth(new RepositoryHealthSnapshot(
                 DateTimeOffset.UtcNow,
-                CombineHealth(currentScrubReport.HealthState, currentRestoreRehearsalReport?.HealthState),
+                CombineHealth(currentScrubReport.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport?.HealthState),
                 "Repository scrub completed.",
                 currentScrubReport,
-                currentRestoreRehearsalReport));
+                currentRestoreRehearsalReport,
+                currentMirrorRepairReport));
             RepositoryHealthStatus = $"Repository scrub completed - {response.RepositoryScrub.HealthState}";
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
@@ -701,15 +704,82 @@ public sealed partial class MainWindowViewModel : ObservableObject
             currentRestoreRehearsalReport = response.RestoreRehearsal;
             ApplyRepositoryHealth(new RepositoryHealthSnapshot(
                 DateTimeOffset.UtcNow,
-                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport.HealthState),
+                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport.HealthState, currentMirrorRepairReport?.HealthState),
                 "Restore rehearsal completed.",
                 currentScrubReport,
-                currentRestoreRehearsalReport));
+                currentRestoreRehearsalReport,
+                currentMirrorRepairReport));
             RepositoryHealthStatus = $"Restore rehearsal completed - {response.RestoreRehearsal.HealthState}";
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
         {
             RepositoryHealthStatus = $"Restore rehearsal failed: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private async Task PreviewMirrorRepairAsync()
+    {
+        await RunMirrorRepairCoreAsync(isPreview: true, mirrorNodeId: null).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task RunMirrorRepairAsync()
+    {
+        await RunMirrorRepairCoreAsync(isPreview: false, mirrorNodeId: null).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task PreviewSelectedMirrorRepairAsync()
+    {
+        if (SelectedMirrorNode is null)
+        {
+            RepositoryHealthStatus = "Mirror repair preview failed: no mirror is selected.";
+            return;
+        }
+
+        await RunMirrorRepairCoreAsync(isPreview: true, SelectedMirrorNode.Id).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task RunSelectedMirrorRepairAsync()
+    {
+        if (SelectedMirrorNode is null)
+        {
+            RepositoryHealthStatus = "Mirror repair failed: no mirror is selected.";
+            return;
+        }
+
+        await RunMirrorRepairCoreAsync(isPreview: false, SelectedMirrorNode.Id).ConfigureAwait(true);
+    }
+
+    private async Task RunMirrorRepairCoreAsync(bool isPreview, string? mirrorNodeId)
+    {
+        try
+        {
+            var request = isPreview
+                ? FluxVaultIpcRequest.PreviewMirrorRepair(mirrorNodeId)
+                : FluxVaultIpcRequest.RunMirrorRepair(mirrorNodeId);
+            var response = await client.SendAsync(request).ConfigureAwait(true);
+            if (!response.Success || response.MirrorRepair is null)
+            {
+                RepositoryHealthStatus = $"{(isPreview ? "Mirror repair preview" : "Mirror repair")} failed: {response.ErrorMessage ?? "no mirror repair report returned"}";
+                return;
+            }
+
+            currentMirrorRepairReport = response.MirrorRepair;
+            ApplyRepositoryHealth(new RepositoryHealthSnapshot(
+                DateTimeOffset.UtcNow,
+                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport.HealthState),
+                isPreview ? "Mirror repair preview completed." : "Mirror repair completed.",
+                currentScrubReport,
+                currentRestoreRehearsalReport,
+                currentMirrorRepairReport));
+            RepositoryHealthStatus = $"{(isPreview ? "Mirror repair preview" : "Mirror repair")} completed - {response.MirrorRepair.HealthState}";
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            RepositoryHealthStatus = $"{(isPreview ? "Mirror repair preview" : "Mirror repair")} failed: {ex.Message}";
         }
     }
 
@@ -983,21 +1053,26 @@ public sealed partial class MainWindowViewModel : ObservableObject
             RepositoryHealthStatus = "Repository health: waiting";
             RepositoryHealthRows.Clear();
             RepositoryHealthRows.Add(new RepositoryHealthRow("Repository integrity", "Waiting for scrub", "No scrub report has been recorded yet."));
+            RepositoryHealthRows.Add(new RepositoryHealthRow("Mirror repair", "Waiting for repair preview", "Run a mirror repair preview or repair action to get per-node mirror health."));
             RepositoryHealthRows.Add(new RepositoryHealthRow("Restore rehearsal", "Waiting for rehearsal", "No restore rehearsal has been recorded yet."));
             RepositoryHealthRows.Add(new RepositoryHealthRow("USN state", UsnHealth, UsnHealthToolTip));
             RepositoryHealthRows.Add(new RepositoryHealthRow("Blocked files", CaptureHealth, "Blocked and pending capture state is shown in Activity."));
+            ApplyMirrorRepairToNodes(null);
             return;
         }
 
         currentScrubReport = health.LastScrub;
         currentRestoreRehearsalReport = health.LastRestoreRehearsal;
+        currentMirrorRepairReport = health.LastMirrorRepair;
         RepositoryHealthStatus = $"Repository health: {health.OverallState} - {health.Summary}";
         RepositoryHealthRows.Clear();
         RepositoryHealthRows.Add(BuildScrubRow(health.LastScrub));
         RepositoryHealthRows.Add(BuildMirrorRow(health.LastScrub));
+        RepositoryHealthRows.Add(BuildMirrorRepairRow(health.LastMirrorRepair));
         RepositoryHealthRows.Add(BuildRehearsalRow(health.LastRestoreRehearsal));
         RepositoryHealthRows.Add(new RepositoryHealthRow("USN state", UsnHealth, UsnHealthToolTip));
         RepositoryHealthRows.Add(new RepositoryHealthRow("Blocked files", CaptureHealth, "Blocked and pending capture state is shown in Activity."));
+        ApplyMirrorRepairToNodes(health.LastMirrorRepair);
     }
 
     private static RepositoryHealthRow BuildScrubRow(RepositoryScrubReport? report)
@@ -1027,6 +1102,43 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ? "Healthy"
             : $"Repaired {repairedMirror} mirror issue(s)";
         return new RepositoryHealthRow("Mirror state", status, "Mirror artefacts are compared against referenced primary repository artefacts.");
+    }
+
+    private static RepositoryHealthRow BuildMirrorRepairRow(MirrorRepairReport? report)
+    {
+        if (report is null)
+        {
+            return new RepositoryHealthRow("Mirror repair", "Waiting for repair preview", "Run a mirror repair preview or repair action to get per-node mirror health.");
+        }
+
+        var status = report.RepairedIssueCount > 0
+            ? $"{report.HealthState} - repaired {report.RepairedIssueCount} issue(s)"
+            : $"{report.HealthState} - {report.IssueCount} issue(s)";
+        var nodeSummary = string.Join("; ", report.Nodes.Select(node => $"{node.Label}: {node.HealthState}, {node.IssueCount} issue(s)"));
+        var detail = $"{(report.IsPreview ? "Preview" : "Repair")} completed at {report.CompletedAtUtc.ToLocalTime():yyyy-MM-dd HH:mm:ss}. {nodeSummary}";
+        return new RepositoryHealthRow("Mirror repair", status, detail);
+    }
+
+    private void ApplyMirrorRepairToNodes(MirrorRepairReport? report)
+    {
+        foreach (var node in MirrorNodes)
+        {
+            var nodeReport = report?.Nodes.FirstOrDefault(reportNode =>
+                string.Equals(reportNode.NodeId, node.Id, StringComparison.OrdinalIgnoreCase));
+            if (nodeReport is null)
+            {
+                node.RepairStatus = "No repair preview";
+                node.RepairDetail = "Run mirror repair preview to check this node.";
+                continue;
+            }
+
+            node.RepairStatus = nodeReport.RepairedIssueCount > 0
+                ? $"{nodeReport.HealthState} - repaired {nodeReport.RepairedIssueCount}"
+                : $"{nodeReport.HealthState} - {nodeReport.IssueCount} issue(s)";
+            node.RepairDetail = nodeReport.IssueCount == 0
+                ? "No mirror repair issues reported."
+                : $"{nodeReport.Label} reported {nodeReport.IssueCount} issue(s), repaired {nodeReport.RepairedIssueCount}.";
+        }
     }
 
     private static RepositoryHealthRow BuildRehearsalRow(RestoreRehearsalReport? report)
@@ -1327,6 +1439,12 @@ public sealed partial class MirrorNodeRow : ObservableObject
 
     [ObservableProperty]
     private bool isEnabled;
+
+    [ObservableProperty]
+    private string repairStatus = "No repair preview";
+
+    [ObservableProperty]
+    private string repairDetail = "Run mirror repair preview to check this node.";
 
     public MirrorNodeRow(string id, string label, string path, bool isEnabled)
     {

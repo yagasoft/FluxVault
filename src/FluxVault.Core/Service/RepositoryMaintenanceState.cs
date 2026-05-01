@@ -7,9 +7,10 @@ public sealed record RepositoryMaintenanceState(
     DateTimeOffset? LastMaintenanceUtc,
     RepositoryHealthSnapshot? LastHealth,
     RepositoryScrubReport? LastScrub,
-    RestoreRehearsalReport? LastRestoreRehearsal)
+    RestoreRehearsalReport? LastRestoreRehearsal,
+    MirrorRepairReport? LastMirrorRepair = null)
 {
-    public static RepositoryMaintenanceState Empty { get; } = new(null, null, null, null);
+    public static RepositoryMaintenanceState Empty { get; } = new(null, null, null, null, null);
 }
 
 public interface IRepositoryMaintenanceStateStore

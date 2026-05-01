@@ -16,6 +16,14 @@ public interface IChunkRepository
         bool autoRepairFromMirror,
         CancellationToken cancellationToken = default);
 
+    Task<MirrorRepairReport> PreviewMirrorRepairAsync(
+        string? mirrorNodeId = null,
+        CancellationToken cancellationToken = default);
+
+    Task<MirrorRepairReport> RunMirrorRepairAsync(
+        string? mirrorNodeId = null,
+        CancellationToken cancellationToken = default);
+
     Task<RestoreRehearsalReport> RunRestoreRehearsalAsync(
         string tempRoot,
         int maxVersions,

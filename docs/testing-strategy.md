@@ -73,11 +73,14 @@
   from mirror, mirror repair from primary, unresolved corruption, ignored
   retention-pruned artefacts, restore rehearsal length verification, failure
   reporting, and temporary-output cleanup.
+- Mirror repair model tests for preview without writes, repair-all primary and
+  mirror repairs, selected-node mirror-only repair, offline mirror reporting,
+  manifest/chunk/metadata drift, and temporary-file cleanup.
 - MirrorSet configuration tests for default empty nodes, legacy `mirrorPath`
   migration, multi-node save/load round-trip, and validation.
 - Mirrors workspace view-model and XAML tests for editable node lists,
-  repository/protection summary replacement, workspace navigation, and absence
-  of dormant R2-002 controls.
+  repository/protection summary replacement, workspace navigation, per-node
+  repair status/actions, and absence of dormant R2 placement controls.
 
 ## Integration tests
 
@@ -89,6 +92,10 @@
 - Mirror warning behaviour when a node is unavailable: the primary backup still
   succeeds, status records a node-specific warning, and no temporary files are
   left in healthy mirror nodes.
+- Mirror repair IPC behaviour: preview/run return repair reports, selected-node
+  repair only writes to the selected mirror, repair-all can repair the primary
+  from any healthy mirror, and repository health status persists the latest
+  mirror repair report.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

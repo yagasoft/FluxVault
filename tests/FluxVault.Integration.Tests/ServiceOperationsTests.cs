@@ -281,6 +281,47 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Mirror_repair_ipc_previews_repairs_selected_node_and_updates_health_status()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "mirrored service repair");
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            MirrorSet = new MirrorSetConfiguration(
+            [
+                new MirrorNodeConfiguration("first", "First mirror", firstMirror, IsEnabled: true),
+                new MirrorNodeConfiguration("second", "Second mirror", secondMirror, IsEnabled: true)
+            ])
+        };
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        await operations.RunBackupNowAsync();
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        var digest = Assert.Single((await operations.InspectVersionAsync(version.VersionId)).Manifest.Chunks).Digest;
+        File.Delete(ChunkPath(firstMirror, digest));
+        File.Delete(ChunkPath(secondMirror, digest));
+
+        var preview = await operations.HandleAsync(FluxVaultIpcRequest.PreviewMirrorRepair("second"));
+        var repair = await operations.HandleAsync(FluxVaultIpcRequest.RunMirrorRepair("second"));
+        var status = await operations.GetStatusAsync();
+
+        Assert.True(preview.Success);
+        Assert.True(preview.MirrorRepair!.IsPreview);
+        Assert.Equal("second", preview.MirrorRepair.RequestedMirrorNodeId);
+        Assert.True(repair.Success);
+        Assert.False(repair.MirrorRepair!.IsPreview);
+        Assert.True(File.Exists(ChunkPath(secondMirror, digest)));
+        Assert.False(File.Exists(ChunkPath(firstMirror, digest)));
+        Assert.Equal("second", status.RepositoryHealth!.LastMirrorRepair!.RequestedMirrorNodeId);
+        Assert.Equal(RepositoryHealthState.Warning, status.RepositoryHealth.OverallState);
+    }
+
+    [Fact]
     public async Task Repository_maintenance_loop_runs_when_due_and_skips_when_recent()
     {
         using var workspace = TemporaryWorkspace.Create();

@@ -308,6 +308,21 @@ public sealed class XamlQualityTests
         Assert.Contains(
             mirrorsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Command") == "{Binding RemoveMirrorCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding PreviewSelectedMirrorRepairCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding RunSelectedMirrorRepairCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding PreviewMirrorRepairCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding RunMirrorRepairCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "DataGridTextColumn"),
+            element => (string?)element.Attribute("Binding") == "{Binding RepairStatus}");
     }
 
     [Fact]
@@ -358,6 +373,12 @@ public sealed class XamlQualityTests
             diagnosticsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Content") == "Run restore rehearsal"
                 && (string?)element.Attribute("Command") == "{Binding RunRestoreRehearsalCommand}");
+        Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding PreviewMirrorRepairCommand}");
+        Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding RunMirrorRepairCommand}");
         Assert.Contains(
             diagnosticsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Command") == "{Binding ExportDiagnosticsCommand}");

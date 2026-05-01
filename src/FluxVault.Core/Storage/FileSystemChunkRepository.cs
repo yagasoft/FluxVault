@@ -263,6 +263,478 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             Issues: issues);
     }
 
+    public Task<MirrorRepairReport> PreviewMirrorRepairAsync(
+        string? mirrorNodeId = null,
+        CancellationToken cancellationToken = default)
+    {
+        return RunMirrorRepairCoreAsync(isPreview: true, mirrorNodeId, cancellationToken);
+    }
+
+    public Task<MirrorRepairReport> RunMirrorRepairAsync(
+        string? mirrorNodeId = null,
+        CancellationToken cancellationToken = default)
+    {
+        return RunMirrorRepairCoreAsync(isPreview: false, mirrorNodeId, cancellationToken);
+    }
+
+    private async Task<MirrorRepairReport> RunMirrorRepairCoreAsync(
+        bool isPreview,
+        string? requestedMirrorNodeId,
+        CancellationToken cancellationToken)
+    {
+        var allNodes = mirrorNodes.ToArray();
+        var nodeIssues = allNodes.ToDictionary(
+            node => node.Id,
+            _ => new List<MirrorRepairIssue>(),
+            StringComparer.OrdinalIgnoreCase);
+        var primaryIssues = new List<MirrorRepairIssue>();
+        var repairAll = string.IsNullOrWhiteSpace(requestedMirrorNodeId);
+        var canWritePrimary = !isPreview && repairAll;
+
+        var manifests = await ReadPrimaryManifestsForMirrorRepairAsync(
+                canWritePrimary,
+                primaryIssues,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        foreach (var node in allNodes)
+        {
+            if (File.Exists(node.Path))
+            {
+                nodeIssues[node.Id].Add(new MirrorRepairIssue(
+                    node.Id,
+                    node.Label,
+                    RepositoryScrubIssueSeverity.Warning,
+                    MirrorRepairArtefactKind.Repository,
+                    node.Path,
+                    null,
+                    null,
+                    $"Mirror '{node.Label}' is unavailable because its configured path is a file.",
+                    MirrorRepairAction.Unresolved));
+            }
+            else if (!isPreview && ShouldRepairNode(node, requestedMirrorNodeId))
+            {
+                Directory.CreateDirectory(node.Path);
+            }
+        }
+
+        foreach (var manifest in manifests)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var primaryManifestPath = ManifestPath(rootPath, manifest.VersionId);
+            var primaryManifestBytes = await File.ReadAllBytesAsync(primaryManifestPath, cancellationToken).ConfigureAwait(false);
+
+            foreach (var node in allNodes)
+            {
+                if (nodeIssues[node.Id].Any(issue => issue.ArtefactKind == MirrorRepairArtefactKind.Repository))
+                {
+                    continue;
+                }
+
+                var manifestIssue = BuildManifestMirrorIssue(node, manifest, primaryManifestBytes);
+                if (manifestIssue is null)
+                {
+                    continue;
+                }
+
+                if (!isPreview && ShouldRepairNode(node, requestedMirrorNodeId))
+                {
+                    AtomicWriteOverwrite(ManifestPath(node.Path, manifest.VersionId), primaryManifestBytes);
+                    manifestIssue = manifestIssue with { RepairAction = MirrorRepairAction.RepairedMirrorFromPrimary };
+                }
+
+                nodeIssues[node.Id].Add(manifestIssue);
+            }
+
+            foreach (var chunk in manifest.Chunks)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var primaryValidation = ValidateChunk(rootPath, chunk);
+                var primaryHealthy = primaryValidation.IsHealthy;
+                if (!primaryHealthy)
+                {
+                    var issue = BuildPrimaryRepairIssue(
+                        chunk,
+                        primaryValidation,
+                        requestedMirrorNodeId,
+                        isPreview,
+                        allNodes);
+                    if (!isPreview && repairAll && issue.RepairAction == MirrorRepairAction.RepairedPrimaryFromMirror)
+                    {
+                        var sourceMirror = allNodes.First(node => ValidateChunk(node.Path, chunk).IsHealthy);
+                        RepairChunk(sourceMirror.Path, rootPath, chunk.Digest);
+                        primaryHealthy = true;
+                    }
+
+                    primaryIssues.Add(issue);
+                }
+
+                if (!primaryHealthy)
+                {
+                    continue;
+                }
+
+                foreach (var node in allNodes)
+                {
+                    if (nodeIssues[node.Id].Any(issue => issue.ArtefactKind == MirrorRepairArtefactKind.Repository))
+                    {
+                        continue;
+                    }
+
+                    var issues = BuildMirrorChunkIssues(node, chunk).ToList();
+                    if (issues.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    if (!isPreview && ShouldRepairNode(node, requestedMirrorNodeId))
+                    {
+                        RepairChunk(rootPath, node.Path, chunk.Digest);
+                        issues = issues
+                            .Select(issue => issue with { RepairAction = MirrorRepairAction.RepairedMirrorFromPrimary })
+                            .ToList();
+                    }
+
+                    nodeIssues[node.Id].AddRange(issues);
+                }
+            }
+        }
+
+        var nodes = allNodes
+            .Select(node => BuildMirrorNodeRepairReport(node, nodeIssues[node.Id]))
+            .ToArray();
+        var issueCount = primaryIssues.Count + nodes.Sum(node => node.IssueCount);
+        var repairedIssueCount = primaryIssues.Count(issue => issue.RepairAction != MirrorRepairAction.None
+                                                              && issue.RepairAction != MirrorRepairAction.Unresolved)
+                                 + nodes.Sum(node => node.RepairedIssueCount);
+        var healthState = CalculateMirrorRepairHealth(primaryIssues, nodes);
+        return new MirrorRepairReport(
+            DateTimeOffset.UtcNow,
+            isPreview,
+            requestedMirrorNodeId,
+            healthState,
+            issueCount,
+            repairedIssueCount,
+            nodes,
+            primaryIssues);
+    }
+
+    private async Task<IReadOnlyList<FileVersionManifest>> ReadPrimaryManifestsForMirrorRepairAsync(
+        bool canRepairPrimaryManifest,
+        List<MirrorRepairIssue> primaryIssues,
+        CancellationToken cancellationToken)
+    {
+        if (!Directory.Exists(ManifestsPath(rootPath)))
+        {
+            return [];
+        }
+
+        var manifests = new List<FileVersionManifest>();
+        foreach (var path in Directory.EnumerateFiles(ManifestsPath(rootPath), "*.json"))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var versionId = Path.GetFileNameWithoutExtension(path);
+            try
+            {
+                manifests.Add(await ReadManifestAsync(path, cancellationToken).ConfigureAwait(false));
+            }
+            catch (Exception exception) when (exception is JsonException or IOException or InvalidDataException)
+            {
+                var repaired = false;
+                if (canRepairPrimaryManifest)
+                {
+                    foreach (var node in mirrorNodes)
+                    {
+                        var mirrorManifestPath = ManifestPath(node.Path, versionId);
+                        if (!File.Exists(mirrorManifestPath))
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            var mirrorManifest = await ReadManifestAsync(mirrorManifestPath, cancellationToken).ConfigureAwait(false);
+                            AtomicWriteOverwrite(path, await File.ReadAllBytesAsync(mirrorManifestPath, cancellationToken).ConfigureAwait(false));
+                            manifests.Add(mirrorManifest);
+                            primaryIssues.Add(new MirrorRepairIssue(
+                                null,
+                                null,
+                                RepositoryScrubIssueSeverity.Warning,
+                                MirrorRepairArtefactKind.Manifest,
+                                path,
+                                versionId,
+                                null,
+                                $"Primary manifest was repaired from mirror '{node.Label}'.",
+                                MirrorRepairAction.RepairedPrimaryFromMirror));
+                            repaired = true;
+                            break;
+                        }
+                        catch (Exception mirrorException) when (mirrorException is JsonException or IOException or InvalidDataException)
+                        {
+                        }
+                    }
+                }
+
+                if (!repaired)
+                {
+                    primaryIssues.Add(new MirrorRepairIssue(
+                        null,
+                        null,
+                        RepositoryScrubIssueSeverity.Critical,
+                        MirrorRepairArtefactKind.Manifest,
+                        path,
+                        versionId,
+                        null,
+                        $"Primary manifest could not be read: {exception.Message}",
+                        canRepairPrimaryManifest ? MirrorRepairAction.Unresolved : MirrorRepairAction.None));
+                }
+            }
+        }
+
+        return manifests;
+    }
+
+    private static bool ShouldRepairNode(MirrorNodeConfiguration node, string? requestedMirrorNodeId)
+    {
+        return string.IsNullOrWhiteSpace(requestedMirrorNodeId)
+               || string.Equals(node.Id, requestedMirrorNodeId, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static MirrorNodeRepairReport BuildMirrorNodeRepairReport(
+        MirrorNodeConfiguration node,
+        IReadOnlyList<MirrorRepairIssue> issues)
+    {
+        var health = issues.Count == 0 || issues.All(issue => issue.RepairAction == MirrorRepairAction.RepairedMirrorFromPrimary)
+            ? RepositoryHealthState.Healthy
+            : RepositoryHealthState.Warning;
+        return new MirrorNodeRepairReport(
+            node.Id,
+            node.Label,
+            node.Path,
+            node.IsEnabled,
+            health,
+            issues.Count,
+            issues.Count(issue => issue.RepairAction == MirrorRepairAction.RepairedMirrorFromPrimary),
+            issues);
+    }
+
+    private static RepositoryHealthState CalculateMirrorRepairHealth(
+        IReadOnlyList<MirrorRepairIssue> primaryIssues,
+        IReadOnlyList<MirrorNodeRepairReport> nodes)
+    {
+        if (primaryIssues.Any(issue => issue.RepairAction == MirrorRepairAction.Unresolved
+                                       || issue.Severity == RepositoryScrubIssueSeverity.Critical))
+        {
+            return RepositoryHealthState.Critical;
+        }
+
+        return primaryIssues.Any(issue => issue.RepairAction == MirrorRepairAction.None)
+               || nodes.Any(node => node.HealthState != RepositoryHealthState.Healthy)
+            ? RepositoryHealthState.Warning
+            : RepositoryHealthState.Healthy;
+    }
+
+    private MirrorRepairIssue BuildPrimaryRepairIssue(
+        ManifestChunk chunk,
+        ChunkValidation primaryValidation,
+        string? requestedMirrorNodeId,
+        bool isPreview,
+        IReadOnlyList<MirrorNodeConfiguration> allNodes)
+    {
+        var canRepairFromMirror = string.IsNullOrWhiteSpace(requestedMirrorNodeId)
+                                  && allNodes.Any(node => ValidateChunk(node.Path, chunk).IsHealthy);
+        var action = isPreview
+            ? MirrorRepairAction.None
+            : canRepairFromMirror
+                ? MirrorRepairAction.RepairedPrimaryFromMirror
+                : MirrorRepairAction.Unresolved;
+        var message = string.IsNullOrWhiteSpace(requestedMirrorNodeId)
+            ? primaryValidation.Message ?? "Primary artefact is unavailable or corrupt."
+            : "Selected mirror repair cannot repair primary artefacts; run repair all first.";
+        return new MirrorRepairIssue(
+            null,
+            null,
+            action == MirrorRepairAction.Unresolved ? RepositoryScrubIssueSeverity.Critical : RepositoryScrubIssueSeverity.Warning,
+            MirrorRepairArtefactKind.Chunk,
+            ChunkPath(rootPath, chunk.Digest),
+            null,
+            chunk.Digest,
+            message,
+            action);
+    }
+
+    private MirrorRepairIssue? BuildManifestMirrorIssue(
+        MirrorNodeConfiguration node,
+        FileVersionManifest manifest,
+        byte[] primaryManifestBytes)
+    {
+        var path = ManifestPath(node.Path, manifest.VersionId);
+        if (!File.Exists(path))
+        {
+            return new MirrorRepairIssue(
+                node.Id,
+                node.Label,
+                RepositoryScrubIssueSeverity.Warning,
+                MirrorRepairArtefactKind.Manifest,
+                path,
+                manifest.VersionId,
+                null,
+                $"Mirror '{node.Label}' manifest is missing.",
+                MirrorRepairAction.None);
+        }
+
+        try
+        {
+            var bytes = File.ReadAllBytes(path);
+            if (bytes.SequenceEqual(primaryManifestBytes))
+            {
+                return null;
+            }
+
+            return new MirrorRepairIssue(
+                node.Id,
+                node.Label,
+                RepositoryScrubIssueSeverity.Warning,
+                MirrorRepairArtefactKind.Manifest,
+                path,
+                manifest.VersionId,
+                null,
+                $"Mirror '{node.Label}' manifest differs from the primary repository.",
+                MirrorRepairAction.None);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            return new MirrorRepairIssue(
+                node.Id,
+                node.Label,
+                RepositoryScrubIssueSeverity.Warning,
+                MirrorRepairArtefactKind.Manifest,
+                path,
+                manifest.VersionId,
+                null,
+                $"Mirror '{node.Label}' manifest could not be read: {exception.Message}",
+                MirrorRepairAction.Unresolved);
+        }
+    }
+
+    private IEnumerable<MirrorRepairIssue> BuildMirrorChunkIssues(MirrorNodeConfiguration node, ManifestChunk chunk)
+    {
+        var chunkPath = ChunkPath(node.Path, chunk.Digest);
+        var metadataPath = MetadataPath(node.Path, chunk.Digest);
+        if (!File.Exists(chunkPath))
+        {
+            yield return new MirrorRepairIssue(
+                node.Id,
+                node.Label,
+                RepositoryScrubIssueSeverity.Warning,
+                MirrorRepairArtefactKind.Chunk,
+                chunkPath,
+                null,
+                chunk.Digest,
+                $"Mirror '{node.Label}' chunk is missing.",
+                MirrorRepairAction.None);
+        }
+        else
+        {
+            var chunkValidation = ValidateChunkPayload(chunkPath, chunk);
+            if (chunkValidation is not null)
+            {
+                yield return chunkValidation with { MirrorNodeId = node.Id, MirrorNodeLabel = node.Label };
+            }
+        }
+
+        var metadataValidation = ValidateChunkMetadata(node.Path, chunk);
+        if (metadataValidation is not null)
+        {
+            yield return metadataValidation with { MirrorNodeId = node.Id, MirrorNodeLabel = node.Label };
+        }
+
+        MirrorRepairIssue? ValidateChunkPayload(string path, ManifestChunk manifestChunk)
+        {
+            try
+            {
+                var payload = File.ReadAllBytes(path);
+                if (payload.Length != manifestChunk.StoredLength)
+                {
+                    return NewChunkIssue($"Mirror '{node.Label}' chunk stored length differs from the manifest.");
+                }
+
+                var raw = manifestChunk.Encoding == ChunkEncoding.Raw
+                    ? payload
+                    : codec.Decompress(payload, manifestChunk.Length, manifestChunk.Encoding);
+                if (raw.Length != manifestChunk.Length)
+                {
+                    return NewChunkIssue($"Mirror '{node.Label}' chunk logical length differs from the manifest.");
+                }
+
+                var digest = hasher.Hash(raw);
+                if (!string.Equals(digest, manifestChunk.Digest, StringComparison.OrdinalIgnoreCase))
+                {
+                    return NewChunkIssue($"Mirror '{node.Label}' chunk digest differs from the manifest.");
+                }
+
+                return null;
+            }
+            catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException)
+            {
+                return NewChunkIssue($"Mirror '{node.Label}' chunk could not be read: {exception.Message}");
+            }
+
+            MirrorRepairIssue NewChunkIssue(string message)
+            {
+                return new MirrorRepairIssue(
+                    null,
+                    null,
+                    RepositoryScrubIssueSeverity.Warning,
+                    MirrorRepairArtefactKind.Chunk,
+                    path,
+                    null,
+                    manifestChunk.Digest,
+                    message,
+                    MirrorRepairAction.None);
+            }
+        }
+    }
+
+    private MirrorRepairIssue? ValidateChunkMetadata(string root, ManifestChunk chunk)
+    {
+        var path = MetadataPath(root, chunk.Digest);
+        if (!File.Exists(path))
+        {
+            return new MirrorRepairIssue(
+                null,
+                null,
+                RepositoryScrubIssueSeverity.Warning,
+                MirrorRepairArtefactKind.Metadata,
+                path,
+                null,
+                chunk.Digest,
+                "Mirror chunk metadata is missing.",
+                MirrorRepairAction.None);
+        }
+
+        var metadata = ReadChunkMetadataSafe(root, chunk.Digest);
+        if (metadata is not null
+            && string.Equals(metadata.Digest, chunk.Digest, StringComparison.OrdinalIgnoreCase)
+            && metadata.LogicalLength == chunk.Length
+            && metadata.StoredLength == chunk.StoredLength
+            && metadata.Encoding == chunk.Encoding)
+        {
+            return null;
+        }
+
+        return new MirrorRepairIssue(
+            null,
+            null,
+            RepositoryScrubIssueSeverity.Warning,
+            MirrorRepairArtefactKind.Metadata,
+            path,
+            null,
+            chunk.Digest,
+            "Mirror chunk metadata is missing, corrupt, or differs from the manifest.",
+            MirrorRepairAction.None);
+    }
+
     public async Task<RestoreRehearsalReport> RunRestoreRehearsalAsync(
         string tempRoot,
         int maxVersions,

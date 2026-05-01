@@ -7,7 +7,8 @@ public sealed record FluxVaultIpcRequest(
     FluxVaultConfiguration? Configuration,
     string? VersionId,
     string? OutputPath,
-    string? ExportPath)
+    string? ExportPath,
+    string? MirrorNodeId = null)
 {
     public static FluxVaultIpcRequest GetStatus()
     {
@@ -83,5 +84,15 @@ public sealed record FluxVaultIpcRequest(
     public static FluxVaultIpcRequest RunRestoreRehearsal()
     {
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.RunRestoreRehearsal, null, null, null, null);
+    }
+
+    public static FluxVaultIpcRequest PreviewMirrorRepair(string? mirrorNodeId = null)
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.PreviewMirrorRepair, null, null, null, null, mirrorNodeId);
+    }
+
+    public static FluxVaultIpcRequest RunMirrorRepair(string? mirrorNodeId = null)
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.RunMirrorRepair, null, null, null, null, mirrorNodeId);
     }
 }

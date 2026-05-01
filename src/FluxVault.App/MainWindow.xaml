@@ -366,7 +366,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal">
+                    <WrapPanel>
                         <TextBlock Text="{Binding MirrorSummary}" VerticalAlignment="Center" Foreground="#3C4043" Margin="0,0,12,0" />
                         <Button Content="Add mirror" Command="{Binding AddMirrorCommand}" Margin="0,0,8,0"
                                 ToolTip="Add a full-copy mirror node." />
@@ -374,7 +374,15 @@
                                 ToolTip="Choose the folder for the selected mirror node." />
                         <Button Content="Remove mirror" Command="{Binding RemoveMirrorCommand}"
                                 ToolTip="Remove the selected mirror node from configuration." />
-                    </StackPanel>
+                        <Button Content="Preview selected repair" Command="{Binding PreviewSelectedMirrorRepairCommand}" Margin="8,0,8,0"
+                                ToolTip="Preview repairable drift for the selected mirror node." />
+                        <Button Content="Repair selected" Command="{Binding RunSelectedMirrorRepairCommand}" Margin="0,0,8,0"
+                                ToolTip="Repair the selected mirror from the healthy primary repository." />
+                        <Button Content="Preview all repairs" Command="{Binding PreviewMirrorRepairCommand}" Margin="0,0,8,0"
+                                ToolTip="Preview repairable primary and mirror drift across enabled mirror nodes." />
+                        <Button Content="Repair all" Command="{Binding RunMirrorRepairCommand}"
+                                ToolTip="Repair the primary from healthy mirrors and repair enabled mirrors from the healthy primary." />
+                    </WrapPanel>
 
                     <DataGrid Grid.Row="2"
                               ItemsSource="{Binding MirrorNodes}"
@@ -389,6 +397,8 @@
                             <DataGridTextColumn Header="Path" Binding="{Binding Path, UpdateSourceTrigger=PropertyChanged}" Width="*" />
                             <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Width="90" />
                             <DataGridTextColumn Header="Mode" Binding="{Binding Status}" Width="150" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Repair" Binding="{Binding RepairStatus}" Width="170" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Repair detail" Binding="{Binding RepairDetail}" Width="260" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -461,17 +471,23 @@
                                        Margin="0,4,0,0"
                                        TextWrapping="Wrap" />
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="12,0,0,0">
+                        <WrapPanel Grid.Column="1" HorizontalAlignment="Right" Margin="12,0,0,0">
                             <Button Content="Run scrub"
                                     Command="{Binding RunRepositoryScrubCommand}"
                                     ToolTip="Check referenced repository and mirror artefacts, repairing from a healthy counterpart when possible." />
+                            <Button Content="Preview mirror repair"
+                                    Command="{Binding PreviewMirrorRepairCommand}"
+                                    ToolTip="Preview repairable primary and mirror drift without writing artefacts." />
+                            <Button Content="Run mirror repair"
+                                    Command="{Binding RunMirrorRepairCommand}"
+                                    ToolTip="Repair primary artefacts from healthy mirrors and repair enabled mirrors from the healthy primary." />
                             <Button Content="Run restore rehearsal"
                                     Command="{Binding RunRestoreRehearsalCommand}"
                                     ToolTip="Restore recent versions to a temporary FluxVault folder, verify length, then delete the temporary output." />
                             <Button Content="Export diagnostics"
                                     Command="{Binding ExportDiagnosticsCommand}"
                                     ToolTip="Export local service status, diagnostics, and health details." />
-                        </StackPanel>
+                        </WrapPanel>
                     </Grid>
 
                     <DataGrid Grid.Row="2"

@@ -159,15 +159,18 @@ watcher/debounce queue; the USN tile is the latest durable catch-up result.
 
 The Diagnostics workspace is the detailed health dashboard. It shows repository
 integrity, mirror state, restore rehearsal, USN state, and blocked-file rows, and
-keeps manual Run scrub, Run restore rehearsal, and Export diagnostics actions in
-one place.
+keeps manual Run scrub, Preview mirror repair, Run mirror repair, Run restore
+rehearsal, and Export diagnostics actions in one place.
 
 The Mirrors workspace owns mirror configuration. The Protection workspace shows
 a concise mirror summary and links into Mirrors; it no longer exposes the
 legacy editable mirror-path textbox. Mirror nodes currently have id, label,
 path, and enabled state, and all enabled nodes use full-copy placement. Capacity
 balancing, redundancy counts, drain/remove, and rebalance preview remain later
-R2 work.
+R2 work. The workspace also shows compact per-node mirror repair status and
+allows selected-node preview/repair. Selected-node repair only repairs that
+mirror from the healthy primary repository; primary repair remains a repair-all
+operation.
 
 The tray activity pane is positioned from the active monitor working area. The
 WinForms cursor and monitor coordinates are converted to WPF device-independent
@@ -297,6 +300,14 @@ attempts atomic writes to each enabled mirror node. A failed mirror write
 records a node-specific warning in the commit result and service status, but it
 does not roll back or fail the primary backup.
 
+Mirror repair reuses the repository validation boundary. Preview checks primary
+and enabled mirror manifests, chunks, and chunk metadata without writing files.
+Repair-all repairs primary artefacts from any healthy enabled mirror, then
+repairs enabled mirrors from the healthy primary copy. Selected-node repair is
+mirror-only and leaves primary repair to repair-all. Mirror repair reports are
+persisted in repository health state so Diagnostics and Mirrors can display the
+latest per-node repair evidence after refresh or service restart.
+
 ## Planned multi-PC sync safety
 
 R3 sync publishes device identity, folder mapping metadata, manifests, and
@@ -317,9 +328,11 @@ diverged afterward.
 ## Future release tracks
 
 R2 is the distributed mirror fabric. The first slice establishes `MirrorSet`
-full-copy nodes and warning semantics; later R2 work adds capacity-aware
-placement, redundancy policy, drain/remove, repair movement, and rebalance
-preview. R3 is multi-PC sync over repository-owned peer metadata. R4 introduces
-a WinFsp managed workspace for high-frequency large-file workloads. R5
-introduces Cloud Files API / ProjFS sync-root integration. R4 and R5 are
-separate tracks because they change the namespace and write-path assumptions.
+full-copy nodes and warning semantics. The repair foundation adds explicit
+preview/run repair and per-node mirror health while keeping full-copy placement.
+Later R2 work adds capacity-aware placement, redundancy policy, drain/remove,
+movement preview, and rebalance execution. R3 is multi-PC sync over
+repository-owned peer metadata. R4 introduces a WinFsp managed workspace for
+high-frequency large-file workloads. R5 introduces Cloud Files API / ProjFS
+sync-root integration. R4 and R5 are separate tracks because they change the
+namespace and write-path assumptions.

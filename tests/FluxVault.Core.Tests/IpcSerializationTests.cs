@@ -146,13 +146,64 @@ public sealed class IpcSerializationTests
     [InlineData(FluxVaultIpcCommand.GetRepositoryHealth)]
     [InlineData(FluxVaultIpcCommand.RunRepositoryScrub)]
     [InlineData(FluxVaultIpcCommand.RunRestoreRehearsal)]
+    [InlineData(FluxVaultIpcCommand.PreviewMirrorRepair)]
+    [InlineData(FluxVaultIpcCommand.RunMirrorRepair)]
     public void Repository_maintenance_request_serialization_preserves_command(FluxVaultIpcCommand command)
     {
-        var request = new FluxVaultIpcRequest(command, null, null, null, null);
+        var request = new FluxVaultIpcRequest(command, null, null, null, null, MirrorNodeId: "mirror-1");
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeRequest(FluxVaultIpcSerializer.SerializeRequest(request));
 
         Assert.Equal(command, roundTrip.Command);
+        Assert.Equal("mirror-1", roundTrip.MirrorNodeId);
+    }
+
+    [Fact]
+    public void Mirror_repair_response_serialization_preserves_node_report()
+    {
+        var report = new MirrorRepairReport(
+            CompletedAtUtc: new DateTimeOffset(2026, 4, 30, 11, 0, 0, TimeSpan.Zero),
+            IsPreview: true,
+            RequestedMirrorNodeId: "cloud",
+            HealthState: RepositoryHealthState.Warning,
+            IssueCount: 1,
+            RepairedIssueCount: 0,
+            Nodes:
+            [
+                new MirrorNodeRepairReport(
+                    NodeId: "cloud",
+                    Label: "Cloud mirror",
+                    Path: @"D:\Mirrors\Cloud",
+                    IsEnabled: true,
+                    HealthState: RepositoryHealthState.Warning,
+                    IssueCount: 1,
+                    RepairedIssueCount: 0,
+                    Issues:
+                    [
+                        new MirrorRepairIssue(
+                            MirrorNodeId: "cloud",
+                            MirrorNodeLabel: "Cloud mirror",
+                            Severity: RepositoryScrubIssueSeverity.Warning,
+                            ArtefactKind: MirrorRepairArtefactKind.Chunk,
+                            Path: @"D:\Mirrors\Cloud\chunks\aa\chunk.chunk",
+                            VersionId: "version-1",
+                            ChunkDigest: "digest-1",
+                            Message: "Mirror chunk is missing.",
+                            RepairAction: MirrorRepairAction.None)
+                    ])
+            ],
+            Issues: []);
+        var response = FluxVaultIpcResponse.WithMirrorRepair(report);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
+
+        Assert.True(roundTrip.Success);
+        Assert.NotNull(roundTrip.MirrorRepair);
+        Assert.True(roundTrip.MirrorRepair.IsPreview);
+        Assert.Equal("cloud", roundTrip.MirrorRepair.RequestedMirrorNodeId);
+        var node = Assert.Single(roundTrip.MirrorRepair.Nodes);
+        Assert.Equal("Cloud mirror", node.Label);
+        Assert.Equal(MirrorRepairArtefactKind.Chunk, Assert.Single(node.Issues).ArtefactKind);
     }
 
     [Fact]

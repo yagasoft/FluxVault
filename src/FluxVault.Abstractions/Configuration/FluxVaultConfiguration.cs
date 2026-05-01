@@ -15,7 +15,8 @@ public sealed record FluxVaultConfiguration(
     RepositoryMaintenancePolicy RepositoryMaintenancePolicy = null!,
     WorkloadPolicyConfiguration WorkloadPolicy = null!,
     MirrorSetConfiguration MirrorSet = null!,
-    SyncConfiguration Sync = null!)
+    SyncConfiguration Sync = null!,
+    PerformanceWorkspaceConfiguration PerformanceWorkspace = null!)
 {
     public static FluxVaultConfiguration CreateDefault(string programDataPath)
     {
@@ -33,6 +34,7 @@ public sealed record FluxVaultConfiguration(
             RepositoryMaintenancePolicy: RepositoryMaintenancePolicy.CreateDefault(),
             WorkloadPolicy: WorkloadPolicyConfiguration.CreateDefault(),
             MirrorSet: MirrorSetConfiguration.CreateDefault(),
-            Sync: SyncConfiguration.CreateDefault(programDataPath));
+            Sync: SyncConfiguration.CreateDefault(programDataPath),
+            PerformanceWorkspace: PerformanceWorkspaceConfiguration.CreateDefault(programDataPath));
     }
 }

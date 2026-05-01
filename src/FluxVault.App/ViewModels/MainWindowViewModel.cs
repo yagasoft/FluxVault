@@ -110,6 +110,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private string syncPeerSummary = "Sync: waiting";
 
     [ObservableProperty]
+    private string performanceWorkspaceStatus = "Performance workspace: waiting";
+
+    [ObservableProperty]
     private string usnHealth = "USN: checking";
 
     [ObservableProperty]
@@ -1003,6 +1006,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             CaptureHealth = BuildCaptureHealth(status.CaptureStatuses ?? []);
             ApplyDeviceIdentity(status);
             ApplySyncStatus(status.Sync);
+            ApplyPerformanceWorkspaceStatus(status.PerformanceWorkspace);
             ApplyRepositoryHealth(status.RepositoryHealth);
             WatchedFolders.Clear();
             foreach (var folder in status.Configuration.WatchedFolders)
@@ -1274,6 +1278,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
 
         return string.Join(", ", parts);
+    }
+
+    private void ApplyPerformanceWorkspaceStatus(PerformanceWorkspaceRuntimeStatus? status)
+    {
+        if (status is null)
+        {
+            PerformanceWorkspaceStatus = "Performance workspace: waiting";
+            return;
+        }
+
+        var state = status.IsEnabled ? "prepared" : "disabled";
+        var driver = status.IsDriverCheckDeferred ? "driver check deferred" : status.Status;
+        PerformanceWorkspaceStatus = $"Performance workspace: {status.Mode} {state}, {driver}";
     }
 
     private static string BuildMirrorHealth(IReadOnlyList<string> warnings, FluxVaultConfiguration configuration)

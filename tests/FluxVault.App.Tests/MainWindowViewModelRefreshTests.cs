@@ -197,6 +197,16 @@ public sealed class MainWindowViewModelRefreshTests
     {
         var status = StatusWithVersions() with
         {
+            PerformanceWorkspace = new PerformanceWorkspaceRuntimeStatus(
+                IsEnabled: true,
+                Mode: PerformanceWorkspaceMode.WinFsp,
+                WorkspacePath: @"D:\FluxVaultFast",
+                CacheSizeMegabytes: 2048,
+                MountName: "FluxVaultFast",
+                SetupScriptPath: @"D:\Repo\eng\winfsp\Register-FluxVaultWinFspWorkspace.ps1",
+                ManifestPath: @"D:\Repo\eng\winfsp\FluxVault.WinFsp.Workspace.manifest.json",
+                Status: "Prepared; WinFsp driver install not executed.",
+                IsDriverCheckDeferred: true),
             Sync = new SyncRuntimeStatus(
                 "device-local",
                 [
@@ -255,6 +265,7 @@ public sealed class MainWindowViewModelRefreshTests
         await viewModel.RefreshAsync();
 
         Assert.Equal("Sync: 2 peer head(s), 1 cursor(s), 1 pending mapping(s), 1 applied remote version(s), 1 blocked target(s), 1 conflict(s)", viewModel.SyncPeerSummary);
+        Assert.Equal("Performance workspace: WinFsp prepared, driver check deferred", viewModel.PerformanceWorkspaceStatus);
     }
 
     [Fact]

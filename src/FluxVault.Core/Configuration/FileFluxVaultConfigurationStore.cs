@@ -78,6 +78,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         }
 
         ValidateMirrorSet(configuration.MirrorSet);
+        ValidatePerformanceWorkspace(configuration.PerformanceWorkspace);
     }
 
     private FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
@@ -102,6 +103,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             RepositoryMaintenancePolicy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault(),
             WorkloadPolicy = configuration.WorkloadPolicy ?? WorkloadPolicyConfiguration.CreateDefault(),
             Sync = (configuration.Sync ?? SyncConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
+            PerformanceWorkspace = (configuration.PerformanceWorkspace ?? PerformanceWorkspaceConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
             SelectionRules = selectionRules.Select(NormaliseSelectionRule).ToArray(),
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0
@@ -129,6 +131,19 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             {
                 throw new InvalidDataException($"Mirror path is required for enabled mirror node {node.Label}.");
             }
+        }
+    }
+
+    private static void ValidatePerformanceWorkspace(PerformanceWorkspaceConfiguration configuration)
+    {
+        if (configuration.IsEnabled && string.IsNullOrWhiteSpace(configuration.WorkspacePath))
+        {
+            throw new InvalidDataException("Performance workspace path is required when the workspace is enabled.");
+        }
+
+        if (configuration.CacheSizeMegabytes < 128)
+        {
+            throw new InvalidDataException("Performance workspace cache size must be at least 128 MB.");
         }
     }
 

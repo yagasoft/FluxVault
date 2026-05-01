@@ -225,6 +225,15 @@ folder; direct cloud adapters arrive later.
   content that differs from the incoming remote version, FluxVault must keep the
   local target unchanged and record conflict actions for keeping local, keeping
   remote, restoring remote as a copy, or marking the conflict resolved.
+- R4 WinFsp performance-workspace configuration must be typed, defaulted, and
+  disabled by default. It must record workspace path, cache budget, and mount
+  name without assuming the driver is installed.
+- R4 status must expose whether WinFsp workspace setup is prepared and must
+  clearly report that driver checks and OS-level registration are deferred until
+  explicitly approved.
+- R4 setup scripts and manifests may be authored in the repository, but tests
+  and normal app flows must not install drivers, register mounts, or mutate
+  machine-wide state.
 
 ## Explicit non-goals for v1
 

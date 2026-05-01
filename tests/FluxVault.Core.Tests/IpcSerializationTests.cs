@@ -142,7 +142,17 @@ public sealed class IpcSerializationTests
                         DetectedAtUtc: checkedAt,
                         Status: SyncConflictStatus.Open,
                         AvailableActions: [SyncConflictAction.KeepLocal, SyncConflictAction.KeepRemote])
-                ]));
+                ]),
+            PerformanceWorkspace: new PerformanceWorkspaceRuntimeStatus(
+                IsEnabled: true,
+                Mode: PerformanceWorkspaceMode.WinFsp,
+                WorkspacePath: @"D:\FluxVaultFast",
+                CacheSizeMegabytes: 2048,
+                MountName: "FluxVaultFast",
+                SetupScriptPath: @"D:\Repo\eng\winfsp\Register-FluxVaultWinFspWorkspace.ps1",
+                ManifestPath: @"D:\Repo\eng\winfsp\FluxVault.WinFsp.Workspace.manifest.json",
+                Status: "Prepared; WinFsp driver install not executed.",
+                IsDriverCheckDeferred: true));
         var response = FluxVaultIpcResponse.WithStatus(status);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
@@ -169,6 +179,9 @@ public sealed class IpcSerializationTests
         Assert.Equal("remote-version-42", Assert.Single(roundTrip.Status.Sync.AppliedRemoteVersions!).SourceVersionId);
         Assert.Equal(SyncHydrationState.Conflict, Assert.Single(roundTrip.Status.Sync.Hydrations!).State);
         Assert.Equal(SyncConflictStatus.Open, Assert.Single(roundTrip.Status.Sync.Conflicts!).Status);
+        Assert.NotNull(roundTrip.Status.PerformanceWorkspace);
+        Assert.Equal(PerformanceWorkspaceMode.WinFsp, roundTrip.Status.PerformanceWorkspace.Mode);
+        Assert.True(roundTrip.Status.PerformanceWorkspace.IsDriverCheckDeferred);
     }
 
     [Fact]

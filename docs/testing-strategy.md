@@ -142,6 +142,11 @@
   overwriting, conflicting targets are preserved with open conflict metadata,
   conflict actions can mark a record resolved, IPC round-trips conflict
   resolution requests, and Diagnostics shows blocked/conflict counts.
+- WinFsp performance-workspace foundation: configuration defaults disabled and
+  round-trips workspace path/cache/mount fields, service status and IPC expose
+  prepared/deferred driver state, Diagnostics shows the workspace status, and
+  `eng/winfsp` setup assets are covered by static tests that prove they are not
+  self-executing driver or machine registration scripts.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

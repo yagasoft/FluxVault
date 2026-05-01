@@ -344,6 +344,40 @@ public sealed class ConfigurationStoreTests
     }
 
     [Fact]
+    public async Task Default_configuration_has_disabled_winfsp_performance_workspace()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+
+        var configuration = await store.LoadAsync();
+
+        Assert.False(configuration.PerformanceWorkspace.IsEnabled);
+        Assert.Equal(PerformanceWorkspaceMode.WinFsp, configuration.PerformanceWorkspace.Mode);
+        Assert.Equal(Path.Combine(workspace.RootPath, "performance-workspace"), configuration.PerformanceWorkspace.WorkspacePath);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_winfsp_performance_workspace()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var expected = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            PerformanceWorkspace = new PerformanceWorkspaceConfiguration(
+                IsEnabled: true,
+                Mode: PerformanceWorkspaceMode.WinFsp,
+                WorkspacePath: Path.Combine(workspace.RootPath, "fast-workspace"),
+                CacheSizeMegabytes: 2048,
+                MountName: "FluxVaultFast")
+        };
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+        Assert.Equal(expected.PerformanceWorkspace, actual.PerformanceWorkspace);
+    }
+
+    [Fact]
     public async Task Save_and_load_round_trips_retention_policy()
     {
         using var workspace = TemporaryWorkspace.Create();

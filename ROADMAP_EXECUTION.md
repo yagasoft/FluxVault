@@ -196,3 +196,33 @@ Assumptions:
 
 - `R3-003` implements local sync hydration contracts and safety behaviour; live peer transport/background polling remains future polish.
 - Conflict resolution actions are recorded safely first; this slice does not destructively apply keep-remote or restore-as-copy file operations through the UI.
+
+## R4-001: WinFsp performance workspace foundation
+
+Status: complete.
+
+Plan:
+
+- Add disabled-by-default typed WinFsp performance-workspace configuration with workspace path, cache budget, and mount name.
+- Expose prepared/deferred WinFsp workspace status through IPC/service status and Diagnostics.
+- Add repo-owned static WinFsp setup scripts and manifest for review/static tests only.
+- Ensure scripts/manifests do not install drivers, mount file systems, or mutate machine-wide state in tests or normal app flows.
+- Update README and roadmap docs/tracker for `R4-001`.
+
+Evidence:
+
+- Red evidence: `dotnet test tests\FluxVault.Core.Tests\FluxVault.Core.Tests.csproj --filter "FullyQualifiedName~Default_configuration_has_disabled_winfsp_performance_workspace|FullyQualifiedName~Save_and_load_round_trips_winfsp_performance_workspace|FullyQualifiedName~IpcSerializationTests"` initially failed because `PerformanceWorkspaceConfiguration`, `PerformanceWorkspaceMode`, `PerformanceWorkspaceRuntimeStatus`, `FluxVaultConfiguration.PerformanceWorkspace`, and `FluxVaultServiceStatus.PerformanceWorkspace` did not exist.
+- Green targeted evidence: core configuration/IPC tests passed, 22 total.
+- Green targeted evidence: integration service status and static WinFsp asset tests passed, 2 total.
+- Green targeted evidence: app Diagnostics status/XAML tests passed, 2 total.
+- Full verification: `dotnet test` passed across App/Core/Integration/Windows test projects: 117 App, 139 Core, 80 Integration, 17 Windows.
+- Whitespace verification: `git diff --check` passed.
+
+Blockers:
+
+- None.
+
+Assumptions:
+
+- R4-001 prepares the WinFsp workspace contract and repo assets only; no driver installation, mount registration, or machine-wide mutation is run.
+- The configuration is not exposed in Options yet because the real WinFsp write path is not active in this safe foundation slice.

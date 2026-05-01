@@ -195,11 +195,20 @@ Expected user-visible result: best-in-class handling for huge, constantly
 changing files.
 
 - Optional FluxVault-managed workspace or drive for selected workloads.
-- WinFsp controls the write path without a FluxVault-owned kernel driver.
-- Better write-range journalling for CAD/BIM, video, database-like, and other
-  hot large-file workloads.
-- Configurable migration into or out of the managed workspace.
-- Uses the same repository, mirror, retention, and sync metadata.
+- Implemented: typed performance-workspace configuration records WinFsp mode,
+  workspace path, cache budget, and mount name with disabled-by-default
+  compatibility.
+- Implemented: service status and Diagnostics expose the prepared WinFsp
+  workspace state and explicitly report that driver checks and registration are
+  deferred.
+- Implemented: repo-owned `eng/winfsp` setup scripts and a registration
+  manifest are present for review and static tests only; they do not run during
+  tests or normal app flows.
+- Future work can make WinFsp control the write path without a FluxVault-owned
+  kernel driver, add write-range journalling for hot large-file workloads, and
+  add managed migration into or out of the workspace.
+- The workspace is designed to use the same repository, mirror, retention, and
+  sync metadata.
 
 ## R5 Cloud Files API / ProjFS shell integration
 

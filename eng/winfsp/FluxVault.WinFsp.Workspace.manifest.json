@@ -1,0 +1,10 @@
+{
+  "id": "FluxVault.WinFsp.Workspace",
+  "track": "R4-001",
+  "mode": "WinFsp",
+  "driverInstallRequired": true,
+  "machineMutation": false,
+  "description": "Static FluxVault WinFsp performance workspace registration manifest. It is authored for review and tests only; do not execute OS registration without explicit permission.",
+  "workspaceRootVariable": "FluxVault:PerformanceWorkspace:WorkspacePath",
+  "mountNameVariable": "FluxVault:PerformanceWorkspace:MountName"
+}

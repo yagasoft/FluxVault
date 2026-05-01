@@ -401,6 +401,31 @@ public sealed class PackagingTests
         Assert.True(new FileInfo(logoPath).Length > 1024);
     }
 
+    [Fact]
+    public void Winfsp_workspace_setup_assets_are_static_and_not_self_executing()
+    {
+        var root = FindRepositoryRoot();
+        var registerPath = Path.Combine(root, "eng", "winfsp", "Register-FluxVaultWinFspWorkspace.ps1");
+        var unregisterPath = Path.Combine(root, "eng", "winfsp", "Unregister-FluxVaultWinFspWorkspace.ps1");
+        var manifestPath = Path.Combine(root, "eng", "winfsp", "FluxVault.WinFsp.Workspace.manifest.json");
+
+        Assert.True(File.Exists(registerPath));
+        Assert.True(File.Exists(unregisterPath));
+        Assert.True(File.Exists(manifestPath));
+        var register = File.ReadAllText(registerPath);
+        var unregister = File.ReadAllText(unregisterPath);
+        var manifest = File.ReadAllText(manifestPath);
+
+        Assert.Contains("SupportsShouldProcess", register);
+        Assert.Contains("-WhatIf", register);
+        Assert.DoesNotContain("Start-Process", register);
+        Assert.DoesNotContain("msiexec", register, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("SupportsShouldProcess", unregister);
+        Assert.Contains("FluxVault.WinFsp.Workspace", manifest);
+        Assert.Contains("\"driverInstallRequired\": true", manifest);
+        Assert.Contains("\"machineMutation\": false", manifest);
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

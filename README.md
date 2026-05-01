@@ -319,6 +319,13 @@ version when the target is safe, leave locked targets blocked, and record
 non-destructive conflicts with keep-local, keep-remote, restore-as-copy, and
 mark-resolved actions.
 
+FluxVault now has the first R4 WinFsp performance-workspace foundation. The
+configuration model and Diagnostics status can describe a prepared WinFsp
+workspace path, cache budget, and mount name, and the repository includes
+static `eng/winfsp` setup manifests/scripts for review. Those scripts are not
+run by tests or normal app flows; WinFsp driver installation and OS-level
+registration still require explicit future approval.
+
 Open **Options** to review retention, scheduled maintenance, and the default
 workload preset assigned to newly protected folders/files. The MVP
 retention defaults keep every version for 24 hours, keep one version per hour

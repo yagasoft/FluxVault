@@ -772,6 +772,33 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Status_exposes_winfsp_performance_workspace_preparation()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            PerformanceWorkspace = new PerformanceWorkspaceConfiguration(
+                IsEnabled: true,
+                Mode: PerformanceWorkspaceMode.WinFsp,
+                WorkspacePath: Path.Combine(workspace.RootPath, "fast-workspace"),
+                CacheSizeMegabytes: 1024,
+                MountName: "FluxVaultFast")
+        };
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        var status = await operations.GetStatusAsync();
+
+        Assert.NotNull(status.PerformanceWorkspace);
+        Assert.True(status.PerformanceWorkspace.IsEnabled);
+        Assert.Equal(PerformanceWorkspaceMode.WinFsp, status.PerformanceWorkspace.Mode);
+        Assert.True(status.PerformanceWorkspace.IsDriverCheckDeferred);
+        Assert.Contains("not executed", status.PerformanceWorkspace.Status, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task File_browser_recursive_folder_selection_backs_up_nested_files()
     {
         using var workspace = TemporaryWorkspace.Create();

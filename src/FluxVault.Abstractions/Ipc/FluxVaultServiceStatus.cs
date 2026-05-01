@@ -18,7 +18,8 @@ public sealed record FluxVaultServiceStatus(
     RepositoryHealthSnapshot? RepositoryHealth = null,
     IReadOnlyList<string>? MirrorWarnings = null,
     DeviceIdentityRuntimeStatus? DeviceIdentity = null,
-    SyncRuntimeStatus? Sync = null);
+    SyncRuntimeStatus? Sync = null,
+    PerformanceWorkspaceRuntimeStatus? PerformanceWorkspace = null);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,
@@ -48,3 +49,14 @@ public sealed record SyncRuntimeStatus(
     IReadOnlyList<SyncAppliedVersionRecord>? AppliedRemoteVersions = null,
     IReadOnlyList<SyncHydrationRecord>? Hydrations = null,
     IReadOnlyList<SyncConflictRecord>? Conflicts = null);
+
+public sealed record PerformanceWorkspaceRuntimeStatus(
+    bool IsEnabled,
+    PerformanceWorkspaceMode Mode,
+    string WorkspacePath,
+    int CacheSizeMegabytes,
+    string MountName,
+    string SetupScriptPath,
+    string ManifestPath,
+    string Status,
+    bool IsDriverCheckDeferred);

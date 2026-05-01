@@ -439,7 +439,8 @@ public sealed class FluxVaultOperations(
             RepositoryHealth: await GetRepositoryHealthAsync(cancellationToken).ConfigureAwait(false),
             MirrorWarnings: lastMirrorWarnings,
             DeviceIdentity: BuildDeviceIdentityStatus(configuration.Sync),
-            Sync: await BuildSyncStatusAsync(configuration, cancellationToken).ConfigureAwait(false));
+            Sync: await BuildSyncStatusAsync(configuration, cancellationToken).ConfigureAwait(false),
+            PerformanceWorkspace: BuildPerformanceWorkspaceStatus(configuration.PerformanceWorkspace));
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -730,6 +731,25 @@ public sealed class FluxVaultOperations(
             await applied.ListAppliedVersionsAsync(cancellationToken).ConfigureAwait(false),
             await hydrations.ListHydrationsAsync(cancellationToken).ConfigureAwait(false),
             await conflicts.ListConflictsAsync(cancellationToken).ConfigureAwait(false));
+    }
+
+    private static PerformanceWorkspaceRuntimeStatus BuildPerformanceWorkspaceStatus(
+        PerformanceWorkspaceConfiguration configuration)
+    {
+        var scriptPath = Path.Combine(AppContext.BaseDirectory, "eng", "winfsp", "Register-FluxVaultWinFspWorkspace.ps1");
+        var manifestPath = Path.Combine(AppContext.BaseDirectory, "eng", "winfsp", "FluxVault.WinFsp.Workspace.manifest.json");
+        return new PerformanceWorkspaceRuntimeStatus(
+            configuration.IsEnabled,
+            configuration.Mode,
+            configuration.WorkspacePath,
+            configuration.CacheSizeMegabytes,
+            configuration.MountName,
+            scriptPath,
+            manifestPath,
+            configuration.IsEnabled
+                ? "Prepared; WinFsp driver install not executed."
+                : "Disabled; WinFsp driver install not executed.",
+            IsDriverCheckDeferred: true);
     }
 
     private static string FormatBytes(long bytes)

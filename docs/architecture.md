@@ -385,6 +385,16 @@ keep-local, keep-remote, restore-as-copy, and mark-resolved actions. Conflict
 resolution records the selected action without destructively rewriting the file
 in this foundation slice.
 
+R4 WinFsp performance workspace support starts as a prepared, non-mutating
+foundation. `PerformanceWorkspaceConfiguration` records WinFsp mode, workspace
+path, cache budget, and mount name while defaulting disabled for existing users.
+Service status projects a `PerformanceWorkspaceRuntimeStatus` that tells the
+dashboard whether the workspace is enabled and that WinFsp driver checks and
+registration are deferred. The `eng/winfsp` scripts and manifest are static
+review artefacts in this slice; they emit plans and are covered by tests, but
+FluxVault does not install WinFsp, register a file system, or mount a workspace
+without explicit future approval.
+
 ## Future release tracks
 
 R2 is the distributed mirror fabric. The first slice establishes `MirrorSet`

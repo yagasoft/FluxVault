@@ -100,6 +100,121 @@ public sealed class RepositoryMirrorTests
     }
 
     [Fact]
+    public async Task Capacity_balanced_mirror_set_writes_chunks_only_to_planned_node_and_manifests_to_all_nodes()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "FluxVault.Integration", Guid.NewGuid().ToString("N"));
+        var local = Path.Combine(root, "local");
+        var firstMirror = Path.Combine(root, "cloud-folder");
+        var secondMirror = Path.Combine(root, "usb-folder");
+
+        try
+        {
+            var mirrorSet = new MirrorSetConfiguration(
+            [
+                new MirrorNodeConfiguration("cloud", "Cloud folder", firstMirror, IsEnabled: true),
+                new MirrorNodeConfiguration("usb", "USB folder", secondMirror, IsEnabled: true)
+            ],
+            new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced));
+            var repository = new FileSystemChunkRepository(
+                local,
+                new FastCdcChunker(new ChunkingOptions(128, 256, 512)),
+                new Blake3ContentHasher(),
+                new ZstdChunkCodec(),
+                mirrorSet);
+
+            var payload = Encoding.UTF8.GetBytes(string.Concat(Enumerable.Repeat("balanced mirror content ", 64)));
+            var result = await repository.CommitAsync(new FileCommitRequest(
+                WatchedFolderId: "docs",
+                SourcePath: @"D:\Work\Docs\balanced.docx",
+                CapturedAtUtc: DateTimeOffset.UtcNow,
+                Consistency: CaptureConsistency.CrashConsistent,
+                Compression: CompressionPreference.Zstd,
+                MinimumCompressionBytes: 128,
+                Content: new MemoryStream(payload)));
+            var paths = new Dictionary<string, string>
+            {
+                ["cloud"] = firstMirror,
+                ["usb"] = secondMirror
+            };
+
+            foreach (var chunk in result.Manifest.Chunks.DistinctBy(chunk => chunk.Digest))
+            {
+                var plannedTarget = new MirrorPlacementPlanner()
+                    .SelectChunkTargets(chunk.Digest, chunk.StoredLength, mirrorSet, new Dictionary<string, long>())
+                    .TargetNodeIds
+                    .Single();
+                foreach (var (nodeId, mirror) in paths)
+                {
+                    Assert.True(File.Exists(Path.Combine(mirror, "manifests", $"{result.Manifest.VersionId}.json")));
+                    Assert.Equal(
+                        nodeId == plannedTarget,
+                        File.Exists(ChunkPath(mirror, chunk.Digest)));
+                    Assert.Equal(
+                        nodeId == plannedTarget,
+                        File.Exists(MetadataPath(mirror, chunk.Digest)));
+                    Assert.Empty(Directory.EnumerateFiles(mirror, "*.tmp", SearchOption.AllDirectories));
+                }
+            }
+
+            Assert.Empty(result.MirrorWarnings);
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task Redundant_mirror_set_reports_under_satisfied_copies_without_failing_primary_commit()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "FluxVault.Integration", Guid.NewGuid().ToString("N"));
+        var local = Path.Combine(root, "local");
+        var firstMirror = Path.Combine(root, "cloud-folder");
+        var secondMirror = Path.Combine(root, "usb-folder");
+
+        try
+        {
+            var repository = new FileSystemChunkRepository(
+                local,
+                new FastCdcChunker(new ChunkingOptions(128, 256, 512)),
+                new Blake3ContentHasher(),
+                new ZstdChunkCodec(),
+                new MirrorSetConfiguration(
+                [
+                    new MirrorNodeConfiguration("cloud", "Cloud folder", firstMirror, IsEnabled: true),
+                    new MirrorNodeConfiguration("usb", "USB folder", secondMirror, IsEnabled: true)
+                ],
+                new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.Redundant, MinimumMirrorCopies: 3)));
+
+            var payload = Encoding.UTF8.GetBytes(string.Concat(Enumerable.Repeat("redundant mirror content ", 64)));
+            var result = await repository.CommitAsync(new FileCommitRequest(
+                WatchedFolderId: "docs",
+                SourcePath: @"D:\Work\Docs\redundant.docx",
+                CapturedAtUtc: DateTimeOffset.UtcNow,
+                Consistency: CaptureConsistency.CrashConsistent,
+                Compression: CompressionPreference.Zstd,
+                MinimumCompressionBytes: 128,
+                Content: new MemoryStream(payload)));
+            var chunk = result.Manifest.Chunks.First();
+
+            Assert.True(File.Exists(Path.Combine(local, "manifests", $"{result.Manifest.VersionId}.json")));
+            Assert.True(File.Exists(ChunkPath(firstMirror, chunk.Digest)));
+            Assert.True(File.Exists(ChunkPath(secondMirror, chunk.Digest)));
+            Assert.Contains(result.MirrorWarnings, warning => warning.Contains("under-satisfied", StringComparison.OrdinalIgnoreCase));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public async Task Unavailable_mirror_set_node_returns_warning_without_failing_primary_commit()
     {
         var root = Path.Combine(Path.GetTempPath(), "FluxVault.Integration", Guid.NewGuid().ToString("N"));
@@ -253,5 +368,15 @@ public sealed class RepositoryMirrorTests
                 Directory.Delete(root, recursive: true);
             }
         }
+    }
+
+    private static string ChunkPath(string root, string digest)
+    {
+        return Path.Combine(root, "chunks", digest[..2], $"{digest}.chunk");
+    }
+
+    private static string MetadataPath(string root, string digest)
+    {
+        return Path.Combine(root, "chunks", digest[..2], $"{digest}.json");
     }
 }

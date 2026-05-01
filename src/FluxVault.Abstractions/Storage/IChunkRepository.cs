@@ -24,6 +24,9 @@ public interface IChunkRepository
         string? mirrorNodeId = null,
         CancellationToken cancellationToken = default);
 
+    Task<MirrorRebalancePreviewReport> PreviewMirrorRebalanceAsync(
+        CancellationToken cancellationToken = default);
+
     Task<RestoreRehearsalReport> RunRestoreRehearsalAsync(
         string tempRoot,
         int maxVersions,

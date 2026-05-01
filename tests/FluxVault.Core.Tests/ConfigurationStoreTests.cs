@@ -38,6 +38,8 @@ public sealed class ConfigurationStoreTests
         Assert.Empty(configuration.SelectionRules);
         Assert.Empty(configuration.ExclusionRules);
         Assert.Empty(configuration.MirrorSet.Nodes);
+        Assert.Equal(MirrorPlacementProfile.FullCopy, configuration.MirrorSet.PlacementPolicy.Profile);
+        Assert.Equal(1, configuration.MirrorSet.PlacementPolicy.MinimumMirrorCopies);
     }
 
     [Fact]
@@ -111,6 +113,7 @@ public sealed class ConfigurationStoreTests
         Assert.Equal("Default mirror", node.Label);
         Assert.Equal(legacyMirrorPath, node.Path);
         Assert.True(node.IsEnabled);
+        Assert.Equal(MirrorPlacementProfile.FullCopy, actual.MirrorSet.PlacementPolicy.Profile);
     }
 
     [Fact]
@@ -131,13 +134,20 @@ public sealed class ConfigurationStoreTests
                     Id: "cloud",
                     Label: "Cloud copy",
                     Path: Path.Combine(workspace.RootPath, "cloud"),
-                    IsEnabled: true),
+                    IsEnabled: true,
+                    CapacityBudgetBytes: 1_000_000_000,
+                    Priority: 200),
                 new MirrorNodeConfiguration(
                     Id: "usb",
                     Label: "USB shelf copy",
                     Path: Path.Combine(workspace.RootPath, "usb"),
-                    IsEnabled: false)
-            ]));
+                    IsEnabled: false,
+                    CapacityBudgetBytes: 500_000_000,
+                    Priority: 50)
+            ],
+            new MirrorPlacementPolicyConfiguration(
+                Profile: MirrorPlacementProfile.Redundant,
+                MinimumMirrorCopies: 2)));
 
         await store.SaveAsync(expected);
 
@@ -145,6 +155,7 @@ public sealed class ConfigurationStoreTests
 
         Assert.Null(actual.MirrorPath);
         Assert.Equal(expected.MirrorSet.Nodes, actual.MirrorSet.Nodes);
+        Assert.Equal(expected.MirrorSet.PlacementPolicy, actual.MirrorSet.PlacementPolicy);
     }
 
     [Fact]

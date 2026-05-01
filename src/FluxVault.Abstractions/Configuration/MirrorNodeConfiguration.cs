@@ -4,10 +4,10 @@ public sealed record MirrorNodeConfiguration(
     string Id,
     string Label,
     string Path,
-    bool IsEnabled = true)
+    bool IsEnabled = true,
+    long? CapacityBudgetBytes = null,
+    int Priority = 100)
 {
-    public const string PlacementSemantics = "FullCopy";
-
     public static MirrorNodeConfiguration Create(string path, string? label = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);

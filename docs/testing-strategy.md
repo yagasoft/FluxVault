@@ -77,10 +77,17 @@
   mirror repairs, selected-node mirror-only repair, offline mirror reporting,
   manifest/chunk/metadata drift, and temporary-file cleanup.
 - MirrorSet configuration tests for default empty nodes, legacy `mirrorPath`
-  migration, multi-node save/load round-trip, and validation.
+  migration, multi-node save/load round-trip, placement policy defaults, minimum
+  mirror copy count, capacity budget, priority, and validation.
+- Mirror placement planner tests for full-copy targeting, capacity/priority
+  selection, redundant copy counts, and under-satisfied redundancy.
+- Mirror placement preview tests for missing required copies, extra non-target
+  copies, offline nodes, estimated movement, read-only behaviour, and
+  temporary-file cleanup.
 - Mirrors workspace view-model and XAML tests for editable node lists,
   repository/protection summary replacement, workspace navigation, per-node
-  repair status/actions, and absence of dormant R2 placement controls.
+  repair status/actions, placement controls/status, preview action, and absence
+  of dormant R2 drain/remove or run-rebalance execution controls.
 
 ## Integration tests
 
@@ -88,7 +95,8 @@
 - Open and locked file reads.
 - Rapid edits and service restart catch-up.
 - VSS unavailable or failed.
-- Atomic cloud-folder mirror writes and multi-node full-copy MirrorSet writes.
+- Atomic cloud-folder mirror writes, multi-node full-copy MirrorSet writes, and
+  placement-aware capacity-balanced/redundant mirror writes.
 - Mirror warning behaviour when a node is unavailable: the primary backup still
   succeeds, status records a node-specific warning, and no temporary files are
   left in healthy mirror nodes.
@@ -96,6 +104,9 @@
   repair only writes to the selected mirror, repair-all can repair the primary
   from any healthy mirror, and repository health status persists the latest
   mirror repair report.
+- Mirror placement preview IPC behaviour: preview returns planned copy/delete
+  actions, persists the latest preview in repository health, and leaves
+  `RunMirrorRebalance` unsupported and non-mutating.
 - Restore to original and alternate paths.
 - CLI backup/list/inspect/restore using real temporary files.
 - Service operation backup/list/restore using real temporary files.

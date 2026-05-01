@@ -208,6 +208,7 @@ public sealed class FluxVaultOperations(
                 state.LastScrub,
                 state.LastRestoreRehearsal,
                 state.LastMirrorRepair,
+                state.LastMirrorRebalance,
                 "Repository health has not run yet.");
     }
 
@@ -218,7 +219,7 @@ public sealed class FluxVaultOperations(
         var report = await CreateRepository(configuration)
             .ScrubAsync(policy.AutoRepairFromMirror, cancellationToken)
             .ConfigureAwait(false);
-        await SaveRepositoryMaintenanceResultAsync(report, null, null, cancellationToken).ConfigureAwait(false);
+        await SaveRepositoryMaintenanceResultAsync(report, null, null, null, cancellationToken).ConfigureAwait(false);
         lastMessage = FormatScrubSummary(report);
         return report;
     }
@@ -231,7 +232,7 @@ public sealed class FluxVaultOperations(
         var report = await CreateRepository(configuration)
             .PreviewMirrorRepairAsync(mirrorNodeId, cancellationToken)
             .ConfigureAwait(false);
-        await SaveRepositoryMaintenanceResultAsync(null, null, report, cancellationToken).ConfigureAwait(false);
+        await SaveRepositoryMaintenanceResultAsync(null, null, report, null, cancellationToken).ConfigureAwait(false);
         lastMessage = FormatMirrorRepairSummary(report);
         return report;
     }
@@ -244,7 +245,7 @@ public sealed class FluxVaultOperations(
         var report = await CreateRepository(configuration)
             .RunMirrorRepairAsync(mirrorNodeId, cancellationToken)
             .ConfigureAwait(false);
-        await SaveRepositoryMaintenanceResultAsync(null, null, report, cancellationToken).ConfigureAwait(false);
+        await SaveRepositoryMaintenanceResultAsync(null, null, report, null, cancellationToken).ConfigureAwait(false);
         lastMessage = FormatMirrorRepairSummary(report);
         return report;
     }
@@ -256,8 +257,19 @@ public sealed class FluxVaultOperations(
         var report = await CreateRepository(configuration)
             .RunRestoreRehearsalAsync(restoreRehearsalRoot, policy.RestoreRehearsalVersionCount, cancellationToken)
             .ConfigureAwait(false);
-        await SaveRepositoryMaintenanceResultAsync(null, report, null, cancellationToken).ConfigureAwait(false);
+        await SaveRepositoryMaintenanceResultAsync(null, report, null, null, cancellationToken).ConfigureAwait(false);
         lastMessage = FormatRestoreRehearsalSummary(report);
+        return report;
+    }
+
+    public async Task<MirrorRebalancePreviewReport> PreviewMirrorRebalanceAsync(CancellationToken cancellationToken = default)
+    {
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var report = await CreateRepository(configuration)
+            .PreviewMirrorRebalanceAsync(cancellationToken)
+            .ConfigureAwait(false);
+        await SaveRepositoryMaintenanceResultAsync(null, null, null, report, cancellationToken).ConfigureAwait(false);
+        lastMessage = FormatMirrorRebalanceSummary(report);
         return report;
     }
 
@@ -401,6 +413,8 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.GetRepositoryHealth => FluxVaultIpcResponse.WithRepositoryHealth(await GetRepositoryHealthAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunRepositoryScrub => FluxVaultIpcResponse.WithRepositoryScrub(await RunRepositoryScrubAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunRestoreRehearsal => FluxVaultIpcResponse.WithRestoreRehearsal(await RunRestoreRehearsalAsync(cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.PreviewMirrorRebalance => FluxVaultIpcResponse.WithMirrorRebalance(await PreviewMirrorRebalanceAsync(cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.RunMirrorRebalance => FluxVaultIpcResponse.Failure("RunMirrorRebalance is unsupported until mirror rebalance execution is implemented."),
             FluxVaultIpcCommand.PreviewMirrorRepair => FluxVaultIpcResponse.WithMirrorRepair(await PreviewMirrorRepairAsync(request.MirrorNodeId, cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunMirrorRepair => FluxVaultIpcResponse.WithMirrorRepair(await RunMirrorRepairAsync(request.MirrorNodeId, cancellationToken).ConfigureAwait(false)),
             _ => FluxVaultIpcResponse.Failure($"Unsupported command: {request.Command}")
@@ -475,20 +489,23 @@ public sealed class FluxVaultOperations(
         RepositoryScrubReport? scrub,
         RestoreRehearsalReport? rehearsal,
         MirrorRepairReport? mirrorRepair,
+        MirrorRebalancePreviewReport? mirrorRebalance,
         CancellationToken cancellationToken)
     {
         var state = await repositoryMaintenanceStateStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         var nextScrub = scrub ?? state.LastScrub;
         var nextRehearsal = rehearsal ?? state.LastRestoreRehearsal;
         var nextMirrorRepair = mirrorRepair ?? state.LastMirrorRepair;
-        var health = BuildRepositoryHealthSnapshot(nextScrub, nextRehearsal, nextMirrorRepair);
+        var nextMirrorRebalance = mirrorRebalance ?? state.LastMirrorRebalance;
+        var health = BuildRepositoryHealthSnapshot(nextScrub, nextRehearsal, nextMirrorRepair, nextMirrorRebalance);
         await repositoryMaintenanceStateStore.SaveAsync(
             state with
             {
                 LastHealth = health,
                 LastScrub = nextScrub,
                 LastRestoreRehearsal = nextRehearsal,
-                LastMirrorRepair = nextMirrorRepair
+                LastMirrorRepair = nextMirrorRepair,
+                LastMirrorRebalance = nextMirrorRebalance
             },
             cancellationToken).ConfigureAwait(false);
     }
@@ -497,16 +514,18 @@ public sealed class FluxVaultOperations(
         RepositoryScrubReport? scrub,
         RestoreRehearsalReport? rehearsal,
         MirrorRepairReport? mirrorRepair,
+        MirrorRebalancePreviewReport? mirrorRebalance,
         string? summaryOverride = null)
     {
-        var state = CombineHealth(scrub?.HealthState, rehearsal?.HealthState, mirrorRepair?.HealthState);
+        var state = CombineHealth(scrub?.HealthState, rehearsal?.HealthState, mirrorRepair?.HealthState, mirrorRebalance?.HealthState);
         return new RepositoryHealthSnapshot(
             CheckedAtUtc: DateTimeOffset.UtcNow,
             OverallState: state,
-            Summary: summaryOverride ?? BuildRepositoryHealthSummary(scrub, rehearsal, mirrorRepair, state),
+            Summary: summaryOverride ?? BuildRepositoryHealthSummary(scrub, rehearsal, mirrorRepair, mirrorRebalance, state),
             LastScrub: scrub,
             LastRestoreRehearsal: rehearsal,
-            LastMirrorRepair: mirrorRepair);
+            LastMirrorRepair: mirrorRepair,
+            LastMirrorRebalance: mirrorRebalance);
     }
 
     private static RepositoryHealthState CombineHealth(params RepositoryHealthState?[] states)
@@ -531,6 +550,7 @@ public sealed class FluxVaultOperations(
         RepositoryScrubReport? scrub,
         RestoreRehearsalReport? rehearsal,
         MirrorRepairReport? mirrorRepair,
+        MirrorRebalancePreviewReport? mirrorRebalance,
         RepositoryHealthState state)
     {
         var parts = new List<string>();
@@ -548,6 +568,11 @@ public sealed class FluxVaultOperations(
         {
             var operation = mirrorRepair.IsPreview ? "mirror repair preview" : "mirror repair";
             parts.Add($"{operation} {mirrorRepair.HealthState.ToString().ToLowerInvariant()}, repaired {mirrorRepair.RepairedIssueCount} issue(s)");
+        }
+
+        if (mirrorRebalance is not null)
+        {
+            parts.Add($"mirror placement preview {mirrorRebalance.HealthState.ToString().ToLowerInvariant()}, actions {mirrorRebalance.ActionCount}");
         }
 
         return parts.Count == 0
@@ -569,6 +594,11 @@ public sealed class FluxVaultOperations(
     {
         var action = report.IsPreview ? "Mirror repair preview" : "Mirror repair";
         return $"{action} completed: {report.IssueCount} issue(s), repaired {report.RepairedIssueCount}.";
+    }
+
+    private static string FormatMirrorRebalanceSummary(MirrorRebalancePreviewReport report)
+    {
+        return $"Mirror placement preview completed: {report.ActionCount} action(s), copy {FormatBytes(report.EstimatedCopyBytes)}, delete {FormatBytes(report.EstimatedDeleteBytes)}.";
     }
 
     private static string FormatBytes(long bytes)

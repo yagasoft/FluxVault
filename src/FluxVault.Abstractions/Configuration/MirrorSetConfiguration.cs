@@ -2,11 +2,13 @@ using System.Text.Json.Serialization;
 
 namespace FluxVault.Abstractions.Configuration;
 
-public sealed record MirrorSetConfiguration(IReadOnlyList<MirrorNodeConfiguration> Nodes)
+public sealed record MirrorSetConfiguration(
+    IReadOnlyList<MirrorNodeConfiguration> Nodes,
+    MirrorPlacementPolicyConfiguration PlacementPolicy = null!)
 {
     public static MirrorSetConfiguration CreateDefault()
     {
-        return new MirrorSetConfiguration([]);
+        return new MirrorSetConfiguration([], MirrorPlacementPolicyConfiguration.CreateDefault());
     }
 
     public static MirrorSetConfiguration FromLegacyPath(string? mirrorPath)
@@ -20,7 +22,8 @@ public sealed record MirrorSetConfiguration(IReadOnlyList<MirrorNodeConfiguratio
                     Label: "Default mirror",
                     Path: Path.GetFullPath(mirrorPath),
                     IsEnabled: true)
-            ]);
+            ],
+            MirrorPlacementPolicyConfiguration.CreateDefault());
     }
 
     [JsonIgnore]
@@ -32,7 +35,8 @@ public sealed record MirrorSetConfiguration(IReadOnlyList<MirrorNodeConfiguratio
     {
         return new MirrorSetConfiguration((Nodes ?? [])
             .Select(NormaliseNode)
-            .ToArray());
+            .ToArray(),
+            (PlacementPolicy ?? MirrorPlacementPolicyConfiguration.CreateDefault()).Normalise());
     }
 
     private static MirrorNodeConfiguration NormaliseNode(MirrorNodeConfiguration node)
@@ -44,7 +48,9 @@ public sealed record MirrorSetConfiguration(IReadOnlyList<MirrorNodeConfiguratio
         {
             Id = string.IsNullOrWhiteSpace(node.Id) ? Guid.NewGuid().ToString("N") : node.Id,
             Label = string.IsNullOrWhiteSpace(node.Label) ? "Mirror" : node.Label,
-            Path = path
+            Path = path,
+            Priority = Math.Max(1, node.Priority),
+            CapacityBudgetBytes = node.CapacityBudgetBytes is > 0 ? node.CapacityBudgetBytes : null
         };
     }
 }

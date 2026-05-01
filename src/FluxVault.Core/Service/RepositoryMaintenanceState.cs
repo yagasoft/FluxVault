@@ -8,9 +8,10 @@ public sealed record RepositoryMaintenanceState(
     RepositoryHealthSnapshot? LastHealth,
     RepositoryScrubReport? LastScrub,
     RestoreRehearsalReport? LastRestoreRehearsal,
-    MirrorRepairReport? LastMirrorRepair = null)
+    MirrorRepairReport? LastMirrorRepair = null,
+    MirrorRebalancePreviewReport? LastMirrorRebalance = null)
 {
-    public static RepositoryMaintenanceState Empty { get; } = new(null, null, null, null, null);
+    public static RepositoryMaintenanceState Empty { get; } = new(null, null, null, null, null, null);
 }
 
 public interface IRepositoryMaintenanceStateStore

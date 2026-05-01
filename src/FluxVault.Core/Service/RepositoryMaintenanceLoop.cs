@@ -68,7 +68,8 @@ public sealed class RepositoryMaintenanceLoop(
             Summary: $"Repository maintenance failed: {exception.Message}",
             LastScrub: state.LastScrub,
             LastRestoreRehearsal: state.LastRestoreRehearsal,
-            LastMirrorRepair: state.LastMirrorRepair);
+            LastMirrorRepair: state.LastMirrorRepair,
+            LastMirrorRebalance: state.LastMirrorRebalance);
         await stateStore.SaveAsync(state with { LastHealth = snapshot }, cancellationToken).ConfigureAwait(false);
     }
 }

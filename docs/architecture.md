@@ -18,7 +18,7 @@ configuration save, manual backup, version listing, version inspection, restore,
 and diagnostics export. Configuration is stored in
 `C:\ProgramData\FluxVault\config.json`; repository artefacts are written to the
 configured local repository, with optional atomic mirroring into enabled
-full-copy `MirrorSet` nodes. On Windows, the service creates the IPC pipe with
+`MirrorSet` nodes. On Windows, the service creates the IPC pipe with
 an explicit ACL: LocalSystem and Administrators retain full control, while
 Authenticated Users and packaged app tokens receive read/write pipe access.
 
@@ -110,8 +110,11 @@ restore-lineage hints.
 7. Core chunking splits the captured bytes into FastCDC-style chunks.
 8. Chunk fingerprints are compared against the local repository.
 9. New chunks and a manifest are committed atomically.
-10. Repository artefacts are mirrored into every enabled full-copy mirror node.
-    Mirror failures are captured as warnings after the primary commit succeeds.
+10. Repository artefacts are mirrored according to the active mirror placement
+    profile after the primary commit succeeds. Manifests go to every enabled
+    mirror node, while chunks and metadata follow full-copy, capacity-balanced,
+    or redundant placement. Mirror failures are captured as warnings after the
+    primary commit succeeds.
 11. Compression is selected by policy. The default adaptive profile uses zstd,
     skips known compressed file types from the configurable skip-extension
     list, uses lz4 for hot files, and keeps Brotli and LZMA as explicit
@@ -159,18 +162,20 @@ watcher/debounce queue; the USN tile is the latest durable catch-up result.
 
 The Diagnostics workspace is the detailed health dashboard. It shows repository
 integrity, mirror state, restore rehearsal, USN state, and blocked-file rows, and
-keeps manual Run scrub, Preview mirror repair, Run mirror repair, Run restore
-rehearsal, and Export diagnostics actions in one place.
+keeps manual Run scrub, Preview mirror repair, Run mirror repair, Preview mirror
+placement, Run restore rehearsal, and Export diagnostics actions in one place.
 
 The Mirrors workspace owns mirror configuration. The Protection workspace shows
 a concise mirror summary and links into Mirrors; it no longer exposes the
-legacy editable mirror-path textbox. Mirror nodes currently have id, label,
-path, and enabled state, and all enabled nodes use full-copy placement. Capacity
-balancing, redundancy counts, drain/remove, and rebalance preview remain later
-R2 work. The workspace also shows compact per-node mirror repair status and
-allows selected-node preview/repair. Selected-node repair only repairs that
-mirror from the healthy primary repository; primary repair remains a repair-all
-operation.
+legacy editable mirror-path textbox. Mirror nodes have id, label, path, enabled
+state, optional capacity budget, and priority. The workspace saves the active
+placement profile (`FullCopy`, `CapacityBalanced`, or `Redundant`) and minimum
+mirror copy count. It also exposes a read-only placement preview and compact
+per-node placement status. Drain/remove and rebalance execution remain later R2
+work and are not surfaced. The workspace also shows compact per-node mirror
+repair status and allows selected-node preview/repair. Selected-node repair only
+repairs that mirror from the healthy primary repository; primary repair remains
+a repair-all operation.
 
 The tray activity pane is positioned from the active monitor working area. The
 WinForms cursor and monitor coordinates are converted to WPF device-independent
@@ -295,18 +300,31 @@ and reported through status and diagnostics.
 `MirrorSetConfiguration` is the active mirror configuration model. Older
 `mirrorPath` configuration files are loaded for compatibility and normalised
 into one enabled full-copy mirror node. During commit, chunks, metadata, and
-manifests are written to the primary repository first. The repository then
-attempts atomic writes to each enabled mirror node. A failed mirror write
-records a node-specific warning in the commit result and service status, but it
-does not roll back or fail the primary backup.
+manifests are written to the primary repository first. Manifests are then
+mirrored to every enabled node so each mirror has version metadata. Chunks and
+metadata are written through the pure `MirrorPlacementPlanner`: `FullCopy`
+targets every enabled node, `CapacityBalanced` uses deterministic weighted
+rendezvous selection against capacity budget and priority, and `Redundant`
+targets the configured minimum copy count capped by eligible nodes. A failed
+mirror write records a node-specific warning in the commit result and service
+status, but it does not roll back or fail the primary backup.
 
 Mirror repair reuses the repository validation boundary. Preview checks primary
 and enabled mirror manifests, chunks, and chunk metadata without writing files.
-Repair-all repairs primary artefacts from any healthy enabled mirror, then
-repairs enabled mirrors from the healthy primary copy. Selected-node repair is
-mirror-only and leaves primary repair to repair-all. Mirror repair reports are
-persisted in repository health state so Diagnostics and Mirrors can display the
-latest per-node repair evidence after refresh or service restart.
+Chunk and metadata checks are placement-aware, so non-target mirrors are not
+reported as missing required copies. Repair-all repairs primary artefacts from
+any healthy enabled mirror, then repairs enabled mirrors from the healthy
+primary copy. Selected-node repair is mirror-only and leaves primary repair to
+repair-all. Mirror repair reports are persisted in repository health state so
+Diagnostics and Mirrors can display the latest per-node repair evidence after
+refresh or service restart.
+
+Mirror placement preview is read-only. It compares referenced chunk/metadata
+artefacts against the active placement plan, reports missing required copies,
+extra non-target copies, offline nodes, planned copy/delete actions, estimated
+bytes, and per-node health, then persists the latest preview in repository
+health state. `RunMirrorRebalance` remains unsupported until rebalance
+execution exists.
 
 ## Planned multi-PC sync safety
 
@@ -329,10 +347,11 @@ diverged afterward.
 
 R2 is the distributed mirror fabric. The first slice establishes `MirrorSet`
 full-copy nodes and warning semantics. The repair foundation adds explicit
-preview/run repair and per-node mirror health while keeping full-copy placement.
-Later R2 work adds capacity-aware placement, redundancy policy, drain/remove,
-movement preview, and rebalance execution. R3 is multi-PC sync over
-repository-owned peer metadata. R4 introduces a WinFsp managed workspace for
-high-frequency large-file workloads. R5 introduces Cloud Files API / ProjFS
-sync-root integration. R4 and R5 are separate tracks because they change the
-namespace and write-path assumptions.
+preview/run repair and per-node mirror health. The placement foundation adds
+real full-copy, capacity-balanced, and redundant placement for new commits plus
+read-only movement preview for existing artefacts. Later R2 work adds rebalance
+execution and drain/remove workflows. R3 is multi-PC sync over repository-owned
+peer metadata. R4 introduces a WinFsp managed workspace for high-frequency
+large-file workloads. R5 introduces Cloud Files API / ProjFS sync-root
+integration. R4 and R5 are separate tracks because they change the namespace and
+write-path assumptions.

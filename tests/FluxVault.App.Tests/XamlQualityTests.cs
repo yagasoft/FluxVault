@@ -321,12 +321,24 @@ public sealed class XamlQualityTests
             mirrorsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Command") == "{Binding RunMirrorRepairCommand}");
         Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding PreviewMirrorRebalanceCommand}");
+        Assert.Contains(
             mirrorsTab.Descendants(XamlNamespace + "DataGridTextColumn"),
             element => (string?)element.Attribute("Binding") == "{Binding RepairStatus}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "DataGridTextColumn"),
+            element => (string?)element.Attribute("Binding") == "{Binding PlacementStatus}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "ComboBox"),
+            element => (string?)element.Attribute("SelectedItem") == "{Binding MirrorPlacementProfile}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "TextBox"),
+            element => (string?)element.Attribute("Text") == "{Binding MinimumMirrorCopies, UpdateSourceTrigger=PropertyChanged}");
     }
 
     [Fact]
-    public void Mirrors_workspace_does_not_expose_future_r2_controls()
+    public void Mirrors_workspace_does_not_expose_future_r2_execution_controls()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
         var mirrorsTab = document
@@ -344,11 +356,11 @@ public sealed class XamlQualityTests
                 })
                 .OfType<string>());
 
-        Assert.DoesNotContain("capacity", text, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("rebalance", text, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("redundancy", text, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("required", text, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("drain", text, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Run rebalance", text, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding RunMirrorRebalanceCommand}");
     }
 
     [Fact]
@@ -379,6 +391,12 @@ public sealed class XamlQualityTests
         Assert.Contains(
             diagnosticsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Command") == "{Binding RunMirrorRepairCommand}");
+        Assert.Contains(
+            diagnosticsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding PreviewMirrorRebalanceCommand}");
+        Assert.DoesNotContain(
+            diagnosticsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding RunMirrorRebalanceCommand}");
         Assert.Contains(
             diagnosticsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Command") == "{Binding ExportDiagnosticsCommand}");

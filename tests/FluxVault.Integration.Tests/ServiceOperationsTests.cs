@@ -322,6 +322,60 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Mirror_rebalance_preview_ipc_returns_report_updates_health_and_run_stays_unsupported()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, string.Concat(Enumerable.Repeat("rebalance preview ", 80)));
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var fullCopyConfiguration = NewConfiguration(workspace, watched) with
+        {
+            MirrorSet = new MirrorSetConfiguration(
+            [
+                new MirrorNodeConfiguration("first", "First mirror", firstMirror, IsEnabled: true),
+                new MirrorNodeConfiguration("second", "Second mirror", secondMirror, IsEnabled: true)
+            ])
+        };
+        var operations = CreateOperations(workspace, fullCopyConfiguration);
+        await operations.SaveConfigurationAsync(fullCopyConfiguration);
+        await operations.RunBackupNowAsync();
+        var capacityConfiguration = fullCopyConfiguration with
+        {
+            MirrorSet = new MirrorSetConfiguration(
+            [
+                new MirrorNodeConfiguration("first", "First mirror", firstMirror, IsEnabled: true),
+                new MirrorNodeConfiguration("second", "Second mirror", secondMirror, IsEnabled: true)
+            ],
+            new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced))
+        };
+        await operations.SaveConfigurationAsync(capacityConfiguration);
+
+        var preview = await operations.HandleAsync(new FluxVaultIpcRequest(
+            FluxVaultIpcCommand.PreviewMirrorRebalance,
+            null,
+            null,
+            null,
+            null));
+        var run = await operations.HandleAsync(new FluxVaultIpcRequest(
+            FluxVaultIpcCommand.RunMirrorRebalance,
+            null,
+            null,
+            null,
+            null));
+        var status = await operations.GetStatusAsync();
+
+        Assert.True(preview.Success);
+        Assert.NotNull(preview.MirrorRebalance);
+        Assert.NotEmpty(preview.MirrorRebalance.Actions);
+        Assert.NotNull(status.RepositoryHealth!.LastMirrorRebalance);
+        Assert.False(run.Success);
+        Assert.Contains("unsupported", run.ErrorMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task Repository_maintenance_loop_runs_when_due_and_skips_when_recent()
     {
         using var workspace = TemporaryWorkspace.Create();

@@ -368,12 +368,25 @@
 
                     <WrapPanel>
                         <TextBlock Text="{Binding MirrorSummary}" VerticalAlignment="Center" Foreground="#3C4043" Margin="0,0,12,0" />
+                        <TextBlock Text="Profile" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <ComboBox ItemsSource="{Binding MirrorPlacementProfiles}"
+                                  SelectedItem="{Binding MirrorPlacementProfile}"
+                                  Width="150"
+                                  Margin="0,0,8,0"
+                                  ToolTip="Choose how new chunks are placed across enabled mirrors." />
+                        <TextBlock Text="Minimum copies" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBox Text="{Binding MinimumMirrorCopies, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="56"
+                                 Margin="0,0,12,0"
+                                 ToolTip="Minimum mirror copies requested by the redundant placement profile." />
                         <Button Content="Add mirror" Command="{Binding AddMirrorCommand}" Margin="0,0,8,0"
-                                ToolTip="Add a full-copy mirror node." />
+                                ToolTip="Add a mirror node." />
                         <Button Content="Browse path" Command="{Binding BrowseSelectedMirrorCommand}" Margin="0,0,8,0"
                                 ToolTip="Choose the folder for the selected mirror node." />
-                        <Button Content="Remove mirror" Command="{Binding RemoveMirrorCommand}"
+                        <Button Content="Remove mirror" Command="{Binding RemoveMirrorCommand}" Margin="0,0,8,0"
                                 ToolTip="Remove the selected mirror node from configuration." />
+                        <Button Content="Preview placement" Command="{Binding PreviewMirrorRebalanceCommand}" Margin="0,0,8,0"
+                                ToolTip="Preview mirror copy and cleanup actions needed to match the current placement policy." />
                         <Button Content="Preview selected repair" Command="{Binding PreviewSelectedMirrorRepairCommand}" Margin="8,0,8,0"
                                 ToolTip="Preview repairable drift for the selected mirror node." />
                         <Button Content="Repair selected" Command="{Binding RunSelectedMirrorRepairCommand}" Margin="0,0,8,0"
@@ -397,6 +410,10 @@
                             <DataGridTextColumn Header="Path" Binding="{Binding Path, UpdateSourceTrigger=PropertyChanged}" Width="*" />
                             <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Width="90" />
                             <DataGridTextColumn Header="Mode" Binding="{Binding Status}" Width="150" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Capacity bytes" Binding="{Binding CapacityBudgetBytes, UpdateSourceTrigger=PropertyChanged}" Width="130" />
+                            <DataGridTextColumn Header="Priority" Binding="{Binding Priority, UpdateSourceTrigger=PropertyChanged}" Width="90" />
+                            <DataGridTextColumn Header="Placement" Binding="{Binding PlacementStatus}" Width="170" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Placement detail" Binding="{Binding PlacementDetail}" Width="260" IsReadOnly="True" />
                             <DataGridTextColumn Header="Repair" Binding="{Binding RepairStatus}" Width="170" IsReadOnly="True" />
                             <DataGridTextColumn Header="Repair detail" Binding="{Binding RepairDetail}" Width="260" IsReadOnly="True" />
                         </DataGrid.Columns>
@@ -478,6 +495,9 @@
                             <Button Content="Preview mirror repair"
                                     Command="{Binding PreviewMirrorRepairCommand}"
                                     ToolTip="Preview repairable primary and mirror drift without writing artefacts." />
+                            <Button Content="Preview mirror placement"
+                                    Command="{Binding PreviewMirrorRebalanceCommand}"
+                                    ToolTip="Preview mirror copy and cleanup actions needed to match the current placement policy." />
                             <Button Content="Run mirror repair"
                                     Command="{Binding RunMirrorRepairCommand}"
                                     ToolTip="Repair primary artefacts from healthy mirrors and repair enabled mirrors from the healthy primary." />

@@ -36,6 +36,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private RepositoryScrubReport? currentScrubReport;
     private RestoreRehearsalReport? currentRestoreRehearsalReport;
     private MirrorRepairReport? currentMirrorRepairReport;
+    private MirrorRebalancePreviewReport? currentMirrorRebalanceReport;
     private FluxVaultWindowsServiceStatus windowsServiceStatus = new(
         WindowsFluxVaultServiceController.DefaultServiceName,
         FluxVaultWindowsServiceState.Unknown,
@@ -70,6 +71,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string mirrorSummary = "Mirrors: local only";
+
+    [ObservableProperty]
+    private MirrorPlacementProfile mirrorPlacementProfile = MirrorPlacementProfile.FullCopy;
+
+    [ObservableProperty]
+    private int minimumMirrorCopies = 1;
 
     [ObservableProperty]
     private MirrorNodeRow? selectedMirrorNode;
@@ -208,6 +215,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public ObservableCollection<MirrorNodeRow> MirrorNodes { get; } = [];
 
     public FileBrowserViewModel FileBrowser { get; }
+
+    public IReadOnlyList<MirrorPlacementProfile> MirrorPlacementProfiles { get; } =
+    [
+        MirrorPlacementProfile.FullCopy,
+        MirrorPlacementProfile.CapacityBalanced,
+        MirrorPlacementProfile.Redundant
+    ];
 
     public IFluxVaultServiceClient ServiceClient => client;
 
@@ -439,12 +453,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
         MirrorNodes.Clear();
         foreach (var node in nodes)
         {
-            AddMirrorRow(new MirrorNodeRow(node.Id, node.Label, node.Path, node.IsEnabled));
+            AddMirrorRow(new MirrorNodeRow(node.Id, node.Label, node.Path, node.IsEnabled, node.CapacityBudgetBytes, node.Priority));
         }
 
         SelectedMirrorNode = MirrorNodes.FirstOrDefault();
         UpdateMirrorSummary();
         ApplyMirrorRepairToNodes(currentMirrorRepairReport);
+        ApplyMirrorPlacementToNodes(currentMirrorRebalanceReport);
     }
 
     private void AddMirrorRow(MirrorNodeRow row)
@@ -469,7 +484,25 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
 
         var enabled = MirrorNodes.Count(node => node.IsEnabled);
-        MirrorSummary = $"Mirrors: {enabled} of {total} enabled full-copy node(s)";
+        MirrorSummary = $"Mirrors: {enabled} of {total} enabled, {MirrorPlacementProfile} placement";
+    }
+
+    partial void OnMirrorPlacementProfileChanged(MirrorPlacementProfile value)
+    {
+        if (!isApplyingStatus)
+        {
+            MarkConfigurationDirty();
+        }
+
+        UpdateMirrorSummary();
+    }
+
+    partial void OnMinimumMirrorCopiesChanged(int value)
+    {
+        if (!isApplyingStatus)
+        {
+            MarkConfigurationDirty();
+        }
     }
 
     private void SetServiceUnavailable(Exception ex)
@@ -676,11 +709,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
             currentScrubReport = response.RepositoryScrub;
             ApplyRepositoryHealth(new RepositoryHealthSnapshot(
                 DateTimeOffset.UtcNow,
-                CombineHealth(currentScrubReport.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport?.HealthState),
+                CombineHealth(currentScrubReport.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport?.HealthState, currentMirrorRebalanceReport?.HealthState),
                 "Repository scrub completed.",
                 currentScrubReport,
                 currentRestoreRehearsalReport,
-                currentMirrorRepairReport));
+                currentMirrorRepairReport,
+                currentMirrorRebalanceReport));
             RepositoryHealthStatus = $"Repository scrub completed - {response.RepositoryScrub.HealthState}";
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
@@ -704,11 +738,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
             currentRestoreRehearsalReport = response.RestoreRehearsal;
             ApplyRepositoryHealth(new RepositoryHealthSnapshot(
                 DateTimeOffset.UtcNow,
-                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport.HealthState, currentMirrorRepairReport?.HealthState),
+                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport.HealthState, currentMirrorRepairReport?.HealthState, currentMirrorRebalanceReport?.HealthState),
                 "Restore rehearsal completed.",
                 currentScrubReport,
                 currentRestoreRehearsalReport,
-                currentMirrorRepairReport));
+                currentMirrorRepairReport,
+                currentMirrorRebalanceReport));
             RepositoryHealthStatus = $"Restore rehearsal completed - {response.RestoreRehearsal.HealthState}";
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
@@ -770,16 +805,51 @@ public sealed partial class MainWindowViewModel : ObservableObject
             currentMirrorRepairReport = response.MirrorRepair;
             ApplyRepositoryHealth(new RepositoryHealthSnapshot(
                 DateTimeOffset.UtcNow,
-                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport.HealthState),
+                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport.HealthState, currentMirrorRebalanceReport?.HealthState),
                 isPreview ? "Mirror repair preview completed." : "Mirror repair completed.",
                 currentScrubReport,
                 currentRestoreRehearsalReport,
-                currentMirrorRepairReport));
+                currentMirrorRepairReport,
+                currentMirrorRebalanceReport));
             RepositoryHealthStatus = $"{(isPreview ? "Mirror repair preview" : "Mirror repair")} completed - {response.MirrorRepair.HealthState}";
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
         {
             RepositoryHealthStatus = $"{(isPreview ? "Mirror repair preview" : "Mirror repair")} failed: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private async Task PreviewMirrorRebalanceAsync()
+    {
+        try
+        {
+            var response = await client.SendAsync(new FluxVaultIpcRequest(
+                FluxVaultIpcCommand.PreviewMirrorRebalance,
+                null,
+                null,
+                null,
+                null)).ConfigureAwait(true);
+            if (!response.Success || response.MirrorRebalance is null)
+            {
+                RepositoryHealthStatus = $"Mirror placement preview failed: {response.ErrorMessage ?? "no placement preview returned"}";
+                return;
+            }
+
+            currentMirrorRebalanceReport = response.MirrorRebalance;
+            ApplyRepositoryHealth(new RepositoryHealthSnapshot(
+                DateTimeOffset.UtcNow,
+                CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport?.HealthState, currentMirrorRebalanceReport.HealthState),
+                "Mirror placement preview completed.",
+                currentScrubReport,
+                currentRestoreRehearsalReport,
+                currentMirrorRepairReport,
+                currentMirrorRebalanceReport));
+            RepositoryHealthStatus = $"Mirror placement preview completed - {response.MirrorRebalance.HealthState}";
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            RepositoryHealthStatus = $"Mirror placement preview failed: {ex.Message}";
         }
     }
 
@@ -792,8 +862,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
             if (!preserveLocalConfiguration)
             {
                 RepositoryPath = status.Configuration.RepositoryPath;
-                ReplaceMirrorNodes((status.Configuration.MirrorSet
-                    ?? MirrorSetConfiguration.FromLegacyPath(status.Configuration.MirrorPath)).Nodes);
+                var mirrorSet = (status.Configuration.MirrorSet
+                    ?? MirrorSetConfiguration.FromLegacyPath(status.Configuration.MirrorPath)).Normalise();
+                MirrorPlacementProfile = mirrorSet.PlacementPolicy.Profile;
+                MinimumMirrorCopies = mirrorSet.PlacementPolicy.MinimumMirrorCopies;
+                ReplaceMirrorNodes(mirrorSet.Nodes);
                 currentRetentionPolicy = status.Configuration.RetentionPolicy;
                 currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
                 currentCodecPolicy = status.Configuration.CodecPolicy;
@@ -906,8 +979,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     node.Id,
                     node.Label,
                     node.Path,
-                    node.IsEnabled))
-                .ToArray()));
+                    node.IsEnabled,
+                    node.CapacityBudgetBytes,
+                    node.Priority))
+                .ToArray(),
+                new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile, MinimumMirrorCopies)));
     }
 
     private VersionRow? FindRestoreHintVersion()
@@ -1053,26 +1129,31 @@ public sealed partial class MainWindowViewModel : ObservableObject
             RepositoryHealthStatus = "Repository health: waiting";
             RepositoryHealthRows.Clear();
             RepositoryHealthRows.Add(new RepositoryHealthRow("Repository integrity", "Waiting for scrub", "No scrub report has been recorded yet."));
+            RepositoryHealthRows.Add(new RepositoryHealthRow("Mirror placement", "Waiting for placement preview", "Run mirror placement preview to see required mirror copy/delete actions."));
             RepositoryHealthRows.Add(new RepositoryHealthRow("Mirror repair", "Waiting for repair preview", "Run a mirror repair preview or repair action to get per-node mirror health."));
             RepositoryHealthRows.Add(new RepositoryHealthRow("Restore rehearsal", "Waiting for rehearsal", "No restore rehearsal has been recorded yet."));
             RepositoryHealthRows.Add(new RepositoryHealthRow("USN state", UsnHealth, UsnHealthToolTip));
             RepositoryHealthRows.Add(new RepositoryHealthRow("Blocked files", CaptureHealth, "Blocked and pending capture state is shown in Activity."));
             ApplyMirrorRepairToNodes(null);
+            ApplyMirrorPlacementToNodes(null);
             return;
         }
 
         currentScrubReport = health.LastScrub;
         currentRestoreRehearsalReport = health.LastRestoreRehearsal;
         currentMirrorRepairReport = health.LastMirrorRepair;
+        currentMirrorRebalanceReport = health.LastMirrorRebalance;
         RepositoryHealthStatus = $"Repository health: {health.OverallState} - {health.Summary}";
         RepositoryHealthRows.Clear();
         RepositoryHealthRows.Add(BuildScrubRow(health.LastScrub));
         RepositoryHealthRows.Add(BuildMirrorRow(health.LastScrub));
+        RepositoryHealthRows.Add(BuildMirrorRebalanceRow(health.LastMirrorRebalance));
         RepositoryHealthRows.Add(BuildMirrorRepairRow(health.LastMirrorRepair));
         RepositoryHealthRows.Add(BuildRehearsalRow(health.LastRestoreRehearsal));
         RepositoryHealthRows.Add(new RepositoryHealthRow("USN state", UsnHealth, UsnHealthToolTip));
         RepositoryHealthRows.Add(new RepositoryHealthRow("Blocked files", CaptureHealth, "Blocked and pending capture state is shown in Activity."));
         ApplyMirrorRepairToNodes(health.LastMirrorRepair);
+        ApplyMirrorPlacementToNodes(health.LastMirrorRebalance);
     }
 
     private static RepositoryHealthRow BuildScrubRow(RepositoryScrubReport? report)
@@ -1119,6 +1200,18 @@ public sealed partial class MainWindowViewModel : ObservableObject
         return new RepositoryHealthRow("Mirror repair", status, detail);
     }
 
+    private static RepositoryHealthRow BuildMirrorRebalanceRow(MirrorRebalancePreviewReport? report)
+    {
+        if (report is null)
+        {
+            return new RepositoryHealthRow("Mirror placement", "Waiting for placement preview", "Run mirror placement preview to see required mirror copy/delete actions.");
+        }
+
+        var status = $"{report.HealthState} - {report.ActionCount} action(s)";
+        var detail = $"Checked {report.CheckedChunkCount} chunk(s) at {report.CompletedAtUtc.ToLocalTime():yyyy-MM-dd HH:mm:ss}. Copy {FormatBytes(report.EstimatedCopyBytes)}, delete {FormatBytes(report.EstimatedDeleteBytes)}.";
+        return new RepositoryHealthRow("Mirror placement", status, detail);
+    }
+
     private void ApplyMirrorRepairToNodes(MirrorRepairReport? report)
     {
         foreach (var node in MirrorNodes)
@@ -1138,6 +1231,26 @@ public sealed partial class MainWindowViewModel : ObservableObject
             node.RepairDetail = nodeReport.IssueCount == 0
                 ? "No mirror repair issues reported."
                 : $"{nodeReport.Label} reported {nodeReport.IssueCount} issue(s), repaired {nodeReport.RepairedIssueCount}.";
+        }
+    }
+
+    private void ApplyMirrorPlacementToNodes(MirrorRebalancePreviewReport? report)
+    {
+        foreach (var node in MirrorNodes)
+        {
+            var nodeReport = report?.Nodes.FirstOrDefault(reportNode =>
+                string.Equals(reportNode.NodeId, node.Id, StringComparison.OrdinalIgnoreCase));
+            if (nodeReport is null)
+            {
+                node.PlacementStatus = "No placement preview";
+                node.PlacementDetail = "Run mirror placement preview to check this node.";
+                continue;
+            }
+
+            node.PlacementStatus = $"{nodeReport.HealthState} - {nodeReport.ActionCount} action(s)";
+            node.PlacementDetail = nodeReport.ActionCount == 0
+                ? "No mirror placement movement is required."
+                : $"{nodeReport.Label}: copy {FormatBytes(nodeReport.EstimatedCopyBytes)}, delete {FormatBytes(nodeReport.EstimatedDeleteBytes)}.";
         }
     }
 
@@ -1171,6 +1284,20 @@ public sealed partial class MainWindowViewModel : ObservableObject
         return actual.Contains(RepositoryHealthState.Warning)
             ? RepositoryHealthState.Warning
             : RepositoryHealthState.Healthy;
+    }
+
+    private static string FormatBytes(long bytes)
+    {
+        string[] units = ["B", "KB", "MB", "GB", "TB"];
+        var value = (double)bytes;
+        var unit = 0;
+        while (value >= 1024 && unit < units.Length - 1)
+        {
+            value /= 1024;
+            unit++;
+        }
+
+        return unit == 0 ? $"{bytes} B" : $"{value:0.0} {units[unit]}";
     }
 
     private void ApplyDurableChangeHealth(DurableChangeRuntimeStatus? durableChange)
@@ -1441,24 +1568,52 @@ public sealed partial class MirrorNodeRow : ObservableObject
     private bool isEnabled;
 
     [ObservableProperty]
+    private long? capacityBudgetBytes;
+
+    [ObservableProperty]
+    private int priority = 100;
+
+    [ObservableProperty]
     private string repairStatus = "No repair preview";
 
     [ObservableProperty]
     private string repairDetail = "Run mirror repair preview to check this node.";
 
-    public MirrorNodeRow(string id, string label, string path, bool isEnabled)
+    [ObservableProperty]
+    private string placementStatus = "No placement preview";
+
+    [ObservableProperty]
+    private string placementDetail = "Run mirror placement preview to check this node.";
+
+    public MirrorNodeRow(
+        string id,
+        string label,
+        string path,
+        bool isEnabled,
+        long? capacityBudgetBytes = null,
+        int priority = 100)
     {
         this.id = id;
         this.label = label;
         this.path = path;
         this.isEnabled = isEnabled;
+        this.capacityBudgetBytes = capacityBudgetBytes;
+        this.priority = priority;
     }
 
-    public string Status => IsEnabled ? "Enabled full-copy" : "Disabled";
+    public string Status => IsEnabled ? "Enabled" : "Disabled";
 
     partial void OnIsEnabledChanged(bool value)
     {
         OnPropertyChanged(nameof(Status));
+    }
+
+    partial void OnPriorityChanged(int value)
+    {
+        if (value < 1)
+        {
+            Priority = 1;
+        }
     }
 }
 

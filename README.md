@@ -14,8 +14,9 @@ a tray app, and a per-machine Windows service.
 - Configurable capture cadence with bounded hot-file snapshots.
 - Adaptive compression policy with zstd by default, plus lz4, Brotli, LZMA,
   and off modes for explicit profiles.
-- Local immutable repository plus atomic writes into enabled full-copy mirror
-  nodes such as cloud sync folders or removable storage.
+- Local immutable repository plus atomic writes into enabled mirror nodes such
+  as cloud sync folders or removable storage, using full-copy,
+  capacity-balanced, or redundant placement.
 - Restore to alternate paths with explicit overwrite confirmation before the
   service is asked to write.
 - File browser selection UX with drives, folders, files, and a pending change
@@ -46,7 +47,7 @@ FluxVault now has a developer-usable MVP loop:
   best-effort, covered writer-aware VSS captures are app-consistent, and VSS
   captures without matching writer coverage are crash-consistent.
 - Version list, inspect, restore, diagnostics export, local repository, and a
-  `MirrorSet` for optional full-copy mirrors.
+  `MirrorSet` for optional mirrors.
 - Append-only version lineage in manifests. Same-path captures record parent
   versions, restores leave a pending lineage hint for the next capture, and
   identical copied files become visible inherited versions without re-uploading
@@ -58,13 +59,17 @@ FluxVault now has a developer-usable MVP loop:
 - Conservative automatic retention and scheduled repository maintenance, with a
   WPF Options dialog for previewing retention, running retention, editing
   maintenance cadence, and controlling mirror repair/rehearsal defaults.
-- Dedicated Mirrors workspace for editing mirror node label, path, and enabled
-  state. Existing legacy `mirrorPath` configuration is migrated into one
+- Dedicated Mirrors workspace for editing mirror node label, path, enabled
+  state, placement profile, minimum mirror copies, capacity budget, and
+  priority. Existing legacy `mirrorPath` configuration is migrated into one
   enabled full-copy mirror node, and mirror write failures are reported as
   warnings without failing the primary backup.
 - Mirror repair preview and repair actions report per-node mirror health.
   Diagnostics can preview or repair all enabled mirrors; the Mirrors workspace
   can preview or repair the selected node from the healthy primary repository.
+- Mirror placement preview reports planned copy/delete work for existing mirror
+  artefacts without writing files. Rebalance execution and drain/remove
+  workflows remain future R2 work.
 - Conservative workload policy presets for general, Office, CAD/BIM,
   Adobe/video, developer, and generic-large-file selections. Options controls
   the default preset for new selections, and the File browser can change the
@@ -187,11 +192,14 @@ proves FluxVault's VSS behaviour without requiring elevated live app-writer
 tests in CI; it does not certify every third-party VSS writer workload.
 
 In the dashboard, choose a repository folder, then use **Mirrors** if you want
-one or more full-copy mirror nodes. Use **File browser** to select protected
-folders or files, review the pending changes pane, save the configuration, run
-a backup, then restore a selected version to an alternate path. Restore asks for
-a destination and, when that file already exists, requires an explicit overwrite
-confirmation before the service restore IPC call is sent.
+one or more mirror nodes. The Mirrors workspace can keep all nodes as full
+copies, balance new chunk/metadata writes by node capacity and priority, or
+write a redundant minimum number of mirror copies. Use **File browser** to
+select protected folders or files, review the pending changes pane, save the
+configuration, run a backup, then restore a selected version to an alternate
+path. Restore asks for a destination and, when that file already exists,
+requires an explicit overwrite confirmation before the service restore IPC call
+is sent.
 
 Use the **About** button for the FluxVault version, Yagasoft copyright,
 [`https://github.com/yagasoft/FluxVault`](https://github.com/yagasoft/FluxVault),
@@ -258,10 +266,22 @@ results, then removes the temporary output without creating repository versions
 or restore-lineage hints.
 
 Mirror writes are secondary to the primary repository commit. FluxVault commits
-chunks, metadata, and manifests to the primary repository first, then copies
-new artefacts to each enabled full-copy mirror node. If a mirror folder is
-offline or unavailable, the backup remains successful and the node is reported
-through mirror warnings in status/health.
+chunks, metadata, and manifests to the primary repository first, then mirrors
+new artefacts according to the active placement profile. `FullCopy` writes
+chunks and metadata to every enabled node. `CapacityBalanced` uses deterministic
+weighted rendezvous selection so new chunk/metadata pairs go only to the
+selected capacity/priority target. `Redundant` writes the configured minimum
+number of mirror copies, capped by enabled node availability, and reports when
+the request is under-satisfied. Manifests continue to be mirrored to enabled
+nodes so every mirror has version metadata. If a mirror folder is offline or
+unavailable, the backup remains successful and the node is reported through
+mirror warnings in status/health.
+
+**Preview mirror placement** is a read-only check for existing repository
+artefacts. It reports missing required chunk/metadata copies, extra non-target
+copies, offline nodes, estimated movement, and per-node placement summaries
+without writing files or leaving temporary artefacts. `RunMirrorRebalance`
+remains unsupported until rebalance execution is implemented.
 
 Mirror repair is an explicit manual operation, not a scheduled placement or
 rebalance policy. **Preview mirror repair** reports repairable primary and

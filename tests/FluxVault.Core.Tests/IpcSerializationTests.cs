@@ -146,6 +146,8 @@ public sealed class IpcSerializationTests
     [InlineData(FluxVaultIpcCommand.GetRepositoryHealth)]
     [InlineData(FluxVaultIpcCommand.RunRepositoryScrub)]
     [InlineData(FluxVaultIpcCommand.RunRestoreRehearsal)]
+    [InlineData(FluxVaultIpcCommand.PreviewMirrorRebalance)]
+    [InlineData(FluxVaultIpcCommand.RunMirrorRebalance)]
     [InlineData(FluxVaultIpcCommand.PreviewMirrorRepair)]
     [InlineData(FluxVaultIpcCommand.RunMirrorRepair)]
     public void Repository_maintenance_request_serialization_preserves_command(FluxVaultIpcCommand command)
@@ -156,6 +158,52 @@ public sealed class IpcSerializationTests
 
         Assert.Equal(command, roundTrip.Command);
         Assert.Equal("mirror-1", roundTrip.MirrorNodeId);
+    }
+
+    [Fact]
+    public void Mirror_rebalance_response_serialization_preserves_actions()
+    {
+        var report = new MirrorRebalancePreviewReport(
+            CompletedAtUtc: new DateTimeOffset(2026, 5, 1, 9, 0, 0, TimeSpan.Zero),
+            HealthState: RepositoryHealthState.Warning,
+            CheckedChunkCount: 1,
+            ActionCount: 1,
+            EstimatedCopyBytes: 512,
+            EstimatedDeleteBytes: 0,
+            Nodes:
+            [
+                new MirrorNodeRebalancePreview(
+                    NodeId: "cloud",
+                    Label: "Cloud mirror",
+                    Path: @"D:\Mirrors\Cloud",
+                    IsEnabled: true,
+                    HealthState: RepositoryHealthState.Warning,
+                    ActionCount: 1,
+                    EstimatedCopyBytes: 512,
+                    EstimatedDeleteBytes: 0)
+            ],
+            Actions:
+            [
+                new MirrorRebalanceAction(
+                    Action: MirrorRebalanceActionKind.CopyToMirror,
+                    ArtefactKind: MirrorRebalanceArtefactKind.Chunk,
+                    MirrorNodeId: "cloud",
+                    MirrorNodeLabel: "Cloud mirror",
+                    Path: @"D:\Mirrors\Cloud\chunks\aa\chunk.chunk",
+                    ChunkDigest: "chunk-digest",
+                    EstimatedBytes: 512,
+                    Message: "Copy required.")
+            ]);
+        var response = FluxVaultIpcResponse.WithMirrorRebalance(report);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
+
+        Assert.True(roundTrip.Success);
+        Assert.NotNull(roundTrip.MirrorRebalance);
+        Assert.Equal(RepositoryHealthState.Warning, roundTrip.MirrorRebalance.HealthState);
+        var action = Assert.Single(roundTrip.MirrorRebalance.Actions);
+        Assert.Equal(MirrorRebalanceActionKind.CopyToMirror, action.Action);
+        Assert.Equal("cloud", action.MirrorNodeId);
     }
 
     [Fact]
@@ -242,7 +290,27 @@ public sealed class IpcSerializationTests
             OverallState: RepositoryHealthState.Warning,
             Summary: "Repository repaired 1 issue.",
             LastScrub: scrub,
-            LastRestoreRehearsal: rehearsal);
+            LastRestoreRehearsal: rehearsal,
+            LastMirrorRebalance: new MirrorRebalancePreviewReport(
+                CompletedAtUtc: new DateTimeOffset(2026, 5, 1, 9, 0, 0, TimeSpan.Zero),
+                HealthState: RepositoryHealthState.Warning,
+                CheckedChunkCount: 1,
+                ActionCount: 1,
+                EstimatedCopyBytes: 512,
+                EstimatedDeleteBytes: 0,
+                Nodes: [],
+                Actions:
+                [
+                    new MirrorRebalanceAction(
+                        MirrorRebalanceActionKind.CopyToMirror,
+                        MirrorRebalanceArtefactKind.Chunk,
+                        "cloud",
+                        "Cloud mirror",
+                        @"D:\Mirrors\Cloud\chunks\aa\chunk.chunk",
+                        "chunk-digest",
+                        512,
+                        "Copy required.")
+                ]));
         var response = FluxVaultIpcResponse.WithRepositoryHealth(health);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
@@ -251,5 +319,6 @@ public sealed class IpcSerializationTests
         Assert.Equal(RepositoryHealthState.Warning, roundTrip.RepositoryHealth.OverallState);
         Assert.Equal(RepositoryRepairAction.RepairedMirrorFromPrimary, Assert.Single(roundTrip.RepositoryHealth.LastScrub!.Issues).RepairAction);
         Assert.True(Assert.Single(roundTrip.RepositoryHealth.LastRestoreRehearsal!.Results).Success);
+        Assert.Equal(MirrorRebalanceActionKind.CopyToMirror, Assert.Single(roundTrip.RepositoryHealth.LastMirrorRebalance!.Actions).Action);
     }
 }

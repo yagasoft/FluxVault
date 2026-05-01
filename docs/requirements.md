@@ -164,22 +164,31 @@ folder; direct cloud adapters arrive later.
   already-compressed formats without extra compression, and keep global
   skip-extension entries as the final no-compression guardrail.
 - Mirror configuration must use a typed `MirrorSet` with mirror node id, label,
-  path, and enabled state. Older `mirrorPath` configuration must remain loadable
-  and migrate into one enabled full-copy mirror node.
+  path, enabled state, placement policy, optional capacity budget, and node
+  priority. Older `mirrorPath` configuration must remain loadable and migrate
+  into one enabled full-copy mirror node.
 - The dashboard must provide a dedicated Mirrors workspace for editing mirror
   nodes. The Protection workspace should show a summary and navigation to
   Mirrors instead of an editable mirror-path textbox.
 - Repository commits must write the primary repository first, then mirror new
-  chunks, metadata, and manifests to every enabled full-copy node. Mirror write
-  failures must be reported as node-specific warnings and must not fail an
-  otherwise successful primary backup.
+  artefacts according to the configured placement policy. `FullCopy` must write
+  chunks and metadata to every enabled node. `CapacityBalanced` must place each
+  new chunk/metadata pair on deterministic capacity/priority-selected targets.
+  `Redundant` must write the configured minimum mirror copy count, capped by
+  enabled node availability and reported when under-satisfied. Manifests must
+  continue to be mirrored to enabled nodes. Mirror write failures must be
+  reported as node-specific warnings and must not fail an otherwise successful
+  primary backup.
 - Mirror repair must provide explicit preview and run actions. Preview must not
   write artefacts. Repair-all may repair primary artefacts from any healthy
   enabled mirror and repair enabled mirrors from the healthy primary.
   Selected-node repair is mirror-only and must not repair the primary.
-- Capacity-aware placement, redundancy counts, drain/remove, rebalance
-  execution, movement preview, and placement profiles remain future R2
-  mirror-fabric work and should not appear as dormant controls.
+- Mirror placement preview must report missing required copies, extra
+  non-target copies, offline nodes, planned copy/delete actions, estimated
+  movement, and per-node status without writing files. The latest preview must
+  be visible through repository health/status.
+- Rebalance execution and drain/remove workflows remain future R2 mirror-fabric
+  work and must not appear as dormant controls.
 - Multi-PC sync must keep a newly selected folder or file pending on each peer
   until same-path or per-PC override mapping is confirmed.
 - Peers must not create, hydrate, or patch an unconfirmed mapping target.

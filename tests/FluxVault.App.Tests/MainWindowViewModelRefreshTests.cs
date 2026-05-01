@@ -199,6 +199,41 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Refresh_populates_mirror_placement_status_in_diagnostics_and_mirrors()
+    {
+        var rebalance = MirrorRebalanceReport("cloud", "Cloud copy", @"D:\Mirrors\Cloud", MirrorRebalanceActionKind.CopyToMirror);
+        var status = StatusWithVersions() with
+        {
+            Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+            {
+                MirrorSet = new MirrorSetConfiguration(
+                [
+                    new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true)
+                ],
+                new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced))
+            },
+            RepositoryHealth = HealthSnapshot(
+                RepositoryHealthState.Warning,
+                "Mirror placement warning.",
+                scrub: null,
+                rehearsal: null,
+                mirrorRepair: null,
+                mirrorRebalance: rebalance)
+        };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        Assert.Equal(MirrorPlacementProfile.CapacityBalanced, viewModel.MirrorPlacementProfile);
+        var mirror = Assert.Single(viewModel.MirrorNodes);
+        Assert.Contains("Warning", mirror.PlacementStatus);
+        Assert.Contains("copy", mirror.PlacementDetail, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(viewModel.RepositoryHealthRows,
+            row => row.Name == "Mirror placement" && row.Status.Contains("Warning", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
     public async Task Mirror_repair_commands_send_selected_and_all_requests()
     {
         var status = StatusWithVersions() with
@@ -239,6 +274,35 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Mirror_rebalance_preview_command_updates_health_and_node_placement_status()
+    {
+        var status = StatusWithVersions() with
+        {
+            Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+            {
+                MirrorSet = new MirrorSetConfiguration(
+                [
+                    new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true)
+                ])
+            }
+        };
+        var client = new FakeFluxVaultServiceClient(status)
+        {
+            MirrorRebalanceResponse = FluxVaultIpcResponse.WithMirrorRebalance(
+                MirrorRebalanceReport("cloud", "Cloud copy", @"D:\Mirrors\Cloud", MirrorRebalanceActionKind.CopyToMirror))
+        };
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+
+        await viewModel.PreviewMirrorRebalanceCommand.ExecuteAsync(null);
+
+        Assert.Contains(FluxVaultIpcCommand.PreviewMirrorRebalance, client.Commands);
+        var mirror = Assert.Single(viewModel.MirrorNodes);
+        Assert.Contains("Warning", mirror.PlacementStatus);
+        Assert.Contains("Mirror placement preview completed", viewModel.RepositoryHealthStatus);
+    }
+
+    [Fact]
     public async Task Save_configuration_persists_mirror_set_nodes_and_clears_legacy_mirror_path()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions());
@@ -260,6 +324,33 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Equal("Cloud copy", node.Label);
         Assert.Equal(@"D:\Mirrors\Cloud", node.Path);
         Assert.True(node.IsEnabled);
+    }
+
+    [Fact]
+    public async Task Save_configuration_persists_mirror_placement_policy_and_node_capacity_priority()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions());
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+
+        viewModel.MirrorPlacementProfile = MirrorPlacementProfile.Redundant;
+        viewModel.MinimumMirrorCopies = 2;
+        viewModel.AddMirrorCommand.Execute(null);
+        var mirror = Assert.Single(viewModel.MirrorNodes);
+        mirror.Id = "cloud";
+        mirror.Label = "Cloud copy";
+        mirror.Path = @"D:\Mirrors\Cloud";
+        mirror.IsEnabled = true;
+        mirror.CapacityBudgetBytes = 1_000_000_000;
+        mirror.Priority = 250;
+        await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        Assert.Equal(MirrorPlacementProfile.Redundant, saved.MirrorSet.PlacementPolicy.Profile);
+        Assert.Equal(2, saved.MirrorSet.PlacementPolicy.MinimumMirrorCopies);
+        var node = Assert.Single(saved.MirrorSet.Nodes);
+        Assert.Equal(1_000_000_000, node.CapacityBudgetBytes);
+        Assert.Equal(250, node.Priority);
     }
 
     [Fact]
@@ -920,9 +1011,10 @@ public sealed class MainWindowViewModelRefreshTests
         string summary,
         RepositoryScrubReport? scrub,
         RestoreRehearsalReport? rehearsal,
-        MirrorRepairReport? mirrorRepair = null)
+        MirrorRepairReport? mirrorRepair = null,
+        MirrorRebalancePreviewReport? mirrorRebalance = null)
     {
-        return new RepositoryHealthSnapshot(DateTimeOffset.UtcNow, state, summary, scrub, rehearsal, mirrorRepair);
+        return new RepositoryHealthSnapshot(DateTimeOffset.UtcNow, state, summary, scrub, rehearsal, mirrorRepair, mirrorRebalance);
     }
 
     private static RepositoryScrubReport ScrubReport(RepositoryHealthState state, int repaired)
@@ -979,6 +1071,45 @@ public sealed class MainWindowViewModelRefreshTests
             Issues: []);
     }
 
+    private static MirrorRebalancePreviewReport MirrorRebalanceReport(
+        string nodeId,
+        string nodeLabel,
+        string nodePath,
+        MirrorRebalanceActionKind action)
+    {
+        return new MirrorRebalancePreviewReport(
+            DateTimeOffset.UtcNow,
+            RepositoryHealthState.Warning,
+            CheckedChunkCount: 1,
+            ActionCount: 1,
+            EstimatedCopyBytes: action == MirrorRebalanceActionKind.CopyToMirror ? 512 : 0,
+            EstimatedDeleteBytes: action == MirrorRebalanceActionKind.DeleteFromMirror ? 512 : 0,
+            Nodes:
+            [
+                new MirrorNodeRebalancePreview(
+                    nodeId,
+                    nodeLabel,
+                    nodePath,
+                    IsEnabled: true,
+                    RepositoryHealthState.Warning,
+                    ActionCount: 1,
+                    EstimatedCopyBytes: action == MirrorRebalanceActionKind.CopyToMirror ? 512 : 0,
+                    EstimatedDeleteBytes: action == MirrorRebalanceActionKind.DeleteFromMirror ? 512 : 0)
+            ],
+            Actions:
+            [
+                new MirrorRebalanceAction(
+                    action,
+                    MirrorRebalanceArtefactKind.Chunk,
+                    nodeId,
+                    nodeLabel,
+                    Path.Combine(nodePath, "chunks", "aa", "chunk.chunk"),
+                    "chunk-digest",
+                    512,
+                    "Placement action required.")
+            ]);
+    }
+
     private sealed class FakeFluxVaultServiceClient(params FluxVaultServiceStatus[] statuses) : IFluxVaultServiceClient
     {
         private readonly Queue<FluxVaultServiceStatus> statuses = new(statuses);
@@ -998,6 +1129,8 @@ public sealed class MainWindowViewModelRefreshTests
         public FluxVaultIpcResponse RestoreRehearsalResponse { get; init; } = FluxVaultIpcResponse.Ok();
 
         public FluxVaultIpcResponse MirrorRepairResponse { get; init; } = FluxVaultIpcResponse.Ok();
+
+        public FluxVaultIpcResponse MirrorRebalanceResponse { get; init; } = FluxVaultIpcResponse.Ok();
 
         public List<(FluxVaultIpcCommand Command, string? MirrorNodeId)> MirrorRepairRequests { get; } = [];
 
@@ -1048,6 +1181,11 @@ public sealed class MainWindowViewModelRefreshTests
             {
                 MirrorRepairRequests.Add((request.Command, request.MirrorNodeId));
                 return Task.FromResult(MirrorRepairResponse);
+            }
+
+            if (request.Command == FluxVaultIpcCommand.PreviewMirrorRebalance)
+            {
+                return Task.FromResult(MirrorRebalanceResponse);
             }
 
             var status = statuses.Count > 1 ? statuses.Dequeue() : statuses.Peek();

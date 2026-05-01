@@ -128,26 +128,26 @@ one storage fabric.
   slice migrates legacy `mirrorPath` config into one enabled full-copy mirror
   node and adds a dedicated Mirrors workspace for node label, path, and enabled
   state.
-- Primary repository commits remain authoritative. Enabled full-copy mirror
-  nodes receive committed chunks, metadata, and manifests after the primary
-  commit succeeds; unavailable mirrors report node-specific warnings without
-  failing the backup.
-- Future mirror nodes add capacity budget, priority, health, online/offline
-  state, include/exclude constraints, and placement profile.
-- Future placement profiles: `CapacityBalanced`, `Redundant`, `FullCopy`, and
-  `Custom`.
-- Capacity mode uses weighted rendezvous hashing with capacity watermarks and
-  a configurable excluded mirror fraction. With two mirrors, chunks for a file
-  may live on either mirror; with more mirrors, chunks distribute across the
-  selected set while excluding the configured fraction.
+- Primary repository commits remain authoritative. Mirror nodes receive
+  committed artefacts according to the active placement profile after the
+  primary commit succeeds; unavailable mirrors report node-specific warnings
+  without failing the backup.
+- Mirror nodes now carry capacity budget, priority, health, online/offline
+  state, and placement profile inputs.
+- Implemented placement profiles are `FullCopy`, `CapacityBalanced`, and
+  `Redundant`.
+- Capacity mode uses deterministic weighted rendezvous hashing with capacity
+  budget and priority. With two mirrors, chunks for a file may live on either
+  mirror; with more mirrors, chunks distribute across selected eligible nodes.
 - Redundancy mode overrides capacity-only placement by requiring a configured
-  minimum copy count.
-- Mirror maintenance can take a node offline, drain/remove it after
-  consolidation, repair missing chunks, and preview movement before applying.
+  minimum mirror copy count.
+- Future mirror maintenance can take a node offline, drain/remove it after
+  consolidation, and apply previewed movement.
 - The repair foundation provides explicit preview and repair actions for
-  primary/mirror drift and per-node mirror health. Capacity placement,
-  redundancy policy, drain/remove, movement preview, and rebalance execution
-  remain later R2 work.
+  primary/mirror drift and per-node mirror health. The placement foundation
+  applies the configured policy to new commits and previews existing placement
+  movement without writing files. Drain/remove and rebalance execution remain
+  later R2 work.
 
 ## R3 multi-PC sync
 

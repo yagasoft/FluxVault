@@ -83,6 +83,26 @@ public sealed class RepositoryMaintenanceTests
     }
 
     [Fact]
+    public async Task Scrub_ignores_missing_chunks_on_non_target_capacity_balanced_nodes()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var repository = CreateRepository(
+            workspace.RepositoryPath,
+            MirrorSet(
+                new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced),
+                firstMirror,
+                secondMirror));
+        await repository.CommitAsync(NewRequest("capacity-balanced scrub content"));
+
+        var report = await repository.ScrubAsync(autoRepairFromMirror: true);
+
+        Assert.Equal(RepositoryHealthState.Healthy, report.HealthState);
+        Assert.Empty(report.Issues);
+    }
+
+    [Fact]
     public async Task Missing_chunk_without_healthy_copy_is_reported_as_unresolved()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -267,6 +287,94 @@ public sealed class RepositoryMaintenanceTests
         AssertNoTemporaryFiles(workspace.RootPath);
     }
 
+    [Fact]
+    public async Task Mirror_repair_preview_ignores_missing_chunks_on_non_target_capacity_balanced_nodes()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var repository = CreateRepository(
+            workspace.RepositoryPath,
+            MirrorSet(
+                new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced),
+                firstMirror,
+                secondMirror));
+        await repository.CommitAsync(NewRequest("capacity-balanced mirror content"));
+
+        var report = await repository.PreviewMirrorRepairAsync();
+
+        Assert.Equal(RepositoryHealthState.Healthy, report.HealthState);
+        Assert.All(report.Nodes, node => Assert.Empty(node.Issues));
+    }
+
+    [Fact]
+    public async Task Mirror_rebalance_preview_reports_missing_required_and_extra_non_target_copies_without_writing()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
+        var secondMirror = Path.Combine(workspace.RootPath, "second-mirror");
+        var fullCopyRepository = CreateRepository(workspace.RepositoryPath, MirrorSet(firstMirror, secondMirror));
+        var commit = await fullCopyRepository.CommitAsync(NewRequest("placement preview content"));
+        var chunk = Assert.Single(commit.Manifest.Chunks);
+        var placementMirrorSet = MirrorSet(
+            new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced),
+            firstMirror,
+            secondMirror);
+        var targetNodeId = new MirrorPlacementPlanner()
+            .SelectChunkTargets(chunk.Digest, chunk.StoredLength, placementMirrorSet, new Dictionary<string, long>())
+            .TargetNodeIds
+            .Single();
+        var targetPath = targetNodeId == "mirror" ? firstMirror : secondMirror;
+        var extraPath = targetNodeId == "mirror" ? secondMirror : firstMirror;
+        File.Delete(ChunkPath(targetPath, chunk.Digest));
+        File.Delete(MetadataPath(targetPath, chunk.Digest));
+        var placementRepository = CreateRepository(workspace.RepositoryPath, placementMirrorSet);
+
+        var report = await placementRepository.PreviewMirrorRebalanceAsync();
+
+        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
+        Assert.Contains(report.Actions, action =>
+            action.Action == MirrorRebalanceActionKind.CopyToMirror
+            && action.MirrorNodeId == targetNodeId
+            && action.ChunkDigest == chunk.Digest);
+        Assert.Contains(report.Actions, action =>
+            action.Action == MirrorRebalanceActionKind.DeleteFromMirror
+            && action.MirrorNodeId != targetNodeId
+            && action.ChunkDigest == chunk.Digest);
+        Assert.True(report.EstimatedCopyBytes >= chunk.StoredLength);
+        Assert.True(report.EstimatedDeleteBytes >= chunk.StoredLength);
+        Assert.False(File.Exists(ChunkPath(targetPath, chunk.Digest)));
+        Assert.True(File.Exists(ChunkPath(extraPath, chunk.Digest)));
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
+    [Fact]
+    public async Task Mirror_rebalance_preview_reports_unavailable_node_without_writing()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var onlineMirror = Path.Combine(workspace.RootPath, "online-mirror");
+        var offlineMirror = Path.Combine(workspace.RootPath, "offline-mirror");
+        var repository = CreateRepository(
+            workspace.RepositoryPath,
+            new MirrorSetConfiguration(
+            [
+                new MirrorNodeConfiguration("online", "Online mirror", onlineMirror, IsEnabled: true),
+                new MirrorNodeConfiguration("offline", "Offline mirror", offlineMirror, IsEnabled: true)
+            ]));
+        await repository.CommitAsync(NewRequest("offline placement preview content"));
+
+        Directory.Delete(offlineMirror, recursive: true);
+
+        var report = await repository.PreviewMirrorRebalanceAsync();
+
+        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
+        var action = Assert.Single(report.Actions, action => action.MirrorNodeId == "offline");
+        Assert.Equal(MirrorRebalanceActionKind.Unresolved, action.Action);
+        Assert.Contains("unavailable", action.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.False(Directory.Exists(offlineMirror));
+        AssertNoTemporaryFiles(workspace.RootPath);
+    }
+
     private static FileSystemChunkRepository CreateRepository(string path, string? mirrorPath = null)
     {
         return new FileSystemChunkRepository(
@@ -296,6 +404,20 @@ public sealed class RepositoryMaintenanceTests
                 Path: path,
                 IsEnabled: true))
             .ToArray());
+    }
+
+    private static MirrorSetConfiguration MirrorSet(
+        MirrorPlacementPolicyConfiguration placementPolicy,
+        params string[] paths)
+    {
+        return new MirrorSetConfiguration(paths
+            .Select((path, index) => new MirrorNodeConfiguration(
+                Id: index == 0 ? "mirror" : index == 1 ? "second" : $"mirror-{index + 1}",
+                Label: index == 0 ? "Mirror" : $"Mirror {index + 1}",
+                Path: path,
+                IsEnabled: true))
+            .ToArray(),
+            placementPolicy);
     }
 
     private static FileCommitRequest NewRequest(string payload, DateTimeOffset? capturedAtUtc = null)

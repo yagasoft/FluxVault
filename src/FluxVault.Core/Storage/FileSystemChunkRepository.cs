@@ -17,7 +17,9 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     };
 
     private readonly string rootPath;
+    private readonly MirrorSetConfiguration mirrorSet;
     private readonly IReadOnlyList<MirrorNodeConfiguration> mirrorNodes;
+    private readonly MirrorPlacementPlanner mirrorPlacementPlanner = new();
     private readonly StreamingFastCdcChunker streamingChunker;
     private readonly Blake3ContentHasher hasher;
     private readonly ZstdChunkCodec codec;
@@ -43,7 +45,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         streamingChunker = new StreamingFastCdcChunker(chunker.Options);
         this.hasher = hasher;
         this.codec = codec;
-        mirrorNodes = (mirrorSet ?? MirrorSetConfiguration.CreateDefault()).Normalise().EnabledNodes;
+        this.mirrorSet = (mirrorSet ?? MirrorSetConfiguration.CreateDefault()).Normalise();
+        mirrorNodes = this.mirrorSet.EnabledNodes;
     }
 
     public async Task<FileCommitResult> CommitAsync(FileCommitRequest request, CancellationToken cancellationToken = default)
@@ -215,8 +218,17 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                     continue;
                 }
 
+                var targetNodeIds = mirrorPlacementPlanner
+                    .SelectChunkTargets(chunk.Digest, chunk.StoredLength, mirrorSet, GetMirrorNodeUsedBytes())
+                    .TargetNodeIds
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
                 foreach (var mirrorNode in mirrorNodes)
                 {
+                    if (!targetNodeIds.Contains(mirrorNode.Id))
+                    {
+                        continue;
+                    }
+
                     var mirrorValidation = ValidateChunk(mirrorNode.Path, chunk);
                     if (mirrorValidation.IsHealthy)
                     {
@@ -374,8 +386,17 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                     continue;
                 }
 
+                var targetNodeIds = mirrorPlacementPlanner
+                    .SelectChunkTargets(chunk.Digest, chunk.StoredLength, mirrorSet, GetMirrorNodeUsedBytes())
+                    .TargetNodeIds
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
                 foreach (var node in allNodes)
                 {
+                    if (!targetNodeIds.Contains(node.Id))
+                    {
+                        continue;
+                    }
+
                     if (nodeIssues[node.Id].Any(issue => issue.ArtefactKind == MirrorRepairArtefactKind.Repository))
                     {
                         continue;
@@ -904,7 +925,17 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
 
         var warnings = new List<string>();
-        foreach (var mirrorNode in mirrorNodes)
+        var selection = mirrorPlacementPlanner.SelectChunkTargets(
+            digest,
+            prepared.Metadata.StoredLength,
+            mirrorSet,
+            GetMirrorNodeUsedBytes());
+        if (selection.IsUnderSatisfied)
+        {
+            warnings.Add($"Mirror placement for chunk {digest} is under-satisfied: {selection.TargetNodeIds.Count} of {selection.RequiredCopyCount} required mirror copy/copies are available.");
+        }
+
+        foreach (var mirrorNode in selection.TargetNodes)
         {
             try
             {
@@ -918,6 +949,74 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
 
         return warnings;
+    }
+
+    public async Task<MirrorRebalancePreviewReport> PreviewMirrorRebalanceAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var manifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
+        var chunks = manifests
+            .SelectMany(manifest => manifest.Chunks)
+            .GroupBy(chunk => chunk.Digest, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.First())
+            .ToArray();
+        var nodeActions = mirrorNodes.ToDictionary(
+            node => node.Id,
+            _ => new List<MirrorRebalanceAction>(),
+            StringComparer.OrdinalIgnoreCase);
+        var usedBytes = GetMirrorNodeUsedBytes();
+
+        foreach (var chunk in chunks)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var selection = mirrorPlacementPlanner.SelectChunkTargets(
+                chunk.Digest,
+                chunk.StoredLength,
+                mirrorSet,
+                usedBytes);
+            var targetIds = selection.TargetNodeIds.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var node in mirrorNodes)
+            {
+                if (!nodeActions.TryGetValue(node.Id, out var currentNodeActions))
+                {
+                    continue;
+                }
+
+                if (!Directory.Exists(node.Path))
+                {
+                    AddUnavailableNodeAction(currentNodeActions, node, chunk.Digest);
+                    continue;
+                }
+
+                var chunkPath = ChunkPath(node.Path, chunk.Digest);
+                var metadataPath = MetadataPath(node.Path, chunk.Digest);
+                if (targetIds.Contains(node.Id))
+                {
+                    AddMissingAction(currentNodeActions, node, chunk, chunkPath, MirrorRebalanceArtefactKind.Chunk);
+                    AddMissingAction(currentNodeActions, node, chunk, metadataPath, MirrorRebalanceArtefactKind.Metadata);
+                }
+                else
+                {
+                    AddExtraAction(currentNodeActions, node, chunk, chunkPath, MirrorRebalanceArtefactKind.Chunk);
+                    AddExtraAction(currentNodeActions, node, chunk, metadataPath, MirrorRebalanceArtefactKind.Metadata);
+                }
+            }
+        }
+
+        var actions = nodeActions.Values.SelectMany(static actions => actions).ToArray();
+        var nodes = mirrorNodes
+            .Select(node => BuildMirrorNodeRebalancePreview(node, nodeActions[node.Id]))
+            .ToArray();
+        return new MirrorRebalancePreviewReport(
+            DateTimeOffset.UtcNow,
+            actions.Length == 0 ? RepositoryHealthState.Healthy : RepositoryHealthState.Warning,
+            chunks.Length,
+            actions.Length,
+            actions.Where(action => action.Action == MirrorRebalanceActionKind.CopyToMirror).Sum(action => action.EstimatedBytes),
+            actions.Where(action => action.Action == MirrorRebalanceActionKind.DeleteFromMirror).Sum(action => action.EstimatedBytes),
+            nodes,
+            actions);
     }
 
     private IReadOnlyList<string> MirrorManifestIfNeeded(string versionId, byte[] manifestBytes)
@@ -941,6 +1040,96 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
 
         return warnings;
+    }
+
+    private static void AddMissingAction(
+        List<MirrorRebalanceAction> actions,
+        MirrorNodeConfiguration node,
+        ManifestChunk chunk,
+        string path,
+        MirrorRebalanceArtefactKind artefactKind)
+    {
+        if (File.Exists(path))
+        {
+            return;
+        }
+
+        actions.Add(new MirrorRebalanceAction(
+            MirrorRebalanceActionKind.CopyToMirror,
+            artefactKind,
+            node.Id,
+            node.Label,
+            path,
+            chunk.Digest,
+            artefactKind == MirrorRebalanceArtefactKind.Chunk ? chunk.StoredLength : GetFileLength(path),
+            $"Mirror '{node.Label}' is missing required {artefactKind.ToString().ToLowerInvariant()} for chunk {chunk.Digest}."));
+    }
+
+    private static void AddUnavailableNodeAction(
+        List<MirrorRebalanceAction> actions,
+        MirrorNodeConfiguration node,
+        string chunkDigest)
+    {
+        if (actions.Any(action => action.Action == MirrorRebalanceActionKind.Unresolved))
+        {
+            return;
+        }
+
+        actions.Add(new MirrorRebalanceAction(
+            MirrorRebalanceActionKind.Unresolved,
+            MirrorRebalanceArtefactKind.Chunk,
+            node.Id,
+            node.Label,
+            node.Path,
+            chunkDigest,
+            0,
+            $"Mirror '{node.Label}' is unavailable at its configured path."));
+    }
+
+    private static void AddExtraAction(
+        List<MirrorRebalanceAction> actions,
+        MirrorNodeConfiguration node,
+        ManifestChunk chunk,
+        string path,
+        MirrorRebalanceArtefactKind artefactKind)
+    {
+        if (!File.Exists(path))
+        {
+            return;
+        }
+
+        actions.Add(new MirrorRebalanceAction(
+            MirrorRebalanceActionKind.DeleteFromMirror,
+            artefactKind,
+            node.Id,
+            node.Label,
+            path,
+            chunk.Digest,
+            GetFileLength(path),
+            $"Mirror '{node.Label}' has non-target {artefactKind.ToString().ToLowerInvariant()} for chunk {chunk.Digest}."));
+    }
+
+    private static MirrorNodeRebalancePreview BuildMirrorNodeRebalancePreview(
+        MirrorNodeConfiguration node,
+        IReadOnlyList<MirrorRebalanceAction> actions)
+    {
+        return new MirrorNodeRebalancePreview(
+            node.Id,
+            node.Label,
+            node.Path,
+            node.IsEnabled,
+            actions.Count == 0 ? RepositoryHealthState.Healthy : RepositoryHealthState.Warning,
+            actions.Count,
+            actions.Where(action => action.Action == MirrorRebalanceActionKind.CopyToMirror).Sum(action => action.EstimatedBytes),
+            actions.Where(action => action.Action == MirrorRebalanceActionKind.DeleteFromMirror).Sum(action => action.EstimatedBytes));
+    }
+
+    private IReadOnlyDictionary<string, long> GetMirrorNodeUsedBytes()
+    {
+        return mirrorNodes.ToDictionary(
+            node => node.Id,
+            node => Directory.Exists(node.Path) ? GetRepositorySize(node.Path) : 0L,
+            StringComparer.OrdinalIgnoreCase);
     }
 
     private static ChunkMetadata? ReadChunkMetadata(string root, string digest)

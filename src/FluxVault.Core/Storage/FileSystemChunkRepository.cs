@@ -160,6 +160,15 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         await RestoreManifestAsync(manifest, outputPath, writeRestoreHint: true, cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task RestorePreviewAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(outputPath);
+
+        var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
+        await RestoreManifestAsync(manifest, outputPath, writeRestoreHint: false, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<RepositoryScrubReport> ScrubAsync(
         bool autoRepairFromMirror,
         CancellationToken cancellationToken = default)

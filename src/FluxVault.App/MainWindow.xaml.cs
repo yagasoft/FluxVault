@@ -1,6 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
+using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
 using WpfButton = System.Windows.Controls.Button;
 using WpfDataGrid = System.Windows.Controls.DataGrid;
@@ -10,11 +12,19 @@ namespace FluxVault.App;
 
 public partial class MainWindow : Window
 {
+    private const string MirrorGridLayoutKey = "mirrors";
     private bool fileBrowserFilesGridAutoFitted;
     private bool fileBrowserPendingChangesGridAutoFitted;
+    private readonly IDataGridLayoutStore layoutStore;
 
     public MainWindow()
+        : this(new FileDataGridLayoutStore())
     {
+    }
+
+    internal MainWindow(IDataGridLayoutStore layoutStore)
+    {
+        this.layoutStore = layoutStore;
         InitializeComponent();
     }
 
@@ -70,6 +80,29 @@ public partial class MainWindow : Window
         }
     }
 
+    private async void WatchedFoldersGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (DataContext is not MainWindowViewModel viewModel || viewModel.SelectedWatchedFolder is null)
+        {
+            return;
+        }
+
+        var inventory = await viewModel.CreateVersionInventoryAsync(viewModel.SelectedWatchedFolder).ConfigureAwait(true);
+        var window = new ProtectedFolderVersionsWindow(inventory)
+        {
+            Owner = this
+        };
+        window.ShowDialog();
+    }
+
+    private async void RecentVersionsGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel viewModel)
+        {
+            await viewModel.OpenSelectedVersionPreviewCommand.ExecuteAsync(null).ConfigureAwait(true);
+        }
+    }
+
     private void FileBrowserGrid_Loaded(object sender, RoutedEventArgs e)
     {
         if (ReferenceEquals(sender, FileBrowserFilesGrid))
@@ -82,6 +115,33 @@ public partial class MainWindow : Window
         {
             AutoFitDataGridColumnsOnce(FileBrowserPendingChangesGrid);
         }
+    }
+
+    private void MirrorNodesGrid_Loaded(object sender, RoutedEventArgs e)
+    {
+        ApplyDataGridLayout(MirrorNodesGrid, MirrorGridLayoutKey);
+        MirrorNodesGrid.AddHandler(
+            Thumb.DragCompletedEvent,
+            new DragCompletedEventHandler(MirrorNodesGrid_ColumnDragCompleted),
+            handledEventsToo: true);
+    }
+
+    private void MirrorNodesGrid_Unloaded(object sender, RoutedEventArgs e)
+    {
+        SaveDataGridLayout(MirrorNodesGrid, MirrorGridLayoutKey);
+        MirrorNodesGrid.RemoveHandler(
+            Thumb.DragCompletedEvent,
+            new DragCompletedEventHandler(MirrorNodesGrid_ColumnDragCompleted));
+    }
+
+    private void MirrorNodesGrid_ColumnLayoutChanged(object sender, DataGridColumnEventArgs e)
+    {
+        SaveDataGridLayout(MirrorNodesGrid, MirrorGridLayoutKey);
+    }
+
+    private void MirrorNodesGrid_ColumnDragCompleted(object sender, DragCompletedEventArgs e)
+    {
+        SaveDataGridLayout(MirrorNodesGrid, MirrorGridLayoutKey);
     }
 
     private void AutoFitFileBrowserFilesGridOnce()
@@ -124,5 +184,54 @@ public partial class MainWindow : Window
             var measuredWidth = Math.Ceiling(column.ActualWidth) + 18;
             column.Width = new WpfDataGridLength(Math.Max(column.MinWidth, measuredWidth));
         }
+    }
+
+    private void ApplyDataGridLayout(WpfDataGrid grid, string gridKey)
+    {
+        var savedColumns = layoutStore.Load(gridKey);
+        if (savedColumns.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var savedColumn in savedColumns)
+        {
+            var column = grid.Columns.FirstOrDefault(column => string.Equals(GetColumnKey(column), savedColumn.Key, StringComparison.Ordinal));
+            if (column is null || savedColumn.Width <= 0)
+            {
+                continue;
+            }
+
+            column.Width = new WpfDataGridLength(savedColumn.Width);
+        }
+
+        foreach (var savedColumn in savedColumns.OrderBy(column => column.DisplayIndex))
+        {
+            var column = grid.Columns.FirstOrDefault(column => string.Equals(GetColumnKey(column), savedColumn.Key, StringComparison.Ordinal));
+            if (column is null)
+            {
+                continue;
+            }
+
+            column.DisplayIndex = Math.Clamp(savedColumn.DisplayIndex, 0, grid.Columns.Count - 1);
+        }
+    }
+
+    private void SaveDataGridLayout(WpfDataGrid grid, string gridKey)
+    {
+        var columns = grid.Columns
+            .Select(column => new DataGridColumnLayout(
+                GetColumnKey(column),
+                Math.Ceiling(column.ActualWidth > 0 ? column.ActualWidth : column.Width.Value),
+                column.DisplayIndex))
+            .Where(column => !string.IsNullOrWhiteSpace(column.Key) && column.Width > 0)
+            .OrderBy(column => column.DisplayIndex)
+            .ToArray();
+        layoutStore.Save(gridKey, columns);
+    }
+
+    private static string GetColumnKey(DataGridColumn column)
+    {
+        return column.Header?.ToString() ?? string.Empty;
     }
 }

@@ -169,16 +169,20 @@ diagnostics actions in one place.
 The Mirrors workspace owns mirror configuration. The Protection workspace shows
 a concise mirror summary and links into Mirrors; it no longer exposes the
 legacy editable mirror-path textbox. Mirror nodes have id, label, path, enabled
-state, optional capacity budget, and priority. The workspace saves the active
-placement profile (`FullCopy`, `CapacityBalanced`, or `Redundant`) and minimum
-mirror copy count. It also exposes a read-only placement preview and compact
-per-node placement status, plus an Apply placement action that executes the
-same copy/delete plan conservatively. Selected-node drain preview/run copies
-required artefacts to remaining mirrors before deleting drained chunk/metadata
-copies and disabling the node. The workspace also shows compact per-node mirror
-repair status and allows selected-node preview/repair. Selected-node repair
-only repairs that mirror from the healthy primary repository; primary repair
-remains a repair-all operation.
+state, optional capacity budget, and priority. Add/edit uses a dialog so
+validation and explicit migration status are owned by the app rather than
+inline table edits. The workspace saves the active placement profile
+(`FullCopy`, `CapacityBalanced`, or `Redundant`) and minimum mirror copy count,
+using English display labels in the dashboard. It also exposes a read-only
+placement preview and compact per-node placement status, plus an Apply
+placement action that executes the same copy/delete plan conservatively.
+Selected-node drain preview/run copies required artefacts to remaining mirrors
+before deleting drained chunk/metadata copies and disabling the node. The
+workspace also shows compact per-node mirror repair status and allows
+selected-node preview/repair. Selected-node repair only repairs that mirror
+from the healthy primary repository; primary repair remains a repair-all
+operation. Mirror grid column widths and order are saved as local UI state, not
+service configuration.
 
 The tray activity pane is positioned from the active monitor working area. The
 WinForms cursor and monitor coordinates are converted to WPF device-independent
@@ -207,7 +211,9 @@ updates runtime status, versions, and activity without replacing local unsaved
 selection rules or clearing the pending-changes pane.
 
 The File browser tree owns its own scrollbars so mouse-wheel scrolling works
-when the cursor is over the folder tree. File and pending-change grids auto-fit
+when the cursor is over the folder tree. File checkboxes are interactive inside
+the otherwise read-only grid, so individual files can be added or removed from
+protection without inline table editing. File and pending-change grids auto-fit
 their columns on first render, then rely on horizontal scrolling for long names
 or paths rather than resizing the three-pane layout. Folder and file context
 menus use a shell-launch abstraction so tests can prove `explorer.exe <folder>`,
@@ -223,14 +229,17 @@ selection can carry a workload preset. Missing preset fields from older config
 files default to the general-purpose preset, while Options controls the preset
 used for new File browser and Explorer Add selections.
 
-Scoped `ProtectionScopedRegexRule` lists complement each selected folder or
-file. Recursive folder regex rules apply to descendants; immediate-folder rules
-apply only to files directly inside that folder; child rules are additive with
-inherited parent rules. Include rules are treated as an additive narrowing set,
-and any matching exclude rule suppresses the file before capture. Folders with
-local scoped regex rules show an `R` indicator in the tree. Legacy global
-`ProtectionExclusionRule` records are still understood by the service for
-backward compatibility, but the Options global regex editor has been removed.
+Scoped `ProtectionScopedRegexRule` lists complement selected folders/files and
+regex-only folder scopes. A regex-only scope can be saved on an unselected
+folder; it does not compile into a watched folder and only filters protected
+descendant selections. Recursive folder and regex-scope rules apply to
+descendants; immediate-folder rules apply only to files directly inside that
+folder; child rules are additive with inherited parent rules. Include rules are
+treated as an additive narrowing set, and any matching exclude rule suppresses
+the file before capture. Folders with local scoped regex rules show an `R`
+indicator in the tree. Legacy global `ProtectionExclusionRule` records are still
+understood by the service for backward compatibility, but the Options global
+regex editor has been removed.
 
 ## Workload policy presets
 
@@ -292,6 +301,13 @@ and restorable. Byte-identical copies into protected paths become visible
 `InheritedCopy` versions that reuse chunks and point to the original history.
 This gives FluxVault Git-like history semantics without using Git as the live
 repository engine.
+
+Opening a version for preview is separate from restore. The dashboard asks the
+service to reconstruct the chosen version into FluxVault-owned preview state,
+opens the returned temporary file with the user's default application, and does
+not write a restore-lineage hint. Protection folder rows can open a repository
+inventory dialog built from manifests; each file row expands to its versions and
+supports both explicit restore and temporary preview.
 
 Retention is manifest-led. FluxVault groups versions by normalised source path,
 keeps dense recent history, thins older history to hourly and daily buckets,

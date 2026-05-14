@@ -23,6 +23,17 @@ public sealed class IpcSerializationTests
     }
 
     [Fact]
+    public void Preview_restore_request_serialization_preserves_version_id()
+    {
+        var request = FluxVaultIpcRequest.RestoreVersionPreview("version-42");
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeRequest(FluxVaultIpcSerializer.SerializeRequest(request));
+
+        Assert.Equal(FluxVaultIpcCommand.RestoreVersionPreview, roundTrip.Command);
+        Assert.Equal("version-42", roundTrip.VersionId);
+    }
+
+    [Fact]
     public void Response_serialization_preserves_status_details()
     {
         var checkedAt = new DateTimeOffset(2026, 4, 27, 12, 1, 0, TimeSpan.Zero);

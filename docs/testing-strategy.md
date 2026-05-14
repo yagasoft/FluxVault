@@ -33,12 +33,15 @@
   operational cockpit shell, prioritised command order, constrained dashboard
   header status text, service availability warning and Start/Stop controls,
   first-tab startup, Options Explorer menu actions, File browser context menus,
-  scoped regex controls, workload preset controls, repository maintenance
-  Options controls, compression skip-extension editing, wrapping USN tooltips,
-  and wrapping Options tooltips.
+  scoped regex controls, workload preset controls, interactive file checkboxes,
+  profile/regex pending-change columns, Protection regex columns, repository
+  version preview double-click wiring, repository maintenance Options controls,
+  compression skip-extension editing, wrapping USN tooltips, and wrapping
+  Options tooltips.
 - Restore workflow view-model tests for destination cancellation, overwrite
   confirmation, overwrite denial, IPC failure, locked/access-denied failure
-  messaging, and preserving the selected version.
+  messaging, preserving the selected version, and non-lineage temporary version
+  previews.
 - Startup request routing tests for `--restore-path`, `--show-versions`,
   `--add-path`, and `--remove-path` parsing and forwarding a second launch to
   the primary dashboard instance.
@@ -87,10 +90,13 @@
 - Mirror drain tests for selected-node preview, copy-before-delete execution,
   blocked deletes when remaining targets are unresolved, configuration disable
   after healthy drain, and temporary-file cleanup.
-- Mirrors workspace view-model and XAML tests for editable node lists,
-  repository/protection summary replacement, workspace navigation, per-node
-  repair status/actions, placement controls/status, preview/apply action, and
-  selected-node drain controls.
+- Mirrors workspace view-model and XAML tests for dialog-based add/edit,
+  selection-preserving refresh, explicit enable/disable and selected-action
+  visibility, local grid-layout persistence, repository/protection summary
+  replacement, workspace navigation, per-node repair status/actions, placement
+  controls/status, preview/apply action, and selected-node drain controls.
+- Protection inventory tests for repository-manifest file grouping, expandable
+  version rows, restore callbacks, and temporary preview callbacks.
 - Security/fleet foundation tests for disabled defaults, configuration
   round-trip, rejection of inline encryption key material, key-reference-only
   encryption planning, local fleet policy evaluation, IPC serialisation, and

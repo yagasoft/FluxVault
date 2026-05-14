@@ -110,6 +110,38 @@ public sealed class ProtectionSelectionCompilerTests
         Assert.True(folder.Recursive);
     }
 
+    [Fact]
+    public void Compile_ignores_regex_scope_rules_as_watched_folders()
+    {
+        var root = FullPath(@"D:\Work");
+        var child = Path.Combine(root, "Docs");
+        var watched = ProtectionSelectionCompiler.Compile(
+            [
+                new ProtectionSelectionRule(
+                    "work-regex",
+                    root,
+                    ProtectionSelectionMode.RegexScope,
+                    CompressionPreference.Zstd,
+                    ResourceProfile.Balanced,
+                    IsEnabled: true,
+                    IncludeRegexRules:
+                    [
+                        new ProtectionScopedRegexRule("docx", @"\.docx$", ProtectionExclusionTarget.File)
+                    ]),
+                new ProtectionSelectionRule(
+                    "docs",
+                    child,
+                    ProtectionSelectionMode.RecursiveFolder,
+                    CompressionPreference.Zstd,
+                    ResourceProfile.Balanced,
+                    IsEnabled: true)
+            ]);
+
+        var folder = Assert.Single(watched);
+        Assert.Equal("docs", folder.Id);
+        Assert.Equal(child, folder.Path);
+    }
+
     private static string FullPath(string path)
     {
         return Path.GetFullPath(path);

@@ -116,7 +116,9 @@ public sealed partial class FileBrowserViewModel(
 
     public void ToggleFolderSelection(FileBrowserFolderNode folder)
     {
-        var next = folder.SelectionMode switch
+        currentRules.TryGetValue(folder.Path, out var existingRule);
+        var currentMode = existingRule?.Mode == ProtectionSelectionMode.RegexScope ? null : folder.SelectionMode;
+        var next = currentMode switch
         {
             null => (ProtectionSelectionMode?)ProtectionSelectionMode.RecursiveFolder,
             ProtectionSelectionMode.RecursiveFolder => ProtectionSelectionMode.ImmediateFiles,
@@ -126,19 +128,36 @@ public sealed partial class FileBrowserViewModel(
 
         if (next is null)
         {
-            RemoveSelectionRule(folder.Path);
+            if (existingRule is not null && HasRegexRules(existingRule))
+            {
+                ReplaceSelectionRule(existingRule with
+                {
+                    Mode = ProtectionSelectionMode.RegexScope,
+                    WorkloadPreset = null
+                });
+            }
+            else
+            {
+                RemoveSelectionRule(folder.Path);
+            }
         }
         else
         {
             var preset = WorkloadPolicyPresetCatalog.Get(DefaultWorkloadPreset);
-            ReplaceSelectionRule(new ProtectionSelectionRule(
-                StableRuleId("folder", folder.Path),
-                folder.Path,
-                next.Value,
-                preset.Compression,
-                preset.ResourceProfile,
-                IsEnabled: true,
-                WorkloadPreset: DefaultWorkloadPreset));
+            ReplaceSelectionRule((existingRule ?? new ProtectionSelectionRule(
+                    StableRuleId("folder", folder.Path),
+                    folder.Path,
+                    next.Value,
+                    preset.Compression,
+                    preset.ResourceProfile,
+                    IsEnabled: true,
+                    WorkloadPreset: DefaultWorkloadPreset)) with
+                {
+                    Mode = next.Value,
+                    Compression = preset.Compression,
+                    ResourceProfile = preset.ResourceProfile,
+                    WorkloadPreset = DefaultWorkloadPreset
+                });
         }
 
         ApplySelectionToTree([folder]);
@@ -271,20 +290,42 @@ public sealed partial class FileBrowserViewModel(
         var path = SelectedFile?.Path ?? SelectedFolder?.Path;
         if (string.IsNullOrWhiteSpace(path))
         {
-            SelectedRegexStatus = "Select a protected folder or file before applying regex rules.";
+            SelectedRegexStatus = "Select a folder or protected file before applying regex rules.";
             return;
         }
 
         var fullPath = Path.GetFullPath(path);
-        if (!currentRules.TryGetValue(fullPath, out var rule))
+        currentRules.TryGetValue(fullPath, out var rule);
+        if (rule is null && SelectedFile is not null)
         {
-            SelectedRegexStatus = "Regex rules can only be applied to a directly selected folder or file.";
+            SelectedRegexStatus = "Select the file for protection before applying file-local regex rules.";
             return;
         }
 
         var includeRules = ToScopedRegexRules("include", SelectedIncludeRegexText, ProtectionExclusionTarget.File);
         var excludeRules = ToScopedRegexRules("exclude", SelectedExcludeRegexText, ProtectionExclusionTarget.File);
-        ReplaceSelectionRule(rule with
+        if (rule is null && includeRules.Count == 0 && excludeRules.Count == 0)
+        {
+            SelectedRegexStatus = "No regex rules are defined for this folder.";
+            return;
+        }
+
+        if (rule is not null && rule.Mode == ProtectionSelectionMode.RegexScope && includeRules.Count == 0 && excludeRules.Count == 0)
+        {
+            RemoveSelectionRule(rule.Path);
+            ApplySelectionToTree(Roots);
+            SelectedRegexStatus = "Scoped regex rules cleared. Save selections to apply them.";
+            return;
+        }
+
+        var targetRule = rule ?? new ProtectionSelectionRule(
+            StableRuleId("regex", fullPath),
+            fullPath,
+            ProtectionSelectionMode.RegexScope,
+            CompressionPreference.Zstd,
+            ResourceProfile.Balanced,
+            IsEnabled: true);
+        ReplaceSelectionRule(targetRule with
         {
             IncludeRegexRules = includeRules,
             ExcludeRegexRules = excludeRules
@@ -363,7 +404,8 @@ public sealed partial class FileBrowserViewModel(
         }
 
         var fullPath = Path.GetFullPath(path);
-        if (!currentRules.TryGetValue(fullPath, out var rule))
+        if (!currentRules.TryGetValue(fullPath, out var rule)
+            || rule.Mode == ProtectionSelectionMode.RegexScope)
         {
             SelectedWorkloadPresetDescription = "Add this item before assigning a workload preset.";
             return;
@@ -426,7 +468,7 @@ public sealed partial class FileBrowserViewModel(
     {
         if (node.IsAccessible && currentRules.TryGetValue(node.Path, out var rule))
         {
-            node.SelectionMode = rule.Mode;
+            node.SelectionMode = rule.Mode == ProtectionSelectionMode.RegexScope ? null : rule.Mode;
             node.HasLocalRegexRules = HasRegexRules(rule);
         }
         else
@@ -456,7 +498,12 @@ public sealed partial class FileBrowserViewModel(
         {
             if (!baselineRules.TryGetValue(rule.Path, out var baseline))
             {
-                PendingChanges.Add(new PendingSelectionChangeRow("Added", rule.Path, rule.Mode.ToString()));
+                PendingChanges.Add(new PendingSelectionChangeRow(
+                    "Added",
+                    rule.Path,
+                    FormatProfile(rule),
+                    FormatRegexSummary([rule], rule.Path),
+                    FormatMode(rule.Mode)));
             }
             else if (baseline.Mode != rule.Mode
                      || baseline.Compression != rule.Compression
@@ -465,7 +512,12 @@ public sealed partial class FileBrowserViewModel(
                      || !RegexRulesEqual(baseline.IncludeRegexRules, rule.IncludeRegexRules)
                      || !RegexRulesEqual(baseline.ExcludeRegexRules, rule.ExcludeRegexRules))
             {
-                PendingChanges.Add(new PendingSelectionChangeRow("Changed", rule.Path, FormatChangeDetail(baseline, rule)));
+                PendingChanges.Add(new PendingSelectionChangeRow(
+                    "Changed",
+                    rule.Path,
+                    FormatProfile(rule),
+                    FormatRegexSummary([rule], rule.Path),
+                    FormatChangeDetail(baseline, rule)));
             }
         }
 
@@ -473,7 +525,12 @@ public sealed partial class FileBrowserViewModel(
         {
             if (!currentRules.ContainsKey(baseline.Path))
             {
-                PendingChanges.Add(new PendingSelectionChangeRow("Removed", baseline.Path, baseline.Mode.ToString()));
+                PendingChanges.Add(new PendingSelectionChangeRow(
+                    "Removed",
+                    baseline.Path,
+                    FormatProfile(baseline),
+                    FormatRegexSummary([baseline], baseline.Path),
+                    FormatMode(baseline.Mode)));
             }
         }
     }
@@ -546,7 +603,7 @@ public sealed partial class FileBrowserViewModel(
         {
             SelectedIncludeRegexText = string.Empty;
             SelectedExcludeRegexText = string.Empty;
-            SelectedRegexStatus = "This item is not directly selected. Add it before defining local regex rules.";
+            SelectedRegexStatus = "Define regex here to filter protected descendant folders without selecting this folder.";
             return;
         }
 
@@ -560,7 +617,8 @@ public sealed partial class FileBrowserViewModel(
         isLoadingSelectedWorkloadPreset = true;
         try
         {
-            if (!currentRules.TryGetValue(Path.GetFullPath(path), out var rule))
+            if (!currentRules.TryGetValue(Path.GetFullPath(path), out var rule)
+                || rule.Mode == ProtectionSelectionMode.RegexScope)
             {
                 SelectedWorkloadPreset = DefaultWorkloadPreset;
                 SelectedWorkloadPresetDescription = "This item is not directly selected. Add it before assigning a workload preset.";
@@ -582,12 +640,85 @@ public sealed partial class FileBrowserViewModel(
     {
         var baselinePreset = baseline.WorkloadPreset ?? WorkloadPolicyPresetId.GeneralPurpose;
         var rulePreset = rule.WorkloadPreset ?? WorkloadPolicyPresetId.GeneralPurpose;
+        if (baseline.Mode != rule.Mode)
+        {
+            return $"{FormatMode(baseline.Mode)} -> {FormatMode(rule.Mode)}";
+        }
+
         if (baselinePreset != rulePreset)
         {
             return $"{WorkloadPolicyPresetCatalog.Get(baselinePreset).DisplayName} -> {WorkloadPolicyPresetCatalog.Get(rulePreset).DisplayName}";
         }
 
-        return $"{baseline.Mode} -> {rule.Mode}";
+        return "Regex changed";
+    }
+
+    private static string FormatProfile(ProtectionSelectionRule rule)
+    {
+        if (rule.Mode == ProtectionSelectionMode.RegexScope)
+        {
+            return "No protection profile";
+        }
+
+        return WorkloadPolicyPresetCatalog.Get(rule.WorkloadPreset ?? WorkloadPolicyPresetId.GeneralPurpose).DisplayName;
+    }
+
+    private static string FormatMode(ProtectionSelectionMode mode)
+    {
+        return mode switch
+        {
+            ProtectionSelectionMode.RecursiveFolder => "Recursive folder",
+            ProtectionSelectionMode.ImmediateFiles => "Immediate files",
+            ProtectionSelectionMode.File => "File",
+            ProtectionSelectionMode.RegexScope => "Regex scope",
+            _ => mode.ToString()
+        };
+    }
+
+    private static string FormatRegexSummary(IReadOnlyList<ProtectionSelectionRule> rules, string path)
+    {
+        var applicable = rules
+            .Where(rule => CoversRegexPath(rule, path))
+            .OrderBy(rule => TrimPath(rule.Path).Length)
+            .ToArray();
+        var include = applicable
+            .SelectMany(rule => rule.IncludeRegexRules ?? [])
+            .Where(rule => rule.IsEnabled)
+            .Select(rule => rule.Pattern)
+            .ToArray();
+        var exclude = applicable
+            .SelectMany(rule => rule.ExcludeRegexRules ?? [])
+            .Where(rule => rule.IsEnabled)
+            .Select(rule => rule.Pattern)
+            .ToArray();
+        if (include.Length == 0 && exclude.Length == 0)
+        {
+            return "None";
+        }
+
+        var parts = new List<string>();
+        if (include.Length > 0)
+        {
+            parts.Add("Include: " + string.Join(", ", include));
+        }
+
+        if (exclude.Length > 0)
+        {
+            parts.Add("Exclude: " + string.Join(", ", exclude));
+        }
+
+        return string.Join("; ", parts);
+    }
+
+    private static bool CoversRegexPath(ProtectionSelectionRule rule, string path)
+    {
+        return rule.Mode switch
+        {
+            ProtectionSelectionMode.RegexScope or ProtectionSelectionMode.RecursiveFolder => IsSamePath(path, rule.Path) || IsUnderPath(path, rule.Path),
+            ProtectionSelectionMode.ImmediateFiles => IsSamePath(path, rule.Path),
+            ProtectionSelectionMode.File => IsSamePath(path, rule.Path),
+            _ => false
+        };
     }
 
     private static bool HasRegexRules(ProtectionSelectionRule rule)

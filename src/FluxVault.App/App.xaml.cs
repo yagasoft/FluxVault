@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
@@ -13,6 +14,7 @@ public partial class App : System.Windows.Application
     private MainWindow? mainWindow;
     private ActivityPaneWindow? activityPaneWindow;
     private IAppStartupRequestRouter? startupRequestRouter;
+    private readonly DashboardWindowLifetimeController dashboardWindowLifetime = new();
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -29,11 +31,7 @@ public partial class App : System.Windows.Application
 
         var viewModel = new MainWindowViewModel();
 
-        mainWindow = new MainWindow
-        {
-            DataContext = viewModel
-        };
-        mainWindow.Activated += (_, _) => _ = viewModel.RefreshAsync();
+        mainWindow = CreateMainWindow(viewModel);
         mainWindow.Show();
         startupRequestRouter.StartListeningAsync(HandleStartupRequestAsync).GetAwaiter().GetResult();
         _ = ApplyStartupRequestAsync(viewModel, startupRequest);
@@ -77,7 +75,7 @@ public partial class App : System.Windows.Application
         menu.Items.Add("Blocked files", null, (_, _) => ShowActivityPane());
         menu.Items.Add("Pause/resume protection", null, async (_, _) => await SetProtectionPausedAsync());
         menu.Items.Add("Options", null, (_, _) => ShowOptions());
-        menu.Items.Add("Exit", null, (_, _) => Shutdown());
+        menu.Items.Add("Exit", null, (_, _) => ExitApplication());
         return menu;
     }
 
@@ -86,11 +84,7 @@ public partial class App : System.Windows.Application
         if (mainWindow is null)
         {
             var viewModel = new MainWindowViewModel();
-            mainWindow = new MainWindow
-            {
-                DataContext = viewModel
-            };
-            mainWindow.Activated += (_, _) => _ = viewModel.RefreshAsync();
+            mainWindow = CreateMainWindow(viewModel);
             viewModel.StartAutoRefresh();
             _ = viewModel.RefreshAsync();
         }
@@ -101,9 +95,39 @@ public partial class App : System.Windows.Application
             _ = existingViewModel.RefreshAsync();
         }
 
-        mainWindow.Show();
-        mainWindow.WindowState = WindowState.Normal;
-        mainWindow.Activate();
+        var window = mainWindow;
+        dashboardWindowLifetime.ShowDashboard(
+            () => window.Show(),
+            () => window.WindowState = WindowState.Normal,
+            () => window.Activate());
+    }
+
+    private MainWindow CreateMainWindow(MainWindowViewModel viewModel)
+    {
+        var window = new MainWindow
+        {
+            DataContext = viewModel
+        };
+        window.Activated += (_, _) => _ = viewModel.RefreshAsync();
+        window.Closing += DashboardWindow_Closing;
+        return window;
+    }
+
+    private void DashboardWindow_Closing(object? sender, CancelEventArgs e)
+    {
+        dashboardWindowLifetime.HandleClosing(e, () =>
+        {
+            if (sender is Window window)
+            {
+                window.Hide();
+            }
+        });
+    }
+
+    private void ExitApplication()
+    {
+        dashboardWindowLifetime.BeginExit();
+        Shutdown();
     }
 
     private Task HandleStartupRequestAsync(AppStartupRequest request)

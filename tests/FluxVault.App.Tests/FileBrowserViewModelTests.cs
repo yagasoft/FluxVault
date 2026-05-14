@@ -218,6 +218,51 @@ public sealed class FileBrowserViewModelTests
     }
 
     [Fact]
+    public void Regex_can_be_defined_on_unselected_folder_as_scope_only_rule()
+    {
+        var node = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        viewModel.LoadSelectionRules([]);
+
+        viewModel.SelectedFolder = node;
+        viewModel.SelectedIncludeRegexText = @"\.docx$";
+        viewModel.SelectedExcludeRegexText = @"\\draft";
+        viewModel.ApplySelectedRegexRulesCommand.Execute(null);
+
+        var rule = Assert.Single(viewModel.GetSelectionRules());
+        Assert.Equal(ProtectionSelectionMode.RegexScope, rule.Mode);
+        Assert.Equal(Path.GetFullPath(@"D:\Work"), rule.Path);
+        Assert.Single(rule.IncludeRegexRules ?? []);
+        Assert.Single(rule.ExcludeRegexRules ?? []);
+        Assert.Contains(viewModel.PendingChanges, row =>
+            row.Change == "Added"
+            && row.Path == Path.GetFullPath(@"D:\Work")
+            && row.Profile == "No protection profile"
+            && row.Regex.Contains(@"\.docx$", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void File_checkbox_toggle_adds_and_removes_individual_file_rule()
+    {
+        var folder = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);
+        var viewModel = new FileBrowserViewModel(
+            new FakeFileBrowserFileSystem([], [], [new FileBrowserFileInfo(@"D:\Work\brief.docx", "brief.docx", 10)]));
+        viewModel.LoadSelectionRules([]);
+        viewModel.SelectFolder(folder);
+        var row = Assert.Single(viewModel.Files);
+
+        row.IsSelected = true;
+
+        var rule = Assert.Single(viewModel.GetSelectionRules());
+        Assert.Equal(ProtectionSelectionMode.File, rule.Mode);
+        Assert.Equal(Path.GetFullPath(@"D:\Work\brief.docx"), rule.Path);
+
+        row.IsSelected = false;
+
+        Assert.Empty(viewModel.GetSelectionRules());
+    }
+
+    [Fact]
     public void File_browser_context_commands_launch_selected_paths_through_shell_abstraction()
     {
         var shell = new FakeFileBrowserShellLauncher();

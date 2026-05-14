@@ -95,7 +95,7 @@ public sealed partial class FileBrowserFolderNode(
     public string RegexIndicator => HasLocalRegexRules ? "R" : string.Empty;
 
     public string RegexToolTip => HasLocalRegexRules
-        ? "This selected folder has local include or exclude regex rules."
+        ? "This folder has local include or exclude regex rules."
         : "No local regex rules are defined on this folder.";
 
     partial void OnSelectionModeChanged(ProtectionSelectionMode? value)
@@ -138,4 +138,6 @@ public sealed partial class FileBrowserFileRow(
 public sealed record PendingSelectionChangeRow(
     string Change,
     string Path,
+    string Profile,
+    string Regex,
     string Detail);

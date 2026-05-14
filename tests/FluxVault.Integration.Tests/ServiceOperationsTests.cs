@@ -65,6 +65,28 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Preview_restore_round_trips_bytes_without_writing_restore_hint()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "preview version");
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        await operations.RunBackupNowAsync();
+        var version = Assert.Single(await operations.ListVersionsAsync());
+
+        var response = await operations.HandleAsync(FluxVaultIpcRequest.RestoreVersionPreview(version.VersionId));
+
+        Assert.True(response.Success);
+        Assert.NotNull(response.OutputPath);
+        Assert.Equal(await Sha256Async(source), await Sha256Async(response.OutputPath));
+        Assert.False(Directory.Exists(Path.Combine(workspace.RepositoryPath, "lineage", "restore-hints")));
+    }
+
+    [Fact]
     public async Task Repeated_edits_create_multiple_versions_for_same_file()
     {
         using var workspace = TemporaryWorkspace.Create();

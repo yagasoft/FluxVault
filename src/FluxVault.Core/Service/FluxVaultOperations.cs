@@ -29,6 +29,9 @@ public sealed class FluxVaultOperations(
     private readonly string restoreRehearsalRoot = Path.Combine(
         maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
         "restore-rehearsal");
+    private readonly string versionPreviewRoot = Path.Combine(
+        maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
+        "version-preview");
     private DateTimeOffset? lastCaptureUtc;
     private string lastMessage = "Ready";
     private IReadOnlyList<string> lastMirrorWarnings = [];
@@ -181,6 +184,19 @@ public sealed class FluxVaultOperations(
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         await CreateRepository(configuration).RestoreAsync(versionId, outputPath, cancellationToken).ConfigureAwait(false);
         lastMessage = $"Restored {versionId} to {outputPath}.";
+    }
+
+    public async Task<string> RestoreVersionPreviewAsync(string versionId, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var repository = CreateRepository(configuration);
+        var inspection = await repository.InspectAsync(versionId, cancellationToken).ConfigureAwait(false);
+        var outputPath = BuildVersionPreviewPath(inspection.Manifest);
+        CleanOldVersionPreviews(DateTimeOffset.UtcNow.AddDays(-2));
+        await repository.RestorePreviewAsync(versionId, outputPath, cancellationToken).ConfigureAwait(false);
+        lastMessage = $"Prepared preview for {versionId}.";
+        return outputPath;
     }
 
     public async Task<RepositoryRetentionPreview> PreviewRetentionAsync(CancellationToken cancellationToken = default)
@@ -458,6 +474,7 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.ListVersions => FluxVaultIpcResponse.WithVersions(await ListVersionsAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.InspectVersion => FluxVaultIpcResponse.WithInspection(await InspectVersionAsync(Require(request.VersionId, "version id"), cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RestoreVersion => await RestoreVersionResponseAsync(request, cancellationToken).ConfigureAwait(false),
+            FluxVaultIpcCommand.RestoreVersionPreview => await RestoreVersionPreviewResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.ExportDiagnostics => FluxVaultIpcResponse.WithOutputPath(await ExportDiagnosticsAsync(Require(request.ExportPath, "export path"), cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.PreviewRetention => FluxVaultIpcResponse.WithRetentionPreview(await PreviewRetentionAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunRetentionNow => FluxVaultIpcResponse.WithRetentionResult(await RunRetentionNowAsync(cancellationToken).ConfigureAwait(false)),
@@ -503,6 +520,76 @@ public sealed class FluxVaultOperations(
         {
             return FluxVaultIpcResponse.Failure($"Restore failed for {outputPath}: {ex.Message}");
         }
+    }
+
+    private async Task<FluxVaultIpcResponse> RestoreVersionPreviewResponseAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
+    {
+        var versionId = Require(request.VersionId, "version id");
+        try
+        {
+            return FluxVaultIpcResponse.WithOutputPath(await RestoreVersionPreviewAsync(versionId, cancellationToken)
+                .ConfigureAwait(false));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            return FluxVaultIpcResponse.Failure($"Preview restore failed for {versionId}: {ex.Message}");
+        }
+    }
+
+    private string BuildVersionPreviewPath(FileVersionManifest manifest)
+    {
+        var fileName = Path.GetFileName(manifest.SourcePath);
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            fileName = $"{manifest.VersionId}.preview";
+        }
+
+        return Path.Combine(
+            versionPreviewRoot,
+            SafePathSegment(manifest.VersionId),
+            SafePathSegment(fileName));
+    }
+
+    private void CleanOldVersionPreviews(DateTimeOffset olderThanUtc)
+    {
+        try
+        {
+            if (!Directory.Exists(versionPreviewRoot))
+            {
+                return;
+            }
+
+            foreach (var file in Directory.EnumerateFiles(versionPreviewRoot, "*", SearchOption.AllDirectories))
+            {
+                var lastWrite = File.GetLastWriteTimeUtc(file);
+                if (lastWrite < olderThanUtc.UtcDateTime)
+                {
+                    File.Delete(file);
+                }
+            }
+
+            foreach (var directory in Directory.EnumerateDirectories(versionPreviewRoot, "*", SearchOption.AllDirectories)
+                         .OrderByDescending(path => path.Length))
+            {
+                if (!Directory.EnumerateFileSystemEntries(directory).Any())
+                {
+                    Directory.Delete(directory);
+                }
+            }
+        }
+        catch (IOException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+    }
+
+    private static string SafePathSegment(string value)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        var safe = new string(value.Select(character => invalid.Contains(character) ? '_' : character).ToArray()).Trim();
+        return string.IsNullOrWhiteSpace(safe) ? "preview" : safe;
     }
 
     private async Task<FluxVaultIpcResponse> SetProtectionPausedResponseAsync(CancellationToken cancellationToken)

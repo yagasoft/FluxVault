@@ -7,6 +7,7 @@ using FluxVault.Abstractions.Storage;
 using FluxVault.Abstractions.Sync;
 using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
+using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
 
 namespace FluxVault.App.Tests;
@@ -158,6 +159,158 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.True(viewModel.MirrorNodes[0].IsEnabled);
         Assert.Contains("1 of 2", viewModel.MirrorSummary);
         Assert.Contains("warning", viewModel.MirrorHealth, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Refresh_preserves_selected_mirror_node_when_status_refresh_rebuilds_rows()
+    {
+        var firstStatus = StatusWithMirrorNodes(
+            new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true),
+            new MirrorNodeConfiguration("usb", "USB shelf copy", @"E:\FluxVault", IsEnabled: true));
+        var refreshedStatus = StatusWithMirrorNodes(
+            new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true),
+            new MirrorNodeConfiguration("usb", "USB shelf copy", @"E:\FluxVault", IsEnabled: true));
+        var client = new FakeFluxVaultServiceClient(firstStatus, refreshedStatus);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedMirrorNode = viewModel.MirrorNodes.Single(node => node.Id == "usb");
+
+        await viewModel.RefreshAsync();
+
+        Assert.NotNull(viewModel.SelectedMirrorNode);
+        Assert.Equal("usb", viewModel.SelectedMirrorNode.Id);
+    }
+
+    [Fact]
+    public async Task Add_mirror_dialog_confirm_adds_node_and_marks_configuration_dirty()
+    {
+        var dialog = new FakeMirrorNodeDialogService
+        {
+            AddResult = new MirrorNodeDraft(
+                "Archive mirror",
+                @"D:\Mirrors\Archive",
+                IsEnabled: true,
+                CapacityBudgetBytes: 1_000_000_000,
+                Priority: 25)
+        };
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions());
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
+        await viewModel.RefreshAsync();
+
+        viewModel.AddMirrorCommand.Execute(null);
+        var mirror = Assert.Single(viewModel.MirrorNodes);
+        await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+
+        Assert.Equal("Archive mirror", mirror.Label);
+        Assert.Equal(@"D:\Mirrors\Archive", mirror.Path);
+        Assert.True(mirror.IsEnabled);
+        Assert.Equal(1_000_000_000, mirror.CapacityBudgetBytes);
+        Assert.Equal(25, mirror.Priority);
+        var saved = Assert.Single(client.SavedConfigurations);
+        var savedNode = Assert.Single(saved.MirrorSet.Nodes);
+        Assert.Equal("Archive mirror", savedNode.Label);
+    }
+
+    [Fact]
+    public async Task Add_mirror_dialog_cancel_does_not_add_node()
+    {
+        var dialog = new FakeMirrorNodeDialogService { AddResult = null };
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions());
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
+        await viewModel.RefreshAsync();
+
+        viewModel.AddMirrorCommand.Execute(null);
+
+        Assert.Empty(viewModel.MirrorNodes);
+        Assert.Empty(client.SavedConfigurations);
+    }
+
+    [Fact]
+    public async Task Edit_mirror_updates_parameters_and_marks_explicit_migration_pending()
+    {
+        var dialog = new FakeMirrorNodeDialogService
+        {
+            EditResult = new MirrorNodeDraft(
+                "Cloud copy",
+                @"D:\Mirrors\Cloud2",
+                IsEnabled: false,
+                CapacityBudgetBytes: 2_000_000_000,
+                Priority: 75)
+        };
+        var client = new FakeFluxVaultServiceClient(StatusWithMirrorNodes(
+            new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true, CapacityBudgetBytes: 1_000, Priority: 50)));
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
+        await viewModel.RefreshAsync();
+        viewModel.SelectedMirrorNode = Assert.Single(viewModel.MirrorNodes);
+
+        viewModel.EditMirrorCommand.Execute(null);
+
+        var mirror = Assert.Single(viewModel.MirrorNodes);
+        Assert.Equal(@"D:\Mirrors\Cloud2", mirror.Path);
+        Assert.False(mirror.IsEnabled);
+        Assert.Equal(2_000_000_000, mirror.CapacityBudgetBytes);
+        Assert.Equal(75, mirror.Priority);
+        Assert.Equal("Migration pending", mirror.MigrationStatus);
+        Assert.Contains("preview", mirror.MigrationDetail, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("repair", mirror.MigrationDetail, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Selected_mirror_action_state_follows_selection_and_enabled_count_rules()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithMirrorNodes(
+            new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true),
+            new MirrorNodeConfiguration("usb", "USB shelf copy", @"E:\FluxVault", IsEnabled: false)));
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedMirrorNode = null;
+
+        Assert.False(viewModel.HasSelectedMirror);
+        Assert.False(viewModel.CanShowSelectedMirrorRepairActions);
+        Assert.False(viewModel.CanShowSelectedMirrorDrainActions);
+        Assert.True(viewModel.CanShowGlobalMirrorRepairActions);
+
+        var disabledMirror = viewModel.MirrorNodes.Single(node => node.Id == "usb");
+        viewModel.SelectedMirrorNode = disabledMirror;
+
+        Assert.True(viewModel.HasSelectedMirror);
+        Assert.True(viewModel.CanEnableSelectedMirror);
+        Assert.False(viewModel.CanDisableSelectedMirror);
+        Assert.False(viewModel.CanShowSelectedMirrorDrainActions);
+
+        viewModel.EnableSelectedMirrorCommand.Execute(null);
+        var enabledMirror = viewModel.MirrorNodes.Single(node => node.Id == "cloud");
+        viewModel.SelectedMirrorNode = enabledMirror;
+
+        Assert.False(viewModel.CanEnableSelectedMirror);
+        Assert.True(viewModel.CanDisableSelectedMirror);
+        Assert.True(viewModel.CanShowSelectedMirrorRepairActions);
+        Assert.True(viewModel.CanShowSelectedMirrorDrainActions);
+    }
+
+    [Fact]
+    public async Task Placement_profiles_use_english_display_labels_instead_of_enum_names()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions() with
+        {
+            Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+            {
+                MirrorSet = new MirrorSetConfiguration(
+                [
+                    new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true)
+                ],
+                new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced))
+            }
+        });
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        Assert.Equal(
+            ["Full copy", "Capacity balanced", "Redundant"],
+            viewModel.MirrorPlacementProfileOptions.Select(option => option.DisplayName).ToArray());
+        Assert.Contains("Capacity balanced placement", viewModel.MirrorSummary);
+        Assert.DoesNotContain("CapacityBalanced", viewModel.MirrorSummary);
     }
 
     [Fact]
@@ -426,7 +579,7 @@ public sealed class MainWindowViewModelRefreshTests
         };
         var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
-        viewModel.SelectedMirrorNode = Assert.Single(viewModel.MirrorNodes);
+        viewModel.SelectedMirrorNode = viewModel.MirrorNodes.Single(node => node.Id == "cloud");
 
         await viewModel.PreviewSelectedMirrorRepairCommand.ExecuteAsync(null);
         await viewModel.RunSelectedMirrorRepairCommand.ExecuteAsync(null);
@@ -506,7 +659,8 @@ public sealed class MainWindowViewModelRefreshTests
             {
                 MirrorSet = new MirrorSetConfiguration(
                 [
-                    new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true)
+                    new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true),
+                    new MirrorNodeConfiguration("usb", "USB shelf copy", @"E:\FluxVault", IsEnabled: true)
                 ])
             }
         };
@@ -524,7 +678,7 @@ public sealed class MainWindowViewModelRefreshTests
         };
         var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
-        viewModel.SelectedMirrorNode = Assert.Single(viewModel.MirrorNodes);
+        viewModel.SelectedMirrorNode = viewModel.MirrorNodes.Single(node => node.Id == "cloud");
 
         await viewModel.PreviewSelectedMirrorDrainCommand.ExecuteAsync(null);
         await viewModel.RunSelectedMirrorDrainCommand.ExecuteAsync(null);
@@ -532,7 +686,7 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Contains((FluxVaultIpcCommand.PreviewMirrorDrain, "cloud"), client.MirrorRebalanceRequests);
         Assert.Contains((FluxVaultIpcCommand.RunMirrorDrain, "cloud"), client.MirrorRebalanceRequests);
         Assert.Contains("Mirror drain", viewModel.RepositoryHealthStatus);
-        var mirror = Assert.Single(viewModel.MirrorNodes);
+        var mirror = viewModel.MirrorNodes.Single(node => node.Id == "cloud");
         Assert.Contains("Warning", mirror.PlacementStatus);
     }
 
@@ -540,15 +694,16 @@ public sealed class MainWindowViewModelRefreshTests
     public async Task Save_configuration_persists_mirror_set_nodes_and_clears_legacy_mirror_path()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions());
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var dialog = new FakeMirrorNodeDialogService
+        {
+            AddResult = new MirrorNodeDraft("Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true)
+        };
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
         await viewModel.RefreshAsync();
 
         viewModel.AddMirrorCommand.Execute(null);
         var mirror = Assert.Single(viewModel.MirrorNodes);
         mirror.Id = "cloud";
-        mirror.Label = "Cloud copy";
-        mirror.Path = @"D:\Mirrors\Cloud";
-        mirror.IsEnabled = true;
         await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
 
         var saved = Assert.Single(client.SavedConfigurations);
@@ -564,7 +719,16 @@ public sealed class MainWindowViewModelRefreshTests
     public async Task Save_configuration_persists_mirror_placement_policy_and_node_capacity_priority()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions());
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var dialog = new FakeMirrorNodeDialogService
+        {
+            AddResult = new MirrorNodeDraft(
+                "Cloud copy",
+                @"D:\Mirrors\Cloud",
+                IsEnabled: true,
+                CapacityBudgetBytes: 1_000_000_000,
+                Priority: 250)
+        };
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
         await viewModel.RefreshAsync();
 
         viewModel.MirrorPlacementProfile = MirrorPlacementProfile.Redundant;
@@ -572,11 +736,6 @@ public sealed class MainWindowViewModelRefreshTests
         viewModel.AddMirrorCommand.Execute(null);
         var mirror = Assert.Single(viewModel.MirrorNodes);
         mirror.Id = "cloud";
-        mirror.Label = "Cloud copy";
-        mirror.Path = @"D:\Mirrors\Cloud";
-        mirror.IsEnabled = true;
-        mirror.CapacityBudgetBytes = 1_000_000_000;
-        mirror.Priority = 250;
         await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
 
         var saved = Assert.Single(client.SavedConfigurations);
@@ -744,6 +903,44 @@ public sealed class MainWindowViewModelRefreshTests
 
         Assert.Single(viewModel.RecentVersions);
         Assert.Contains("unavailable", viewModel.ServiceStatus);
+    }
+
+    [Fact]
+    public async Task Refresh_exposes_profile_and_inherited_regex_on_protection_rows()
+    {
+        var scope = new ProtectionSelectionRule(
+            "work-regex",
+            Path.GetFullPath(@"D:\Work"),
+            ProtectionSelectionMode.RegexScope,
+            CompressionPreference.Zstd,
+            ResourceProfile.Balanced,
+            IsEnabled: true,
+            IncludeRegexRules:
+            [
+                new ProtectionScopedRegexRule("docx", @"\.docx$", ProtectionExclusionTarget.File)
+            ]);
+        var selectedFolder = new ProtectionSelectionRule(
+            "docs",
+            Path.GetFullPath(@"D:\Work\Docs"),
+            ProtectionSelectionMode.RecursiveFolder,
+            CompressionPreference.Zstd,
+            ResourceProfile.Balanced,
+            IsEnabled: true,
+            WorkloadPreset: WorkloadPolicyPresetId.OfficeDocuments);
+        var configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+        {
+            SelectionRules = [scope, selectedFolder],
+            WatchedFolders = ProtectionSelectionCompiler.Compile([scope, selectedFolder])
+        };
+        var status = StatusWithVersions() with { Configuration = configuration };
+        var client = new FakeFluxVaultServiceClient(status);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+
+        await viewModel.RefreshAsync();
+
+        var row = Assert.Single(viewModel.WatchedFolders);
+        Assert.Equal("Office documents", row.Profile);
+        Assert.Contains(@"\.docx$", row.Regex, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1071,6 +1268,30 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Open_selected_version_preview_restores_to_service_preview_and_launches_returned_file()
+    {
+        var previewPath = Path.GetFullPath(@"C:\ProgramData\FluxVault\state\version-preview\v1\draft.txt");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"))
+        {
+            RestorePreviewResponse = FluxVaultIpcResponse.WithOutputPath(previewPath)
+        };
+        var launcher = new FakeVersionPreviewLauncher();
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker(),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true),
+            launcher);
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+
+        await viewModel.OpenSelectedVersionPreviewCommand.ExecuteAsync(null);
+
+        Assert.Equal("v1", Assert.Single(client.RestorePreviewRequests));
+        Assert.Equal([previewPath], launcher.OpenedFiles);
+    }
+
+    [Fact]
     public async Task Restore_cancelled_destination_does_not_send_ipc_and_preserves_selection()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
@@ -1254,6 +1475,17 @@ public sealed class MainWindowViewModelRefreshTests
                 128,
                 1))
             .ToArray());
+    }
+
+    private static FluxVaultServiceStatus StatusWithMirrorNodes(params MirrorNodeConfiguration[] nodes)
+    {
+        return StatusWithVersions() with
+        {
+            Configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+            {
+                MirrorSet = new MirrorSetConfiguration(nodes)
+            }
+        };
     }
 
     private static FluxVaultServiceStatus StatusWithVersionSummaries(params RepositoryVersionSummary[] versions)
@@ -1478,9 +1710,13 @@ public sealed class MainWindowViewModelRefreshTests
 
         public List<(string VersionId, string OutputPath)> RestoreRequests { get; } = [];
 
+        public List<string> RestorePreviewRequests { get; } = [];
+
         public List<FluxVaultConfiguration> SavedConfigurations { get; } = [];
 
         public FluxVaultIpcResponse RestoreResponse { get; init; } = FluxVaultIpcResponse.Ok();
+
+        public FluxVaultIpcResponse RestorePreviewResponse { get; init; } = FluxVaultIpcResponse.Ok();
 
         public FluxVaultIpcResponse RepositoryScrubResponse { get; init; } = FluxVaultIpcResponse.Ok();
 
@@ -1519,6 +1755,12 @@ public sealed class MainWindowViewModelRefreshTests
                     request.VersionId ?? throw new InvalidOperationException("Missing version id."),
                     request.OutputPath ?? throw new InvalidOperationException("Missing output path.")));
                 return Task.FromResult(RestoreResponse);
+            }
+
+            if (request.Command == FluxVaultIpcCommand.RestoreVersionPreview)
+            {
+                RestorePreviewRequests.Add(request.VersionId ?? throw new InvalidOperationException("Missing version id."));
+                return Task.FromResult(RestorePreviewResponse);
             }
 
             if (request.Command == FluxVaultIpcCommand.SaveConfiguration)
@@ -1564,6 +1806,30 @@ public sealed class MainWindowViewModelRefreshTests
         public void ThrowOnNextRestore(Exception exception)
         {
             nextRestoreException = exception;
+        }
+    }
+
+    private sealed class FakeMirrorNodeDialogService : IMirrorNodeDialogService
+    {
+        public MirrorNodeDraft? AddResult { get; init; }
+
+        public MirrorNodeDraft? EditResult { get; init; }
+
+        public string? BrowseResult { get; init; }
+
+        public MirrorNodeDraft? ShowAddMirrorDialog(MirrorNodeDraft initialDraft)
+        {
+            return AddResult;
+        }
+
+        public MirrorNodeDraft? ShowEditMirrorDialog(MirrorNodeDraft currentDraft)
+        {
+            return EditResult;
+        }
+
+        public string BrowseMirrorPath(string currentPath)
+        {
+            return BrowseResult ?? currentPath;
         }
     }
 
@@ -1665,6 +1931,16 @@ public sealed class MainWindowViewModelRefreshTests
             ConfirmCount++;
             LastDestinationPath = destinationPath;
             return confirmOverwrite;
+        }
+    }
+
+    private sealed class FakeVersionPreviewLauncher : IVersionPreviewLauncher
+    {
+        public List<string> OpenedFiles { get; } = [];
+
+        public void OpenFile(string filePath)
+        {
+            OpenedFiles.Add(Path.GetFullPath(filePath));
         }
     }
 

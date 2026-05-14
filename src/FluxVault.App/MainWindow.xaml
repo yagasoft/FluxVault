@@ -139,7 +139,8 @@
                 <Style TargetType="TabItem">
                     <Setter Property="Width" Value="132" />
                     <Setter Property="Padding" Value="12,10" />
-                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
                 </Style>
             </TabControl.Resources>
 
@@ -165,10 +166,18 @@
                     </Border>
                     <Button Grid.Row="1" Grid.Column="1" Content="Open Mirrors" Command="{Binding OpenMirrorsWorkspaceCommand}" Margin="0" />
 
-                    <DataGrid Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding WatchedFolders}" SelectedItem="{Binding SelectedWatchedFolder}">
+                    <DataGrid Grid.Row="3"
+                              Grid.ColumnSpan="2"
+                              Name="WatchedFoldersGrid"
+                              ItemsSource="{Binding WatchedFolders}"
+                              SelectedItem="{Binding SelectedWatchedFolder}"
+                              MouseDoubleClick="WatchedFoldersGrid_MouseDoubleClick"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Folder" Binding="{Binding Path}" Width="*" />
-                            <DataGridTextColumn Header="Profile" Binding="{Binding ResourceProfile}" Width="120" />
+                            <DataGridTextColumn Header="Folder" Binding="{Binding Path}" Width="360" />
+                            <DataGridTextColumn Header="Profile" Binding="{Binding Profile}" Width="160" />
+                            <DataGridTextColumn Header="Regex" Binding="{Binding Regex}" Width="260" />
                             <DataGridTextColumn Header="Compression" Binding="{Binding Compression}" Width="130" />
                             <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="300" />
                         </DataGrid.Columns>
@@ -177,7 +186,7 @@
             </TabItem>
 
             <TabItem Header="📁 File browser">
-                <Grid Margin="18" Name="FileBrowserPaneGrid">
+                <Grid Margin="18" Name="FileBrowserPaneGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -306,8 +315,7 @@
                               SelectedItem="{Binding FileBrowser.SelectedFile}"
                               Loaded="FileBrowserGrid_Loaded"
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                              ScrollViewer.VerticalScrollBarVisibility="Auto"
-                              ToolTip="Files in the selected folder. Check a file to protect only that file.">
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <DataGrid.ContextMenu>
                             <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                                 <MenuItem Header="Open in default app"
@@ -317,7 +325,15 @@
                             </ContextMenu>
                         </DataGrid.ContextMenu>
                         <DataGrid.Columns>
-                            <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="SizeToCells" MinWidth="90" />
+                            <DataGridTemplateColumn Header="Selected" Width="SizeToCells" MinWidth="90">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTextColumn Header="File" Binding="{Binding Name}" Width="SizeToCells" MinWidth="160" />
                             <DataGridTextColumn Header="Bytes" Binding="{Binding Length}" Width="SizeToCells" MinWidth="90" />
                         </DataGrid.Columns>
@@ -330,11 +346,12 @@
                               ItemsSource="{Binding FileBrowser.PendingChanges}"
                               Loaded="FileBrowserGrid_Loaded"
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                              ScrollViewer.VerticalScrollBarVisibility="Auto"
-                              ToolTip="Unsaved File browser selection changes. Press Save selections to apply them.">
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Change" Binding="{Binding Change}" Width="SizeToCells" MinWidth="90" />
                             <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="SizeToCells" MinWidth="180" />
+                            <DataGridTextColumn Header="Profile" Binding="{Binding Profile}" Width="SizeToCells" MinWidth="140" />
+                            <DataGridTextColumn Header="Regex" Binding="{Binding Regex}" Width="SizeToCells" MinWidth="180" />
                             <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="SizeToCells" MinWidth="120" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -343,7 +360,10 @@
 
             <TabItem Header="🧱 Repository">
                 <Grid Margin="18">
-                    <DataGrid ItemsSource="{Binding RecentVersions}" SelectedItem="{Binding SelectedVersion}">
+                    <DataGrid Name="RecentVersionsGrid"
+                              ItemsSource="{Binding RecentVersions}"
+                              SelectedItem="{Binding SelectedVersion}"
+                              MouseDoubleClick="RecentVersionsGrid_MouseDoubleClick">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Version" Binding="{Binding VersionId}" Width="220" />
                             <DataGridTextColumn Header="File" Binding="{Binding SourcePath}" Width="*" />
@@ -366,62 +386,215 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <WrapPanel>
-                        <TextBlock Text="{Binding MirrorSummary}" VerticalAlignment="Center" Foreground="#3C4043" Margin="0,0,12,0" />
-                        <TextBlock Text="Profile" VerticalAlignment="Center" Margin="0,0,6,0" />
-                        <ComboBox ItemsSource="{Binding MirrorPlacementProfiles}"
-                                  SelectedItem="{Binding MirrorPlacementProfile}"
-                                  Width="150"
-                                  Margin="0,0,8,0"
-                                  ToolTip="Choose how new chunks are placed across enabled mirrors." />
-                        <TextBlock Text="Minimum copies" VerticalAlignment="Center" Margin="0,0,6,0" />
-                        <TextBox Text="{Binding MinimumMirrorCopies, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="56"
-                                 Margin="0,0,12,0"
-                                 ToolTip="Minimum mirror copies requested by the redundant placement profile." />
-                        <Button Content="Add mirror" Command="{Binding AddMirrorCommand}" Margin="0,0,8,0"
-                                ToolTip="Add a mirror node." />
-                        <Button Content="Browse path" Command="{Binding BrowseSelectedMirrorCommand}" Margin="0,0,8,0"
-                                ToolTip="Choose the folder for the selected mirror node." />
-                        <Button Content="Remove from configuration" Command="{Binding RemoveMirrorCommand}" Margin="0,0,8,0"
-                                ToolTip="Remove the selected mirror node from configuration without moving existing mirror data." />
-                        <Button Content="Preview drain" Command="{Binding PreviewSelectedMirrorDrainCommand}" Margin="0,0,8,0"
-                                ToolTip="Preview safe copy and delete actions for draining the selected mirror node." />
-                        <Button Content="Drain selected" Command="{Binding RunSelectedMirrorDrainCommand}" Margin="0,0,8,0"
-                                ToolTip="Copy required artefacts to remaining mirrors, then disable the selected mirror after safe cleanup." />
-                        <Button Content="Preview placement" Command="{Binding PreviewMirrorRebalanceCommand}" Margin="0,0,8,0"
-                                ToolTip="Preview mirror copy and cleanup actions needed to match the current placement policy." />
-                        <Button Content="Apply placement" Command="{Binding RunMirrorRebalanceCommand}" Margin="0,0,8,0"
-                                ToolTip="Apply mirror copy and cleanup actions needed to match the current placement policy." />
-                        <Button Content="Preview selected repair" Command="{Binding PreviewSelectedMirrorRepairCommand}" Margin="8,0,8,0"
-                                ToolTip="Preview repairable drift for the selected mirror node." />
-                        <Button Content="Repair selected" Command="{Binding RunSelectedMirrorRepairCommand}" Margin="0,0,8,0"
-                                ToolTip="Repair the selected mirror from the healthy primary repository." />
-                        <Button Content="Preview all repairs" Command="{Binding PreviewMirrorRepairCommand}" Margin="0,0,8,0"
-                                ToolTip="Preview repairable primary and mirror drift across enabled mirror nodes." />
-                        <Button Content="Repair all" Command="{Binding RunMirrorRepairCommand}"
-                                ToolTip="Repair the primary from healthy mirrors and repair enabled mirrors from the healthy primary." />
-                    </WrapPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <WrapPanel Grid.Row="0">
+                            <TextBlock Text="{Binding MirrorSummary}" VerticalAlignment="Center" Foreground="#3C4043" Margin="0,0,12,0" />
+                            <TextBlock Text="Profile" VerticalAlignment="Center" Margin="0,0,6,0" />
+                            <ComboBox ItemsSource="{Binding MirrorPlacementProfileOptions}"
+                                      SelectedValue="{Binding MirrorPlacementProfile}"
+                                      SelectedValuePath="Value"
+                                      DisplayMemberPath="DisplayName"
+                                      Width="170"
+                                      Margin="0,0,8,0"
+                                      ToolTip="Choose how new chunks are placed across enabled mirrors." />
+                            <TextBlock Text="Minimum copies" VerticalAlignment="Center" Margin="0,0,6,0" />
+                            <TextBox Text="{Binding MinimumMirrorCopies, UpdateSourceTrigger=PropertyChanged}"
+                                     Width="56"
+                                     Margin="0,0,12,0"
+                                     ToolTip="Minimum mirror copies requested by the redundant placement profile." />
+                            <Button Content="New mirror" Command="{Binding AddMirrorCommand}" Margin="0,0,8,0"
+                                    ToolTip="Add a mirror node." />
+                            <Button Content="Preview placement" Command="{Binding PreviewMirrorRebalanceCommand}" Margin="0,0,8,0"
+                                    ToolTip="Preview mirror copy and cleanup actions needed to match the current placement policy.">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanShowMirrorPlacementActions}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="Apply placement" Command="{Binding RunMirrorRebalanceCommand}" Margin="0,0,8,0"
+                                    ToolTip="Apply mirror copy and cleanup actions needed to match the current placement policy.">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanShowMirrorPlacementActions}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="Preview all repairs" Command="{Binding PreviewMirrorRepairCommand}" Margin="0,0,8,0"
+                                    ToolTip="Preview repairable primary and mirror drift across enabled mirror nodes.">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanShowGlobalMirrorRepairActions}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="Repair all" Command="{Binding RunMirrorRepairCommand}"
+                                    ToolTip="Repair the primary from healthy mirrors and repair enabled mirrors from the healthy primary.">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanShowGlobalMirrorRepairActions}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </WrapPanel>
+
+                        <StackPanel Grid.Row="2" Name="MirrorSelectedActionsPanel" Orientation="Horizontal">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasSelectedMirror}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Button Content="Edit" Command="{Binding EditMirrorCommand}" Margin="0,0,8,0"
+                                    ToolTip="Edit the selected mirror parameters." />
+                            <Button Content="Enable" Command="{Binding EnableSelectedMirrorCommand}" Margin="0,0,8,0"
+                                    ToolTip="Enable the selected mirror.">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanEnableSelectedMirror}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="Disable" Command="{Binding DisableSelectedMirrorCommand}" Margin="0,0,8,0"
+                                    ToolTip="Disable the selected mirror without deleting existing mirror data.">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanDisableSelectedMirror}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="Browse path" Command="{Binding BrowseSelectedMirrorCommand}" Margin="0,0,8,0"
+                                    ToolTip="Choose the folder for the selected mirror node." />
+                            <Button Content="Remove from configuration" Command="{Binding RemoveMirrorCommand}" Margin="0,0,8,0"
+                                    ToolTip="Remove the selected mirror node from configuration without moving existing mirror data." />
+                            <Button Content="Preview selected repair" Command="{Binding PreviewSelectedMirrorRepairCommand}" Margin="0,0,8,0"
+                                    ToolTip="Preview repairable drift for the selected mirror node.">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanShowSelectedMirrorRepairActions}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="Repair selected" Command="{Binding RunSelectedMirrorRepairCommand}" Margin="0,0,8,0"
+                                    ToolTip="Repair the selected mirror from the healthy primary repository.">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanShowSelectedMirrorRepairActions}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="Preview drain" Command="{Binding PreviewSelectedMirrorDrainCommand}" Margin="0,0,8,0"
+                                    ToolTip="Preview safe copy and delete actions for draining the selected mirror node.">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanShowSelectedMirrorDrainActions}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="Drain selected" Command="{Binding RunSelectedMirrorDrainCommand}"
+                                    ToolTip="Copy required artefacts to remaining mirrors, then disable the selected mirror after safe cleanup.">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanShowSelectedMirrorDrainActions}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="4"
+                                   Text="{Binding MirrorActionStatus}"
+                                   Foreground="#5F6368"
+                                   TextWrapping="Wrap" />
+                    </Grid>
 
                     <DataGrid Grid.Row="2"
+                              Name="MirrorNodesGrid"
                               ItemsSource="{Binding MirrorNodes}"
                               SelectedItem="{Binding SelectedMirrorNode}"
                               AutoGenerateColumns="False"
                               CanUserAddRows="False"
                               CanUserDeleteRows="False"
-                              IsReadOnly="False"
-                              ToolTip="Configured full-copy mirror nodes.">
+                              IsReadOnly="True"
+                              Loaded="MirrorNodesGrid_Loaded"
+                              Unloaded="MirrorNodesGrid_Unloaded"
+                              ColumnReordered="MirrorNodesGrid_ColumnLayoutChanged"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Label" Binding="{Binding Label, UpdateSourceTrigger=PropertyChanged}" Width="180" />
-                            <DataGridTextColumn Header="Path" Binding="{Binding Path, UpdateSourceTrigger=PropertyChanged}" Width="*" />
-                            <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Width="90" />
-                            <DataGridTextColumn Header="Mode" Binding="{Binding Status}" Width="150" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Capacity bytes" Binding="{Binding CapacityBudgetBytes, UpdateSourceTrigger=PropertyChanged}" Width="130" />
-                            <DataGridTextColumn Header="Priority" Binding="{Binding Priority, UpdateSourceTrigger=PropertyChanged}" Width="90" />
-                            <DataGridTextColumn Header="Placement" Binding="{Binding PlacementStatus}" Width="170" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Placement detail" Binding="{Binding PlacementDetail}" Width="260" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Repair" Binding="{Binding RepairStatus}" Width="170" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Repair detail" Binding="{Binding RepairDetail}" Width="260" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Label" Binding="{Binding Label}" Width="180" />
+                            <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="360" />
+                            <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" Width="90" />
+                            <DataGridTextColumn Header="Mode" Binding="{Binding Status}" Width="130" />
+                            <DataGridTextColumn Header="Capacity bytes" Binding="{Binding CapacityBudgetBytes}" Width="140" />
+                            <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" Width="90" />
+                            <DataGridTextColumn Header="Migration" Binding="{Binding MigrationStatus}" Width="160" />
+                            <DataGridTextColumn Header="Migration detail" Binding="{Binding MigrationDetail}" Width="300" />
+                            <DataGridTextColumn Header="Placement" Binding="{Binding PlacementStatus}" Width="170" />
+                            <DataGridTextColumn Header="Placement detail" Binding="{Binding PlacementDetail}" Width="300" />
+                            <DataGridTextColumn Header="Repair" Binding="{Binding RepairStatus}" Width="170" />
+                            <DataGridTextColumn Header="Repair detail" Binding="{Binding RepairDetail}" Width="300" />
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -552,8 +725,7 @@
                     </Grid>
 
                     <DataGrid Grid.Row="2"
-                              ItemsSource="{Binding RepositoryHealthRows}"
-                              ToolTip="Repository health, mirror, USN, blocked-file, scrub, and restore rehearsal status.">
+                              ItemsSource="{Binding RepositoryHealthRows}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Area" Binding="{Binding Name}" Width="180" />
                             <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="220" />

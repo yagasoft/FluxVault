@@ -12,6 +12,7 @@ using FluxVault.Abstractions.Sync;
 using FluxVault.App.Services;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
+using FluxVault.Core.Policies;
 using WinForms = System.Windows.Forms;
 
 namespace FluxVault.App.ViewModels;
@@ -23,6 +24,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly IFluxVaultWindowsServiceController windowsServiceController;
     private readonly IRestoreDestinationPicker restoreDestinationPicker;
     private readonly IRestoreOverwriteConfirmation restoreOverwriteConfirmation;
+    private readonly IVersionPreviewLauncher versionPreviewLauncher;
+    private readonly IMirrorNodeDialogService mirrorNodeDialogService;
     private readonly TimeSpan autoRefreshInterval;
     private readonly SemaphoreSlim refreshGate = new(1, 1);
     private CancellationTokenSource? autoRefreshCancellation;
@@ -39,6 +42,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private SecurityPostureConfiguration currentSecurityPosture = SecurityPostureConfiguration.CreateDefault();
     private EnterpriseFleetConfiguration currentFleet = EnterpriseFleetConfiguration.CreateDefault();
     private IReadOnlyList<ProtectionExclusionRule> currentExclusionRules = [];
+    private readonly Dictionary<string, MirrorMigrationState> pendingMirrorMigrations = new(StringComparer.OrdinalIgnoreCase);
     private RepositoryScrubReport? currentScrubReport;
     private RestoreRehearsalReport? currentRestoreRehearsalReport;
     private MirrorRepairReport? currentMirrorRepairReport;
@@ -151,7 +155,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
             new WindowsFluxVaultServiceController(),
             new SaveFileRestoreDestinationPicker(),
-            new MessageBoxRestoreOverwriteConfirmation())
+            new MessageBoxRestoreOverwriteConfirmation(),
+            new WpfMirrorNodeDialogService())
     {
     }
 
@@ -162,7 +167,23 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
             new AssumedRunningWindowsServiceController(),
             new SaveFileRestoreDestinationPicker(),
-            new MessageBoxRestoreOverwriteConfirmation())
+            new MessageBoxRestoreOverwriteConfirmation(),
+            new WpfMirrorNodeDialogService())
+    {
+    }
+
+    public MainWindowViewModel(
+        IFluxVaultServiceClient client,
+        TimeSpan autoRefreshInterval,
+        IMirrorNodeDialogService mirrorNodeDialogService)
+        : this(
+            client,
+            autoRefreshInterval,
+            new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
+            new AssumedRunningWindowsServiceController(),
+            new SaveFileRestoreDestinationPicker(),
+            new MessageBoxRestoreOverwriteConfirmation(),
+            mirrorNodeDialogService)
     {
     }
 
@@ -177,7 +198,26 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
             new AssumedRunningWindowsServiceController(),
             restoreDestinationPicker,
-            restoreOverwriteConfirmation)
+            restoreOverwriteConfirmation,
+            new WpfMirrorNodeDialogService())
+    {
+    }
+
+    public MainWindowViewModel(
+        IFluxVaultServiceClient client,
+        TimeSpan autoRefreshInterval,
+        IRestoreDestinationPicker restoreDestinationPicker,
+        IRestoreOverwriteConfirmation restoreOverwriteConfirmation,
+        IVersionPreviewLauncher versionPreviewLauncher)
+        : this(
+            client,
+            autoRefreshInterval,
+            new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
+            new AssumedRunningWindowsServiceController(),
+            restoreDestinationPicker,
+            restoreOverwriteConfirmation,
+            new WpfMirrorNodeDialogService(),
+            versionPreviewLauncher)
     {
     }
 
@@ -191,7 +231,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             fileBrowser,
             new WindowsFluxVaultServiceController(),
             new SaveFileRestoreDestinationPicker(),
-            new MessageBoxRestoreOverwriteConfirmation())
+            new MessageBoxRestoreOverwriteConfirmation(),
+            new WpfMirrorNodeDialogService())
     {
     }
 
@@ -206,7 +247,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             fileBrowser,
             windowsServiceController,
             new SaveFileRestoreDestinationPicker(),
-            new MessageBoxRestoreOverwriteConfirmation())
+            new MessageBoxRestoreOverwriteConfirmation(),
+            new WpfMirrorNodeDialogService())
     {
     }
 
@@ -216,12 +258,16 @@ public sealed partial class MainWindowViewModel : ObservableObject
         FileBrowserViewModel fileBrowser,
         IFluxVaultWindowsServiceController windowsServiceController,
         IRestoreDestinationPicker restoreDestinationPicker,
-        IRestoreOverwriteConfirmation restoreOverwriteConfirmation)
+        IRestoreOverwriteConfirmation restoreOverwriteConfirmation,
+        IMirrorNodeDialogService? mirrorNodeDialogService = null,
+        IVersionPreviewLauncher? versionPreviewLauncher = null)
     {
         this.client = client;
         this.windowsServiceController = windowsServiceController;
         this.restoreDestinationPicker = restoreDestinationPicker;
         this.restoreOverwriteConfirmation = restoreOverwriteConfirmation;
+        this.versionPreviewLauncher = versionPreviewLauncher ?? new ShellVersionPreviewLauncher();
+        this.mirrorNodeDialogService = mirrorNodeDialogService ?? new WpfMirrorNodeDialogService();
         this.autoRefreshInterval = autoRefreshInterval;
         FileBrowser = fileBrowser;
         FileBrowser.SelectionRulesChanged += (_, _) => MarkConfigurationDirty();
@@ -252,6 +298,65 @@ public sealed partial class MainWindowViewModel : ObservableObject
         MirrorPlacementProfile.CapacityBalanced,
         MirrorPlacementProfile.Redundant
     ];
+
+    public IReadOnlyList<MirrorPlacementProfileOption> MirrorPlacementProfileOptions { get; } =
+    [
+        new(MirrorPlacementProfile.FullCopy, "Full copy"),
+        new(MirrorPlacementProfile.CapacityBalanced, "Capacity balanced"),
+        new(MirrorPlacementProfile.Redundant, "Redundant")
+    ];
+
+    public bool HasSelectedMirror => SelectedMirrorNode is not null;
+
+    public bool CanEnableSelectedMirror => SelectedMirrorNode is { IsEnabled: false };
+
+    public bool CanDisableSelectedMirror => SelectedMirrorNode is { IsEnabled: true };
+
+    public bool CanShowSelectedMirrorRepairActions => SelectedMirrorNode is { IsEnabled: true };
+
+    public bool CanShowSelectedMirrorDrainActions => SelectedMirrorNode is { IsEnabled: true } && EnabledMirrorCount >= 2;
+
+    public bool CanShowGlobalMirrorRepairActions => EnabledMirrorCount > 0;
+
+    public bool CanShowMirrorPlacementActions => EnabledMirrorCount > 0 && HasRequiredMirrorCountForPlacement;
+
+    public string MirrorActionStatus
+    {
+        get
+        {
+            if (MirrorNodes.Count == 0)
+            {
+                return "Add a mirror to enable placement, repair, and drain actions.";
+            }
+
+            if (!HasRequiredMirrorCountForPlacement)
+            {
+                return $"Enable at least {MinimumMirrorCopies} mirrors to satisfy the redundant placement policy.";
+            }
+
+            if (SelectedMirrorNode is null)
+            {
+                return "Select a mirror to edit, enable, disable, repair, or drain it.";
+            }
+
+            if (!SelectedMirrorNode.IsEnabled)
+            {
+                return "Enable the selected mirror before repair or drain actions are available.";
+            }
+
+            if (!CanShowSelectedMirrorDrainActions)
+            {
+                return "Drain needs the selected mirror plus at least one other enabled mirror.";
+            }
+
+            return "Selected mirror actions are available.";
+        }
+    }
+
+    private int EnabledMirrorCount => MirrorNodes.Count(node => node.IsEnabled);
+
+    private bool HasRequiredMirrorCountForPlacement =>
+        MirrorPlacementProfile != MirrorPlacementProfile.Redundant || EnabledMirrorCount >= MinimumMirrorCopies;
 
     public IFluxVaultServiceClient ServiceClient => client;
 
@@ -437,6 +542,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
         MarkConfigurationDirty();
     }
 
+    partial void OnSelectedMirrorNodeChanged(MirrorNodeRow? value)
+    {
+        RefreshMirrorActionState();
+    }
+
     private void MarkConfigurationDirty()
     {
         if (!isApplyingStatus)
@@ -475,6 +585,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private void ReplaceMirrorNodes(IReadOnlyList<MirrorNodeConfiguration> nodes)
     {
+        var selectedMirrorNodeId = SelectedMirrorNode?.Id;
         foreach (var row in MirrorNodes)
         {
             row.PropertyChanged -= MirrorNode_PropertyChanged;
@@ -483,13 +594,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
         MirrorNodes.Clear();
         foreach (var node in nodes)
         {
-            AddMirrorRow(new MirrorNodeRow(node.Id, node.Label, node.Path, node.IsEnabled, node.CapacityBudgetBytes, node.Priority));
+            var row = new MirrorNodeRow(node.Id, node.Label, node.Path, node.IsEnabled, node.CapacityBudgetBytes, node.Priority);
+            ApplyPendingMirrorMigration(row);
+            AddMirrorRow(row);
         }
 
-        SelectedMirrorNode = MirrorNodes.FirstOrDefault();
+        SelectedMirrorNode = selectedMirrorNodeId is null
+            ? MirrorNodes.FirstOrDefault()
+            : MirrorNodes.FirstOrDefault(node => string.Equals(node.Id, selectedMirrorNodeId, StringComparison.OrdinalIgnoreCase))
+              ?? MirrorNodes.FirstOrDefault();
         UpdateMirrorSummary();
         ApplyMirrorRepairToNodes(currentMirrorRepairReport);
         ApplyMirrorPlacementToNodes(currentMirrorRebalanceReport);
+        RefreshMirrorActionState();
     }
 
     private void AddMirrorRow(MirrorNodeRow row)
@@ -500,8 +617,17 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private void MirrorNode_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        MarkConfigurationDirty();
+        if (e.PropertyName is nameof(MirrorNodeRow.Label)
+            or nameof(MirrorNodeRow.Path)
+            or nameof(MirrorNodeRow.IsEnabled)
+            or nameof(MirrorNodeRow.CapacityBudgetBytes)
+            or nameof(MirrorNodeRow.Priority))
+        {
+            MarkConfigurationDirty();
+        }
+
         UpdateMirrorSummary();
+        RefreshMirrorActionState();
     }
 
     private void UpdateMirrorSummary()
@@ -514,7 +640,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
 
         var enabled = MirrorNodes.Count(node => node.IsEnabled);
-        MirrorSummary = $"Mirrors: {enabled} of {total} enabled, {MirrorPlacementProfile} placement";
+        MirrorSummary = $"Mirrors: {enabled} of {total} enabled, {FormatMirrorPlacementProfile(MirrorPlacementProfile)} placement";
     }
 
     partial void OnMirrorPlacementProfileChanged(MirrorPlacementProfile value)
@@ -525,6 +651,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
 
         UpdateMirrorSummary();
+        RefreshMirrorActionState();
     }
 
     partial void OnMinimumMirrorCopiesChanged(int value)
@@ -533,6 +660,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             MarkConfigurationDirty();
         }
+
+        RefreshMirrorActionState();
     }
 
     private void SetServiceUnavailable(Exception ex)
@@ -564,7 +693,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
         WatchedFolders.Add(new WatchedFolderRow(
             Guid.NewGuid().ToString("N"),
             NewWatchedFolderPath,
-            ResourceProfile.Balanced,
+            "General purpose",
+            "None",
             CompressionPreference.Zstd,
             "Pending save"));
         NewWatchedFolderPath = string.Empty;
@@ -590,18 +720,95 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void AddMirror()
     {
-        var row = new MirrorNodeRow(
-            Guid.NewGuid().ToString("N"),
+        var draft = mirrorNodeDialogService.ShowAddMirrorDialog(new MirrorNodeDraft(
             "New mirror",
             string.Empty,
-            isEnabled: false);
+            IsEnabled: true,
+            CapacityBudgetBytes: null,
+            Priority: 100));
+        if (draft is null)
+        {
+            return;
+        }
+
+        var row = new MirrorNodeRow(
+            Guid.NewGuid().ToString("N"),
+            draft.Label,
+            draft.Path,
+            draft.IsEnabled,
+            draft.CapacityBudgetBytes,
+            draft.Priority)
+        {
+            MigrationStatus = "Pending save",
+            MigrationDetail = "Save mirrors to add this mirror to the service configuration."
+        };
         AddMirrorRow(row);
         SelectedMirrorNode = row;
         MarkConfigurationDirty();
         UpdateMirrorSummary();
+        RefreshMirrorActionState();
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HasSelectedMirror))]
+    private void EditMirror()
+    {
+        if (SelectedMirrorNode is null)
+        {
+            return;
+        }
+
+        var original = ToDraft(SelectedMirrorNode);
+        var draft = mirrorNodeDialogService.ShowEditMirrorDialog(original);
+        if (draft is null)
+        {
+            return;
+        }
+
+        var migrationChanges = GetMigrationChanges(original, draft).ToArray();
+        SelectedMirrorNode.Label = draft.Label;
+        SelectedMirrorNode.Path = draft.Path;
+        SelectedMirrorNode.IsEnabled = draft.IsEnabled;
+        SelectedMirrorNode.CapacityBudgetBytes = draft.CapacityBudgetBytes;
+        SelectedMirrorNode.Priority = draft.Priority;
+        if (migrationChanges.Length > 0)
+        {
+            MarkMirrorMigrationPending(SelectedMirrorNode, migrationChanges);
+        }
+
+        MarkConfigurationDirty();
+        UpdateMirrorSummary();
+        RefreshMirrorActionState();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanEnableSelectedMirror))]
+    private void EnableSelectedMirror()
+    {
+        if (SelectedMirrorNode is null)
+        {
+            return;
+        }
+
+        SelectedMirrorNode.IsEnabled = true;
+        MarkMirrorMigrationPending(SelectedMirrorNode, "enablement");
+        MarkConfigurationDirty();
+        RefreshMirrorActionState();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDisableSelectedMirror))]
+    private void DisableSelectedMirror()
+    {
+        if (SelectedMirrorNode is null)
+        {
+            return;
+        }
+
+        SelectedMirrorNode.IsEnabled = false;
+        MarkMirrorMigrationPending(SelectedMirrorNode, "enablement");
+        MarkConfigurationDirty();
+        RefreshMirrorActionState();
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSelectedMirror))]
     private void RemoveMirror()
     {
         if (SelectedMirrorNode is null)
@@ -609,14 +816,16 @@ public sealed partial class MainWindowViewModel : ObservableObject
             return;
         }
 
+        pendingMirrorMigrations.Remove(SelectedMirrorNode.Id);
         SelectedMirrorNode.PropertyChanged -= MirrorNode_PropertyChanged;
         MirrorNodes.Remove(SelectedMirrorNode);
         SelectedMirrorNode = MirrorNodes.FirstOrDefault();
         MarkConfigurationDirty();
         UpdateMirrorSummary();
+        RefreshMirrorActionState();
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HasSelectedMirror))]
     private void BrowseSelectedMirror()
     {
         if (SelectedMirrorNode is null)
@@ -624,7 +833,86 @@ public sealed partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        SelectedMirrorNode.Path = BrowseFolder(SelectedMirrorNode.Path);
+        var newPath = mirrorNodeDialogService.BrowseMirrorPath(SelectedMirrorNode.Path);
+        if (!string.Equals(newPath, SelectedMirrorNode.Path, StringComparison.OrdinalIgnoreCase))
+        {
+            SelectedMirrorNode.Path = newPath;
+            MarkMirrorMigrationPending(SelectedMirrorNode, "path");
+            MarkConfigurationDirty();
+        }
+    }
+
+    private void RefreshMirrorActionState()
+    {
+        OnPropertyChanged(nameof(HasSelectedMirror));
+        OnPropertyChanged(nameof(CanEnableSelectedMirror));
+        OnPropertyChanged(nameof(CanDisableSelectedMirror));
+        OnPropertyChanged(nameof(CanShowSelectedMirrorRepairActions));
+        OnPropertyChanged(nameof(CanShowSelectedMirrorDrainActions));
+        OnPropertyChanged(nameof(CanShowGlobalMirrorRepairActions));
+        OnPropertyChanged(nameof(CanShowMirrorPlacementActions));
+        OnPropertyChanged(nameof(MirrorActionStatus));
+
+        EditMirrorCommand.NotifyCanExecuteChanged();
+        EnableSelectedMirrorCommand.NotifyCanExecuteChanged();
+        DisableSelectedMirrorCommand.NotifyCanExecuteChanged();
+        RemoveMirrorCommand.NotifyCanExecuteChanged();
+        BrowseSelectedMirrorCommand.NotifyCanExecuteChanged();
+        PreviewSelectedMirrorRepairCommand.NotifyCanExecuteChanged();
+        RunSelectedMirrorRepairCommand.NotifyCanExecuteChanged();
+        PreviewSelectedMirrorDrainCommand.NotifyCanExecuteChanged();
+        RunSelectedMirrorDrainCommand.NotifyCanExecuteChanged();
+        PreviewMirrorRepairCommand.NotifyCanExecuteChanged();
+        RunMirrorRepairCommand.NotifyCanExecuteChanged();
+        PreviewMirrorRebalanceCommand.NotifyCanExecuteChanged();
+        RunMirrorRebalanceCommand.NotifyCanExecuteChanged();
+    }
+
+    private static MirrorNodeDraft ToDraft(MirrorNodeRow row)
+    {
+        return new MirrorNodeDraft(row.Label, row.Path, row.IsEnabled, row.CapacityBudgetBytes, row.Priority);
+    }
+
+    private static IEnumerable<string> GetMigrationChanges(MirrorNodeDraft original, MirrorNodeDraft updated)
+    {
+        if (!string.Equals(original.Path, updated.Path, StringComparison.OrdinalIgnoreCase))
+        {
+            yield return "path";
+        }
+
+        if (original.IsEnabled != updated.IsEnabled)
+        {
+            yield return "enablement";
+        }
+
+        if (original.CapacityBudgetBytes != updated.CapacityBudgetBytes)
+        {
+            yield return "capacity";
+        }
+
+        if (original.Priority != updated.Priority)
+        {
+            yield return "priority";
+        }
+    }
+
+    private void MarkMirrorMigrationPending(MirrorNodeRow row, params string[] changes)
+    {
+        var changeSummary = string.Join(", ", changes.Distinct(StringComparer.OrdinalIgnoreCase));
+        var state = new MirrorMigrationState(
+            "Migration pending",
+            $"Changed {changeSummary}. Save mirrors, then use preview/apply placement, repair, or drain to reconcile stored mirror data.");
+        pendingMirrorMigrations[row.Id] = state;
+        ApplyPendingMirrorMigration(row);
+    }
+
+    private void ApplyPendingMirrorMigration(MirrorNodeRow row)
+    {
+        if (pendingMirrorMigrations.TryGetValue(row.Id, out var state))
+        {
+            row.MigrationStatus = state.Status;
+            row.MigrationDetail = state.Detail;
+        }
     }
 
     [RelayCommand]
@@ -677,6 +965,23 @@ public sealed partial class MainWindowViewModel : ObservableObject
             return;
         }
 
+        await RestoreVersionAsync(selectedVersion).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task OpenSelectedVersionPreviewAsync()
+    {
+        var selectedVersion = SelectedVersion;
+        if (selectedVersion is null)
+        {
+            return;
+        }
+
+        await OpenVersionPreviewAsync(selectedVersion).ConfigureAwait(true);
+    }
+
+    internal async Task RestoreVersionAsync(VersionRow selectedVersion)
+    {
         var destination = restoreDestinationPicker.PickDestination(selectedVersion);
         if (string.IsNullOrWhiteSpace(destination))
         {
@@ -707,6 +1012,73 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             SetServiceStatus($"Service connection: restore failed ({ex.Message})");
         }
+    }
+
+    internal async Task OpenVersionPreviewAsync(VersionRow selectedVersion)
+    {
+        try
+        {
+            var response = await client.SendAsync(FluxVaultIpcRequest.RestoreVersionPreview(selectedVersion.VersionId))
+                .ConfigureAwait(true);
+            if (!response.Success || string.IsNullOrWhiteSpace(response.OutputPath))
+            {
+                SetServiceStatus($"Service connection: version preview failed ({response.ErrorMessage ?? "no preview path returned"})");
+                return;
+            }
+
+            versionPreviewLauncher.OpenFile(response.OutputPath);
+            SetServiceStatus($"Service connection: opened preview for {selectedVersion.VersionId}");
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            SetServiceStatus($"Service connection: version preview failed ({ex.Message})");
+        }
+    }
+
+    internal async Task<VersionInventoryViewModel> CreateVersionInventoryAsync(WatchedFolderRow folder)
+    {
+        try
+        {
+            var response = await client.SendAsync(FluxVaultIpcRequest.ListVersions()).ConfigureAwait(true);
+            if (!response.Success || response.Versions is null)
+            {
+                SetServiceStatus($"Service connection: backup inventory failed ({response.ErrorMessage ?? "no versions returned"})");
+                return EmptyVersionInventory(folder.Path);
+            }
+
+            return new VersionInventoryViewModel(
+                folder.Path,
+                response.Versions,
+                version => RestoreVersionAsync(ToVersionRow(version)),
+                version => OpenVersionPreviewAsync(ToVersionRow(version)));
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            SetServiceStatus($"Service connection: backup inventory failed ({ex.Message})");
+            return EmptyVersionInventory(folder.Path);
+        }
+    }
+
+    private VersionInventoryViewModel EmptyVersionInventory(string folderPath)
+    {
+        return new VersionInventoryViewModel(
+            folderPath,
+            [],
+            version => RestoreVersionAsync(ToVersionRow(version)),
+            version => OpenVersionPreviewAsync(ToVersionRow(version)));
+    }
+
+    private static VersionRow ToVersionRow(VersionInventoryVersionRow version)
+    {
+        return new VersionRow(
+            version.VersionId,
+            version.Path,
+            version.CapturedAt,
+            Enum.TryParse<CaptureConsistency>(version.Consistency.Replace(" ", string.Empty), ignoreCase: true, out var consistency)
+                ? consistency
+                : CaptureConsistency.BestEffort,
+            version.ChunkCount,
+            version.Lineage);
     }
 
     [RelayCommand]
@@ -782,36 +1154,36 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanShowGlobalMirrorRepairActions))]
     private async Task PreviewMirrorRepairAsync()
     {
         await RunMirrorRepairCoreAsync(isPreview: true, mirrorNodeId: null).ConfigureAwait(true);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanShowGlobalMirrorRepairActions))]
     private async Task RunMirrorRepairAsync()
     {
         await RunMirrorRepairCoreAsync(isPreview: false, mirrorNodeId: null).ConfigureAwait(true);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanShowSelectedMirrorRepairActions))]
     private async Task PreviewSelectedMirrorRepairAsync()
     {
-        if (SelectedMirrorNode is null)
+        if (!CanShowSelectedMirrorRepairActions || SelectedMirrorNode is null)
         {
-            RepositoryHealthStatus = "Mirror repair preview failed: no mirror is selected.";
+            RepositoryHealthStatus = "Mirror repair preview failed: select an enabled mirror.";
             return;
         }
 
         await RunMirrorRepairCoreAsync(isPreview: true, SelectedMirrorNode.Id).ConfigureAwait(true);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanShowSelectedMirrorRepairActions))]
     private async Task RunSelectedMirrorRepairAsync()
     {
-        if (SelectedMirrorNode is null)
+        if (!CanShowSelectedMirrorRepairActions || SelectedMirrorNode is null)
         {
-            RepositoryHealthStatus = "Mirror repair failed: no mirror is selected.";
+            RepositoryHealthStatus = "Mirror repair failed: select an enabled mirror.";
             return;
         }
 
@@ -849,24 +1221,24 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanShowSelectedMirrorDrainActions))]
     private async Task PreviewSelectedMirrorDrainAsync()
     {
-        if (SelectedMirrorNode is null)
+        if (!CanShowSelectedMirrorDrainActions || SelectedMirrorNode is null)
         {
-            RepositoryHealthStatus = "Mirror drain preview failed: no mirror is selected.";
+            RepositoryHealthStatus = "Mirror drain preview failed: select an enabled mirror with at least one other enabled mirror.";
             return;
         }
 
         await RunMirrorDrainCoreAsync(isPreview: true, SelectedMirrorNode.Id).ConfigureAwait(true);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanShowSelectedMirrorDrainActions))]
     private async Task RunSelectedMirrorDrainAsync()
     {
-        if (SelectedMirrorNode is null)
+        if (!CanShowSelectedMirrorDrainActions || SelectedMirrorNode is null)
         {
-            RepositoryHealthStatus = "Mirror drain failed: no mirror is selected.";
+            RepositoryHealthStatus = "Mirror drain failed: select an enabled mirror with at least one other enabled mirror.";
             return;
         }
 
@@ -904,7 +1276,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanShowMirrorPlacementActions))]
     private async Task PreviewMirrorRebalanceAsync()
     {
         try
@@ -938,7 +1310,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanShowMirrorPlacementActions))]
     private async Task RunMirrorRebalanceAsync()
     {
         try
@@ -1049,7 +1421,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 WatchedFolders.Add(new WatchedFolderRow(
                     folder.Id,
                     folder.Path,
-                    folder.ResourceProfile,
+                    FormatWatchedFolderProfile(folder, status.Configuration.SelectionRules ?? []),
+                    FormatRegexSummary(status.Configuration.SelectionRules ?? [], folder.Path),
                     folder.Compression,
                     runtimeStatus));
             }
@@ -1581,6 +1954,103 @@ public sealed partial class MainWindowViewModel : ObservableObject
         return unit == 0 ? $"{bytes} B" : $"{value:0.0} {units[unit]}";
     }
 
+    private static string FormatMirrorPlacementProfile(MirrorPlacementProfile profile)
+    {
+        return profile switch
+        {
+            MirrorPlacementProfile.FullCopy => "Full copy",
+            MirrorPlacementProfile.CapacityBalanced => "Capacity balanced",
+            MirrorPlacementProfile.Redundant => "Redundant",
+            _ => profile.ToString()
+        };
+    }
+
+    private static string FormatWatchedFolderProfile(
+        WatchedFolderConfiguration folder,
+        IReadOnlyList<ProtectionSelectionRule> selectionRules)
+    {
+        var rule = selectionRules
+            .Where(rule => rule.Mode != ProtectionSelectionMode.RegexScope
+                           && (string.Equals(TrimPath(rule.Path), TrimPath(folder.Path), StringComparison.OrdinalIgnoreCase)
+                               || string.Equals(rule.Id, folder.Id, StringComparison.OrdinalIgnoreCase)))
+            .OrderByDescending(rule => TrimPath(rule.Path).Length)
+            .FirstOrDefault();
+        if (rule?.WorkloadPreset is { } preset)
+        {
+            return WorkloadPolicyPresetCatalog.Get(preset).DisplayName;
+        }
+
+        return folder.ResourceProfile switch
+        {
+            ResourceProfile.Quiet => "Quiet",
+            ResourceProfile.Balanced => "Balanced",
+            ResourceProfile.Fast => "Fast",
+            _ => folder.ResourceProfile.ToString()
+        };
+    }
+
+    private static string FormatRegexSummary(IReadOnlyList<ProtectionSelectionRule> rules, string path)
+    {
+        var applicable = rules
+            .Where(rule => rule.IsEnabled && CoversRegexPath(rule, path))
+            .OrderBy(rule => TrimPath(rule.Path).Length)
+            .ToArray();
+        var includes = applicable
+            .SelectMany(rule => rule.IncludeRegexRules ?? [])
+            .Where(rule => rule.IsEnabled)
+            .Select(rule => rule.Pattern)
+            .ToArray();
+        var excludes = applicable
+            .SelectMany(rule => rule.ExcludeRegexRules ?? [])
+            .Where(rule => rule.IsEnabled)
+            .Select(rule => rule.Pattern)
+            .ToArray();
+        if (includes.Length == 0 && excludes.Length == 0)
+        {
+            return "None";
+        }
+
+        var parts = new List<string>();
+        if (includes.Length > 0)
+        {
+            parts.Add("Include: " + string.Join(", ", includes));
+        }
+
+        if (excludes.Length > 0)
+        {
+            parts.Add("Exclude: " + string.Join(", ", excludes));
+        }
+
+        return string.Join("; ", parts);
+    }
+
+    private static bool CoversRegexPath(ProtectionSelectionRule rule, string path)
+    {
+        return rule.Mode switch
+        {
+            ProtectionSelectionMode.RegexScope or ProtectionSelectionMode.RecursiveFolder => IsSamePath(path, rule.Path) || IsUnderPath(path, rule.Path),
+            ProtectionSelectionMode.ImmediateFiles => IsSamePath(path, rule.Path),
+            ProtectionSelectionMode.File => IsSamePath(path, rule.Path),
+            _ => false
+        };
+    }
+
+    private static bool IsUnderPath(string path, string root)
+    {
+        var trimmedRoot = TrimPath(root) + Path.DirectorySeparatorChar;
+        return Path.GetFullPath(path).StartsWith(trimmedRoot, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsSamePath(string left, string right)
+    {
+        return string.Equals(TrimPath(left), TrimPath(right), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string TrimPath(string path)
+    {
+        return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    }
+
     private void ApplyDurableChangeHealth(DurableChangeRuntimeStatus? durableChange)
     {
         if (durableChange is null || string.IsNullOrWhiteSpace(durableChange.Status))
@@ -1815,7 +2285,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
 public sealed record WatchedFolderRow(
     string Id,
     string Path,
-    ResourceProfile ResourceProfile,
+    string Profile,
+    string Regex,
     CompressionPreference Compression,
     string Status);
 
@@ -1866,6 +2337,12 @@ public sealed partial class MirrorNodeRow : ObservableObject
     [ObservableProperty]
     private string placementDetail = "Run mirror placement preview to check this node.";
 
+    [ObservableProperty]
+    private string migrationStatus = "No migration pending";
+
+    [ObservableProperty]
+    private string migrationDetail = "No pending migration. Edits are reconciled only after explicit preview/apply, repair, or drain actions.";
+
     public MirrorNodeRow(
         string id,
         string label,
@@ -1897,6 +2374,14 @@ public sealed partial class MirrorNodeRow : ObservableObject
         }
     }
 }
+
+public sealed record MirrorPlacementProfileOption(
+    MirrorPlacementProfile Value,
+    string DisplayName);
+
+internal sealed record MirrorMigrationState(
+    string Status,
+    string Detail);
 
 public sealed record RepositoryHealthRow(
     string Name,

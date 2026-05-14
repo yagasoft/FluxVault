@@ -279,6 +279,20 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
+    public void Repository_versions_grid_opens_preview_on_double_click()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var repositoryTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "Repository"));
+        var grid = repositoryTab
+            .Descendants(XamlNamespace + "DataGrid")
+            .Single(element => (string?)element.Attribute("ItemsSource") == "{Binding RecentVersions}");
+
+        Assert.Equal("RecentVersionsGrid_MouseDoubleClick", (string?)grid.Attribute("MouseDoubleClick"));
+    }
+
+    [Fact]
     public void Main_window_contains_mirrors_workspace_and_repository_summary_link()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
@@ -301,10 +315,20 @@ public sealed class XamlQualityTests
         Assert.Contains(
             mirrorsTab.Descendants(XamlNamespace + "DataGrid"),
             element => (string?)element.Attribute("ItemsSource") == "{Binding MirrorNodes}"
-                && (string?)element.Attribute("SelectedItem") == "{Binding SelectedMirrorNode}");
+                && (string?)element.Attribute("SelectedItem") == "{Binding SelectedMirrorNode}"
+                && (string?)element.Attribute("Name") == "MirrorNodesGrid");
         Assert.Contains(
             mirrorsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Command") == "{Binding AddMirrorCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding EditMirrorCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding EnableSelectedMirrorCommand}");
+        Assert.Contains(
+            mirrorsTab.Descendants(XamlNamespace + "Button"),
+            element => (string?)element.Attribute("Command") == "{Binding DisableSelectedMirrorCommand}");
         Assert.Contains(
             mirrorsTab.Descendants(XamlNamespace + "Button"),
             element => (string?)element.Attribute("Command") == "{Binding RemoveMirrorCommand}");
@@ -334,10 +358,70 @@ public sealed class XamlQualityTests
             element => (string?)element.Attribute("Binding") == "{Binding PlacementStatus}");
         Assert.Contains(
             mirrorsTab.Descendants(XamlNamespace + "ComboBox"),
-            element => (string?)element.Attribute("SelectedItem") == "{Binding MirrorPlacementProfile}");
+            element => (string?)element.Attribute("SelectedValue") == "{Binding MirrorPlacementProfile}"
+                && (string?)element.Attribute("ItemsSource") == "{Binding MirrorPlacementProfileOptions}"
+                && (string?)element.Attribute("DisplayMemberPath") == "DisplayName");
         Assert.Contains(
             mirrorsTab.Descendants(XamlNamespace + "TextBox"),
             element => (string?)element.Attribute("Text") == "{Binding MinimumMirrorCopies, UpdateSourceTrigger=PropertyChanged}");
+    }
+
+    [Fact]
+    public void Mirrors_grid_is_readonly_scrollable_and_uses_fixed_columns()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var mirrorsGrid = document
+            .Descendants(XamlNamespace + "DataGrid")
+            .Single(element => (string?)element.Attribute("Name") == "MirrorNodesGrid");
+
+        Assert.Equal("True", (string?)mirrorsGrid.Attribute("IsReadOnly"));
+        Assert.Equal("Auto", (string?)mirrorsGrid.Attribute("ScrollViewer.HorizontalScrollBarVisibility"));
+        Assert.Equal("Auto", (string?)mirrorsGrid.Attribute("ScrollViewer.VerticalScrollBarVisibility"));
+        Assert.Null((string?)mirrorsGrid.Attribute("ToolTip"));
+
+        var widths = mirrorsGrid
+            .Element(XamlNamespace + "DataGrid.Columns")
+            ?.Elements()
+            .Select(column => (string?)column.Attribute("Width"))
+            .OfType<string>()
+            .ToArray();
+        Assert.NotEmpty(widths ?? []);
+        Assert.DoesNotContain("*", widths ?? []);
+    }
+
+    [Fact]
+    public void Mirrors_workspace_has_separate_selected_action_group()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var mirrorsTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "Mirrors"));
+        var selectedActions = mirrorsTab
+            .Descendants(XamlNamespace + "StackPanel")
+            .Single(element => (string?)element.Attribute("Name") == "MirrorSelectedActionsPanel");
+
+        Assert.Contains(
+            selectedActions.Descendants(XamlNamespace + "DataTrigger"),
+            trigger => (string?)trigger.Attribute("Binding") == "{Binding HasSelectedMirror}"
+                && (string?)trigger.Attribute("Value") == "True");
+        Assert.Contains(
+            selectedActions.Descendants(XamlNamespace + "Button"),
+            button => (string?)button.Attribute("Command") == "{Binding EditMirrorCommand}");
+    }
+
+    [Fact]
+    public void Main_window_tables_do_not_define_broad_table_tooltips()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var tableTooltips = document
+            .Descendants()
+            .Where(element => element.Name.Namespace == XamlNamespace
+                              && element.Name.LocalName is "DataGrid" or "ListView")
+            .Where(element => !string.IsNullOrWhiteSpace((string?)element.Attribute("ToolTip")))
+            .Select(Describe)
+            .ToArray();
+
+        Assert.Empty(tableTooltips);
     }
 
     [Fact]
@@ -518,6 +602,8 @@ public sealed class XamlQualityTests
             .ToArray();
 
         Assert.Equal(new[] { "*", "*", "*" }, widths ?? []);
+        Assert.Equal("Stretch", (string?)paneGrid.Attribute("HorizontalAlignment"));
+        Assert.Equal("Stretch", (string?)paneGrid.Attribute("VerticalAlignment"));
         Assert.Empty(fileBrowserTab.Descendants(XamlNamespace + "ScrollViewer"));
 
         var tree = fileBrowserTab
@@ -536,6 +622,59 @@ public sealed class XamlQualityTests
                 Assert.Equal("Auto", (string?)grid.Attribute("ScrollViewer.HorizontalScrollBarVisibility"));
                 Assert.Equal("Auto", (string?)grid.Attribute("ScrollViewer.VerticalScrollBarVisibility"));
             });
+    }
+
+    [Fact]
+    public void File_browser_file_checkbox_uses_interactive_template_column()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var filesGrid = document
+            .Descendants(XamlNamespace + "DataGrid")
+            .Single(element => (string?)element.Attribute("Name") == "FileBrowserFilesGrid");
+
+        Assert.DoesNotContain(
+            filesGrid.Descendants(XamlNamespace + "DataGridCheckBoxColumn"),
+            column => (string?)column.Attribute("Binding") == "{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}");
+        Assert.Contains(
+            filesGrid.Descendants(XamlNamespace + "CheckBox"),
+            checkBox => (string?)checkBox.Attribute("IsChecked") == "{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}");
+    }
+
+    [Fact]
+    public void File_browser_pending_changes_show_profile_and_regex_columns()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var pendingGrid = document
+            .Descendants(XamlNamespace + "DataGrid")
+            .Single(element => (string?)element.Attribute("Name") == "FileBrowserPendingChangesGrid");
+
+        Assert.Contains(
+            pendingGrid.Descendants(XamlNamespace + "DataGridTextColumn"),
+            column => (string?)column.Attribute("Header") == "Profile"
+                && (string?)column.Attribute("Binding") == "{Binding Profile}");
+        Assert.Contains(
+            pendingGrid.Descendants(XamlNamespace + "DataGridTextColumn"),
+            column => (string?)column.Attribute("Header") == "Regex"
+                && (string?)column.Attribute("Binding") == "{Binding Regex}");
+    }
+
+    [Fact]
+    public void Protection_table_shows_regex_and_opens_folder_inventory()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var protectionTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "Protection"));
+        var grid = protectionTab
+            .Descendants(XamlNamespace + "DataGrid")
+            .Single(element => (string?)element.Attribute("ItemsSource") == "{Binding WatchedFolders}");
+
+        Assert.Equal("WatchedFoldersGrid", (string?)grid.Attribute("Name"));
+        Assert.Equal("WatchedFoldersGrid_MouseDoubleClick", (string?)grid.Attribute("MouseDoubleClick"));
+        Assert.Contains(
+            grid.Descendants(XamlNamespace + "DataGridTextColumn"),
+            column => (string?)column.Attribute("Header") == "Regex"
+                && (string?)column.Attribute("Binding") == "{Binding Regex}");
     }
 
     [Fact]
@@ -665,7 +804,7 @@ public sealed class XamlQualityTests
     }
 
     [Fact]
-    public void File_browser_interactive_controls_have_tooltips()
+    public void File_browser_buttons_have_tooltips_without_table_level_tooltips()
     {
         var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
         var fileBrowserTab = document
@@ -674,7 +813,7 @@ public sealed class XamlQualityTests
         var interactiveElements = fileBrowserTab
             .Descendants()
             .Where(element => element.Name.Namespace == XamlNamespace
-                              && element.Name.LocalName is "Button" or "DataGrid")
+                              && element.Name.LocalName == "Button")
             .ToArray();
 
         var missingTooltips = interactiveElements

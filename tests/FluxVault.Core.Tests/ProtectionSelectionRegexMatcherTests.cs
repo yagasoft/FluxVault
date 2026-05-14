@@ -74,6 +74,22 @@ public sealed class ProtectionSelectionRegexMatcherTests
         Assert.True(ProtectionSelectionRegexMatcher.IsFileIncluded(FullPath(@"D:\Work\Child\other.docx"), [parent]));
     }
 
+    [Fact]
+    public void Regex_scope_rules_apply_to_protected_descendants_without_selecting_parent_folder()
+    {
+        var scope = Rule("scope", @"D:\Work", ProtectionSelectionMode.RegexScope) with
+        {
+            IncludeRegexRules =
+            [
+                new ProtectionScopedRegexRule("docx", @"\.docx$", ProtectionExclusionTarget.File)
+            ]
+        };
+        var selectedChild = Rule("child", @"D:\Work\Child", ProtectionSelectionMode.RecursiveFolder);
+
+        Assert.True(ProtectionSelectionRegexMatcher.IsFileIncluded(FullPath(@"D:\Work\Child\brief.docx"), [scope, selectedChild]));
+        Assert.False(ProtectionSelectionRegexMatcher.IsFileIncluded(FullPath(@"D:\Work\Child\brief.tmp"), [scope, selectedChild]));
+    }
+
     private static ProtectionSelectionRule Rule(string id, string path, ProtectionSelectionMode mode)
     {
         return new ProtectionSelectionRule(

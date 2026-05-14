@@ -66,6 +66,7 @@ public static class ProtectionSelectionRegexMatcher
             ProtectionSelectionMode.File => IsSamePath(filePath, rulePath),
             ProtectionSelectionMode.ImmediateFiles => IsDirectChildFile(filePath, rulePath),
             ProtectionSelectionMode.RecursiveFolder => IsSamePath(filePath, rulePath) || IsUnderPath(filePath, rulePath),
+            ProtectionSelectionMode.RegexScope => IsSamePath(filePath, rulePath) || IsUnderPath(filePath, rulePath),
             _ => false
         };
     }
@@ -77,6 +78,7 @@ public static class ProtectionSelectionRegexMatcher
         {
             ProtectionSelectionMode.ImmediateFiles => IsSamePath(folderPath, rulePath),
             ProtectionSelectionMode.RecursiveFolder => IsSamePath(folderPath, rulePath) || IsUnderPath(folderPath, rulePath),
+            ProtectionSelectionMode.RegexScope => IsSamePath(folderPath, rulePath) || IsUnderPath(folderPath, rulePath),
             _ => false
         };
     }

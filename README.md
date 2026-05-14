@@ -47,7 +47,8 @@ FluxVault now has a developer-usable MVP loop:
   best-effort, covered writer-aware VSS captures are app-consistent, and VSS
   captures without matching writer coverage are crash-consistent.
 - Version list, inspect, restore, diagnostics export, local repository, and a
-  `MirrorSet` for optional mirrors.
+  `MirrorSet` for optional mirrors. Version previews open through a temporary
+  FluxVault-owned copy and do not write restore-lineage hints.
 - Append-only version lineage in manifests. Same-path captures record parent
   versions, restores leave a pending lineage hint for the next capture, and
   identical copied files become visible inherited versions without re-uploading
@@ -59,9 +60,10 @@ FluxVault now has a developer-usable MVP loop:
 - Conservative automatic retention and scheduled repository maintenance, with a
   WPF Options dialog for previewing retention, running retention, editing
   maintenance cadence, and controlling mirror repair/rehearsal defaults.
-- Dedicated Mirrors workspace for editing mirror node label, path, enabled
-  state, placement profile, minimum mirror copies, capacity budget, and
-  priority. Existing legacy `mirrorPath` configuration is migrated into one
+- Dedicated Mirrors workspace for adding and editing mirror node label, path,
+  enabled state, capacity budget, and priority through an explicit dialog,
+  while placement profile and minimum mirror copies remain workspace-level
+  controls. Existing legacy `mirrorPath` configuration is migrated into one
   enabled full-copy mirror node, and mirror write failures are reported as
   warnings without failing the primary backup.
 - Mirror repair preview and repair actions report per-node mirror health.
@@ -195,12 +197,17 @@ tests in CI; it does not certify every third-party VSS writer workload.
 In the dashboard, choose a repository folder, then use **Mirrors** if you want
 one or more mirror nodes. The Mirrors workspace can keep all nodes as full
 copies, balance new chunk/metadata writes by node capacity and priority, or
-write a redundant minimum number of mirror copies. Use **File browser** to
-select protected folders or files, review the pending changes pane, save the
-configuration, run a backup, then restore a selected version to an alternate
-path. Restore asks for a destination and, when that file already exists,
-requires an explicit overwrite confirmation before the service restore IPC call
-is sent.
+write a redundant minimum number of mirror copies. Mirror row actions appear
+only when the selected mirror and enabled mirror count make them valid; column
+widths/order are saved locally for the next dashboard run. Use **File browser**
+to select protected folders or files, define inherited regex scopes on folders,
+review profile/regex pending changes, save the configuration, run a backup, then
+restore a selected version to an alternate path. The **Protection** table shows
+inherited regex state and opens a per-folder backup inventory on double-click;
+each file expands to its versions. Restore asks for a destination and, when that
+file already exists, requires an explicit overwrite confirmation before the
+service restore IPC call is sent. Double-clicking a version opens a temporary
+preview instead of saving or recording a restore.
 
 Use the **About** button for the FluxVault version, Yagasoft copyright,
 [`https://github.com/yagasoft/FluxVault`](https://github.com/yagasoft/FluxVault),
@@ -294,6 +301,9 @@ selected mirror's chunk/metadata copies only when those required copies are
 satisfied. A successful drain disables the selected mirror node in
 configuration. Ordinary **Remove from configuration** remains a separate
 unsaved configuration edit and does not move or clean existing mirror data.
+Editing an existing mirror's path, enabled state, capacity, or priority marks
+the mirror as needing explicit migration work; saving persists configuration
+only, and data movement remains behind preview/apply, repair, or drain actions.
 
 Mirror repair is an explicit manual operation, not a scheduled placement or
 rebalance policy. **Preview mirror repair** reports repairable primary and

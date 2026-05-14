@@ -24,5 +24,6 @@ public enum FluxVaultIpcCommand
     PreviewMirrorRepair = 19,
     RunMirrorRepair = 20,
     PreviewMirrorDrain = 21,
-    RunMirrorDrain = 22
+    RunMirrorDrain = 22,
+    RestoreVersionPreview = 23
 }

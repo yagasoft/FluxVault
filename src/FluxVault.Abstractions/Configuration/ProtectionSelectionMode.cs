@@ -4,5 +4,6 @@ public enum ProtectionSelectionMode
 {
     RecursiveFolder = 0,
     ImmediateFiles = 1,
-    File = 2
+    File = 2,
+    RegexScope = 3
 }

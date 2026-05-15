@@ -11,6 +11,8 @@
 - zstd, lz4, Brotli, and LZMA round-trip compression.
 - Adaptive codec-policy selection.
 - Capture cadence defaults and forced hot-file snapshot decisions.
+- Capture cadence persistence for USN fallback cooldown, source deep
+  verification interval, watcher backlog, and bounded capture concurrency.
 - Manifest write/read.
 - Deduplicated commit and restore.
 - Retention decisions.
@@ -20,6 +22,9 @@
 - IPC request/response serialisation.
 - Concurrent named-pipe IPC, including status responsiveness while a long
   backup request is still running.
+- Fast status IPC and dashboard automatic refresh must avoid full tracked-entry
+  enumeration while preserving existing file-browser state until a full refresh
+  is requested.
 - IPC pipe security for LocalSystem, Administrators, desktop users, and
   packaged app tokens.
 - Durable-change detail serialisation for USN fallback diagnostics.
@@ -193,6 +198,9 @@
   health status updates, and scheduled maintenance due/not-due behaviour.
 - Service-triggered retention and manual `RunRetentionNow`.
 - Mirror cleanup after retention pruning.
+- Backup Now unchanged-source skipping, including first capture, second idle
+  backup with no source reread, deletion tombstone recording, and summary
+  counters for enumerated, captured, skipped, failed, and deleted files.
 - Options dialog view-model save, preview, run-retention, repository
   maintenance policy, default workload preset, and compression skip-extension
   behaviour with a fake service client.
@@ -206,6 +214,8 @@
   watcher path only when USN reports no changed files.
 - USN unavailable/full-scan-required watcher cycles run one full scan without
   duplicating the same targeted watcher capture.
+- Repeated USN full-scan-required cycles are cooled down after the first
+  fallback scan and expose suppressed-fallback diagnostics.
 - Noisy watcher event bursts above the configured backlog limit collapse into
   one reconciliation scan and expose event-rate/backlog/catch-up-source status.
 - Backup Now processes targets through bounded workers respecting

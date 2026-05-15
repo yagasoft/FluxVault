@@ -651,7 +651,10 @@ public sealed class ConfigurationStoreTests
                 BalancedMaxHotFileDelay: TimeSpan.FromMinutes(1),
                 QuietMaxHotFileDelay: TimeSpan.FromMinutes(5),
                 MinimumSameFileCaptureInterval: TimeSpan.FromSeconds(10),
-                MaximumConcurrentCaptures: 2));
+                MaximumConcurrentCaptures: 2,
+                WatcherEventBacklogLimit: 4096,
+                UsnFallbackFullScanCooldown: TimeSpan.FromMinutes(30),
+                SourceDeepVerificationInterval: TimeSpan.FromDays(7)));
 
         await store.SaveAsync(expected);
 

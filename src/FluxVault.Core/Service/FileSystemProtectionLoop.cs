@@ -18,6 +18,7 @@ public sealed class FileSystemProtectionLoop(
     private readonly Lock gate = new();
     private readonly List<FileSystemWatcher> watchers = [];
     private DateTimeOffset lastFullScanUtc = DateTimeOffset.MinValue;
+    private DateTimeOffset lastUsnFallbackFullScanUtc = DateTimeOffset.MinValue;
     private string watcherSignature = string.Empty;
     private bool pendingCatchUp = true;
     private bool pendingReconciliationScan;
@@ -30,8 +31,9 @@ public sealed class FileSystemProtectionLoop(
     public async Task RunAsync(CancellationToken cancellationToken)
     {
         await RebuildWatchersAsync(cancellationToken).ConfigureAwait(false);
-        await RunCatchUpCycleAsync(cancellationToken).ConfigureAwait(false);
+        var initialCatchUp = await RunCatchUpCycleCoreAsync(cancellationToken).ConfigureAwait(false);
         lastFullScanUtc = DateTimeOffset.UtcNow;
+        pendingCatchUp = !initialCatchUp.RanFullScan;
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -109,7 +111,22 @@ public sealed class FileSystemProtectionLoop(
             operations.UpdateDurableChangeStatus(result.Status);
             if (result.RequiresFullScan)
             {
+                var now = DateTimeOffset.UtcNow;
+                var fallbackReason = result.Status.FallbackReason ?? result.Status.Status;
+                var cooldown = configuration.CaptureCadencePolicy.UsnFallbackFullScanCooldown;
+                var nextAllowedScanUtc = lastUsnFallbackFullScanUtc == DateTimeOffset.MinValue
+                    ? DateTimeOffset.MinValue
+                    : lastUsnFallbackFullScanUtc + cooldown;
+                if (nextAllowedScanUtc > now)
+                {
+                    operations.RecordSuppressedFullScan(fallbackReason, nextAllowedScanUtc);
+                    RecordCatchUpSource("USN fallback suppressed", overflowed: false);
+                    return ProtectionLoopCatchUpOutcome.SuppressedFullScan(nextAllowedScanUtc);
+                }
+
                 await operations.RunBackupNowAsync(cancellationToken).ConfigureAwait(false);
+                lastUsnFallbackFullScanUtc = DateTimeOffset.UtcNow;
+                lastFullScanUtc = lastUsnFallbackFullScanUtc;
                 RecordCatchUpSource("Watcher fallback", overflowed: false);
                 return ProtectionLoopCatchUpOutcome.FullScan;
             }
@@ -146,7 +163,21 @@ public sealed class FileSystemProtectionLoop(
             {
                 Details = [detail]
             });
+            var now = DateTimeOffset.UtcNow;
+            var cooldown = configuration.CaptureCadencePolicy.UsnFallbackFullScanCooldown;
+            var nextAllowedScanUtc = lastUsnFallbackFullScanUtc == DateTimeOffset.MinValue
+                ? DateTimeOffset.MinValue
+                : lastUsnFallbackFullScanUtc + cooldown;
+            if (nextAllowedScanUtc > now)
+            {
+                operations.RecordSuppressedFullScan(detail.Reason, nextAllowedScanUtc);
+                RecordCatchUpSource("USN fallback suppressed", overflowed: false);
+                return ProtectionLoopCatchUpOutcome.SuppressedFullScan(nextAllowedScanUtc);
+            }
+
             await operations.RunBackupNowAsync(cancellationToken).ConfigureAwait(false);
+            lastUsnFallbackFullScanUtc = DateTimeOffset.UtcNow;
+            lastFullScanUtc = lastUsnFallbackFullScanUtc;
             RecordCatchUpSource("Watcher fallback", overflowed: false);
             return ProtectionLoopCatchUpOutcome.FullScan;
         }
@@ -441,6 +472,13 @@ public sealed class FileSystemProtectionLoop(
 
         public static ProtectionLoopCatchUpOutcome FullScan { get; } =
             new(true, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+
+        public static ProtectionLoopCatchUpOutcome SuppressedFullScan(DateTimeOffset nextAllowedScanUtc)
+        {
+            return new ProtectionLoopCatchUpOutcome(
+                false,
+                new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+        }
 
         public static ProtectionLoopCatchUpOutcome Targeted(IEnumerable<string> paths)
         {

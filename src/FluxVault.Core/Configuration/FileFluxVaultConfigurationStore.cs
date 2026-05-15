@@ -107,7 +107,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             MirrorPath = null,
             MirrorSet = mirrorSet,
             RetentionPolicy = configuration.RetentionPolicy ?? RetentionPolicy.CreateDefault(),
-            CaptureCadencePolicy = configuration.CaptureCadencePolicy ?? CaptureCadencePolicy.CreateDefault(),
+            CaptureCadencePolicy = NormaliseCaptureCadencePolicy(configuration.CaptureCadencePolicy),
             CodecPolicy = configuration.CodecPolicy ?? CodecPolicy.CreateDefault(),
             RepositoryMaintenancePolicy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault(),
             WorkloadPolicy = configuration.WorkloadPolicy ?? WorkloadPolicyConfiguration.CreateDefault(),
@@ -122,6 +122,21 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             WatchedFolders = selectionRules.Count == 0
                 ? configuration.WatchedFolders
                 : ProtectionSelectionCompiler.Compile(selectionRules.Select(NormaliseSelectionRule).ToArray())
+        };
+    }
+
+    private static CaptureCadencePolicy NormaliseCaptureCadencePolicy(CaptureCadencePolicy? policy)
+    {
+        var defaults = CaptureCadencePolicy.CreateDefault();
+        policy ??= defaults;
+        return policy with
+        {
+            UsnFallbackFullScanCooldown = policy.UsnFallbackFullScanCooldown <= TimeSpan.Zero
+                ? defaults.UsnFallbackFullScanCooldown
+                : policy.UsnFallbackFullScanCooldown,
+            SourceDeepVerificationInterval = policy.SourceDeepVerificationInterval <= TimeSpan.Zero
+                ? defaults.SourceDeepVerificationInterval
+                : policy.SourceDeepVerificationInterval
         };
     }
 

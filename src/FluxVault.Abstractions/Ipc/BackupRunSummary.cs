@@ -5,4 +5,8 @@ public sealed record BackupRunSummary(
     string Message,
     int CapturedFileCount,
     int FailedFileCount,
-    DateTimeOffset CompletedAtUtc);
+    DateTimeOffset CompletedAtUtc,
+    int EnumeratedFileCount = 0,
+    int SkippedUnchangedFileCount = 0,
+    int RecordedDeletionCount = 0,
+    TimeSpan? Elapsed = null);

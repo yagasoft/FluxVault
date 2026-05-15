@@ -81,6 +81,12 @@ public sealed partial class OptionsViewModel : ObservableObject
     private int watcherEventBacklogLimit;
 
     [ObservableProperty]
+    private int usnFallbackFullScanCooldownMinutes;
+
+    [ObservableProperty]
+    private int sourceDeepVerificationIntervalHours;
+
+    [ObservableProperty]
     private CodecProfile codecProfile;
 
     [ObservableProperty]
@@ -313,6 +319,8 @@ public sealed partial class OptionsViewModel : ObservableObject
         MinimumSameFileCaptureIntervalSeconds = Math.Max(0, (int)Math.Round(policy.MinimumSameFileCaptureInterval.TotalSeconds));
         MaximumConcurrentCaptures = Math.Max(1, policy.MaximumConcurrentCaptures);
         WatcherEventBacklogLimit = Math.Max(16, policy.WatcherEventBacklogLimit);
+        UsnFallbackFullScanCooldownMinutes = Math.Max(1, (int)Math.Round(policy.UsnFallbackFullScanCooldown.TotalMinutes));
+        SourceDeepVerificationIntervalHours = Math.Max(1, (int)Math.Round(policy.SourceDeepVerificationInterval.TotalHours));
     }
 
     private CaptureCadencePolicy BuildCadence()
@@ -328,7 +336,9 @@ public sealed partial class OptionsViewModel : ObservableObject
             QuietMaxHotFileDelay: TimeSpan.FromMinutes(Math.Max(1, QuietMaxHotFileDelayMinutes)),
             MinimumSameFileCaptureInterval: TimeSpan.FromSeconds(Math.Max(0, MinimumSameFileCaptureIntervalSeconds)),
             MaximumConcurrentCaptures: Math.Max(1, MaximumConcurrentCaptures),
-            WatcherEventBacklogLimit: Math.Max(16, WatcherEventBacklogLimit));
+            WatcherEventBacklogLimit: Math.Max(16, WatcherEventBacklogLimit),
+            UsnFallbackFullScanCooldown: TimeSpan.FromMinutes(Math.Max(1, UsnFallbackFullScanCooldownMinutes)),
+            SourceDeepVerificationInterval: TimeSpan.FromHours(Math.Max(1, SourceDeepVerificationIntervalHours)));
     }
 
     private void ApplyCodec(CodecPolicy policy)

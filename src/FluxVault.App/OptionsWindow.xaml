@@ -151,6 +151,8 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="18" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -199,14 +201,23 @@
                         <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding MaximumConcurrentCaptures, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8"
                                  ToolTip="Parallel capture limit. Keep this low for less disruption." />
                         <TextBlock Grid.Row="7" Text="Watcher event backlog limit" VerticalAlignment="Center" Margin="0,0,14,18"
-                                   ToolTip="Maximum queued watcher paths before FluxVault collapses the event storm into one reconciliation scan." />
+                                    ToolTip="Maximum queued watcher paths before FluxVault collapses the event storm into one reconciliation scan." />
                         <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding WatcherEventBacklogLimit, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,18"
-                                 ToolTip="Higher values allow more targeted fallbacks; lower values cap OneDrive or Office event churn faster." />
+                                  ToolTip="Higher values allow more targeted fallbacks; lower values cap OneDrive or Office event churn faster." />
 
-                        <TextBlock Grid.Row="8" Grid.ColumnSpan="2" Text="Compression" FontWeight="SemiBold" Margin="0,0,0,12" />
-                        <TextBlock Grid.Row="9" Text="Profile / default / hot-file" VerticalAlignment="Center" Margin="0,0,14,8"
-                                   ToolTip="Compression policy profile, normal codec, and hot-file override." />
-                        <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Grid.Row="8" Text="USN fallback cooldown minutes" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Minimum time between full reconciliation scans caused by repeated USN reset or unavailable states." />
+                        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding UsnFallbackFullScanCooldownMinutes, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8"
+                                 ToolTip="Repeated USN fallback scans are suppressed for this many minutes unless an explicit backup or event overflow requires a scan." />
+                        <TextBlock Grid.Row="9" Text="Deep verification interval hours" VerticalAlignment="Center" Margin="0,0,14,18"
+                                   ToolTip="How often maintenance may perform deeper source verification instead of trusting length and last-write metadata." />
+                        <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding SourceDeepVerificationIntervalHours, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,18"
+                                 ToolTip="Normal scans skip unchanged files by metadata; this interval controls scheduled deeper verification." />
+
+                        <TextBlock Grid.Row="10" Grid.ColumnSpan="2" Text="Compression" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="11" Text="Profile / default / hot-file" VerticalAlignment="Center" Margin="0,0,14,8"
+                                    ToolTip="Compression policy profile, normal codec, and hot-file override." />
+                        <StackPanel Grid.Row="11" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
                             <ComboBox ItemsSource="{Binding CodecProfiles}" SelectedItem="{Binding CodecProfile}" Width="120"
                                       ToolTip="Adaptive skips or lowers compression for unsuitable files; ratio-focused profiles spend more CPU." />
                             <ComboBox ItemsSource="{Binding Codecs}" SelectedItem="{Binding DefaultCodec}" Width="110" Margin="8,0,0,0"
@@ -214,18 +225,18 @@
                             <ComboBox ItemsSource="{Binding Codecs}" SelectedItem="{Binding HotFileCodec}" Width="110" Margin="8,0,0,0"
                                       ToolTip="Codec override for hot files. LZ4 or off keeps capture latency lower." />
                         </StackPanel>
-                        <TextBlock Grid.Row="10" Text="Level / minimum KB" VerticalAlignment="Center" Margin="0,0,14,0"
-                                   ToolTip="Compression effort level and minimum chunk size before compression is attempted." />
-                        <StackPanel Grid.Row="10" Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock Grid.Row="12" Text="Level / minimum KB" VerticalAlignment="Center" Margin="0,0,14,0"
+                                    ToolTip="Compression effort level and minimum chunk size before compression is attempted." />
+                        <StackPanel Grid.Row="12" Grid.Column="1" Orientation="Horizontal">
                             <TextBox Text="{Binding CodecLevel, UpdateSourceTrigger=PropertyChanged}" Width="64" Padding="8"
                                      ToolTip="Codec effort level. Higher values may improve ratio but use more CPU." />
                             <TextBox Text="{Binding CodecMinimumKb, UpdateSourceTrigger=PropertyChanged}" Width="90" Padding="8" Margin="8,0,0,0"
                                      ToolTip="Chunks smaller than this size are stored without compression." />
                         </StackPanel>
 
-                        <TextBlock Grid.Row="11" Text="Skip extensions" VerticalAlignment="Top" Margin="0,0,14,18"
-                                   ToolTip="File extensions that are already compressed or not worth compressing. Separate entries with new lines, commas, or semicolons." />
-                        <TextBox Grid.Row="11" Grid.Column="1"
+                        <TextBlock Grid.Row="13" Text="Skip extensions" VerticalAlignment="Top" Margin="0,0,14,18"
+                                    ToolTip="File extensions that are already compressed or not worth compressing. Separate entries with new lines, commas, or semicolons." />
+                        <TextBox Grid.Row="13" Grid.Column="1"
                                  Text="{Binding CodecSkipExtensionsText, UpdateSourceTrigger=PropertyChanged}"
                                  AcceptsReturn="True"
                                  TextWrapping="Wrap"
@@ -235,10 +246,10 @@
                                  Margin="0,0,0,18"
                                  ToolTip="FluxVault normalises entries to extensions such as .zip and removes duplicates when saving." />
 
-                        <TextBlock Grid.Row="13" Grid.ColumnSpan="2" Text="Explorer context menu" FontWeight="SemiBold" Margin="0,0,0,12" />
-                        <TextBlock Grid.Row="14" Grid.ColumnSpan="2" Text="{Binding ExplorerContextMenuStatus}" Foreground="#3C4043" TextWrapping="Wrap" Margin="0,0,0,8"
+                        <TextBlock Grid.Row="15" Grid.ColumnSpan="2" Text="Explorer context menu" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="16" Grid.ColumnSpan="2" Text="{Binding ExplorerContextMenuStatus}" Foreground="#3C4043" TextWrapping="Wrap" Margin="0,0,0,8"
                                    ToolTip="Current per-user Explorer full-menu and Windows 11 compact-menu registration status." />
-                        <StackPanel Grid.Row="15" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <StackPanel Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Name="RegisterExplorerContextMenuButton"
                                     Content="Register Explorer menu"
                                     Command="{Binding RegisterExplorerContextMenuCommand}"

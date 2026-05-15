@@ -52,6 +52,13 @@ credential-reference-only configuration and fake-client-tested contracts.
   control or ProgramData write access through that IPC permission.
 - The service accepts concurrent named-pipe clients so status/activity requests
   remain responsive while long backup or restore operations run.
+- Dashboard automatic refresh uses a lightweight status path that avoids full
+  repository inventory enumeration. Full inventory refresh remains available for
+  explicit user actions and screens that need tracked-entry detail.
+- Backup Now and service-triggered scans must avoid rereading source content
+  when repository metadata proves the file length and source last-write time
+  are unchanged from the latest captured version. Periodic deep verification
+  remains configurable so stale metadata is not trusted forever.
 - A single service process may host multiple enabled vault profiles. Each
   profile has its own id, display name, repository, mirrors, watched folders,
   runtime state, watcher loop, and maintenance state. Old single-profile
@@ -308,7 +315,10 @@ Continuous edits must not defer snapshots indefinitely. Directory notification
 bursts are coalesced by path and profile, but FluxVault forces a snapshot after
 the configured maximum hot-file delay. Defaults are Fast 30 seconds, Balanced 2
 minutes, and Quiet 10 minutes. Periodic reconciliation still runs every 10
-minutes by default as a safety net.
+minutes by default as a safety net. USN reset or full-scan-required fallbacks
+are cooled down after a fallback scan so a noisy or unhealthy volume cannot
+drive repeated idle full scans. The cooldown defaults to 30 minutes and is
+editable from Advanced Options.
 
 ## Consistency language
 

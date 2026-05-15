@@ -29,7 +29,12 @@ creates the IPC pipe with an explicit ACL: LocalSystem and Administrators retain
 full control, while Authenticated Users and packaged app tokens receive
 read/write pipe access. The pipe server accepts multiple clients concurrently;
 long mutating operations are coordinated inside the operations layer so status
-and activity requests can still complete while Backup Now is running.
+and activity requests can still complete while Backup Now is running. Status IPC
+supports a fast detail level used by dashboard auto-refresh. Fast status returns
+cached runtime summaries, activity, recent versions, and live backup/watcher
+diagnostics without rebuilding the full tracked repository inventory every few
+seconds. Manual refreshes and views that need repository file-browser detail
+request full status.
 
 The dashboard checks the Windows service state separately from IPC. If
 `FluxVaultService` is stopped, missing, inaccessible, or running without an
@@ -121,19 +126,28 @@ restore-lineage hints.
    an internal VSS backup-session adapter so CI can verify requester sequencing,
    metadata interpretation, writer-status failure handling, and cleanup without
    elevated live writers.
-7. Core chunking splits the captured bytes into FastCDC-style chunks.
-8. Chunk fingerprints are compared against the local repository.
-9. New chunks and a manifest are committed atomically.
-10. Repository artefacts are mirrored according to the active mirror placement
+7. Before reading source bytes, FluxVault compares the target's length and
+   source last-write time with the latest repository summary for that path.
+   Matching entries are reported as skipped unchanged. Periodic deep
+   verification can force a later reread so source metadata is not trusted
+   indefinitely.
+8. Core chunking splits captured bytes into FastCDC-style chunks.
+9. Chunk fingerprints are compared against the local repository.
+10. New chunks and a manifest, including source last-write metadata, are
+    committed atomically. Backup operations reuse a mutation manifest cache so
+    folder-cascade and deletion manifests do not reread the full manifest set
+    for every committed target.
+11. Repository artefacts are mirrored according to the active mirror placement
     profile after the primary commit succeeds. Manifests go to every enabled
     mirror node, while chunks and metadata follow full-copy, capacity-balanced,
     or redundant placement. Mirror failures are captured as warnings after the
     primary commit succeeds.
-11. Compression is selected by policy. The default adaptive profile uses zstd,
+12. Compression is selected by policy. The default adaptive profile uses zstd,
     skips known compressed file types from the configurable skip-extension
     list, uses lz4 for hot files, and keeps Brotli and LZMA as explicit
     ratio/cold-archive choices.
-12. If retention is enabled, the service applies the configured retention policy
+13. If retention is enabled and the backup produced captured versions or
+    deletion tombstones, the service applies the configured retention policy
     after the successful backup and reports kept, pruned, and reclaimed counts
     in service status.
 
@@ -149,6 +163,8 @@ Options. Defaults are:
 - Minimum same-file capture interval: 15 seconds.
 - Maximum concurrent captures: 2.
 - Watcher event backlog limit: 4096 unique pending paths.
+- USN fallback full-scan cooldown: 30 minutes.
+- Source deep verification interval: 7 days.
 
 Directory notifications are latency hints. They trigger USN catch-up, collapse
 repeated per-path events, and are capped by the watcher event backlog limit. If
@@ -156,6 +172,13 @@ the backlog limit is exceeded, FluxVault drops the per-path queue and schedules
 one reconciliation scan instead of hot-looping on every watcher event. USN is
 the durable catch-up source where available. Reconciliation remains the safety
 net when USN cannot prove continuity or watcher volume is excessive.
+When USN reports reset, wrap, or another full-scan-required state repeatedly,
+FluxVault performs one fallback scan, records the reason, suppresses duplicate
+fallback scans until the configured cooldown expires, and keeps watcher-targeted
+backup processing available for matured events. Backup runtime status exposes
+the current phase, effective worker count, enumerated/captured/skipped/failed
+counts, suppressed fallback count, last full-scan reason, and next allowed
+fallback time.
 Durable-change and watcher runtime status carry latest-check labels, timestamps,
 event rate/backlog, last catch-up source (`USN`, `Watcher fallback`, or
 `Reconciliation scan`), and structured diagnostic details, so the UI and
@@ -168,8 +191,9 @@ failures, and noisy-folder churn such as OneDrive/Office activity.
 Every editable Options control has a native WPF tooltip describing the
 operational effect of the setting; long tooltip text wraps inside a bounded
 width. Options now covers retention, scheduled maintenance, default workload
-preset, capture cadence, active compression choices, compression skip
-extensions, and Explorer integration. Future user-meaningful operational
+preset, capture cadence, USN fallback cooldown, source deep verification,
+active compression choices, compression skip extensions, and Explorer
+integration. Future user-meaningful operational
 settings should follow the same pattern: typed defaults, compatibility for existing config files,
 Options load/save tests, and no exposed dormant fields. The selected dashboard
 direction is Concept A, the operational cockpit: stable primary commands in the

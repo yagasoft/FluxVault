@@ -11,8 +11,13 @@ public sealed record CaptureCadencePolicy(
     TimeSpan QuietMaxHotFileDelay,
     TimeSpan MinimumSameFileCaptureInterval,
     int MaximumConcurrentCaptures,
-    int WatcherEventBacklogLimit = 4096)
+    int WatcherEventBacklogLimit = 4096,
+    TimeSpan UsnFallbackFullScanCooldown = default,
+    TimeSpan SourceDeepVerificationInterval = default)
 {
+    public static readonly TimeSpan DefaultUsnFallbackFullScanCooldown = TimeSpan.FromMinutes(30);
+    public static readonly TimeSpan DefaultSourceDeepVerificationInterval = TimeSpan.FromDays(7);
+
     public static CaptureCadencePolicy CreateDefault()
     {
         return new CaptureCadencePolicy(
@@ -26,7 +31,9 @@ public sealed record CaptureCadencePolicy(
             QuietMaxHotFileDelay: TimeSpan.FromMinutes(10),
             MinimumSameFileCaptureInterval: TimeSpan.FromSeconds(15),
             MaximumConcurrentCaptures: 2,
-            WatcherEventBacklogLimit: 4096);
+            WatcherEventBacklogLimit: 4096,
+            UsnFallbackFullScanCooldown: DefaultUsnFallbackFullScanCooldown,
+            SourceDeepVerificationInterval: DefaultSourceDeepVerificationInterval);
     }
 
     public TimeSpan GetDebounce(ResourceProfile profile)

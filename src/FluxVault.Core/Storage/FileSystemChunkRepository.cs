@@ -26,6 +26,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     private readonly StreamingFastCdcChunker streamingChunker;
     private readonly Blake3ContentHasher hasher;
     private readonly ZstdChunkCodec codec;
+    private List<FileVersionManifest>? mutationManifestCache;
 
     private SemaphoreSlim RepositoryLock => RepositoryLocks.GetOrAdd(Path.GetFullPath(rootPath), _ => new SemaphoreSlim(1, 1));
 
@@ -91,7 +92,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             }
 
             var sourcePath = Path.GetFullPath(request.SourcePath);
-            var existingManifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
+            var existingManifests = await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false);
             var contentSignature = ComputeContentSignature(logicalLength, chunks);
             var lineage = request.SyncOrigin is not null
                 ? ResolveSyncLineage(sourcePath, existingManifests)
@@ -114,9 +115,11 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 InheritedFromVersionId: lineage.InheritedFromVersionId,
                 InheritedFromSourcePath: lineage.InheritedFromSourcePath,
                 ContentSignature: contentSignature,
-                SyncOrigin: request.SyncOrigin);
+                SyncOrigin: request.SyncOrigin,
+                SourceLastWriteUtc: request.SourceLastWriteUtc);
 
             mirrorWarnings.AddRange(WriteManifest(manifest));
+            existingManifests.Add(manifest);
             mirrorWarnings.AddRange(WriteFolderCascadeManifests(existingManifests, manifest, request.WatchedFolderPath, cancellationToken));
             if (lineage.OperationType == VersionOperationType.Restore)
             {
@@ -179,7 +182,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
             var sourcePath = Path.GetFullPath(request.SourcePath);
             var entryKind = request.IsDirectory ? RepositoryEntryKind.Folder : RepositoryEntryKind.File;
-            var existingManifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
+            var existingManifests = await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false);
             var deletedFrom = LatestForPath(existingManifests, sourcePath, entryKind);
             if (deletedFrom is null || deletedFrom.IsDeleted)
             {
@@ -204,6 +207,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
             var mirrorWarnings = new List<string>();
             mirrorWarnings.AddRange(WriteManifest(manifest));
+            existingManifests.Add(manifest);
             mirrorWarnings.AddRange(WriteFolderCascadeManifests(existingManifests, manifest, request.WatchedFolderPath, cancellationToken));
             return new RepositoryDeletionResult(manifest, CondenseMirrorWarnings(mirrorWarnings));
         }
@@ -937,6 +941,10 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             var state = await BuildRetentionStateAsync(policy, nowUtc, cancellationToken).ConfigureAwait(false);
             var mirrorWarnings = new List<string>();
             var reclaimedBytes = 0L;
+            if (state.PrunableManifests.Count > 0)
+            {
+                mutationManifestCache = null;
+            }
 
             foreach (var manifest in state.PrunableManifests)
             {
@@ -1317,7 +1325,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     }
 
     private IReadOnlyList<string> WriteFolderCascadeManifests(
-        IReadOnlyList<FileVersionManifest> existingManifests,
+        ICollection<FileVersionManifest> existingManifests,
         FileVersionManifest childManifest,
         string? watchedFolderPath,
         CancellationToken cancellationToken)
@@ -1329,13 +1337,12 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
 
         var mirrorWarnings = new List<string>();
-        var knownManifests = existingManifests.ToList();
         var currentChild = childManifest;
         foreach (var folderPath in folderPaths)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var parent = LatestForPath(knownManifests, folderPath, RepositoryEntryKind.Folder);
+            var parent = LatestForPath(existingManifests, folderPath, RepositoryEntryKind.Folder);
             var folderEntries = MergeFolderEntries(parent?.FolderEntries, ToFolderEntry(currentChild));
             var logicalLength = folderEntries
                 .Where(entry => !entry.IsDeleted)
@@ -1355,7 +1362,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 FolderEntries: folderEntries);
 
             mirrorWarnings.AddRange(WriteManifest(folderManifest));
-            knownManifests.Add(folderManifest);
+            existingManifests.Add(folderManifest);
             currentChild = folderManifest;
         }
 
@@ -1847,7 +1854,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     private static IReadOnlyList<RepositoryVersionRetentionDecision> ExpandRetentionReferences(
         IReadOnlyList<RepositoryVersionRetentionDecision> baseDecisions,
-        IReadOnlyList<FileVersionManifest> manifests,
+        IEnumerable<FileVersionManifest> manifests,
         IReadOnlyList<RepositoryVersionSummary> summaries)
     {
         var manifestsById = manifests.ToDictionary(manifest => manifest.VersionId, StringComparer.OrdinalIgnoreCase);
@@ -1923,6 +1930,17 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
 
         return manifests;
+    }
+
+    private async Task<List<FileVersionManifest>> ReadAllManifestsForMutationAsync(CancellationToken cancellationToken)
+    {
+        if (mutationManifestCache is not null)
+        {
+            return mutationManifestCache;
+        }
+
+        mutationManifestCache = (await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false)).ToList();
+        return mutationManifestCache;
     }
 
     private long GetLocalChunkStorageBytes(string digest)
@@ -2133,7 +2151,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     }
 
     private static FileVersionManifest? LatestForPath(
-        IReadOnlyList<FileVersionManifest> manifests,
+        IEnumerable<FileVersionManifest> manifests,
         string sourcePath,
         RepositoryEntryKind entryKind)
     {
@@ -2172,7 +2190,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             manifest.EntryKind,
             manifest.IsDeleted,
             manifest.FolderEntries,
-            manifest.DeletedFromVersionId);
+            manifest.DeletedFromVersionId,
+            manifest.SourceLastWriteUtc);
     }
 
     private string GetContentSignature(FileVersionManifest manifest)

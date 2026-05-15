@@ -12,4 +12,5 @@ public sealed record FileCommitRequest(
     int MinimumCompressionBytes,
     Stream Content,
     SyncOriginMetadata? SyncOrigin = null,
-    string? WatchedFolderPath = null);
+    string? WatchedFolderPath = null,
+    DateTimeOffset? SourceLastWriteUtc = null);

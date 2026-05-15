@@ -21,6 +21,8 @@ public sealed class CaptureCadencePolicyTests
         Assert.Equal(TimeSpan.FromSeconds(15), policy.MinimumSameFileCaptureInterval);
         Assert.Equal(2, policy.MaximumConcurrentCaptures);
         Assert.Equal(4096, policy.WatcherEventBacklogLimit);
+        Assert.Equal(TimeSpan.FromMinutes(30), policy.UsnFallbackFullScanCooldown);
+        Assert.Equal(TimeSpan.FromDays(7), policy.SourceDeepVerificationInterval);
     }
 
     [Fact]

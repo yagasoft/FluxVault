@@ -20,4 +20,5 @@ public sealed record RepositoryVersionSummary(
     RepositoryEntryKind EntryKind = RepositoryEntryKind.File,
     bool IsDeleted = false,
     IReadOnlyList<FolderVersionEntry>? FolderEntries = null,
-    string? DeletedFromVersionId = null);
+    string? DeletedFromVersionId = null,
+    DateTimeOffset? SourceLastWriteUtc = null);

@@ -1,4 +1,5 @@
 using FluxVault.Abstractions.ChangeTracking;
+using FluxVault.Abstractions.Capture;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Core.Capture;
@@ -87,6 +88,52 @@ public sealed class ProtectionLoopUsnTests
             logger.Entries,
             entry => entry.Level == LogLevel.Warning
                 && entry.Message.Contains("USN catch-up cycle failed", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public async Task Repeated_usn_full_scan_requirement_is_cooled_down_after_initial_fallback()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        await File.WriteAllTextAsync(Path.Combine(watched, "first.txt"), "first");
+        await File.WriteAllTextAsync(Path.Combine(watched, "second.txt"), "second");
+        var configuration = NewFastConfiguration(workspace, watched) with
+        {
+            CaptureCadencePolicy = NewFastConfiguration(workspace, watched).CaptureCadencePolicy with
+            {
+                UsnFallbackFullScanCooldown = TimeSpan.FromHours(1)
+            }
+        };
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var captureProvider = new CountingCaptureProvider();
+        var operations = new FluxVaultOperations(store, captureProvider);
+        await operations.SaveConfigurationAsync(configuration);
+        var reader = new SequencedUsnChangeJournalReader(
+            UsnChangeJournalReadResult.FullScanRequired("USN journal reset.", [Checkpoint(watched, nextUsn: 200)]),
+            UsnChangeJournalReadResult.FullScanRequired("USN journal reset.", [Checkpoint(watched, nextUsn: 300)]),
+            UsnChangeJournalReadResult.FullScanRequired("USN journal reset.", [Checkpoint(watched, nextUsn: 400)]));
+        var loop = CreateLoop(workspace, operations, reader);
+
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(4));
+        var loopTask = loop.RunAsync(cancellation.Token);
+        try
+        {
+            await WaitUntilAsync(_ => Task.FromResult(reader.ReadCount >= 1), cancellation.Token);
+            loop.RecordFileSystemEventForTesting(configuration.WatchedFolders[0], Path.Combine(watched, "first.txt"));
+            await WaitUntilAsync(_ => Task.FromResult(reader.ReadCount >= 2), cancellation.Token);
+            await Task.Delay(150, cancellation.Token);
+        }
+        finally
+        {
+            await StopLoopAsync(loopTask, cancellation);
+        }
+
+        Assert.Equal(2, captureProvider.TotalCaptures);
+        var status = await operations.GetStatusAsync();
+        Assert.NotNull(status.BackupRuntime);
+        Assert.True(status.BackupRuntime.SuppressedFullScanCount >= 1);
+        Assert.NotNull(status.BackupRuntime.NextFallbackScanUtc);
     }
 
     [Fact]
@@ -417,6 +464,23 @@ public sealed class ProtectionLoopUsnTests
             CancellationToken cancellationToken = default)
         {
             return Task.FromException<UsnChangeJournalReadResult>(exception);
+        }
+    }
+
+    private sealed class CountingCaptureProvider : IFileCaptureProvider
+    {
+        private int totalCaptures;
+
+        public int TotalCaptures => totalCaptures;
+
+        public Task<FileCaptureResult> CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken = default)
+        {
+            Interlocked.Increment(ref totalCaptures);
+            var payload = File.ReadAllBytes(request.SourcePath);
+            return Task.FromResult(FileCaptureResult.Captured(
+                new MemoryStream(payload),
+                FluxVault.Abstractions.Storage.CaptureConsistency.BestEffort,
+                "Captured."));
         }
     }
 

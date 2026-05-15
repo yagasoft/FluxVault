@@ -18,13 +18,23 @@ public sealed record FluxVaultIpcRequest(
     bool OverwriteConfirmed = false,
     string? ProfileId = null,
     string? ProfileDisplayName = null,
-    string? SourceProfileId = null)
+    string? SourceProfileId = null,
+    FluxVaultStatusDetailLevel StatusDetailLevel = FluxVaultStatusDetailLevel.Full)
 {
     public string? DestinationPath => OutputPath;
 
-    public static FluxVaultIpcRequest GetStatus(string? profileId = null)
+    public static FluxVaultIpcRequest GetStatus(
+        string? profileId = null,
+        FluxVaultStatusDetailLevel statusDetailLevel = FluxVaultStatusDetailLevel.Full)
     {
-        return new FluxVaultIpcRequest(FluxVaultIpcCommand.GetStatus, null, null, null, null, ProfileId: profileId);
+        return new FluxVaultIpcRequest(
+            FluxVaultIpcCommand.GetStatus,
+            null,
+            null,
+            null,
+            null,
+            ProfileId: profileId,
+            StatusDetailLevel: statusDetailLevel);
     }
 
     public static FluxVaultIpcRequest SaveConfiguration(FluxVaultConfiguration configuration, string? profileId = null)
@@ -224,4 +234,10 @@ public sealed record FluxVaultIpcRequest(
         ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.SetActiveProfile, null, null, null, null, ProfileId: profileId);
     }
+}
+
+public enum FluxVaultStatusDetailLevel
+{
+    Full = 0,
+    Fast = 1
 }

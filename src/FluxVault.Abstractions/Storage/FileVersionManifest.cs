@@ -21,7 +21,8 @@ public sealed record FileVersionManifest(
     RepositoryEntryKind EntryKind = RepositoryEntryKind.File,
     bool IsDeleted = false,
     IReadOnlyList<FolderVersionEntry>? FolderEntries = null,
-    string? DeletedFromVersionId = null);
+    string? DeletedFromVersionId = null,
+    DateTimeOffset? SourceLastWriteUtc = null);
 
 public sealed record FolderVersionEntry(
     string Name,

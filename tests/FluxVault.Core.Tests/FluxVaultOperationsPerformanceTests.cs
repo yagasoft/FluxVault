@@ -57,6 +57,99 @@ public sealed class FluxVaultOperationsPerformanceTests
     }
 
     [Fact]
+    public async Task Backup_now_skips_unchanged_files_after_initial_capture()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var source = Path.Combine(workspace.RootPath, "source");
+        Directory.CreateDirectory(source);
+        for (var index = 0; index < 6; index++)
+        {
+            await File.WriteAllTextAsync(Path.Combine(source, $"file-{index:00}.txt"), $"content-{index}");
+        }
+
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            RepositoryPath = workspace.RepositoryPath,
+            WatchedFolders =
+            [
+                new WatchedFolderConfiguration(
+                    "source",
+                    source,
+                    Recursive: false,
+                    IncludePatterns: ["*.txt"],
+                    ExcludePatterns: [],
+                    CompressionPreference.Off,
+                    ResourceProfile.Balanced,
+                    IsEnabled: true)
+            ],
+            CaptureCadencePolicy = CaptureCadencePolicy.CreateDefault() with
+            {
+                MaximumConcurrentCaptures = 2
+            }
+        };
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        await store.SaveAsync(configuration);
+        var captureProvider = new CountingCaptureProvider();
+        var operations = new FluxVaultOperations(store, captureProvider);
+
+        var first = await operations.RunBackupNowAsync();
+        var second = await operations.RunBackupNowAsync();
+
+        Assert.True(first.Success);
+        Assert.True(second.Success);
+        Assert.Equal(6, first.CapturedFileCount);
+        Assert.Equal(0, second.CapturedFileCount);
+        Assert.Equal(6, second.SkippedUnchangedFileCount);
+        Assert.Equal(6, captureProvider.TotalCaptures);
+    }
+
+    [Fact]
+    public async Task Backup_now_rereads_unchanged_files_after_deep_verification_interval()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var source = Path.Combine(workspace.RootPath, "source");
+        Directory.CreateDirectory(source);
+        var file = Path.Combine(source, "file.txt");
+        await File.WriteAllTextAsync(file, "content");
+
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            RepositoryPath = workspace.RepositoryPath,
+            WatchedFolders =
+            [
+                new WatchedFolderConfiguration(
+                    "source",
+                    source,
+                    Recursive: false,
+                    IncludePatterns: ["*.txt"],
+                    ExcludePatterns: [],
+                    CompressionPreference.Off,
+                    ResourceProfile.Balanced,
+                    IsEnabled: true)
+            ],
+            CaptureCadencePolicy = CaptureCadencePolicy.CreateDefault() with
+            {
+                SourceDeepVerificationInterval = TimeSpan.FromMilliseconds(1)
+            }
+        };
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        await store.SaveAsync(configuration);
+        var captureProvider = new CountingCaptureProvider();
+        var operations = new FluxVaultOperations(store, captureProvider);
+
+        var first = await operations.RunBackupNowAsync();
+        await Task.Delay(20);
+        var second = await operations.RunBackupNowAsync();
+
+        Assert.True(first.Success);
+        Assert.True(second.Success);
+        Assert.Equal(1, first.CapturedFileCount);
+        Assert.Equal(1, second.CapturedFileCount);
+        Assert.Equal(0, second.SkippedUnchangedFileCount);
+        Assert.Equal(2, captureProvider.TotalCaptures);
+    }
+
+    [Fact]
     public async Task Folder_restore_latest_elsewhere_preserves_relative_paths_and_uses_latest_versions()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -191,8 +284,9 @@ public sealed class FluxVaultOperationsPerformanceTests
                 Interlocked.Increment(ref totalCaptures);
                 UpdateMaximumActiveCaptures(active);
                 await Task.Delay(20, cancellationToken);
+                var payload = await File.ReadAllBytesAsync(request.SourcePath, cancellationToken);
                 return FileCaptureResult.Captured(
-                    new MemoryStream(Encoding.UTF8.GetBytes(Path.GetFileName(request.SourcePath))),
+                    new MemoryStream(payload),
                     CaptureConsistency.BestEffort,
                     "Captured.");
             }

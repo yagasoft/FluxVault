@@ -472,7 +472,22 @@ public sealed partial class MainWindowViewModel : ObservableObject
             while (!cancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(autoRefreshInterval, cancellationToken).ConfigureAwait(true);
-                await RefreshAsync(isAutomatic: true, cancellationToken).ConfigureAwait(true);
+                try
+                {
+                    await RefreshAsync(isAutomatic: true, cancellationToken).ConfigureAwait(true);
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (Exception ex) when (ex is IOException
+                                             or TimeoutException
+                                             or UnauthorizedAccessException
+                                             or InvalidOperationException
+                                             or ArgumentException)
+                {
+                    SetServiceUnavailable(ex);
+                }
             }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -504,7 +519,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     return;
                 }
 
-                var response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true);
+                var response = await client.SendAsync(
+                        FluxVaultIpcRequest.GetStatus(
+                            statusDetailLevel: isAutomatic
+                                ? FluxVaultStatusDetailLevel.Fast
+                                : FluxVaultStatusDetailLevel.Full),
+                        cancellationToken)
+                    .ConfigureAwait(true);
                 if (!response.Success || response.Status is null)
                 {
                     SetServiceStatus($"Service connection: unavailable ({response.ErrorMessage ?? "no status returned"})");
@@ -1713,7 +1734,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 }
             }
 
-            FileBrowser.LoadTrackedEntries(status.TrackedEntries ?? status.RecentVersions);
+            if (status.TrackedEntries is not null)
+            {
+                FileBrowser.LoadTrackedEntries(status.TrackedEntries);
+            }
 
             var visibleStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}. Last refreshed {DateTime.Now:HH:mm:ss}";
             if (!string.IsNullOrWhiteSpace(RestoreHintPath))

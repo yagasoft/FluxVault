@@ -106,6 +106,9 @@ public sealed class MainWindowViewModelRefreshTests
 
         Assert.True(client.GetStatusCount >= 2);
         Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+        Assert.All(
+            client.Requests.Where(request => request.Command == FluxVaultIpcCommand.GetStatus),
+            request => Assert.Equal(FluxVaultStatusDetailLevel.Fast, request.StatusDetailLevel));
     }
 
     [Fact]
@@ -1807,6 +1810,8 @@ public sealed class MainWindowViewModelRefreshTests
 
         public List<FluxVaultIpcCommand> Commands { get; } = [];
 
+        public List<FluxVaultIpcRequest> Requests { get; } = [];
+
         public List<(string VersionId, string OutputPath)> RestoreRequests { get; } = [];
 
         public List<string> RestorePreviewRequests { get; } = [];
@@ -1837,6 +1842,7 @@ public sealed class MainWindowViewModelRefreshTests
 
         public Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
         {
+            Requests.Add(request);
             Commands.Add(request.Command);
             if (nextException is not null)
             {

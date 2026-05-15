@@ -27,7 +27,8 @@ public sealed record FluxVaultServiceStatus(
     IReadOnlyList<WatcherRuntimeStatus>? Watchers = null,
     string? ActiveProfileId = null,
     IReadOnlyList<FluxVaultProfileRuntimeStatus>? Profiles = null,
-    IReadOnlyList<RepositoryVersionSummary>? TrackedEntries = null);
+    IReadOnlyList<RepositoryVersionSummary>? TrackedEntries = null,
+    BackupRuntimeStatus? BackupRuntime = null);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,
@@ -54,6 +55,24 @@ public sealed record FluxVaultProfileRuntimeStatus(
     string RepositoryPath,
     int WatchedFolderCount,
     int EnabledMirrorCount);
+
+public sealed record BackupRuntimeStatus(
+    bool IsRunning,
+    string Phase,
+    string? Trigger,
+    DateTimeOffset? StartedAtUtc,
+    DateTimeOffset? CompletedAtUtc,
+    int EnumeratedFileCount,
+    int CapturedFileCount,
+    int SkippedUnchangedFileCount,
+    int FailedFileCount,
+    int RecordedDeletionCount,
+    int ActiveWorkers,
+    int EffectiveWorkerCount,
+    int SuppressedFullScanCount = 0,
+    DateTimeOffset? NextFallbackScanUtc = null,
+    string? LastFullScanReason = null,
+    TimeSpan? LastElapsed = null);
 
 public sealed record DeviceIdentityRuntimeStatus(
     string DeviceId,

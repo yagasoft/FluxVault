@@ -497,7 +497,66 @@ public sealed class ServiceOperationsTests
         var status = await operations.GetStatusAsync();
         Assert.Single(versions);
         Assert.NotNull(status.LastRetention);
-        Assert.Equal(1, status.LastRetention.PrunedVersionCount);
+        Assert.Equal(2, status.LastRetention.PrunedVersionCount);
+    }
+
+    [Fact]
+    public async Task Targeted_backup_records_deleted_tracked_file_as_restorable_phantom()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "before delete");
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        await operations.RunBackupForFilesAsync([source]);
+        File.Delete(source);
+        await operations.RunBackupForFilesAsync([source]);
+        var status = await operations.GetStatusAsync();
+        var latest = Assert.Single(status.TrackedEntries!, entry =>
+            entry.EntryKind == RepositoryEntryKind.File
+            && string.Equals(entry.SourcePath, source, StringComparison.OrdinalIgnoreCase));
+        var restorePath = Path.Combine(workspace.RootPath, "restore", "draft.txt");
+
+        var restore = await operations.RunRestoreSelectionAsync(
+            source,
+            isDirectory: false,
+            RestoreSelectionDestinationMode.Elsewhere,
+            restorePath,
+            overwriteConfirmed: true);
+
+        Assert.True(latest.IsDeleted);
+        Assert.Equal(1, restore.RestoredCount);
+        Assert.Equal("before delete", await File.ReadAllTextAsync(restorePath));
+    }
+
+    [Fact]
+    public async Task Reconciliation_backup_records_deleted_tracked_file_in_parent_folder_snapshot()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "before delete");
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+
+        await operations.RunBackupNowAsync();
+        File.Delete(source);
+        await operations.RunBackupNowAsync();
+        var status = await operations.GetStatusAsync();
+        var parent = Assert.Single(status.TrackedEntries!, entry =>
+            entry.EntryKind == RepositoryEntryKind.Folder
+            && string.Equals(entry.SourcePath, watched, StringComparison.OrdinalIgnoreCase));
+
+        Assert.Contains(parent.FolderEntries ?? [], entry =>
+            entry.EntryKind == RepositoryEntryKind.File
+            && string.Equals(entry.SourcePath, source, StringComparison.OrdinalIgnoreCase)
+            && entry.IsDeleted);
     }
 
     [Fact]

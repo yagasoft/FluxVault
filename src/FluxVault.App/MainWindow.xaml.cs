@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Threading;
 using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
@@ -102,6 +103,15 @@ public partial class MainWindow : Window
         if (DataContext is MainWindowViewModel viewModel && sender is WpfButton { DataContext: FileBrowserFolderNode folder })
         {
             viewModel.FileBrowser.ToggleFolderSelection(folder);
+            e.Handled = true;
+        }
+    }
+
+    private void FileBrowserAddress_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter && DataContext is MainWindowViewModel viewModel)
+        {
+            viewModel.FileBrowser.NavigateAddressCommand.Execute(null);
             e.Handled = true;
         }
     }

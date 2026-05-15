@@ -10,6 +10,7 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
 {
     private readonly Func<VersionInventoryVersionRow, Task> restoreVersion;
     private readonly Func<VersionInventoryVersionRow, Task> openVersionPreview;
+    private readonly Dictionary<string, VersionInventoryVersionRow> versionsById = new(StringComparer.OrdinalIgnoreCase);
 
     public VersionInventoryViewModel(
         string folderPath,
@@ -26,11 +27,22 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
         var normalisedFocusPath = string.IsNullOrWhiteSpace(focusPath)
             ? null
             : Path.GetFullPath(focusPath);
+        var filteredVersions = versions
+            .Where(version => normalisedFocusPath is null
+                ? IsUnderOrSameFolder(version.SourcePath, FolderPath) || IsSamePath(version.SourcePath, FolderPath)
+                : SourcePathMatchesFocus(version.SourcePath, normalisedFocusPath))
+            .OrderByDescending(version => version.CapturedAtUtc)
+            .ThenByDescending(version => version.VersionId, StringComparer.Ordinal)
+            .ToArray();
 
-        foreach (var group in versions
-                     .Where(version => IsUnderOrSameFolder(version.SourcePath, FolderPath))
-                     .Where(version => normalisedFocusPath is null
-                                       || SourcePathMatchesFocus(version.SourcePath, normalisedFocusPath))
+        foreach (var version in filteredVersions.Select(ToVersionRow))
+        {
+            Versions.Add(version);
+            versionsById[version.VersionId] = version;
+        }
+
+        foreach (var group in filteredVersions
+                     .Where(version => version.EntryKind == RepositoryEntryKind.File)
                      .GroupBy(version => Path.GetFullPath(version.SourcePath), StringComparer.OrdinalIgnoreCase)
                      .OrderBy(group => group.Key, StringComparer.OrdinalIgnoreCase))
         {
@@ -49,11 +61,47 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
                 latest.Bytes,
                 orderedVersions));
         }
+
+        SelectedVersion = Versions.FirstOrDefault();
     }
 
     public string FolderPath { get; }
 
     public ObservableCollection<VersionInventoryFileRow> Files { get; } = [];
+
+    public ObservableCollection<VersionInventoryVersionRow> Versions { get; } = [];
+
+    public ObservableCollection<VersionInventorySnapshotEntryRow> SnapshotEntries { get; } = [];
+
+    [ObservableProperty]
+    private VersionInventoryVersionRow? selectedVersion;
+
+    [ObservableProperty]
+    private VersionInventorySnapshotEntryRow? selectedSnapshotEntry;
+
+    partial void OnSelectedVersionChanged(VersionInventoryVersionRow? value)
+    {
+        SnapshotEntries.Clear();
+        SelectedSnapshotEntry = null;
+        if (value?.FolderEntries is null)
+        {
+            return;
+        }
+
+        foreach (var entry in value.FolderEntries
+                     .OrderByDescending(entry => entry.EntryKind)
+                     .ThenBy(entry => entry.Name, StringComparer.OrdinalIgnoreCase))
+        {
+            SnapshotEntries.Add(new VersionInventorySnapshotEntryRow(
+                entry.Name,
+                Path.GetFullPath(entry.SourcePath),
+                entry.EntryKind,
+                entry.VersionId,
+                entry.IsDeleted,
+                entry.LogicalLength,
+                entry.CapturedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")));
+        }
+    }
 
     [RelayCommand]
     private async Task RestoreVersionAsync(VersionInventoryVersionRow? version)
@@ -67,10 +115,64 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
     [RelayCommand]
     private async Task OpenVersionPreviewAsync(VersionInventoryVersionRow? version)
     {
-        if (version is not null)
+        if (version is { EntryKind: RepositoryEntryKind.File })
         {
             await openVersionPreview(version).ConfigureAwait(true);
         }
+    }
+
+    [RelayCommand]
+    private async Task RestoreSelectedVersionAsync()
+    {
+        if (SelectedVersion is not null)
+        {
+            await restoreVersion(SelectedVersion).ConfigureAwait(true);
+        }
+    }
+
+    [RelayCommand]
+    private async Task PreviewSelectedVersionAsync()
+    {
+        if (SelectedVersion is { EntryKind: RepositoryEntryKind.File } version)
+        {
+            await openVersionPreview(version).ConfigureAwait(true);
+        }
+    }
+
+    [RelayCommand]
+    private async Task RestoreSelectedSnapshotEntryAsync()
+    {
+        if (SelectedSnapshotEntry is not null && versionsById.TryGetValue(SelectedSnapshotEntry.VersionId, out var version))
+        {
+            await restoreVersion(version).ConfigureAwait(true);
+        }
+    }
+
+    [RelayCommand]
+    private async Task PreviewSelectedSnapshotEntryAsync()
+    {
+        if (SelectedSnapshotEntry is { EntryKind: RepositoryEntryKind.File } entry
+            && versionsById.TryGetValue(entry.VersionId, out var version))
+        {
+            await openVersionPreview(version).ConfigureAwait(true);
+        }
+    }
+
+    [RelayCommand]
+    private async Task OpenSelectedSnapshotEntryAsync()
+    {
+        if (SelectedSnapshotEntry is null || !versionsById.TryGetValue(SelectedSnapshotEntry.VersionId, out var version))
+        {
+            return;
+        }
+
+        if (SelectedSnapshotEntry.EntryKind == RepositoryEntryKind.Folder)
+        {
+            SelectedVersion = version;
+            return;
+        }
+
+        await openVersionPreview(version).ConfigureAwait(true);
     }
 
     private static VersionInventoryVersionRow ToVersionRow(RepositoryVersionSummary version)
@@ -83,7 +185,10 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
             FormatConsistency(version.Consistency),
             version.LogicalLength,
             FormatLineage(version.OperationType),
-            version.ChunkCount);
+            version.ChunkCount,
+            version.EntryKind,
+            version.IsDeleted,
+            version.FolderEntries);
     }
 
     private static bool IsUnderOrSameFolder(string path, string folder)
@@ -112,6 +217,11 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
         return fullPath.StartsWith(focusRoot, StringComparison.OrdinalIgnoreCase);
     }
 
+    private static bool IsSamePath(string left, string right)
+    {
+        return string.Equals(TrimPath(left), TrimPath(right), StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string TrimPath(string path)
     {
         return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
@@ -136,6 +246,7 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
             VersionOperationType.Restore => "Restored",
             VersionOperationType.InheritedCopy => "Inherited copy",
             VersionOperationType.RemoteSync => "Remote sync",
+            VersionOperationType.Delete => "Deleted",
             _ => operationType.ToString()
         };
     }
@@ -176,4 +287,26 @@ public sealed record VersionInventoryVersionRow(
     string Consistency,
     long Bytes,
     string Lineage,
-    int ChunkCount);
+    int ChunkCount,
+    RepositoryEntryKind EntryKind = RepositoryEntryKind.File,
+    bool IsDeleted = false,
+    IReadOnlyList<FolderVersionEntry>? FolderEntries = null)
+{
+    public string Kind => EntryKind.ToString();
+
+    public string State => IsDeleted ? "Deleted" : "Live";
+}
+
+public sealed record VersionInventorySnapshotEntryRow(
+    string Name,
+    string Path,
+    RepositoryEntryKind EntryKind,
+    string VersionId,
+    bool IsDeleted,
+    long Bytes,
+    string CapturedAt)
+{
+    public string Kind => EntryKind.ToString();
+
+    public string State => IsDeleted ? "Deleted" : "Live";
+}

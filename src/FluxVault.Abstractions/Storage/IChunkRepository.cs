@@ -8,6 +8,10 @@ public interface IChunkRepository
 
     Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default);
+
+    Task<RepositoryDeletionResult?> RecordDeletionAsync(RepositoryDeletionRequest request, CancellationToken cancellationToken = default);
+
     Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default);
 
     Task RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default);

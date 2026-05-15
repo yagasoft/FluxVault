@@ -43,6 +43,7 @@ public sealed class FileSystemProtectionLoop(
             var dueChanges = TakeDueChanges(cadence, now);
             if (TakePendingReconciliationScan())
             {
+                RecordCatchUpSource("Reconciliation scan", overflowed: false);
                 await operations.RunBackupNowAsync(cancellationToken).ConfigureAwait(false);
                 lastFullScanUtc = now;
                 pendingCatchUp = false;
@@ -120,7 +121,7 @@ public sealed class FileSystemProtectionLoop(
                 return ProtectionLoopCatchUpOutcome.Targeted(result.ChangedFiles);
             }
 
-            RecordCatchUpSource("USN", overflowed: false);
+            RecordCatchUpSource("USN", overflowed: false, preserveReconciliation: true);
             return ProtectionLoopCatchUpOutcome.None;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -325,12 +326,18 @@ public sealed class FileSystemProtectionLoop(
         }
     }
 
-    private void RecordCatchUpSource(string source, bool overflowed)
+    private void RecordCatchUpSource(string source, bool overflowed, bool preserveReconciliation = false)
     {
         lock (gate)
         {
             foreach (var (folderId, counter) in watcherEventsByFolder)
             {
+                if (preserveReconciliation
+                    && string.Equals(counter.LastCatchUpSource, "Reconciliation scan", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
                 counter.LastCatchUpSource = source;
                 counter.IsOverflowed = overflowed;
                 if (watchedFolderPaths.TryGetValue(folderId, out var folderPath))

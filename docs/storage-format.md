@@ -32,15 +32,30 @@ A manifest records:
 - logical file length
 - ordered chunk list
 - chunk encoding used for each chunk
-- operation type: `Capture`, `Restore`, or `InheritedCopy`
+- operation type: `Capture`, `Restore`, `InheritedCopy`, `RemoteSync`, or
+  `Delete`
 - parent version id or ids
 - restored-from version id
 - fork-origin version id
 - inherited-from version id and source path
 - deterministic content signature based on logical length and ordered chunk
   identity
+- entry kind: `File` or `Folder`
+- deletion state and deleted-from version id for tombstones
+- immediate folder child entries for folder manifests
 
 Manifests are written to a temporary file and atomically moved into place.
+Older manifests that do not contain entry-kind or deletion fields load as live
+file versions.
+
+Folder manifests are metadata-only versions. When a file is committed with a
+watched-root path, FluxVault writes folder versions for the containing folder
+and each tracked ancestor up to the watched root. Each folder version stores
+its immediate child entries and the child version ids that make up that
+snapshot. Deletion tombstones are also manifests: they point at the deleted
+version through `DeletedFromVersionId`, and parent folder manifests are
+cascaded upward so browsers can show missing tracked entries as restorable
+phantoms.
 
 ## Lineage metadata
 
@@ -69,9 +84,10 @@ placement, and a clean repository layout without side `.git` working trees.
 ## Retention and garbage collection
 
 Retention deletes manifests first. A version disappears from `list` as soon as
-its manifest is pruned. Chunk and metadata files are deleted only when no
-remaining manifest references the chunk digest, so shared chunks survive older
-version pruning.
+its manifest is pruned. Folder manifests and deletion tombstones keep referenced
+child versions alive while the folder/tombstone remains retained. Chunk and
+metadata files are deleted only when no remaining manifest references the chunk
+digest, so shared chunks survive older version pruning.
 
 Cloud-folder mirrors use the same layout. Local pruning is authoritative; mirror
 deletion is best-effort and any mirror cleanup warnings are surfaced in service
@@ -99,5 +115,6 @@ temporary files. It does not write restore hints and does not create manifests.
 
 The developer CLI writes into the same chunk and manifest layout as the service
 will use. `list` reads manifest summaries, `inspect` reads one manifest and
-reports stored/logical size, and `restore` reconstructs the file from ordered
-manifest chunks.
+reports stored/logical size, and `restore` reconstructs file manifests from
+ordered chunks or folder manifests recursively from their child snapshot
+entries.

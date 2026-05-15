@@ -26,7 +26,8 @@ public sealed record FluxVaultServiceStatus(
     FleetRuntimeStatus? Fleet = null,
     IReadOnlyList<WatcherRuntimeStatus>? Watchers = null,
     string? ActiveProfileId = null,
-    IReadOnlyList<FluxVaultProfileRuntimeStatus>? Profiles = null);
+    IReadOnlyList<FluxVaultProfileRuntimeStatus>? Profiles = null,
+    IReadOnlyList<RepositoryVersionSummary>? TrackedEntries = null);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,

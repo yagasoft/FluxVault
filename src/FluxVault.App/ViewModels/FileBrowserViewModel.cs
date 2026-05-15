@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Policies;
+using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Policies;
 
 namespace FluxVault.App.ViewModels;
@@ -16,6 +17,7 @@ public sealed partial class FileBrowserViewModel(
 {
     private readonly Dictionary<string, ProtectionSelectionRule> currentRules = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, ProtectionSelectionRule> baselineRules = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, RepositoryVersionSummary> trackedEntries = new(StringComparer.OrdinalIgnoreCase);
     private readonly IFileBrowserShellLauncher shellLauncher = shellLauncher ?? new WindowsFileBrowserShellLauncher();
 
     [ObservableProperty]
@@ -32,6 +34,12 @@ public sealed partial class FileBrowserViewModel(
 
     [ObservableProperty]
     private string selectedRegexStatus = "Select a protected folder or file to manage scoped regex rules.";
+
+    [ObservableProperty]
+    private string addressPath = string.Empty;
+
+    [ObservableProperty]
+    private string navigationStatus = "Enter a file or folder path, then press Enter or Go.";
 
     [ObservableProperty]
     private WorkloadPolicyPresetId defaultWorkloadPreset = WorkloadPolicyPresetId.GeneralPurpose;
@@ -65,6 +73,20 @@ public sealed partial class FileBrowserViewModel(
         }
 
         RefreshTreeIndicators(Roots);
+    }
+
+    public void LoadTrackedEntries(IReadOnlyList<RepositoryVersionSummary> entries)
+    {
+        trackedEntries.Clear();
+        foreach (var entry in entries)
+        {
+            trackedEntries[ToTrackedEntryKey(entry.SourcePath, entry.EntryKind)] = entry;
+        }
+
+        if (Roots.Count > 0)
+        {
+            RefreshBrowser();
+        }
     }
 
     public void RefreshBrowser()
@@ -148,11 +170,22 @@ public sealed partial class FileBrowserViewModel(
         }
 
         folder.Children.Clear();
-        foreach (var child in fileSystem.GetChildFolders(folder.Path))
+        if (!folder.IsPhantom)
         {
-            var node = ToNode(child);
-            ApplySelectionToNode(node);
-            folder.Children.Add(node);
+            var liveChildPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var child in fileSystem.GetChildFolders(folder.Path))
+            {
+                liveChildPaths.Add(Path.GetFullPath(child.Path));
+                var node = ToNode(child);
+                ApplySelectionToNode(node);
+                folder.Children.Add(node);
+            }
+
+            foreach (var child in GetPhantomChildFolders(folder.Path, liveChildPaths))
+            {
+                ApplySelectionToNode(child);
+                folder.Children.Add(child);
+            }
         }
 
         folder.HasLoadedChildren = true;
@@ -161,6 +194,11 @@ public sealed partial class FileBrowserViewModel(
 
     public void ToggleFolderSelection(FileBrowserFolderNode folder)
     {
+        if (!folder.CanChangeSelection)
+        {
+            return;
+        }
+
         currentRules.TryGetValue(folder.Path, out var existingRule);
         var currentMode = existingRule?.Mode == ProtectionSelectionMode.RegexScope ? null : folder.SelectionMode;
         var next = currentMode switch
@@ -390,7 +428,7 @@ public sealed partial class FileBrowserViewModel(
     [RelayCommand]
     private void ShowSelectedFolderInExplorer()
     {
-        if (SelectedFolder is not null)
+        if (SelectedFolder is { CanUseShellActions: true })
         {
             shellLauncher.ShowFolder(SelectedFolder.Path);
         }
@@ -399,7 +437,7 @@ public sealed partial class FileBrowserViewModel(
     [RelayCommand]
     private void OpenSelectedFile()
     {
-        if (SelectedFile is not null)
+        if (SelectedFile is { CanUseShellActions: true })
         {
             shellLauncher.OpenFile(SelectedFile.Path);
         }
@@ -408,9 +446,24 @@ public sealed partial class FileBrowserViewModel(
     [RelayCommand]
     private void ShowSelectedFileInExplorer()
     {
-        if (SelectedFile is not null)
+        if (SelectedFile is { CanUseShellActions: true })
         {
             shellLauncher.ShowFileInExplorer(SelectedFile.Path);
+        }
+    }
+
+    [RelayCommand]
+    private void NavigateAddress()
+    {
+        if (string.IsNullOrWhiteSpace(AddressPath))
+        {
+            NavigationStatus = "Enter a file or folder path before navigating.";
+            return;
+        }
+
+        if (!NavigateToPath(AddressPath))
+        {
+            NavigationStatus = $"Path is not available or tracked: {AddressPath}";
         }
     }
 
@@ -419,6 +472,7 @@ public sealed partial class FileBrowserViewModel(
         if (value is not null)
         {
             SelectedFile = null;
+            AddressPath = value.Path;
             SelectFolder(value);
             LoadRegexText(value.Path);
             LoadWorkloadPresetText(value.Path);
@@ -429,6 +483,7 @@ public sealed partial class FileBrowserViewModel(
     {
         if (value is not null)
         {
+            AddressPath = value.Path;
             LoadRegexText(value.Path);
             LoadWorkloadPresetText(value.Path);
         }
@@ -476,22 +531,177 @@ public sealed partial class FileBrowserViewModel(
             return;
         }
 
-        foreach (var file in fileSystem.GetFiles(folder.Path))
+        var liveFilePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (!folder.IsPhantom)
         {
-            var row = new FileBrowserFileRow(
-                file.Path,
-                file.Name,
-                file.Length,
-                currentRules.ContainsKey(Path.GetFullPath(file.Path)));
-            row.PropertyChanged += (_, args) =>
+            foreach (var file in fileSystem.GetFiles(folder.Path))
             {
-                if (args.PropertyName == nameof(FileBrowserFileRow.IsSelected))
-                {
-                    ToggleFileSelection(row);
-                }
-            };
-            Files.Add(row);
+                liveFilePaths.Add(Path.GetFullPath(file.Path));
+                Files.Add(CreateFileRow(
+                    file.Path,
+                    file.Name,
+                    file.Length,
+                    isPhantom: false,
+                    restorableVersionId: null));
+            }
         }
+
+        foreach (var entry in GetPhantomChildFiles(folder.Path, liveFilePaths))
+        {
+            Files.Add(CreateFileRow(
+                entry.SourcePath,
+                Path.GetFileName(entry.SourcePath),
+                entry.LogicalLength,
+                isPhantom: true,
+                restorableVersionId: entry.VersionId));
+        }
+    }
+
+    public bool NavigateToPath(string path)
+    {
+        string fullPath;
+        try
+        {
+            fullPath = Path.GetFullPath(path);
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            NavigationStatus = $"Invalid path: {path}";
+            return false;
+        }
+
+        if (TryNavigateToFolder(fullPath))
+        {
+            NavigationStatus = $"Selected folder: {fullPath}";
+            return true;
+        }
+
+        var fileEntry = FindTrackedEntry(fullPath, RepositoryEntryKind.File);
+        if (File.Exists(fullPath) || fileEntry is not null)
+        {
+            var parent = Path.GetDirectoryName(fullPath);
+            if (!string.IsNullOrWhiteSpace(parent) && TryNavigateToFolder(parent))
+            {
+                SelectedFile = Files.FirstOrDefault(file => IsSamePath(file.Path, fullPath));
+                if (SelectedFile is not null)
+                {
+                    NavigationStatus = $"Selected file: {fullPath}";
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private FileBrowserFileRow CreateFileRow(
+        string path,
+        string name,
+        long length,
+        bool isPhantom,
+        string? restorableVersionId)
+    {
+        var row = new FileBrowserFileRow(
+            path,
+            name,
+            length,
+            currentRules.ContainsKey(Path.GetFullPath(path)),
+            isPhantom,
+            restorableVersionId);
+        row.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(FileBrowserFileRow.IsSelected) && row.CanChangeSelection)
+            {
+                ToggleFileSelection(row);
+            }
+        };
+        return row;
+    }
+
+    private IEnumerable<FileBrowserFolderNode> GetPhantomChildFolders(string parentPath, ISet<string> liveChildPaths)
+    {
+        return trackedEntries.Values
+            .Where(entry => entry.EntryKind == RepositoryEntryKind.Folder)
+            .Where(entry => IsImmediateChild(entry.SourcePath, parentPath))
+            .Where(entry => entry.IsDeleted || !Directory.Exists(entry.SourcePath))
+            .Where(entry => !liveChildPaths.Contains(Path.GetFullPath(entry.SourcePath)))
+            .OrderBy(entry => Path.GetFileName(entry.SourcePath), StringComparer.OrdinalIgnoreCase)
+            .Select(entry => new FileBrowserFolderNode(
+                entry.SourcePath,
+                Path.GetFileName(TrimPath(entry.SourcePath)),
+                isAccessible: true,
+                errorMessage: null,
+                isPhantom: true,
+                restorableVersionId: entry.VersionId));
+    }
+
+    private IEnumerable<RepositoryVersionSummary> GetPhantomChildFiles(string parentPath, ISet<string> liveFilePaths)
+    {
+        return trackedEntries.Values
+            .Where(entry => entry.EntryKind == RepositoryEntryKind.File)
+            .Where(entry => IsImmediateChild(entry.SourcePath, parentPath))
+            .Where(entry => entry.IsDeleted || !File.Exists(entry.SourcePath))
+            .Where(entry => !liveFilePaths.Contains(Path.GetFullPath(entry.SourcePath)))
+            .OrderBy(entry => Path.GetFileName(entry.SourcePath), StringComparer.OrdinalIgnoreCase);
+    }
+
+    private bool TryNavigateToFolder(string folderPath)
+    {
+        if (Roots.Count == 0)
+        {
+            LoadRoots();
+        }
+
+        var fullPath = Path.GetFullPath(folderPath);
+        var existing = FindFolder(fullPath);
+        if (existing is not null)
+        {
+            SelectedFolder = existing;
+            return true;
+        }
+
+        var root = Roots.FirstOrDefault(root => IsSamePath(fullPath, root.Path) || IsUnderPath(fullPath, root.Path));
+        if (root is null)
+        {
+            return false;
+        }
+
+        var pathChain = BuildFolderPathChain(root.Path, fullPath);
+        var current = root;
+        foreach (var candidatePath in pathChain.Skip(1))
+        {
+            LoadChildren(current);
+            var next = current.Children.FirstOrDefault(child => IsSamePath(child.Path, candidatePath));
+            if (next is null)
+            {
+                return false;
+            }
+
+            current = next;
+        }
+
+        SelectedFolder = current;
+        return true;
+    }
+
+    private RepositoryVersionSummary? FindTrackedEntry(string path, RepositoryEntryKind entryKind)
+    {
+        return trackedEntries.TryGetValue(ToTrackedEntryKey(path, entryKind), out var entry) ? entry : null;
+    }
+
+    private static IReadOnlyList<string> BuildFolderPathChain(string rootPath, string targetPath)
+    {
+        var root = TrimPath(rootPath);
+        var current = TrimPath(targetPath);
+        var chain = new Stack<string>();
+        while (!string.IsNullOrWhiteSpace(current) && !IsSamePath(current, root))
+        {
+            chain.Push(current);
+            current = Path.GetDirectoryName(current) ?? string.Empty;
+        }
+
+        chain.Push(root);
+        return chain.ToArray();
     }
 
     private void ApplySelectionToTree(IEnumerable<FileBrowserFolderNode> roots)
@@ -818,6 +1028,12 @@ public sealed partial class FileBrowserViewModel(
         return Path.GetFullPath(path).StartsWith(trimmedRoot, StringComparison.OrdinalIgnoreCase);
     }
 
+    private static bool IsImmediateChild(string childPath, string parentPath)
+    {
+        var parent = Path.GetDirectoryName(Path.GetFullPath(childPath));
+        return parent is not null && IsSamePath(parent, parentPath);
+    }
+
     private static bool IsSamePath(string left, string right)
     {
         return string.Equals(TrimPath(left), TrimPath(right), StringComparison.OrdinalIgnoreCase);
@@ -826,5 +1042,10 @@ public sealed partial class FileBrowserViewModel(
     private static string TrimPath(string path)
     {
         return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    }
+
+    private static string ToTrackedEntryKey(string path, RepositoryEntryKind entryKind)
+    {
+        return $"{entryKind}:{TrimPath(path)}";
     }
 }

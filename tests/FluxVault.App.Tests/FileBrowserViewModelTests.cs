@@ -2,6 +2,7 @@ using System.IO;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
+using FluxVault.Abstractions.Storage;
 using FluxVault.App.ViewModels;
 using FluxVault.Core.Ipc;
 
@@ -284,6 +285,54 @@ public sealed class FileBrowserViewModelTests
     }
 
     [Fact]
+    public void Phantom_tracked_file_is_merged_and_shell_actions_are_disabled()
+    {
+        var shell = new FakeFileBrowserShellLauncher();
+        var folder = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []), shell);
+        viewModel.LoadSelectionRules([]);
+        viewModel.LoadTrackedEntries(
+            [
+                Tracked("deleted", @"D:\Work\missing.txt", RepositoryEntryKind.File, isDeleted: true)
+            ]);
+
+        viewModel.SelectFolder(folder);
+        viewModel.SelectedFile = Assert.Single(viewModel.Files);
+        viewModel.OpenSelectedFileCommand.Execute(null);
+        viewModel.ShowSelectedFileInExplorerCommand.Execute(null);
+
+        Assert.True(viewModel.SelectedFile.IsPhantom);
+        Assert.False(viewModel.SelectedFile.CanUseShellActions);
+        Assert.Empty(shell.OpenedFiles);
+        Assert.Empty(shell.SelectedFiles);
+    }
+
+    [Fact]
+    public void Address_navigation_selects_tracked_phantom_file()
+    {
+        var viewModel = new FileBrowserViewModel(new MutableFileBrowserFileSystem(
+            [Folder(@"D:\")],
+            new Dictionary<string, IReadOnlyList<FileBrowserFolderInfo>>(StringComparer.OrdinalIgnoreCase)
+            {
+                [Path.GetFullPath(@"D:\")] = [Folder(@"D:\Work")]
+            },
+            new Dictionary<string, IReadOnlyList<FileBrowserFileInfo>>(StringComparer.OrdinalIgnoreCase)));
+        viewModel.LoadSelectionRules([]);
+        viewModel.LoadTrackedEntries(
+            [
+                Tracked("deleted", @"D:\Work\missing.txt", RepositoryEntryKind.File, isDeleted: true)
+            ]);
+        viewModel.LoadRoots();
+
+        var navigated = viewModel.NavigateToPath(@"D:\Work\missing.txt");
+
+        Assert.True(navigated);
+        Assert.NotNull(viewModel.SelectedFile);
+        Assert.Equal(Path.GetFullPath(@"D:\Work\missing.txt"), viewModel.SelectedFile.Path);
+        Assert.True(viewModel.SelectedFile.IsPhantom);
+    }
+
+    [Fact]
     public void Refresh_preserves_selected_folder_reloads_files_and_refreshes_loaded_children()
     {
         var fileSystem = new MutableFileBrowserFileSystem(
@@ -363,6 +412,23 @@ public sealed class FileBrowserViewModelTests
             LastCaptureUtc: null,
             WatchedFolders: [],
             RecentVersions: []);
+    }
+
+    private static RepositoryVersionSummary Tracked(
+        string versionId,
+        string path,
+        RepositoryEntryKind entryKind,
+        bool isDeleted)
+    {
+        return new RepositoryVersionSummary(
+            versionId,
+            Path.GetFullPath(path),
+            DateTimeOffset.UtcNow,
+            CaptureConsistency.BestEffort,
+            10,
+            ChunkCount: entryKind == RepositoryEntryKind.File ? 1 : 0,
+            EntryKind: entryKind,
+            IsDeleted: isDeleted);
     }
 
     private sealed class FakeFileBrowserFileSystem(

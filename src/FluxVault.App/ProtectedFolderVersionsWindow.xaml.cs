@@ -21,4 +21,13 @@ public partial class ProtectedFolderVersionsWindow : Window
             await viewModel.OpenVersionPreviewCommand.ExecuteAsync(version).ConfigureAwait(true);
         }
     }
+
+    private async void SnapshotGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (DataContext is VersionInventoryViewModel viewModel
+            && sender is WpfDataGrid { SelectedItem: VersionInventorySnapshotEntryRow })
+        {
+            await viewModel.OpenSelectedSnapshotEntryCommand.ExecuteAsync(null).ConfigureAwait(true);
+        }
+    }
 }

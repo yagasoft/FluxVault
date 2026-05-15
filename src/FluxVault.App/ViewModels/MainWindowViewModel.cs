@@ -1207,14 +1207,17 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     internal async Task RestoreVersionAsync(VersionRow selectedVersion)
     {
-        var destination = restoreDestinationPicker.PickDestination(selectedVersion);
+        var destination = selectedVersion.EntryKind == RepositoryEntryKind.Folder
+            ? restoreDestinationPicker.PickFolderDestination(selectedVersion.SourcePath)
+            : restoreDestinationPicker.PickDestination(selectedVersion);
         if (string.IsNullOrWhiteSpace(destination))
         {
             SetServiceStatus("Service connection: restore cancelled.");
             return;
         }
 
-        if (File.Exists(destination) && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
+        if ((File.Exists(destination) || selectedVersion.EntryKind == RepositoryEntryKind.Folder && Directory.Exists(destination))
+            && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
         {
             SetServiceStatus("Service connection: restore overwrite denied.");
             return;
@@ -1294,6 +1297,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     internal async Task OpenVersionPreviewAsync(VersionRow selectedVersion)
     {
+        if (selectedVersion.EntryKind == RepositoryEntryKind.Folder)
+        {
+            SetServiceStatus("Service connection: select a file version to open a preview.");
+            return;
+        }
+
         try
         {
             var response = await client.SendAsync(FluxVaultIpcRequest.RestoreVersionPreview(selectedVersion.VersionId))
@@ -1371,7 +1380,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         var inventory = await CreateVersionInventoryForPathAsync(path).ConfigureAwait(true);
         VersionInventoryRequested?.Invoke(this, new VersionInventoryRequestedEventArgs(inventory));
-        SetServiceStatus(inventory.Files.Count == 0
+        SetServiceStatus(inventory.Versions.Count == 0
             ? $"Service connection: no restorable versions found for {path}"
             : $"Service connection: showing versions for {path}");
     }
@@ -1395,7 +1404,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 ? consistency
                 : CaptureConsistency.BestEffort,
             version.ChunkCount,
-            version.Lineage);
+            version.Lineage,
+            version.EntryKind,
+            version.IsDeleted);
     }
 
     [RelayCommand]
@@ -1702,6 +1713,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 }
             }
 
+            FileBrowser.LoadTrackedEntries(status.TrackedEntries ?? status.RecentVersions);
+
             var visibleStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}. Last refreshed {DateTime.Now:HH:mm:ss}";
             if (!string.IsNullOrWhiteSpace(RestoreHintPath))
             {
@@ -1759,7 +1772,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     version.CapturedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss"),
                     version.Consistency,
                     version.ChunkCount,
-                    FormatLineage(version)));
+                    FormatLineage(version),
+                    version.EntryKind,
+                    version.IsDeleted));
             }
 
             SelectedVersion = selectedVersionId is null
@@ -2680,7 +2695,9 @@ public sealed record VersionRow(
     string CapturedAt,
     CaptureConsistency Consistency,
     int ChunkCount,
-    string Lineage = "Capture");
+    string Lineage = "Capture",
+    RepositoryEntryKind EntryKind = RepositoryEntryKind.File,
+    bool IsDeleted = false);
 
 public sealed class VersionInventoryRequestedEventArgs(VersionInventoryViewModel inventory) : EventArgs
 {

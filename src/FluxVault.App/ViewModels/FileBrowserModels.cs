@@ -45,7 +45,9 @@ public sealed partial class FileBrowserFolderNode(
     string path,
     string name,
     bool isAccessible,
-    string? errorMessage) : ObservableObject
+    string? errorMessage,
+    bool isPhantom = false,
+    string? restorableVersionId = null) : ObservableObject
 {
     [ObservableProperty]
     private ProtectionSelectionMode? selectionMode;
@@ -66,6 +68,16 @@ public sealed partial class FileBrowserFolderNode(
     public bool IsAccessible { get; } = isAccessible;
 
     public string? ErrorMessage { get; } = errorMessage;
+
+    public bool IsPhantom { get; } = isPhantom;
+
+    public string? RestorableVersionId { get; } = restorableVersionId;
+
+    public bool CanUseShellActions => !IsPhantom && IsAccessible;
+
+    public bool CanChangeSelection => !IsPhantom;
+
+    public double ItemOpacity => IsPhantom ? 0.55 : 1.0;
 
     public ObservableCollection<FileBrowserFolderNode> Children { get; } = [];
 
@@ -123,7 +135,9 @@ public sealed partial class FileBrowserFileRow(
     string path,
     string name,
     long length,
-    bool isSelected) : ObservableObject
+    bool isSelected,
+    bool isPhantom = false,
+    string? restorableVersionId = null) : ObservableObject
 {
     [ObservableProperty]
     private bool isSelected = isSelected;
@@ -133,6 +147,16 @@ public sealed partial class FileBrowserFileRow(
     public string Name { get; } = name;
 
     public long Length { get; } = length;
+
+    public bool IsPhantom { get; } = isPhantom;
+
+    public string? RestorableVersionId { get; } = restorableVersionId;
+
+    public bool CanUseShellActions => !IsPhantom;
+
+    public bool CanChangeSelection => !IsPhantom;
+
+    public double ItemOpacity => IsPhantom ? 0.55 : 1.0;
 }
 
 public sealed record PendingSelectionChangeRow(

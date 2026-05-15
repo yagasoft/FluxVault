@@ -55,6 +55,44 @@ public sealed class VersionInventoryViewModelTests
         Assert.Equal(["v1"], opened);
     }
 
+    [Fact]
+    public async Task Folder_version_snapshot_can_navigate_and_preview_child_file()
+    {
+        var opened = new List<string>();
+        var child = Version("file-v1", @"D:\Work\Docs\a.txt", minutesAgo: 0, 20);
+        var folder = Version("folder-v1", @"D:\Work\Docs", minutesAgo: 0, 20) with
+        {
+            EntryKind = RepositoryEntryKind.Folder,
+            ChunkCount = 0,
+            FolderEntries =
+            [
+                new FolderVersionEntry(
+                    "a.txt",
+                    Path.GetFullPath(@"D:\Work\Docs\a.txt"),
+                    RepositoryEntryKind.File,
+                    "file-v1",
+                    IsDeleted: false,
+                    LogicalLength: 20,
+                    DateTimeOffset.UtcNow)
+            ]
+        };
+        var viewModel = new VersionInventoryViewModel(
+            Path.GetFullPath(@"D:\Work"),
+            [folder, child],
+            _ => Task.CompletedTask,
+            version =>
+            {
+                opened.Add(version.VersionId);
+                return Task.CompletedTask;
+            });
+
+        viewModel.SelectedVersion = viewModel.Versions.Single(version => version.VersionId == "folder-v1");
+        viewModel.SelectedSnapshotEntry = Assert.Single(viewModel.SnapshotEntries);
+        await viewModel.OpenSelectedSnapshotEntryCommand.ExecuteAsync(null);
+
+        Assert.Equal(["file-v1"], opened);
+    }
+
     private static RepositoryVersionSummary Version(string id, string path, int minutesAgo, long length)
     {
         return new RepositoryVersionSummary(

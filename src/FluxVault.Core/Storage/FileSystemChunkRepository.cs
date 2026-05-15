@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
 using FluxVault.Abstractions.Configuration;
@@ -11,6 +12,8 @@ namespace FluxVault.Core.Storage;
 
 public sealed class FileSystemChunkRepository : IChunkRepository
 {
+    private static readonly ConcurrentDictionary<string, SemaphoreSlim> RepositoryLocks = new(StringComparer.OrdinalIgnoreCase);
+
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         WriteIndented = true
@@ -23,6 +26,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     private readonly StreamingFastCdcChunker streamingChunker;
     private readonly Blake3ContentHasher hasher;
     private readonly ZstdChunkCodec codec;
+
+    private SemaphoreSlim RepositoryLock => RepositoryLocks.GetOrAdd(Path.GetFullPath(rootPath), _ => new SemaphoreSlim(1, 1));
 
     public FileSystemChunkRepository(
         string rootPath,
@@ -52,71 +57,78 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     public async Task<FileCommitResult> CommitAsync(FileCommitRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
-        Directory.CreateDirectory(ChunksPath(rootPath));
-        Directory.CreateDirectory(ManifestsPath(rootPath));
-
         await using var content = request.Content;
-        var chunks = new List<ManifestChunk>();
-        var mirrorWarnings = new List<string>();
-        var newChunkCount = 0;
-        var logicalLength = 0L;
-
-        await foreach (var chunk in streamingChunker.ChunkAsync(content, cancellationToken))
+        await RepositoryLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var raw = chunk.Payload.AsSpan();
-            var digest = hasher.Hash(raw);
-            var metadata = ReadChunkMetadata(rootPath, digest);
+            Directory.CreateDirectory(ChunksPath(rootPath));
+            Directory.CreateDirectory(ManifestsPath(rootPath));
 
-            if (metadata is null)
+            var chunks = new List<ManifestChunk>();
+            var mirrorWarnings = new List<string>();
+            var newChunkCount = 0;
+            var logicalLength = 0L;
+
+            await foreach (var chunk in streamingChunker.ChunkAsync(content, cancellationToken))
             {
-                var prepared = PreparePayload(raw, digest, request.Compression, request.MinimumCompressionBytes);
-                AtomicWrite(ChunkPath(rootPath, digest), prepared.Payload);
-                AtomicWrite(MetadataPath(rootPath, digest), JsonSerializer.SerializeToUtf8Bytes(prepared.Metadata, JsonOptions));
-                mirrorWarnings.AddRange(MirrorChunkIfNeeded(digest, prepared));
-                metadata = prepared.Metadata;
-                newChunkCount++;
+                cancellationToken.ThrowIfCancellationRequested();
+                var raw = chunk.Payload.AsSpan();
+                var digest = hasher.Hash(raw);
+                var metadata = ReadChunkMetadata(rootPath, digest);
+
+                if (metadata is null)
+                {
+                    var prepared = PreparePayload(raw, digest, request.Compression, request.MinimumCompressionBytes);
+                    AtomicWrite(ChunkPath(rootPath, digest), prepared.Payload);
+                    AtomicWrite(MetadataPath(rootPath, digest), JsonSerializer.SerializeToUtf8Bytes(prepared.Metadata, JsonOptions));
+                    mirrorWarnings.AddRange(MirrorChunkIfNeeded(digest, prepared));
+                    metadata = prepared.Metadata;
+                    newChunkCount++;
+                }
+
+                chunks.Add(new ManifestChunk(digest, chunk.Offset, chunk.Payload.Length, metadata.StoredLength, metadata.Encoding));
+                logicalLength += chunk.Payload.Length;
             }
 
-            chunks.Add(new ManifestChunk(digest, chunk.Offset, chunk.Payload.Length, metadata.StoredLength, metadata.Encoding));
-            logicalLength += chunk.Payload.Length;
+            var sourcePath = Path.GetFullPath(request.SourcePath);
+            var existingManifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
+            var contentSignature = ComputeContentSignature(logicalLength, chunks);
+            var lineage = request.SyncOrigin is not null
+                ? ResolveSyncLineage(sourcePath, existingManifests)
+                : ReadRestoreHint(sourcePath) is { } restoreHint
+                ? ResolveRestoreLineage(sourcePath, restoreHint, existingManifests)
+                : ResolveCaptureLineage(sourcePath, contentSignature, existingManifests);
+
+            var manifest = new FileVersionManifest(
+                VersionId: Guid.CreateVersion7().ToString("N"),
+                WatchedFolderId: request.WatchedFolderId,
+                SourcePath: sourcePath,
+                CapturedAtUtc: request.CapturedAtUtc,
+                Consistency: request.Consistency,
+                LogicalLength: logicalLength,
+                Chunks: chunks,
+                OperationType: lineage.OperationType,
+                ParentVersionIds: lineage.ParentVersionIds,
+                RestoredFromVersionId: lineage.RestoredFromVersionId,
+                ForkOriginVersionId: lineage.ForkOriginVersionId,
+                InheritedFromVersionId: lineage.InheritedFromVersionId,
+                InheritedFromSourcePath: lineage.InheritedFromSourcePath,
+                ContentSignature: contentSignature,
+                SyncOrigin: request.SyncOrigin);
+
+            mirrorWarnings.AddRange(WriteManifest(manifest));
+            mirrorWarnings.AddRange(WriteFolderCascadeManifests(existingManifests, manifest, request.WatchedFolderPath, cancellationToken));
+            if (lineage.OperationType == VersionOperationType.Restore)
+            {
+                DeleteRestoreHint(sourcePath);
+            }
+
+            return new FileCommitResult(manifest, newChunkCount, CondenseMirrorWarnings(mirrorWarnings));
         }
-
-        var sourcePath = Path.GetFullPath(request.SourcePath);
-        var existingManifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
-        var contentSignature = ComputeContentSignature(logicalLength, chunks);
-        var lineage = request.SyncOrigin is not null
-            ? ResolveSyncLineage(sourcePath, existingManifests)
-            : ReadRestoreHint(sourcePath) is { } restoreHint
-            ? ResolveRestoreLineage(sourcePath, restoreHint, existingManifests)
-            : ResolveCaptureLineage(sourcePath, contentSignature, existingManifests);
-
-        var manifest = new FileVersionManifest(
-            VersionId: Guid.CreateVersion7().ToString("N"),
-            WatchedFolderId: request.WatchedFolderId,
-            SourcePath: sourcePath,
-            CapturedAtUtc: request.CapturedAtUtc,
-            Consistency: request.Consistency,
-            LogicalLength: logicalLength,
-            Chunks: chunks,
-            OperationType: lineage.OperationType,
-            ParentVersionIds: lineage.ParentVersionIds,
-            RestoredFromVersionId: lineage.RestoredFromVersionId,
-            ForkOriginVersionId: lineage.ForkOriginVersionId,
-            InheritedFromVersionId: lineage.InheritedFromVersionId,
-            InheritedFromSourcePath: lineage.InheritedFromSourcePath,
-            ContentSignature: contentSignature,
-            SyncOrigin: request.SyncOrigin);
-
-        var manifestBytes = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonOptions);
-        AtomicWrite(ManifestPath(rootPath, manifest.VersionId), manifestBytes);
-        mirrorWarnings.AddRange(MirrorManifestIfNeeded(manifest.VersionId, manifestBytes));
-        if (lineage.OperationType == VersionOperationType.Restore)
+        finally
         {
-            DeleteRestoreHint(sourcePath);
+            RepositoryLock.Release();
         }
-
-        return new FileCommitResult(manifest, newChunkCount, CondenseMirrorWarnings(mirrorWarnings));
     }
 
     public async Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default)
@@ -138,6 +150,67 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             .OrderByDescending(version => version.CapturedAtUtc)
             .ThenByDescending(version => version.VersionId, StringComparer.Ordinal)
             .ToArray();
+    }
+
+    public async Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default)
+    {
+        var manifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
+        return manifests
+            .GroupBy(manifest => ToEntryKey(manifest.SourcePath, manifest.EntryKind), StringComparer.OrdinalIgnoreCase)
+            .Select(group => group
+                .OrderByDescending(manifest => manifest.CapturedAtUtc)
+                .ThenByDescending(manifest => manifest.VersionId, StringComparer.Ordinal)
+                .First())
+            .Select(ToSummary)
+            .OrderBy(version => version.SourcePath, StringComparer.OrdinalIgnoreCase)
+            .ThenByDescending(version => version.EntryKind)
+            .ToArray();
+    }
+
+    public async Task<RepositoryDeletionResult?> RecordDeletionAsync(
+        RepositoryDeletionRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        await RepositoryLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            Directory.CreateDirectory(ManifestsPath(rootPath));
+
+            var sourcePath = Path.GetFullPath(request.SourcePath);
+            var entryKind = request.IsDirectory ? RepositoryEntryKind.Folder : RepositoryEntryKind.File;
+            var existingManifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
+            var deletedFrom = LatestForPath(existingManifests, sourcePath, entryKind);
+            if (deletedFrom is null || deletedFrom.IsDeleted)
+            {
+                return null;
+            }
+
+            var manifest = new FileVersionManifest(
+                VersionId: Guid.CreateVersion7().ToString("N"),
+                WatchedFolderId: request.WatchedFolderId,
+                SourcePath: sourcePath,
+                CapturedAtUtc: request.DeletedAtUtc,
+                Consistency: request.Consistency,
+                LogicalLength: deletedFrom.LogicalLength,
+                Chunks: [],
+                OperationType: VersionOperationType.Delete,
+                ParentVersionIds: [deletedFrom.VersionId],
+                ContentSignature: ComputeDeletedContentSignature(sourcePath, deletedFrom.VersionId),
+                EntryKind: entryKind,
+                IsDeleted: true,
+                FolderEntries: entryKind == RepositoryEntryKind.Folder ? deletedFrom.FolderEntries : null,
+                DeletedFromVersionId: deletedFrom.VersionId);
+
+            var mirrorWarnings = new List<string>();
+            mirrorWarnings.AddRange(WriteManifest(manifest));
+            mirrorWarnings.AddRange(WriteFolderCascadeManifests(existingManifests, manifest, request.WatchedFolderPath, cancellationToken));
+            return new RepositoryDeletionResult(manifest, CondenseMirrorWarnings(mirrorWarnings));
+        }
+        finally
+        {
+            RepositoryLock.Release();
+        }
     }
 
     public async Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default)
@@ -776,6 +849,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         ArgumentException.ThrowIfNullOrWhiteSpace(tempRoot);
         var requested = Math.Max(0, maxVersions);
         var manifests = (await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false))
+            .Where(manifest => manifest.EntryKind == RepositoryEntryKind.File && !manifest.IsDeleted)
             .OrderByDescending(manifest => manifest.CapturedAtUtc)
             .ThenByDescending(manifest => manifest.VersionId, StringComparer.Ordinal)
             .Take(requested)
@@ -857,41 +931,49 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(policy);
-        var state = await BuildRetentionStateAsync(policy, nowUtc, cancellationToken).ConfigureAwait(false);
-        var mirrorWarnings = new List<string>();
-        var reclaimedBytes = 0L;
-
-        foreach (var manifest in state.PrunableManifests)
+        await RepositoryLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            reclaimedBytes += DeleteLocalFile(ManifestPath(rootPath, manifest.VersionId));
-            DeleteMirrorFile(ManifestPath, manifest.VersionId, mirrorWarnings);
-        }
+            var state = await BuildRetentionStateAsync(policy, nowUtc, cancellationToken).ConfigureAwait(false);
+            var mirrorWarnings = new List<string>();
+            var reclaimedBytes = 0L;
 
-        var deletedChunkCount = 0;
-        foreach (var digest in state.PrunableChunkDigests)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var chunkBytes = DeleteLocalFile(ChunkPath(rootPath, digest));
-            var metadataBytes = DeleteLocalFile(MetadataPath(rootPath, digest));
-            if (chunkBytes > 0 || metadataBytes > 0)
+            foreach (var manifest in state.PrunableManifests)
             {
-                deletedChunkCount++;
-                reclaimedBytes += chunkBytes + metadataBytes;
+                cancellationToken.ThrowIfCancellationRequested();
+                reclaimedBytes += DeleteLocalFile(ManifestPath(rootPath, manifest.VersionId));
+                DeleteMirrorFile(ManifestPath, manifest.VersionId, mirrorWarnings);
             }
 
-            DeleteMirrorFile(ChunkPath, digest, mirrorWarnings);
-            DeleteMirrorFile(MetadataPath, digest, mirrorWarnings);
-        }
+            var deletedChunkCount = 0;
+            foreach (var digest in state.PrunableChunkDigests)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var chunkBytes = DeleteLocalFile(ChunkPath(rootPath, digest));
+                var metadataBytes = DeleteLocalFile(MetadataPath(rootPath, digest));
+                if (chunkBytes > 0 || metadataBytes > 0)
+                {
+                    deletedChunkCount++;
+                    reclaimedBytes += chunkBytes + metadataBytes;
+                }
 
-        return new RepositoryRetentionResult(
-            state.Decisions,
-            state.KeptVersionCount,
-            state.PrunableVersionCount,
-            deletedChunkCount,
-            reclaimedBytes,
-            GetRepositorySize(rootPath),
-            mirrorWarnings);
+                DeleteMirrorFile(ChunkPath, digest, mirrorWarnings);
+                DeleteMirrorFile(MetadataPath, digest, mirrorWarnings);
+            }
+
+            return new RepositoryRetentionResult(
+                state.Decisions,
+                state.KeptVersionCount,
+                state.PrunableVersionCount,
+                deletedChunkCount,
+                reclaimedBytes,
+                GetRepositorySize(rootPath),
+                mirrorWarnings);
+        }
+        finally
+        {
+            RepositoryLock.Release();
+        }
     }
 
     private PreparedChunk PreparePayload(
@@ -1227,6 +1309,59 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         return warnings;
     }
 
+    private IReadOnlyList<string> WriteManifest(FileVersionManifest manifest)
+    {
+        var manifestBytes = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonOptions);
+        AtomicWrite(ManifestPath(rootPath, manifest.VersionId), manifestBytes);
+        return MirrorManifestIfNeeded(manifest.VersionId, manifestBytes);
+    }
+
+    private IReadOnlyList<string> WriteFolderCascadeManifests(
+        IReadOnlyList<FileVersionManifest> existingManifests,
+        FileVersionManifest childManifest,
+        string? watchedFolderPath,
+        CancellationToken cancellationToken)
+    {
+        var folderPaths = GetFolderCascadePaths(childManifest.SourcePath, watchedFolderPath);
+        if (folderPaths.Count == 0)
+        {
+            return [];
+        }
+
+        var mirrorWarnings = new List<string>();
+        var knownManifests = existingManifests.ToList();
+        var currentChild = childManifest;
+        foreach (var folderPath in folderPaths)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var parent = LatestForPath(knownManifests, folderPath, RepositoryEntryKind.Folder);
+            var folderEntries = MergeFolderEntries(parent?.FolderEntries, ToFolderEntry(currentChild));
+            var logicalLength = folderEntries
+                .Where(entry => !entry.IsDeleted)
+                .Sum(entry => entry.LogicalLength);
+            var folderManifest = new FileVersionManifest(
+                VersionId: Guid.CreateVersion7().ToString("N"),
+                WatchedFolderId: childManifest.WatchedFolderId,
+                SourcePath: folderPath,
+                CapturedAtUtc: childManifest.CapturedAtUtc,
+                Consistency: childManifest.Consistency,
+                LogicalLength: logicalLength,
+                Chunks: [],
+                OperationType: VersionOperationType.Capture,
+                ParentVersionIds: parent is null ? [] : [parent.VersionId],
+                ContentSignature: ComputeFolderContentSignature(folderEntries),
+                EntryKind: RepositoryEntryKind.Folder,
+                FolderEntries: folderEntries);
+
+            mirrorWarnings.AddRange(WriteManifest(folderManifest));
+            knownManifests.Add(folderManifest);
+            currentChild = folderManifest;
+        }
+
+        return mirrorWarnings;
+    }
+
     private static void AddMissingAction(
         List<MirrorRebalanceAction> actions,
         MirrorNodeConfiguration node,
@@ -1402,10 +1537,27 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     private static async Task<FileVersionManifest> ReadManifestAsync(string manifestPath, CancellationToken cancellationToken)
     {
-        await using var manifestStream = File.OpenRead(manifestPath);
-        return await JsonSerializer.DeserializeAsync<FileVersionManifest>(manifestStream, JsonOptions, cancellationToken)
-            .ConfigureAwait(false)
-            ?? throw new InvalidDataException($"Manifest {manifestPath} could not be read.");
+        const int maxAttempts = 5;
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                await using var manifestStream = new FileStream(
+                    manifestPath,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.ReadWrite | FileShare.Delete,
+                    bufferSize: 4096,
+                    FileOptions.Asynchronous | FileOptions.SequentialScan);
+                return await JsonSerializer.DeserializeAsync<FileVersionManifest>(manifestStream, JsonOptions, cancellationToken)
+                    .ConfigureAwait(false)
+                    ?? throw new InvalidDataException($"Manifest {manifestPath} could not be read.");
+            }
+            catch (IOException) when (attempt < maxAttempts)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(25 * attempt), cancellationToken).ConfigureAwait(false);
+            }
+        }
     }
 
     private async Task RestoreManifestAsync(
@@ -1414,6 +1566,36 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         bool writeRestoreHint,
         CancellationToken cancellationToken)
     {
+        if (manifest.IsDeleted)
+        {
+            if (string.IsNullOrWhiteSpace(manifest.DeletedFromVersionId))
+            {
+                throw new InvalidDataException($"Deleted manifest {manifest.VersionId} does not identify a restorable version.");
+            }
+
+            var deletedFrom = await ReadManifestByVersionAsync(manifest.DeletedFromVersionId, cancellationToken).ConfigureAwait(false);
+            await RestoreManifestAsync(deletedFrom, outputPath, writeRestoreHint, cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        if (manifest.EntryKind == RepositoryEntryKind.Folder)
+        {
+            Directory.CreateDirectory(outputPath);
+            foreach (var entry in (manifest.FolderEntries ?? []).Where(entry => !entry.IsDeleted))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var childManifest = await ReadManifestByVersionAsync(entry.VersionId, cancellationToken).ConfigureAwait(false);
+                await RestoreManifestAsync(
+                        childManifest,
+                        Path.Combine(outputPath, entry.Name),
+                        writeRestoreHint,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+            }
+
+            return;
+        }
+
         var outputDirectory = Path.GetDirectoryName(outputPath);
         if (!string.IsNullOrWhiteSpace(outputDirectory))
         {
@@ -1630,7 +1812,10 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         var manifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
         var summaries = manifests.Select(ToSummary).ToArray();
 
-        var decisions = RetentionPlanner.Decide(summaries, policy, nowUtc).ToArray();
+        var decisions = ExpandRetentionReferences(
+            RetentionPlanner.Decide(summaries, policy, nowUtc),
+            manifests,
+            summaries);
         var prunableIds = decisions
             .Where(decision => !decision.Keep)
             .Select(decision => decision.VersionId)
@@ -1658,6 +1843,69 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             prunableManifests,
             prunableChunkDigests,
             prunableChunkDigests.Sum(GetLocalChunkStorageBytes));
+    }
+
+    private static IReadOnlyList<RepositoryVersionRetentionDecision> ExpandRetentionReferences(
+        IReadOnlyList<RepositoryVersionRetentionDecision> baseDecisions,
+        IReadOnlyList<FileVersionManifest> manifests,
+        IReadOnlyList<RepositoryVersionSummary> summaries)
+    {
+        var manifestsById = manifests.ToDictionary(manifest => manifest.VersionId, StringComparer.OrdinalIgnoreCase);
+        var reasons = baseDecisions.ToDictionary(
+            decision => decision.VersionId,
+            decision => decision.Reason,
+            StringComparer.OrdinalIgnoreCase);
+        var retained = baseDecisions
+            .Where(decision => decision.Keep)
+            .Select(decision => decision.VersionId)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var queue = new Queue<string>(retained);
+
+        while (queue.Count > 0)
+        {
+            var versionId = queue.Dequeue();
+            if (!manifestsById.TryGetValue(versionId, out var manifest))
+            {
+                continue;
+            }
+
+            if (manifest.IsDeleted
+                && !string.IsNullOrWhiteSpace(manifest.DeletedFromVersionId)
+                && manifestsById.ContainsKey(manifest.DeletedFromVersionId)
+                && retained.Add(manifest.DeletedFromVersionId))
+            {
+                reasons[manifest.DeletedFromVersionId] = $"Referenced by deleted entry {manifest.VersionId}";
+                queue.Enqueue(manifest.DeletedFromVersionId);
+            }
+
+            foreach (var entry in manifest.FolderEntries ?? [])
+            {
+                if (!manifestsById.ContainsKey(entry.VersionId) || !retained.Add(entry.VersionId))
+                {
+                    continue;
+                }
+
+                reasons[entry.VersionId] = $"Referenced by folder version {manifest.VersionId}";
+                queue.Enqueue(entry.VersionId);
+            }
+        }
+
+        return summaries
+            .OrderByDescending(summary => summary.CapturedAtUtc)
+            .ThenByDescending(summary => summary.VersionId, StringComparer.Ordinal)
+            .Select(summary =>
+            {
+                var keep = retained.Contains(summary.VersionId);
+                return new RepositoryVersionRetentionDecision(
+                    summary.VersionId,
+                    summary.SourcePath,
+                    summary.CapturedAtUtc,
+                    keep,
+                    keep ? reasons[summary.VersionId] : "Pruned by retention policy",
+                    summary.LogicalLength,
+                    summary.ChunkCount);
+            })
+            .ToArray();
     }
 
     private async Task<IReadOnlyList<FileVersionManifest>> ReadAllManifestsAsync(CancellationToken cancellationToken)
@@ -1822,7 +2070,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         RestoreLineageHint hint,
         IReadOnlyList<FileVersionManifest> existingManifests)
     {
-        var samePathParent = LatestForPath(existingManifests, sourcePath);
+        var samePathParent = LatestForPath(existingManifests, sourcePath, RepositoryEntryKind.File);
         return new LineageResolution(
             VersionOperationType.Restore,
             samePathParent is null ? [] : [samePathParent.VersionId],
@@ -1837,7 +2085,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         string contentSignature,
         IReadOnlyList<FileVersionManifest> existingManifests)
     {
-        var samePathParent = LatestForPath(existingManifests, sourcePath);
+        var samePathParent = LatestForPath(existingManifests, sourcePath, RepositoryEntryKind.File);
         if (samePathParent is not null)
         {
             return new LineageResolution(
@@ -1851,6 +2099,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
         var inheritedFrom = existingManifests
             .Where(manifest => !PathEquals(manifest.SourcePath, sourcePath))
+            .Where(manifest => manifest.EntryKind == RepositoryEntryKind.File && !manifest.IsDeleted)
             .Where(manifest => string.Equals(GetContentSignature(manifest), contentSignature, StringComparison.Ordinal))
             .OrderBy(manifest => manifest.CapturedAtUtc)
             .ThenBy(manifest => manifest.VersionId, StringComparer.Ordinal)
@@ -1873,7 +2122,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         string sourcePath,
         IReadOnlyList<FileVersionManifest> existingManifests)
     {
-        var samePathParent = LatestForPath(existingManifests, sourcePath);
+        var samePathParent = LatestForPath(existingManifests, sourcePath, RepositoryEntryKind.File);
         return new LineageResolution(
             VersionOperationType.RemoteSync,
             samePathParent is null ? [] : [samePathParent.VersionId],
@@ -1883,10 +2132,14 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             null);
     }
 
-    private static FileVersionManifest? LatestForPath(IReadOnlyList<FileVersionManifest> manifests, string sourcePath)
+    private static FileVersionManifest? LatestForPath(
+        IReadOnlyList<FileVersionManifest> manifests,
+        string sourcePath,
+        RepositoryEntryKind entryKind)
     {
         return manifests
             .Where(manifest => PathEquals(manifest.SourcePath, sourcePath))
+            .Where(manifest => manifest.EntryKind == entryKind)
             .OrderByDescending(manifest => manifest.CapturedAtUtc)
             .ThenByDescending(manifest => manifest.VersionId, StringComparer.Ordinal)
             .FirstOrDefault();
@@ -1915,7 +2168,11 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             manifest.InheritedFromVersionId,
             manifest.InheritedFromSourcePath,
             GetContentSignature(manifest),
-            manifest.SyncOrigin);
+            manifest.SyncOrigin,
+            manifest.EntryKind,
+            manifest.IsDeleted,
+            manifest.FolderEntries,
+            manifest.DeletedFromVersionId);
     }
 
     private string GetContentSignature(FileVersionManifest manifest)
@@ -1939,6 +2196,126 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
 
         return hasher.Hash(Encoding.UTF8.GetBytes(builder.ToString()));
+    }
+
+    private string ComputeFolderContentSignature(IReadOnlyList<FolderVersionEntry> entries)
+    {
+        var builder = new StringBuilder("fv-folder-v1");
+        foreach (var entry in entries
+                     .OrderByDescending(entry => entry.EntryKind)
+                     .ThenBy(entry => entry.Name, StringComparer.OrdinalIgnoreCase)
+                     .ThenBy(entry => entry.SourcePath, StringComparer.OrdinalIgnoreCase))
+        {
+            builder
+                .Append('|')
+                .Append(entry.EntryKind)
+                .Append(':')
+                .Append(entry.Name)
+                .Append(':')
+                .Append(entry.VersionId)
+                .Append(':')
+                .Append(entry.IsDeleted ? "deleted" : "live");
+        }
+
+        return hasher.Hash(Encoding.UTF8.GetBytes(builder.ToString()));
+    }
+
+    private string ComputeDeletedContentSignature(string sourcePath, string deletedFromVersionId)
+    {
+        return hasher.Hash(Encoding.UTF8.GetBytes(
+            $"fv-deleted-v1:{Path.GetFullPath(sourcePath)}:{deletedFromVersionId}"));
+    }
+
+    private static IReadOnlyList<FolderVersionEntry> MergeFolderEntries(
+        IReadOnlyList<FolderVersionEntry>? currentEntries,
+        FolderVersionEntry changedEntry)
+    {
+        return (currentEntries ?? [])
+            .Where(entry => !string.Equals(ToEntryKey(entry.SourcePath, entry.EntryKind), ToEntryKey(changedEntry.SourcePath, changedEntry.EntryKind), StringComparison.OrdinalIgnoreCase))
+            .Append(changedEntry)
+            .OrderByDescending(entry => entry.EntryKind)
+            .ThenBy(entry => entry.Name, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(entry => entry.SourcePath, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static FolderVersionEntry ToFolderEntry(FileVersionManifest manifest)
+    {
+        var sourcePath = NormaliseDirectoryPath(manifest.SourcePath);
+        var name = Path.GetFileName(sourcePath);
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            name = sourcePath;
+        }
+
+        return new FolderVersionEntry(
+            name,
+            sourcePath,
+            manifest.EntryKind,
+            manifest.VersionId,
+            manifest.IsDeleted,
+            manifest.LogicalLength,
+            manifest.CapturedAtUtc);
+    }
+
+    private static IReadOnlyList<string> GetFolderCascadePaths(string sourcePath, string? watchedFolderPath)
+    {
+        if (string.IsNullOrWhiteSpace(watchedFolderPath))
+        {
+            return [];
+        }
+
+        var watchedRoot = NormaliseDirectoryPath(watchedFolderPath);
+        var current = Path.GetDirectoryName(Path.GetFullPath(sourcePath));
+        if (string.IsNullOrWhiteSpace(current))
+        {
+            return [];
+        }
+
+        var folders = new List<string>();
+        while (!string.IsNullOrWhiteSpace(current))
+        {
+            var normalised = NormaliseDirectoryPath(current);
+            if (!PathIsWithinOrEqual(normalised, watchedRoot))
+            {
+                break;
+            }
+
+            folders.Add(normalised);
+            if (PathEquals(normalised, watchedRoot))
+            {
+                break;
+            }
+
+            current = Path.GetDirectoryName(normalised);
+        }
+
+        return folders;
+    }
+
+    private static bool PathIsWithinOrEqual(string path, string parentPath)
+    {
+        var normalisedPath = NormaliseDirectoryPath(path);
+        var normalisedParent = NormaliseDirectoryPath(parentPath);
+        if (string.Equals(normalisedPath, normalisedParent, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        var parentWithSeparator = normalisedParent.EndsWith(Path.DirectorySeparatorChar)
+            ? normalisedParent
+            : normalisedParent + Path.DirectorySeparatorChar;
+        return normalisedPath.StartsWith(parentWithSeparator, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string NormaliseDirectoryPath(string path)
+    {
+        return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    }
+
+    private static string ToEntryKey(string sourcePath, RepositoryEntryKind entryKind)
+    {
+        return $"{entryKind}:{NormaliseDirectoryPath(sourcePath)}";
     }
 
     private static void AtomicWriteOverwrite(string path, byte[] bytes)

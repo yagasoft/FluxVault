@@ -34,6 +34,91 @@ public sealed class RepositoryTests
     }
 
     [Fact]
+    public async Task Commit_creates_folder_versions_for_parent_chain()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        var sourcePath = Path.GetFullPath(@"D:\Work\Docs\Reports\brief.txt");
+
+        var file = await repository.CommitAsync(NewRequest(
+            Encoding.UTF8.GetBytes("folder cascade"),
+            sourcePath: sourcePath,
+            watchedFolderPath: @"D:\Work"));
+
+        var versions = await repository.ListVersionsAsync();
+        var reports = Assert.Single(versions, version => version.SourcePath == Path.GetFullPath(@"D:\Work\Docs\Reports"));
+        var docs = Assert.Single(versions, version => version.SourcePath == Path.GetFullPath(@"D:\Work\Docs"));
+        var root = Assert.Single(versions, version => version.SourcePath == Path.GetFullPath(@"D:\Work"));
+
+        Assert.Equal(RepositoryEntryKind.File, file.Manifest.EntryKind);
+        Assert.Equal(RepositoryEntryKind.Folder, reports.EntryKind);
+        Assert.Equal(RepositoryEntryKind.Folder, docs.EntryKind);
+        Assert.Equal(RepositoryEntryKind.Folder, root.EntryKind);
+        Assert.Contains(reports.FolderEntries ?? [], entry =>
+            entry.SourcePath == sourcePath
+            && entry.VersionId == file.Manifest.VersionId
+            && entry.EntryKind == RepositoryEntryKind.File
+            && !entry.IsDeleted);
+        Assert.Contains(docs.FolderEntries ?? [], entry =>
+            entry.SourcePath == Path.GetFullPath(@"D:\Work\Docs\Reports")
+            && entry.VersionId == reports.VersionId
+            && entry.EntryKind == RepositoryEntryKind.Folder);
+    }
+
+    [Fact]
+    public async Task Folder_version_restore_recreates_snapshot_children()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        await repository.CommitAsync(NewRequest(
+            Encoding.UTF8.GetBytes("alpha"),
+            sourcePath: @"D:\Work\Docs\a.txt",
+            watchedFolderPath: @"D:\Work"));
+        await repository.CommitAsync(NewRequest(
+            Encoding.UTF8.GetBytes("bravo"),
+            sourcePath: @"D:\Work\Docs\Nested\b.txt",
+            watchedFolderPath: @"D:\Work"));
+        var folderVersion = (await repository.ListVersionsAsync())
+            .Where(version => version.EntryKind == RepositoryEntryKind.Folder)
+            .First(version => version.SourcePath == Path.GetFullPath(@"D:\Work\Docs"));
+        var restoreRoot = Path.Combine(workspace.RootPath, "folder-restore");
+
+        await repository.RestoreAsync(folderVersion.VersionId, restoreRoot);
+
+        Assert.Equal("alpha", await File.ReadAllTextAsync(Path.Combine(restoreRoot, "a.txt")));
+        Assert.Equal("bravo", await File.ReadAllTextAsync(Path.Combine(restoreRoot, "Nested", "b.txt")));
+    }
+
+    [Fact]
+    public async Task Record_deletion_writes_tombstone_and_restores_previous_file_version()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        var sourcePath = Path.GetFullPath(@"D:\Work\Docs\brief.txt");
+        var payload = Encoding.UTF8.GetBytes("before delete");
+        var original = await repository.CommitAsync(NewRequest(payload, sourcePath: sourcePath, watchedFolderPath: @"D:\Work"));
+
+        var deletion = await repository.RecordDeletionAsync(new RepositoryDeletionRequest(
+            WatchedFolderId: "docs",
+            WatchedFolderPath: @"D:\Work",
+            SourcePath: sourcePath,
+            IsDirectory: false,
+            DeletedAtUtc: DateTimeOffset.UtcNow));
+        Assert.NotNull(deletion);
+
+        var latest = await repository.ListLatestEntriesAsync();
+        var tombstone = Assert.Single(latest, version => version.SourcePath == sourcePath && version.EntryKind == RepositoryEntryKind.File);
+        var parentFolder = Assert.Single(latest, version => version.SourcePath == Path.GetFullPath(@"D:\Work\Docs") && version.EntryKind == RepositoryEntryKind.Folder);
+        var restoredPath = Path.Combine(workspace.RootPath, "deleted.restore");
+        await repository.RestoreAsync(deletion.Manifest.VersionId, restoredPath);
+
+        Assert.True(tombstone.IsDeleted);
+        Assert.Equal(original.Manifest.VersionId, tombstone.DeletedFromVersionId);
+        Assert.Contains(parentFolder.FolderEntries ?? [], entry => entry.SourcePath == sourcePath && entry.IsDeleted);
+        Assert.Equal(payload, await File.ReadAllBytesAsync(restoredPath));
+    }
+
+    [Fact]
     public async Task Commit_reuses_existing_chunks_for_identical_content()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -207,7 +292,8 @@ public sealed class RepositoryTests
     private static FileCommitRequest NewRequest(
         byte[] payload,
         DateTimeOffset? capturedAtUtc = null,
-        string sourcePath = @"D:\Work\Docs\brief.docx")
+        string sourcePath = @"D:\Work\Docs\brief.docx",
+        string? watchedFolderPath = null)
     {
         return new FileCommitRequest(
             WatchedFolderId: "docs",
@@ -216,6 +302,7 @@ public sealed class RepositoryTests
             Consistency: CaptureConsistency.CrashConsistent,
             Compression: CompressionPreference.Zstd,
             MinimumCompressionBytes: 128,
-            Content: new MemoryStream(payload));
+            Content: new MemoryStream(payload),
+            WatchedFolderPath: watchedFolderPath);
     }
 }

@@ -1,14 +1,13 @@
 <Window x:Class="FluxVault.App.ProtectedFolderVersionsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Protected folder versions"
-        MinHeight="420"
-        MinWidth="860"
-        Height="520"
-        Width="960"
+        Title="Version history"
+        MinHeight="520"
+        MinWidth="980"
+        Height="640"
+        Width="1120"
         Background="#F4F6F8">
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style TargetType="DataGrid">
             <Setter Property="BorderBrush" Value="#DADCE0" />
             <Setter Property="RowHeight" Value="28" />
@@ -30,6 +29,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="12" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Text="{Binding FolderPath}"
@@ -37,61 +38,61 @@
                    FontWeight="SemiBold"
                    TextTrimming="CharacterEllipsis" />
 
-        <DataGrid Grid.Row="2"
-                  ItemsSource="{Binding Files}"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Setter Property="DetailsVisibility" Value="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                </Style>
-            </DataGrid.RowStyle>
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="" Width="42">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <ToggleButton Content=">"
-                                          IsChecked="{Binding IsExpanded, Mode=TwoWay}"
-                                          Width="26"
-                                          Padding="0" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="File" Binding="{Binding File}" Width="220" />
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="180" />
-                <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="360" />
-                <DataGridTextColumn Header="Latest version" Binding="{Binding LatestVersionId}" Width="220" />
-                <DataGridTextColumn Header="Latest captured" Binding="{Binding LatestCapturedAt}" Width="160" />
-                <DataGridTextColumn Header="Bytes" Binding="{Binding Bytes}" Width="100" />
-            </DataGrid.Columns>
-            <DataGrid.RowDetailsTemplate>
-                <DataTemplate>
-                    <Border BorderBrush="#DADCE0" BorderThickness="0,1,0,1" Padding="36,8,8,8" Background="#FAFBFC">
-                        <DataGrid ItemsSource="{Binding Versions}"
-                                  MouseDoubleClick="VersionsGrid_MouseDoubleClick"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Version" Binding="{Binding VersionId}" Width="220" />
-                                <DataGridTextColumn Header="Captured" Binding="{Binding CapturedAt}" Width="160" />
-                                <DataGridTextColumn Header="Consistency" Binding="{Binding Consistency}" Width="130" />
-                                <DataGridTextColumn Header="Lineage" Binding="{Binding Lineage}" Width="140" />
-                                <DataGridTextColumn Header="Bytes" Binding="{Binding Bytes}" Width="100" />
-                                <DataGridTextColumn Header="Chunks" Binding="{Binding ChunkCount}" Width="80" />
-                                <DataGridTemplateColumn Header="Restore" Width="100">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Button Content="Restore"
-                                                    Command="{Binding DataContext.RestoreVersionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                    CommandParameter="{Binding}" />
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Border>
-                </DataTemplate>
-            </DataGrid.RowDetailsTemplate>
-        </DataGrid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+
+            <DataGrid Grid.Column="0"
+                      ItemsSource="{Binding Versions}"
+                      SelectedItem="{Binding SelectedVersion}"
+                      MouseDoubleClick="VersionsGrid_MouseDoubleClick"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Captured" Binding="{Binding CapturedAt}" Width="150" />
+                    <DataGridTextColumn Header="Kind" Binding="{Binding Kind}" Width="80" />
+                    <DataGridTextColumn Header="State" Binding="{Binding State}" Width="80" />
+                    <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="320" />
+                    <DataGridTextColumn Header="Lineage" Binding="{Binding Lineage}" Width="120" />
+                    <DataGridTextColumn Header="Bytes" Binding="{Binding Bytes}" Width="90" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <DataGrid Grid.Column="2"
+                      ItemsSource="{Binding SnapshotEntries}"
+                      SelectedItem="{Binding SelectedSnapshotEntry}"
+                      MouseDoubleClick="SnapshotGrid_MouseDoubleClick"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200" />
+                    <DataGridTextColumn Header="Kind" Binding="{Binding Kind}" Width="80" />
+                    <DataGridTextColumn Header="State" Binding="{Binding State}" Width="80" />
+                    <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="360" />
+                    <DataGridTextColumn Header="Captured" Binding="{Binding CapturedAt}" Width="150" />
+                    <DataGridTextColumn Header="Bytes" Binding="{Binding Bytes}" Width="90" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Preview version"
+                    Command="{Binding PreviewSelectedVersionCommand}"
+                    Margin="0,0,8,0" />
+            <Button Content="Restore version"
+                    Command="{Binding RestoreSelectedVersionCommand}"
+                    Margin="0,0,18,0" />
+            <Button Content="Open"
+                    Command="{Binding OpenSelectedSnapshotEntryCommand}"
+                    Margin="0,0,8,0" />
+            <Button Content="Preview file"
+                    Command="{Binding PreviewSelectedSnapshotEntryCommand}"
+                    Margin="0,0,8,0" />
+            <Button Content="Restore selected"
+                    Command="{Binding RestoreSelectedSnapshotEntryCommand}" />
+        </StackPanel>
     </Grid>
 </Window>

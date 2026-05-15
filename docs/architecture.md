@@ -260,6 +260,15 @@ destination. Latest restore to original requires overwrite confirmation when
 conflicts exist. Show versions opens the version inventory filtered to the
 selected file or folder.
 
+The File browser merges live filesystem entries with the repository's latest
+tracked entries. Deleted or otherwise missing tracked files and folders appear
+as translucent phantom rows. Phantom rows can be restored and can open version
+history, but shell open/show-in-Explorer actions are disabled because no live
+filesystem object exists. The browser also has an address bar; entering a live
+or tracked path and pressing Enter or Go navigates to that folder/file, while
+invalid or untracked paths leave the current selection unchanged and report a
+status message.
+
 Scoped `ProtectionScopedRegexRule` lists complement selected folders/files and
 regex-only folder scopes. A regex-only scope can be saved on an unselected
 folder; it does not compile into a watched folder and only filters protected
@@ -333,19 +342,22 @@ and restorable. Byte-identical copies into protected paths become visible
 This gives FluxVault Git-like history semantics without using Git as the live
 repository engine.
 
-Opening a version for preview is separate from restore. The dashboard asks the
-service to reconstruct the chosen version into FluxVault-owned preview state,
-opens the returned temporary file with the user's default application, and does
-not write a restore-lineage hint. Protection folder rows can open a repository
-inventory dialog built from manifests; each file row expands to its versions and
-supports both explicit restore and temporary preview.
+Opening a file version for preview is separate from restore. The dashboard asks
+the service to reconstruct the chosen version into FluxVault-owned preview
+state, opens the returned temporary file with the user's default application,
+and does not write a restore-lineage hint. Folder versions are previewed inside
+FluxVault through the version history browser: selecting a folder version shows
+the snapshot entries stored in that manifest, double-clicking a folder entry
+navigates into that snapshot folder, and double-clicking a file entry opens the
+existing temporary file-preview flow before any restore.
 
 Retention is manifest-led. FluxVault groups versions by normalised source path,
 keeps dense recent history, thins older history to hourly and daily buckets,
 and always keeps at least the latest configured number of versions per source
-file. After deleting pruned manifests locally, it garbage-collects only chunks
-and metadata no remaining manifest references. Mirror cleanup is best-effort
-and reported through status and diagnostics.
+entry. Folder manifests and deletion tombstones retain their referenced child
+versions while they are kept. After deleting pruned manifests locally, FluxVault
+garbage-collects only chunks and metadata no remaining manifest references.
+Mirror cleanup is best-effort and reported through status and diagnostics.
 
 `MirrorSetConfiguration` is the active mirror configuration model. Older
 `mirrorPath` configuration files are loaded for compatibility and normalised

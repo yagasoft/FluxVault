@@ -31,6 +31,8 @@ public sealed class RepositoryLineageTests
 
         Assert.NotNull(manifest);
         Assert.Equal(VersionOperationType.Capture, manifest.OperationType);
+        Assert.Equal(RepositoryEntryKind.File, manifest.EntryKind);
+        Assert.False(manifest.IsDeleted);
         Assert.Empty(manifest.ParentVersionIds ?? []);
         Assert.Null(manifest.RestoredFromVersionId);
         Assert.Null(manifest.ForkOriginVersionId);

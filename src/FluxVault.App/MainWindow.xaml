@@ -240,6 +240,16 @@
                         <Button Content="Discard changes"
                                 Command="{Binding DiscardConfigurationChangesCommand}"
                                 ToolTip="Discard unsaved File browser and configuration edits, then reload settings from the service." />
+                        <TextBlock Text="Path" VerticalAlignment="Center" Margin="16,0,6,0" />
+                        <TextBox Width="420"
+                                 Padding="7"
+                                 Text="{Binding FileBrowser.AddressPath, UpdateSourceTrigger=PropertyChanged}"
+                                 KeyDown="FileBrowserAddress_KeyDown"
+                                 ToolTip="{Binding FileBrowser.NavigationStatus}" />
+                        <Button Content="Go"
+                                Command="{Binding FileBrowser.NavigateAddressCommand}"
+                                Margin="6,0,0,0"
+                                ToolTip="{Binding FileBrowser.NavigationStatus}" />
                     </StackPanel>
 
                     <Border Grid.Row="1" Grid.ColumnSpan="3" BorderBrush="#DADCE0" BorderThickness="1" Background="#FAFBFC" Padding="10" Margin="0,0,0,12">
@@ -313,16 +323,18 @@
                                               Command="{Binding ShowSelectedBrowserItemVersionsCommand}" />
                                     <Separator />
                                     <MenuItem Header="Show in File Explorer"
-                                              Command="{Binding FileBrowser.ShowSelectedFolderInExplorerCommand}" />
+                                              Command="{Binding FileBrowser.ShowSelectedFolderInExplorerCommand}"
+                                              IsEnabled="{Binding FileBrowser.SelectedFolder.CanUseShellActions}" />
                                 </ContextMenu>
                             </TreeView.ContextMenu>
                             <TreeView.Resources>
                                 <HierarchicalDataTemplate DataType="{x:Type vm:FileBrowserFolderNode}" ItemsSource="{Binding Children}">
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Opacity="{Binding ItemOpacity}">
                                         <Button Width="32"
                                                 Padding="4,2"
                                                 Margin="0,0,6,0"
                                                 Click="FolderSelection_Click"
+                                                IsEnabled="{Binding CanChangeSelection}"
                                                 ToolTip="{Binding SelectionToolTip}">
                                             <TextBlock Text="{Binding SelectionIndicator}" HorizontalAlignment="Center" />
                                         </Button>
@@ -362,16 +374,24 @@
                                           Command="{Binding ShowSelectedBrowserItemVersionsCommand}" />
                                 <Separator />
                                 <MenuItem Header="Open in default app"
-                                          Command="{Binding FileBrowser.OpenSelectedFileCommand}" />
+                                          Command="{Binding FileBrowser.OpenSelectedFileCommand}"
+                                          IsEnabled="{Binding FileBrowser.SelectedFile.CanUseShellActions}" />
                                 <MenuItem Header="Show in File Explorer"
-                                          Command="{Binding FileBrowser.ShowSelectedFileInExplorerCommand}" />
+                                          Command="{Binding FileBrowser.ShowSelectedFileInExplorerCommand}"
+                                          IsEnabled="{Binding FileBrowser.SelectedFile.CanUseShellActions}" />
                             </ContextMenu>
                         </DataGrid.ContextMenu>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Opacity" Value="{Binding ItemOpacity}" />
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Selected" Width="SizeToCells" MinWidth="90">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  IsEnabled="{Binding CanChangeSelection}"
                                                   HorizontalAlignment="Center"
                                                   VerticalAlignment="Center" />
                                     </DataTemplate>

@@ -16,4 +16,8 @@ public sealed record RepositoryVersionSummary(
     string? InheritedFromVersionId = null,
     string? InheritedFromSourcePath = null,
     string? ContentSignature = null,
-    SyncOriginMetadata? SyncOrigin = null);
+    SyncOriginMetadata? SyncOrigin = null,
+    RepositoryEntryKind EntryKind = RepositoryEntryKind.File,
+    bool IsDeleted = false,
+    IReadOnlyList<FolderVersionEntry>? FolderEntries = null,
+    string? DeletedFromVersionId = null);

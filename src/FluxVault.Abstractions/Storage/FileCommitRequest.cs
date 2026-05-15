@@ -11,4 +11,5 @@ public sealed record FileCommitRequest(
     CompressionPreference Compression,
     int MinimumCompressionBytes,
     Stream Content,
-    SyncOriginMetadata? SyncOrigin = null);
+    SyncOriginMetadata? SyncOrigin = null,
+    string? WatchedFolderPath = null);

@@ -10,7 +10,8 @@ public sealed record CaptureCadencePolicy(
     TimeSpan BalancedMaxHotFileDelay,
     TimeSpan QuietMaxHotFileDelay,
     TimeSpan MinimumSameFileCaptureInterval,
-    int MaximumConcurrentCaptures)
+    int MaximumConcurrentCaptures,
+    int WatcherEventBacklogLimit = 4096)
 {
     public static CaptureCadencePolicy CreateDefault()
     {
@@ -24,7 +25,8 @@ public sealed record CaptureCadencePolicy(
             BalancedMaxHotFileDelay: TimeSpan.FromMinutes(2),
             QuietMaxHotFileDelay: TimeSpan.FromMinutes(10),
             MinimumSameFileCaptureInterval: TimeSpan.FromSeconds(15),
-            MaximumConcurrentCaptures: 1);
+            MaximumConcurrentCaptures: 2,
+            WatcherEventBacklogLimit: 4096);
     }
 
     public TimeSpan GetDebounce(ResourceProfile profile)

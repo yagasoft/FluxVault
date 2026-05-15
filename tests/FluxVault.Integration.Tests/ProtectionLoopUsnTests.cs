@@ -186,6 +186,63 @@ public sealed class ProtectionLoopUsnTests
         Assert.Contains(versions, version => version.SourcePath == changed);
     }
 
+    [Fact]
+    public async Task Noisy_watcher_events_collapse_to_one_reconciliation_scan()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var files = Enumerable.Range(0, 30)
+            .Select(index => Path.Combine(watched, $"file-{index:00}.txt"))
+            .ToArray();
+        foreach (var file in files)
+        {
+            await File.WriteAllTextAsync(file, Path.GetFileName(file));
+        }
+
+        var configuration = NewFastConfiguration(workspace, watched);
+        configuration = configuration with
+        {
+            CaptureCadencePolicy = configuration.CaptureCadencePolicy with
+            {
+                WatcherEventBacklogLimit = 16
+            }
+        };
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        var reader = new SequencedUsnChangeJournalReader(
+            NoChangedFiles(watched),
+            NoChangedFiles(watched),
+            NoChangedFiles(watched));
+        var loop = CreateLoop(workspace, operations, reader);
+
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(6));
+        var loopTask = loop.RunAsync(cancellation.Token);
+        try
+        {
+            await WaitUntilAsync(_ => Task.FromResult(reader.ReadCount >= 2), cancellation.Token);
+            var folder = Assert.Single(configuration.WatchedFolders);
+            foreach (var file in files)
+            {
+                loop.RecordFileSystemEventForTesting(folder, file);
+            }
+
+            await WaitUntilAsync(async token => (await operations.ListVersionsAsync(token)).Count == files.Length, cancellation.Token);
+        }
+        finally
+        {
+            await StopLoopAsync(loopTask, cancellation);
+        }
+
+        var versions = await operations.ListVersionsAsync();
+        Assert.Equal(files.Length, versions.Count);
+        var status = await operations.GetStatusAsync();
+        var watcher = Assert.Single(status.Watchers!);
+        Assert.Equal("Reconciliation scan", watcher.LastCatchUpSource);
+        Assert.Equal(0, watcher.BacklogCount);
+        Assert.True(watcher.EventsPerMinute >= 16);
+    }
+
     private static FileSystemProtectionLoop CreateLoop(
         TemporaryWorkspace workspace,
         FluxVaultOperations operations,

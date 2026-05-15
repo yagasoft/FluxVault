@@ -19,7 +19,8 @@ public sealed class CaptureCadencePolicyTests
         Assert.Equal(TimeSpan.FromMinutes(2), policy.GetMaxHotFileDelay(ResourceProfile.Balanced));
         Assert.Equal(TimeSpan.FromMinutes(10), policy.GetMaxHotFileDelay(ResourceProfile.Quiet));
         Assert.Equal(TimeSpan.FromSeconds(15), policy.MinimumSameFileCaptureInterval);
-        Assert.Equal(1, policy.MaximumConcurrentCaptures);
+        Assert.Equal(2, policy.MaximumConcurrentCaptures);
+        Assert.Equal(4096, policy.WatcherEventBacklogLimit);
     }
 
     [Fact]

@@ -15,16 +15,22 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
         string folderPath,
         IReadOnlyList<RepositoryVersionSummary> versions,
         Func<VersionInventoryVersionRow, Task> restoreVersion,
-        Func<VersionInventoryVersionRow, Task> openVersionPreview)
+        Func<VersionInventoryVersionRow, Task> openVersionPreview,
+        string? focusPath = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(folderPath);
         ArgumentNullException.ThrowIfNull(versions);
         this.restoreVersion = restoreVersion;
         this.openVersionPreview = openVersionPreview;
         FolderPath = Path.GetFullPath(folderPath);
+        var normalisedFocusPath = string.IsNullOrWhiteSpace(focusPath)
+            ? null
+            : Path.GetFullPath(focusPath);
 
         foreach (var group in versions
                      .Where(version => IsUnderOrSameFolder(version.SourcePath, FolderPath))
+                     .Where(version => normalisedFocusPath is null
+                                       || SourcePathMatchesFocus(version.SourcePath, normalisedFocusPath))
                      .GroupBy(version => Path.GetFullPath(version.SourcePath), StringComparer.OrdinalIgnoreCase)
                      .OrderBy(group => group.Key, StringComparer.OrdinalIgnoreCase))
         {
@@ -92,6 +98,18 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
         var trimmedFolder = TrimPath(folder);
         return string.Equals(TrimPath(parent), trimmedFolder, StringComparison.OrdinalIgnoreCase)
                || fullPath.StartsWith(trimmedFolder + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool SourcePathMatchesFocus(string path, string focusPath)
+    {
+        var fullPath = Path.GetFullPath(path);
+        if (string.Equals(TrimPath(fullPath), TrimPath(focusPath), StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        var focusRoot = TrimPath(focusPath) + Path.DirectorySeparatorChar;
+        return fullPath.StartsWith(focusRoot, StringComparison.OrdinalIgnoreCase);
     }
 
     private static string TrimPath(string path)

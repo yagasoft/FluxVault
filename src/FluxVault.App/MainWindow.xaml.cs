@@ -16,6 +16,7 @@ public partial class MainWindow : Window
     private bool fileBrowserFilesGridAutoFitted;
     private bool fileBrowserPendingChangesGridAutoFitted;
     private readonly IDataGridLayoutStore layoutStore;
+    private MainWindowViewModel? subscribedViewModel;
 
     public MainWindow()
         : this(new FileDataGridLayoutStore())
@@ -26,6 +27,7 @@ public partial class MainWindow : Window
     {
         this.layoutStore = layoutStore;
         InitializeComponent();
+        DataContextChanged += MainWindow_DataContextChanged;
     }
 
     private async void Options_Click(object sender, RoutedEventArgs e)
@@ -42,6 +44,30 @@ public partial class MainWindow : Window
         };
         window.ShowDialog();
         await viewModel.RefreshAsync().ConfigureAwait(true);
+        viewModel.FileBrowser.RefreshBrowser();
+    }
+
+    private void MainWindow_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (subscribedViewModel is not null)
+        {
+            subscribedViewModel.VersionInventoryRequested -= ViewModel_VersionInventoryRequested;
+        }
+
+        subscribedViewModel = e.NewValue as MainWindowViewModel;
+        if (subscribedViewModel is not null)
+        {
+            subscribedViewModel.VersionInventoryRequested += ViewModel_VersionInventoryRequested;
+        }
+    }
+
+    private void ViewModel_VersionInventoryRequested(object? sender, VersionInventoryRequestedEventArgs e)
+    {
+        var window = new ProtectedFolderVersionsWindow(e.Inventory)
+        {
+            Owner = this
+        };
+        window.ShowDialog();
     }
 
     private void About_Click(object sender, RoutedEventArgs e)

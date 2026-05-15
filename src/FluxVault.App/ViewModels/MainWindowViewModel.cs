@@ -26,6 +26,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly IRestoreOverwriteConfirmation restoreOverwriteConfirmation;
     private readonly IVersionPreviewLauncher versionPreviewLauncher;
     private readonly IMirrorNodeDialogService mirrorNodeDialogService;
+    private readonly IProfileDialogService profileDialogService;
     private readonly TimeSpan autoRefreshInterval;
     private readonly SemaphoreSlim refreshGate = new(1, 1);
     private CancellationTokenSource? autoRefreshCancellation;
@@ -148,6 +149,14 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private string captureHealth = "Capture: idle";
 
+    [ObservableProperty]
+    private FluxVaultProfileRow? selectedProfile;
+
+    [ObservableProperty]
+    private string activeProfileName = "Default";
+
+    public ObservableCollection<FluxVaultProfileRow> Profiles { get; } = [];
+
     public MainWindowViewModel()
         : this(
             new NamedPipeFluxVaultClient(),
@@ -156,7 +165,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new WindowsFluxVaultServiceController(),
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
-            new WpfMirrorNodeDialogService())
+            new WpfMirrorNodeDialogService(),
+            profileDialogService: new ProfileDialogService())
     {
     }
 
@@ -168,7 +178,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new AssumedRunningWindowsServiceController(),
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
-            new WpfMirrorNodeDialogService())
+            new WpfMirrorNodeDialogService(),
+            profileDialogService: new ProfileDialogService())
     {
     }
 
@@ -183,7 +194,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new AssumedRunningWindowsServiceController(),
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
-            mirrorNodeDialogService)
+            mirrorNodeDialogService,
+            profileDialogService: new ProfileDialogService())
     {
     }
 
@@ -199,7 +211,24 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new AssumedRunningWindowsServiceController(),
             restoreDestinationPicker,
             restoreOverwriteConfirmation,
-            new WpfMirrorNodeDialogService())
+            new WpfMirrorNodeDialogService(),
+            profileDialogService: new ProfileDialogService())
+    {
+    }
+
+    public MainWindowViewModel(
+        IFluxVaultServiceClient client,
+        TimeSpan autoRefreshInterval,
+        IProfileDialogService profileDialogService)
+        : this(
+            client,
+            autoRefreshInterval,
+            new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
+            new AssumedRunningWindowsServiceController(),
+            new SaveFileRestoreDestinationPicker(),
+            new MessageBoxRestoreOverwriteConfirmation(),
+            new WpfMirrorNodeDialogService(),
+            profileDialogService: profileDialogService)
     {
     }
 
@@ -217,7 +246,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             restoreDestinationPicker,
             restoreOverwriteConfirmation,
             new WpfMirrorNodeDialogService(),
-            versionPreviewLauncher)
+            versionPreviewLauncher,
+            profileDialogService: new ProfileDialogService())
     {
     }
 
@@ -232,7 +262,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new WindowsFluxVaultServiceController(),
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
-            new WpfMirrorNodeDialogService())
+            new WpfMirrorNodeDialogService(),
+            profileDialogService: new ProfileDialogService())
     {
     }
 
@@ -248,7 +279,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             windowsServiceController,
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
-            new WpfMirrorNodeDialogService())
+            new WpfMirrorNodeDialogService(),
+            profileDialogService: new ProfileDialogService())
     {
     }
 
@@ -260,7 +292,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
         IRestoreDestinationPicker restoreDestinationPicker,
         IRestoreOverwriteConfirmation restoreOverwriteConfirmation,
         IMirrorNodeDialogService? mirrorNodeDialogService = null,
-        IVersionPreviewLauncher? versionPreviewLauncher = null)
+        IVersionPreviewLauncher? versionPreviewLauncher = null,
+        IProfileDialogService? profileDialogService = null)
     {
         this.client = client;
         this.windowsServiceController = windowsServiceController;
@@ -268,6 +301,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         this.restoreOverwriteConfirmation = restoreOverwriteConfirmation;
         this.versionPreviewLauncher = versionPreviewLauncher ?? new ShellVersionPreviewLauncher();
         this.mirrorNodeDialogService = mirrorNodeDialogService ?? new WpfMirrorNodeDialogService();
+        this.profileDialogService = profileDialogService ?? new ProfileDialogService();
         this.autoRefreshInterval = autoRefreshInterval;
         FileBrowser = fileBrowser;
         FileBrowser.SelectionRulesChanged += (_, _) => MarkConfigurationDirty();
@@ -292,6 +326,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public FileBrowserViewModel FileBrowser { get; }
 
+    public event EventHandler<VersionInventoryRequestedEventArgs>? VersionInventoryRequested;
+
     public IReadOnlyList<MirrorPlacementProfile> MirrorPlacementProfiles { get; } =
     [
         MirrorPlacementProfile.FullCopy,
@@ -307,6 +343,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     ];
 
     public bool HasSelectedMirror => SelectedMirrorNode is not null;
+
+    public bool HasSelectedVersion => SelectedVersion is not null;
 
     public bool CanEnableSelectedMirror => SelectedMirrorNode is { IsEnabled: false };
 
@@ -415,6 +453,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             case AppStartupRequestAction.ShowVersions:
                 ApplyRestorePathRequest(request.Path);
+                await RefreshAsync(isAutomatic: false, forceConfigurationReload: true).ConfigureAwait(true);
+                await ShowVersionsForPathAsync(request.Path).ConfigureAwait(true);
                 break;
             case AppStartupRequestAction.AddToFluxVault:
                 await ApplyExplorerSelectionRequestAsync(request.Path, add: true).ConfigureAwait(true);
@@ -547,6 +587,21 @@ public sealed partial class MainWindowViewModel : ObservableObject
         RefreshMirrorActionState();
     }
 
+    partial void OnSelectedVersionChanged(VersionRow? value)
+    {
+        RestoreSelectedCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnSelectedProfileChanged(FluxVaultProfileRow? value)
+    {
+        if (isApplyingStatus || value is null || value.IsActive)
+        {
+            return;
+        }
+
+        _ = SwitchProfileAsync(value.Id);
+    }
+
     private void MarkConfigurationDirty()
     {
         if (!isApplyingStatus)
@@ -557,7 +612,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private async Task SaveConfigurationCoreAsync(bool refreshAfterSave = true, string? successStatus = null)
     {
-        var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(BuildConfiguration())).ConfigureAwait(true);
+        var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(BuildConfiguration(), SelectedProfile?.Id)).ConfigureAwait(true);
         SetServiceStatus(response.Success
             ? successStatus ?? "Service connection: configuration saved"
             : $"Service connection: save failed ({response.ErrorMessage})");
@@ -567,6 +622,15 @@ public sealed partial class MainWindowViewModel : ObservableObject
             if (refreshAfterSave)
             {
                 await RefreshAsync().ConfigureAwait(true);
+                FileBrowser.RefreshBrowser();
+                if (!string.IsNullOrWhiteSpace(successStatus))
+                {
+                    SetServiceStatus(successStatus);
+                }
+            }
+            else
+            {
+                FileBrowser.RefreshBrowser();
             }
         }
     }
@@ -576,11 +640,93 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         hasLocalConfigurationChanges = false;
         await RefreshAsync(isAutomatic: false, forceConfigurationReload: true).ConfigureAwait(true);
+        FileBrowser.RefreshBrowser();
     }
 
     private void MarkStatusApplied()
     {
         hasLocalConfigurationChanges = false;
+    }
+
+    [RelayCommand]
+    private async Task AddProfileAsync()
+    {
+        var displayName = profileDialogService.PromptForProfileName("Add FluxVault profile", $"Profile {Profiles.Count + 1}");
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            return;
+        }
+
+        await SendProfileCommandAsync(FluxVaultIpcRequest.CreateProfile(UniqueProfileId(displayName), displayName)).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task DuplicateProfileAsync()
+    {
+        if (SelectedProfile is null)
+        {
+            return;
+        }
+
+        var displayName = profileDialogService.PromptForProfileName("Duplicate FluxVault profile", $"{SelectedProfile.DisplayName} copy");
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            return;
+        }
+
+        await SendProfileCommandAsync(FluxVaultIpcRequest.DuplicateProfile(SelectedProfile.Id, UniqueProfileId(displayName), displayName)).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task RenameProfileAsync()
+    {
+        if (SelectedProfile is null)
+        {
+            return;
+        }
+
+        var displayName = profileDialogService.PromptForProfileName("Rename FluxVault profile", SelectedProfile.DisplayName);
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            return;
+        }
+
+        await SendProfileCommandAsync(FluxVaultIpcRequest.RenameProfile(SelectedProfile.Id, displayName)).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task DeleteProfileAsync()
+    {
+        if (SelectedProfile is null || !profileDialogService.ConfirmDelete(SelectedProfile.DisplayName))
+        {
+            return;
+        }
+
+        await SendProfileCommandAsync(FluxVaultIpcRequest.DeleteProfile(SelectedProfile.Id)).ConfigureAwait(true);
+    }
+
+    private async Task SwitchProfileAsync(string profileId)
+    {
+        if (hasLocalConfigurationChanges)
+        {
+            SetServiceStatus("Service connection: save or discard configuration changes before switching profile");
+            return;
+        }
+
+        await SendProfileCommandAsync(FluxVaultIpcRequest.SetActiveProfile(profileId)).ConfigureAwait(true);
+    }
+
+    private async Task SendProfileCommandAsync(FluxVaultIpcRequest request)
+    {
+        var response = await client.SendAsync(request).ConfigureAwait(true);
+        if (!response.Success || response.Status is null)
+        {
+            SetServiceStatus($"Service connection: profile action failed ({response.ErrorMessage ?? "no status returned"})");
+            return;
+        }
+
+        ApplyStatus(response.Status, preserveLocalConfiguration: false);
+        FileBrowser.RefreshBrowser();
     }
 
     private void ReplaceMirrorNodes(IReadOnlyList<MirrorNodeConfiguration> nodes)
@@ -954,18 +1100,97 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ? $"Service connection: backup failed ({response.ErrorMessage})"
             : $"Service connection: {response.Backup.Message}");
         await RefreshAsync().ConfigureAwait(true);
+        FileBrowser.RefreshBrowser();
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HasSelectedVersion))]
     private async Task RestoreSelectedAsync()
     {
         var selectedVersion = SelectedVersion;
         if (selectedVersion is null)
         {
+            SetServiceStatus("Service connection: select a repository version before restoring.");
             return;
         }
 
         await RestoreVersionAsync(selectedVersion).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task RestoreSelectedBrowserItemElsewhereAsync()
+    {
+        var selection = GetSelectedBrowserRestoreSelection();
+        if (selection is null)
+        {
+            SetServiceStatus("Service connection: select a file or folder in the browser before restoring.");
+            return;
+        }
+
+        var destination = selection.Value.IsDirectory
+            ? restoreDestinationPicker.PickFolderDestination(selection.Value.Path)
+            : restoreDestinationPicker.PickDestination(new VersionRow(
+                "latest",
+                selection.Value.Path,
+                string.Empty,
+                CaptureConsistency.BestEffort,
+                0));
+        if (string.IsNullOrWhiteSpace(destination))
+        {
+            SetServiceStatus("Service connection: restore cancelled.");
+            return;
+        }
+
+        if (!selection.Value.IsDirectory
+            && File.Exists(destination)
+            && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
+        {
+            SetServiceStatus("Service connection: restore overwrite denied.");
+            return;
+        }
+
+        await RestoreBrowserSelectionAsync(
+            selection.Value.Path,
+            selection.Value.IsDirectory,
+            RestoreSelectionDestinationMode.Elsewhere,
+            destination,
+            overwriteConfirmed: true).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task RestoreSelectedBrowserItemToOriginalAsync()
+    {
+        var selection = GetSelectedBrowserRestoreSelection();
+        if (selection is null)
+        {
+            SetServiceStatus("Service connection: select a file or folder in the browser before restoring.");
+            return;
+        }
+
+        if (!restoreOverwriteConfirmation.ConfirmOverwrite(selection.Value.Path))
+        {
+            SetServiceStatus("Service connection: restore overwrite denied.");
+            return;
+        }
+
+        await RestoreBrowserSelectionAsync(
+            selection.Value.Path,
+            selection.Value.IsDirectory,
+            RestoreSelectionDestinationMode.Original,
+            selection.Value.Path,
+            overwriteConfirmed: true).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task ShowSelectedBrowserItemVersionsAsync()
+    {
+        var selection = GetSelectedBrowserRestoreSelection();
+        if (selection is null)
+        {
+            SetServiceStatus("Service connection: select a file or folder in the browser before showing versions.");
+            return;
+        }
+
+        await ShowVersionsForPathAsync(selection.Value.Path).ConfigureAwait(true);
     }
 
     [RelayCommand]
@@ -1014,6 +1239,59 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    private async Task RestoreBrowserSelectionAsync(
+        string sourcePath,
+        bool isDirectory,
+        RestoreSelectionDestinationMode destinationMode,
+        string? destinationPath,
+        bool overwriteConfirmed)
+    {
+        try
+        {
+            var response = await client.SendAsync(FluxVaultIpcRequest.RunRestoreSelection(
+                    sourcePath,
+                    isDirectory,
+                    destinationMode,
+                    destinationPath,
+                    overwriteConfirmed))
+                .ConfigureAwait(true);
+            if (!response.Success)
+            {
+                SetServiceStatus($"Service connection: restore failed ({response.ErrorMessage})");
+                return;
+            }
+
+            var summary = response.RestoreSelection;
+            SetServiceStatus(summary is null
+                ? $"Service connection: restored latest versions for {sourcePath}"
+                : $"Service connection: restored {summary.RestoredCount} of {summary.FileCount} item(s) for {sourcePath}");
+            await RefreshAsync().ConfigureAwait(true);
+            FileBrowser.RefreshBrowser();
+            SetServiceStatus(summary is null
+                ? $"Service connection: restored latest versions for {sourcePath}"
+                : $"Service connection: restored {summary.RestoredCount} of {summary.FileCount} item(s) for {sourcePath}");
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            SetServiceStatus($"Service connection: restore failed ({ex.Message})");
+        }
+    }
+
+    private (string Path, bool IsDirectory)? GetSelectedBrowserRestoreSelection()
+    {
+        if (FileBrowser.SelectedFile is not null)
+        {
+            return (FileBrowser.SelectedFile.Path, false);
+        }
+
+        if (FileBrowser.SelectedFolder is not null)
+        {
+            return (FileBrowser.SelectedFolder.Path, true);
+        }
+
+        return null;
+    }
+
     internal async Task OpenVersionPreviewAsync(VersionRow selectedVersion)
     {
         try
@@ -1057,6 +1335,45 @@ public sealed partial class MainWindowViewModel : ObservableObject
             SetServiceStatus($"Service connection: backup inventory failed ({ex.Message})");
             return EmptyVersionInventory(folder.Path);
         }
+    }
+
+    internal async Task<VersionInventoryViewModel> CreateVersionInventoryForPathAsync(string path)
+    {
+        try
+        {
+            var response = await client.SendAsync(FluxVaultIpcRequest.ListVersions()).ConfigureAwait(true);
+            if (!response.Success || response.Versions is null)
+            {
+                SetServiceStatus($"Service connection: backup inventory failed ({response.ErrorMessage ?? "no versions returned"})");
+                return EmptyVersionInventory(path);
+            }
+
+            var fullPath = Path.GetFullPath(path);
+            var exactMatch = response.Versions.Any(version => IsSamePath(version.SourcePath, fullPath));
+            var folderPath = exactMatch
+                ? Path.GetDirectoryName(fullPath) ?? fullPath
+                : fullPath;
+            return new VersionInventoryViewModel(
+                folderPath,
+                response.Versions,
+                version => RestoreVersionAsync(ToVersionRow(version)),
+                version => OpenVersionPreviewAsync(ToVersionRow(version)),
+                fullPath);
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            SetServiceStatus($"Service connection: backup inventory failed ({ex.Message})");
+            return EmptyVersionInventory(path);
+        }
+    }
+
+    private async Task ShowVersionsForPathAsync(string path)
+    {
+        var inventory = await CreateVersionInventoryForPathAsync(path).ConfigureAwait(true);
+        VersionInventoryRequested?.Invoke(this, new VersionInventoryRequestedEventArgs(inventory));
+        SetServiceStatus(inventory.Files.Count == 0
+            ? $"Service connection: no restorable versions found for {path}"
+            : $"Service connection: showing versions for {path}");
     }
 
     private VersionInventoryViewModel EmptyVersionInventory(string folderPath)
@@ -1350,6 +1667,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         isApplyingStatus = true;
         try
         {
+            ApplyProfiles(status);
             if (!preserveLocalConfiguration)
             {
                 RepositoryPath = status.Configuration.RepositoryPath;
@@ -1388,6 +1706,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
             if (!string.IsNullOrWhiteSpace(RestoreHintPath))
             {
                 visibleStatus += $". Restore request: {RestoreHintPath}";
+            }
+
+            if (status.RecentVersions.Count == 0)
+            {
+                visibleStatus += ". Select a repository version after a backup completes before restoring";
             }
 
             SetServiceStatus(visibleStatus, BuildServiceStatusToolTip(visibleStatus, status.DurableChange));
@@ -1468,6 +1791,42 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    private void ApplyProfiles(FluxVaultServiceStatus status)
+    {
+        var activeProfileId = status.ActiveProfileId
+            ?? status.Profiles?.FirstOrDefault(profile => profile.IsActive)?.Id
+            ?? FluxVaultProfileConfiguration.DefaultProfileId;
+        var profiles = status.Profiles is { Count: > 0 }
+            ? status.Profiles
+            : [
+                new FluxVaultProfileRuntimeStatus(
+                    FluxVaultProfileConfiguration.DefaultProfileId,
+                    "Default",
+                    IsEnabled: true,
+                    IsActive: true,
+                    status.Configuration.RepositoryPath,
+                    status.Configuration.WatchedFolders.Count,
+                    status.Configuration.MirrorSet?.Nodes.Count(node => node.IsEnabled) ?? 0)
+            ];
+
+        Profiles.Clear();
+        foreach (var profile in profiles)
+        {
+            Profiles.Add(new FluxVaultProfileRow(
+                profile.Id,
+                profile.DisplayName,
+                profile.IsEnabled,
+                string.Equals(profile.Id, activeProfileId, StringComparison.OrdinalIgnoreCase),
+                profile.RepositoryPath,
+                profile.WatchedFolderCount,
+                profile.EnabledMirrorCount));
+        }
+
+        SelectedProfile = Profiles.FirstOrDefault(profile => profile.IsActive)
+            ?? Profiles.FirstOrDefault();
+        ActiveProfileName = SelectedProfile?.DisplayName ?? "Default";
+    }
+
     private FluxVaultConfiguration BuildConfiguration()
     {
         var selectionRules = FileBrowser.GetSelectionRules();
@@ -1498,6 +1857,31 @@ public sealed partial class MainWindowViewModel : ObservableObject
             DirectCloud: currentDirectCloud,
             SecurityPosture: currentSecurityPosture,
             Fleet: currentFleet);
+    }
+
+    private string UniqueProfileId(string displayName)
+    {
+        var baseId = ToProfileId(displayName);
+        var candidate = baseId;
+        var suffix = 2;
+        while (Profiles.Any(profile => string.Equals(profile.Id, candidate, StringComparison.OrdinalIgnoreCase)))
+        {
+            candidate = $"{baseId}-{suffix++}";
+        }
+
+        return candidate;
+    }
+
+    private static string ToProfileId(string displayName)
+    {
+        var chars = displayName
+            .Trim()
+            .ToLowerInvariant()
+            .Select(ch => char.IsLetterOrDigit(ch) ? ch : '-')
+            .ToArray();
+        var id = string.Join('-', new string(chars)
+            .Split('-', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+        return string.IsNullOrWhiteSpace(id) ? $"profile-{Guid.NewGuid():N}" : id;
     }
 
     private VersionRow? FindRestoreHintVersion()
@@ -2298,12 +2682,29 @@ public sealed record VersionRow(
     int ChunkCount,
     string Lineage = "Capture");
 
+public sealed class VersionInventoryRequestedEventArgs(VersionInventoryViewModel inventory) : EventArgs
+{
+    public VersionInventoryViewModel Inventory { get; } = inventory;
+}
+
 public sealed record CaptureStatusRow(
     string SourcePath,
     CaptureRuntimeState State,
     string LastEvent,
     string NextForcedCapture,
     string Detail);
+
+public sealed record FluxVaultProfileRow(
+    string Id,
+    string DisplayName,
+    bool IsEnabled,
+    bool IsActive,
+    string RepositoryPath,
+    int WatchedFolderCount,
+    int EnabledMirrorCount)
+{
+    public string Summary => $"{WatchedFolderCount} folder(s), {EnabledMirrorCount} mirror(s)";
+}
 
 public sealed partial class MirrorNodeRow : ObservableObject
 {

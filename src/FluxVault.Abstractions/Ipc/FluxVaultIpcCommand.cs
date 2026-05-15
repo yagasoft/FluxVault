@@ -25,5 +25,12 @@ public enum FluxVaultIpcCommand
     RunMirrorRepair = 20,
     PreviewMirrorDrain = 21,
     RunMirrorDrain = 22,
-    RestoreVersionPreview = 23
+    RestoreVersionPreview = 23,
+    PreviewRestoreSelection = 24,
+    RunRestoreSelection = 25,
+    CreateProfile = 26,
+    RenameProfile = 27,
+    DuplicateProfile = 28,
+    DeleteProfile = 29,
+    SetActiveProfile = 30
 }

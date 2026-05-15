@@ -78,6 +78,9 @@ public sealed partial class OptionsViewModel : ObservableObject
     private int maximumConcurrentCaptures;
 
     [ObservableProperty]
+    private int watcherEventBacklogLimit;
+
+    [ObservableProperty]
     private CodecProfile codecProfile;
 
     [ObservableProperty]
@@ -309,6 +312,7 @@ public sealed partial class OptionsViewModel : ObservableObject
         QuietMaxHotFileDelayMinutes = Math.Max(1, (int)Math.Round(policy.QuietMaxHotFileDelay.TotalMinutes));
         MinimumSameFileCaptureIntervalSeconds = Math.Max(0, (int)Math.Round(policy.MinimumSameFileCaptureInterval.TotalSeconds));
         MaximumConcurrentCaptures = Math.Max(1, policy.MaximumConcurrentCaptures);
+        WatcherEventBacklogLimit = Math.Max(16, policy.WatcherEventBacklogLimit);
     }
 
     private CaptureCadencePolicy BuildCadence()
@@ -323,7 +327,8 @@ public sealed partial class OptionsViewModel : ObservableObject
             BalancedMaxHotFileDelay: TimeSpan.FromMinutes(Math.Max(1, BalancedMaxHotFileDelayMinutes)),
             QuietMaxHotFileDelay: TimeSpan.FromMinutes(Math.Max(1, QuietMaxHotFileDelayMinutes)),
             MinimumSameFileCaptureInterval: TimeSpan.FromSeconds(Math.Max(0, MinimumSameFileCaptureIntervalSeconds)),
-            MaximumConcurrentCaptures: Math.Max(1, MaximumConcurrentCaptures));
+            MaximumConcurrentCaptures: Math.Max(1, MaximumConcurrentCaptures),
+            WatcherEventBacklogLimit: Math.Max(16, WatcherEventBacklogLimit));
     }
 
     private void ApplyCodec(CodecPolicy policy)

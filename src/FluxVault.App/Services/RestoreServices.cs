@@ -3,12 +3,18 @@ using System.Diagnostics;
 using System.Windows;
 using FluxVault.App.ViewModels;
 using Microsoft.Win32;
+using WinForms = System.Windows.Forms;
 
 namespace FluxVault.App.Services;
 
 public interface IRestoreDestinationPicker
 {
     string? PickDestination(VersionRow version);
+
+    string? PickFolderDestination(string sourcePath)
+    {
+        return null;
+    }
 }
 
 public sealed class SaveFileRestoreDestinationPicker : IRestoreDestinationPicker
@@ -21,6 +27,16 @@ public sealed class SaveFileRestoreDestinationPicker : IRestoreDestinationPicker
             Title = "Restore FluxVault version"
         };
         return dialog.ShowDialog() == true ? dialog.FileName : null;
+    }
+
+    public string? PickFolderDestination(string sourcePath)
+    {
+        using var dialog = new WinForms.FolderBrowserDialog
+        {
+            Description = "Restore FluxVault versions to folder",
+            UseDescriptionForTitle = true
+        };
+        return dialog.ShowDialog() == WinForms.DialogResult.OK ? dialog.SelectedPath : null;
     }
 }
 

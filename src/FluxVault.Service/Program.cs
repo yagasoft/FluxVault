@@ -9,6 +9,7 @@ using FluxVault.Core.Service;
 using FluxVault.Windows.ChangeTracking;
 using FluxVault.Windows.Capture;
 using System.Runtime.Versioning;
+using FluxVault.Abstractions.Configuration;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddWindowsService(options => options.ServiceName = "FluxVaultService");
@@ -19,27 +20,19 @@ if (OperatingSystem.IsWindows())
 var programDataPath = Path.Combine(
     Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
     "FluxVault");
-builder.Services.AddSingleton<IFluxVaultConfigurationStore>(
-    new FileFluxVaultConfigurationStore(Path.Combine(programDataPath, "config.json"), programDataPath));
-builder.Services.AddSingleton<IUsnJournalCheckpointStore>(
-    new FileUsnJournalCheckpointStore(Path.Combine(programDataPath, "state", "usn-checkpoints.json")));
-builder.Services.AddSingleton<IRepositoryMaintenanceStateStore>(
-    new FileRepositoryMaintenanceStateStore(Path.Combine(programDataPath, "state", "repository-maintenance.json")));
+var configPath = Path.Combine(programDataPath, "config.json");
+builder.Services.AddSingleton<IFluxVaultProfileSetStore>(
+    new FileFluxVaultProfileSetStore(configPath, programDataPath));
 builder.Services.AddSingleton<IUsnChangeJournalReader, WindowsUsnChangeJournalReader>();
-builder.Services.AddSingleton<UsnCatchUpService>();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton(CapturePipelinePlanner.CreateDefault());
 builder.Services.AddSingleton<IFileCaptureProvider>(
     _ => new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new WriterAwareVssCaptureProvider()));
-builder.Services.AddSingleton(provider => new FluxVaultOperations(
-    provider.GetRequiredService<IFluxVaultConfigurationStore>(),
-    provider.GetRequiredService<IFileCaptureProvider>(),
-    provider.GetRequiredService<IRepositoryMaintenanceStateStore>(),
-    Path.Combine(programDataPath, "state")));
-builder.Services.AddSingleton<IFluxVaultRequestHandler>(provider => provider.GetRequiredService<FluxVaultOperations>());
+builder.Services.AddSingleton(provider => new FluxVaultProfileManager(
+    provider.GetRequiredService<IFluxVaultProfileSetStore>(),
+    profile => CreateProfileRuntime(profile, provider, programDataPath)));
+builder.Services.AddSingleton<IFluxVaultRequestHandler>(provider => provider.GetRequiredService<FluxVaultProfileManager>());
 builder.Services.AddSingleton<NamedPipeFluxVaultServer>();
-builder.Services.AddSingleton<FileSystemProtectionLoop>();
-builder.Services.AddSingleton<RepositoryMaintenanceLoop>();
 builder.Services.AddSingleton<IFluxVaultServiceRuntime, FluxVaultServiceRuntime>();
 builder.Services.AddHostedService<Worker>();
 
@@ -54,4 +47,54 @@ static void AddWindowsEventLog(ILoggingBuilder logging)
         options.LogName = "Application";
         options.SourceName = "FluxVaultService";
     });
+}
+
+static FluxVaultProfileRuntime CreateProfileRuntime(
+    FluxVaultProfileConfiguration profile,
+    IServiceProvider provider,
+    string programDataPath)
+{
+    var profileSetStore = provider.GetRequiredService<IFluxVaultProfileSetStore>();
+    var configurationStore = new FluxVaultProfileConfigurationStore(profileSetStore, profile.Id);
+    var stateRoot = ProfileStateRoot(programDataPath, profile.Id);
+    var maintenanceStateStore = new FileRepositoryMaintenanceStateStore(Path.Combine(stateRoot, "repository-maintenance.json"));
+    var operations = new FluxVaultOperations(
+        configurationStore,
+        provider.GetRequiredService<IFileCaptureProvider>(),
+        maintenanceStateStore,
+        stateRoot);
+    var checkpointStore = new FileUsnJournalCheckpointStore(Path.Combine(stateRoot, "usn-checkpoints.json"));
+    var usnCatchUpService = new UsnCatchUpService(provider.GetRequiredService<IUsnChangeJournalReader>(), checkpointStore);
+    var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+    return new FluxVaultProfileRuntime(
+        profile.Id,
+        operations,
+        new FileSystemProtectionLoop(
+            operations,
+            configurationStore,
+            usnCatchUpService,
+            loggerFactory.CreateLogger<FileSystemProtectionLoop>()),
+        new RepositoryMaintenanceLoop(
+            operations,
+            configurationStore,
+            maintenanceStateStore,
+            provider.GetRequiredService<TimeProvider>(),
+            loggerFactory.CreateLogger<RepositoryMaintenanceLoop>()));
+}
+
+static string ProfileStateRoot(string programDataPath, string profileId)
+{
+    return string.Equals(profileId, FluxVaultProfileConfiguration.DefaultProfileId, StringComparison.OrdinalIgnoreCase)
+        ? Path.Combine(programDataPath, "state")
+        : Path.Combine(programDataPath, "profiles", SafePathSegment(profileId), "state");
+}
+
+static string SafePathSegment(string value)
+{
+    var invalid = Path.GetInvalidFileNameChars();
+    var chars = value
+        .Select(ch => invalid.Contains(ch) ? '_' : ch)
+        .ToArray();
+    var safe = new string(chars).Trim();
+    return string.IsNullOrWhiteSpace(safe) ? "profile" : safe;
 }

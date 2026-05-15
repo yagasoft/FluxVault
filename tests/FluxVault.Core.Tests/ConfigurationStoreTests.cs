@@ -1,11 +1,19 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Core.Configuration;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FluxVault.Core.Tests;
 
 public sealed class ConfigurationStoreTests
 {
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
+    {
+        WriteIndented = true,
+        Converters = { new JsonStringEnumConverter() }
+    };
+
     [Fact]
     public async Task Load_returns_default_configuration_when_file_is_missing()
     {
@@ -45,6 +53,55 @@ public sealed class ConfigurationStoreTests
         var localTrustedDevice = Assert.Single(configuration.Sync.TrustedDevices);
         Assert.Equal(configuration.Sync.LocalDevice.DeviceId, localTrustedDevice.DeviceId);
         Assert.Equal(DeviceTrustState.Local, localTrustedDevice.TrustState);
+    }
+
+    [Fact]
+    public async Task Profile_set_store_migrates_legacy_single_profile_configuration()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var configPath = Path.Combine(workspace.RootPath, "config.json");
+        var legacy = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            RepositoryPath = workspace.RepositoryPath,
+            IsEnabled = true
+        };
+        Directory.CreateDirectory(workspace.RootPath);
+        await File.WriteAllTextAsync(configPath, JsonSerializer.Serialize(legacy, JsonOptions));
+        var store = new FileFluxVaultProfileSetStore(configPath, workspace.RootPath);
+
+        var profileSet = await store.LoadAsync();
+
+        Assert.Equal(FluxVaultProfileConfiguration.DefaultProfileId, profileSet.ActiveProfileId);
+        var profile = Assert.Single(profileSet.Profiles);
+        Assert.Equal("Default", profile.DisplayName);
+        Assert.True(profile.IsEnabled);
+        Assert.Equal(workspace.RepositoryPath, profile.Configuration.RepositoryPath);
+    }
+
+    [Fact]
+    public async Task Profile_configuration_store_saves_only_selected_profile()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var configPath = Path.Combine(workspace.RootPath, "config.json");
+        var profileSetStore = new FileFluxVaultProfileSetStore(configPath, workspace.RootPath);
+        var first = FluxVaultProfileConfiguration.CreateDefault(workspace.RootPath);
+        var second = new FluxVaultProfileConfiguration(
+            "archive",
+            "Archive",
+            IsEnabled: true,
+            FluxVaultConfiguration.CreateDefault(Path.Combine(workspace.RootPath, "archive")) with
+            {
+                RepositoryPath = Path.Combine(workspace.RootPath, "archive-repository")
+            });
+        await profileSetStore.SaveAsync(new FluxVaultProfileSetConfiguration(first.Id, [first, second]));
+        var selectedStore = new FluxVaultProfileConfigurationStore(profileSetStore, "archive");
+        var updated = second.Configuration with { RepositoryPath = Path.Combine(workspace.RootPath, "archive-repository-2") };
+
+        await selectedStore.SaveAsync(updated);
+
+        var loaded = await profileSetStore.LoadAsync();
+        Assert.Equal(first.Configuration.RepositoryPath, loaded.Profiles.Single(profile => profile.Id == first.Id).Configuration.RepositoryPath);
+        Assert.Equal(updated.RepositoryPath, loaded.Profiles.Single(profile => profile.Id == "archive").Configuration.RepositoryPath);
     }
 
     [Fact]

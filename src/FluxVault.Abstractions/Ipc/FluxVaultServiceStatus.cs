@@ -23,7 +23,10 @@ public sealed record FluxVaultServiceStatus(
     ShellIntegrationRuntimeStatus? ShellIntegration = null,
     DirectCloudRuntimeStatus? DirectCloud = null,
     SecurityPostureRuntimeStatus? SecurityPosture = null,
-    FleetRuntimeStatus? Fleet = null);
+    FleetRuntimeStatus? Fleet = null,
+    IReadOnlyList<WatcherRuntimeStatus>? Watchers = null,
+    string? ActiveProfileId = null,
+    IReadOnlyList<FluxVaultProfileRuntimeStatus>? Profiles = null);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,
@@ -32,6 +35,24 @@ public sealed record WatchedFolderRuntimeStatus(
     bool IsEnabled,
     string Status,
     string DurableChangeStatus = "Unknown");
+
+public sealed record WatcherRuntimeStatus(
+    string WatchedFolderId,
+    string Path,
+    int BacklogCount,
+    double EventsPerMinute,
+    DateTimeOffset? LastEventUtc,
+    string LastCatchUpSource,
+    bool IsBacklogOverflowed);
+
+public sealed record FluxVaultProfileRuntimeStatus(
+    string Id,
+    string DisplayName,
+    bool IsEnabled,
+    bool IsActive,
+    string RepositoryPath,
+    int WatchedFolderCount,
+    int EnabledMirrorCount);
 
 public sealed record DeviceIdentityRuntimeStatus(
     string DeviceId,

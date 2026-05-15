@@ -15,7 +15,11 @@
 - Deduplicated commit and restore.
 - Retention decisions.
 - Configuration load/save/defaults and validation.
+- Profile-set configuration migration from legacy single-profile JSON,
+  selected-profile save isolation, and profile CRUD IPC routing.
 - IPC request/response serialisation.
+- Concurrent named-pipe IPC, including status responsiveness while a long
+  backup request is still running.
 - IPC pipe security for LocalSystem, Administrators, desktop users, and
   packaged app tokens.
 - Durable-change detail serialisation for USN fallback diagnostics.
@@ -42,6 +46,9 @@
   confirmation, overwrite denial, IPC failure, locked/access-denied failure
   messaging, preserving the selected version, and non-lineage temporary version
   previews.
+- File browser latest-restore workflow tests for file/folder restore elsewhere,
+  restore to original, no-version handling, overwrite refusal, filtered version
+  browsing, and browser refresh preservation after service operations.
 - Startup request routing tests for `--restore-path`, `--show-versions`,
   `--add-path`, and `--remove-path` parsing and forwarding a second launch to
   the primary dashboard instance.
@@ -189,6 +196,8 @@
 - Options dialog view-model save, preview, run-retention, repository
   maintenance policy, default workload preset, and compression skip-extension
   behaviour with a fake service client.
+- Options capture-cadence tests cover the watcher event backlog limit and
+  maximum concurrent capture setting.
 - Activity pane view-model loading for recent events and blocked files.
 - Diagnostics export containing durable-change fallback details.
 - CodeQL workflow trigger guard: no `pull_request` trigger.
@@ -197,6 +206,13 @@
   watcher path only when USN reports no changed files.
 - USN unavailable/full-scan-required watcher cycles run one full scan without
   duplicating the same targeted watcher capture.
+- Noisy watcher event bursts above the configured backlog limit collapse into
+  one reconciliation scan and expose event-rate/backlog/catch-up-source status.
+- Backup Now processes targets through bounded workers respecting
+  `MaximumConcurrentCaptures`, without creating one task per target.
+- Multi-profile service runtimes route IPC by `ProfileId` and isolate each
+  profile's repository, mirror set, watcher checkpoint state, and maintenance
+  state.
 - Service worker fatal task failures are logged as critical and rethrown for
   Windows Service recovery; recoverable USN exceptions are logged as warnings
   before reconciliation fallback.
@@ -235,6 +251,9 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
   consumer-bundle MSI-only chaining, absence of `Add-AppxPackage`, no sparse
   MSIX dependency, recursive full-publish payload harvesting, and narrow WiX
   warning suppressions.
+- Explorer registration tests cover stale FluxVault-owned HKCU verbs, repair
+  through re-registration, unregister cleanup of known owned verbs, and compact
+  shell-extension launch target validation.
 - Release package validation builds developer artefacts, MSI, unsigned Burn
   bundle, branded setup/checksum/notes/status files, and unsigned-release
   warnings without installing elevated components or requiring signing secrets.

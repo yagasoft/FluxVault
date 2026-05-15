@@ -31,6 +31,13 @@ credential-reference-only configuration and fake-client-tested contracts.
 - Restore browser supporting alternate restore paths, destination cancellation,
   explicit overwrite confirmation, and safe failure status for IPC,
   locked-destination, and access-denied errors.
+- File browser restore supports latest-file/folder restore elsewhere by
+  default, latest restore to original with overwrite confirmation, and filtered
+  version browsing for the selected file or folder.
+- File browser refresh reloads roots, expanded folders, selected-folder files,
+  and selection indicators while preserving the current selection; save,
+  discard, backup, restore, Explorer mutations, profile switches, and Options
+  close refresh the browser automatically.
 - Local logs and diagnostics export only.
 - Tray activity pane and dashboard Activity view for pending, in-progress,
   blocked, failed, and completed capture events.
@@ -43,6 +50,12 @@ credential-reference-only configuration and fake-client-tested contracts.
 - Packaged and unpackaged dashboard runs must be able to connect to the local
   service IPC pipe as the logged-in desktop user, without granting service
   control or ProgramData write access through that IPC permission.
+- The service accepts concurrent named-pipe clients so status/activity requests
+  remain responsive while long backup or restore operations run.
+- A single service process may host multiple enabled vault profiles. Each
+  profile has its own id, display name, repository, mirrors, watched folders,
+  runtime state, watcher loop, and maintenance state. Old single-profile
+  configuration loads as the enabled `Default` profile.
 - The runtime dashboard follows the selected operational cockpit direction:
   stable primary commands in the header, left navigation, first-tab startup,
   and footer health/status tiles.
@@ -133,6 +146,11 @@ credential-reference-only configuration and fake-client-tested contracts.
   from package identity plus the shell-extension artefact. The unsigned
   consumer release profile does not install that package identity, so compact
   menu support is unavailable there while the full menu remains supported.
+- Explorer registration status treats FluxVault-owned full-menu verbs as valid
+  only when all owned verbs point to the current executable and expected
+  argument. Register repairs stale owned verbs, unregister removes known
+  FluxVault-owned verbs, and compact-menu availability validates that the app
+  executable target exists.
 - Restoring an older version preserves newer versions. Restore writes the bytes
   and a repository-local pending lineage hint; the next capture of the
   destination records the restored-from and fork-origin version ids.

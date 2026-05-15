@@ -15,12 +15,21 @@ FluxVault has four main runtime parts:
 
 The current MVP service exposes a local named-pipe JSON IPC surface for status,
 configuration save, manual backup, version listing, version inspection, restore,
-and diagnostics export. Configuration is stored in
-`C:\ProgramData\FluxVault\config.json`; repository artefacts are written to the
-configured local repository, with optional atomic mirroring into enabled
-`MirrorSet` nodes. On Windows, the service creates the IPC pipe with
-an explicit ACL: LocalSystem and Administrators retain full control, while
-Authenticated Users and packaged app tokens receive read/write pipe access.
+profile management, and diagnostics export. Configuration is stored in
+`C:\ProgramData\FluxVault\config.json`. New files use a profile-set shape with
+one `FluxVaultConfiguration` per vault profile; legacy single-profile JSON is
+loaded as the enabled `Default` profile. A single service process owns one
+operations/protection/maintenance runtime per enabled profile, keeping each
+profile's repository, mirrors, watcher state, USN checkpoint state, and
+maintenance evidence isolated. IPC requests may specify `ProfileId`; old clients
+without a profile id target the active/default profile. Repository artefacts are
+written to the selected profile's configured local repository, with optional
+atomic mirroring into its enabled `MirrorSet` nodes. On Windows, the service
+creates the IPC pipe with an explicit ACL: LocalSystem and Administrators retain
+full control, while Authenticated Users and packaged app tokens receive
+read/write pipe access. The pipe server accepts multiple clients concurrently;
+long mutating operations are coordinated inside the operations layer so status
+and activity requests can still complete while Backup Now is running.
 
 The dashboard checks the Windows service state separately from IPC. If
 `FluxVaultService` is stopped, missing, inaccessible, or running without an
@@ -45,6 +54,11 @@ can report compact registration as active when the sparse package identity and
 `FluxVault.ExplorerCommand.dll` artefact are present. The shell extension only
 forwards selected paths to the same app startup arguments; it does not perform
 backup, remove, or restore work.
+Classic HKCU verb status is considered current only when every FluxVault-owned
+file and directory verb points to the running `FluxVault.App.exe` path with the
+expected argument. Options registration overwrites stale FluxVault-owned verbs,
+unregistration removes the known FluxVault-owned keys, and compact-menu status
+also validates that the resolved app executable still exists.
 
 When installed by the developer script or production MSI, `FluxVaultService`
 uses delayed automatic start, SCM restart recovery, and the `FluxVaultService`
@@ -133,15 +147,21 @@ Options. Defaults are:
 - Debounce: Fast 2 seconds, Balanced 8 seconds, Quiet 30 seconds.
 - Maximum hot-file delay: Fast 30 seconds, Balanced 2 minutes, Quiet 10 minutes.
 - Minimum same-file capture interval: 15 seconds.
-- Maximum concurrent captures: 1.
+- Maximum concurrent captures: 2.
+- Watcher event backlog limit: 4096 unique pending paths.
 
-Directory notifications are latency hints and drive the live capture queue.
-USN is the durable catch-up source where available. Reconciliation remains the
-safety net when USN cannot prove continuity. Durable-change status carries a
-latest-check label, timestamp, and structured diagnostic details, so the UI and
+Directory notifications are latency hints. They trigger USN catch-up, collapse
+repeated per-path events, and are capped by the watcher event backlog limit. If
+the backlog limit is exceeded, FluxVault drops the per-path queue and schedules
+one reconciliation scan instead of hot-looping on every watcher event. USN is
+the durable catch-up source where available. Reconciliation remains the safety
+net when USN cannot prove continuity or watcher volume is excessive.
+Durable-change and watcher runtime status carry latest-check labels, timestamps,
+event rate/backlog, last catch-up source (`USN`, `Watcher fallback`, or
+`Reconciliation scan`), and structured diagnostic details, so the UI and
 exported diagnostics can distinguish unable to open volume, unsupported volume,
-journal ID change, journal wrap, checkpoint seeding, and file-id path
-resolution failures.
+journal ID change, journal wrap, checkpoint seeding, file-id path resolution
+failures, and noisy-folder churn such as OneDrive/Office activity.
 
 ## Options and status UX
 
@@ -200,6 +220,11 @@ The File browser replaces the older Protection-tab browse/add workflow. It is a
 configuration editing surface, not an immediate service mutation. The left pane
 shows drives and folders, the middle pane shows files in the selected folder,
 and the right pane summarises unsaved selections and unselections.
+The File browser refresh command reloads roots, expanded folder children,
+selected-folder files, and selection indicators while preserving current
+selection where possible. Save, discard, Explorer Add/Remove, backup
+completion, restore completion, profile switch, and Options close trigger the
+same refresh path.
 
 Folder selection is tri-state: recursive selected, immediate files only, and
 not selected. Manual child selections are retained below a parent so they can be
@@ -228,6 +253,12 @@ individual file selections compile to parent-folder include patterns. Each
 selection can carry a workload preset. Missing preset fields from older config
 files default to the general-purpose preset, while Options controls the preset
 used for new File browser and Explorer Add selections.
+Folder and file context menus expose latest restore actions. The default latest
+restore writes elsewhere: file selections use a save-file picker, folder
+selections use a folder picker and preserve relative paths under the chosen
+destination. Latest restore to original requires overwrite confirmation when
+conflicts exist. Show versions opens the version inventory filtered to the
+selected file or folder.
 
 Scoped `ProtectionScopedRegexRule` lists complement selected folders/files and
 regex-only folder scopes. A regex-only scope can be saved on an unselected

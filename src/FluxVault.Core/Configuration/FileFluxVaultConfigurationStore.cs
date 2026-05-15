@@ -46,7 +46,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         File.Move(tempPath, configPath, overwrite: true);
     }
 
-    private static void Validate(FluxVaultConfiguration configuration)
+    internal static void Validate(FluxVaultConfiguration configuration)
     {
         if (string.IsNullOrWhiteSpace(configuration.RepositoryPath))
         {
@@ -71,6 +71,11 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             throw new InvalidDataException("Maximum concurrent captures must be at least 1.");
         }
 
+        if (configuration.CaptureCadencePolicy.WatcherEventBacklogLimit < 16)
+        {
+            throw new InvalidDataException("Watcher event backlog limit must be at least 16.");
+        }
+
         var exclusionValidation = ProtectionExclusionRuleValidator.Validate(configuration.ExclusionRules);
         if (!exclusionValidation.IsValid)
         {
@@ -85,7 +90,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         ValidateFleet(configuration.Fleet);
     }
 
-    private FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
+    internal FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
     {
         var selectionRules = configuration.SelectionRules ?? [];
         var exclusionRules = configuration.ExclusionRules ?? [];

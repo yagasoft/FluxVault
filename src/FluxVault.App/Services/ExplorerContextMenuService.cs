@@ -46,7 +46,7 @@ public sealed class WindowsExplorerContextMenuService : IExplorerContextMenuServ
     private readonly ICompactExplorerContextMenuRegistration compactRegistration;
 
     public WindowsExplorerContextMenuService(string? applicationPath = null)
-        : this(applicationPath, new WindowsCompactExplorerContextMenuRegistration())
+        : this(ResolveApplicationPath(applicationPath), new WindowsCompactExplorerContextMenuRegistration(ResolveApplicationPath(applicationPath)))
     {
     }
 
@@ -54,20 +54,25 @@ public sealed class WindowsExplorerContextMenuService : IExplorerContextMenuServ
         string? applicationPath,
         ICompactExplorerContextMenuRegistration compactRegistration)
     {
-        this.applicationPath = applicationPath
+        this.applicationPath = ResolveApplicationPath(applicationPath);
+        this.compactRegistration = compactRegistration;
+    }
+
+    private static string ResolveApplicationPath(string? applicationPath)
+    {
+        return applicationPath
             ?? Environment.ProcessPath
             ?? Assembly.GetEntryAssembly()?.Location
             ?? Path.Combine(AppContext.BaseDirectory, "FluxVault.App.exe");
-        this.compactRegistration = compactRegistration;
     }
 
     public ExplorerContextMenuStatus GetStatus()
     {
         try
         {
-            var classicRegistered = IsClassicRegistered();
+            var classicState = GetClassicRegistrationState();
             var compactRegistered = compactRegistration.IsRegistered();
-            return BuildStatus(classicRegistered, compactRegistered);
+            return BuildStatus(classicState, compactRegistered);
         }
         catch (Exception ex) when (ex is UnauthorizedAccessException or System.Security.SecurityException or IOException)
         {
@@ -92,7 +97,7 @@ public sealed class WindowsExplorerContextMenuService : IExplorerContextMenuServ
             }
 
             var compactRegistered = compactRegistration.TryRegister(out var compactMessage);
-            var status = BuildStatus(IsClassicRegistered(), compactRegistered);
+            var status = BuildStatus(GetClassicRegistrationState(), compactRegistered);
             return status with
             {
                 Message = compactRegistered
@@ -148,19 +153,41 @@ public sealed class WindowsExplorerContextMenuService : IExplorerContextMenuServ
         commandKey.SetValue(null, BuildCommand(verb));
     }
 
-    private bool IsClassicRegistered()
+    private ClassicRegistrationState GetClassicRegistrationState()
     {
-        return new[] { FileShellRoot, DirectoryShellRoot }
-            .All(root => Verbs.All(verb => IsClassicVerbRegistered(root, verb)));
+        var roots = new[] { FileShellRoot, DirectoryShellRoot };
+        var states = roots
+            .SelectMany(root => Verbs.Select(verb => GetClassicVerbRegistrationState(root, verb)))
+            .ToArray();
+        if (states.All(state => state == ClassicRegistrationState.Current))
+        {
+            return File.Exists(applicationPath)
+                ? ClassicRegistrationState.Current
+                : ClassicRegistrationState.MissingTarget;
+        }
+
+        if (states.Any(state => state == ClassicRegistrationState.Stale))
+        {
+            return ClassicRegistrationState.Stale;
+        }
+
+        return states.Any(state => state == ClassicRegistrationState.Current)
+            ? ClassicRegistrationState.Stale
+            : ClassicRegistrationState.NotRegistered;
     }
 
-    private bool IsClassicVerbRegistered(string shellRoot, ExplorerContextMenuVerb verb)
+    private ClassicRegistrationState GetClassicVerbRegistrationState(string shellRoot, ExplorerContextMenuVerb verb)
     {
         using var commandKey = Registry.CurrentUser.OpenSubKey($@"{shellRoot}\{verb.RegistryKey}\{CommandSubKeyName}");
-        return string.Equals(
-            commandKey?.GetValue(null) as string,
-            BuildCommand(verb),
-            StringComparison.OrdinalIgnoreCase);
+        var command = commandKey?.GetValue(null) as string;
+        if (string.IsNullOrWhiteSpace(command))
+        {
+            return ClassicRegistrationState.NotRegistered;
+        }
+
+        return string.Equals(command, BuildCommand(verb), StringComparison.OrdinalIgnoreCase)
+            ? ClassicRegistrationState.Current
+            : ClassicRegistrationState.Stale;
     }
 
     private string BuildCommand(ExplorerContextMenuVerb verb)
@@ -168,17 +195,30 @@ public sealed class WindowsExplorerContextMenuService : IExplorerContextMenuServ
         return $"\"{applicationPath}\" {verb.ArgumentName} \"%1\"";
     }
 
-    private static ExplorerContextMenuStatus BuildStatus(bool classicRegistered, bool compactRegistered)
+    private static ExplorerContextMenuStatus BuildStatus(ClassicRegistrationState classicState, bool compactRegistered)
     {
+        var classicRegistered = classicState == ClassicRegistrationState.Current;
         var isRegistered = classicRegistered || compactRegistered;
-        var message = (classicRegistered, compactRegistered) switch
+        var message = (classicState, compactRegistered) switch
         {
-            (true, true) => "Explorer context menu is registered for full and Windows 11 compact menus.",
-            (true, false) => "Full Explorer menu is registered. Windows 11 compact menu is unavailable without app identity/IExplorerCommand registration.",
-            (false, true) => "Windows 11 compact Explorer menu is registered; full menu is not registered.",
+            (ClassicRegistrationState.Current, true) => "Explorer context menu is registered for full and Windows 11 compact menus.",
+            (ClassicRegistrationState.Current, false) => "Full Explorer menu is registered. Windows 11 compact menu is unavailable without app identity/IExplorerCommand registration.",
+            (ClassicRegistrationState.Stale, true) => "Windows 11 compact Explorer menu is registered; full menu has stale FluxVault entries and can be repaired.",
+            (ClassicRegistrationState.Stale, false) => "Full Explorer menu has stale FluxVault entries and can be repaired.",
+            (ClassicRegistrationState.MissingTarget, true) => "Windows 11 compact Explorer menu is registered; full menu target is missing and can be repaired.",
+            (ClassicRegistrationState.MissingTarget, false) => "Full Explorer menu target is missing. Register again after launching the current FluxVault app.",
+            (ClassicRegistrationState.NotRegistered, true) => "Windows 11 compact Explorer menu is registered; full menu is not registered.",
             _ => "Explorer context menu is not registered."
         };
         return new ExplorerContextMenuStatus(isRegistered, classicRegistered, compactRegistered, message);
+    }
+
+    private enum ClassicRegistrationState
+    {
+        NotRegistered,
+        Current,
+        Stale,
+        MissingTarget
     }
 
     private sealed record ExplorerContextMenuVerb(
@@ -192,10 +232,20 @@ internal sealed class WindowsCompactExplorerContextMenuRegistration : ICompactEx
     private const int AppModelErrorNoPackage = 15700;
     private const int ErrorInsufficientBuffer = 122;
     private const string ShellExtensionFileName = "FluxVault.ExplorerCommand.dll";
+    private readonly string applicationPath;
+
+    public WindowsCompactExplorerContextMenuRegistration(string? applicationPath = null)
+    {
+        this.applicationPath = applicationPath
+            ?? Environment.ProcessPath
+            ?? Assembly.GetEntryAssembly()?.Location
+            ?? Path.Combine(AppContext.BaseDirectory, "FluxVault.App.exe");
+    }
 
     public bool IsRegistered()
     {
         return HasPackageIdentity()
+            && File.Exists(applicationPath)
             && File.Exists(ResolveShellExtensionPath());
     }
 
@@ -207,7 +257,9 @@ internal sealed class WindowsCompactExplorerContextMenuRegistration : ICompactEx
             return true;
         }
 
-        message = HasPackageIdentity()
+        message = !File.Exists(applicationPath)
+            ? $"Windows 11 compact menu target is missing: {applicationPath}"
+            : HasPackageIdentity()
             ? "Windows 11 compact menu package identity is active, but FluxVault.ExplorerCommand.dll was not found beside the package artefacts."
             : "Windows 11 compact menu registration needs the FluxVault sparse package identity and IExplorerCommand shell extension; full menu registration is active.";
         return false;

@@ -28,6 +28,31 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Profile_selector_loads_profiles_and_add_profile_sends_ipc_request()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithProfiles(
+            new FluxVaultProfileRuntimeStatus(
+                "default",
+                "Default",
+                IsEnabled: true,
+                IsActive: true,
+                @"D:\Vault\repository",
+                WatchedFolderCount: 1,
+                EnabledMirrorCount: 0)));
+        var dialog = new FakeProfileDialogService("Archive");
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
+
+        await viewModel.RefreshAsync();
+        await viewModel.AddProfileCommand.ExecuteAsync(null);
+
+        Assert.Equal("Default", Assert.Single(viewModel.Profiles).DisplayName);
+        var request = Assert.Single(client.ProfileRequests);
+        Assert.Equal(FluxVaultIpcCommand.CreateProfile, request.Command);
+        Assert.Equal("archive", request.ProfileId);
+        Assert.Equal("Archive", request.ProfileDisplayName);
+    }
+
+    [Fact]
     public async Task Refresh_populates_compact_lineage_text_for_version_rows()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersionSummaries(
@@ -1268,6 +1293,71 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Restore_command_is_disabled_without_selected_version_and_reports_status_when_invoked()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions());
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker(),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
+        await viewModel.RefreshAsync();
+
+        Assert.False(viewModel.RestoreSelectedCommand.CanExecute(null));
+        await viewModel.RestoreSelectedCommand.ExecuteAsync(null);
+
+        Assert.Empty(client.RestoreRequests);
+        Assert.Contains("select", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task File_browser_restore_latest_elsewhere_sends_restore_selection_request()
+    {
+        using var workspace = TempFolder.Create();
+        var destination = Path.Combine(workspace.Path, "brief-restored.docx");
+        var sourcePath = Path.GetFullPath(@"D:\Work\brief.docx");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersionSources(("v1", sourcePath)));
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker(destination),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
+        await viewModel.RefreshAsync();
+        viewModel.FileBrowser.SelectedFile = new FileBrowserFileRow(sourcePath, "brief.docx", 128, isSelected: true);
+
+        await viewModel.RestoreSelectedBrowserItemElsewhereCommand.ExecuteAsync(null);
+
+        var request = Assert.Single(client.RestoreSelectionRequests);
+        Assert.Equal(sourcePath, request.SourcePath);
+        Assert.False(request.IsDirectory);
+        Assert.Equal(RestoreSelectionDestinationMode.Elsewhere, request.DestinationMode);
+        Assert.Equal(destination, request.DestinationPath);
+    }
+
+    [Fact]
+    public async Task Explorer_show_versions_request_raises_filtered_inventory_after_refresh()
+    {
+        var hintedPath = Path.GetFullPath(@"D:\Work\Docs\brief.docx");
+        var siblingPath = Path.GetFullPath(@"D:\Work\Docs\notes.txt");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersionSources(("v1", hintedPath), ("v2", siblingPath)));
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker((string?)null),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
+        VersionInventoryViewModel? requested = null;
+        viewModel.VersionInventoryRequested += (_, args) => requested = args.Inventory;
+
+        await viewModel.ApplyStartupRequestAsync(
+            new AppStartupRequest(AppStartupRequestAction.ShowVersions, hintedPath));
+
+        Assert.NotNull(requested);
+        var file = Assert.Single(requested.Files);
+        Assert.Equal(hintedPath, file.Path);
+        Assert.Equal("v1", Assert.Single(file.Versions).VersionId);
+    }
+
+    [Fact]
     public async Task Open_selected_version_preview_restores_to_service_preview_and_launches_returned_file()
     {
         var previewPath = Path.GetFullPath(@"C:\ProgramData\FluxVault\state\version-preview\v1\draft.txt");
@@ -1500,6 +1590,15 @@ public sealed class MainWindowViewModelRefreshTests
             RecentVersions: versions);
     }
 
+    private static FluxVaultServiceStatus StatusWithProfiles(params FluxVaultProfileRuntimeStatus[] profiles)
+    {
+        return StatusWithVersions() with
+        {
+            ActiveProfileId = profiles.FirstOrDefault(profile => profile.IsActive)?.Id ?? profiles.First().Id,
+            Profiles = profiles
+        };
+    }
+
     private static FluxVaultServiceStatus StatusWithVersionSources(params (string VersionId, string SourcePath)[] versions)
     {
         var configuration = FluxVaultConfiguration.CreateDefault(@"D:\Vault");
@@ -1712,6 +1811,10 @@ public sealed class MainWindowViewModelRefreshTests
 
         public List<string> RestorePreviewRequests { get; } = [];
 
+        public List<FluxVaultIpcRequest> RestoreSelectionRequests { get; } = [];
+
+        public List<FluxVaultIpcRequest> ProfileRequests { get; } = [];
+
         public List<FluxVaultConfiguration> SavedConfigurations { get; } = [];
 
         public FluxVaultIpcResponse RestoreResponse { get; init; } = FluxVaultIpcResponse.Ok();
@@ -1763,10 +1866,41 @@ public sealed class MainWindowViewModelRefreshTests
                 return Task.FromResult(RestorePreviewResponse);
             }
 
+            if (request.Command is FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.RunRestoreSelection)
+            {
+                RestoreSelectionRequests.Add(request);
+                return Task.FromResult(FluxVaultIpcResponse.WithRestoreSelection(new RestoreSelectionSummary(
+                    request.SourcePath ?? throw new InvalidOperationException("Missing source path."),
+                    request.IsDirectory,
+                    request.DestinationMode ?? RestoreSelectionDestinationMode.Elsewhere,
+                    request.DestinationPath,
+                    FileCount: 1,
+                    ConflictCount: 0,
+                    RestoredCount: request.Command == FluxVaultIpcCommand.RunRestoreSelection ? 1 : 0,
+                    FailedPaths: [])));
+            }
+
             if (request.Command == FluxVaultIpcCommand.SaveConfiguration)
             {
                 SavedConfigurations.Add(request.Configuration ?? throw new InvalidOperationException("Missing configuration."));
                 return Task.FromResult(FluxVaultIpcResponse.Ok());
+            }
+
+            if (request.Command is FluxVaultIpcCommand.CreateProfile
+                or FluxVaultIpcCommand.RenameProfile
+                or FluxVaultIpcCommand.DuplicateProfile
+                or FluxVaultIpcCommand.DeleteProfile
+                or FluxVaultIpcCommand.SetActiveProfile)
+            {
+                ProfileRequests.Add(request);
+                var profileStatus = statuses.Count > 0 ? statuses.Peek() : StatusWithVersions();
+                return Task.FromResult(FluxVaultIpcResponse.WithStatus(profileStatus));
+            }
+
+            if (request.Command == FluxVaultIpcCommand.ListVersions)
+            {
+                var inventoryStatus = statuses.Count > 0 ? statuses.Peek() : StatusWithVersions();
+                return Task.FromResult(FluxVaultIpcResponse.WithVersions(inventoryStatus.RecentVersions));
             }
 
             if (request.Command == FluxVaultIpcCommand.RunRepositoryScrub)
@@ -1830,6 +1964,19 @@ public sealed class MainWindowViewModelRefreshTests
         public string BrowseMirrorPath(string currentPath)
         {
             return BrowseResult ?? currentPath;
+        }
+    }
+
+    private sealed class FakeProfileDialogService(string? profileName, bool confirmDelete = true) : IProfileDialogService
+    {
+        public string? PromptForProfileName(string title, string initialValue)
+        {
+            return profileName;
+        }
+
+        public bool ConfirmDelete(string displayName)
+        {
+            return confirmDelete;
         }
     }
 

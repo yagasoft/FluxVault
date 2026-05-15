@@ -11,17 +11,26 @@ public sealed record FluxVaultIpcRequest(
     string? ExportPath,
     string? MirrorNodeId = null,
     string? ConflictId = null,
-    SyncConflictAction? ConflictAction = null)
+    SyncConflictAction? ConflictAction = null,
+    string? SourcePath = null,
+    bool IsDirectory = false,
+    RestoreSelectionDestinationMode? DestinationMode = null,
+    bool OverwriteConfirmed = false,
+    string? ProfileId = null,
+    string? ProfileDisplayName = null,
+    string? SourceProfileId = null)
 {
-    public static FluxVaultIpcRequest GetStatus()
+    public string? DestinationPath => OutputPath;
+
+    public static FluxVaultIpcRequest GetStatus(string? profileId = null)
     {
-        return new FluxVaultIpcRequest(FluxVaultIpcCommand.GetStatus, null, null, null, null);
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.GetStatus, null, null, null, null, ProfileId: profileId);
     }
 
-    public static FluxVaultIpcRequest SaveConfiguration(FluxVaultConfiguration configuration)
+    public static FluxVaultIpcRequest SaveConfiguration(FluxVaultConfiguration configuration, string? profileId = null)
     {
         ArgumentNullException.ThrowIfNull(configuration);
-        return new FluxVaultIpcRequest(FluxVaultIpcCommand.SaveConfiguration, configuration, null, null, null);
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.SaveConfiguration, configuration, null, null, null, ProfileId: profileId);
     }
 
     public static FluxVaultIpcRequest RunBackupNow()
@@ -47,6 +56,44 @@ public sealed record FluxVaultIpcRequest(
     public static FluxVaultIpcRequest RestoreVersionPreview(string versionId)
     {
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.RestoreVersionPreview, null, versionId, null, null);
+    }
+
+    public static FluxVaultIpcRequest PreviewRestoreSelection(
+        string sourcePath,
+        bool isDirectory,
+        RestoreSelectionDestinationMode destinationMode,
+        string? destinationPath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);
+        return new FluxVaultIpcRequest(
+            FluxVaultIpcCommand.PreviewRestoreSelection,
+            null,
+            null,
+            destinationPath,
+            null,
+            SourcePath: sourcePath,
+            IsDirectory: isDirectory,
+            DestinationMode: destinationMode);
+    }
+
+    public static FluxVaultIpcRequest RunRestoreSelection(
+        string sourcePath,
+        bool isDirectory,
+        RestoreSelectionDestinationMode destinationMode,
+        string? destinationPath,
+        bool overwriteConfirmed = false)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);
+        return new FluxVaultIpcRequest(
+            FluxVaultIpcCommand.RunRestoreSelection,
+            null,
+            null,
+            destinationPath,
+            null,
+            SourcePath: sourcePath,
+            IsDirectory: isDirectory,
+            DestinationMode: destinationMode,
+            OverwriteConfirmed: overwriteConfirmed);
     }
 
     public static FluxVaultIpcRequest ExportDiagnostics(string exportPath)
@@ -120,5 +167,61 @@ public sealed record FluxVaultIpcRequest(
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(conflictId);
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.ResolveConflict, null, null, null, null, ConflictId: conflictId, ConflictAction: action);
+    }
+
+    public static FluxVaultIpcRequest CreateProfile(string profileId, string displayName, FluxVaultConfiguration? configuration = null)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
+        return new FluxVaultIpcRequest(
+            FluxVaultIpcCommand.CreateProfile,
+            configuration,
+            null,
+            null,
+            null,
+            ProfileId: profileId,
+            ProfileDisplayName: displayName);
+    }
+
+    public static FluxVaultIpcRequest RenameProfile(string profileId, string displayName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
+        return new FluxVaultIpcRequest(
+            FluxVaultIpcCommand.RenameProfile,
+            null,
+            null,
+            null,
+            null,
+            ProfileId: profileId,
+            ProfileDisplayName: displayName);
+    }
+
+    public static FluxVaultIpcRequest DuplicateProfile(string sourceProfileId, string profileId, string displayName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceProfileId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
+        return new FluxVaultIpcRequest(
+            FluxVaultIpcCommand.DuplicateProfile,
+            null,
+            null,
+            null,
+            null,
+            ProfileId: profileId,
+            ProfileDisplayName: displayName,
+            SourceProfileId: sourceProfileId);
+    }
+
+    public static FluxVaultIpcRequest DeleteProfile(string profileId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.DeleteProfile, null, null, null, null, ProfileId: profileId);
+    }
+
+    public static FluxVaultIpcRequest SetActiveProfile(string profileId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.SetActiveProfile, null, null, null, null, ProfileId: profileId);
     }
 }

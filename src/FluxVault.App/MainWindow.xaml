@@ -46,10 +46,30 @@
 
             <StackPanel Grid.Column="0" MinWidth="0" Margin="0,0,16,0">
                 <TextBlock Text="FluxVault" FontSize="26" FontWeight="SemiBold" Foreground="#202124" />
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <ComboBox ItemsSource="{Binding Profiles}"
+                              SelectedItem="{Binding SelectedProfile}"
+                              DisplayMemberPath="DisplayName"
+                              Width="210"
+                              ToolTip="Active vault profile." />
+                    <Button Command="{Binding AddProfileCommand}" Padding="9,5" Margin="8,0,0,0" ToolTip="Add a vault profile.">
+                        <TextBlock Text="+" />
+                    </Button>
+                    <Button Command="{Binding DuplicateProfileCommand}" Padding="9,5" Margin="4,0,0,0" ToolTip="Duplicate the active vault profile.">
+                        <TextBlock Text="⧉" />
+                    </Button>
+                    <Button Command="{Binding RenameProfileCommand}" Padding="9,5" Margin="4,0,0,0" ToolTip="Rename the active vault profile.">
+                        <TextBlock Text="✎" />
+                    </Button>
+                    <Button Command="{Binding DeleteProfileCommand}" Padding="9,5" Margin="4,0,0,0" ToolTip="Delete the active vault profile.">
+                        <TextBlock Text="×" />
+                    </Button>
+                    <TextBlock Text="{Binding ActiveProfileName}" Visibility="Collapsed" />
+                </StackPanel>
                 <TextBlock Text="{Binding ServiceStatus}"
                            FontSize="13"
                            Foreground="#5F6368"
-                           Margin="0,3,0,0"
+                           Margin="0,6,0,0"
                            MinWidth="0"
                            TextTrimming="CharacterEllipsis">
                     <TextBlock.ToolTip>
@@ -199,9 +219,18 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,0,0,12">
-                        <Button Content="Refresh drives"
+                        <Button Content="Refresh file browser"
                                 Command="{Binding FileBrowser.RefreshRootsCommand}"
-                                ToolTip="Reload drives and top-level folders in the file browser." />
+                                ToolTip="Reload drives, expanded folders, visible files, and selection indicators." />
+                        <Button Content="Restore latest elsewhere"
+                                Command="{Binding RestoreSelectedBrowserItemElsewhereCommand}"
+                                ToolTip="Restore the latest version of the selected file or folder to another destination." />
+                        <Button Content="Restore latest original"
+                                Command="{Binding RestoreSelectedBrowserItemToOriginalCommand}"
+                                ToolTip="Restore the latest version of the selected file or folder back to its original path after confirmation." />
+                        <Button Content="Show versions"
+                                Command="{Binding ShowSelectedBrowserItemVersionsCommand}"
+                                ToolTip="Open the version browser filtered to the selected file or folder." />
                         <Button Content="Cycle folder selection"
                                 Command="{Binding FileBrowser.ToggleSelectedFolderCommand}"
                                 ToolTip="Cycle the selected folder between recursive, immediate files only, and not selected." />
@@ -276,6 +305,13 @@
                                   ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <TreeView.ContextMenu>
                                 <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                    <MenuItem Header="Restore latest elsewhere"
+                                              Command="{Binding RestoreSelectedBrowserItemElsewhereCommand}" />
+                                    <MenuItem Header="Restore latest to original"
+                                              Command="{Binding RestoreSelectedBrowserItemToOriginalCommand}" />
+                                    <MenuItem Header="Show versions"
+                                              Command="{Binding ShowSelectedBrowserItemVersionsCommand}" />
+                                    <Separator />
                                     <MenuItem Header="Show in File Explorer"
                                               Command="{Binding FileBrowser.ShowSelectedFolderInExplorerCommand}" />
                                 </ContextMenu>
@@ -318,6 +354,13 @@
                               ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <DataGrid.ContextMenu>
                             <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                <MenuItem Header="Restore latest elsewhere"
+                                          Command="{Binding RestoreSelectedBrowserItemElsewhereCommand}" />
+                                <MenuItem Header="Restore latest to original"
+                                          Command="{Binding RestoreSelectedBrowserItemToOriginalCommand}" />
+                                <MenuItem Header="Show versions"
+                                          Command="{Binding ShowSelectedBrowserItemVersionsCommand}" />
+                                <Separator />
                                 <MenuItem Header="Open in default app"
                                           Command="{Binding FileBrowser.OpenSelectedFileCommand}" />
                                 <MenuItem Header="Show in File Explorer"

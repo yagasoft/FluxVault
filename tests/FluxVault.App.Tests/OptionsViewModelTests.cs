@@ -66,6 +66,7 @@ public sealed class OptionsViewModelTests
         viewModel.BalancedMaxHotFileDelayMinutes = 3;
         viewModel.MinimumSameFileCaptureIntervalSeconds = 11;
         viewModel.MaximumConcurrentCaptures = 2;
+        viewModel.WatcherEventBacklogLimit = 128;
         viewModel.CodecProfile = CodecProfile.Ratio;
         viewModel.DefaultCodec = CompressionPreference.Brotli;
         viewModel.HotFileCodec = CompressionPreference.Lz4;
@@ -80,6 +81,7 @@ public sealed class OptionsViewModelTests
         Assert.Equal(TimeSpan.FromMinutes(3), saved.CaptureCadencePolicy.BalancedMaxHotFileDelay);
         Assert.Equal(TimeSpan.FromSeconds(11), saved.CaptureCadencePolicy.MinimumSameFileCaptureInterval);
         Assert.Equal(2, saved.CaptureCadencePolicy.MaximumConcurrentCaptures);
+        Assert.Equal(128, saved.CaptureCadencePolicy.WatcherEventBacklogLimit);
         Assert.Equal(CodecProfile.Ratio, saved.CodecPolicy.Profile);
         Assert.Equal(CompressionPreference.Brotli, saved.CodecPolicy.Codec);
         Assert.Equal(CompressionPreference.Lz4, saved.CodecPolicy.HotFileOverride);

@@ -1852,8 +1852,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         var inheritedFrom = existingManifests
             .Where(manifest => !PathEquals(manifest.SourcePath, sourcePath))
             .Where(manifest => string.Equals(GetContentSignature(manifest), contentSignature, StringComparison.Ordinal))
-            .OrderByDescending(manifest => manifest.CapturedAtUtc)
-            .ThenByDescending(manifest => manifest.VersionId, StringComparer.Ordinal)
+            .OrderBy(manifest => manifest.CapturedAtUtc)
+            .ThenBy(manifest => manifest.VersionId, StringComparer.Ordinal)
             .FirstOrDefault();
         if (inheritedFrom is not null)
         {

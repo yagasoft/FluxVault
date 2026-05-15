@@ -284,6 +284,42 @@ public sealed class FileBrowserViewModelTests
     }
 
     [Fact]
+    public void Refresh_preserves_selected_folder_reloads_files_and_refreshes_loaded_children()
+    {
+        var fileSystem = new MutableFileBrowserFileSystem(
+            [Folder(@"D:\")],
+            new Dictionary<string, IReadOnlyList<FileBrowserFolderInfo>>(StringComparer.OrdinalIgnoreCase)
+            {
+                [Path.GetFullPath(@"D:\")] = [Folder(@"D:\Work")],
+                [Path.GetFullPath(@"D:\Work")] = [Folder(@"D:\Work\Old")]
+            },
+            new Dictionary<string, IReadOnlyList<FileBrowserFileInfo>>(StringComparer.OrdinalIgnoreCase)
+            {
+                [Path.GetFullPath(@"D:\Work")] = [new FileBrowserFileInfo(@"D:\Work\old.txt", "old.txt", 10)]
+            });
+        var viewModel = new FileBrowserViewModel(fileSystem);
+        viewModel.LoadSelectionRules([]);
+        viewModel.LoadRoots();
+        var root = Assert.Single(viewModel.Roots);
+        viewModel.LoadChildren(root);
+        var work = Assert.Single(root.Children);
+        viewModel.SelectFolder(work);
+        viewModel.LoadChildren(work);
+
+        fileSystem.ChildrenByPath[Path.GetFullPath(@"D:\Work")] =
+            [Folder(@"D:\Work\New")];
+        fileSystem.FilesByPath[Path.GetFullPath(@"D:\Work")] =
+            [new FileBrowserFileInfo(@"D:\Work\new.txt", "new.txt", 20)];
+
+        viewModel.RefreshBrowser();
+
+        Assert.NotNull(viewModel.SelectedFolder);
+        Assert.Equal(Path.GetFullPath(@"D:\Work"), viewModel.SelectedFolder.Path);
+        Assert.Equal("New", Assert.Single(viewModel.SelectedFolder.Children).Name);
+        Assert.Equal("new.txt", Assert.Single(viewModel.Files).Name);
+    }
+
+    [Fact]
     public async Task Main_window_save_sends_compiled_file_browser_rules_only_after_save()
     {
         var client = new FakeFluxVaultServiceClient(Status());
@@ -347,6 +383,31 @@ public sealed class FileBrowserViewModelTests
         public IReadOnlyList<FileBrowserFileInfo> GetFiles(string path)
         {
             return files;
+        }
+    }
+
+    private sealed class MutableFileBrowserFileSystem(
+        IReadOnlyList<FileBrowserFolderInfo> roots,
+        Dictionary<string, IReadOnlyList<FileBrowserFolderInfo>> childrenByPath,
+        Dictionary<string, IReadOnlyList<FileBrowserFileInfo>> filesByPath) : IFileBrowserFileSystem
+    {
+        public Dictionary<string, IReadOnlyList<FileBrowserFolderInfo>> ChildrenByPath { get; } = childrenByPath;
+
+        public Dictionary<string, IReadOnlyList<FileBrowserFileInfo>> FilesByPath { get; } = filesByPath;
+
+        public IReadOnlyList<FileBrowserFolderInfo> GetRoots()
+        {
+            return roots;
+        }
+
+        public IReadOnlyList<FileBrowserFolderInfo> GetChildFolders(string path)
+        {
+            return ChildrenByPath.TryGetValue(Path.GetFullPath(path), out var folders) ? folders : [];
+        }
+
+        public IReadOnlyList<FileBrowserFileInfo> GetFiles(string path)
+        {
+            return FilesByPath.TryGetValue(Path.GetFullPath(path), out var fileRows) ? fileRows : [];
         }
     }
 

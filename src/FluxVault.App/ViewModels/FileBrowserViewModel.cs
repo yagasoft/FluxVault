@@ -67,6 +67,51 @@ public sealed partial class FileBrowserViewModel(
         RefreshTreeIndicators(Roots);
     }
 
+    public void RefreshBrowser()
+    {
+        var selectedFolderPath = SelectedFolder?.Path;
+        var selectedFilePath = SelectedFile?.Path;
+        var loadedFolderPaths = EnumerateFolders(Roots)
+            .Where(folder => folder.HasLoadedChildren)
+            .Select(folder => folder.Path)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(PathDepth)
+            .ToArray();
+
+        LoadRoots();
+        foreach (var folderPath in loadedFolderPaths)
+        {
+            var folder = FindFolder(folderPath);
+            if (folder is not null)
+            {
+                LoadChildren(folder);
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(selectedFolderPath))
+        {
+            var selectedFolderNode = FindFolder(selectedFolderPath);
+            if (selectedFolderNode is not null)
+            {
+                SelectedFolder = selectedFolderNode;
+                LoadFiles(selectedFolderNode);
+                if (!string.IsNullOrWhiteSpace(selectedFilePath))
+                {
+                    SelectedFile = Files.FirstOrDefault(file =>
+                        string.Equals(file.Path, selectedFilePath, StringComparison.OrdinalIgnoreCase));
+                }
+            }
+            else
+            {
+                SelectedFolder = null;
+                Files.Clear();
+                SelectedFile = null;
+            }
+        }
+
+        RefreshTreeIndicators(Roots);
+    }
+
     public void LoadSelectionRules(IReadOnlyList<ProtectionSelectionRule> rules)
     {
         baselineRules.Clear();
@@ -272,7 +317,7 @@ public sealed partial class FileBrowserViewModel(
     [RelayCommand]
     private void RefreshRoots()
     {
-        LoadRoots();
+        RefreshBrowser();
     }
 
     [RelayCommand]
@@ -544,6 +589,31 @@ public sealed partial class FileBrowserViewModel(
         }
 
         return node;
+    }
+
+    private FileBrowserFolderNode? FindFolder(string path)
+    {
+        var fullPath = Path.GetFullPath(path);
+        return EnumerateFolders(Roots)
+            .FirstOrDefault(folder => string.Equals(folder.Path, fullPath, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static IEnumerable<FileBrowserFolderNode> EnumerateFolders(IEnumerable<FileBrowserFolderNode> folders)
+    {
+        foreach (var folder in folders)
+        {
+            yield return folder;
+            foreach (var child in EnumerateFolders(folder.Children))
+            {
+                yield return child;
+            }
+        }
+    }
+
+    private static int PathDepth(string path)
+    {
+        var fullPath = Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        return fullPath.Count(character => character is '\\' or '/');
     }
 
     private static ProtectionSelectionRule Normalise(ProtectionSelectionRule rule)

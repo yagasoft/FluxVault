@@ -217,7 +217,18 @@ public sealed class IpcSerializationTests
                 AssignmentCount: 1,
                 LocalStatusCount: 1,
                 Status: "Local fleet policy loaded.",
-                IsRemoteManagementDeferred: true));
+                IsRemoteManagementDeferred: true),
+            Watchers:
+            [
+                new WatcherRuntimeStatus(
+                    "docs",
+                    @"D:\Work",
+                    BacklogCount: 3,
+                    EventsPerMinute: 42,
+                    LastEventUtc: checkedAt,
+                    LastCatchUpSource: "USN",
+                    IsBacklogOverflowed: false)
+            ]);
         var response = FluxVaultIpcResponse.WithStatus(status);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(FluxVaultIpcSerializer.SerializeResponse(response));
@@ -262,6 +273,10 @@ public sealed class IpcSerializationTests
         Assert.NotNull(roundTrip.Status.Fleet);
         Assert.Equal(FleetPolicyMode.LocalManaged, roundTrip.Status.Fleet.Mode);
         Assert.True(roundTrip.Status.Fleet.IsRemoteManagementDeferred);
+        var watcher = Assert.Single(roundTrip.Status.Watchers!);
+        Assert.Equal("docs", watcher.WatchedFolderId);
+        Assert.Equal(3, watcher.BacklogCount);
+        Assert.Equal("USN", watcher.LastCatchUpSource);
     }
 
     [Fact]

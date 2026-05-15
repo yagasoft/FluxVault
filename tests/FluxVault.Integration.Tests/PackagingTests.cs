@@ -1,3 +1,8 @@
+using System.Diagnostics;
+using FluxVault.Abstractions.Configuration;
+using FluxVault.Abstractions.Policies;
+using FluxVault.Core.Configuration;
+
 namespace FluxVault.Integration.Tests;
 
 public sealed class PackagingTests
@@ -476,6 +481,91 @@ public sealed class PackagingTests
         Assert.DoesNotContain("client_secret", coreProject, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public async Task PostgreSql_bootstrap_script_parses_and_preserves_profile_configuration_in_config_only_mode()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var root = FindRepositoryRoot();
+        var scriptPath = Path.Combine(root, "eng", "setup-fluxvault-postgresql.ps1");
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        var repository = Path.Combine(workspace.RootPath, "repository");
+        Directory.CreateDirectory(watched);
+        var store = new FileFluxVaultProfileSetStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var original = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            RepositoryPath = Path.Combine(workspace.RootPath, "old-repository"),
+            WatchedFolders =
+            [
+                new WatchedFolderConfiguration(
+                    "docs",
+                    watched,
+                    Recursive: true,
+                    IncludePatterns: ["*.txt"],
+                    ExcludePatterns: ["~$*"],
+                    Compression: CompressionPreference.Zstd,
+                    ResourceProfile: ResourceProfile.Fast,
+                    IsEnabled: true)
+            ]
+        };
+        await store.SaveAsync(new FluxVaultProfileSetConfiguration(
+            FluxVaultProfileConfiguration.DefaultProfileId,
+            [new FluxVaultProfileConfiguration(FluxVaultProfileConfiguration.DefaultProfileId, "Default", true, original)]));
+
+        var parse = RunPowerShell([
+            "-NoProfile",
+            "-Command",
+            $"$tokens=$null;$errors=$null;[System.Management.Automation.Language.Parser]::ParseFile('{EscapePowerShellSingleQuoted(scriptPath)}',[ref]$tokens,[ref]$errors)|Out-Null;if($errors.Count -gt 0){{$errors|ForEach-Object{{$_.Message|Write-Error}};exit 1}}"
+        ]);
+        var configure = RunPowerShell([
+            "-NoProfile",
+            "-ExecutionPolicy", "Bypass",
+            "-File", scriptPath,
+            "-ConfigOnly",
+            "-ProgramDataPath", workspace.RootPath,
+            "-RepositoryPath", repository,
+            "-DatabaseName", "fluxvault_test",
+            "-Username", "fv_test",
+            "-Port", "5544",
+            "-ServiceName", "postgresql-x64-18"
+        ]);
+
+        var updated = await store.LoadAsync();
+
+        Assert.Equal(0, parse.ExitCode);
+        Assert.Equal(0, configure.ExitCode);
+        var profile = updated.ActiveProfile.Configuration;
+        Assert.Equal(repository, profile.RepositoryPath);
+        Assert.Equal("fluxvault_test", profile.MetadataStore.DatabaseName);
+        Assert.Equal("fv_test", profile.MetadataStore.Username);
+        Assert.Equal(5544, profile.MetadataStore.Port);
+        Assert.Equal("postgresql-x64-18", profile.MetadataStore.ServiceName);
+        Assert.Single(profile.WatchedFolders);
+        Assert.Equal(watched, profile.WatchedFolders[0].Path);
+        Assert.True(Directory.EnumerateFiles(workspace.RootPath, "config.json.*.bak").Any());
+    }
+
+    [Fact]
+    public void PostgreSql_bootstrap_script_declares_pg18_defaults_and_safe_trust_scope()
+    {
+        var root = FindRepositoryRoot();
+        var script = File.ReadAllText(Path.Combine(root, "eng", "setup-fluxvault-postgresql.ps1"));
+
+        Assert.Contains("PostgreSQL.PostgreSQL.18", script);
+        Assert.Contains("postgresql-x64-18", script);
+        Assert.Contains("FluxVault PostgreSQL local trust BEGIN", script);
+        Assert.Contains("function Find-PgHbaInsertionIndex", script);
+        Assert.Contains("$output.InsertRange($insertIndex, $managedBlock)", script);
+        Assert.Contains("host $DatabaseName $Username 127.0.0.1/32 trust", script);
+        Assert.Contains("host $DatabaseName $Username ::1/128 trust", script);
+        Assert.Contains("[switch]$AllowTemporaryAdminTrustForExistingServer", script);
+        Assert.Contains("PostgresAdminPassword", script);
+        Assert.Contains("--override", script);
+        Assert.Contains("--mode unattended", script);
+        Assert.DoesNotContain("host all all", script, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("0.0.0.0/0 trust", script, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("::/0 trust", script, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -485,5 +575,38 @@ public sealed class PackagingTests
         }
 
         return directory?.FullName ?? throw new InvalidOperationException("Repository root was not found.");
+    }
+
+    private static (int ExitCode, string StandardOutput, string StandardError) RunPowerShell(IReadOnlyList<string> arguments)
+    {
+        using var process = new Process();
+        process.StartInfo = new ProcessStartInfo
+        {
+            FileName = "powershell.exe",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+        foreach (var argument in arguments)
+        {
+            process.StartInfo.ArgumentList.Add(argument);
+        }
+
+        process.Start();
+        var standardOutput = process.StandardOutput.ReadToEnd();
+        var standardError = process.StandardError.ReadToEnd();
+        process.WaitForExit(30000);
+        if (!process.HasExited)
+        {
+            process.Kill(entireProcessTree: true);
+            throw new TimeoutException($"PowerShell command timed out. Output: {standardOutput} Error: {standardError}");
+        }
+
+        return (process.ExitCode, standardOutput, standardError);
+    }
+
+    private static string EscapePowerShellSingleQuoted(string value)
+    {
+        return value.Replace("'", "''", StringComparison.Ordinal);
     }
 }

@@ -88,6 +88,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         ValidateDirectCloud(configuration.DirectCloud);
         ValidateSecurityPosture(configuration.SecurityPosture);
         ValidateFleet(configuration.Fleet);
+        ValidateMetadataStore(configuration.MetadataStore);
     }
 
     internal FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
@@ -117,6 +118,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             DirectCloud = (configuration.DirectCloud ?? DirectCloudConfiguration.CreateDefault()).Normalise(),
             SecurityPosture = (configuration.SecurityPosture ?? SecurityPostureConfiguration.CreateDefault()).Normalise(),
             Fleet = (configuration.Fleet ?? EnterpriseFleetConfiguration.CreateDefault()).Normalise(),
+            MetadataStore = (configuration.MetadataStore ?? MetadataStoreConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
             SelectionRules = selectionRules.Select(NormaliseSelectionRule).ToArray(),
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0
@@ -290,6 +292,59 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             {
                 throw new InvalidDataException("Fleet status device id and policy id are required.");
             }
+        }
+    }
+
+    private static void ValidateMetadataStore(MetadataStoreConfiguration configuration)
+    {
+        if (configuration.Provider != MetadataStoreProvider.PostgreSql)
+        {
+            throw new InvalidDataException("PostgreSQL is the only supported metadata store provider.");
+        }
+
+        if (string.IsNullOrWhiteSpace(configuration.Host))
+        {
+            throw new InvalidDataException("Metadata database host is required.");
+        }
+
+        if (configuration.Port is < 1 or > 65535)
+        {
+            throw new InvalidDataException("Metadata database port must be between 1 and 65535.");
+        }
+
+        if (string.IsNullOrWhiteSpace(configuration.DatabaseName))
+        {
+            throw new InvalidDataException("Metadata database name is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(configuration.Username))
+        {
+            throw new InvalidDataException("Metadata database user name is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(configuration.BackupDirectory))
+        {
+            throw new InvalidDataException("Metadata database backup directory is required.");
+        }
+
+        if (configuration.BackupRetentionDays < 1)
+        {
+            throw new InvalidDataException("Metadata database backup retention must be at least 1 day.");
+        }
+
+        if (configuration.MaxCaptureWorkers < 1)
+        {
+            throw new InvalidDataException("Metadata capture worker count must be at least 1.");
+        }
+
+        if (configuration.MaxDbWriterConcurrency < 1)
+        {
+            throw new InvalidDataException("Metadata database writer concurrency must be at least 1.");
+        }
+
+        if (configuration.ExportLagWarningThreshold <= TimeSpan.Zero)
+        {
+            throw new InvalidDataException("Metadata export lag warning threshold must be positive.");
         }
     }
 

@@ -28,7 +28,18 @@ public sealed record FluxVaultServiceStatus(
     string? ActiveProfileId = null,
     IReadOnlyList<FluxVaultProfileRuntimeStatus>? Profiles = null,
     IReadOnlyList<RepositoryVersionSummary>? TrackedEntries = null,
-    BackupRuntimeStatus? BackupRuntime = null);
+    BackupRuntimeStatus? BackupRuntime = null,
+    MetadataStoreRuntimeStatus? MetadataStore = null);
+
+public sealed record MetadataStoreRuntimeStatus(
+    MetadataStoreProvider Provider,
+    string Endpoint,
+    bool SchemaInitialized,
+    string? LastError,
+    int PendingOutboxCount,
+    DateTimeOffset? OldestUnexportedUtc,
+    TimeSpan? OldestUnexportedAge,
+    bool IsExportLagExceeded);
 
 public sealed record WatchedFolderRuntimeStatus(
     string Id,

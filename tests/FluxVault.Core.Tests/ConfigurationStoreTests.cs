@@ -53,6 +53,16 @@ public sealed class ConfigurationStoreTests
         var localTrustedDevice = Assert.Single(configuration.Sync.TrustedDevices);
         Assert.Equal(configuration.Sync.LocalDevice.DeviceId, localTrustedDevice.DeviceId);
         Assert.Equal(DeviceTrustState.Local, localTrustedDevice.TrustState);
+        Assert.Equal(MetadataStoreProvider.PostgreSql, configuration.MetadataStore.Provider);
+        Assert.Equal("localhost", configuration.MetadataStore.Host);
+        Assert.Equal(5432, configuration.MetadataStore.Port);
+        Assert.Equal("fluxvault_metadata", configuration.MetadataStore.DatabaseName);
+        Assert.Equal("fluxvault", configuration.MetadataStore.Username);
+        Assert.Equal(Path.Combine(programData, "db-backups"), configuration.MetadataStore.BackupDirectory);
+        Assert.Equal(30, configuration.MetadataStore.BackupRetentionDays);
+        Assert.Equal(4, configuration.MetadataStore.MaxCaptureWorkers);
+        Assert.Equal(8, configuration.MetadataStore.MaxDbWriterConcurrency);
+        Assert.Equal(TimeSpan.FromMinutes(15), configuration.MetadataStore.ExportLagWarningThreshold);
     }
 
     [Fact]
@@ -161,6 +171,55 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(ResourceProfile.Fast, watchedFolder.ResourceProfile);
         Assert.Equal(["*.txt", "*.docx"], watchedFolder.IncludePatterns);
         Assert.True(actual.RetentionPolicy.IsEnabled);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_metadata_store_configuration()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(
+            Path.Combine(workspace.RootPath, "config.json"),
+            workspace.RootPath);
+        var expected = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            MetadataStore = new MetadataStoreConfiguration(
+                Provider: MetadataStoreProvider.PostgreSql,
+                Host: "127.0.0.1",
+                Port: 15432,
+                DatabaseName: "fluxvault_lab",
+                Username: "fluxvault_writer",
+                ServiceName: "postgresql-x64-18",
+                BackupDirectory: Path.Combine(workspace.RootPath, "backups"),
+                BackupRetentionDays: 14,
+                MaxCaptureWorkers: 12,
+                MaxDbWriterConcurrency: 24,
+                ExportLagWarningThreshold: TimeSpan.FromMinutes(5))
+        };
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+        Assert.Equal(expected.MetadataStore, actual.MetadataStore);
+    }
+
+    [Fact]
+    public async Task Save_rejects_invalid_metadata_writer_concurrency()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(
+            Path.Combine(workspace.RootPath, "config.json"),
+            workspace.RootPath);
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            MetadataStore = MetadataStoreConfiguration.CreateDefault(workspace.RootPath) with
+            {
+                MaxDbWriterConcurrency = 0
+            }
+        };
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => store.SaveAsync(configuration));
+
+        Assert.Contains("Metadata database writer concurrency", error.Message);
     }
 
     [Fact]

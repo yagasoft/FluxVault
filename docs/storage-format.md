@@ -12,7 +12,25 @@ repository/
     version-id.json
   lineage/
     restore-hints/
+  metadata-journal/
+    device-id/
+      sequence.fvop
 ```
+
+PostgreSQL is the primary metadata store for normal service/app runtime.
+Chunk payloads remain content-addressed files under the repository. The legacy
+JSON manifest layout remains importable and available through explicit
+developer diagnostics, but normal large-vault query paths read PostgreSQL
+tables instead of scanning `manifests/*.json`.
+
+Developer machines can run `eng/setup-fluxvault-postgresql.ps1` to install and
+prepare the local PostgreSQL metadata store with FluxVault defaults.
+
+The metadata database stores paths, versions, chunk references, lineage, folder
+entries, current-entry projections, mirror placement state, sync records,
+conflicts, capture queue rows, and metadata outbox rows. The replayable
+`metadata-journal` stream is an export/recovery artefact, not the primary
+runtime query source.
 
 ## Chunk records
 
@@ -22,7 +40,8 @@ logical length, stored length, and digest.
 
 ## Version manifests
 
-A manifest records:
+For repositories created before the PostgreSQL metadata transition, or when
+explicit legacy diagnostics are requested, a manifest records:
 
 - version id
 - watched root id
@@ -44,18 +63,18 @@ A manifest records:
 - deletion state and deleted-from version id for tombstones
 - immediate folder child entries for folder manifests
 
-Manifests are written to a temporary file and atomically moved into place.
-Older manifests that do not contain entry-kind or deletion fields load as live
-file versions.
+Normal PostgreSQL-backed commits store the exact `FileVersionManifest` payload
+in `versions.manifest_json` and normalized rows for indexed queries. Legacy
+manifest files are written only in legacy file-manifest mode. Older manifests
+that do not contain entry-kind or deletion fields load as live file versions.
 
-Folder manifests are metadata-only versions. When a file is committed with a
-watched-root path, FluxVault writes folder versions for the containing folder
+Folder versions are metadata-only versions. When a file is committed with a
+watched-root path, FluxVault records folder versions for the containing folder
 and each tracked ancestor up to the watched root. Each folder version stores
 its immediate child entries and the child version ids that make up that
-snapshot. Deletion tombstones are also manifests: they point at the deleted
-version through `DeletedFromVersionId`, and parent folder manifests are
-cascaded upward so browsers can show missing tracked entries as restorable
-phantoms.
+snapshot. Deletion tombstones point at the deleted version through
+`DeletedFromVersionId`, and parent folder versions are cascaded upward so
+browsers can show missing tracked entries as restorable phantoms.
 
 ## Lineage metadata
 
@@ -83,11 +102,11 @@ placement, and a clean repository layout without side `.git` working trees.
 
 ## Retention and garbage collection
 
-Retention deletes manifests first. A version disappears from `list` as soon as
-its manifest is pruned. Folder manifests and deletion tombstones keep referenced
-child versions alive while the folder/tombstone remains retained. Chunk and
-metadata files are deleted only when no remaining manifest references the chunk
-digest, so shared chunks survive older version pruning.
+Retention deletes PostgreSQL version rows first. A version disappears from
+`list` as soon as its DB row is pruned. Folder versions and deletion tombstones
+keep referenced child versions alive while the folder/tombstone remains
+retained. Chunk and metadata files are deleted only when no remaining DB chunk
+reference points at the digest, so shared chunks survive older version pruning.
 
 Cloud-folder mirrors use the same layout. Local pruning is authoritative; mirror
 deletion is best-effort and any mirror cleanup warnings are surfaced in service
@@ -101,8 +120,8 @@ ProgramData state so restarting the service does not erase diagnostics evidence.
 These files are outside the chunk/manifests repository and are additive runtime
 metadata.
 
-Scrub validates only manifests and chunks still referenced by remaining
-manifests. Missing or corrupt primary artefacts can be repaired from a healthy
+Scrub validates only DB-referenced manifests and chunks. Missing or corrupt
+primary artefacts can be repaired from a healthy
 mirror copy, and missing or corrupt mirror artefacts can be repaired from a
 healthy primary copy. If neither side has a healthy copy, the scrub report marks
 the issue critical and unresolved. Scrub never repairs from live source files.
@@ -113,8 +132,8 @@ temporary files. It does not write restore hints and does not create manifests.
 
 ## CLI repository operations
 
-The developer CLI writes into the same chunk and manifest layout as the service
-will use. `list` reads manifest summaries, `inspect` reads one manifest and
-reports stored/logical size, and `restore` reconstructs file manifests from
-ordered chunks or folder manifests recursively from their child snapshot
-entries.
+The CLI loads the normal ProgramData/profile configuration and uses the
+PostgreSQL-backed repository by default. The legacy JSON manifest repository is
+still available through `--legacy-file-manifest` for developer diagnostics and
+test harnesses. `list`, `inspect`, and `restore` use the same metadata source as
+the selected mode.

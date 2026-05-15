@@ -2,10 +2,15 @@ using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Capture;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Policies;
+using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Capture;
 using FluxVault.Core.ChangeTracking;
+using FluxVault.Core.Chunking;
 using FluxVault.Core.Configuration;
+using FluxVault.Core.Content;
 using FluxVault.Core.Service;
+using FluxVault.Core.Storage;
+using FluxVault.Core.Storage.Metadata;
 using Microsoft.Extensions.Logging;
 
 namespace FluxVault.Integration.Tests;
@@ -107,7 +112,7 @@ public sealed class ProtectionLoopUsnTests
         };
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
         var captureProvider = new CountingCaptureProvider();
-        var operations = new FluxVaultOperations(store, captureProvider);
+        var operations = CreateOperations(workspace, configuration, store, captureProvider);
         await operations.SaveConfigurationAsync(configuration);
         var reader = new SequencedUsnChangeJournalReader(
             UsnChangeJournalReadResult.FullScanRequired("USN journal reset.", [Checkpoint(watched, nextUsn: 200)]),
@@ -326,10 +331,43 @@ public sealed class ProtectionLoopUsnTests
             logger);
     }
 
-    private static FluxVaultOperations CreateOperations(TemporaryWorkspace workspace, FluxVaultConfiguration configuration)
+    private static FluxVaultOperations CreateOperations(
+        TemporaryWorkspace workspace,
+        FluxVaultConfiguration configuration)
     {
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
-        return new FluxVaultOperations(store, new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()));
+        return CreateOperations(
+            workspace,
+            configuration,
+            store,
+            new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()));
+    }
+
+    private static FluxVaultOperations CreateOperations(
+        TemporaryWorkspace workspace,
+        FluxVaultConfiguration configuration,
+        FileFluxVaultConfigurationStore store,
+        IFileCaptureProvider captureProvider)
+    {
+        var metadataStore = new InMemoryRepositoryMetadataStore();
+        return new FluxVaultOperations(
+            store,
+            captureProvider,
+            metadataStoreFactory: _ => metadataStore,
+            repositoryFactory: repositoryConfiguration => CreateRepository(repositoryConfiguration, metadataStore));
+    }
+
+    private static IChunkRepository CreateRepository(
+        FluxVaultConfiguration configuration,
+        IRepositoryMetadataStore metadataStore)
+    {
+        return new FileSystemChunkRepository(
+            configuration.RepositoryPath,
+            new FastCdcChunker(new ChunkingOptions(64 * 1024, 256 * 1024, 1024 * 1024)),
+            new Blake3ContentHasher(),
+            new ZstdChunkCodec(),
+            configuration.MirrorSet,
+            metadataStore);
     }
 
     private static FluxVaultConfiguration NewConfiguration(TemporaryWorkspace workspace, string watched)

@@ -133,15 +133,16 @@ restore-lineage hints.
    indefinitely.
 8. Core chunking splits captured bytes into FastCDC-style chunks.
 9. Chunk fingerprints are compared against the local repository.
-10. New chunks and a manifest, including source last-write metadata, are
-    committed atomically. Backup operations reuse a mutation manifest cache so
-    folder-cascade and deletion manifests do not reread the full manifest set
-    for every committed target.
+10. New chunks are written to the content-addressed repository, then version,
+    lineage, folder, chunk-reference, current-entry, and outbox metadata are
+    committed to PostgreSQL. The exact manifest payload is also stored as
+    `manifest_json` so restore and inspect can reconstruct the captured version
+    without reading a JSON manifest file.
 11. Repository artefacts are mirrored according to the active mirror placement
-    profile after the primary commit succeeds. Manifests go to every enabled
-    mirror node, while chunks and metadata follow full-copy, capacity-balanced,
-    or redundant placement. Mirror failures are captured as warnings after the
-    primary commit succeeds.
+    profile after the primary commit succeeds. Chunks and chunk metadata follow
+    full-copy, capacity-balanced, or redundant placement. Runtime version
+    metadata is exported through the DB-backed metadata journal rather than
+    mirrored as per-version JSON manifests.
 12. Compression is selected by policy. The default adaptive profile uses zstd,
     skips known compressed file types from the configurable skip-extension
     list, uses lz4 for hot files, and keeps Brotli and LZMA as explicit
@@ -352,10 +353,12 @@ writes, listing, inspection, and restore without claiming open-file consistency.
 
 ## Storage boundary
 
-The repository stores immutable chunks and append-only version manifests. A
-manifest is the authoritative description of one captured file version. Chunks
-are addressed by BLAKE3 digest and may be stored raw or encoded with zstd, lz4,
-Brotli, or LZMA according to policy.
+The repository stores immutable chunks, while PostgreSQL stores append-only
+version metadata. A `FileVersionManifest` is still the canonical in-memory
+description of one captured version, but normal runtime reconstructs it from
+`versions.manifest_json` and indexed relational rows. Chunks are addressed by
+BLAKE3 digest and may be stored raw or encoded with zstd, lz4, Brotli, or LZMA
+according to policy.
 
 Restore remains append-only in the V1 lineage model. Restoring an older version
 writes bytes plus a repository-local pending lineage hint; it does not create a
@@ -371,32 +374,32 @@ the service to reconstruct the chosen version into FluxVault-owned preview
 state, opens the returned temporary file with the user's default application,
 and does not write a restore-lineage hint. Folder versions are previewed inside
 FluxVault through the version history browser: selecting a folder version shows
-the snapshot entries stored in that manifest, double-clicking a folder entry
+the snapshot entries stored in metadata, double-clicking a folder entry
 navigates into that snapshot folder, and double-clicking a file entry opens the
 existing temporary file-preview flow before any restore.
 
-Retention is manifest-led. FluxVault groups versions by normalised source path,
+Retention is metadata-led. FluxVault groups versions by normalised source path,
 keeps dense recent history, thins older history to hourly and daily buckets,
 and always keeps at least the latest configured number of versions per source
-entry. Folder manifests and deletion tombstones retain their referenced child
-versions while they are kept. After deleting pruned manifests locally, FluxVault
-garbage-collects only chunks and metadata no remaining manifest references.
+entry. Folder versions and deletion tombstones retain their referenced child
+versions while they are kept. After deleting pruned DB version rows, FluxVault
+garbage-collects only chunks and metadata no remaining DB chunk reference uses.
 Mirror cleanup is best-effort and reported through status and diagnostics.
 
 `MirrorSetConfiguration` is the active mirror configuration model. Older
 `mirrorPath` configuration files are loaded for compatibility and normalised
-into one enabled full-copy mirror node. During commit, chunks, metadata, and
-manifests are written to the primary repository first. Manifests are then
-mirrored to every enabled node so each mirror has version metadata. Chunks and
-metadata are written through the pure `MirrorPlacementPlanner`: `FullCopy`
+into one enabled full-copy mirror node. During commit, chunks and chunk metadata
+are written to the primary repository first, while version metadata is committed
+to PostgreSQL and exported to `metadata-journal/<device>/<sequence>.fvop`.
+Chunks and metadata are written through the pure `MirrorPlacementPlanner`: `FullCopy`
 targets every enabled node, `CapacityBalanced` uses deterministic weighted
 rendezvous selection against capacity budget and priority, and `Redundant`
 targets the configured minimum copy count capped by eligible nodes. A failed
 mirror write records a node-specific warning in the commit result and service
 status, but it does not roll back or fail the primary backup.
 
-Mirror repair reuses the repository validation boundary. Preview checks primary
-and enabled mirror manifests, chunks, and chunk metadata without writing files.
+Mirror repair reuses the repository validation boundary. Preview checks
+DB-referenced chunks and chunk metadata without writing files.
 Chunk and metadata checks are placement-aware, so non-target mirrors are not
 reported as missing required copies. Repair-all repairs primary artefacts from
 any healthy enabled mirror, then repairs enabled mirrors from the healthy
@@ -421,8 +424,39 @@ execution copies required artefacts from the healthy primary repository to the
 remaining target mirrors first, recomputes state, and deletes the selected
 mirror's chunk/metadata artefacts only for chunks with no unresolved required
 target issue. On a healthy completion the selected mirror node is disabled in
-configuration. Manifests continue to follow normal manifest mirroring; drain
-does not act as a destructive repository purge.
+configuration. Version metadata remains in PostgreSQL and metadata-journal
+exports; drain does not act as a destructive repository purge.
+
+## Whole-PC metadata store
+
+PostgreSQL is now the primary metadata runtime for the whole-PC storage track.
+Each PC owns its own local PostgreSQL database and chunk repository; no runtime
+design assumes a shared database between PCs. PostgreSQL owns structured
+metadata for paths, versions, chunk references, lineage, folder entries, current
+entry projections, mirror placement, sync records, conflicts, capture queue
+state, and metadata export outbox rows. Chunk bytes remain in the
+content-addressed repository so large-file streaming, dedupe, mirror repair,
+and future object-store transport do not push payloads through the relational
+database.
+
+The runtime repository initializes the PostgreSQL schema, records new file and
+folder versions to DB rows, reads list/status/inspect/restore/retention/scrub
+paths from metadata, and stops writing per-version JSON manifests in normal
+service/app commits. Existing file-manifest repositories remain loadable only
+through explicit legacy/developer paths and can be imported into the relational
+shape for developer and test vaults.
+
+Database recovery uses `eng/backup-fluxvault-db.ps1` for `pg_dump -Fc` logical
+backups and `eng/restore-fluxvault-db.ps1` for `pg_restore`-based reinstall
+recovery. The backup bundle can include configuration and exported
+`metadata-journal` files. The runtime exports outbox rows to immutable journal
+files after DB commit and marks rows exported only after the atomic write
+succeeds.
+
+Developer/bootstrap setup uses `eng/setup-fluxvault-postgresql.ps1` to install
+PostgreSQL through winget, create the local FluxVault metadata role/database,
+scope loopback trust to that database/user, patch ProgramData profile
+configuration, initialize the schema, and run an immediate smoke check.
 
 ## Multi-PC sync safety
 

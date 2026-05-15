@@ -1,6 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
+using FluxVault.Abstractions.Configuration;
 using FluxVault.Cli;
+using FluxVault.Core.Configuration;
 
 namespace FluxVault.Integration.Tests;
 
@@ -18,16 +20,18 @@ public sealed class CliHarnessTests
             "backup",
             "--source", source,
             "--repository", workspace.RepositoryPath,
-            "--compression", "zstd"
+            "--compression", "zstd",
+            "--legacy-file-manifest"
         ]);
-        var list = await FluxVaultCli.RunAsync(["list", "--repository", workspace.RepositoryPath]);
+        var list = await FluxVaultCli.RunAsync(["list", "--repository", workspace.RepositoryPath, "--legacy-file-manifest"]);
         var versionId = ParseVersionId(backup.StandardOutput);
-        var inspect = await FluxVaultCli.RunAsync(["inspect", "--repository", workspace.RepositoryPath, "--version", versionId]);
+        var inspect = await FluxVaultCli.RunAsync(["inspect", "--repository", workspace.RepositoryPath, "--version", versionId, "--legacy-file-manifest"]);
         var restore = await FluxVaultCli.RunAsync([
             "restore",
             "--repository", workspace.RepositoryPath,
             "--version", versionId,
-            "--output", restored
+            "--output", restored,
+            "--legacy-file-manifest"
         ]);
 
         Assert.Equal(0, backup.ExitCode);
@@ -51,7 +55,8 @@ public sealed class CliHarnessTests
             "backup",
             "--source", source,
             "--repository", workspace.RepositoryPath,
-            "--mirror", mirror
+            "--mirror", mirror,
+            "--legacy-file-manifest"
         ]);
 
         Assert.Equal(0, result.ExitCode);
@@ -67,7 +72,8 @@ public sealed class CliHarnessTests
         var result = await FluxVaultCli.RunAsync([
             "backup",
             "--source", Path.Combine(workspace.RootPath, "missing.bin"),
-            "--repository", workspace.RepositoryPath
+            "--repository", workspace.RepositoryPath,
+            "--legacy-file-manifest"
         ]);
 
         Assert.Equal(2, result.ExitCode);
@@ -84,11 +90,38 @@ public sealed class CliHarnessTests
             "restore",
             "--repository", workspace.RepositoryPath,
             "--version", "missing",
-            "--output", Path.Combine(workspace.RootPath, "restored.bin")
+            "--output", Path.Combine(workspace.RootPath, "restored.bin"),
+            "--legacy-file-manifest"
         ]);
 
         Assert.Equal(2, result.ExitCode);
         Assert.Contains("Version not found", result.StandardError);
+    }
+
+    [Fact]
+    public async Task Metadata_init_reports_database_connection_failure_without_manifest_fallback()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            MetadataStore = MetadataStoreConfiguration.CreateDefault(workspace.RootPath) with
+            {
+                Host = "127.0.0.1",
+                Port = 1,
+                DatabaseName = "fluxvault_metadata",
+                Username = "fluxvault"
+            }
+        };
+        await new FileFluxVaultProfileSetStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath)
+            .SaveAsync(new FluxVaultProfileSetConfiguration(
+                FluxVaultProfileConfiguration.DefaultProfileId,
+                [new FluxVaultProfileConfiguration(FluxVaultProfileConfiguration.DefaultProfileId, "Default", true, configuration)]));
+
+        var result = await FluxVaultCli.RunAsync(["metadata-init", "--program-data", workspace.RootPath]);
+
+        Assert.Equal(3, result.ExitCode);
+        Assert.Contains("127.0.0.1", result.StandardError);
+        Assert.DoesNotContain("manifests", result.StandardError, StringComparison.OrdinalIgnoreCase);
     }
 
     private static byte[] CreatePayload()

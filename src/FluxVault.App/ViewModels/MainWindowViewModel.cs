@@ -1771,6 +1771,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ApplySecurityPostureStatus(status.SecurityPosture);
             ApplyFleetStatus(status.Fleet);
             ApplyRepositoryHealth(status.RepositoryHealth);
+            ApplyMetadataStoreHealth(status.MetadataStore);
             WatchedFolders.Clear();
             foreach (var folder in status.Configuration.WatchedFolders)
             {
@@ -2227,6 +2228,28 @@ public sealed partial class MainWindowViewModel : ObservableObject
         RepositoryHealthRows.Add(new RepositoryHealthRow("Blocked files", CaptureHealth, "Blocked and pending capture state is shown in Activity."));
         ApplyMirrorRepairToNodes(health.LastMirrorRepair);
         ApplyMirrorPlacementToNodes(health.LastMirrorRebalance);
+    }
+
+    private void ApplyMetadataStoreHealth(MetadataStoreRuntimeStatus? metadataStore)
+    {
+        if (metadataStore is null)
+        {
+            return;
+        }
+
+        var status = metadataStore.LastError is not null
+            ? "Unavailable"
+            : metadataStore.IsExportLagExceeded
+                ? "Export lag warning"
+                : "Ready";
+        var oldestAge = metadataStore.OldestUnexportedAge is null
+            ? "none"
+            : $"{(int)metadataStore.OldestUnexportedAge.Value.TotalMinutes} minute(s)";
+        var detail = metadataStore.LastError is not null
+            ? $"{metadataStore.Provider} at {metadataStore.Endpoint}: {metadataStore.LastError}"
+            : $"{metadataStore.Provider} at {metadataStore.Endpoint}; schema initialized: {metadataStore.SchemaInitialized}; pending journal exports: {metadataStore.PendingOutboxCount}; oldest pending age: {oldestAge}.";
+
+        RepositoryHealthRows.Add(new RepositoryHealthRow("Metadata database", status, detail));
     }
 
     private static RepositoryHealthRow BuildScrubRow(RepositoryScrubReport? report)

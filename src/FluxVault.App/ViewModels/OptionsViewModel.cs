@@ -120,6 +120,39 @@ public sealed partial class OptionsViewModel : ObservableObject
     private int restoreRehearsalVersionCount;
 
     [ObservableProperty]
+    private MetadataStoreProvider metadataStoreProvider = MetadataStoreProvider.PostgreSql;
+
+    [ObservableProperty]
+    private string metadataStoreHost = string.Empty;
+
+    [ObservableProperty]
+    private int metadataStorePort;
+
+    [ObservableProperty]
+    private string metadataStoreDatabaseName = string.Empty;
+
+    [ObservableProperty]
+    private string metadataStoreUsername = string.Empty;
+
+    [ObservableProperty]
+    private string metadataStoreServiceName = string.Empty;
+
+    [ObservableProperty]
+    private string metadataStoreBackupDirectory = string.Empty;
+
+    [ObservableProperty]
+    private int metadataStoreBackupRetentionDays;
+
+    [ObservableProperty]
+    private int metadataStoreMaxCaptureWorkers;
+
+    [ObservableProperty]
+    private int metadataStoreMaxDbWriterConcurrency;
+
+    [ObservableProperty]
+    private int metadataStoreExportLagWarningMinutes;
+
+    [ObservableProperty]
     private string previewText = "Retention preview has not been run.";
 
     [ObservableProperty]
@@ -150,6 +183,8 @@ public sealed partial class OptionsViewModel : ObservableObject
 
     public IReadOnlyList<CompressionPreference> Codecs { get; } = Enum.GetValues<CompressionPreference>();
 
+    public IReadOnlyList<MetadataStoreProvider> MetadataStoreProviders { get; } = Enum.GetValues<MetadataStoreProvider>();
+
     public IReadOnlyList<WorkloadPolicyPresetOption> WorkloadPresets { get; } = WorkloadPolicyPresetCatalog.PresetOptions;
 
     public IReadOnlyList<ProtectionExclusionTarget> ExclusionTargets { get; } = Enum.GetValues<ProtectionExclusionTarget>();
@@ -172,6 +207,7 @@ public sealed partial class OptionsViewModel : ObservableObject
         ApplyCodec(currentConfiguration.CodecPolicy);
         ApplyMaintenance(currentConfiguration.RepositoryMaintenancePolicy);
         ApplyWorkload(currentConfiguration.WorkloadPolicy);
+        ApplyMetadataStore(currentConfiguration.MetadataStore);
         ApplyExclusions(currentConfiguration.ExclusionRules ?? []);
         StatusText = "Options loaded.";
     }
@@ -196,6 +232,7 @@ public sealed partial class OptionsViewModel : ObservableObject
             CodecPolicy = BuildCodec(),
             RepositoryMaintenancePolicy = BuildMaintenance(),
             WorkloadPolicy = BuildWorkload(),
+            MetadataStore = BuildMetadataStore(),
             ExclusionRules = []
         };
         var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(updated), cancellationToken)
@@ -385,6 +422,40 @@ public sealed partial class OptionsViewModel : ObservableObject
             Interval: TimeSpan.FromHours(Math.Max(1, MaintenanceIntervalHours)),
             AutoRepairFromMirror: MaintenanceAutoRepairFromMirror,
             RestoreRehearsalVersionCount: Math.Max(0, RestoreRehearsalVersionCount));
+    }
+
+    private void ApplyMetadataStore(MetadataStoreConfiguration configuration)
+    {
+        MetadataStoreProvider = configuration.Provider;
+        MetadataStoreHost = configuration.Host;
+        MetadataStorePort = configuration.Port;
+        MetadataStoreDatabaseName = configuration.DatabaseName;
+        MetadataStoreUsername = configuration.Username;
+        MetadataStoreServiceName = configuration.ServiceName;
+        MetadataStoreBackupDirectory = configuration.BackupDirectory;
+        MetadataStoreBackupRetentionDays = configuration.BackupRetentionDays;
+        MetadataStoreMaxCaptureWorkers = configuration.MaxCaptureWorkers;
+        MetadataStoreMaxDbWriterConcurrency = configuration.MaxDbWriterConcurrency;
+        MetadataStoreExportLagWarningMinutes = Math.Max(1, (int)Math.Round(configuration.ExportLagWarningThreshold.TotalMinutes));
+    }
+
+    private MetadataStoreConfiguration BuildMetadataStore()
+    {
+        var defaults = currentConfiguration?.MetadataStore ?? MetadataStoreConfiguration.CreateDefault(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        return defaults with
+        {
+            Provider = MetadataStoreProvider,
+            Host = string.IsNullOrWhiteSpace(MetadataStoreHost) ? defaults.Host : MetadataStoreHost.Trim(),
+            Port = Math.Clamp(MetadataStorePort, 1, 65535),
+            DatabaseName = string.IsNullOrWhiteSpace(MetadataStoreDatabaseName) ? defaults.DatabaseName : MetadataStoreDatabaseName.Trim(),
+            Username = string.IsNullOrWhiteSpace(MetadataStoreUsername) ? defaults.Username : MetadataStoreUsername.Trim(),
+            ServiceName = string.IsNullOrWhiteSpace(MetadataStoreServiceName) ? defaults.ServiceName : MetadataStoreServiceName.Trim(),
+            BackupDirectory = string.IsNullOrWhiteSpace(MetadataStoreBackupDirectory) ? defaults.BackupDirectory : MetadataStoreBackupDirectory.Trim(),
+            BackupRetentionDays = Math.Max(1, MetadataStoreBackupRetentionDays),
+            MaxCaptureWorkers = Math.Max(1, MetadataStoreMaxCaptureWorkers),
+            MaxDbWriterConcurrency = Math.Max(1, MetadataStoreMaxDbWriterConcurrency),
+            ExportLagWarningThreshold = TimeSpan.FromMinutes(Math.Max(1, MetadataStoreExportLagWarningMinutes))
+        };
     }
 
     private WorkloadPolicyConfiguration BuildWorkload()

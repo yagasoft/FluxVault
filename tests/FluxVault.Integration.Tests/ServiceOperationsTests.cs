@@ -10,8 +10,12 @@ using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Abstractions.Sync;
 using FluxVault.Core.Capture;
+using FluxVault.Core.Chunking;
 using FluxVault.Core.Configuration;
+using FluxVault.Core.Content;
 using FluxVault.Core.Service;
+using FluxVault.Core.Storage;
+using FluxVault.Core.Storage.Metadata;
 using FluxVault.Core.Sync;
 
 namespace FluxVault.Integration.Tests;
@@ -193,9 +197,11 @@ public sealed class ServiceOperationsTests
         await operations.SaveConfigurationAsync(configuration);
 
         var backup = await operations.RunBackupNowAsync();
+        var version = Assert.Single(await operations.ListVersionsAsync());
+        var digest = Assert.Single((await operations.InspectVersionAsync(version.VersionId)).Manifest.Chunks).Digest;
 
         Assert.True(backup.Success);
-        Assert.True(Directory.EnumerateFiles(Path.Combine(mirror, "manifests"), "*.json").Any());
+        Assert.True(File.Exists(ChunkPath(mirror, digest)));
         Assert.Empty(Directory.EnumerateFiles(mirror, "*.tmp", SearchOption.AllDirectories));
     }
 
@@ -236,20 +242,28 @@ public sealed class ServiceOperationsTests
         using var workspace = TemporaryWorkspace.Create();
         var watched = Path.Combine(workspace.RootPath, "watched");
         Directory.CreateDirectory(watched);
+        var prunePolicy = ImmediatePrunePolicy();
         var configuration = NewConfiguration(workspace, watched) with
         {
-            RetentionPolicy = ImmediatePrunePolicy()
+            RetentionPolicy = prunePolicy with { IsEnabled = false }
         };
         var operations = CreateOperations(workspace, configuration);
         await operations.SaveConfigurationAsync(configuration);
-        await SeedRepositoryVersionsAsync(workspace, 3);
+        var source = Path.Combine(watched, "draft.txt");
+        for (var index = 0; index < 3; index++)
+        {
+            await File.WriteAllTextAsync(source, $"seed version {index}");
+            await operations.RunBackupNowAsync();
+        }
+
+        await operations.SaveConfigurationAsync(configuration with { RetentionPolicy = prunePolicy });
 
         var result = await operations.RunRetentionNowAsync();
         var status = await operations.GetStatusAsync();
 
-        Assert.Equal(2, result.PrunedVersionCount);
+        Assert.Equal(4, result.PrunedVersionCount);
         Assert.NotNull(status.LastRetention);
-        Assert.Equal(2, status.LastRetention.PrunedVersionCount);
+        Assert.Equal(4, status.LastRetention.PrunedVersionCount);
         Assert.Contains("Retention", status.LastMessage);
     }
 
@@ -456,7 +470,9 @@ public sealed class ServiceOperationsTests
         await File.WriteAllTextAsync(Path.Combine(watched, "draft.txt"), "scheduled");
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
         var stateStore = new InMemoryRepositoryMaintenanceStateStore();
-        var operations = new FluxVaultOperations(
+        var operations = CreateOperations(
+            workspace,
+            NewConfiguration(workspace, watched),
             store,
             new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()),
             stateStore,
@@ -583,9 +599,9 @@ public sealed class ServiceOperationsTests
         var source = Path.Combine(watched, "draft.txt");
         await File.WriteAllTextAsync(source, "content");
         var configuration = NewConfiguration(workspace, watched);
-        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
-        var operations = new FluxVaultOperations(
-            store,
+        var operations = CreateOperations(
+            workspace,
+            configuration,
             new StubCaptureProvider(FileCaptureResult.Failed("The process cannot access the file because it is locked.")));
         await operations.SaveConfigurationAsync(configuration);
 
@@ -607,9 +623,9 @@ public sealed class ServiceOperationsTests
         var source = Path.Combine(watched, "draft.txt");
         await File.WriteAllTextAsync(source, "live content");
         var configuration = NewConfiguration(workspace, watched);
-        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
-        var operations = new FluxVaultOperations(
-            store,
+        var operations = CreateOperations(
+            workspace,
+            configuration,
             new StubCaptureProvider(FileCaptureResult.Failed("VSS requester failed: VSS writer SqlServerWriter reported state 5.")));
         await operations.SaveConfigurationAsync(configuration);
 
@@ -632,9 +648,9 @@ public sealed class ServiceOperationsTests
         var source = Path.Combine(watched, "draft.txt");
         await File.WriteAllTextAsync(source, "live content");
         var configuration = NewConfiguration(workspace, watched);
-        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
-        var operations = new FluxVaultOperations(
-            store,
+        var operations = CreateOperations(
+            workspace,
+            configuration,
             new StubCaptureProvider(FileCaptureResult.Captured(
                 new MemoryStream(Encoding.UTF8.GetBytes("snapshot content")),
                 CaptureConsistency.AppConsistent,
@@ -1343,10 +1359,54 @@ public sealed class ServiceOperationsTests
         Assert.Equal("FSCTL_READ_USN_JOURNAL", durableChange.GetProperty("details")[0].GetProperty("operation").GetString());
     }
 
-    private static FluxVaultOperations CreateOperations(TemporaryWorkspace workspace, FluxVaultConfiguration configuration)
+    private static FluxVaultOperations CreateOperations(
+        TemporaryWorkspace workspace,
+        FluxVaultConfiguration configuration)
+    {
+        return CreateOperations(
+            workspace,
+            configuration,
+            new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()));
+    }
+
+    private static FluxVaultOperations CreateOperations(
+        TemporaryWorkspace workspace,
+        FluxVaultConfiguration configuration,
+        IFileCaptureProvider captureProvider)
     {
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
-        return new FluxVaultOperations(store, new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()));
+        return CreateOperations(workspace, configuration, store, captureProvider);
+    }
+
+    private static FluxVaultOperations CreateOperations(
+        TemporaryWorkspace workspace,
+        FluxVaultConfiguration configuration,
+        FileFluxVaultConfigurationStore store,
+        IFileCaptureProvider captureProvider,
+        IRepositoryMaintenanceStateStore? maintenanceStateStore = null,
+        string? maintenanceStateRoot = null)
+    {
+        var metadataStore = new InMemoryRepositoryMetadataStore();
+        return new FluxVaultOperations(
+            store,
+            captureProvider,
+            maintenanceStateStore,
+            maintenanceStateRoot,
+            metadataStoreFactory: _ => metadataStore,
+            repositoryFactory: repositoryConfiguration => CreateRepository(repositoryConfiguration, metadataStore));
+    }
+
+    private static IChunkRepository CreateRepository(
+        FluxVaultConfiguration configuration,
+        IRepositoryMetadataStore metadataStore)
+    {
+        return new FileSystemChunkRepository(
+            configuration.RepositoryPath,
+            new FastCdcChunker(new ChunkingOptions(64 * 1024, 256 * 1024, 1024 * 1024)),
+            new Blake3ContentHasher(),
+            new ZstdChunkCodec(),
+            configuration.MirrorSet,
+            metadataStore);
     }
 
     private static FluxVaultConfiguration NewConfiguration(TemporaryWorkspace workspace, string watched)
@@ -1427,28 +1487,6 @@ public sealed class ServiceOperationsTests
             KeepHourlyFor: TimeSpan.Zero,
             KeepDailyFor: TimeSpan.Zero,
             MinimumVersionsPerFile: 1);
-    }
-
-    private static async Task SeedRepositoryVersionsAsync(TemporaryWorkspace workspace, int count)
-    {
-        var repository = new FluxVault.Core.Storage.FileSystemChunkRepository(
-            workspace.RepositoryPath,
-            new FluxVault.Core.Chunking.FastCdcChunker(new FluxVault.Core.Chunking.ChunkingOptions(128, 256, 512)),
-            new FluxVault.Core.Content.Blake3ContentHasher(),
-            new FluxVault.Core.Content.ZstdChunkCodec());
-
-        for (var index = 0; index < count; index++)
-        {
-            var payload = Encoding.UTF8.GetBytes($"seed version {index}");
-            await repository.CommitAsync(new FluxVault.Abstractions.Storage.FileCommitRequest(
-                WatchedFolderId: "docs",
-                SourcePath: Path.Combine(workspace.RootPath, "watched", "draft.txt"),
-                CapturedAtUtc: DateTimeOffset.UtcNow.AddDays(-200).AddMinutes(index),
-                Consistency: FluxVault.Abstractions.Storage.CaptureConsistency.CrashConsistent,
-                Compression: CompressionPreference.Off,
-                MinimumCompressionBytes: 128,
-                Content: new MemoryStream(payload)));
-        }
     }
 
     private static async Task<string> Sha256Async(string path)

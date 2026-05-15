@@ -135,6 +135,75 @@ public sealed class OptionsViewModelTests
     }
 
     [Fact]
+    public async Task Initialise_loads_metadata_store_settings_from_service_status()
+    {
+        var metadata = new MetadataStoreConfiguration(
+            Provider: MetadataStoreProvider.PostgreSql,
+            Host: "127.0.0.1",
+            Port: 15432,
+            DatabaseName: "fluxvault_lab",
+            Username: "fluxvault_writer",
+            ServiceName: "postgresql-x64-18",
+            BackupDirectory: @"D:\FluxVaultBackups",
+            BackupRetentionDays: 14,
+            MaxCaptureWorkers: 12,
+            MaxDbWriterConcurrency: 24,
+            ExportLagWarningThreshold: TimeSpan.FromMinutes(5));
+        var client = new FakeFluxVaultServiceClient(StatusWithConfiguration(configuration => configuration with
+        {
+            MetadataStore = metadata
+        }));
+        var viewModel = new OptionsViewModel(client);
+
+        await viewModel.InitialiseAsync();
+
+        Assert.Equal(MetadataStoreProvider.PostgreSql, viewModel.MetadataStoreProvider);
+        Assert.Equal("127.0.0.1", viewModel.MetadataStoreHost);
+        Assert.Equal(15432, viewModel.MetadataStorePort);
+        Assert.Equal("fluxvault_lab", viewModel.MetadataStoreDatabaseName);
+        Assert.Equal("fluxvault_writer", viewModel.MetadataStoreUsername);
+        Assert.Equal("postgresql-x64-18", viewModel.MetadataStoreServiceName);
+        Assert.Equal(@"D:\FluxVaultBackups", viewModel.MetadataStoreBackupDirectory);
+        Assert.Equal(14, viewModel.MetadataStoreBackupRetentionDays);
+        Assert.Equal(12, viewModel.MetadataStoreMaxCaptureWorkers);
+        Assert.Equal(24, viewModel.MetadataStoreMaxDbWriterConcurrency);
+        Assert.Equal(5, viewModel.MetadataStoreExportLagWarningMinutes);
+    }
+
+    [Fact]
+    public async Task Save_persists_metadata_store_settings()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
+        var viewModel = new OptionsViewModel(client);
+        await viewModel.InitialiseAsync();
+        viewModel.MetadataStoreHost = "127.0.0.1";
+        viewModel.MetadataStorePort = 15432;
+        viewModel.MetadataStoreDatabaseName = "fluxvault_lab";
+        viewModel.MetadataStoreUsername = "fluxvault_writer";
+        viewModel.MetadataStoreServiceName = "postgresql-x64-18";
+        viewModel.MetadataStoreBackupDirectory = @"D:\FluxVaultBackups";
+        viewModel.MetadataStoreBackupRetentionDays = 14;
+        viewModel.MetadataStoreMaxCaptureWorkers = 12;
+        viewModel.MetadataStoreMaxDbWriterConcurrency = 24;
+        viewModel.MetadataStoreExportLagWarningMinutes = 5;
+
+        await viewModel.SaveAsync();
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        Assert.Equal(MetadataStoreProvider.PostgreSql, saved.MetadataStore.Provider);
+        Assert.Equal("127.0.0.1", saved.MetadataStore.Host);
+        Assert.Equal(15432, saved.MetadataStore.Port);
+        Assert.Equal("fluxvault_lab", saved.MetadataStore.DatabaseName);
+        Assert.Equal("fluxvault_writer", saved.MetadataStore.Username);
+        Assert.Equal("postgresql-x64-18", saved.MetadataStore.ServiceName);
+        Assert.Equal(@"D:\FluxVaultBackups", saved.MetadataStore.BackupDirectory);
+        Assert.Equal(14, saved.MetadataStore.BackupRetentionDays);
+        Assert.Equal(12, saved.MetadataStore.MaxCaptureWorkers);
+        Assert.Equal(24, saved.MetadataStore.MaxDbWriterConcurrency);
+        Assert.Equal(TimeSpan.FromMinutes(5), saved.MetadataStore.ExportLagWarningThreshold);
+    }
+
+    [Fact]
     public async Task Save_persists_codec_skip_extensions_from_options_text()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));

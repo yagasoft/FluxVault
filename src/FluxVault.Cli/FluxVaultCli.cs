@@ -1,8 +1,11 @@
+using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
+using FluxVault.Core.Configuration;
 using FluxVault.Core.Content;
 using FluxVault.Core.Storage;
+using FluxVault.Core.Storage.Metadata;
 
 namespace FluxVault.Cli;
 
@@ -39,6 +42,7 @@ public static class FluxVaultCli
                 "list" => await ListAsync(options, standardOutput, standardError).ConfigureAwait(false),
                 "inspect" => await InspectAsync(options, standardOutput, standardError).ConfigureAwait(false),
                 "restore" => await RestoreAsync(options, standardOutput, standardError).ConfigureAwait(false),
+                "metadata-init" => await MetadataInitAsync(options, standardOutput).ConfigureAwait(false),
                 _ => await InvalidAsync(standardError, $"Unknown command: {args[0]}").ConfigureAwait(false)
             };
         }
@@ -57,7 +61,11 @@ public static class FluxVaultCli
             await standardError.WriteLineAsync(ex.Message).ConfigureAwait(false);
             return 2;
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        catch (Exception ex) when (ex is IOException
+                                   or UnauthorizedAccessException
+                                   or InvalidDataException
+                                   or InvalidOperationException
+                                   || ex.GetType().FullName?.StartsWith("Npgsql.", StringComparison.Ordinal) == true)
         {
             await standardError.WriteLineAsync(ex.Message).ConfigureAwait(false);
             return 3;
@@ -70,7 +78,6 @@ public static class FluxVaultCli
         TextWriter standardError)
     {
         var source = Require(options, "source");
-        var repositoryPath = Require(options, "repository");
         options.TryGetValue("mirror", out var mirrorPath);
         var compression = ParseCompression(options.TryGetValue("compression", out var value) ? value : "zstd");
 
@@ -80,7 +87,7 @@ public static class FluxVaultCli
             return 2;
         }
 
-        var repository = CreateRepository(repositoryPath, mirrorPath);
+        var repository = await CreateRepositoryAsync(options, mirrorPath).ConfigureAwait(false);
         await using var stream = File.Open(source, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
         var result = await repository.CommitAsync(new FileCommitRequest(
             WatchedFolderId: "cli",
@@ -104,14 +111,14 @@ public static class FluxVaultCli
         TextWriter standardOutput,
         TextWriter standardError)
     {
-        var repositoryPath = Require(options, "repository");
+        var repositoryPath = GetRepositoryPathForExistenceCheck(options);
         if (!Directory.Exists(repositoryPath))
         {
             await standardError.WriteLineAsync($"Repository not found: {repositoryPath}").ConfigureAwait(false);
             return 2;
         }
 
-        var repository = CreateRepository(repositoryPath);
+        var repository = await CreateRepositoryAsync(options).ConfigureAwait(false);
         var versions = await repository.ListVersionsAsync().ConfigureAwait(false);
         foreach (var version in versions)
         {
@@ -128,7 +135,7 @@ public static class FluxVaultCli
         TextWriter standardOutput,
         TextWriter standardError)
     {
-        var repositoryPath = Require(options, "repository");
+        var repositoryPath = GetRepositoryPathForExistenceCheck(options);
         var versionId = Require(options, "version");
         if (!Directory.Exists(repositoryPath))
         {
@@ -136,7 +143,7 @@ public static class FluxVaultCli
             return 2;
         }
 
-        var repository = CreateRepository(repositoryPath);
+        var repository = await CreateRepositoryAsync(options).ConfigureAwait(false);
         RepositoryInspection inspection;
         try
         {
@@ -163,7 +170,7 @@ public static class FluxVaultCli
         TextWriter standardOutput,
         TextWriter standardError)
     {
-        var repositoryPath = Require(options, "repository");
+        var repositoryPath = GetRepositoryPathForExistenceCheck(options);
         var versionId = Require(options, "version");
         var output = Require(options, "output");
         if (!Directory.Exists(repositoryPath))
@@ -172,7 +179,7 @@ public static class FluxVaultCli
             return 2;
         }
 
-        var repository = CreateRepository(repositoryPath);
+        var repository = await CreateRepositoryAsync(options).ConfigureAwait(false);
         try
         {
             await repository.RestoreAsync(versionId, output).ConfigureAwait(false);
@@ -187,7 +194,67 @@ public static class FluxVaultCli
         return 0;
     }
 
-    private static FileSystemChunkRepository CreateRepository(string repositoryPath, string? mirrorPath = null)
+    private static async Task<int> MetadataInitAsync(
+        IReadOnlyDictionary<string, string> options,
+        TextWriter standardOutput)
+    {
+        var configuration = await LoadConfigurationAsync(options).ConfigureAwait(false);
+        var metadataStore = new PostgreSqlRepositoryMetadataStore(
+            configuration.MetadataStore,
+            configuration.Sync.LocalDevice.DeviceId);
+
+        await metadataStore.InitializeAsync().ConfigureAwait(false);
+        var schemaVersion = await metadataStore.GetSchemaVersionAsync().ConfigureAwait(false);
+        var status = await metadataStore
+            .GetRuntimeStatusAsync(configuration.MetadataStore.ExportLagWarningThreshold)
+            .ConfigureAwait(false);
+
+        await standardOutput.WriteLineAsync(
+                $"Metadata store: {configuration.MetadataStore.Host}:{configuration.MetadataStore.Port}/{configuration.MetadataStore.DatabaseName}")
+            .ConfigureAwait(false);
+        await standardOutput.WriteLineAsync($"Schema initialized: {status.SchemaInitialized}").ConfigureAwait(false);
+        await standardOutput.WriteLineAsync($"Schema version: {schemaVersion}").ConfigureAwait(false);
+        await standardOutput.WriteLineAsync($"Pending outbox: {status.PendingOutboxCount}").ConfigureAwait(false);
+        await standardOutput.WriteLineAsync(
+                $"Oldest unexported UTC: {(status.OldestUnexportedUtc?.ToString("O") ?? "(none)")}")
+            .ConfigureAwait(false);
+        await standardOutput.WriteLineAsync($"Export lag exceeded: {status.IsExportLagExceeded}").ConfigureAwait(false);
+        if (!string.IsNullOrWhiteSpace(status.LastError))
+        {
+            await standardOutput.WriteLineAsync($"Last error: {status.LastError}").ConfigureAwait(false);
+        }
+
+        return 0;
+    }
+
+    private static async Task<IChunkRepository> CreateRepositoryAsync(
+        IReadOnlyDictionary<string, string> options,
+        string? mirrorPath = null)
+    {
+        if (IsLegacyFileManifestMode(options))
+        {
+            return CreateLegacyRepository(Require(options, "repository"), mirrorPath);
+        }
+
+        var configuration = await LoadConfigurationAsync(options).ConfigureAwait(false);
+        if (!string.IsNullOrWhiteSpace(mirrorPath))
+        {
+            configuration = configuration with { MirrorSet = MirrorSetConfiguration.FromLegacyPath(mirrorPath) };
+        }
+
+        var metadataStore = new PostgreSqlRepositoryMetadataStore(
+            configuration.MetadataStore,
+            configuration.Sync.LocalDevice.DeviceId);
+        return new FileSystemChunkRepository(
+            configuration.RepositoryPath,
+            new FastCdcChunker(new ChunkingOptions(64 * 1024, 256 * 1024, 1024 * 1024)),
+            new Blake3ContentHasher(),
+            new ZstdChunkCodec(),
+            configuration.MirrorSet,
+            metadataStore);
+    }
+
+    private static FileSystemChunkRepository CreateLegacyRepository(string repositoryPath, string? mirrorPath = null)
     {
         return new FileSystemChunkRepository(
             repositoryPath,
@@ -195,6 +262,43 @@ public static class FluxVaultCli
             new Blake3ContentHasher(),
             new ZstdChunkCodec(),
             string.IsNullOrWhiteSpace(mirrorPath) ? null : mirrorPath);
+    }
+
+    private static async Task<FluxVaultConfiguration> LoadConfigurationAsync(IReadOnlyDictionary<string, string> options)
+    {
+        var programDataPath = options.TryGetValue("program-data", out var configuredProgramData)
+            ? Path.GetFullPath(configuredProgramData)
+            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "FluxVault");
+        var profileSetStore = new FileFluxVaultProfileSetStore(Path.Combine(programDataPath, "config.json"), programDataPath);
+        var profileSet = await profileSetStore.LoadAsync().ConfigureAwait(false);
+        var profile = options.TryGetValue("profile", out var profileId)
+            ? profileSet.Profiles.FirstOrDefault(value => string.Equals(value.Id, profileId, StringComparison.OrdinalIgnoreCase))
+                ?? throw new ArgumentException($"Profile not found: {profileId}.")
+            : profileSet.ActiveProfile;
+        var configuration = profile.Configuration;
+        if (options.TryGetValue("repository", out var repositoryPath) && !string.IsNullOrWhiteSpace(repositoryPath))
+        {
+            configuration = configuration with { RepositoryPath = Path.GetFullPath(repositoryPath) };
+        }
+
+        return configuration;
+    }
+
+    private static string GetRepositoryPathForExistenceCheck(IReadOnlyDictionary<string, string> options)
+    {
+        if (IsLegacyFileManifestMode(options))
+        {
+            return Require(options, "repository");
+        }
+
+        return options.TryGetValue("repository", out var repositoryPath) && !string.IsNullOrWhiteSpace(repositoryPath)
+            ? Path.GetFullPath(repositoryPath)
+            : LoadConfigurationAsync(options).GetAwaiter().GetResult().RepositoryPath;
+    }
+
+    private static bool IsLegacyFileManifestMode(IReadOnlyDictionary<string, string> options)
+    {
+        return options.ContainsKey("legacy-file-manifest");
     }
 
     private static IReadOnlyDictionary<string, string> ParseOptions(IReadOnlyList<string> args)
@@ -210,6 +314,12 @@ public static class FluxVaultCli
 
             if (index + 1 >= args.Count || args[index + 1].StartsWith("--", StringComparison.Ordinal))
             {
+                if (string.Equals(key, "--legacy-file-manifest", StringComparison.OrdinalIgnoreCase))
+                {
+                    result[key[2..]] = "true";
+                    continue;
+                }
+
                 throw new ArgumentException($"Missing value for {key}.");
             }
 

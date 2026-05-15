@@ -5,8 +5,12 @@ using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Capture;
+using FluxVault.Core.Chunking;
 using FluxVault.Core.Configuration;
+using FluxVault.Core.Content;
 using FluxVault.Core.Service;
+using FluxVault.Core.Storage;
+using FluxVault.Core.Storage.Metadata;
 
 namespace FluxVault.Core.Tests;
 
@@ -46,7 +50,7 @@ public sealed class FluxVaultOperationsPerformanceTests
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
         await store.SaveAsync(configuration);
         var captureProvider = new CountingCaptureProvider();
-        var operations = new FluxVaultOperations(store, captureProvider);
+        var operations = CreateOperations(store, captureProvider);
 
         var summary = await operations.RunBackupNowAsync();
 
@@ -90,7 +94,7 @@ public sealed class FluxVaultOperationsPerformanceTests
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
         await store.SaveAsync(configuration);
         var captureProvider = new CountingCaptureProvider();
-        var operations = new FluxVaultOperations(store, captureProvider);
+        var operations = CreateOperations(store, captureProvider);
 
         var first = await operations.RunBackupNowAsync();
         var second = await operations.RunBackupNowAsync();
@@ -135,7 +139,7 @@ public sealed class FluxVaultOperationsPerformanceTests
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
         await store.SaveAsync(configuration);
         var captureProvider = new CountingCaptureProvider();
-        var operations = new FluxVaultOperations(store, captureProvider);
+        var operations = CreateOperations(store, captureProvider);
 
         var first = await operations.RunBackupNowAsync();
         await Task.Delay(20);
@@ -263,7 +267,32 @@ public sealed class FluxVaultOperationsPerformanceTests
         };
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
         await store.SaveAsync(configuration);
-        return new FluxVaultOperations(store, new NormalFileCaptureProvider());
+        return CreateOperations(store, new NormalFileCaptureProvider());
+    }
+
+    private static FluxVaultOperations CreateOperations(
+        FileFluxVaultConfigurationStore store,
+        IFileCaptureProvider captureProvider)
+    {
+        var metadataStore = new InMemoryRepositoryMetadataStore();
+        return new FluxVaultOperations(
+            store,
+            captureProvider,
+            metadataStoreFactory: _ => metadataStore,
+            repositoryFactory: configuration => CreateRepository(configuration, metadataStore));
+    }
+
+    private static IChunkRepository CreateRepository(
+        FluxVaultConfiguration configuration,
+        IRepositoryMetadataStore metadataStore)
+    {
+        return new FileSystemChunkRepository(
+            configuration.RepositoryPath,
+            new FastCdcChunker(new ChunkingOptions(64 * 1024, 256 * 1024, 1024 * 1024)),
+            new Blake3ContentHasher(),
+            new ZstdChunkCodec(),
+            configuration.MirrorSet,
+            metadataStore);
     }
 
     private sealed class CountingCaptureProvider : IFileCaptureProvider

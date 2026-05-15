@@ -133,6 +133,95 @@
                 </ScrollViewer>
             </TabItem>
 
+            <TabItem Header="Storage">
+                <ScrollViewer Name="StorageOptionsScrollViewer"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <Grid Margin="18">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="18" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="18" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Metadata database" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="1" Text="Provider" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Database engine used for FluxVault metadata." />
+                        <ComboBox Grid.Row="1" Grid.Column="1"
+                                  ItemsSource="{Binding MetadataStoreProviders}"
+                                  SelectedItem="{Binding MetadataStoreProvider}"
+                                  Padding="6"
+                                  Margin="0,0,0,8"
+                                  ToolTip="PostgreSQL is the supported whole-PC metadata store." />
+
+                        <TextBlock Grid.Row="2" Text="Host / port" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Local PostgreSQL endpoint used by the FluxVault service." />
+                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBox Text="{Binding MetadataStoreHost, UpdateSourceTrigger=PropertyChanged}" Width="210" Padding="8"
+                                     ToolTip="PostgreSQL host name or address." />
+                            <TextBox Text="{Binding MetadataStorePort, UpdateSourceTrigger=PropertyChanged}" Width="82" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="PostgreSQL TCP port." />
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="3" Text="Database name" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="FluxVault metadata database name." />
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding MetadataStoreDatabaseName, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8"
+                                 ToolTip="Database created for FluxVault metadata tables." />
+
+                        <TextBlock Grid.Row="4" Text="User name" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Database role used by the FluxVault service." />
+                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding MetadataStoreUsername, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8"
+                                 ToolTip="PostgreSQL login name. Passwords are not stored in this options payload." />
+
+                        <TextBlock Grid.Row="5" Text="Service name" VerticalAlignment="Center" Margin="0,0,14,0"
+                                   ToolTip="Windows service name used by maintenance scripts when checking PostgreSQL availability." />
+                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MetadataStoreServiceName, UpdateSourceTrigger=PropertyChanged}" Padding="8"
+                                 ToolTip="Typical value is postgresql-x64 or the installed version-specific service name." />
+
+                        <TextBlock Grid.Row="7" Grid.ColumnSpan="2" Text="Metadata backup" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="8" Text="Backup directory" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Directory where the backup script writes pg_dump files and metadata recovery bundles." />
+                        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding MetadataStoreBackupDirectory, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8"
+                                 ToolTip="Use a path outside the repository if you want reinstall recovery independent from vault storage." />
+
+                        <TextBlock Grid.Row="9" Text="Backup retention days" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Number of days to keep generated metadata database backup files." />
+                        <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding MetadataStoreBackupRetentionDays, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,8"
+                                 ToolTip="Older backup files are removed by the backup script." />
+
+                        <TextBlock Grid.Row="10" Text="Export lag warning minutes" VerticalAlignment="Center" Margin="0,0,14,0"
+                                   ToolTip="Warn when committed metadata has not been exported to replayable operation files within this window." />
+                        <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding MetadataStoreExportLagWarningMinutes, UpdateSourceTrigger=PropertyChanged}" Padding="8"
+                                 ToolTip="Outbox lag threshold for future metadata journal export health." />
+
+                        <TextBlock Grid.Row="12" Grid.ColumnSpan="2" Text="Concurrency" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="13" Text="Capture workers / DB writers" VerticalAlignment="Center" Margin="0,0,14,0"
+                                   ToolTip="Worker and database writer limits for whole-PC ingest." />
+                        <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal">
+                            <TextBox Text="{Binding MetadataStoreMaxCaptureWorkers, UpdateSourceTrigger=PropertyChanged}" Width="82" Padding="8"
+                                     ToolTip="Maximum metadata-aware capture workers." />
+                            <TextBox Text="{Binding MetadataStoreMaxDbWriterConcurrency, UpdateSourceTrigger=PropertyChanged}" Width="82" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="Maximum concurrent database writer operations allowed by FluxVault." />
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
             <TabItem Header="Advanced">
                 <ScrollViewer Name="AdvancedOptionsScrollViewer"
                               VerticalScrollBarVisibility="Auto"
@@ -268,7 +357,7 @@
 
         <StackPanel Grid.Row="4" Name="OptionsStickyFooter" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Save" Command="{Binding SaveCommand}" Padding="16,8" Margin="0,0,8,0"
-                    ToolTip="Save the current retention, maintenance, workload, cadence, compression, and Explorer options to the service configuration." />
+                    ToolTip="Save the current retention, maintenance, workload, storage, cadence, compression, and Explorer options to the service configuration." />
             <Button Content="Close" Click="Close_Click" Padding="16,8"
                     ToolTip="Close Options without applying any unsaved changes." />
         </StackPanel>

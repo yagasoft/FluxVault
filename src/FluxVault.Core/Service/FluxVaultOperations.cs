@@ -13,6 +13,7 @@ using FluxVault.Core.Content;
 using FluxVault.Core.Ipc;
 using FluxVault.Core.Policies;
 using FluxVault.Core.Storage;
+using FluxVault.Core.Storage.Metadata;
 using FluxVault.Core.Sync;
 
 namespace FluxVault.Core.Service;
@@ -21,11 +22,17 @@ public sealed class FluxVaultOperations(
     IFluxVaultConfigurationStore configurationStore,
     IFileCaptureProvider captureProvider,
     IRepositoryMaintenanceStateStore? repositoryMaintenanceStateStore = null,
-    string? maintenanceStateRoot = null) : IFluxVaultRequestHandler
+    string? maintenanceStateRoot = null,
+    Func<FluxVaultConfiguration, IRepositoryMetadataStore>? metadataStoreFactory = null,
+    Func<FluxVaultConfiguration, IChunkRepository>? repositoryFactory = null) : IFluxVaultRequestHandler
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
     private readonly IRepositoryMaintenanceStateStore repositoryMaintenanceStateStore =
         repositoryMaintenanceStateStore ?? new InMemoryRepositoryMaintenanceStateStore();
+    private readonly Func<FluxVaultConfiguration, IRepositoryMetadataStore> metadataStoreFactory =
+        metadataStoreFactory ?? CreateMetadataStore;
+    private readonly Func<FluxVaultConfiguration, IChunkRepository> repositoryFactory =
+        repositoryFactory ?? (configuration => CreateRepository(configuration, (metadataStoreFactory ?? CreateMetadataStore)(configuration)));
     private readonly string restoreRehearsalRoot = Path.Combine(
         maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
         "restore-rehearsal");
@@ -893,6 +900,30 @@ public sealed class FluxVaultOperations(
         }
     }
 
+    private async Task<MetadataStoreRuntimeStatus> GetMetadataStoreStatusAsync(
+        FluxVaultConfiguration configuration,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await metadataStoreFactory(configuration)
+                .GetRuntimeStatusAsync(configuration.MetadataStore.ExportLagWarningThreshold, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or IOException or TimeoutException)
+        {
+            return new MetadataStoreRuntimeStatus(
+                Provider: configuration.MetadataStore.Provider,
+                Endpoint: $"{configuration.MetadataStore.Host}:{configuration.MetadataStore.Port}/{configuration.MetadataStore.DatabaseName}",
+                SchemaInitialized: false,
+                LastError: exception.Message,
+                PendingOutboxCount: 0,
+                OldestUnexportedUtc: null,
+                OldestUnexportedAge: null,
+                IsExportLagExceeded: false);
+        }
+    }
+
     public Task<FluxVaultServiceStatus> GetStatusAsync(CancellationToken cancellationToken = default)
     {
         return GetStatusAsync(FluxVaultStatusDetailLevel.Full, cancellationToken);
@@ -940,7 +971,10 @@ public sealed class FluxVaultOperations(
             Fleet: BuildFleetStatus(configuration.Fleet),
             Watchers: GetWatcherStatuses(),
             TrackedEntries: trackedEntries,
-            BackupRuntime: GetBackupRuntime());
+            BackupRuntime: GetBackupRuntime(),
+            MetadataStore: isFast
+                ? null
+                : await GetMetadataStoreStatusAsync(configuration, cancellationToken).ConfigureAwait(false));
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -2059,14 +2093,34 @@ public sealed class FluxVaultOperations(
         }
     }
 
-    private static FileSystemChunkRepository CreateRepository(FluxVaultConfiguration configuration)
+    private IChunkRepository CreateRepository(FluxVaultConfiguration configuration)
+    {
+        return repositoryFactory(configuration);
+    }
+
+    private static IRepositoryMetadataStore CreateMetadataStore(FluxVaultConfiguration configuration)
+    {
+        if (configuration.MetadataStore.Provider != MetadataStoreProvider.PostgreSql)
+        {
+            throw new InvalidOperationException($"Unsupported metadata store provider: {configuration.MetadataStore.Provider}.");
+        }
+
+        return new PostgreSqlRepositoryMetadataStore(
+            configuration.MetadataStore,
+            configuration.Sync.LocalDevice.DeviceId);
+    }
+
+    private static IChunkRepository CreateRepository(
+        FluxVaultConfiguration configuration,
+        IRepositoryMetadataStore metadataStore)
     {
         return new FileSystemChunkRepository(
             configuration.RepositoryPath,
             new FastCdcChunker(new ChunkingOptions(64 * 1024, 256 * 1024, 1024 * 1024)),
             new Blake3ContentHasher(),
             new ZstdChunkCodec(),
-            configuration.MirrorSet);
+            configuration.MirrorSet,
+            metadataStore);
     }
 
     private static string Require(string? value, string name)

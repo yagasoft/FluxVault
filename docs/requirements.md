@@ -55,6 +55,11 @@ credential-reference-only configuration and fake-client-tested contracts.
 - Dashboard automatic refresh uses a lightweight status path that avoids full
   repository inventory enumeration. Full inventory refresh remains available for
   explicit user actions and screens that need tracked-entry detail.
+- Whole-PC scale metadata must use PostgreSQL as the primary metadata store on
+  each PC. Chunk payloads remain content-addressed files or object-store
+  artefacts outside the database. Options must expose meaningful metadata-store
+  and backup settings, and normal dashboard/version queries must move toward
+  indexed database reads rather than manifest-directory scans.
 - Backup Now and service-triggered scans must avoid rereading source content
   when repository metadata proves the file length and source last-write time
   are unchanged from the latest captured version. Periodic deep verification

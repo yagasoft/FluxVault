@@ -20,6 +20,21 @@ public sealed class InMemoryRepositoryMetadataStore : IRepositoryMetadataStore
         return Task.CompletedTask;
     }
 
+    public Task RecordVersionsAsync(IReadOnlyCollection<FileVersionManifest> manifestsToRecord, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(manifestsToRecord);
+        lock (gate)
+        {
+            foreach (var manifest in manifestsToRecord)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                manifests[manifest.VersionId] = manifest;
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
     public Task<FileVersionManifest> ReadManifestAsync(string versionId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
@@ -43,6 +58,47 @@ public sealed class InMemoryRepositoryMetadataStore : IRepositoryMetadataStore
                     .OrderByDescending(manifest => manifest.CapturedAtUtc)
                     .ThenByDescending(manifest => manifest.VersionId, StringComparer.Ordinal)
                     .ToArray());
+        }
+    }
+
+    public Task<FileVersionManifest?> FindLatestManifestAsync(
+        string sourcePath,
+        RepositoryEntryKind entryKind,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);
+        var fullPath = Path.GetFullPath(sourcePath);
+        lock (gate)
+        {
+            return Task.FromResult(manifests.Values
+                .Where(manifest => PathEquals(manifest.SourcePath, fullPath))
+                .Where(manifest => manifest.EntryKind == entryKind)
+                .OrderByDescending(manifest => manifest.CapturedAtUtc)
+                .ThenByDescending(manifest => manifest.VersionId, StringComparer.Ordinal)
+                .FirstOrDefault());
+        }
+    }
+
+    public Task<FileVersionManifest?> FindLiveFileByContentSignatureAsync(
+        string sourcePath,
+        string contentSignature,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(contentSignature);
+        var fullPath = Path.GetFullPath(sourcePath);
+        lock (gate)
+        {
+            return Task.FromResult(manifests.Values
+                .Where(manifest => !PathEquals(manifest.SourcePath, fullPath))
+                .Where(manifest => manifest.EntryKind == RepositoryEntryKind.File && !manifest.IsDeleted)
+                .Where(manifest => string.Equals(
+                    RepositoryMetadataStoreHelpers.GetContentSignature(manifest),
+                    contentSignature,
+                    StringComparison.Ordinal))
+                .OrderBy(manifest => manifest.CapturedAtUtc)
+                .ThenBy(manifest => manifest.VersionId, StringComparer.Ordinal)
+                .FirstOrDefault());
         }
     }
 
@@ -111,5 +167,13 @@ public sealed class InMemoryRepositoryMetadataStore : IRepositoryMetadataStore
             OldestUnexportedUtc: null,
             OldestUnexportedAge: null,
             IsExportLagExceeded: false));
+    }
+
+    private static bool PathEquals(string left, string right)
+    {
+        return string.Equals(
+            Path.GetFullPath(left).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
+            Path.GetFullPath(right).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
+            StringComparison.OrdinalIgnoreCase);
     }
 }

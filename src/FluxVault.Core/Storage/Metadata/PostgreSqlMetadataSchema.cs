@@ -227,5 +227,9 @@ public static class PostgreSqlMetadataSchema
 
         CREATE INDEX IF NOT EXISTS ix_metadata_outbox_export
             ON fluxvault.metadata_outbox (exported_at_utc, created_at_utc);
+
+        CREATE INDEX IF NOT EXISTS ix_metadata_outbox_version_export
+            ON fluxvault.metadata_outbox (version_id, exported_at_utc)
+            WHERE version_id IS NOT NULL;
         """;
 }

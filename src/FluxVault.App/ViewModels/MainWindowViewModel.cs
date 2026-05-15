@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text.Json;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -20,6 +21,7 @@ namespace FluxVault.App.ViewModels;
 public sealed partial class MainWindowViewModel : ObservableObject
 {
     private const int MirrorsWorkspaceIndex = 3;
+    private static readonly JsonSerializerOptions ConfigurationFingerprintJsonOptions = new(JsonSerializerDefaults.Web);
     private readonly IFluxVaultServiceClient client;
     private readonly IFluxVaultWindowsServiceController windowsServiceController;
     private readonly IRestoreDestinationPicker restoreDestinationPicker;
@@ -34,6 +36,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private Task? autoRefreshTask;
     private bool isApplyingStatus;
     private bool hasLocalConfigurationChanges;
+    private string? lastAppliedConfigurationFingerprint;
     private RetentionPolicy currentRetentionPolicy = RetentionPolicy.CreateDefault();
     private CaptureCadencePolicy currentCaptureCadencePolicy = CaptureCadencePolicy.CreateDefault();
     private CodecPolicy currentCodecPolicy = CodecPolicy.CreateDefault();
@@ -101,6 +104,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private VersionRow? selectedVersion;
+
+    [ObservableProperty]
+    private bool isPreviewBusy;
+
+    [ObservableProperty]
+    private string previewStatus = string.Empty;
 
     [ObservableProperty]
     private string restoreHintPath = string.Empty;
@@ -536,7 +545,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     return;
                 }
 
-                ApplyStatus(response.Status, preserveLocalConfiguration: hasLocalConfigurationChanges && !forceConfigurationReload);
+                ApplyStatus(
+                    response.Status,
+                    preserveLocalConfiguration: hasLocalConfigurationChanges && !forceConfigurationReload,
+                    isAutomatic,
+                    forceConfigurationReload);
             }
             finally
             {
@@ -614,6 +627,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
     partial void OnSelectedVersionChanged(VersionRow? value)
     {
         RestoreSelectedCommand.NotifyCanExecuteChanged();
+        OpenSelectedVersionPreviewCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnIsPreviewBusyChanged(bool value)
+    {
+        OpenSelectedVersionPreviewCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnSelectedProfileChanged(FluxVaultProfileRow? value)
@@ -1254,7 +1273,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         await ShowVersionsForPathAsync(selection.Value.Path).ConfigureAwait(true);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanPreviewSelectedVersion))]
     private async Task OpenSelectedVersionPreviewAsync()
     {
         var selectedVersion = SelectedVersion;
@@ -1264,6 +1283,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
 
         await OpenVersionPreviewAsync(selectedVersion).ConfigureAwait(true);
+    }
+
+    private bool CanPreviewSelectedVersion()
+    {
+        return !IsPreviewBusy && SelectedVersion is { EntryKind: RepositoryEntryKind.File };
     }
 
     internal async Task RestoreVersionAsync(VersionRow selectedVersion)
@@ -1364,6 +1388,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
             return;
         }
 
+        if (IsPreviewBusy)
+        {
+            return;
+        }
+
+        IsPreviewBusy = true;
+        PreviewStatus = "Preparing preview...";
         try
         {
             var response = await client.SendAsync(FluxVaultIpcRequest.RestoreVersionPreview(selectedVersion.VersionId))
@@ -1380,6 +1411,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
         {
             SetServiceStatus($"Service connection: version preview failed ({ex.Message})");
+        }
+        finally
+        {
+            PreviewStatus = string.Empty;
+            IsPreviewBusy = false;
         }
     }
 
@@ -1733,14 +1769,24 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    private void ApplyStatus(FluxVaultServiceStatus status, bool preserveLocalConfiguration)
+    private void ApplyStatus(
+        FluxVaultServiceStatus status,
+        bool preserveLocalConfiguration,
+        bool isAutomatic = false,
+        bool forceConfigurationReload = false)
     {
         var selectedVersionId = SelectedVersion?.VersionId;
+        var configurationFingerprint = ComputeConfigurationFingerprint(status.Configuration);
+        var shouldApplyConfiguration = !preserveLocalConfiguration
+                                       && (!isAutomatic
+                                           || forceConfigurationReload
+                                           || lastAppliedConfigurationFingerprint is null
+                                           || !string.Equals(lastAppliedConfigurationFingerprint, configurationFingerprint, StringComparison.Ordinal));
         isApplyingStatus = true;
         try
         {
             ApplyProfiles(status);
-            if (!preserveLocalConfiguration)
+            if (shouldApplyConfiguration)
             {
                 RepositoryPath = status.Configuration.RepositoryPath;
                 var mirrorSet = (status.Configuration.MirrorSet
@@ -1772,6 +1818,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 {
                     FileBrowser.LoadRoots();
                 }
+
+                lastAppliedConfigurationFingerprint = configurationFingerprint;
             }
 
             if (status.TrackedEntries is not null)
@@ -1860,7 +1908,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                         ?? string.Empty));
             }
 
-            if (!preserveLocalConfiguration)
+            if (shouldApplyConfiguration)
             {
                 MarkStatusApplied();
             }
@@ -1937,6 +1985,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
             DirectCloud: currentDirectCloud,
             SecurityPosture: currentSecurityPosture,
             Fleet: currentFleet);
+    }
+
+    private static string ComputeConfigurationFingerprint(FluxVaultConfiguration configuration)
+    {
+        return JsonSerializer.Serialize(configuration, ConfigurationFingerprintJsonOptions);
     }
 
     private string UniqueProfileId(string displayName)

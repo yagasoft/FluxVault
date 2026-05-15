@@ -9,6 +9,8 @@
         Background="#F4F6F8"
         Icon="Assets/FluxVault.ico">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
         <Style TargetType="Button">
             <Setter Property="Padding" Value="14,7" />
             <Setter Property="Margin" Value="6,0,0,0" />
@@ -442,7 +444,31 @@
 
             <TabItem Header="🧱 Repository">
                 <Grid Margin="18">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" LastChildFill="True">
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                            <ProgressBar Width="120"
+                                         Height="4"
+                                         Margin="0,0,8,0"
+                                         VerticalAlignment="Center"
+                                         IsIndeterminate="True"
+                                         Visibility="{Binding IsPreviewBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <TextBlock Text="{Binding PreviewStatus}"
+                                       VerticalAlignment="Center"
+                                       Foreground="#5F6368"
+                                       Margin="0,0,8,0" />
+                            <Button Content="Preview selected"
+                                    Command="{Binding OpenSelectedVersionPreviewCommand}" />
+                        </StackPanel>
+                    </DockPanel>
+
                     <DataGrid Name="RecentVersionsGrid"
+                              Grid.Row="2"
                               ItemsSource="{Binding RecentVersions}"
                               SelectedItem="{Binding SelectedVersion}"
                               MouseDoubleClick="RecentVersionsGrid_MouseDoubleClick">

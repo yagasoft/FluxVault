@@ -140,6 +140,62 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         return manifests;
     }
 
+    public async Task<FileVersionManifest?> FindLatestManifestAsync(
+        string sourcePath,
+        RepositoryEntryKind entryKind,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);
+        await InitializeAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT manifest_json::text, version_id
+            FROM fluxvault.versions
+            WHERE source_path = @source_path AND entry_kind = @entry_kind
+            ORDER BY captured_at_utc DESC, version_id DESC
+            LIMIT 1;
+            """,
+            connection);
+        command.Parameters.AddWithValue("source_path", Path.GetFullPath(sourcePath));
+        command.Parameters.AddWithValue("entry_kind", entryKind.ToString());
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        return await reader.ReadAsync(cancellationToken).ConfigureAwait(false)
+            ? DeserializeManifest(reader.GetString(0), reader.GetString(1))
+            : null;
+    }
+
+    public async Task<FileVersionManifest?> FindLiveFileByContentSignatureAsync(
+        string sourcePath,
+        string contentSignature,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(contentSignature);
+        await InitializeAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT manifest_json::text, version_id
+            FROM fluxvault.versions
+            WHERE entry_kind = 'File'
+              AND is_deleted = false
+              AND source_path <> @source_path
+              AND content_signature = @content_signature
+            ORDER BY captured_at_utc ASC, version_id ASC
+            LIMIT 1;
+            """,
+            connection);
+        command.Parameters.AddWithValue("source_path", Path.GetFullPath(sourcePath));
+        command.Parameters.AddWithValue("content_signature", contentSignature);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        return await reader.ReadAsync(cancellationToken).ConfigureAwait(false)
+            ? DeserializeManifest(reader.GetString(0), reader.GetString(1))
+            : null;
+    }
+
     public async Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default)
     {
         var manifests = await ListManifestsAsync(cancellationToken).ConfigureAwait(false);
@@ -334,6 +390,53 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
             }
         }
 
+        return await ExportOutboxRowsAsync(repositoryPath, connection, rows, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<int> ExportOutboxAsync(
+        string repositoryPath,
+        IReadOnlyCollection<string> versionIds,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(repositoryPath);
+        ArgumentNullException.ThrowIfNull(versionIds);
+        var ids = versionIds.Where(id => !string.IsNullOrWhiteSpace(id)).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        if (ids.Length == 0)
+        {
+            return 0;
+        }
+
+        await InitializeAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+        await using var select = new NpgsqlCommand(
+            """
+            SELECT outbox_id, device_id, payload_json::text
+            FROM fluxvault.metadata_outbox
+            WHERE exported_at_utc IS NULL
+              AND version_id = ANY(@version_ids)
+            ORDER BY outbox_id;
+            """,
+            connection);
+        select.Parameters.AddWithValue("version_ids", ids);
+        var rows = new List<OutboxRow>();
+        await using (var reader = await select.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
+        {
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                rows.Add(new OutboxRow(reader.GetInt64(0), reader.GetString(1), reader.GetString(2)));
+            }
+        }
+
+        return await ExportOutboxRowsAsync(repositoryPath, connection, rows, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<int> ExportOutboxRowsAsync(
+        string repositoryPath,
+        NpgsqlConnection connection,
+        IReadOnlyList<OutboxRow> rows,
+        CancellationToken cancellationToken)
+    {
         var exported = 0;
         foreach (var row in rows)
         {

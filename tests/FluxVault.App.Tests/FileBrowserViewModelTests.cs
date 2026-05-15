@@ -458,6 +458,43 @@ public sealed class FileBrowserViewModelTests
     }
 
     [Fact]
+    public void Tracked_entry_refresh_updates_visible_phantoms_without_rebuilding_selection_or_address_edit()
+    {
+        var fileSystem = new MutableFileBrowserFileSystem(
+            [Folder(@"D:\")],
+            new Dictionary<string, IReadOnlyList<FileBrowserFolderInfo>>(StringComparer.OrdinalIgnoreCase)
+            {
+                [Path.GetFullPath(@"D:\")] = [Folder(@"D:\Work")]
+            },
+            new Dictionary<string, IReadOnlyList<FileBrowserFileInfo>>(StringComparer.OrdinalIgnoreCase)
+            {
+                [Path.GetFullPath(@"D:\Work")] = [new FileBrowserFileInfo(@"D:\Work\live.txt", "live.txt", 10)]
+            });
+        var viewModel = new FileBrowserViewModel(fileSystem);
+        viewModel.LoadSelectionRules([]);
+        viewModel.LoadRoots();
+        var root = Assert.Single(viewModel.Roots);
+        viewModel.LoadChildren(root);
+        var work = Assert.Single(root.Children);
+        viewModel.SelectFolder(work);
+        viewModel.SelectedFile = Assert.Single(viewModel.Files);
+        var selectedFolder = viewModel.SelectedFolder;
+        var selectedFile = viewModel.SelectedFile;
+        viewModel.BeginAddressPathEdit();
+        viewModel.AddressPath = @"D:\Typed\While\Refresh";
+
+        viewModel.LoadTrackedEntries(
+            [
+                Tracked("deleted", @"D:\Work\missing.txt", RepositoryEntryKind.File, isDeleted: true)
+            ]);
+
+        Assert.Same(selectedFolder, viewModel.SelectedFolder);
+        Assert.Same(selectedFile, viewModel.SelectedFile);
+        Assert.Equal(@"D:\Typed\While\Refresh", viewModel.AddressPath);
+        Assert.Contains(viewModel.Files, file => file.Path == Path.GetFullPath(@"D:\Work\missing.txt") && file.IsPhantom);
+    }
+
+    [Fact]
     public void Refresh_preserves_expanded_folders()
     {
         var fileSystem = new MutableFileBrowserFileSystem(

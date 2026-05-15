@@ -33,6 +33,22 @@ public interface IRepositoryMetadataStore
         throw new NotSupportedException("This metadata store cannot list full manifests.");
     }
 
+    Task<FileVersionManifest?> FindLatestManifestAsync(
+        string sourcePath,
+        RepositoryEntryKind entryKind,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotSupportedException("This metadata store cannot perform targeted latest-manifest lookups.");
+    }
+
+    Task<FileVersionManifest?> FindLiveFileByContentSignatureAsync(
+        string sourcePath,
+        string contentSignature,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotSupportedException("This metadata store cannot perform targeted content-signature lookups.");
+    }
+
     Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default);
@@ -69,5 +85,13 @@ public interface IRepositoryMetadataStore
         CancellationToken cancellationToken = default)
     {
         return Task.FromResult(0);
+    }
+
+    Task<int> ExportOutboxAsync(
+        string repositoryPath,
+        IReadOnlyCollection<string> versionIds,
+        CancellationToken cancellationToken = default)
+    {
+        return ExportOutboxAsync(repositoryPath, cancellationToken);
     }
 }

@@ -109,13 +109,22 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             }
 
             var sourcePath = Path.GetFullPath(request.SourcePath);
-            var existingManifests = await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false);
+            var existingManifests = metadataStore is null
+                ? await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false)
+                : null;
             var contentSignature = ComputeContentSignature(logicalLength, chunks);
-            var lineage = request.SyncOrigin is not null
-                ? ResolveSyncLineage(sourcePath, existingManifests)
-                : ReadRestoreHint(sourcePath) is { } restoreHint
-                ? ResolveRestoreLineage(sourcePath, restoreHint, existingManifests)
-                : ResolveCaptureLineage(sourcePath, contentSignature, existingManifests);
+            var lineage = metadataStore is null
+                ? request.SyncOrigin is not null
+                    ? ResolveSyncLineage(sourcePath, existingManifests ?? [])
+                    : ReadRestoreHint(sourcePath) is { } restoreHint
+                    ? ResolveRestoreLineage(sourcePath, restoreHint, existingManifests ?? [])
+                    : ResolveCaptureLineage(sourcePath, contentSignature, existingManifests ?? [])
+                : await ResolveMetadataBackedLineageAsync(
+                    sourcePath,
+                    contentSignature,
+                    request.SyncOrigin is not null,
+                    ReadRestoreHint(sourcePath),
+                    cancellationToken).ConfigureAwait(false);
 
             var manifest = new FileVersionManifest(
                 VersionId: Guid.CreateVersion7().ToString("N"),
@@ -135,10 +144,15 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 SyncOrigin: request.SyncOrigin,
                 SourceLastWriteUtc: request.SourceLastWriteUtc);
 
-            mirrorWarnings.AddRange(await WriteManifestAsync(manifest, cancellationToken).ConfigureAwait(false));
-            existingManifests.Add(manifest);
-            mirrorWarnings.AddRange(await WriteFolderCascadeManifestsAsync(existingManifests, manifest, request.WatchedFolderPath, cancellationToken)
+            var manifestsToRecord = new List<FileVersionManifest> { manifest };
+            existingManifests?.Add(manifest);
+            manifestsToRecord.AddRange(await BuildFolderCascadeManifestsAsync(
+                    existingManifests,
+                    manifest,
+                    request.WatchedFolderPath,
+                    cancellationToken)
                 .ConfigureAwait(false));
+            mirrorWarnings.AddRange(await WriteManifestsAsync(manifestsToRecord, cancellationToken).ConfigureAwait(false));
             if (lineage.OperationType == VersionOperationType.Restore)
             {
                 DeleteRestoreHint(sourcePath);
@@ -213,8 +227,12 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
             var sourcePath = Path.GetFullPath(request.SourcePath);
             var entryKind = request.IsDirectory ? RepositoryEntryKind.Folder : RepositoryEntryKind.File;
-            var existingManifests = await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false);
-            var deletedFrom = LatestForPath(existingManifests, sourcePath, entryKind);
+            var existingManifests = metadataStore is null
+                ? await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false)
+                : null;
+            var deletedFrom = existingManifests is null
+                ? await FindLatestManifestAsync(sourcePath, entryKind, cancellationToken).ConfigureAwait(false)
+                : LatestForPath(existingManifests, sourcePath, entryKind);
             if (deletedFrom is null || deletedFrom.IsDeleted)
             {
                 return null;
@@ -237,10 +255,15 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 DeletedFromVersionId: deletedFrom.VersionId);
 
             var mirrorWarnings = new List<string>();
-            mirrorWarnings.AddRange(await WriteManifestAsync(manifest, cancellationToken).ConfigureAwait(false));
-            existingManifests.Add(manifest);
-            mirrorWarnings.AddRange(await WriteFolderCascadeManifestsAsync(existingManifests, manifest, request.WatchedFolderPath, cancellationToken)
+            var manifestsToRecord = new List<FileVersionManifest> { manifest };
+            existingManifests?.Add(manifest);
+            manifestsToRecord.AddRange(await BuildFolderCascadeManifestsAsync(
+                    existingManifests,
+                    manifest,
+                    request.WatchedFolderPath,
+                    cancellationToken)
                 .ConfigureAwait(false));
+            mirrorWarnings.AddRange(await WriteManifestsAsync(manifestsToRecord, cancellationToken).ConfigureAwait(false));
             return new RepositoryDeletionResult(manifest, CondenseMirrorWarnings(mirrorWarnings));
         }
         finally
@@ -1470,12 +1493,28 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         FileVersionManifest manifest,
         CancellationToken cancellationToken)
     {
+        return await WriteManifestsAsync([manifest], cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<IReadOnlyList<string>> WriteManifestsAsync(
+        IReadOnlyCollection<FileVersionManifest> manifests,
+        CancellationToken cancellationToken)
+    {
+        if (manifests.Count == 0)
+        {
+            return [];
+        }
+
         if (metadataStore is not null)
         {
-            await metadataStore.RecordVersionAsync(manifest, cancellationToken).ConfigureAwait(false);
+            await metadataStore.RecordVersionsAsync(manifests, cancellationToken).ConfigureAwait(false);
             try
             {
-                await metadataStore.ExportOutboxAsync(rootPath, cancellationToken).ConfigureAwait(false);
+                await metadataStore.ExportOutboxAsync(
+                        rootPath,
+                        manifests.Select(manifest => manifest.VersionId).ToArray(),
+                        cancellationToken)
+                    .ConfigureAwait(false);
                 return [];
             }
             catch (Exception exception) when (exception is not OperationCanceledException)
@@ -1484,13 +1523,20 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             }
         }
 
-        var manifestBytes = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonOptions);
-        AtomicWrite(ManifestPath(rootPath, manifest.VersionId), manifestBytes);
-        return MirrorManifestIfNeeded(manifest.VersionId, manifestBytes);
+        var mirrorWarnings = new List<string>();
+        foreach (var manifest in manifests)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var manifestBytes = JsonSerializer.SerializeToUtf8Bytes(manifest, JsonOptions);
+            AtomicWrite(ManifestPath(rootPath, manifest.VersionId), manifestBytes);
+            mirrorWarnings.AddRange(MirrorManifestIfNeeded(manifest.VersionId, manifestBytes));
+        }
+
+        return mirrorWarnings;
     }
 
-    private async Task<IReadOnlyList<string>> WriteFolderCascadeManifestsAsync(
-        ICollection<FileVersionManifest> existingManifests,
+    private async Task<IReadOnlyList<FileVersionManifest>> BuildFolderCascadeManifestsAsync(
+        ICollection<FileVersionManifest>? existingManifests,
         FileVersionManifest childManifest,
         string? watchedFolderPath,
         CancellationToken cancellationToken)
@@ -1501,13 +1547,15 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             return [];
         }
 
-        var mirrorWarnings = new List<string>();
+        var manifests = new List<FileVersionManifest>();
         var currentChild = childManifest;
         foreach (var folderPath in folderPaths)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var parent = LatestForPath(existingManifests, folderPath, RepositoryEntryKind.Folder);
+            var parent = existingManifests is null
+                ? await FindLatestManifestAsync(folderPath, RepositoryEntryKind.Folder, cancellationToken).ConfigureAwait(false)
+                : LatestForPath(existingManifests, folderPath, RepositoryEntryKind.Folder);
             var folderEntries = MergeFolderEntries(parent?.FolderEntries, ToFolderEntry(currentChild));
             var logicalLength = folderEntries
                 .Where(entry => !entry.IsDeleted)
@@ -1526,12 +1574,12 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 EntryKind: RepositoryEntryKind.Folder,
                 FolderEntries: folderEntries);
 
-            mirrorWarnings.AddRange(await WriteManifestAsync(folderManifest, cancellationToken).ConfigureAwait(false));
-            existingManifests.Add(folderManifest);
+            manifests.Add(folderManifest);
+            existingManifests?.Add(folderManifest);
             currentChild = folderManifest;
         }
 
-        return mirrorWarnings;
+        return manifests;
     }
 
     private static void AddMissingAction(
@@ -2350,6 +2398,113 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         {
             File.Delete(hintPath);
         }
+    }
+
+    private async Task<LineageResolution> ResolveMetadataBackedLineageAsync(
+        string sourcePath,
+        string contentSignature,
+        bool isSyncOrigin,
+        RestoreLineageHint? restoreHint,
+        CancellationToken cancellationToken)
+    {
+        var samePathParent = await FindLatestManifestAsync(sourcePath, RepositoryEntryKind.File, cancellationToken)
+            .ConfigureAwait(false);
+        if (isSyncOrigin)
+        {
+            return new LineageResolution(
+                VersionOperationType.RemoteSync,
+                samePathParent is null ? [] : [samePathParent.VersionId],
+                null,
+                samePathParent is null ? null : GetForkOriginVersionId(samePathParent),
+                null,
+                null);
+        }
+
+        if (restoreHint is not null)
+        {
+            return new LineageResolution(
+                VersionOperationType.Restore,
+                samePathParent is null ? [] : [samePathParent.VersionId],
+                restoreHint.RestoredFromVersionId,
+                restoreHint.ForkOriginVersionId,
+                null,
+                null);
+        }
+
+        if (samePathParent is not null)
+        {
+            return new LineageResolution(
+                VersionOperationType.Capture,
+                [samePathParent.VersionId],
+                null,
+                GetForkOriginVersionId(samePathParent),
+                null,
+                null);
+        }
+
+        var inheritedFrom = await FindLiveFileByContentSignatureAsync(sourcePath, contentSignature, cancellationToken)
+            .ConfigureAwait(false);
+        if (inheritedFrom is not null)
+        {
+            return new LineageResolution(
+                VersionOperationType.InheritedCopy,
+                [inheritedFrom.VersionId],
+                null,
+                GetForkOriginVersionId(inheritedFrom) ?? inheritedFrom.VersionId,
+                inheritedFrom.VersionId,
+                inheritedFrom.SourcePath);
+        }
+
+        return new LineageResolution(VersionOperationType.Capture, [], null, null, null, null);
+    }
+
+    private async Task<FileVersionManifest?> FindLatestManifestAsync(
+        string sourcePath,
+        RepositoryEntryKind entryKind,
+        CancellationToken cancellationToken)
+    {
+        if (metadataStore is not null)
+        {
+            try
+            {
+                return await metadataStore.FindLatestManifestAsync(sourcePath, entryKind, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            catch (NotSupportedException)
+            {
+            }
+        }
+
+        return LatestForPath(
+            await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false),
+            sourcePath,
+            entryKind);
+    }
+
+    private async Task<FileVersionManifest?> FindLiveFileByContentSignatureAsync(
+        string sourcePath,
+        string contentSignature,
+        CancellationToken cancellationToken)
+    {
+        if (metadataStore is not null)
+        {
+            try
+            {
+                return await metadataStore.FindLiveFileByContentSignatureAsync(sourcePath, contentSignature, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            catch (NotSupportedException)
+            {
+            }
+        }
+
+        return (await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false))
+            .Where(manifest => !PathEquals(manifest.SourcePath, sourcePath))
+            .Where(manifest => manifest.EntryKind == RepositoryEntryKind.File && !manifest.IsDeleted)
+            .Where(manifest => string.Equals(GetContentSignature(manifest), contentSignature, StringComparison.Ordinal))
+            .OrderBy(manifest => manifest.CapturedAtUtc)
+            .ThenBy(manifest => manifest.VersionId, StringComparer.Ordinal)
+            .FirstOrDefault();
     }
 
     private LineageResolution ResolveRestoreLineage(

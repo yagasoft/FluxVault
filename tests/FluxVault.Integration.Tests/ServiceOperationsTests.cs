@@ -91,6 +91,35 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
+    public async Task Preview_restore_marks_file_readonly_and_reuses_cached_preview()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var source = Path.Combine(watched, "draft.txt");
+        await File.WriteAllTextAsync(source, "preview version");
+        var configuration = NewConfiguration(workspace, watched);
+        var operations = CreateOperations(workspace, configuration);
+        await operations.SaveConfigurationAsync(configuration);
+        await operations.RunBackupNowAsync();
+        var version = Assert.Single(await operations.ListVersionsAsync());
+
+        var first = await operations.HandleAsync(FluxVaultIpcRequest.RestoreVersionPreview(version.VersionId));
+        Assert.True(first.Success);
+        Assert.NotNull(first.OutputPath);
+        var firstWriteTime = File.GetLastWriteTimeUtc(first.OutputPath);
+        await Task.Delay(TimeSpan.FromMilliseconds(20));
+
+        var second = await operations.HandleAsync(FluxVaultIpcRequest.RestoreVersionPreview(version.VersionId));
+
+        Assert.True(second.Success);
+        Assert.NotNull(second.OutputPath);
+        Assert.Equal(first.OutputPath, second.OutputPath);
+        Assert.True((File.GetAttributes(second.OutputPath!) & FileAttributes.ReadOnly) != 0);
+        Assert.Equal(firstWriteTime, File.GetLastWriteTimeUtc(second.OutputPath!));
+    }
+
+    [Fact]
     public async Task Repeated_edits_create_multiple_versions_for_same_file()
     {
         using var workspace = TemporaryWorkspace.Create();

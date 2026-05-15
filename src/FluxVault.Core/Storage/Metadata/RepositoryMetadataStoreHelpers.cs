@@ -62,7 +62,7 @@ internal static class RepositoryMetadataStoreHelpers
         return $"{Path.GetFullPath(sourcePath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant()}|{entryKind}";
     }
 
-    private static string GetContentSignature(FileVersionManifest manifest)
+    public static string GetContentSignature(FileVersionManifest manifest)
     {
         return manifest.ContentSignature ?? ComputeContentSignature(manifest.LogicalLength, manifest.Chunks);
     }

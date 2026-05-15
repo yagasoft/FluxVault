@@ -11,6 +11,9 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
     private readonly Func<VersionInventoryVersionRow, Task> restoreVersion;
     private readonly Func<VersionInventoryVersionRow, Task> openVersionPreview;
     private readonly Dictionary<string, VersionInventoryVersionRow> versionsById = new(StringComparer.OrdinalIgnoreCase);
+    private readonly IReadOnlyList<VersionInventoryVersionRow> allVersionRows;
+    private string currentFocusPath;
+    private RepositoryEntryKind? currentFocusKind;
 
     public VersionInventoryViewModel(
         string folderPath,
@@ -35,9 +38,9 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
             .ThenByDescending(version => version.VersionId, StringComparer.Ordinal)
             .ToArray();
 
-        foreach (var version in filteredVersions.Select(ToVersionRow))
+        allVersionRows = filteredVersions.Select(ToVersionRow).ToArray();
+        foreach (var version in allVersionRows)
         {
-            Versions.Add(version);
             versionsById[version.VersionId] = version;
         }
 
@@ -62,6 +65,11 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
                 orderedVersions));
         }
 
+        currentFocusPath = normalisedFocusPath ?? FolderPath;
+        currentFocusKind = normalisedFocusPath is null
+            ? null
+            : DetermineFocusKind(allVersionRows, normalisedFocusPath);
+        RefreshVisibleVersions(currentFocusPath, currentFocusKind);
         SelectedVersion = Versions.FirstOrDefault();
     }
 
@@ -79,10 +87,17 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
     [ObservableProperty]
     private VersionInventorySnapshotEntryRow? selectedSnapshotEntry;
 
+    [ObservableProperty]
+    private bool isPreviewBusy;
+
+    [ObservableProperty]
+    private string previewStatus = string.Empty;
+
     partial void OnSelectedVersionChanged(VersionInventoryVersionRow? value)
     {
         SnapshotEntries.Clear();
         SelectedSnapshotEntry = null;
+        PreviewSelectedVersionCommand.NotifyCanExecuteChanged();
         if (value?.FolderEntries is null)
         {
             return;
@@ -103,6 +118,20 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
         }
     }
 
+    partial void OnSelectedSnapshotEntryChanged(VersionInventorySnapshotEntryRow? value)
+    {
+        OpenSelectedSnapshotEntryCommand.NotifyCanExecuteChanged();
+        PreviewSelectedSnapshotEntryCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnIsPreviewBusyChanged(bool value)
+    {
+        OpenVersionPreviewCommand.NotifyCanExecuteChanged();
+        PreviewSelectedVersionCommand.NotifyCanExecuteChanged();
+        PreviewSelectedSnapshotEntryCommand.NotifyCanExecuteChanged();
+        OpenSelectedSnapshotEntryCommand.NotifyCanExecuteChanged();
+    }
+
     [RelayCommand]
     private async Task RestoreVersionAsync(VersionInventoryVersionRow? version)
     {
@@ -112,12 +141,12 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanOpenVersionPreview))]
     private async Task OpenVersionPreviewAsync(VersionInventoryVersionRow? version)
     {
         if (version is { EntryKind: RepositoryEntryKind.File })
         {
-            await openVersionPreview(version).ConfigureAwait(true);
+            await OpenPreviewAsync(version).ConfigureAwait(true);
         }
     }
 
@@ -130,12 +159,12 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanPreviewSelectedVersion))]
     private async Task PreviewSelectedVersionAsync()
     {
         if (SelectedVersion is { EntryKind: RepositoryEntryKind.File } version)
         {
-            await openVersionPreview(version).ConfigureAwait(true);
+            await OpenPreviewAsync(version).ConfigureAwait(true);
         }
     }
 
@@ -148,17 +177,17 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanPreviewSelectedSnapshotEntry))]
     private async Task PreviewSelectedSnapshotEntryAsync()
     {
         if (SelectedSnapshotEntry is { EntryKind: RepositoryEntryKind.File } entry
             && versionsById.TryGetValue(entry.VersionId, out var version))
         {
-            await openVersionPreview(version).ConfigureAwait(true);
+            await OpenPreviewAsync(version).ConfigureAwait(true);
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanOpenSelectedSnapshotEntry))]
     private async Task OpenSelectedSnapshotEntryAsync()
     {
         if (SelectedSnapshotEntry is null || !versionsById.TryGetValue(SelectedSnapshotEntry.VersionId, out var version))
@@ -168,11 +197,76 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
 
         if (SelectedSnapshotEntry.EntryKind == RepositoryEntryKind.Folder)
         {
-            SelectedVersion = version;
+            NavigateToFolderVersion(version);
             return;
         }
 
-        await openVersionPreview(version).ConfigureAwait(true);
+        await OpenPreviewAsync(version).ConfigureAwait(true);
+    }
+
+    private bool CanOpenVersionPreview(VersionInventoryVersionRow? version)
+    {
+        return !IsPreviewBusy && version is { EntryKind: RepositoryEntryKind.File };
+    }
+
+    private bool CanPreviewSelectedVersion()
+    {
+        return !IsPreviewBusy && SelectedVersion is { EntryKind: RepositoryEntryKind.File };
+    }
+
+    private bool CanPreviewSelectedSnapshotEntry()
+    {
+        return !IsPreviewBusy && SelectedSnapshotEntry is { EntryKind: RepositoryEntryKind.File };
+    }
+
+    private bool CanOpenSelectedSnapshotEntry()
+    {
+        return !IsPreviewBusy && SelectedSnapshotEntry is not null;
+    }
+
+    private async Task OpenPreviewAsync(VersionInventoryVersionRow version)
+    {
+        if (IsPreviewBusy)
+        {
+            return;
+        }
+
+        IsPreviewBusy = true;
+        PreviewStatus = "Preparing preview...";
+        try
+        {
+            await openVersionPreview(version).ConfigureAwait(true);
+        }
+        finally
+        {
+            PreviewStatus = string.Empty;
+            IsPreviewBusy = false;
+        }
+    }
+
+    private void NavigateToFolderVersion(VersionInventoryVersionRow version)
+    {
+        currentFocusPath = version.Path;
+        currentFocusKind = RepositoryEntryKind.Folder;
+        RefreshVisibleVersions(currentFocusPath, currentFocusKind);
+        SelectedVersion = Versions.FirstOrDefault(row => row.VersionId == version.VersionId)
+            ?? Versions.FirstOrDefault();
+    }
+
+    private void RefreshVisibleVersions(string focusPath, RepositoryEntryKind? focusKind)
+    {
+        Versions.Clear();
+        var rows = focusKind is null
+            ? allVersionRows
+            : allVersionRows
+                .Where(version => version.EntryKind == focusKind.Value)
+                .Where(version => IsSamePath(version.Path, focusPath));
+        foreach (var row in rows
+                     .OrderByDescending(version => version.CapturedAt, StringComparer.Ordinal)
+                     .ThenByDescending(version => version.VersionId, StringComparer.Ordinal))
+        {
+            Versions.Add(row);
+        }
     }
 
     private static VersionInventoryVersionRow ToVersionRow(RepositoryVersionSummary version)
@@ -215,6 +309,17 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
 
         var focusRoot = TrimPath(focusPath) + Path.DirectorySeparatorChar;
         return fullPath.StartsWith(focusRoot, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static RepositoryEntryKind DetermineFocusKind(
+        IReadOnlyList<VersionInventoryVersionRow> versions,
+        string focusPath)
+    {
+        return versions
+            .Where(version => IsSamePath(version.Path, focusPath))
+            .OrderByDescending(version => version.EntryKind == RepositoryEntryKind.Folder)
+            .Select(version => version.EntryKind)
+            .FirstOrDefault();
     }
 
     private static bool IsSamePath(string left, string right)

@@ -88,7 +88,7 @@ public sealed partial class FileBrowserViewModel(
 
         if (Roots.Count > 0)
         {
-            RefreshBrowser();
+            RefreshVisibleTrackedEntries();
         }
     }
 
@@ -737,6 +737,105 @@ public sealed partial class FileBrowserViewModel(
             .Where(entry => entry.IsDeleted || !File.Exists(entry.SourcePath))
             .Where(entry => !liveFilePaths.Contains(Path.GetFullPath(entry.SourcePath)))
             .OrderBy(entry => Path.GetFileName(entry.SourcePath), StringComparer.OrdinalIgnoreCase);
+    }
+
+    private void RefreshVisibleTrackedEntries()
+    {
+        foreach (var folder in EnumerateFolders(Roots).ToArray())
+        {
+            if (folder.HasLoadedChildren)
+            {
+                RefreshVisiblePhantomFolders(folder);
+            }
+        }
+
+        if (SelectedFolder is not null)
+        {
+            RefreshVisiblePhantomFiles(SelectedFolder);
+        }
+
+        RefreshTreeIndicators(Roots);
+    }
+
+    private void RefreshVisiblePhantomFolders(FileBrowserFolderNode folder)
+    {
+        if (!folder.IsAccessible || folder.IsPhantom)
+        {
+            return;
+        }
+
+        var liveChildPaths = folder.Children
+            .Where(child => !child.IsPhantom)
+            .Select(child => child.Path)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (var child in GetPhantomChildFolders(folder.Path, liveChildPaths))
+        {
+            if (folder.Children.Any(existing => IsSamePath(existing.Path, child.Path)))
+            {
+                continue;
+            }
+
+            ApplySelectionToNode(child);
+            folder.Children.Add(child);
+        }
+
+        for (var index = folder.Children.Count - 1; index >= 0; index--)
+        {
+            var child = folder.Children[index];
+            if (!child.IsPhantom)
+            {
+                continue;
+            }
+
+            var tracked = FindTrackedEntry(child.Path, RepositoryEntryKind.Folder);
+            if (tracked is null || !tracked.IsDeleted && Directory.Exists(child.Path))
+            {
+                folder.Children.RemoveAt(index);
+            }
+        }
+    }
+
+    private void RefreshVisiblePhantomFiles(FileBrowserFolderNode folder)
+    {
+        var selectedFile = SelectedFile;
+        var liveFilePaths = Files
+            .Where(file => !file.IsPhantom)
+            .Select(file => file.Path)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (var entry in GetPhantomChildFiles(folder.Path, liveFilePaths))
+        {
+            if (Files.Any(existing => IsSamePath(existing.Path, entry.SourcePath)))
+            {
+                continue;
+            }
+
+            Files.Add(CreateFileRow(
+                entry.SourcePath,
+                Path.GetFileName(entry.SourcePath),
+                entry.LogicalLength,
+                isPhantom: true,
+                restorableVersionId: entry.VersionId));
+        }
+
+        for (var index = Files.Count - 1; index >= 0; index--)
+        {
+            var file = Files[index];
+            if (!file.IsPhantom)
+            {
+                continue;
+            }
+
+            var tracked = FindTrackedEntry(file.Path, RepositoryEntryKind.File);
+            if (tracked is null || !tracked.IsDeleted && File.Exists(file.Path))
+            {
+                Files.RemoveAt(index);
+            }
+        }
+
+        if (selectedFile is not null && Files.Contains(selectedFile))
+        {
+            SelectedFile = selectedFile;
+        }
     }
 
     private bool TryNavigateToFolder(string folderPath)

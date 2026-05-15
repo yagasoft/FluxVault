@@ -41,6 +41,7 @@ public sealed class FluxVaultOperations(
     private readonly string versionPreviewRoot = Path.Combine(
         maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
         "version-preview");
+    private bool versionPreviewCleanupQueued;
     private DateTimeOffset? lastCaptureUtc;
     private string lastMessage = "Ready";
     private IReadOnlyList<string> lastMirrorWarnings = [];
@@ -339,9 +340,37 @@ public sealed class FluxVaultOperations(
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         var repository = CreateRepository(configuration);
         var inspection = await repository.InspectAsync(versionId, cancellationToken).ConfigureAwait(false);
+        if (inspection.Manifest.EntryKind != RepositoryEntryKind.File)
+        {
+            throw new InvalidDataException("Only file versions can be opened as previews.");
+        }
+
         var outputPath = BuildVersionPreviewPath(inspection.Manifest);
-        CleanOldVersionPreviews(DateTimeOffset.UtcNow.AddDays(-2));
-        await repository.RestorePreviewAsync(versionId, outputPath, cancellationToken).ConfigureAwait(false);
+        if (TryUseCachedVersionPreview(inspection.Manifest, outputPath))
+        {
+            lastMessage = $"Prepared cached preview for {versionId}.";
+            return outputPath;
+        }
+
+        QueueOldVersionPreviewCleanup(DateTimeOffset.UtcNow.AddDays(-2));
+        var directory = Path.GetDirectoryName(outputPath)
+            ?? throw new InvalidOperationException($"Preview path has no directory: {outputPath}");
+        Directory.CreateDirectory(directory);
+        var tempPath = Path.Combine(directory, $"{Path.GetFileName(outputPath)}.{Guid.NewGuid():N}.tmp");
+        try
+        {
+            DeleteFileIfExists(tempPath);
+            await repository.RestorePreviewAsync(versionId, tempPath, cancellationToken).ConfigureAwait(false);
+            ClearReadOnlyIfExists(outputPath);
+            File.Move(tempPath, outputPath, overwrite: true);
+            MarkReadOnly(outputPath);
+            WriteVersionPreviewMarker(inspection.Manifest, outputPath);
+        }
+        finally
+        {
+            DeleteFileIfExists(tempPath);
+        }
+
         lastMessage = $"Prepared preview for {versionId}.";
         return outputPath;
     }
@@ -1381,6 +1410,70 @@ public sealed class FluxVaultOperations(
             SafePathSegment(fileName));
     }
 
+    private bool TryUseCachedVersionPreview(FileVersionManifest manifest, string outputPath)
+    {
+        try
+        {
+            var markerPath = BuildVersionPreviewMarkerPath(outputPath);
+            if (!File.Exists(outputPath) || !File.Exists(markerPath))
+            {
+                return false;
+            }
+
+            var marker = JsonSerializer.Deserialize<VersionPreviewMarker>(
+                File.ReadAllBytes(markerPath),
+                JsonOptions);
+            if (marker is null
+                || !string.Equals(marker.VersionId, manifest.VersionId, StringComparison.Ordinal)
+                || !string.Equals(marker.ContentSignature, manifest.ContentSignature ?? string.Empty, StringComparison.Ordinal)
+                || marker.LogicalLength != manifest.LogicalLength)
+            {
+                return false;
+            }
+
+            var info = new FileInfo(outputPath);
+            if (!info.Exists || info.Length != manifest.LogicalLength)
+            {
+                return false;
+            }
+
+            MarkReadOnly(outputPath);
+            return true;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidDataException)
+        {
+            return false;
+        }
+    }
+
+    private void WriteVersionPreviewMarker(FileVersionManifest manifest, string outputPath)
+    {
+        var marker = new VersionPreviewMarker(
+            manifest.VersionId,
+            manifest.ContentSignature ?? string.Empty,
+            manifest.LogicalLength,
+            DateTimeOffset.UtcNow);
+        File.WriteAllBytes(
+            BuildVersionPreviewMarkerPath(outputPath),
+            JsonSerializer.SerializeToUtf8Bytes(marker, JsonOptions));
+    }
+
+    private static string BuildVersionPreviewMarkerPath(string outputPath)
+    {
+        return $"{outputPath}.fluxvault-preview.json";
+    }
+
+    private void QueueOldVersionPreviewCleanup(DateTimeOffset olderThanUtc)
+    {
+        if (versionPreviewCleanupQueued)
+        {
+            return;
+        }
+
+        versionPreviewCleanupQueued = true;
+        _ = Task.Run(() => CleanOldVersionPreviews(olderThanUtc));
+    }
+
     private void CleanOldVersionPreviews(DateTimeOffset olderThanUtc)
     {
         try
@@ -1395,7 +1488,7 @@ public sealed class FluxVaultOperations(
                 var lastWrite = File.GetLastWriteTimeUtc(file);
                 if (lastWrite < olderThanUtc.UtcDateTime)
                 {
-                    File.Delete(file);
+                    DeleteFileIfExists(file);
                 }
             }
 
@@ -1415,6 +1508,47 @@ public sealed class FluxVaultOperations(
         {
         }
     }
+
+    private static void MarkReadOnly(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return;
+        }
+
+        File.SetAttributes(path, File.GetAttributes(path) | FileAttributes.ReadOnly);
+    }
+
+    private static void ClearReadOnlyIfExists(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return;
+        }
+
+        var attributes = File.GetAttributes(path);
+        if ((attributes & FileAttributes.ReadOnly) != 0)
+        {
+            File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
+        }
+    }
+
+    private static void DeleteFileIfExists(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return;
+        }
+
+        ClearReadOnlyIfExists(path);
+        File.Delete(path);
+    }
+
+    private sealed record VersionPreviewMarker(
+        string VersionId,
+        string ContentSignature,
+        long LogicalLength,
+        DateTimeOffset CreatedAtUtc);
 
     private static string SafePathSegment(string value)
     {

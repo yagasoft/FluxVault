@@ -8,6 +8,8 @@
         Width="1120"
         Background="#F4F6F8">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
         <Style TargetType="DataGrid">
             <Setter Property="BorderBrush" Value="#DADCE0" />
             <Setter Property="RowHeight" Value="28" />
@@ -78,21 +80,37 @@
             </DataGrid>
         </Grid>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Preview version"
-                    Command="{Binding PreviewSelectedVersionCommand}"
-                    Margin="0,0,8,0" />
-            <Button Content="Restore version"
-                    Command="{Binding RestoreSelectedVersionCommand}"
-                    Margin="0,0,18,0" />
-            <Button Content="Open"
-                    Command="{Binding OpenSelectedSnapshotEntryCommand}"
-                    Margin="0,0,8,0" />
-            <Button Content="Preview file"
-                    Command="{Binding PreviewSelectedSnapshotEntryCommand}"
-                    Margin="0,0,8,0" />
-            <Button Content="Restore selected"
-                    Command="{Binding RestoreSelectedSnapshotEntryCommand}" />
-        </StackPanel>
+        <Grid Grid.Row="4">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center">
+                <ProgressBar Width="120"
+                             Height="4"
+                             Margin="0,0,8,0"
+                             VerticalAlignment="Center"
+                             IsIndeterminate="True"
+                             Visibility="{Binding IsPreviewBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{Binding PreviewStatus}"
+                           VerticalAlignment="Center"
+                           Foreground="#5F6368" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Preview version"
+                        Command="{Binding PreviewSelectedVersionCommand}"
+                        Margin="0,0,8,0" />
+                <Button Content="Restore version"
+                        Command="{Binding RestoreSelectedVersionCommand}"
+                        Margin="0,0,18,0" />
+                <Button Content="Open"
+                        Command="{Binding OpenSelectedSnapshotEntryCommand}"
+                        Margin="0,0,8,0" />
+                <Button Content="Preview file"
+                        Command="{Binding PreviewSelectedSnapshotEntryCommand}"
+                        Margin="0,0,8,0" />
+                <Button Content="Restore selected"
+                        Command="{Binding RestoreSelectedSnapshotEntryCommand}" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

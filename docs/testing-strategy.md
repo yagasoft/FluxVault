@@ -74,6 +74,10 @@
   indicators, per-selection workload presets, Explorer Add/Remove selection
   mutations, shell-launch context commands, pending-change summaries,
   discard/reload, and Save-only application.
+- File browser removal confirmation tests cover destructive purge prompting,
+  cancellation without save, confirmed removed-scope IPC, regex-only removal
+  without purge, and expansion edits that do not prompt because coverage is not
+  reduced.
 - Dirty File browser and configuration edits are preserved across automatic
   refresh, manual refresh, app activation, and Options return.
 - Exclusion rules: config round-trip, legacy global regex validation,
@@ -109,6 +113,10 @@
   controls/status, preview/apply action, and selected-node drain controls.
 - Protection inventory tests for repository-manifest file grouping, expandable
   version rows, restore callbacks, and temporary preview callbacks.
+- Repository purge tests cover exact file, immediate folder, recursive folder,
+  dependent folder/deletion manifests, retained child preserve scopes, shared
+  chunk preservation, mirror warning reporting, and metadata-backed reference
+  counts before chunk deletion.
 - Security/fleet foundation tests for disabled defaults, configuration
   round-trip, rejection of inline encryption key material, key-reference-only
   encryption planning, local fleet policy evaluation, IPC serialisation, and
@@ -228,6 +236,11 @@
   before reconciliation fallback.
 - File browser flow: unsaved selection edits do not change service
   configuration until Save.
+- Removed File browser selections stop active work immediately: config save
+  wakes the protection loop, clears pending watcher paths for removed scopes,
+  cancels matching active captures, skips targets that become unprotected during
+  enumeration, purges confirmed repository/mirror history, and leaves unrelated
+  scanning paths active.
 - File browser compiled selections: recursive folders include nested files,
   immediate-only folders exclude nested files, and selected-file rules capture
   only the selected files.

@@ -39,6 +39,11 @@ public sealed class MetadataBackedChunkRepository(
         return result;
     }
 
+    public Task<RepositoryPurgeResult> PurgeAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken = default)
+    {
+        return innerRepository.PurgeAsync(request, cancellationToken);
+    }
+
     public Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default)
     {
         return innerRepository.InspectAsync(versionId, cancellationToken);

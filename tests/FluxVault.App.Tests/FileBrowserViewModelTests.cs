@@ -3,7 +3,9 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
+using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
+using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
 
 namespace FluxVault.App.Tests;
@@ -520,6 +522,196 @@ public sealed class FileBrowserViewModelTests
         Assert.True(watched.Recursive);
     }
 
+    [Fact]
+    public async Task Main_window_save_requires_confirmation_before_purging_removed_selection()
+    {
+        var source = Path.GetFullPath(@"D:\Work\Docs");
+        var baseline = Rule("docs", source, ProtectionSelectionMode.RecursiveFolder);
+        var client = new FakeFluxVaultServiceClient(Status(FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+        {
+            SelectionRules = [baseline],
+            WatchedFolders = ProtectionSelectionCompiler.Compile([baseline])
+        }));
+        var confirmation = new FakeProtectionRemovalConfirmation(confirm: false);
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
+            new FakeWindowsServiceController(),
+            new FakeRestoreDestinationPicker(),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true),
+            protectionRemovalConfirmation: confirmation);
+        await viewModel.RefreshAsync();
+
+        viewModel.FileBrowser.RemovePathSelection(source, isDirectory: true);
+        await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+
+        Assert.Equal(1, confirmation.ConfirmCount);
+        Assert.DoesNotContain(FluxVaultIpcCommand.SaveConfiguration, client.Commands);
+    }
+
+    [Fact]
+    public async Task Main_window_save_sends_confirmed_removed_selection_purge_scope()
+    {
+        var source = Path.GetFullPath(@"D:\Work\Docs");
+        var baseline = Rule("docs", source, ProtectionSelectionMode.RecursiveFolder);
+        var client = new FakeFluxVaultServiceClient(Status(FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+        {
+            SelectionRules = [baseline],
+            WatchedFolders = ProtectionSelectionCompiler.Compile([baseline])
+        }));
+        var confirmation = new FakeProtectionRemovalConfirmation(confirm: true);
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
+            new FakeWindowsServiceController(),
+            new FakeRestoreDestinationPicker(),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true),
+            protectionRemovalConfirmation: confirmation);
+        await viewModel.RefreshAsync();
+
+        viewModel.FileBrowser.RemovePathSelection(source, isDirectory: true);
+        await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+
+        var request = Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
+        Assert.True(request.PurgeRemovedSelections);
+        var scope = Assert.Single(request.RemovedSelections!);
+        Assert.Equal(source, scope.SourcePath);
+        Assert.Equal(RepositoryPurgeScopeKind.RecursiveFolder, scope.Kind);
+    }
+
+    [Fact]
+    public async Task Main_window_save_pipe_failure_after_removed_selection_confirmation_preserves_pending_changes()
+    {
+        var source = Path.GetFullPath(@"D:\Work\Docs");
+        var baseline = Rule("docs", source, ProtectionSelectionMode.RecursiveFolder);
+        var client = new FakeFluxVaultServiceClient(Status(FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+        {
+            SelectionRules = [baseline],
+            WatchedFolders = ProtectionSelectionCompiler.Compile([baseline])
+        }));
+        var confirmation = new FakeProtectionRemovalConfirmation(confirm: true);
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
+            new FakeWindowsServiceController(),
+            new FakeRestoreDestinationPicker(),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true),
+            protectionRemovalConfirmation: confirmation);
+        await viewModel.RefreshAsync();
+
+        client.NextException = new IOException("pipe closed");
+        viewModel.FileBrowser.RemovePathSelection(source, isDirectory: true);
+        await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+
+        Assert.Equal(1, confirmation.ConfirmCount);
+        Assert.Empty(client.SavedConfigurations);
+        Assert.Contains(viewModel.FileBrowser.PendingChanges, change => change.Change == "Removed" && change.Path == source);
+        Assert.Contains("unavailable", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("pipe closed", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Main_window_save_reports_failed_purge_without_reverting_removed_selection()
+    {
+        var source = Path.GetFullPath(@"D:\Work\Docs");
+        var baseline = Rule("docs", source, ProtectionSelectionMode.RecursiveFolder);
+        var client = new FakeFluxVaultServiceClient(Status(FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+        {
+            SelectionRules = [baseline],
+            WatchedFolders = ProtectionSelectionCompiler.Compile([baseline])
+        }))
+        {
+            SaveResponse = FluxVaultIpcResponse.WithPurge(new RepositoryPurgeResult(
+                0,
+                0,
+                0,
+                [],
+                Success: false,
+                ErrorMessage: "metadata offline"))
+        };
+        var confirmation = new FakeProtectionRemovalConfirmation(confirm: true);
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
+            new FakeWindowsServiceController(),
+            new FakeRestoreDestinationPicker(),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true),
+            protectionRemovalConfirmation: confirmation);
+        await viewModel.RefreshAsync();
+
+        viewModel.FileBrowser.RemovePathSelection(source, isDirectory: true);
+        await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+
+        Assert.Single(client.SavedConfigurations);
+        Assert.Empty(viewModel.FileBrowser.PendingChanges);
+        Assert.Contains("purge failed", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("metadata offline", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("history may remain", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Main_window_save_does_not_prompt_or_purge_regex_only_removal()
+    {
+        var source = Path.GetFullPath(@"D:\Work\Docs");
+        var baseline = Rule("regex", source, ProtectionSelectionMode.RegexScope);
+        var client = new FakeFluxVaultServiceClient(Status(FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+        {
+            SelectionRules = [baseline],
+            WatchedFolders = []
+        }));
+        var confirmation = new FakeProtectionRemovalConfirmation(confirm: false);
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
+            new FakeWindowsServiceController(),
+            new FakeRestoreDestinationPicker(),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true),
+            protectionRemovalConfirmation: confirmation);
+        await viewModel.RefreshAsync();
+
+        viewModel.FileBrowser.RemovePathSelection(source, isDirectory: true);
+        await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+
+        Assert.Equal(0, confirmation.ConfirmCount);
+        var request = Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
+        Assert.False(request.PurgeRemovedSelections);
+        Assert.Empty(request.RemovedSelections ?? []);
+    }
+
+    [Fact]
+    public async Task Main_window_save_does_not_prompt_when_selection_expands()
+    {
+        var source = Path.GetFullPath(@"D:\Work\Docs");
+        var baseline = Rule("docs", source, ProtectionSelectionMode.ImmediateFiles);
+        var client = new FakeFluxVaultServiceClient(Status(FluxVaultConfiguration.CreateDefault(@"D:\Vault") with
+        {
+            SelectionRules = [baseline],
+            WatchedFolders = ProtectionSelectionCompiler.Compile([baseline])
+        }));
+        var confirmation = new FakeProtectionRemovalConfirmation(confirm: false);
+        var viewModel = new MainWindowViewModel(
+            client,
+            TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
+            new FakeWindowsServiceController(),
+            new FakeRestoreDestinationPicker(),
+            new FakeRestoreOverwriteConfirmation(confirmOverwrite: true),
+            protectionRemovalConfirmation: confirmation);
+        await viewModel.RefreshAsync();
+
+        viewModel.FileBrowser.ReplaceSelectionRule(baseline with { Mode = ProtectionSelectionMode.RecursiveFolder });
+        await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+
+        Assert.Equal(0, confirmation.ConfirmCount);
+        var request = Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
+        Assert.False(request.PurgeRemovedSelections);
+    }
+
     private static ProtectionSelectionRule Rule(string id, string path, ProtectionSelectionMode mode)
     {
         return new ProtectionSelectionRule(
@@ -536,11 +728,11 @@ public sealed class FileBrowserViewModelTests
         return new FileBrowserFolderInfo(Path.GetFullPath(path), Path.GetFileName(Path.TrimEndingDirectorySeparator(path)) is { Length: > 0 } name ? name : path, true, null);
     }
 
-    private static FluxVaultServiceStatus Status()
+    private static FluxVaultServiceStatus Status(FluxVaultConfiguration? configuration = null)
     {
         return new FluxVaultServiceStatus(
             IsServiceRunning: true,
-            Configuration: FluxVaultConfiguration.CreateDefault(@"D:\Vault"),
+            Configuration: configuration ?? FluxVaultConfiguration.CreateDefault(@"D:\Vault"),
             LastMessage: "Ready",
             LastCaptureUtc: null,
             WatchedFolders: [],
@@ -634,21 +826,102 @@ public sealed class FileBrowserViewModelTests
         }
     }
 
-    private sealed class FakeFluxVaultServiceClient(FluxVaultServiceStatus status) : IFluxVaultServiceClient
+    private sealed class FakeFluxVaultServiceClient(FluxVaultServiceStatus initialStatus) : IFluxVaultServiceClient
     {
+        private FluxVaultServiceStatus status = initialStatus;
+
         public List<FluxVaultIpcCommand> Commands { get; } = [];
         public List<FluxVaultConfiguration> SavedConfigurations { get; } = [];
+        public List<FluxVaultIpcRequest> Requests { get; } = [];
+
+        public Exception? NextException { get; set; }
+
+        public FluxVaultIpcResponse? SaveResponse { get; set; }
 
         public Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
         {
             Commands.Add(request.Command);
+            Requests.Add(request);
+            if (NextException is not null)
+            {
+                var exception = NextException;
+                NextException = null;
+                throw exception;
+            }
+
             if (request.Command == FluxVaultIpcCommand.SaveConfiguration)
             {
-                SavedConfigurations.Add(request.Configuration ?? throw new InvalidOperationException("Missing config."));
-                return Task.FromResult(FluxVaultIpcResponse.Ok());
+                var configuration = request.Configuration ?? throw new InvalidOperationException("Missing config.");
+                SavedConfigurations.Add(configuration);
+                status = status with { Configuration = configuration };
+                return Task.FromResult(SaveResponse ?? FluxVaultIpcResponse.Ok());
             }
 
             return Task.FromResult(FluxVaultIpcResponse.WithStatus(status));
+        }
+    }
+
+    private sealed class FakeProtectionRemovalConfirmation(bool confirm) : IProtectionRemovalConfirmation
+    {
+        public int ConfirmCount { get; private set; }
+
+        public IReadOnlyList<RepositoryPurgeScope>? LastScopes { get; private set; }
+
+        public bool ConfirmPurge(IReadOnlyList<RepositoryPurgeScope> scopes)
+        {
+            ConfirmCount++;
+            LastScopes = scopes;
+            return confirm;
+        }
+    }
+
+    private sealed class FakeRestoreDestinationPicker : IRestoreDestinationPicker
+    {
+        public string? PickDestination(VersionRow version)
+        {
+            return null;
+        }
+
+        public string? PickFolderDestination(string sourcePath)
+        {
+            return null;
+        }
+    }
+
+    private sealed class FakeRestoreOverwriteConfirmation(bool confirmOverwrite) : IRestoreOverwriteConfirmation
+    {
+        public bool ConfirmOverwrite(string destinationPath)
+        {
+            return confirmOverwrite;
+        }
+    }
+
+    private sealed class FakeWindowsServiceController : IFluxVaultWindowsServiceController
+    {
+        public Task<FluxVaultWindowsServiceStatus> GetStatusAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new FluxVaultWindowsServiceStatus(
+                "FluxVaultService",
+                FluxVaultWindowsServiceState.Running,
+                "FluxVault service is running."));
+        }
+
+        public Task<FluxVaultWindowsServiceActionResult> StartAsync(CancellationToken cancellationToken = default)
+        {
+            var status = new FluxVaultWindowsServiceStatus(
+                "FluxVaultService",
+                FluxVaultWindowsServiceState.Running,
+                "FluxVault service is running.");
+            return Task.FromResult(new FluxVaultWindowsServiceActionResult(true, status, status.Message));
+        }
+
+        public Task<FluxVaultWindowsServiceActionResult> StopAsync(CancellationToken cancellationToken = default)
+        {
+            var status = new FluxVaultWindowsServiceStatus(
+                "FluxVaultService",
+                FluxVaultWindowsServiceState.Stopped,
+                "FluxVault service is stopped.");
+            return Task.FromResult(new FluxVaultWindowsServiceActionResult(true, status, status.Message));
         }
     }
 }

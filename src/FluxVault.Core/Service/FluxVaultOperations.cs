@@ -24,7 +24,8 @@ public sealed class FluxVaultOperations(
     IRepositoryMaintenanceStateStore? repositoryMaintenanceStateStore = null,
     string? maintenanceStateRoot = null,
     Func<FluxVaultConfiguration, IRepositoryMetadataStore>? metadataStoreFactory = null,
-    Func<FluxVaultConfiguration, IChunkRepository>? repositoryFactory = null) : IFluxVaultRequestHandler
+    Func<FluxVaultConfiguration, IChunkRepository>? repositoryFactory = null,
+    ProtectionRuntimeCoordinator? runtimeCoordinator = null) : IFluxVaultRequestHandler
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
     private readonly IRepositoryMaintenanceStateStore repositoryMaintenanceStateStore =
@@ -33,6 +34,7 @@ public sealed class FluxVaultOperations(
         metadataStoreFactory ?? CreateMetadataStore;
     private readonly Func<FluxVaultConfiguration, IChunkRepository> repositoryFactory =
         repositoryFactory ?? (configuration => CreateRepository(configuration, (metadataStoreFactory ?? CreateMetadataStore)(configuration)));
+    private readonly ProtectionRuntimeCoordinator protectionRuntimeCoordinator = runtimeCoordinator ?? new ProtectionRuntimeCoordinator();
     private readonly string restoreRehearsalRoot = Path.Combine(
         maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
         "restore-rehearsal");
@@ -45,8 +47,11 @@ public sealed class FluxVaultOperations(
     private DurableChangeRuntimeStatus? durableChange;
     private RepositoryRetentionResult? lastRetention;
     private readonly Lock runtimeGate = new();
+    private readonly Lock activeCaptureGate = new();
     private readonly Dictionary<string, CaptureRuntimeStatus> captureStatuses = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, WatcherRuntimeStatus> watcherStatuses = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, CancellationTokenSource> activeCaptureTokens = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> removedCapturePaths = new(StringComparer.OrdinalIgnoreCase);
     private readonly SemaphoreSlim mutatingOperationGate = new(1, 1);
     private readonly SemaphoreSlim backupOperationGate = new(1, 1);
     private readonly TimeSpan recentVersionStatusCacheDuration = TimeSpan.FromSeconds(15);
@@ -54,6 +59,7 @@ public sealed class FluxVaultOperations(
     private DateTimeOffset recentVersionStatusCacheUtc;
     private IReadOnlyList<RepositoryVersionSummary>? trackedEntryStatusCache;
     private DateTimeOffset trackedEntryStatusCacheUtc;
+    private FluxVaultConfiguration? currentConfiguration;
     private BackupRuntimeStatus backupRuntime = new(
         IsRunning: false,
         Phase: "Idle",
@@ -68,12 +74,66 @@ public sealed class FluxVaultOperations(
         ActiveWorkers: 0,
         EffectiveWorkerCount: 0);
 
-    public async Task SaveConfigurationAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken = default)
+    public async Task<RepositoryPurgeResult?> SaveConfigurationAsync(
+        FluxVaultConfiguration configuration,
+        bool purgeRemovedSelections = false,
+        IReadOnlyList<RepositoryPurgeScope>? removedSelections = null,
+        IReadOnlyList<RepositoryPurgeScope>? preservedSelections = null,
+        CancellationToken cancellationToken = default)
     {
+        var previousConfiguration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var effectiveRemovedSelections = removedSelections
+            ?? GetRemovedProtectedScopes(previousConfiguration.SelectionRules, configuration.SelectionRules);
+        var effectivePreservedSelections = preservedSelections
+            ?? GetProtectedSelectionScopes(configuration.SelectionRules);
         await configurationStore.SaveAsync(configuration, cancellationToken).ConfigureAwait(false);
+        SetCurrentConfiguration(configuration);
+        if (effectiveRemovedSelections.Count > 0)
+        {
+            protectionRuntimeCoordinator.NotifyConfigurationChanged(effectiveRemovedSelections);
+            CancelActiveCapturesForRemovedScopes(effectiveRemovedSelections);
+        }
+
+        ClearRuntimeStateForRemovedScopes(effectiveRemovedSelections);
         InvalidateRecentVersionStatusCache();
         lastMirrorWarnings = [];
-        lastMessage = "Configuration saved.";
+        RepositoryPurgeResult? purge = null;
+        if (purgeRemovedSelections && effectiveRemovedSelections.Count > 0)
+        {
+            try
+            {
+                var repository = CreateRepository(configuration);
+                purge = await repository.PurgeAsync(
+                        new RepositoryPurgeRequest(effectiveRemovedSelections, effectivePreservedSelections),
+                        cancellationToken)
+                    .ConfigureAwait(false);
+                lastMirrorWarnings = purge.MirrorWarnings;
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = string.IsNullOrWhiteSpace(ex.Message) ? ex.GetType().Name : ex.Message;
+                purge = new RepositoryPurgeResult(
+                    PurgedVersionCount: 0,
+                    DeletedChunkCount: 0,
+                    ReclaimedBytes: 0,
+                    MirrorWarnings: [],
+                    Success: false,
+                    ErrorMessage: errorMessage);
+                lastMirrorWarnings = [$"Repository purge failed: {errorMessage}"];
+            }
+        }
+
+        lastMessage = purge switch
+        {
+            null => "Configuration saved.",
+            { Success: false } => $"Configuration saved, but purge failed: {purge.ErrorMessage}. Backup history may remain until retry.",
+            _ => $"Configuration saved. Purged {purge.PurgedVersionCount} version(s) and {purge.DeletedChunkCount} chunk(s)."
+        };
+        return purge;
     }
 
     public async Task<BackupRunSummary> RunBackupNowAsync(CancellationToken cancellationToken = default)
@@ -85,6 +145,7 @@ public sealed class FluxVaultOperations(
         try
         {
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        SetCurrentConfiguration(configuration);
         if (!configuration.IsEnabled)
         {
             lastMirrorWarnings = [];
@@ -151,6 +212,7 @@ public sealed class FluxVaultOperations(
         try
         {
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        SetCurrentConfiguration(configuration);
         if (!configuration.IsEnabled)
         {
             lastMirrorWarnings = [];
@@ -718,6 +780,7 @@ public sealed class FluxVaultOperations(
                 LastCaptureAttemptUtc: state is CaptureRuntimeState.Capturing
                     or CaptureRuntimeState.ForcedHotFileSnapshot
                     or CaptureRuntimeState.SkippedUnchanged
+                    or CaptureRuntimeState.Canceled
                     ? DateTimeOffset.UtcNow
                     : previous?.LastCaptureAttemptUtc,
                 DelayReason: delayReason,
@@ -726,6 +789,7 @@ public sealed class FluxVaultOperations(
                 AttemptCount: state is CaptureRuntimeState.Capturing
                     or CaptureRuntimeState.ForcedHotFileSnapshot
                     or CaptureRuntimeState.SkippedUnchanged
+                    or CaptureRuntimeState.Canceled
                     ? (previous?.AttemptCount ?? 0) + 1
                     : previous?.AttemptCount ?? 0,
                 ConsistencyDetail: consistencyDetail ?? previous?.ConsistencyDetail);
@@ -766,6 +830,189 @@ public sealed class FluxVaultOperations(
                 LastFullScanReason = reason
             };
         }
+    }
+
+    private void ClearRuntimeStateForRemovedScopes(IReadOnlyList<RepositoryPurgeScope> removedScopes)
+    {
+        if (removedScopes.Count == 0)
+        {
+            return;
+        }
+
+        lock (runtimeGate)
+        {
+            foreach (var path in captureStatuses.Keys.ToArray())
+            {
+                if (removedScopes.Any(scope => PurgeScopeMatchesPath(scope, path, isDirectory: false)))
+                {
+                    captureStatuses.Remove(path);
+                }
+            }
+
+            foreach (var (watchedFolderId, status) in watcherStatuses.ToArray())
+            {
+                if (removedScopes.Any(scope => PurgeScopeMatchesPath(scope, status.Path, isDirectory: true)))
+                {
+                    watcherStatuses.Remove(watchedFolderId);
+                }
+            }
+        }
+    }
+
+    private void SetCurrentConfiguration(FluxVaultConfiguration configuration)
+    {
+        lock (runtimeGate)
+        {
+            currentConfiguration = configuration;
+        }
+    }
+
+    private FluxVaultConfiguration? GetCurrentConfiguration()
+    {
+        lock (runtimeGate)
+        {
+            return currentConfiguration;
+        }
+    }
+
+    private bool IsTargetStillProtected(FileBackupTarget target)
+    {
+        var configuration = GetCurrentConfiguration();
+        if (configuration is null)
+        {
+            return true;
+        }
+
+        return configuration.IsEnabled
+               && File.Exists(target.Path)
+               && TryFindIncludedFolder(configuration, target.Path, out _);
+    }
+
+    private void RegisterActiveCapture(string sourcePath, CancellationTokenSource cancellation)
+    {
+        var normalisedPath = Path.GetFullPath(sourcePath);
+        lock (activeCaptureGate)
+        {
+            activeCaptureTokens[normalisedPath] = cancellation;
+            removedCapturePaths.Remove(normalisedPath);
+        }
+    }
+
+    private void UnregisterActiveCapture(string sourcePath, CancellationTokenSource cancellation)
+    {
+        var normalisedPath = Path.GetFullPath(sourcePath);
+        lock (activeCaptureGate)
+        {
+            if (activeCaptureTokens.TryGetValue(normalisedPath, out var active)
+                && ReferenceEquals(active, cancellation))
+            {
+                activeCaptureTokens.Remove(normalisedPath);
+            }
+
+            removedCapturePaths.Remove(normalisedPath);
+        }
+    }
+
+    private bool WasCaptureCanceledForRemoval(string sourcePath)
+    {
+        lock (activeCaptureGate)
+        {
+            return removedCapturePaths.Contains(Path.GetFullPath(sourcePath));
+        }
+    }
+
+    private void CancelActiveCapturesForRemovedScopes(IReadOnlyList<RepositoryPurgeScope> removedScopes)
+    {
+        List<CancellationTokenSource> capturesToCancel = [];
+        lock (activeCaptureGate)
+        {
+            foreach (var (sourcePath, cancellation) in activeCaptureTokens)
+            {
+                if (!removedScopes.Any(scope => PurgeScopeMatchesPath(scope, sourcePath, isDirectory: false)))
+                {
+                    continue;
+                }
+
+                removedCapturePaths.Add(sourcePath);
+                capturesToCancel.Add(cancellation);
+            }
+        }
+
+        foreach (var cancellation in capturesToCancel)
+        {
+            try
+            {
+                cancellation.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+        }
+    }
+
+    private static IReadOnlyList<RepositoryPurgeScope> GetRemovedProtectedScopes(
+        IReadOnlyList<ProtectionSelectionRule> previousRules,
+        IReadOnlyList<ProtectionSelectionRule> currentRules)
+    {
+        var currentScopes = GetProtectedSelectionScopes(currentRules)
+            .ToHashSet(RepositoryPurgeScopeComparer.Instance);
+        return GetProtectedSelectionScopes(previousRules)
+            .Where(scope => !currentScopes.Contains(scope))
+            .Where(scope => !currentScopes.Any(current => ScopeCovers(current, scope)))
+            .ToArray();
+    }
+
+    private static IReadOnlyList<RepositoryPurgeScope> GetProtectedSelectionScopes(
+        IReadOnlyList<ProtectionSelectionRule> rules)
+    {
+        return (rules ?? [])
+            .Where(rule => rule.IsEnabled && rule.Mode != ProtectionSelectionMode.RegexScope)
+            .Select(rule => new RepositoryPurgeScope(
+                Path.GetFullPath(rule.Path),
+                rule.Mode switch
+                {
+                    ProtectionSelectionMode.File => RepositoryPurgeScopeKind.File,
+                    ProtectionSelectionMode.ImmediateFiles => RepositoryPurgeScopeKind.ImmediateFiles,
+                    ProtectionSelectionMode.RecursiveFolder => RepositoryPurgeScopeKind.RecursiveFolder,
+                    _ => throw new InvalidOperationException($"Selection mode does not protect content: {rule.Mode}")
+                }))
+            .ToArray();
+    }
+
+    private static bool ScopeCovers(RepositoryPurgeScope covering, RepositoryPurgeScope covered)
+    {
+        return covered.Kind switch
+        {
+            RepositoryPurgeScopeKind.File => covering.Kind switch
+            {
+                RepositoryPurgeScopeKind.File => PathEquals(covered.SourcePath, covering.SourcePath),
+                RepositoryPurgeScopeKind.ImmediateFiles => IsDirectChildFile(covered.SourcePath, covering.SourcePath),
+                RepositoryPurgeScopeKind.RecursiveFolder => PathEqualsOrUnder(covered.SourcePath, covering.SourcePath),
+                _ => false
+            },
+            RepositoryPurgeScopeKind.ImmediateFiles => covering.Kind switch
+            {
+                RepositoryPurgeScopeKind.ImmediateFiles => PathEquals(covered.SourcePath, covering.SourcePath),
+                RepositoryPurgeScopeKind.RecursiveFolder => PathEqualsOrUnder(covered.SourcePath, covering.SourcePath),
+                _ => false
+            },
+            RepositoryPurgeScopeKind.RecursiveFolder => covering.Kind == RepositoryPurgeScopeKind.RecursiveFolder
+                                                        && PathEqualsOrUnder(covered.SourcePath, covering.SourcePath),
+            _ => false
+        };
+    }
+
+    private static bool PurgeScopeMatchesPath(RepositoryPurgeScope scope, string path, bool isDirectory)
+    {
+        return scope.Kind switch
+        {
+            RepositoryPurgeScopeKind.File => !isDirectory && PathEquals(path, scope.SourcePath),
+            RepositoryPurgeScopeKind.ImmediateFiles => isDirectory
+                ? PathEquals(path, scope.SourcePath)
+                : IsDirectChildFile(path, scope.SourcePath),
+            RepositoryPurgeScopeKind.RecursiveFolder => PathEqualsOrUnder(path, scope.SourcePath),
+            _ => false
+        };
     }
 
     private void BeginBackup(string trigger, string phase, DateTimeOffset startedUtc, int effectiveWorkerCount)
@@ -1048,8 +1295,14 @@ public sealed class FluxVaultOperations(
             return FluxVaultIpcResponse.Failure("Configuration payload is required.");
         }
 
-        await SaveConfigurationAsync(request.Configuration, cancellationToken).ConfigureAwait(false);
-        return FluxVaultIpcResponse.Ok();
+        var purge = await SaveConfigurationAsync(
+                request.Configuration,
+                request.PurgeRemovedSelections,
+                request.RemovedSelections,
+                request.PreservedSelections,
+                cancellationToken)
+            .ConfigureAwait(false);
+        return purge is null ? FluxVaultIpcResponse.Ok() : FluxVaultIpcResponse.WithPurge(purge);
     }
 
     private async Task<FluxVaultIpcResponse> RestoreVersionResponseAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
@@ -1737,6 +1990,18 @@ public sealed class FluxVaultOperations(
                || IsUnderPath(trimmedPath, trimmedRoot);
     }
 
+    private static bool PathEquals(string left, string right)
+    {
+        return string.Equals(TrimPath(left), TrimPath(right), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsDirectChildFile(string filePath, string folderPath)
+    {
+        var parent = Path.GetDirectoryName(Path.GetFullPath(filePath));
+        return !string.IsNullOrWhiteSpace(parent)
+               && PathEquals(parent, folderPath);
+    }
+
     private static int PathDepth(string path)
     {
         return TrimPath(path).Count(ch => ch == Path.DirectorySeparatorChar || ch == Path.AltDirectorySeparatorChar);
@@ -1785,6 +2050,17 @@ public sealed class FluxVaultOperations(
             lastEventUtc: null,
             nextForcedCaptureUtc: null,
             consistencyDetail: "Skipped; source length and last write time are unchanged.");
+    }
+
+    private void UpdateRemovedSelectionStatus(FileBackupTarget target)
+    {
+        UpdateCaptureRuntimeStatus(
+            target.Path,
+            target.Folder.Id,
+            CaptureRuntimeState.Canceled,
+            lastEventUtc: null,
+            nextForcedCaptureUtc: null,
+            consistencyDetail: "Skipped; the protected selection was removed.");
     }
 
     private static int GetEffectiveMaximumConcurrentCaptures(int configuredMaximum)
@@ -1879,6 +2155,14 @@ public sealed class FluxVaultOperations(
                     }
 
                     Interlocked.Increment(ref enumerated);
+                    if (!IsTargetStillProtected(target))
+                    {
+                        Interlocked.Increment(ref skipped);
+                        UpdateRemovedSelectionStatus(target);
+                        PublishBackupProgress("Skipping removed selections", captured, failed, enumerated, skipped, workerCount);
+                        continue;
+                    }
+
                     if (allowUnchangedSkip && IsUnchangedTarget(target, latestByPath, deepVerificationInterval))
                     {
                         Interlocked.Increment(ref skipped);
@@ -1889,7 +2173,11 @@ public sealed class FluxVaultOperations(
 
                     PublishBackupProgress("Capturing", captured, failed, enumerated, skipped, workerCount);
                     var result = await CaptureTargetAsync(repository, target, cancellationToken).ConfigureAwait(false);
-                    if (result.Success)
+                    if (result.Skipped)
+                    {
+                        Interlocked.Increment(ref skipped);
+                    }
+                    else if (result.Success)
                     {
                         Interlocked.Increment(ref captured);
                         foreach (var warning in result.MirrorWarnings)
@@ -1921,6 +2209,14 @@ public sealed class FluxVaultOperations(
         {
             cancellationToken.ThrowIfCancellationRequested();
             enumerated++;
+            if (!IsTargetStillProtected(target))
+            {
+                skipped++;
+                UpdateRemovedSelectionStatus(target);
+                PublishBackupProgress("Skipping removed selections", captured, failed, enumerated, skipped, workerCount);
+                continue;
+            }
+
             if (allowUnchangedSkip && IsUnchangedTarget(target, latestByPath, deepVerificationInterval))
             {
                 skipped++;
@@ -1931,7 +2227,11 @@ public sealed class FluxVaultOperations(
 
             PublishBackupProgress("Capturing", captured, failed, enumerated, skipped, workerCount);
             var result = await CaptureTargetAsync(repository, target, cancellationToken).ConfigureAwait(false);
-            if (result.Success)
+            if (result.Skipped)
+            {
+                skipped++;
+            }
+            else if (result.Success)
             {
                 captured++;
                 mirrorWarnings.AddRange(result.MirrorWarnings);
@@ -1954,13 +2254,23 @@ public sealed class FluxVaultOperations(
         FileBackupTarget target,
         CancellationToken cancellationToken)
     {
+        if (!IsTargetStillProtected(target))
+        {
+            UpdateRemovedSelectionStatus(target);
+            return CaptureTargetResult.SkippedRemoved();
+        }
+
+        using var captureCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        RegisterActiveCapture(target.Path, captureCancellation);
+        try
+        {
         UpdateCaptureRuntimeStatus(
             target.Path,
             target.Folder.Id,
             CaptureRuntimeState.Capturing,
             lastEventUtc: null,
             nextForcedCaptureUtc: null);
-        await using var capture = await captureProvider.CaptureAsync(new FileCaptureRequest(target.Path), cancellationToken)
+        await using var capture = await captureProvider.CaptureAsync(new FileCaptureRequest(target.Path), captureCancellation.Token)
             .ConfigureAwait(false);
         if (!capture.Success || capture.Content is null)
         {
@@ -1971,7 +2281,7 @@ public sealed class FluxVaultOperations(
                 lastEventUtc: null,
                 nextForcedCaptureUtc: null,
                 blockedReason: IsBlockedFailure(capture.Message) ? capture.Message : null);
-            return new CaptureTargetResult(false, $"{target.Path}: {capture.Message}", []);
+            return CaptureTargetResult.Failed($"{target.Path}: {capture.Message}");
         }
 
         var commit = await repository.CommitAsync(new FileCommitRequest(
@@ -1983,7 +2293,7 @@ public sealed class FluxVaultOperations(
             MinimumCompressionBytes: target.MinimumCompressionBytes,
             Content: capture.Content,
             WatchedFolderPath: target.Folder.Path,
-            SourceLastWriteUtc: target.LastWriteUtc), cancellationToken).ConfigureAwait(false);
+            SourceLastWriteUtc: target.LastWriteUtc), captureCancellation.Token).ConfigureAwait(false);
         UpdateCaptureRuntimeStatus(
             target.Path,
             target.Folder.Id,
@@ -1992,7 +2302,17 @@ public sealed class FluxVaultOperations(
             nextForcedCaptureUtc: null,
             consistency: capture.Consistency,
             consistencyDetail: capture.Message);
-        return new CaptureTargetResult(true, null, commit.MirrorWarnings);
+        return CaptureTargetResult.Captured(commit.MirrorWarnings);
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested && WasCaptureCanceledForRemoval(target.Path))
+        {
+            UpdateRemovedSelectionStatus(target);
+            return CaptureTargetResult.SkippedRemoved();
+        }
+        finally
+        {
+            UnregisterActiveCapture(target.Path, captureCancellation);
+        }
     }
 
     private static IEnumerable<string> EnumerateIncludedFiles(
@@ -2176,7 +2496,49 @@ public sealed class FluxVaultOperations(
         DateTimeOffset LastWriteUtc,
         CompressionPreference Compression,
         int MinimumCompressionBytes);
-    private sealed record CaptureTargetResult(bool Success, string? Message, IReadOnlyList<string> MirrorWarnings);
+    private sealed record CaptureTargetResult(bool Success, bool Skipped, string? Message, IReadOnlyList<string> MirrorWarnings)
+    {
+        public static CaptureTargetResult Captured(IReadOnlyList<string> mirrorWarnings)
+        {
+            return new CaptureTargetResult(true, false, null, mirrorWarnings);
+        }
+
+        public static CaptureTargetResult Failed(string? message)
+        {
+            return new CaptureTargetResult(false, false, message, []);
+        }
+
+        public static CaptureTargetResult SkippedRemoved()
+        {
+            return new CaptureTargetResult(false, true, null, []);
+        }
+    }
+
+    private sealed class RepositoryPurgeScopeComparer : IEqualityComparer<RepositoryPurgeScope>
+    {
+        public static RepositoryPurgeScopeComparer Instance { get; } = new();
+
+        public bool Equals(RepositoryPurgeScope? left, RepositoryPurgeScope? right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (left is null || right is null)
+            {
+                return false;
+            }
+
+            return left.Kind == right.Kind && PathEquals(left.SourcePath, right.SourcePath);
+        }
+
+        public int GetHashCode(RepositoryPurgeScope scope)
+        {
+            return HashCode.Combine(scope.Kind, StringComparer.OrdinalIgnoreCase.GetHashCode(TrimPath(scope.SourcePath)));
+        }
+    }
+
     private sealed record DeletionRecordSummary(
         int Recorded,
         int Failed,
@@ -2231,6 +2593,7 @@ public sealed class FluxVaultOperations(
             CaptureRuntimeState.Blocked => FluxVaultActivityKind.Blocked,
             CaptureRuntimeState.Failed => FluxVaultActivityKind.Failed,
             CaptureRuntimeState.SkippedUnchanged => FluxVaultActivityKind.Info,
+            CaptureRuntimeState.Canceled => FluxVaultActivityKind.Info,
             _ => FluxVaultActivityKind.Info
         };
         var title = status.State switch
@@ -2242,6 +2605,7 @@ public sealed class FluxVaultOperations(
             CaptureRuntimeState.Blocked => "Blocked",
             CaptureRuntimeState.Failed => "Failed",
             CaptureRuntimeState.SkippedUnchanged => "Skipped unchanged",
+            CaptureRuntimeState.Canceled => "Canceled",
             _ => "Activity"
         };
         var detail = status.BlockedReason

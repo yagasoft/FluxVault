@@ -240,6 +240,180 @@ public sealed class FluxVaultOperationsPerformanceTests
         Assert.Equal("source", await File.ReadAllTextAsync(destinationFile));
     }
 
+    [Fact]
+    public async Task Save_configuration_with_confirmed_removed_selection_purges_repository_history()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var source = Path.Combine(workspace.RootPath, "source");
+        Directory.CreateDirectory(source);
+        var removedFile = Path.Combine(source, "remove.txt");
+        await File.WriteAllTextAsync(removedFile, "remove");
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            RepositoryPath = workspace.RepositoryPath,
+            WatchedFolders =
+            [
+                new WatchedFolderConfiguration(
+                    "source",
+                    source,
+                    Recursive: false,
+                    IncludePatterns: ["*.txt"],
+                    ExcludePatterns: [],
+                    CompressionPreference.Off,
+                    ResourceProfile.Balanced,
+                    IsEnabled: true)
+            ],
+            SelectionRules =
+            [
+                new ProtectionSelectionRule(
+                    "source",
+                    source,
+                    ProtectionSelectionMode.ImmediateFiles,
+                    CompressionPreference.Off,
+                    ResourceProfile.Balanced,
+                    IsEnabled: true)
+            ]
+        };
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        await store.SaveAsync(configuration);
+        var operations = CreateOperations(store, new CountingCaptureProvider());
+        var backup = await operations.RunBackupNowAsync();
+        Assert.True(backup.Success);
+        Assert.NotEmpty(await operations.ListVersionsAsync());
+
+        var response = await operations.HandleAsync(FluxVaultIpcRequest.SaveConfiguration(
+            configuration with
+            {
+                WatchedFolders = [],
+                SelectionRules = []
+            },
+            purgeRemovedSelections: true,
+            removedSelections:
+            [
+                new RepositoryPurgeScope(source, RepositoryPurgeScopeKind.ImmediateFiles)
+            ]));
+
+        Assert.True(response.Success);
+        Assert.NotNull(response.Purge);
+        Assert.True(response.Purge.PurgedVersionCount >= 1);
+        Assert.DoesNotContain(await operations.ListVersionsAsync(), version => version.SourcePath == removedFile);
+        var status = await operations.GetStatusAsync(FluxVaultStatusDetailLevel.Full);
+        Assert.DoesNotContain(status.TrackedEntries ?? [], entry => entry.SourcePath == removedFile);
+    }
+
+    [Fact]
+    public async Task Save_configuration_reports_failed_purge_after_saving_removed_selection()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var source = Path.Combine(workspace.RootPath, "source");
+        Directory.CreateDirectory(source);
+        var baseline = new ProtectionSelectionRule(
+            "source",
+            source,
+            ProtectionSelectionMode.ImmediateFiles,
+            CompressionPreference.Off,
+            ResourceProfile.Balanced,
+            IsEnabled: true);
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            RepositoryPath = workspace.RepositoryPath,
+            WatchedFolders = ProtectionSelectionCompiler.Compile([baseline]),
+            SelectionRules = [baseline]
+        };
+        var updatedConfiguration = configuration with
+        {
+            WatchedFolders = [],
+            SelectionRules = []
+        };
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        await store.SaveAsync(configuration);
+        var operations = new FluxVaultOperations(
+            store,
+            new CountingCaptureProvider(),
+            repositoryFactory: _ => new ThrowingPurgeRepository());
+
+        var response = await operations.HandleAsync(FluxVaultIpcRequest.SaveConfiguration(
+            updatedConfiguration,
+            purgeRemovedSelections: true,
+            removedSelections:
+            [
+                new RepositoryPurgeScope(source, RepositoryPurgeScopeKind.ImmediateFiles)
+            ]));
+
+        Assert.True(response.Success);
+        Assert.NotNull(response.Purge);
+        Assert.False(response.Purge!.Success);
+        Assert.Contains("metadata offline", response.Purge.ErrorMessage, StringComparison.OrdinalIgnoreCase);
+        var savedConfiguration = await store.LoadAsync();
+        Assert.Empty(savedConfiguration.WatchedFolders);
+        Assert.Empty(savedConfiguration.SelectionRules);
+        var status = await operations.GetStatusAsync(FluxVaultStatusDetailLevel.Fast);
+        Assert.Contains("purge failed", status.LastMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Save_configuration_with_removed_selection_cancels_active_capture_without_purge()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var source = Path.Combine(workspace.RootPath, "source");
+        Directory.CreateDirectory(source);
+        var file = Path.Combine(source, "remove.txt");
+        await File.WriteAllTextAsync(file, "remove");
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            RepositoryPath = workspace.RepositoryPath,
+            WatchedFolders =
+            [
+                new WatchedFolderConfiguration(
+                    "source",
+                    source,
+                    Recursive: false,
+                    IncludePatterns: ["*.txt"],
+                    ExcludePatterns: [],
+                    CompressionPreference.Off,
+                    ResourceProfile.Balanced,
+                    IsEnabled: true)
+            ],
+            SelectionRules =
+            [
+                new ProtectionSelectionRule(
+                    "source",
+                    source,
+                    ProtectionSelectionMode.ImmediateFiles,
+                    CompressionPreference.Off,
+                    ResourceProfile.Balanced,
+                    IsEnabled: true)
+            ],
+            CaptureCadencePolicy = CaptureCadencePolicy.CreateDefault() with
+            {
+                MaximumConcurrentCaptures = 1
+            }
+        };
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        await store.SaveAsync(configuration);
+        var captureProvider = new CancelAwareCaptureProvider();
+        var operations = CreateOperations(store, captureProvider);
+
+        var backupTask = operations.RunBackupNowAsync();
+        Assert.Equal(file, await captureProvider.Started.Task.WaitAsync(TimeSpan.FromSeconds(5)));
+
+        var response = await operations.HandleAsync(FluxVaultIpcRequest.SaveConfiguration(configuration with
+        {
+            WatchedFolders = [],
+            SelectionRules = []
+        }));
+        var summary = await backupTask.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.True(response.Success);
+        Assert.Null(response.Purge);
+        Assert.True(captureProvider.Canceled);
+        Assert.True(summary.Success);
+        Assert.Equal(0, summary.CapturedFileCount);
+        Assert.Equal(0, summary.FailedFileCount);
+        Assert.Equal(1, summary.SkippedUnchangedFileCount);
+        Assert.Empty(await operations.ListVersionsAsync());
+    }
+
     private static async Task<FluxVaultOperations> CreateOperationsAsync(
         TemporaryWorkspace workspace,
         string source,
@@ -340,6 +514,132 @@ public sealed class FluxVaultOperationsPerformanceTests
                     return;
                 }
             }
+        }
+    }
+
+    private sealed class CancelAwareCaptureProvider : IFileCaptureProvider
+    {
+        public TaskCompletionSource<string> Started { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public bool Canceled { get; private set; }
+
+        public async Task<FileCaptureResult> CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken = default)
+        {
+            Started.TrySetResult(Path.GetFullPath(request.SourcePath));
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                Canceled = true;
+                throw;
+            }
+
+            var payload = await File.ReadAllBytesAsync(request.SourcePath, cancellationToken);
+            return FileCaptureResult.Captured(
+                new MemoryStream(payload),
+                CaptureConsistency.BestEffort,
+                "Captured.");
+        }
+    }
+
+    private sealed class ThrowingPurgeRepository : IChunkRepository
+    {
+        public Task<FileCommitResult> CommitAsync(FileCommitRequest request, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<RepositoryDeletionResult?> RecordDeletionAsync(RepositoryDeletionRequest request, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<RepositoryPurgeResult> PurgeAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken = default)
+        {
+            throw new InvalidOperationException("metadata offline");
+        }
+
+        public Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task RestorePreviewAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<RepositoryScrubReport> ScrubAsync(bool autoRepairFromMirror, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<MirrorRepairReport> PreviewMirrorRepairAsync(string? mirrorNodeId = null, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<MirrorRepairReport> RunMirrorRepairAsync(string? mirrorNodeId = null, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<MirrorRebalancePreviewReport> PreviewMirrorRebalanceAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<MirrorRebalancePreviewReport> RunMirrorRebalanceAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<MirrorRebalancePreviewReport> PreviewMirrorDrainAsync(string mirrorNodeId, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<MirrorRebalancePreviewReport> RunMirrorDrainAsync(string mirrorNodeId, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<RestoreRehearsalReport> RunRestoreRehearsalAsync(string tempRoot, int maxVersions, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<RepositoryRetentionPreview> PreviewRetentionAsync(
+            RetentionPolicy policy,
+            DateTimeOffset nowUtc,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<RepositoryRetentionResult> ApplyRetentionAsync(
+            RetentionPolicy policy,
+            DateTimeOffset nowUtc,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
         }
     }
 }

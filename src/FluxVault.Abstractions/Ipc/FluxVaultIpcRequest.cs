@@ -1,5 +1,6 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Sync;
+using FluxVault.Abstractions.Storage;
 
 namespace FluxVault.Abstractions.Ipc;
 
@@ -19,7 +20,10 @@ public sealed record FluxVaultIpcRequest(
     string? ProfileId = null,
     string? ProfileDisplayName = null,
     string? SourceProfileId = null,
-    FluxVaultStatusDetailLevel StatusDetailLevel = FluxVaultStatusDetailLevel.Full)
+    FluxVaultStatusDetailLevel StatusDetailLevel = FluxVaultStatusDetailLevel.Full,
+    bool PurgeRemovedSelections = false,
+    IReadOnlyList<RepositoryPurgeScope>? RemovedSelections = null,
+    IReadOnlyList<RepositoryPurgeScope>? PreservedSelections = null)
 {
     public string? DestinationPath => OutputPath;
 
@@ -37,10 +41,24 @@ public sealed record FluxVaultIpcRequest(
             StatusDetailLevel: statusDetailLevel);
     }
 
-    public static FluxVaultIpcRequest SaveConfiguration(FluxVaultConfiguration configuration, string? profileId = null)
+    public static FluxVaultIpcRequest SaveConfiguration(
+        FluxVaultConfiguration configuration,
+        string? profileId = null,
+        bool purgeRemovedSelections = false,
+        IReadOnlyList<RepositoryPurgeScope>? removedSelections = null,
+        IReadOnlyList<RepositoryPurgeScope>? preservedSelections = null)
     {
         ArgumentNullException.ThrowIfNull(configuration);
-        return new FluxVaultIpcRequest(FluxVaultIpcCommand.SaveConfiguration, configuration, null, null, null, ProfileId: profileId);
+        return new FluxVaultIpcRequest(
+            FluxVaultIpcCommand.SaveConfiguration,
+            configuration,
+            null,
+            null,
+            null,
+            ProfileId: profileId,
+            PurgeRemovedSelections: purgeRemovedSelections,
+            RemovedSelections: removedSelections,
+            PreservedSelections: preservedSelections);
     }
 
     public static FluxVaultIpcRequest RunBackupNow()

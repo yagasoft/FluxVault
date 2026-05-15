@@ -58,11 +58,13 @@ static FluxVaultProfileRuntime CreateProfileRuntime(
     var configurationStore = new FluxVaultProfileConfigurationStore(profileSetStore, profile.Id);
     var stateRoot = ProfileStateRoot(programDataPath, profile.Id);
     var maintenanceStateStore = new FileRepositoryMaintenanceStateStore(Path.Combine(stateRoot, "repository-maintenance.json"));
+    var runtimeCoordinator = new ProtectionRuntimeCoordinator();
     var operations = new FluxVaultOperations(
         configurationStore,
         provider.GetRequiredService<IFileCaptureProvider>(),
         maintenanceStateStore,
-        stateRoot);
+        stateRoot,
+        runtimeCoordinator: runtimeCoordinator);
     var checkpointStore = new FileUsnJournalCheckpointStore(Path.Combine(stateRoot, "usn-checkpoints.json"));
     var usnCatchUpService = new UsnCatchUpService(provider.GetRequiredService<IUsnChangeJournalReader>(), checkpointStore);
     var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
@@ -73,7 +75,8 @@ static FluxVaultProfileRuntime CreateProfileRuntime(
             operations,
             configurationStore,
             usnCatchUpService,
-            loggerFactory.CreateLogger<FileSystemProtectionLoop>()),
+            loggerFactory.CreateLogger<FileSystemProtectionLoop>(),
+            runtimeCoordinator),
         new RepositoryMaintenanceLoop(
             operations,
             configurationStore,

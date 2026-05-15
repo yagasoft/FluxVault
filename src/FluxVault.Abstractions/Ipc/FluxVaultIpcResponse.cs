@@ -19,7 +19,8 @@ public sealed record FluxVaultIpcResponse(
     RestoreRehearsalReport? RestoreRehearsal = null,
     MirrorRepairReport? MirrorRepair = null,
     MirrorRebalancePreviewReport? MirrorRebalance = null,
-    RestoreSelectionSummary? RestoreSelection = null)
+    RestoreSelectionSummary? RestoreSelection = null,
+    RepositoryPurgeResult? Purge = null)
 {
     public static FluxVaultIpcResponse Ok()
     {
@@ -147,6 +148,19 @@ public sealed record FluxVaultIpcResponse(
             null,
             null,
             RestoreSelection: summary);
+    }
+
+    public static FluxVaultIpcResponse WithPurge(RepositoryPurgeResult? purge)
+    {
+        return new FluxVaultIpcResponse(
+            true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            Purge: purge);
     }
 
     public static FluxVaultIpcResponse Failure(string errorMessage)

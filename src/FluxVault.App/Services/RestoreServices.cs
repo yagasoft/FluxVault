@@ -1,6 +1,7 @@
 using System.IO;
 using System.Diagnostics;
 using System.Windows;
+using FluxVault.Abstractions.Storage;
 using FluxVault.App.ViewModels;
 using Microsoft.Win32;
 using WinForms = System.Windows.Forms;
@@ -52,6 +53,31 @@ public sealed class MessageBoxRestoreOverwriteConfirmation : IRestoreOverwriteCo
         var result = System.Windows.MessageBox.Show(
             $"The destination file already exists:{Environment.NewLine}{destinationPath}{Environment.NewLine}{Environment.NewLine}Overwrite it?",
             "Overwrite restore destination?",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning,
+            MessageBoxResult.No);
+        return result == MessageBoxResult.Yes;
+    }
+}
+
+public interface IProtectionRemovalConfirmation
+{
+    bool ConfirmPurge(IReadOnlyList<RepositoryPurgeScope> scopes);
+}
+
+public sealed class MessageBoxProtectionRemovalConfirmation : IProtectionRemovalConfirmation
+{
+    public bool ConfirmPurge(IReadOnlyList<RepositoryPurgeScope> scopes)
+    {
+        var sample = string.Join(
+            Environment.NewLine,
+            scopes.Take(8).Select(scope => $"{scope.Kind}: {scope.SourcePath}"));
+        var suffix = scopes.Count > 8
+            ? $"{Environment.NewLine}...and {scopes.Count - 8} more."
+            : string.Empty;
+        var result = System.Windows.MessageBox.Show(
+            $"Remove FluxVault backup history for the removed selection(s)?{Environment.NewLine}{Environment.NewLine}{sample}{suffix}{Environment.NewLine}{Environment.NewLine}This deletes matching FluxVault versions from the repository and mirrors. It does not delete live source files.",
+            "Permanently purge removed selections?",
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning,
             MessageBoxResult.No);

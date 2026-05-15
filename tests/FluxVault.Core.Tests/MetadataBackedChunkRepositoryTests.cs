@@ -131,6 +131,11 @@ public sealed class MetadataBackedChunkRepositoryTests
             return Task.FromResult(DeletionResult);
         }
 
+        public Task<RepositoryPurgeResult> PurgeAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new RepositoryPurgeResult(0, 0, 0, []));
+        }
+
         public Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();

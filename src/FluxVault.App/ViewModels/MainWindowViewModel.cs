@@ -24,6 +24,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly IFluxVaultWindowsServiceController windowsServiceController;
     private readonly IRestoreDestinationPicker restoreDestinationPicker;
     private readonly IRestoreOverwriteConfirmation restoreOverwriteConfirmation;
+    private readonly IProtectionRemovalConfirmation protectionRemovalConfirmation;
     private readonly IVersionPreviewLauncher versionPreviewLauncher;
     private readonly IMirrorNodeDialogService mirrorNodeDialogService;
     private readonly IProfileDialogService profileDialogService;
@@ -293,12 +294,14 @@ public sealed partial class MainWindowViewModel : ObservableObject
         IRestoreOverwriteConfirmation restoreOverwriteConfirmation,
         IMirrorNodeDialogService? mirrorNodeDialogService = null,
         IVersionPreviewLauncher? versionPreviewLauncher = null,
-        IProfileDialogService? profileDialogService = null)
+        IProfileDialogService? profileDialogService = null,
+        IProtectionRemovalConfirmation? protectionRemovalConfirmation = null)
     {
         this.client = client;
         this.windowsServiceController = windowsServiceController;
         this.restoreDestinationPicker = restoreDestinationPicker;
         this.restoreOverwriteConfirmation = restoreOverwriteConfirmation;
+        this.protectionRemovalConfirmation = protectionRemovalConfirmation ?? new MessageBoxProtectionRemovalConfirmation();
         this.versionPreviewLauncher = versionPreviewLauncher ?? new ShellVersionPreviewLauncher();
         this.mirrorNodeDialogService = mirrorNodeDialogService ?? new WpfMirrorNodeDialogService();
         this.profileDialogService = profileDialogService ?? new ProfileDialogService();
@@ -633,10 +636,47 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private async Task SaveConfigurationCoreAsync(bool refreshAfterSave = true, string? successStatus = null)
     {
-        var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(BuildConfiguration(), SelectedProfile?.Id)).ConfigureAwait(true);
-        SetServiceStatus(response.Success
-            ? successStatus ?? "Service connection: configuration saved"
-            : $"Service connection: save failed ({response.ErrorMessage})");
+        var removedSelections = FileBrowser.GetRemovedSelectionPurgeScopes();
+        if (removedSelections.Count > 0 && !protectionRemovalConfirmation.ConfirmPurge(removedSelections))
+        {
+            SetServiceStatus("Service connection: save cancelled; removed selections were not purged");
+            return;
+        }
+
+        FluxVaultIpcResponse response;
+        try
+        {
+            response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(
+                    BuildConfiguration(),
+                    SelectedProfile?.Id,
+                    purgeRemovedSelections: removedSelections.Count > 0,
+                    removedSelections: removedSelections,
+                    preservedSelections: FileBrowser.GetProtectedSelectionPurgeScopes()))
+                .ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is IOException
+                                     or TimeoutException
+                                     or UnauthorizedAccessException
+                                     or InvalidDataException
+                                     or InvalidOperationException
+                                     or ArgumentException)
+        {
+            SetServiceUnavailable(ex);
+            return;
+        }
+
+        var purgeStatus = response.Purge switch
+        {
+            null => string.Empty,
+            { Success: false } => $" Purge failed ({response.Purge.ErrorMessage ?? "unknown error"}); backup history may remain until retry.",
+            _ => $" Purged {response.Purge.PurgedVersionCount} version(s), {response.Purge.DeletedChunkCount} chunk(s)."
+        };
+        var saveStatus = response.Success
+            ? response.Purge is not null
+                ? $"Service connection: configuration saved{purgeStatus}"
+                : successStatus ?? "Service connection: configuration saved"
+            : $"Service connection: save failed ({response.ErrorMessage})";
+        SetServiceStatus(saveStatus);
         if (response.Success)
         {
             hasLocalConfigurationChanges = false;
@@ -644,9 +684,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
             {
                 await RefreshAsync().ConfigureAwait(true);
                 FileBrowser.RefreshBrowser();
-                if (!string.IsNullOrWhiteSpace(successStatus))
+                if (response.Purge is not null || !string.IsNullOrWhiteSpace(successStatus))
                 {
-                    SetServiceStatus(successStatus);
+                    SetServiceStatus(saveStatus);
                 }
             }
             else

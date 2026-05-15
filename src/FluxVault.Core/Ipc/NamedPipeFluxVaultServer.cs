@@ -3,10 +3,14 @@ using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using FluxVault.Abstractions.Ipc;
+using Microsoft.Extensions.Logging;
 
 namespace FluxVault.Core.Ipc;
 
-public sealed class NamedPipeFluxVaultServer(IFluxVaultRequestHandler handler, string pipeName = NamedPipeFluxVaultServer.DefaultPipeName)
+public sealed class NamedPipeFluxVaultServer(
+    IFluxVaultRequestHandler handler,
+    string pipeName = NamedPipeFluxVaultServer.DefaultPipeName,
+    ILogger<NamedPipeFluxVaultServer>? logger = null)
 {
     public const string DefaultPipeName = "FluxVault.Service";
     private const int MaxConcurrentClients = 32;
@@ -150,6 +154,11 @@ public sealed class NamedPipeFluxVaultServer(IFluxVaultRequestHandler handler, s
         {
             return FluxVaultIpcResponse.Failure(ex.Message);
         }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger?.LogWarning(ex, "Failed to process FluxVault IPC request payload.");
+            return FluxVaultIpcResponse.Failure(ex.Message);
+        }
     }
 
     private async Task<FluxVaultIpcResponse> HandleSafeAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
@@ -160,6 +169,11 @@ public sealed class NamedPipeFluxVaultServer(IFluxVaultRequestHandler handler, s
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or ArgumentException)
         {
+            return FluxVaultIpcResponse.Failure(ex.Message);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger?.LogError(ex, "Unexpected FluxVault IPC handler exception for {Command}.", request.Command);
             return FluxVaultIpcResponse.Failure(ex.Message);
         }
     }

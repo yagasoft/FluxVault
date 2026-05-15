@@ -165,6 +165,28 @@ public sealed partial class FileBrowserViewModel(
             .ToArray();
     }
 
+    public IReadOnlyList<RepositoryPurgeScope> GetRemovedSelectionPurgeScopes()
+    {
+        var currentScopes = GetProtectedSelectionPurgeScopes()
+            .ToHashSet(RepositoryPurgeScopeComparer.Instance);
+        return baselineRules.Values
+            .Where(IsProtectedContentRule)
+            .Select(ToRepositoryPurgeScope)
+            .Where(scope => !currentScopes.Contains(scope))
+            .Where(scope => !currentScopes.Any(current => ScopeCovers(current, scope)))
+            .OrderBy(scope => scope.SourcePath, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    public IReadOnlyList<RepositoryPurgeScope> GetProtectedSelectionPurgeScopes()
+    {
+        return currentRules.Values
+            .Where(IsProtectedContentRule)
+            .Select(ToRepositoryPurgeScope)
+            .OrderBy(scope => scope.SourcePath, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
     public void SelectFolder(FileBrowserFolderNode folder)
     {
         SelectedFolder = folder;
@@ -911,6 +933,50 @@ public sealed partial class FileBrowserViewModel(
         };
     }
 
+    private static bool IsProtectedContentRule(ProtectionSelectionRule rule)
+    {
+        return rule.IsEnabled && rule.Mode != ProtectionSelectionMode.RegexScope;
+    }
+
+    private static RepositoryPurgeScope ToRepositoryPurgeScope(ProtectionSelectionRule rule)
+    {
+        return new RepositoryPurgeScope(
+            Path.GetFullPath(rule.Path),
+            rule.Mode switch
+            {
+                ProtectionSelectionMode.File => RepositoryPurgeScopeKind.File,
+                ProtectionSelectionMode.ImmediateFiles => RepositoryPurgeScopeKind.ImmediateFiles,
+                ProtectionSelectionMode.RecursiveFolder => RepositoryPurgeScopeKind.RecursiveFolder,
+                _ => throw new InvalidOperationException($"Selection mode does not protect content: {rule.Mode}")
+            });
+    }
+
+    private static bool ScopeCovers(RepositoryPurgeScope covering, RepositoryPurgeScope covered)
+    {
+        return covered.Kind switch
+        {
+            RepositoryPurgeScopeKind.File => covering.Kind switch
+            {
+                RepositoryPurgeScopeKind.File => IsSamePath(covered.SourcePath, covering.SourcePath),
+                RepositoryPurgeScopeKind.ImmediateFiles => IsDirectChildFile(covered.SourcePath, covering.SourcePath),
+                RepositoryPurgeScopeKind.RecursiveFolder => IsSamePath(covered.SourcePath, covering.SourcePath)
+                                                            || IsUnderPath(covered.SourcePath, covering.SourcePath),
+                _ => false
+            },
+            RepositoryPurgeScopeKind.ImmediateFiles => covering.Kind switch
+            {
+                RepositoryPurgeScopeKind.ImmediateFiles => IsSamePath(covered.SourcePath, covering.SourcePath),
+                RepositoryPurgeScopeKind.RecursiveFolder => IsSamePath(covered.SourcePath, covering.SourcePath)
+                                                            || IsUnderPath(covered.SourcePath, covering.SourcePath),
+                _ => false
+            },
+            RepositoryPurgeScopeKind.RecursiveFolder => covering.Kind == RepositoryPurgeScopeKind.RecursiveFolder
+                                                        && (IsSamePath(covered.SourcePath, covering.SourcePath)
+                                                            || IsUnderPath(covered.SourcePath, covering.SourcePath)),
+            _ => false
+        };
+    }
+
     private ProtectionSelectionRule? FindNearestCoveringRule(string path, bool isDirectory)
     {
         return currentRules.Values
@@ -1139,5 +1205,30 @@ public sealed partial class FileBrowserViewModel(
     private static string ToTrackedEntryKey(string path, RepositoryEntryKind entryKind)
     {
         return $"{entryKind}:{TrimPath(path)}";
+    }
+
+    private sealed class RepositoryPurgeScopeComparer : IEqualityComparer<RepositoryPurgeScope>
+    {
+        public static RepositoryPurgeScopeComparer Instance { get; } = new();
+
+        public bool Equals(RepositoryPurgeScope? left, RepositoryPurgeScope? right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (left is null || right is null)
+            {
+                return false;
+            }
+
+            return left.Kind == right.Kind && IsSamePath(left.SourcePath, right.SourcePath);
+        }
+
+        public int GetHashCode(RepositoryPurgeScope scope)
+        {
+            return HashCode.Combine(scope.Kind, StringComparer.OrdinalIgnoreCase.GetHashCode(TrimPath(scope.SourcePath)));
+        }
     }
 }

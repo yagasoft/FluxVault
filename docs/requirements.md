@@ -102,6 +102,12 @@ credential-reference-only configuration and fake-client-tested contracts.
 - The older watched-folder Browse workflow is removed once the File browser
   becomes the primary selection workflow.
 - Selection changes must not affect the running service until the user saves.
+- Saving removed File browser protected selections must show one destructive
+  confirmation before permanently deleting matching FluxVault repository and
+  mirror history. On save, the service must immediately stop monitoring those
+  scopes, clear pending watcher/capture state for them, cancel only matching
+  active captures, skip no-longer-protected targets still being enumerated, and
+  leave unrelated protected paths running.
 - Scoped include/exclude regex rules attach to selected File browser folders or
   files. Recursive folder regex applies recursively, immediate folder regex
   applies only to direct files, and child regex rules are additive with inherited

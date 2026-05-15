@@ -13,13 +13,20 @@ public sealed class IpcSerializationTests
     public void Request_serialization_preserves_command_and_payload()
     {
         var configuration = FluxVaultConfiguration.CreateDefault(@"C:\ProgramData\FluxVault");
-        var request = FluxVaultIpcRequest.SaveConfiguration(configuration);
+        var request = FluxVaultIpcRequest.SaveConfiguration(
+            configuration,
+            purgeRemovedSelections: true,
+            removedSelections: [new RepositoryPurgeScope(@"D:\Work", RepositoryPurgeScopeKind.RecursiveFolder)]);
 
         var roundTrip = FluxVaultIpcSerializer.DeserializeRequest(FluxVaultIpcSerializer.SerializeRequest(request));
 
         Assert.Equal(FluxVaultIpcCommand.SaveConfiguration, roundTrip.Command);
         Assert.NotNull(roundTrip.Configuration);
         Assert.Equal(configuration.RepositoryPath, roundTrip.Configuration.RepositoryPath);
+        Assert.True(roundTrip.PurgeRemovedSelections);
+        var scope = Assert.Single(roundTrip.RemovedSelections!);
+        Assert.Equal(RepositoryPurgeScopeKind.RecursiveFolder, scope.Kind);
+        Assert.Equal(@"D:\Work", scope.SourcePath);
     }
 
     [Fact]

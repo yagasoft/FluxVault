@@ -260,6 +260,16 @@ changes. While configuration or File browser edits are dirty, dashboard refresh
 updates runtime status, versions, and activity without replacing local unsaved
 selection rules or clearing the pending-changes pane.
 
+When a save removes protected content selections, the app compares the saved
+baseline with the pending rules and asks for destructive confirmation before
+requesting a purge. Regex-only scope removals are ignored because they are
+filters, not protected content. Confirmed removal scopes are sent over IPC with
+the save request together with still-protected preserve scopes, so retained
+child selections are not purged when a parent recursive selection is removed.
+The service computes the same removal scopes for old clients that do not send
+purge fields, but those clients only stop future monitoring; they do not purge
+history unless `PurgeRemovedSelections` is explicitly set.
+
 The File browser tree owns its own scrollbars so mouse-wheel scrolling works
 when the cursor is over the folder tree. File checkboxes are interactive inside
 the otherwise read-only grid, so individual files can be added or removed from
@@ -284,6 +294,16 @@ selections use a folder picker and preserve relative paths under the chosen
 destination. Latest restore to original requires overwrite confirmation when
 conflicts exist. Show versions opens the version inventory filtered to the
 selected file or folder.
+
+Protected-selection removal is coordinated with the running service profile.
+After saving the new configuration, `FluxVaultOperations` updates the current
+protection snapshot, signals the profile's `ProtectionRuntimeCoordinator`,
+clears matching runtime status rows, cancels matching active capture tokens,
+and optionally calls repository purge. `FileSystemProtectionLoop` wakes from
+the same coordinator instead of waiting for the next watcher poll, clears stale
+pending watcher paths, rebuilds watchers, and avoids watcher fallback work for
+removed scopes. Backup enumeration and targeted backup both re-check each
+target against the latest protection snapshot before reading source bytes.
 
 The File browser merges live filesystem entries with the repository's latest
 tracked entries. Deleted or otherwise missing tracked files and folders appear
@@ -385,6 +405,15 @@ entry. Folder versions and deletion tombstones retain their referenced child
 versions while they are kept. After deleting pruned DB version rows, FluxVault
 garbage-collects only chunks and metadata no remaining DB chunk reference uses.
 Mirror cleanup is best-effort and reported through status and diagnostics.
+
+Confirmed protected-selection purge bypasses retention for the removed scopes.
+`RepositoryPurgeRequest` supports exact file, immediate-folder, and recursive
+folder scopes plus preserve scopes for retained child selections. The repository
+deletes every matching file/folder/deletion manifest and expands the purge to
+remaining manifests that reference purged versions, then deletes primary and
+mirror chunks/metadata only when no remaining manifest or metadata row still
+references the digest. Purge returns purged-version count, deleted-chunk count,
+reclaimed bytes, and non-fatal mirror warnings.
 
 `MirrorSetConfiguration` is the active mirror configuration model. Older
 `mirrorPath` configuration files are loaded for compatibility and normalised

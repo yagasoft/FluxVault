@@ -1,4 +1,5 @@
 using System.Text;
+using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
@@ -267,6 +268,68 @@ public sealed class RepositoryTests
         Assert.Equal(sharedPayload, await File.ReadAllBytesAsync(restoredPath));
     }
 
+    [Fact]
+    public async Task Purge_file_removes_history_and_unreferenced_primary_and_mirror_chunks()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var mirrorPath = Path.Combine(workspace.RootPath, "mirror");
+        var repository = CreateRepository(workspace.RepositoryPath, mirrorPath);
+        var removedPath = Path.GetFullPath(@"D:\Work\Docs\remove.txt");
+        var keptPath = Path.GetFullPath(@"D:\Work\Docs\keep.txt");
+        var removed = await repository.CommitAsync(NewRequest(
+            Encoding.UTF8.GetBytes(string.Concat(Enumerable.Repeat("remove unique ", 128))),
+            sourcePath: removedPath,
+            watchedFolderPath: @"D:\Work"));
+        var kept = await repository.CommitAsync(NewRequest(
+            Encoding.UTF8.GetBytes(string.Concat(Enumerable.Repeat("keep unique ", 128))),
+            sourcePath: keptPath,
+            watchedFolderPath: @"D:\Work"));
+
+        var result = await repository.PurgeAsync(new RepositoryPurgeRequest(
+            [new RepositoryPurgeScope(removedPath, RepositoryPurgeScopeKind.File)]));
+
+        var versions = await repository.ListVersionsAsync();
+        Assert.True(result.PurgedVersionCount >= 1);
+        Assert.True(result.DeletedChunkCount >= 1);
+        Assert.True(result.ReclaimedBytes > 0);
+        Assert.DoesNotContain(versions, version => version.SourcePath == removedPath);
+        Assert.DoesNotContain(versions.SelectMany(version => version.FolderEntries ?? []), entry => entry.SourcePath == removedPath);
+        Assert.Contains(versions, version => version.VersionId == kept.Manifest.VersionId);
+        Assert.False(File.Exists(Path.Combine(workspace.RepositoryPath, "manifests", $"{removed.Manifest.VersionId}.json")));
+        Assert.False(File.Exists(Path.Combine(mirrorPath, "manifests", $"{removed.Manifest.VersionId}.json")));
+
+        var restoredPath = Path.Combine(workspace.RootPath, "kept.restore");
+        await repository.RestoreAsync(kept.Manifest.VersionId, restoredPath);
+        Assert.Equal(string.Concat(Enumerable.Repeat("keep unique ", 128)), await File.ReadAllTextAsync(restoredPath));
+    }
+
+    [Fact]
+    public async Task Purge_immediate_folder_keeps_nested_file_history()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        var directPath = Path.GetFullPath(@"D:\Work\Docs\direct.txt");
+        var nestedPath = Path.GetFullPath(@"D:\Work\Docs\Nested\nested.txt");
+        await repository.CommitAsync(NewRequest(
+            Encoding.UTF8.GetBytes("direct"),
+            sourcePath: directPath,
+            watchedFolderPath: @"D:\Work"));
+        var nested = await repository.CommitAsync(NewRequest(
+            Encoding.UTF8.GetBytes("nested"),
+            sourcePath: nestedPath,
+            watchedFolderPath: @"D:\Work"));
+
+        await repository.PurgeAsync(new RepositoryPurgeRequest(
+            [new RepositoryPurgeScope(Path.GetFullPath(@"D:\Work\Docs"), RepositoryPurgeScopeKind.ImmediateFiles)]));
+
+        var versions = await repository.ListVersionsAsync();
+        Assert.DoesNotContain(versions, version => version.SourcePath == directPath);
+        Assert.Contains(versions, version => version.VersionId == nested.Manifest.VersionId);
+        var restoredPath = Path.Combine(workspace.RootPath, "nested.restore");
+        await repository.RestoreAsync(nested.Manifest.VersionId, restoredPath);
+        Assert.Equal("nested", await File.ReadAllTextAsync(restoredPath));
+    }
+
     private static FileSystemChunkRepository CreateRepository(string path)
     {
         return new FileSystemChunkRepository(
@@ -274,6 +337,18 @@ public sealed class RepositoryTests
             new FastCdcChunker(new ChunkingOptions(128, 256, 512)),
             new Blake3ContentHasher(),
             new ZstdChunkCodec());
+    }
+
+    private static FileSystemChunkRepository CreateRepository(string path, string mirrorPath)
+    {
+        return new FileSystemChunkRepository(
+            path,
+            new FastCdcChunker(new ChunkingOptions(128, 256, 512)),
+            new Blake3ContentHasher(),
+            new ZstdChunkCodec(),
+            new MirrorSetConfiguration(
+                [new MirrorNodeConfiguration("mirror", "Mirror", mirrorPath, IsEnabled: true)],
+                MirrorPlacementPolicyConfiguration.CreateDefault()));
     }
 
     private static async Task CommitSeriesAsync(

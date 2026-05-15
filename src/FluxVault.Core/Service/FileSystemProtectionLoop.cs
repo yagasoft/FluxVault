@@ -2,6 +2,7 @@ using FluxVault.Abstractions.ChangeTracking;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
+using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.ChangeTracking;
 using FluxVault.Core.Policies;
@@ -13,8 +14,10 @@ public sealed class FileSystemProtectionLoop(
     FluxVaultOperations operations,
     IFluxVaultConfigurationStore configurationStore,
     UsnCatchUpService usnCatchUpService,
-    ILogger<FileSystemProtectionLoop>? logger = null)
+    ILogger<FileSystemProtectionLoop>? logger = null,
+    ProtectionRuntimeCoordinator? runtimeCoordinator = null)
 {
+    private readonly ProtectionRuntimeCoordinator protectionRuntimeCoordinator = runtimeCoordinator ?? new ProtectionRuntimeCoordinator();
     private readonly Lock gate = new();
     private readonly List<FileSystemWatcher> watchers = [];
     private DateTimeOffset lastFullScanUtc = DateTimeOffset.MinValue;
@@ -39,7 +42,9 @@ public sealed class FileSystemProtectionLoop(
         {
             var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
             var cadence = configuration.CaptureCadencePolicy;
-            await Task.Delay(cadence.WatcherPollInterval, cancellationToken).ConfigureAwait(false);
+            await protectionRuntimeCoordinator.WaitForConfigurationChangeOrDelayAsync(cadence.WatcherPollInterval, cancellationToken)
+                .ConfigureAwait(false);
+            ClearRemovedScopes(protectionRuntimeCoordinator.TakeRemovedScopes());
             await RebuildWatchersAsync(cancellationToken).ConfigureAwait(false);
             var now = DateTimeOffset.UtcNow;
             var dueChanges = TakeDueChanges(cadence, now);
@@ -209,6 +214,17 @@ public sealed class FileSystemProtectionLoop(
         lock (gate)
         {
             watchedFolderPaths.Clear();
+            var enabledFolderIds = configuration.WatchedFolders
+                .Where(folder => folder.IsEnabled && Directory.Exists(folder.Path))
+                .Select(folder => folder.Id)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            foreach (var staleFolderId in watcherEventsByFolder.Keys
+                         .Where(folderId => !enabledFolderIds.Contains(folderId))
+                         .ToArray())
+            {
+                watcherEventsByFolder.Remove(staleFolderId);
+            }
+
             foreach (var folder in configuration.WatchedFolders.Where(folder => folder.IsEnabled && Directory.Exists(folder.Path)))
             {
                 watchedFolderPaths[folder.Id] = Path.GetFullPath(folder.Path);
@@ -235,6 +251,52 @@ public sealed class FileSystemProtectionLoop(
         }
 
         pendingCatchUp = true;
+    }
+
+    private void ClearRemovedScopes(IReadOnlyList<RepositoryPurgeScope> removedScopes)
+    {
+        if (removedScopes.Count == 0)
+        {
+            return;
+        }
+
+        lock (gate)
+        {
+            foreach (var path in pendingFileChanges.Keys.ToArray())
+            {
+                if (removedScopes.Any(scope => ScopeMatchesPath(scope, path, isDirectory: false)))
+                {
+                    pendingFileChanges.Remove(path);
+                }
+            }
+
+            foreach (var path in lastCaptureAttemptByPath.Keys.ToArray())
+            {
+                if (removedScopes.Any(scope => ScopeMatchesPath(scope, path, isDirectory: false)))
+                {
+                    lastCaptureAttemptByPath.Remove(path);
+                }
+            }
+
+            foreach (var (folderId, folderPath) in watchedFolderPaths.ToArray())
+            {
+                if (!removedScopes.Any(scope => ScopeMatchesPath(scope, folderPath, isDirectory: true)))
+                {
+                    continue;
+                }
+
+                watchedFolderPaths.Remove(folderId);
+                watcherEventsByFolder.Remove(folderId);
+            }
+
+            if (pendingFileChanges.Count == 0)
+            {
+                pendingReconciliationScan = false;
+                pendingCatchUp = false;
+            }
+
+            PublishAllWatcherStatuses();
+        }
     }
 
     internal void RecordFileSystemEventForTesting(WatchedFolderConfiguration folder, string fullPath)
@@ -486,5 +548,64 @@ public sealed class FileSystemProtectionLoop(
                 false,
                 paths.Select(Path.GetFullPath).ToHashSet(StringComparer.OrdinalIgnoreCase));
         }
+    }
+
+    private static bool ScopeMatchesPath(RepositoryPurgeScope scope, string path, bool isDirectory)
+    {
+        return scope.Kind switch
+        {
+            RepositoryPurgeScopeKind.File => !isDirectory && PathEquals(path, scope.SourcePath),
+            RepositoryPurgeScopeKind.ImmediateFiles => isDirectory
+                ? PathEquals(path, scope.SourcePath)
+                : IsDirectChildFile(path, scope.SourcePath),
+            RepositoryPurgeScopeKind.RecursiveFolder => PathEqualsOrUnder(path, scope.SourcePath),
+            _ => false
+        };
+    }
+
+    private static bool PathEqualsOrUnder(string path, string root)
+    {
+        var trimmedPath = TrimPath(path);
+        var trimmedRoot = TrimPath(root);
+        return string.Equals(trimmedPath, trimmedRoot, StringComparison.OrdinalIgnoreCase)
+               || IsUnderPath(trimmedPath, trimmedRoot);
+    }
+
+    private static bool PathEquals(string left, string right)
+    {
+        return string.Equals(TrimPath(left), TrimPath(right), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsDirectChildFile(string filePath, string folderPath)
+    {
+        var parent = Path.GetDirectoryName(Path.GetFullPath(filePath));
+        return !string.IsNullOrWhiteSpace(parent)
+               && PathEquals(parent, folderPath);
+    }
+
+    private static bool IsUnderPath(string path, string root)
+    {
+        var rootPrefix = EndsWithDirectorySeparator(root) ? root : root + Path.DirectorySeparatorChar;
+        return Path.GetFullPath(path).StartsWith(rootPrefix, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string TrimPath(string path)
+    {
+        var fullPath = Path.GetFullPath(path);
+        var root = Path.GetPathRoot(fullPath);
+        var trimmed = fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        if (!string.IsNullOrEmpty(root)
+            && string.Equals(trimmed, root.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar), StringComparison.OrdinalIgnoreCase))
+        {
+            return root;
+        }
+
+        return trimmed;
+    }
+
+    private static bool EndsWithDirectorySeparator(string path)
+    {
+        return path.EndsWith(Path.DirectorySeparatorChar)
+               || path.EndsWith(Path.AltDirectorySeparatorChar);
     }
 }

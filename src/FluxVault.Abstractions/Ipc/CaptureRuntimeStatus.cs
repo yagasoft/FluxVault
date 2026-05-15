@@ -10,7 +10,8 @@ public enum CaptureRuntimeState
     Captured = 3,
     Blocked = 4,
     Failed = 5,
-    SkippedUnchanged = 6
+    SkippedUnchanged = 6,
+    Canceled = 7
 }
 
 public sealed record CaptureRuntimeStatus(

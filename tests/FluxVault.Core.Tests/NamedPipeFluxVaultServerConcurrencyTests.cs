@@ -38,6 +38,35 @@ public sealed class NamedPipeFluxVaultServerConcurrencyTests
         Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(1));
     }
 
+    [Fact]
+    public async Task Unexpected_handler_exception_returns_failure_response()
+    {
+        var pipeName = $"FluxVault.Tests.{Guid.NewGuid():N}";
+        var server = new NamedPipeFluxVaultServer(new ThrowingHandler(), pipeName);
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var serverTask = server.RunAsync(cancellation.Token);
+        var client = new NamedPipeFluxVaultClient(pipeName);
+
+        var response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellation.Token)
+            .WaitAsync(TimeSpan.FromSeconds(2), cancellation.Token);
+
+        await cancellation.CancelAsync();
+        await serverTask.WaitAsync(TimeSpan.FromSeconds(2), CancellationToken.None);
+
+        Assert.False(response.Success);
+        Assert.Contains("metadata offline", response.ErrorMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private sealed class ThrowingHandler : IFluxVaultRequestHandler
+    {
+        public Task<FluxVaultIpcResponse> HandleAsync(
+            FluxVaultIpcRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            throw new InvalidOperationException("metadata offline");
+        }
+    }
+
     private sealed class BlockingBackupHandler : IFluxVaultRequestHandler
     {
         private readonly TaskCompletionSource releaseBackup = new(TaskCreationOptions.RunContinuationsAsynchronously);

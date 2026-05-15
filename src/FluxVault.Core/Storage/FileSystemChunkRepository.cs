@@ -249,6 +249,97 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
     }
 
+    public async Task<RepositoryPurgeResult> PurgeAsync(
+        RepositoryPurgeRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var scopes = NormalisePurgeScopes(request.Scopes);
+        if (scopes.Count == 0)
+        {
+            return new RepositoryPurgeResult(0, 0, 0, []);
+        }
+
+        var preserveScopes = NormalisePurgeScopes(request.PreserveScopes ?? []);
+        await RepositoryLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var manifests = (await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false)).ToArray();
+            if (manifests.Length == 0)
+            {
+                return new RepositoryPurgeResult(0, 0, 0, []);
+            }
+
+            var purgeIds = SelectInitialPurgeIds(manifests, scopes, preserveScopes);
+            ExpandPurgeReferences(manifests, purgeIds);
+            if (purgeIds.Count == 0)
+            {
+                return new RepositoryPurgeResult(0, 0, 0, []);
+            }
+
+            var purgedManifests = manifests
+                .Where(manifest => purgeIds.Contains(manifest.VersionId))
+                .ToArray();
+            var remainingManifests = manifests
+                .Where(manifest => !purgeIds.Contains(manifest.VersionId))
+                .ToArray();
+            var purgedDigests = purgedManifests
+                .SelectMany(manifest => manifest.Chunks)
+                .Select(chunk => chunk.Digest)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            var mirrorWarnings = new List<string>();
+            var reclaimedBytes = 0L;
+
+            mutationManifestCache = remainingManifests.ToList();
+            if (metadataStore is not null)
+            {
+                await metadataStore.DeleteVersionsAsync(purgeIds.ToArray(), cancellationToken).ConfigureAwait(false);
+            }
+
+            foreach (var manifest in purgedManifests)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                reclaimedBytes += DeleteLocalFile(ManifestPath(rootPath, manifest.VersionId));
+                DeleteMirrorFile(ManifestPath, manifest.VersionId, mirrorWarnings);
+            }
+
+            var remainingReferences = metadataStore is null
+                ? CountChunkReferences(remainingManifests, purgedDigests)
+                : await metadataStore.CountChunkReferencesAsync(purgedDigests, cancellationToken).ConfigureAwait(false);
+            var deletedChunkCount = 0;
+            foreach (var digest in purgedDigests)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                if (remainingReferences.GetValueOrDefault(digest) > 0)
+                {
+                    continue;
+                }
+
+                var chunkBytes = DeleteLocalFile(ChunkPath(rootPath, digest));
+                var metadataBytes = DeleteLocalFile(MetadataPath(rootPath, digest));
+                if (chunkBytes > 0 || metadataBytes > 0)
+                {
+                    deletedChunkCount++;
+                    reclaimedBytes += chunkBytes + metadataBytes;
+                }
+
+                DeleteMirrorFile(ChunkPath, digest, mirrorWarnings);
+                DeleteMirrorFile(MetadataPath, digest, mirrorWarnings);
+            }
+
+            return new RepositoryPurgeResult(
+                purgedManifests.Length,
+                deletedChunkCount,
+                reclaimedBytes,
+                CondenseMirrorWarnings(mirrorWarnings));
+        }
+        finally
+        {
+            RepositoryLock.Release();
+        }
+    }
+
     public async Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
@@ -1999,6 +2090,95 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             .ToArray();
     }
 
+    private static IReadOnlyList<RepositoryPurgeScope> NormalisePurgeScopes(IEnumerable<RepositoryPurgeScope> scopes)
+    {
+        return scopes
+            .Where(scope => !string.IsNullOrWhiteSpace(scope.SourcePath))
+            .Select(scope => scope with { SourcePath = Path.GetFullPath(scope.SourcePath) })
+            .DistinctBy(scope => $"{scope.Kind}:{NormaliseDirectoryPath(scope.SourcePath)}", StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static HashSet<string> SelectInitialPurgeIds(
+        IEnumerable<FileVersionManifest> manifests,
+        IReadOnlyList<RepositoryPurgeScope> scopes,
+        IReadOnlyList<RepositoryPurgeScope> preserveScopes)
+    {
+        return manifests
+            .Where(manifest => scopes.Any(scope => PurgeScopeMatches(scope, manifest)))
+            .Where(manifest => !preserveScopes.Any(scope => PurgeScopeMatches(scope, manifest)))
+            .Select(manifest => manifest.VersionId)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static void ExpandPurgeReferences(
+        IReadOnlyList<FileVersionManifest> manifests,
+        HashSet<string> purgeIds)
+    {
+        var changed = true;
+        while (changed)
+        {
+            changed = false;
+            foreach (var manifest in manifests)
+            {
+                if (purgeIds.Contains(manifest.VersionId))
+                {
+                    continue;
+                }
+
+                if (ReferencesAnyPurgedVersion(manifest, purgeIds)
+                    && purgeIds.Add(manifest.VersionId))
+                {
+                    changed = true;
+                }
+            }
+        }
+    }
+
+    private static bool ReferencesAnyPurgedVersion(
+        FileVersionManifest manifest,
+        ISet<string> purgeIds)
+    {
+        return (manifest.ParentVersionIds ?? []).Any(purgeIds.Contains)
+               || (!string.IsNullOrWhiteSpace(manifest.DeletedFromVersionId) && purgeIds.Contains(manifest.DeletedFromVersionId))
+               || (!string.IsNullOrWhiteSpace(manifest.RestoredFromVersionId) && purgeIds.Contains(manifest.RestoredFromVersionId))
+               || (!string.IsNullOrWhiteSpace(manifest.ForkOriginVersionId) && purgeIds.Contains(manifest.ForkOriginVersionId))
+               || (!string.IsNullOrWhiteSpace(manifest.InheritedFromVersionId) && purgeIds.Contains(manifest.InheritedFromVersionId))
+               || (manifest.FolderEntries ?? []).Any(entry => purgeIds.Contains(entry.VersionId));
+    }
+
+    private static bool PurgeScopeMatches(RepositoryPurgeScope scope, FileVersionManifest manifest)
+    {
+        return scope.Kind switch
+        {
+            RepositoryPurgeScopeKind.File => manifest.EntryKind == RepositoryEntryKind.File
+                                             && PathEquals(manifest.SourcePath, scope.SourcePath),
+            RepositoryPurgeScopeKind.ImmediateFiles => manifest.EntryKind == RepositoryEntryKind.File
+                                                       ? IsDirectChildFile(manifest.SourcePath, scope.SourcePath)
+                                                       : manifest.EntryKind == RepositoryEntryKind.Folder
+                                                         && PathEquals(manifest.SourcePath, scope.SourcePath),
+            RepositoryPurgeScopeKind.RecursiveFolder => PathIsWithinOrEqual(manifest.SourcePath, scope.SourcePath),
+            _ => false
+        };
+    }
+
+    private static IReadOnlyDictionary<string, long> CountChunkReferences(
+        IEnumerable<FileVersionManifest> manifests,
+        IReadOnlyCollection<string> requestedDigests)
+    {
+        var requested = requestedDigests.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var counts = requested.ToDictionary(digest => digest, _ => 0L, StringComparer.OrdinalIgnoreCase);
+        foreach (var chunk in manifests.SelectMany(manifest => manifest.Chunks))
+        {
+            if (requested.Contains(chunk.Digest))
+            {
+                counts[chunk.Digest] = counts.GetValueOrDefault(chunk.Digest) + 1;
+            }
+        }
+
+        return counts;
+    }
+
     private async Task<IReadOnlyList<FileVersionManifest>> ReadAllManifestsAsync(CancellationToken cancellationToken)
     {
         if (metadataStore is not null)
@@ -2414,6 +2594,13 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             ? normalisedParent
             : normalisedParent + Path.DirectorySeparatorChar;
         return normalisedPath.StartsWith(parentWithSeparator, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsDirectChildFile(string filePath, string folderPath)
+    {
+        var parent = Path.GetDirectoryName(Path.GetFullPath(filePath));
+        return !string.IsNullOrWhiteSpace(parent)
+               && PathEquals(parent, folderPath);
     }
 
     private static string NormaliseDirectoryPath(string path)

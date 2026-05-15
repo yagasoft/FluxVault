@@ -12,6 +12,8 @@ public interface IChunkRepository
 
     Task<RepositoryDeletionResult?> RecordDeletionAsync(RepositoryDeletionRequest request, CancellationToken cancellationToken = default);
 
+    Task<RepositoryPurgeResult> PurgeAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken = default);
+
     Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default);
 
     Task RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default);

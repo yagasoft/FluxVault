@@ -11,7 +11,7 @@ namespace FluxVault.App.Tests;
 public sealed class FileBrowserViewModelTests
 {
     [Fact]
-    public void Folder_selection_cycles_recursive_immediate_none()
+    public void Folder_selection_cycles_recursive_immediate_deselected()
     {
         var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem(
             [Folder(@"D:\")],
@@ -28,6 +28,68 @@ public sealed class FileBrowserViewModelTests
 
         viewModel.ToggleFolderSelection(folder);
         Assert.Null(folder.SelectionMode);
+    }
+
+    [Fact]
+    public void Folder_deselect_all_clears_and_restores_full_subtree_rules()
+    {
+        var root = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);
+        var child = new FileBrowserFolderNode(@"D:\Work\Child", "Child", isAccessible: true, errorMessage: null);
+        root.Children.Add(child);
+        var regexRule = Rule("regex", @"D:\Work\RegexScope", ProtectionSelectionMode.RegexScope) with
+        {
+            IncludeRegexRules =
+            [
+                new ProtectionScopedRegexRule("include-docx", @"\.docx$", ProtectionExclusionTarget.File)
+            ]
+        };
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        viewModel.LoadSelectionRules(
+            [
+                Rule("root", root.Path, ProtectionSelectionMode.ImmediateFiles),
+                Rule("child", child.Path, ProtectionSelectionMode.RecursiveFolder),
+                Rule("file", @"D:\Work\Child\brief.docx", ProtectionSelectionMode.File),
+                regexRule
+            ]);
+
+        viewModel.ToggleFolderSelection(root);
+
+        Assert.Empty(viewModel.GetSelectionRules());
+        Assert.Null(root.SelectionMode);
+        Assert.Null(child.SelectionMode);
+
+        viewModel.ToggleFolderSelection(root);
+
+        var restored = viewModel.GetSelectionRules();
+        Assert.Contains(restored, rule => rule.Path == root.Path && rule.Mode == ProtectionSelectionMode.ImmediateFiles);
+        Assert.Contains(restored, rule => rule.Path == child.Path && rule.Mode == ProtectionSelectionMode.RecursiveFolder);
+        Assert.Contains(restored, rule => rule.Path == Path.GetFullPath(@"D:\Work\Child\brief.docx") && rule.Mode == ProtectionSelectionMode.File);
+        Assert.Contains(restored, rule =>
+            rule.Path == Path.GetFullPath(@"D:\Work\RegexScope")
+            && rule.Mode == ProtectionSelectionMode.RegexScope
+            && Assert.Single(rule.IncludeRegexRules ?? []).Pattern == @"\.docx$");
+    }
+
+    [Fact]
+    public void Folder_deselect_restore_snapshot_is_cleared_when_rules_reload()
+    {
+        var root = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);
+        var child = new FileBrowserFolderNode(@"D:\Work\Child", "Child", isAccessible: true, errorMessage: null);
+        root.Children.Add(child);
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        viewModel.LoadSelectionRules(
+            [
+                Rule("root", root.Path, ProtectionSelectionMode.ImmediateFiles),
+                Rule("child", child.Path, ProtectionSelectionMode.RecursiveFolder)
+            ]);
+        viewModel.ToggleFolderSelection(root);
+
+        viewModel.LoadSelectionRules([]);
+        viewModel.ToggleFolderSelection(root);
+
+        var rule = Assert.Single(viewModel.GetSelectionRules());
+        Assert.Equal(root.Path, rule.Path);
+        Assert.Equal(ProtectionSelectionMode.RecursiveFolder, rule.Mode);
     }
 
     [Fact]
@@ -333,6 +395,31 @@ public sealed class FileBrowserViewModelTests
     }
 
     [Fact]
+    public void Address_navigation_expands_ancestors_to_selected_folder()
+    {
+        var viewModel = new FileBrowserViewModel(new MutableFileBrowserFileSystem(
+            [Folder(@"D:\")],
+            new Dictionary<string, IReadOnlyList<FileBrowserFolderInfo>>(StringComparer.OrdinalIgnoreCase)
+            {
+                [Path.GetFullPath(@"D:\")] = [Folder(@"D:\Work")],
+                [Path.GetFullPath(@"D:\Work")] = [Folder(@"D:\Work\Project")]
+            },
+            new Dictionary<string, IReadOnlyList<FileBrowserFileInfo>>(StringComparer.OrdinalIgnoreCase)));
+        viewModel.LoadSelectionRules([]);
+        viewModel.LoadRoots();
+
+        var navigated = viewModel.NavigateToPath(@"D:\Work\Project");
+
+        Assert.True(navigated);
+        var root = Assert.Single(viewModel.Roots);
+        var work = Assert.Single(root.Children);
+        Assert.True(root.IsExpanded);
+        Assert.True(work.IsExpanded);
+        Assert.NotNull(viewModel.SelectedFolder);
+        Assert.Equal(Path.GetFullPath(@"D:\Work\Project"), viewModel.SelectedFolder.Path);
+    }
+
+    [Fact]
     public void Refresh_preserves_selected_folder_reloads_files_and_refreshes_loaded_children()
     {
         var fileSystem = new MutableFileBrowserFileSystem(
@@ -366,6 +453,52 @@ public sealed class FileBrowserViewModelTests
         Assert.Equal(Path.GetFullPath(@"D:\Work"), viewModel.SelectedFolder.Path);
         Assert.Equal("New", Assert.Single(viewModel.SelectedFolder.Children).Name);
         Assert.Equal("new.txt", Assert.Single(viewModel.Files).Name);
+    }
+
+    [Fact]
+    public void Refresh_preserves_expanded_folders()
+    {
+        var fileSystem = new MutableFileBrowserFileSystem(
+            [Folder(@"D:\")],
+            new Dictionary<string, IReadOnlyList<FileBrowserFolderInfo>>(StringComparer.OrdinalIgnoreCase)
+            {
+                [Path.GetFullPath(@"D:\")] = [Folder(@"D:\Work")],
+                [Path.GetFullPath(@"D:\Work")] = [Folder(@"D:\Work\Project")]
+            },
+            new Dictionary<string, IReadOnlyList<FileBrowserFileInfo>>(StringComparer.OrdinalIgnoreCase));
+        var viewModel = new FileBrowserViewModel(fileSystem);
+        viewModel.LoadSelectionRules([]);
+        viewModel.LoadRoots();
+        var root = Assert.Single(viewModel.Roots);
+        viewModel.LoadChildren(root);
+        var work = Assert.Single(root.Children);
+        root.IsExpanded = true;
+        work.IsExpanded = true;
+
+        viewModel.RefreshBrowser();
+
+        root = Assert.Single(viewModel.Roots);
+        work = Assert.Single(root.Children);
+        Assert.True(root.IsExpanded);
+        Assert.True(work.IsExpanded);
+    }
+
+    [Fact]
+    public void Selection_does_not_overwrite_address_path_while_address_is_being_edited()
+    {
+        var folder = new FileBrowserFolderNode(@"D:\Work", "Work", isAccessible: true, errorMessage: null);
+        var viewModel = new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], []));
+        viewModel.AddressPath = @"D:\Typed";
+
+        viewModel.BeginAddressPathEdit();
+        viewModel.SelectedFolder = folder;
+
+        Assert.Equal(@"D:\Typed", viewModel.AddressPath);
+
+        viewModel.EndAddressPathEdit();
+        viewModel.SelectedFolder = new FileBrowserFolderNode(@"D:\Other", "Other", isAccessible: true, errorMessage: null);
+
+        Assert.Equal(Path.GetFullPath(@"D:\Other"), viewModel.AddressPath);
     }
 
     [Fact]

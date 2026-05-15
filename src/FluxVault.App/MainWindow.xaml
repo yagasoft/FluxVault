@@ -233,23 +233,13 @@
                                 ToolTip="Open the version browser filtered to the selected file or folder." />
                         <Button Content="Cycle folder selection"
                                 Command="{Binding FileBrowser.ToggleSelectedFolderCommand}"
-                                ToolTip="Cycle the selected folder between recursive, immediate files only, and not selected." />
+                                ToolTip="Cycle the selected folder between recursive, immediate files only, deselected, and restored selections." />
                         <Button Content="Save selections"
                                 Command="{Binding SaveConfigurationCommand}"
                                 ToolTip="Save pending File browser selections to the service configuration." />
                         <Button Content="Discard changes"
                                 Command="{Binding DiscardConfigurationChangesCommand}"
                                 ToolTip="Discard unsaved File browser and configuration edits, then reload settings from the service." />
-                        <TextBlock Text="Path" VerticalAlignment="Center" Margin="16,0,6,0" />
-                        <TextBox Width="420"
-                                 Padding="7"
-                                 Text="{Binding FileBrowser.AddressPath, UpdateSourceTrigger=PropertyChanged}"
-                                 KeyDown="FileBrowserAddress_KeyDown"
-                                 ToolTip="{Binding FileBrowser.NavigationStatus}" />
-                        <Button Content="Go"
-                                Command="{Binding FileBrowser.NavigateAddressCommand}"
-                                Margin="6,0,0,0"
-                                ToolTip="{Binding FileBrowser.NavigationStatus}" />
                     </StackPanel>
 
                     <Border Grid.Row="1" Grid.ColumnSpan="3" BorderBrush="#DADCE0" BorderThickness="1" Background="#FAFBFC" Padding="10" Margin="0,0,0,12">
@@ -309,10 +299,37 @@
                     </Border>
 
                     <Border Grid.Row="2" Grid.Column="0" BorderBrush="#DADCE0" BorderThickness="1" Background="#FFFFFF" Margin="0,0,10,0" MinWidth="0">
-                        <TreeView ItemsSource="{Binding FileBrowser.Roots}"
-                                  SelectedItemChanged="FileBrowserTree_SelectedItemChanged"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="8,8,8,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Path" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBox Grid.Column="1"
+                                         MinWidth="0"
+                                         Padding="7"
+                                         Text="{Binding FileBrowser.AddressPath, UpdateSourceTrigger=PropertyChanged}"
+                                         KeyDown="FileBrowserAddress_KeyDown"
+                                         GotFocus="FileBrowserAddress_GotFocus"
+                                         LostFocus="FileBrowserAddress_LostFocus"
+                                         ToolTip="{Binding FileBrowser.NavigationStatus}" />
+                                <Button Grid.Column="2"
+                                        Content="Go"
+                                        Command="{Binding FileBrowser.NavigateAddressCommand}"
+                                        Margin="6,0,0,0"
+                                        ToolTip="{Binding FileBrowser.NavigationStatus}" />
+                            </Grid>
+                            <TreeView Grid.Row="1"
+                                      ItemsSource="{Binding FileBrowser.Roots}"
+                                      SelectedItemChanged="FileBrowserTree_SelectedItemChanged"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <TreeView.ContextMenu>
                                 <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                                     <MenuItem Header="Restore latest elsewhere"
@@ -349,9 +366,11 @@
                                 </HierarchicalDataTemplate>
                                 <Style TargetType="TreeViewItem">
                                     <EventSetter Event="Expanded" Handler="FileBrowserFolder_Expanded" />
+                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                                 </Style>
                             </TreeView.Resources>
-                        </TreeView>
+                            </TreeView>
+                        </Grid>
                     </Border>
 
                     <DataGrid Grid.Row="2"

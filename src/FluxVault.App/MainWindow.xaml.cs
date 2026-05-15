@@ -116,6 +116,22 @@ public partial class MainWindow : Window
         }
     }
 
+    private void FileBrowserAddress_GotFocus(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel viewModel)
+        {
+            viewModel.FileBrowser.BeginAddressPathEdit();
+        }
+    }
+
+    private void FileBrowserAddress_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel viewModel)
+        {
+            viewModel.FileBrowser.EndAddressPathEdit();
+        }
+    }
+
     private async void WatchedFoldersGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         if (DataContext is not MainWindowViewModel viewModel || viewModel.SelectedWatchedFolder is null)

@@ -61,6 +61,9 @@ public sealed partial class FileBrowserFolderNode(
     [ObservableProperty]
     private bool hasLocalRegexRules;
 
+    [ObservableProperty]
+    private bool isExpanded;
+
     public string Path { get; } = System.IO.Path.GetFullPath(path);
 
     public string Name { get; } = string.IsNullOrWhiteSpace(name) ? path : name;

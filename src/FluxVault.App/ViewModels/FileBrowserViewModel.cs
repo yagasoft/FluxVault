@@ -18,6 +18,7 @@ public sealed partial class FileBrowserViewModel(
     private readonly Dictionary<string, ProtectionSelectionRule> currentRules = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, ProtectionSelectionRule> baselineRules = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, RepositoryVersionSummary> trackedEntries = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, ProtectionSelectionRule[]> deselectedSubtreeSnapshots = new(StringComparer.OrdinalIgnoreCase);
     private readonly IFileBrowserShellLauncher shellLauncher = shellLauncher ?? new WindowsFileBrowserShellLauncher();
 
     [ObservableProperty]
@@ -50,6 +51,8 @@ public sealed partial class FileBrowserViewModel(
     [ObservableProperty]
     private string selectedWorkloadPresetDescription = "Select a protected folder or file to manage its workload preset.";
 
+    private bool isEditingAddressPath;
+    private bool isNavigatingAddressPath;
     private bool isLoadingSelectedWorkloadPreset;
 
     public ObservableCollection<FileBrowserFolderNode> Roots { get; } = [];
@@ -93,9 +96,14 @@ public sealed partial class FileBrowserViewModel(
     {
         var selectedFolderPath = SelectedFolder?.Path;
         var selectedFilePath = SelectedFile?.Path;
+        var expandedFolderPaths = EnumerateFolders(Roots)
+            .Where(folder => folder.IsExpanded)
+            .Select(folder => folder.Path)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         var loadedFolderPaths = EnumerateFolders(Roots)
             .Where(folder => folder.HasLoadedChildren)
             .Select(folder => folder.Path)
+            .Concat(expandedFolderPaths)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(PathDepth)
             .ToArray();
@@ -106,6 +114,7 @@ public sealed partial class FileBrowserViewModel(
             var folder = FindFolder(folderPath);
             if (folder is not null)
             {
+                folder.IsExpanded = expandedFolderPaths.Contains(folder.Path);
                 LoadChildren(folder);
             }
         }
@@ -138,6 +147,7 @@ public sealed partial class FileBrowserViewModel(
     {
         baselineRules.Clear();
         currentRules.Clear();
+        deselectedSubtreeSnapshots.Clear();
         foreach (var rule in rules.Select(Normalise).Where(rule => rule.IsEnabled))
         {
             baselineRules[rule.Path] = rule;
@@ -160,6 +170,16 @@ public sealed partial class FileBrowserViewModel(
         SelectedFolder = folder;
         LoadChildren(folder);
         LoadFiles(folder);
+    }
+
+    public void BeginAddressPathEdit()
+    {
+        isEditingAddressPath = true;
+    }
+
+    public void EndAddressPathEdit()
+    {
+        isEditingAddressPath = false;
     }
 
     public void LoadChildren(FileBrowserFolderNode folder)
@@ -199,8 +219,24 @@ public sealed partial class FileBrowserViewModel(
             return;
         }
 
+        if (!HasSubtreeSelectionRules(folder.Path)
+            && deselectedSubtreeSnapshots.TryGetValue(folder.Path, out var restoredSnapshot))
+        {
+            foreach (var rule in restoredSnapshot)
+            {
+                currentRules[rule.Path] = rule;
+            }
+
+            deselectedSubtreeSnapshots.Remove(folder.Path);
+            RefreshPendingChanges();
+            SelectionRulesChanged?.Invoke(this, EventArgs.Empty);
+            ApplySelectionToTree([folder]);
+            ApplySelectionToTree(Roots);
+            return;
+        }
+
         currentRules.TryGetValue(folder.Path, out var existingRule);
-        var currentMode = existingRule?.Mode == ProtectionSelectionMode.RegexScope ? null : folder.SelectionMode;
+        var currentMode = existingRule?.Mode == ProtectionSelectionMode.RegexScope ? null : existingRule?.Mode;
         var next = currentMode switch
         {
             null => (ProtectionSelectionMode?)ProtectionSelectionMode.RecursiveFolder,
@@ -211,21 +247,17 @@ public sealed partial class FileBrowserViewModel(
 
         if (next is null)
         {
-            if (existingRule is not null && HasRegexRules(existingRule))
+            var snapshot = GetSubtreeSelectionRules(folder.Path);
+            if (snapshot.Length > 0)
             {
-                ReplaceSelectionRule(existingRule with
-                {
-                    Mode = ProtectionSelectionMode.RegexScope,
-                    WorkloadPreset = null
-                });
+                deselectedSubtreeSnapshots[folder.Path] = snapshot;
             }
-            else
-            {
-                RemoveSelectionRule(folder.Path);
-            }
+
+            RemoveSubtreeSelectionRules(folder.Path);
         }
         else
         {
+            deselectedSubtreeSnapshots.Remove(folder.Path);
             var preset = WorkloadPolicyPresetCatalog.Get(DefaultWorkloadPreset);
             ReplaceSelectionRule((existingRule ?? new ProtectionSelectionRule(
                     StableRuleId("folder", folder.Path),
@@ -343,6 +375,36 @@ public sealed partial class FileBrowserViewModel(
         SelectionRulesChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    private ProtectionSelectionRule[] GetSubtreeSelectionRules(string folderPath)
+    {
+        return currentRules.Values
+            .Where(rule => IsSamePath(rule.Path, folderPath) || IsUnderPath(rule.Path, folderPath))
+            .OrderBy(rule => rule.Path, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private bool HasSubtreeSelectionRules(string folderPath)
+    {
+        return currentRules.Keys.Any(path => IsSamePath(path, folderPath) || IsUnderPath(path, folderPath));
+    }
+
+    private void RemoveSubtreeSelectionRules(string folderPath)
+    {
+        var removedAny = false;
+        foreach (var path in currentRules.Keys
+                     .Where(path => IsSamePath(path, folderPath) || IsUnderPath(path, folderPath))
+                     .ToArray())
+        {
+            removedAny |= currentRules.Remove(path);
+        }
+
+        if (removedAny)
+        {
+            RefreshPendingChanges();
+            SelectionRulesChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
     public void RefreshTreeIndicators(IEnumerable<FileBrowserFolderNode> roots)
     {
         foreach (var root in roots)
@@ -455,15 +517,16 @@ public sealed partial class FileBrowserViewModel(
     [RelayCommand]
     private void NavigateAddress()
     {
-        if (string.IsNullOrWhiteSpace(AddressPath))
+        var requestedPath = AddressPath;
+        if (string.IsNullOrWhiteSpace(requestedPath))
         {
             NavigationStatus = "Enter a file or folder path before navigating.";
             return;
         }
 
-        if (!NavigateToPath(AddressPath))
+        if (!NavigateToPath(requestedPath))
         {
-            NavigationStatus = $"Path is not available or tracked: {AddressPath}";
+            NavigationStatus = $"Path is not available or tracked: {requestedPath}";
         }
     }
 
@@ -472,7 +535,7 @@ public sealed partial class FileBrowserViewModel(
         if (value is not null)
         {
             SelectedFile = null;
-            AddressPath = value.Path;
+            UpdateAddressPathFromSelection(value.Path);
             SelectFolder(value);
             LoadRegexText(value.Path);
             LoadWorkloadPresetText(value.Path);
@@ -483,7 +546,7 @@ public sealed partial class FileBrowserViewModel(
     {
         if (value is not null)
         {
-            AddressPath = value.Path;
+            UpdateAddressPathFromSelection(value.Path);
             LoadRegexText(value.Path);
             LoadWorkloadPresetText(value.Path);
         }
@@ -570,28 +633,37 @@ public sealed partial class FileBrowserViewModel(
             return false;
         }
 
-        if (TryNavigateToFolder(fullPath))
+        var wasNavigatingAddressPath = isNavigatingAddressPath;
+        isNavigatingAddressPath = true;
+        try
         {
-            NavigationStatus = $"Selected folder: {fullPath}";
-            return true;
-        }
-
-        var fileEntry = FindTrackedEntry(fullPath, RepositoryEntryKind.File);
-        if (File.Exists(fullPath) || fileEntry is not null)
-        {
-            var parent = Path.GetDirectoryName(fullPath);
-            if (!string.IsNullOrWhiteSpace(parent) && TryNavigateToFolder(parent))
+            if (TryNavigateToFolder(fullPath))
             {
-                SelectedFile = Files.FirstOrDefault(file => IsSamePath(file.Path, fullPath));
-                if (SelectedFile is not null)
+                NavigationStatus = $"Selected folder: {fullPath}";
+                return true;
+            }
+
+            var fileEntry = FindTrackedEntry(fullPath, RepositoryEntryKind.File);
+            if (File.Exists(fullPath) || fileEntry is not null)
+            {
+                var parent = Path.GetDirectoryName(fullPath);
+                if (!string.IsNullOrWhiteSpace(parent) && TryNavigateToFolder(parent))
                 {
-                    NavigationStatus = $"Selected file: {fullPath}";
-                    return true;
+                    SelectedFile = Files.FirstOrDefault(file => IsSamePath(file.Path, fullPath));
+                    if (SelectedFile is not null)
+                    {
+                        NavigationStatus = $"Selected file: {fullPath}";
+                        return true;
+                    }
                 }
             }
-        }
 
-        return false;
+            return false;
+        }
+        finally
+        {
+            isNavigatingAddressPath = wasNavigatingAddressPath;
+        }
     }
 
     private FileBrowserFileRow CreateFileRow(
@@ -653,13 +725,6 @@ public sealed partial class FileBrowserViewModel(
         }
 
         var fullPath = Path.GetFullPath(folderPath);
-        var existing = FindFolder(fullPath);
-        if (existing is not null)
-        {
-            SelectedFolder = existing;
-            return true;
-        }
-
         var root = Roots.FirstOrDefault(root => IsSamePath(fullPath, root.Path) || IsUnderPath(fullPath, root.Path));
         if (root is null)
         {
@@ -670,6 +735,7 @@ public sealed partial class FileBrowserViewModel(
         var current = root;
         foreach (var candidatePath in pathChain.Skip(1))
         {
+            current.IsExpanded = true;
             LoadChildren(current);
             var next = current.Children.FirstOrDefault(child => IsSamePath(child.Path, candidatePath));
             if (next is null)
@@ -682,6 +748,14 @@ public sealed partial class FileBrowserViewModel(
 
         SelectedFolder = current;
         return true;
+    }
+
+    private void UpdateAddressPathFromSelection(string path)
+    {
+        if (!isEditingAddressPath || isNavigatingAddressPath)
+        {
+            AddressPath = path;
+        }
     }
 
     private RepositoryVersionSummary? FindTrackedEntry(string path, RepositoryEntryKind entryKind)
@@ -1024,8 +1098,11 @@ public sealed partial class FileBrowserViewModel(
 
     private static bool IsUnderPath(string path, string root)
     {
-        var trimmedRoot = TrimPath(root) + Path.DirectorySeparatorChar;
-        return Path.GetFullPath(path).StartsWith(trimmedRoot, StringComparison.OrdinalIgnoreCase);
+        var trimmedRoot = TrimPath(root);
+        var rootPrefix = EndsWithDirectorySeparator(trimmedRoot)
+            ? trimmedRoot
+            : trimmedRoot + Path.DirectorySeparatorChar;
+        return Path.GetFullPath(path).StartsWith(rootPrefix, StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsImmediateChild(string childPath, string parentPath)
@@ -1041,7 +1118,22 @@ public sealed partial class FileBrowserViewModel(
 
     private static string TrimPath(string path)
     {
-        return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var fullPath = Path.GetFullPath(path);
+        var root = Path.GetPathRoot(fullPath);
+        var trimmed = fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        if (!string.IsNullOrEmpty(root)
+            && string.Equals(trimmed, root.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar), StringComparison.OrdinalIgnoreCase))
+        {
+            return root;
+        }
+
+        return trimmed;
+    }
+
+    private static bool EndsWithDirectorySeparator(string path)
+    {
+        return path.EndsWith(Path.DirectorySeparatorChar)
+               || path.EndsWith(Path.AltDirectorySeparatorChar);
     }
 
     private static string ToTrackedEntryKey(string path, RepositoryEntryKind entryKind)

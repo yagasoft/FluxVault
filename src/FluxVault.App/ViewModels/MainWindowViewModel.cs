@@ -2177,7 +2177,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         PerformanceStatusText = $"Performance: sampled {telemetry.CollectedAtUtc.ToLocalTime():HH:mm:ss}";
 
         PerformanceMetricRows.Clear();
-        PerformanceMetricRows.Add(new PerformanceMetricRow("CPU", $"{telemetry.Process.CpuPercent:0.#}%", "Process CPU across logical processors."));
+        PerformanceMetricRows.Add(new PerformanceMetricRow("CPU", $"{telemetry.Process.CpuPercent:0.#}% total / {telemetry.Process.CpuCoreEquivalent:0.0} core", $"Process CPU across {telemetry.Process.LogicalProcessorCount} logical processor(s)."));
         PerformanceMetricRows.Add(new PerformanceMetricRow("Working set", FormatBytes(telemetry.Process.WorkingSetBytes), "Resident process memory."));
         PerformanceMetricRows.Add(new PerformanceMetricRow("Private memory", FormatBytes(telemetry.Process.PrivateMemoryBytes), "Private process memory."));
         PerformanceMetricRows.Add(new PerformanceMetricRow("GC heap", FormatBytes(telemetry.Process.GcHeapBytes), $"Collections G0/G1/G2: {telemetry.Process.Gen0Collections}/{telemetry.Process.Gen1Collections}/{telemetry.Process.Gen2Collections}."));

@@ -492,7 +492,7 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
-    public async Task Repository_maintenance_loop_runs_when_due_and_skips_when_recent()
+    public async Task Repository_maintenance_loop_does_not_run_by_default()
     {
         using var workspace = TemporaryWorkspace.Create();
         var watched = Path.Combine(workspace.RootPath, "watched");
@@ -507,8 +507,46 @@ public sealed class ServiceOperationsTests
             new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()),
             stateStore,
             Path.Combine(workspace.RootPath, "state"));
-        var loop = new RepositoryMaintenanceLoop(operations, store, stateStore, TimeProvider.System);
         await operations.SaveConfigurationAsync(NewConfiguration(workspace, watched));
+        var loop = new RepositoryMaintenanceLoop(operations, store, stateStore, TimeProvider.System);
+        await operations.RunBackupNowAsync();
+
+        var run = await loop.RunDueMaintenanceOnceAsync();
+
+        Assert.False(run);
+        Assert.Null((await stateStore.LoadAsync()).LastMaintenanceUtc);
+        var status = await operations.HandleAsync(FluxVaultIpcRequest.GetPerformance());
+        Assert.Contains(
+            status.Performance!.BackgroundWork,
+            work => work.Name == "Repository maintenance" && work.State == "Manual only");
+    }
+
+    [Fact]
+    public async Task Repository_maintenance_loop_runs_when_explicitly_automatic_and_due()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        await File.WriteAllTextAsync(Path.Combine(watched, "draft.txt"), "scheduled");
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        var stateStore = new InMemoryRepositoryMaintenanceStateStore();
+        var configuration = NewConfiguration(workspace, watched) with
+        {
+            RepositoryMaintenancePolicy = RepositoryMaintenancePolicy.CreateDefault() with
+            {
+                RunAutomatically = true
+            }
+        };
+        var operations = CreateOperations(
+            workspace,
+            configuration,
+            store,
+            new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()),
+            stateStore,
+            Path.Combine(workspace.RootPath, "state"));
+        var telemetry = new TelemetryCollector(TimeProvider.System);
+        var loop = new RepositoryMaintenanceLoop(operations, store, stateStore, TimeProvider.System, telemetryCollector: telemetry);
+        await operations.SaveConfigurationAsync(configuration);
         await operations.RunBackupNowAsync();
 
         var firstRun = await loop.RunDueMaintenanceOnceAsync();
@@ -517,6 +555,9 @@ public sealed class ServiceOperationsTests
         Assert.True(firstRun);
         Assert.False(secondRun);
         Assert.NotNull((await operations.GetStatusAsync()).RepositoryHealth!.LastRestoreRehearsal);
+        Assert.Contains(
+            telemetry.GetSnapshot(LogRuntimeStatus.Disabled(workspace.RootPath), []).Loops,
+            loopStatus => loopStatus.Name == "Repository maintenance loop" && loopStatus.State == "Waiting");
     }
 
     [Fact]
@@ -1407,7 +1448,9 @@ public sealed class ServiceOperationsTests
         Assert.NotNull(response.Performance);
         Assert.Contains(response.Performance.Loops, loop => loop.Name == "Protection loop" && loop.State == "Waiting");
         Assert.Contains(response.Performance.BackgroundWork, work => work.Name == "Backup" && work.State == "Idle");
-        Assert.NotEmpty(response.Performance.Samples);
+        Assert.Single(response.Performance.Samples);
+        var secondResponse = await operations.HandleAsync(FluxVaultIpcRequest.GetPerformance());
+        Assert.Single(secondResponse.Performance!.Samples);
     }
 
     private static FluxVaultOperations CreateOperations(

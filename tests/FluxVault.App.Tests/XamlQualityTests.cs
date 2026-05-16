@@ -170,8 +170,8 @@ public sealed class XamlQualityTests
             element => (string?)element.Attribute("Text") == "Repository maintenance");
         Assert.Contains(
             document.Descendants(XamlNamespace + "CheckBox"),
-            element => (string?)element.Attribute("Content") == "Enable scheduled repository maintenance"
-                       && (string?)element.Attribute("IsChecked") == "{Binding MaintenanceEnabled}");
+            element => (string?)element.Attribute("Content") == "Run repository maintenance automatically"
+                       && (string?)element.Attribute("IsChecked") == "{Binding MaintenanceRunAutomatically}");
         Assert.Contains(
             document.Descendants(XamlNamespace + "CheckBox"),
             element => (string?)element.Attribute("Content") == "Repair automatically from mirror"

@@ -88,9 +88,9 @@
 
                         <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Text="Repository maintenance" FontWeight="SemiBold" Margin="0,0,0,12" />
 
-                        <CheckBox Grid.Row="7" Grid.ColumnSpan="2" Content="Enable scheduled repository maintenance"
-                                  IsChecked="{Binding MaintenanceEnabled}" Margin="0,0,0,14"
-                                  ToolTip="Run repository scrub and restore rehearsal automatically on the configured interval." />
+                        <CheckBox Grid.Row="7" Grid.ColumnSpan="2" Content="Run repository maintenance automatically"
+                                  IsChecked="{Binding MaintenanceRunAutomatically}" Margin="0,0,0,14"
+                                  ToolTip="Run repository scrub and restore rehearsal automatically on the configured interval. Manual diagnostics actions remain available when this is off." />
 
                         <TextBlock Grid.Row="8" Grid.Column="0" Text="Maintenance interval hours" VerticalAlignment="Center" Margin="0,0,14,10"
                                    ToolTip="Minimum number of hours between scheduled repository scrub and restore rehearsal runs." />

@@ -23,6 +23,8 @@ public sealed class TelemetryCollectorTests
         var status = collector.GetSnapshot(LogRuntimeStatus.Disabled(@"C:\ProgramData\FluxVault\logs"), []);
 
         Assert.Equal(10, status.Process.CpuPercent);
+        Assert.Equal(4, status.Process.LogicalProcessorCount);
+        Assert.Equal(0.4, status.Process.CpuCoreEquivalent);
         Assert.Equal(1, status.Ipc.TotalRequests);
         Assert.Equal("GetStatus", status.Ipc.LastCommand);
     }

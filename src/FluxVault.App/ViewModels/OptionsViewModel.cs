@@ -108,7 +108,7 @@ public sealed partial class OptionsViewModel : ObservableObject
     private WorkloadPolicyPresetId defaultWorkloadPreset = WorkloadPolicyPresetId.GeneralPurpose;
 
     [ObservableProperty]
-    private bool maintenanceEnabled;
+    private bool maintenanceRunAutomatically;
 
     [ObservableProperty]
     private int maintenanceIntervalHours;
@@ -429,7 +429,7 @@ public sealed partial class OptionsViewModel : ObservableObject
 
     private void ApplyMaintenance(RepositoryMaintenancePolicy policy)
     {
-        MaintenanceEnabled = policy.IsEnabled;
+        MaintenanceRunAutomatically = policy.IsEnabled && policy.RunAutomatically;
         MaintenanceIntervalHours = Math.Max(1, (int)Math.Round(policy.Interval.TotalHours));
         MaintenanceAutoRepairFromMirror = policy.AutoRepairFromMirror;
         RestoreRehearsalVersionCount = Math.Max(0, policy.RestoreRehearsalVersionCount);
@@ -443,10 +443,11 @@ public sealed partial class OptionsViewModel : ObservableObject
     private RepositoryMaintenancePolicy BuildMaintenance()
     {
         return new RepositoryMaintenancePolicy(
-            IsEnabled: MaintenanceEnabled,
+            IsEnabled: currentConfiguration?.RepositoryMaintenancePolicy?.IsEnabled ?? true,
             Interval: TimeSpan.FromHours(Math.Max(1, MaintenanceIntervalHours)),
             AutoRepairFromMirror: MaintenanceAutoRepairFromMirror,
-            RestoreRehearsalVersionCount: Math.Max(0, RestoreRehearsalVersionCount));
+            RestoreRehearsalVersionCount: Math.Max(0, RestoreRehearsalVersionCount),
+            RunAutomatically: MaintenanceRunAutomatically);
     }
 
     private void ApplyMetadataStore(MetadataStoreConfiguration configuration)

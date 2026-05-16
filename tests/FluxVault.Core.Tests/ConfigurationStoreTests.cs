@@ -39,6 +39,7 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(CompressionPreference.Zstd, configuration.CodecPolicy.Codec);
         Assert.Equal(CompressionPreference.Lz4, configuration.CodecPolicy.HotFileOverride);
         Assert.True(configuration.RepositoryMaintenancePolicy.IsEnabled);
+        Assert.False(configuration.RepositoryMaintenancePolicy.RunAutomatically);
         Assert.Equal(TimeSpan.FromHours(24), configuration.RepositoryMaintenancePolicy.Interval);
         Assert.True(configuration.RepositoryMaintenancePolicy.AutoRepairFromMirror);
         Assert.Equal(3, configuration.RepositoryMaintenancePolicy.RestoreRehearsalVersionCount);
@@ -133,6 +134,35 @@ public sealed class ConfigurationStoreTests
 
         Assert.Equal(first.Sync.LocalDevice.DeviceId, second.Sync.LocalDevice.DeviceId);
         Assert.StartsWith("fv-device-", first.Sync.LocalDevice.DeviceId, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Legacy_repository_maintenance_policy_does_not_run_automatically()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var configPath = Path.Combine(workspace.RootPath, "config.json");
+        var json = """
+        {
+          "repositoryPath": "repository",
+          "mirrorPath": null,
+          "isEnabled": true,
+          "watchedFolders": [],
+          "repositoryMaintenancePolicy": {
+            "isEnabled": true,
+            "interval": "01:00:00",
+            "autoRepairFromMirror": true,
+            "restoreRehearsalVersionCount": 3
+          }
+        }
+        """;
+        Directory.CreateDirectory(workspace.RootPath);
+        await File.WriteAllTextAsync(configPath, json);
+        var store = new FileFluxVaultConfigurationStore(configPath, workspace.RootPath);
+
+        var configuration = await store.LoadAsync();
+
+        Assert.True(configuration.RepositoryMaintenancePolicy.IsEnabled);
+        Assert.False(configuration.RepositoryMaintenancePolicy.RunAutomatically);
     }
 
     [Fact]

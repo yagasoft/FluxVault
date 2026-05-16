@@ -4,7 +4,8 @@ public sealed record RepositoryMaintenancePolicy(
     bool IsEnabled,
     TimeSpan Interval,
     bool AutoRepairFromMirror,
-    int RestoreRehearsalVersionCount)
+    int RestoreRehearsalVersionCount,
+    bool RunAutomatically = false)
 {
     public static RepositoryMaintenancePolicy CreateDefault()
     {
@@ -12,6 +13,7 @@ public sealed record RepositoryMaintenancePolicy(
             IsEnabled: true,
             Interval: TimeSpan.FromHours(24),
             AutoRepairFromMirror: true,
-            RestoreRehearsalVersionCount: 3);
+            RestoreRehearsalVersionCount: 3,
+            RunAutomatically: false);
     }
 }

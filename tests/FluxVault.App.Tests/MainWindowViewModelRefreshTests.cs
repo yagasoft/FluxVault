@@ -1099,7 +1099,7 @@ public sealed class MainWindowViewModelRefreshTests
 
         Assert.Contains(FluxVaultIpcCommand.GetPerformance, client.Commands);
         Assert.Equal($"Performance: sampled {capturedAt.ToLocalTime():HH:mm:ss}", viewModel.PerformanceStatusText);
-        Assert.Contains(viewModel.PerformanceMetricRows, row => row.Name == "CPU" && row.Value == "12.5%");
+        Assert.Contains(viewModel.PerformanceMetricRows, row => row.Name == "CPU" && row.Value == "8.3% total / 1.0 core");
         Assert.Contains(viewModel.PerformanceLoopRows, row => row.Name == "Protection loop" && row.State == "Waiting");
         Assert.Contains(viewModel.PerformanceBackgroundRows, row => row.Name == "Backup" && row.State == "Idle");
         Assert.Single(viewModel.PerformanceSampleRows);
@@ -1672,7 +1672,7 @@ public sealed class MainWindowViewModelRefreshTests
         return new PerformanceTelemetryStatus(
             CollectedAtUtc: capturedAt,
             Process: new ProcessResourceRuntimeStatus(
-                CpuPercent: 12.5,
+                CpuPercent: 8.3,
                 WorkingSetBytes: 128 * 1024 * 1024,
                 PrivateMemoryBytes: 256 * 1024 * 1024,
                 GcHeapBytes: 32 * 1024 * 1024,
@@ -1680,7 +1680,9 @@ public sealed class MainWindowViewModelRefreshTests
                 Gen1Collections: 2,
                 Gen2Collections: 1,
                 ThreadCount: 17,
-                HandleCount: 222),
+                HandleCount: 222,
+                LogicalProcessorCount: 12,
+                CpuCoreEquivalent: 1.0),
             ThreadPool: new ThreadPoolRuntimeStatus(100, 200, 50, 100, 3),
             Ipc: new IpcRuntimeStatus(7, 1, 0, "GetStatus", capturedAt),
             Logs: new LogRuntimeStatus(true, @"C:\ProgramData\FluxVault\logs", "Warning", null, 0, 1, 0),
@@ -1694,7 +1696,7 @@ public sealed class MainWindowViewModelRefreshTests
             ],
             Samples:
             [
-                new PerformanceTelemetrySample(capturedAt, 12.5, 128 * 1024 * 1024, 32 * 1024 * 1024, 17, 222, 0, 0, 7, 0)
+                new PerformanceTelemetrySample(capturedAt, 8.3, 128 * 1024 * 1024, 32 * 1024 * 1024, 17, 222, 0, 0, 7, 0)
             ]);
     }
 

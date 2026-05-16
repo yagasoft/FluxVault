@@ -61,7 +61,9 @@ public sealed class TelemetryCollector(
                 reading.Gen1Collections,
                 reading.Gen2Collections,
                 reading.ThreadCount,
-                reading.HandleCount);
+                reading.HandleCount,
+                processorCount,
+                Math.Round(cpuPercent * processorCount / 100, 2));
             var sample = new PerformanceTelemetrySample(
                 reading.TimestampUtc,
                 processStatus.CpuPercent,

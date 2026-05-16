@@ -64,7 +64,9 @@ public sealed class IpcSerializationTests
                 Gen1Collections: 2,
                 Gen2Collections: 1,
                 ThreadCount: 17,
-                HandleCount: 222),
+                HandleCount: 222,
+                LogicalProcessorCount: 12,
+                CpuCoreEquivalent: 1.5),
             ThreadPool: new ThreadPoolRuntimeStatus(
                 AvailableWorkerThreads: 100,
                 MaxWorkerThreads: 200,
@@ -124,6 +126,8 @@ public sealed class IpcSerializationTests
 
         Assert.NotNull(roundTrip.Performance);
         Assert.Equal(12.5, roundTrip.Performance.Process.CpuPercent);
+        Assert.Equal(12, roundTrip.Performance.Process.LogicalProcessorCount);
+        Assert.Equal(1.5, roundTrip.Performance.Process.CpuCoreEquivalent);
         Assert.Equal("Protection loop", Assert.Single(roundTrip.Performance.Loops).Name);
         Assert.Equal(7, Assert.Single(roundTrip.Performance.Samples).IpcTotalRequests);
     }

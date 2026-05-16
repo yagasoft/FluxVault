@@ -203,7 +203,8 @@
 - Service operation persistence of `AppConsistent` capture results and optional
   consistency detail in status/activity.
 - Service operations for manual repository scrub, manual restore rehearsal,
-  health status updates, and scheduled maintenance due/not-due behaviour.
+  health status updates, default manual-only maintenance, and explicit
+  automatic maintenance due/not-due behaviour.
 - Service-triggered retention and manual `RunRetentionNow`.
 - Mirror cleanup after retention pruning.
 - Backup Now unchanged-source skipping, including first capture, second idle

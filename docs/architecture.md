@@ -83,15 +83,17 @@ distribution path.
 
 Repository maintenance runs inside the service next to IPC and the protection
 loop. `RepositoryMaintenancePolicy` is part of configuration and defaults to
-enabled, a 24-hour interval, automatic repair from a mirror, and restore
-rehearsal of the newest three versions. The maintenance loop persists the last
-health, scrub, and rehearsal results under ProgramData service state so the
+enabled for manual use, a 24-hour interval, automatic repair from a mirror, and
+restore rehearsal of the newest three versions. Automatic scheduled execution is
+opt-in through `RunAutomatically`; legacy configurations that lack this field do
+not run scrub/rehearsal in the background. The maintenance loop persists the
+last health, scrub, and rehearsal results under ProgramData service state so the
 dashboard keeps health evidence after a service restart. Manual IPC commands can
 return the current health snapshot, run a scrub, or run a restore rehearsal
 without changing existing backup/restore contracts. The Options dialog exposes
-scheduled maintenance enablement, interval, mirror repair, and restore
-rehearsal count so these active service behaviours are configurable without
-editing `config.json` by hand.
+the automatic-run switch, interval, mirror repair, and restore rehearsal count
+so these active service behaviours are configurable without editing
+`config.json` by hand.
 
 Repository scrub is repository-owned only. `FileSystemChunkRepository` walks
 remaining manifests, validates referenced chunks, and ignores artefacts already
@@ -227,10 +229,12 @@ it cannot overlap command buttons. The Capture tile is the live
 watcher/debounce queue; the USN tile is the latest durable catch-up result.
 
 The Performance workspace is an operator view over `GetPerformance`. It fetches
-telemetry only while selected and shows current process resources, loop state,
-background work, watcher/USN status, log health, IPC pressure, and capped recent
-samples. It is meant to answer "what is the service doing while idle?" before a
-full diagnostics export is needed.
+telemetry only while selected and reads the sampler history passively rather
+than appending extra samples. It shows current process resources, CPU as both
+total process percentage and core-equivalent load, loop state, background work,
+watcher/USN status, log health, IPC pressure, and capped recent samples. It is
+meant to answer "what is the service doing while idle?" before a full
+diagnostics export is needed.
 
 The Diagnostics workspace is the detailed health dashboard. It shows repository
 integrity, mirror state, restore rehearsal, USN state, and blocked-file rows, and

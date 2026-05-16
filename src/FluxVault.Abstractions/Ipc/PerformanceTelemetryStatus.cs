@@ -19,7 +19,9 @@ public sealed record ProcessResourceRuntimeStatus(
     int Gen1Collections,
     int Gen2Collections,
     int ThreadCount,
-    int HandleCount);
+    int HandleCount,
+    int LogicalProcessorCount = 1,
+    double CpuCoreEquivalent = 0);
 
 public sealed record ThreadPoolRuntimeStatus(
     int AvailableWorkerThreads,

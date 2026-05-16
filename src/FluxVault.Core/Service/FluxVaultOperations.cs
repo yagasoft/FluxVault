@@ -79,6 +79,12 @@ public sealed class FluxVaultOperations(
         RecordedDeletionCount: 0,
         ActiveWorkers: 0,
         EffectiveWorkerCount: 0);
+    private BackgroundWorkRuntimeStatus repositoryMaintenanceRuntime = new(
+        "Repository maintenance",
+        "Waiting",
+        0,
+        0,
+        "No maintenance running");
 
     public async Task<RepositoryPurgeResult?> SaveConfigurationAsync(
         FluxVaultConfiguration configuration,
@@ -632,12 +638,27 @@ public sealed class FluxVaultOperations(
     {
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         var policy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault();
-        var report = await CreateRepository(configuration)
-            .ScrubAsync(policy.AutoRepairFromMirror, cancellationToken)
-            .ConfigureAwait(false);
-        await SaveRepositoryMaintenanceResultAsync(report, null, null, null, cancellationToken).ConfigureAwait(false);
-        lastMessage = FormatScrubSummary(report);
-        return report;
+        SetRepositoryMaintenanceRuntime("Scrubbing", 1, 0, "Repository scrub in progress");
+        try
+        {
+            var report = await CreateRepository(configuration)
+                .ScrubAsync(policy.AutoRepairFromMirror, cancellationToken)
+                .ConfigureAwait(false);
+            await SaveRepositoryMaintenanceResultAsync(report, null, null, null, cancellationToken).ConfigureAwait(false);
+            lastMessage = FormatScrubSummary(report);
+            SetRepositoryMaintenanceRuntime("Waiting", 0, 0, FormatScrubSummary(report));
+            return report;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            SetRepositoryMaintenanceRuntime("Cancelled", 0, 0, "Repository scrub cancelled");
+            throw;
+        }
+        catch (Exception exception)
+        {
+            SetRepositoryMaintenanceRuntime("Failed", 0, 0, $"Repository scrub failed: {exception.Message}");
+            throw;
+        }
     }
 
     public async Task<MirrorRepairReport> PreviewMirrorRepairAsync(
@@ -670,12 +691,27 @@ public sealed class FluxVaultOperations(
     {
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         var policy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault();
-        var report = await CreateRepository(configuration)
-            .RunRestoreRehearsalAsync(restoreRehearsalRoot, policy.RestoreRehearsalVersionCount, cancellationToken)
-            .ConfigureAwait(false);
-        await SaveRepositoryMaintenanceResultAsync(null, report, null, null, cancellationToken).ConfigureAwait(false);
-        lastMessage = FormatRestoreRehearsalSummary(report);
-        return report;
+        SetRepositoryMaintenanceRuntime("Restore rehearsal", 1, policy.RestoreRehearsalVersionCount, "Restore rehearsal in progress");
+        try
+        {
+            var report = await CreateRepository(configuration)
+                .RunRestoreRehearsalAsync(restoreRehearsalRoot, policy.RestoreRehearsalVersionCount, cancellationToken)
+                .ConfigureAwait(false);
+            await SaveRepositoryMaintenanceResultAsync(null, report, null, null, cancellationToken).ConfigureAwait(false);
+            lastMessage = FormatRestoreRehearsalSummary(report);
+            SetRepositoryMaintenanceRuntime("Waiting", 0, 0, FormatRestoreRehearsalSummary(report));
+            return report;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            SetRepositoryMaintenanceRuntime("Cancelled", 0, 0, "Restore rehearsal cancelled");
+            throw;
+        }
+        catch (Exception exception)
+        {
+            SetRepositoryMaintenanceRuntime("Failed", 0, 0, $"Restore rehearsal failed: {exception.Message}");
+            throw;
+        }
     }
 
     public async Task<MirrorRebalancePreviewReport> PreviewMirrorRebalanceAsync(CancellationToken cancellationToken = default)
@@ -1102,7 +1138,53 @@ public sealed class FluxVaultOperations(
         }
     }
 
+    public void SetRepositoryMaintenanceRuntime(string state, int activeCount, int pendingCount, string detail)
+    {
+        lock (runtimeGate)
+        {
+            repositoryMaintenanceRuntime = new BackgroundWorkRuntimeStatus(
+                "Repository maintenance",
+                state,
+                activeCount,
+                pendingCount,
+                detail);
+        }
+    }
+
+    private BackgroundWorkRuntimeStatus GetRepositoryMaintenanceRuntime(FluxVaultConfiguration configuration)
+    {
+        var policy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault();
+        lock (runtimeGate)
+        {
+            if (!policy.IsEnabled)
+            {
+                return repositoryMaintenanceRuntime with
+                {
+                    State = "Disabled",
+                    ActiveCount = 0,
+                    PendingCount = 0,
+                    Detail = "Repository maintenance is disabled."
+                };
+            }
+
+            if (!policy.RunAutomatically
+                && repositoryMaintenanceRuntime.State is "Waiting")
+            {
+                return repositoryMaintenanceRuntime with
+                {
+                    State = "Manual only",
+                    ActiveCount = 0,
+                    PendingCount = 0,
+                    Detail = "Automatic scrub and restore rehearsal are disabled."
+                };
+            }
+
+            return repositoryMaintenanceRuntime;
+        }
+    }
+
     private IReadOnlyList<BackgroundWorkRuntimeStatus> BuildBackgroundWork(
+        FluxVaultConfiguration configuration,
         BackupRuntimeStatus backup,
         IReadOnlyList<WatcherRuntimeStatus> watchers)
     {
@@ -1136,12 +1218,7 @@ public sealed class FluxVaultOperations(
                 0,
                 backup.SuppressedFullScanCount,
                 usnDetail),
-            new BackgroundWorkRuntimeStatus(
-                "Repository maintenance",
-                "Waiting",
-                0,
-                0,
-                lastRetention is null ? "No retention result recorded" : FormatRetentionSummary(lastRetention))
+            GetRepositoryMaintenanceRuntime(configuration)
         ];
     }
 
@@ -1308,12 +1385,7 @@ public sealed class FluxVaultOperations(
         var watchers = GetWatcherStatuses();
         var logStatus = logStatusFactory?.Invoke()
             ?? LogRuntimeStatus.Disabled(configuration.DiagnosticsPolicy.LogDirectory);
-        telemetryCollector.SampleOnce(
-            configuration.DiagnosticsPolicy,
-            backup.ActiveWorkers,
-            watchers.Sum(watcher => watcher.BacklogCount),
-            logStatus.DroppedMessageCount);
-        return telemetryCollector.GetSnapshot(logStatus, BuildBackgroundWork(backup, watchers));
+        return telemetryCollector.GetSnapshot(logStatus, BuildBackgroundWork(configuration, backup, watchers));
     }
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)

@@ -53,13 +53,13 @@ FluxVault now has a developer-usable MVP loop:
   versions, restores leave a pending lineage hint for the next capture, and
   identical copied files become visible inherited versions without re-uploading
   chunks.
-- Repository health dashboard with manual and scheduled scrub/rehearsal. Scrub
+- Repository health dashboard with manual and opt-in scheduled scrub/rehearsal. Scrub
   validates referenced manifests and chunks, repairs only from a healthy
   primary/mirror counterpart, and restore rehearsal verifies recent versions in
   FluxVault-owned temporary output.
-- Conservative automatic retention and scheduled repository maintenance, with a
+- Conservative automatic retention and manual-first repository maintenance, with a
   WPF Options dialog for previewing retention, running retention, editing
-  maintenance cadence, and controlling mirror repair/rehearsal defaults.
+  maintenance cadence, and opting into automatic mirror repair/rehearsal runs.
 - Dedicated Mirrors workspace for adding and editing mirror node label, path,
   enabled state, capacity budget, and priority through an explicit dialog,
   while placement profile and minimum mirror copies remain workspace-level
@@ -281,9 +281,10 @@ default at `Warning` level under `C:\ProgramData\FluxVault\logs`, with a 25 MB
 file cap and 8 retained files. Switching the service file log level to `Trace`
 records detailed service boundary, backup, USN, maintenance, and diagnostics
 trace events for later review without writing unbounded logs or sending data
-off-machine. The Performance workspace reads the service's in-memory telemetry
-history only while selected; default sampling is every 5 seconds with 4320
-retained samples.
+off-machine. The Performance workspace passively reads the service's in-memory
+telemetry history only while selected; default sampling is every 5 seconds with
+4320 retained samples, and CPU is shown as both total process percentage and
+core-equivalent load.
 
 Mirror writes are secondary to the primary repository commit. FluxVault commits
 chunks, metadata, and manifests to the primary repository first, then mirrors

@@ -96,10 +96,11 @@ public sealed class OptionsViewModelTests
     public async Task Initialise_loads_repository_maintenance_policy_from_service_status()
     {
         var policy = new RepositoryMaintenancePolicy(
-            IsEnabled: false,
+            IsEnabled: true,
             Interval: TimeSpan.FromHours(6),
             AutoRepairFromMirror: false,
-            RestoreRehearsalVersionCount: 5);
+            RestoreRehearsalVersionCount: 5,
+            RunAutomatically: true);
         var client = new FakeFluxVaultServiceClient(StatusWithConfiguration(configuration => configuration with
         {
             RepositoryMaintenancePolicy = policy
@@ -108,7 +109,7 @@ public sealed class OptionsViewModelTests
 
         await viewModel.InitialiseAsync();
 
-        Assert.False(viewModel.MaintenanceEnabled);
+        Assert.True(viewModel.MaintenanceRunAutomatically);
         Assert.Equal(6, viewModel.MaintenanceIntervalHours);
         Assert.False(viewModel.MaintenanceAutoRepairFromMirror);
         Assert.Equal(5, viewModel.RestoreRehearsalVersionCount);
@@ -120,7 +121,7 @@ public sealed class OptionsViewModelTests
         var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
         var viewModel = new OptionsViewModel(client);
         await viewModel.InitialiseAsync();
-        viewModel.MaintenanceEnabled = false;
+        viewModel.MaintenanceRunAutomatically = true;
         viewModel.MaintenanceIntervalHours = 0;
         viewModel.MaintenanceAutoRepairFromMirror = false;
         viewModel.RestoreRehearsalVersionCount = -2;
@@ -128,7 +129,8 @@ public sealed class OptionsViewModelTests
         await viewModel.SaveAsync();
 
         var saved = Assert.Single(client.SavedConfigurations);
-        Assert.False(saved.RepositoryMaintenancePolicy.IsEnabled);
+        Assert.True(saved.RepositoryMaintenancePolicy.IsEnabled);
+        Assert.True(saved.RepositoryMaintenancePolicy.RunAutomatically);
         Assert.Equal(TimeSpan.FromHours(1), saved.RepositoryMaintenancePolicy.Interval);
         Assert.False(saved.RepositoryMaintenancePolicy.AutoRepairFromMirror);
         Assert.Equal(0, saved.RepositoryMaintenancePolicy.RestoreRehearsalVersionCount);

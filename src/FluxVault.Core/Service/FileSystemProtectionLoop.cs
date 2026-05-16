@@ -5,6 +5,7 @@ using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.ChangeTracking;
+using FluxVault.Core.Diagnostics;
 using FluxVault.Core.Policies;
 using Microsoft.Extensions.Logging;
 
@@ -15,7 +16,8 @@ public sealed class FileSystemProtectionLoop(
     IFluxVaultConfigurationStore configurationStore,
     UsnCatchUpService usnCatchUpService,
     ILogger<FileSystemProtectionLoop>? logger = null,
-    ProtectionRuntimeCoordinator? runtimeCoordinator = null)
+    ProtectionRuntimeCoordinator? runtimeCoordinator = null,
+    TelemetryCollector? telemetryCollector = null)
 {
     private readonly ProtectionRuntimeCoordinator protectionRuntimeCoordinator = runtimeCoordinator ?? new ProtectionRuntimeCoordinator();
     private readonly Lock gate = new();
@@ -42,8 +44,10 @@ public sealed class FileSystemProtectionLoop(
         {
             var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
             var cadence = configuration.CaptureCadencePolicy;
+            telemetryCollector?.RecordLoopState("Protection loop", "Waiting", $"Delay {cadence.WatcherPollInterval:g}");
             await protectionRuntimeCoordinator.WaitForConfigurationChangeOrDelayAsync(cadence.WatcherPollInterval, cancellationToken)
                 .ConfigureAwait(false);
+            telemetryCollector?.RecordLoopState("Protection loop", "Running", "Evaluating watcher and USN work");
             ClearRemovedScopes(protectionRuntimeCoordinator.TakeRemovedScopes());
             await RebuildWatchersAsync(cancellationToken).ConfigureAwait(false);
             var now = DateTimeOffset.UtcNow;
@@ -62,12 +66,14 @@ public sealed class FileSystemProtectionLoop(
             var shouldReconcile = now - lastFullScanUtc >= cadence.PeriodicReconciliationInterval;
             if (!shouldCatchUp && !shouldReconcile)
             {
+                logger?.LogTrace("Protection loop idle. Pending changes: {PendingCount}; pendingCatchUp={PendingCatchUp}.", dueChanges.Count, pendingCatchUp);
                 continue;
             }
 
             var catchUpOutcome = ProtectionLoopCatchUpOutcome.None;
             if (shouldCatchUp)
             {
+                logger?.LogTrace("Protection loop running USN catch-up. Due changes: {DueChangeCount}; pendingCatchUp={PendingCatchUp}.", dueChanges.Count, pendingCatchUp);
                 catchUpOutcome = await RunCatchUpCycleCoreAsync(cancellationToken).ConfigureAwait(false);
             }
 
@@ -93,12 +99,14 @@ public sealed class FileSystemProtectionLoop(
 
             if (shouldReconcile)
             {
+                logger?.LogTrace("Protection loop running reconciliation scan after interval {Interval}.", cadence.PeriodicReconciliationInterval);
                 await operations.RunBackupNowAsync(cancellationToken).ConfigureAwait(false);
                 lastFullScanUtc = now;
                 RecordCatchUpSource("Reconciliation scan", overflowed: false);
             }
 
             pendingCatchUp = false;
+            telemetryCollector?.RecordLoopState("Protection loop", "Waiting", "Cycle complete");
         }
     }
 
@@ -114,6 +122,11 @@ public sealed class FileSystemProtectionLoop(
         {
             var result = await usnCatchUpService.CatchUpAsync(configuration, cancellationToken).ConfigureAwait(false);
             operations.UpdateDurableChangeStatus(result.Status);
+            logger?.LogTrace(
+                "USN catch-up completed. ChangedFiles={ChangedFileCount}; RequiresFullScan={RequiresFullScan}; Status={Status}.",
+                result.ChangedFiles.Count,
+                result.RequiresFullScan,
+                result.Status.Status);
             if (result.RequiresFullScan)
             {
                 var now = DateTimeOffset.UtcNow;

@@ -21,6 +21,7 @@ namespace FluxVault.App.ViewModels;
 public sealed partial class MainWindowViewModel : ObservableObject
 {
     private const int MirrorsWorkspaceIndex = 3;
+    private const int PerformanceWorkspaceIndex = 5;
     private static readonly JsonSerializerOptions ConfigurationFingerprintJsonOptions = new(JsonSerializerDefaults.Web);
     private readonly IFluxVaultServiceClient client;
     private readonly IFluxVaultWindowsServiceController windowsServiceController;
@@ -158,6 +159,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string captureHealth = "Capture: idle";
+
+    [ObservableProperty]
+    private string performanceStatusText = "Performance: waiting";
 
     [ObservableProperty]
     private FluxVaultProfileRow? selectedProfile;
@@ -335,6 +339,14 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public ObservableCollection<RepositoryHealthRow> RepositoryHealthRows { get; } = [];
 
     public ObservableCollection<MirrorNodeRow> MirrorNodes { get; } = [];
+
+    public ObservableCollection<PerformanceMetricRow> PerformanceMetricRows { get; } = [];
+
+    public ObservableCollection<PerformanceLoopRow> PerformanceLoopRows { get; } = [];
+
+    public ObservableCollection<PerformanceBackgroundRow> PerformanceBackgroundRows { get; } = [];
+
+    public ObservableCollection<PerformanceSampleRow> PerformanceSampleRows { get; } = [];
 
     public FileBrowserViewModel FileBrowser { get; }
 
@@ -550,6 +562,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     preserveLocalConfiguration: hasLocalConfigurationChanges && !forceConfigurationReload,
                     isAutomatic,
                     forceConfigurationReload);
+                if (SelectedWorkspaceIndex == PerformanceWorkspaceIndex)
+                {
+                    await RefreshPerformanceAsync(cancellationToken).ConfigureAwait(true);
+                }
             }
             finally
             {
@@ -564,6 +580,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             SetServiceUnavailable(ex);
         }
+    }
+
+    private async Task RefreshPerformanceAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await client.SendAsync(FluxVaultIpcRequest.GetPerformance(), cancellationToken)
+            .ConfigureAwait(true);
+        if (!response.Success || response.Performance is null)
+        {
+            PerformanceStatusText = $"Performance: unavailable ({response.ErrorMessage ?? "no telemetry returned"})";
+            return;
+        }
+
+        ApplyPerformance(response.Performance);
     }
 
     [RelayCommand(CanExecute = nameof(CanToggleWindowsService))]
@@ -628,6 +657,14 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         RestoreSelectedCommand.NotifyCanExecuteChanged();
         OpenSelectedVersionPreviewCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnSelectedWorkspaceIndexChanged(int value)
+    {
+        if (value == PerformanceWorkspaceIndex)
+        {
+            _ = RefreshAsync(isAutomatic: true);
+        }
     }
 
     partial void OnIsPreviewBusyChanged(bool value)
@@ -2135,6 +2172,61 @@ public sealed partial class MainWindowViewModel : ObservableObject
         return pending > 0 ? $"Capture: pending {pending}" : "Capture: idle";
     }
 
+    private void ApplyPerformance(PerformanceTelemetryStatus telemetry)
+    {
+        PerformanceStatusText = $"Performance: sampled {telemetry.CollectedAtUtc.ToLocalTime():HH:mm:ss}";
+
+        PerformanceMetricRows.Clear();
+        PerformanceMetricRows.Add(new PerformanceMetricRow("CPU", $"{telemetry.Process.CpuPercent:0.#}%", "Process CPU across logical processors."));
+        PerformanceMetricRows.Add(new PerformanceMetricRow("Working set", FormatBytes(telemetry.Process.WorkingSetBytes), "Resident process memory."));
+        PerformanceMetricRows.Add(new PerformanceMetricRow("Private memory", FormatBytes(telemetry.Process.PrivateMemoryBytes), "Private process memory."));
+        PerformanceMetricRows.Add(new PerformanceMetricRow("GC heap", FormatBytes(telemetry.Process.GcHeapBytes), $"Collections G0/G1/G2: {telemetry.Process.Gen0Collections}/{telemetry.Process.Gen1Collections}/{telemetry.Process.Gen2Collections}."));
+        PerformanceMetricRows.Add(new PerformanceMetricRow("Threads", telemetry.Process.ThreadCount.ToString(), "Process thread count."));
+        PerformanceMetricRows.Add(new PerformanceMetricRow("Handles", telemetry.Process.HandleCount.ToString(), "Process handle count."));
+        PerformanceMetricRows.Add(new PerformanceMetricRow("ThreadPool", $"{telemetry.ThreadPool.AvailableWorkerThreads}/{telemetry.ThreadPool.MaxWorkerThreads} workers", $"{telemetry.ThreadPool.PendingWorkItemCount} pending work item(s)."));
+        PerformanceMetricRows.Add(new PerformanceMetricRow("IPC", $"{telemetry.Ipc.TotalRequests} request(s)", $"{telemetry.Ipc.ActiveRequests} active, {telemetry.Ipc.FailedRequests} failed; last {telemetry.Ipc.LastCommand}."));
+        PerformanceMetricRows.Add(new PerformanceMetricRow("Logs", telemetry.Logs.EffectiveLevel, $"{telemetry.Logs.RetainedFileCount} file(s), {telemetry.Logs.DroppedMessageCount} dropped message(s)."));
+
+        PerformanceLoopRows.Clear();
+        foreach (var loop in telemetry.Loops)
+        {
+            PerformanceLoopRows.Add(new PerformanceLoopRow(
+                loop.Name,
+                loop.State,
+                loop.Detail,
+                loop.IterationCount,
+                FormatLocalTime(loop.LastStartedUtc),
+                FormatLocalTime(loop.LastCompletedUtc)));
+        }
+
+        PerformanceBackgroundRows.Clear();
+        foreach (var work in telemetry.BackgroundWork)
+        {
+            PerformanceBackgroundRows.Add(new PerformanceBackgroundRow(
+                work.Name,
+                work.State,
+                work.ActiveCount,
+                work.PendingCount,
+                work.Detail));
+        }
+
+        PerformanceSampleRows.Clear();
+        foreach (var sample in telemetry.Samples.Reverse().Take(500).Reverse())
+        {
+            PerformanceSampleRows.Add(new PerformanceSampleRow(
+                sample.TimestampUtc.ToLocalTime().ToString("HH:mm:ss"),
+                $"{sample.CpuPercent:0.#}%",
+                FormatBytes(sample.WorkingSetBytes),
+                FormatBytes(sample.GcHeapBytes),
+                sample.ThreadCount,
+                sample.HandleCount,
+                sample.ActiveCaptureWorkers,
+                sample.WatcherBacklogCount,
+                sample.IpcTotalRequests,
+                sample.DroppedLogMessages));
+        }
+    }
+
     private void ApplyDeviceIdentity(FluxVaultServiceStatus status)
     {
         var identity = status.DeviceIdentity ?? BuildDeviceIdentityStatus(status.Configuration.Sync);
@@ -2491,6 +2583,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
 
         return unit == 0 ? $"{bytes} B" : $"{value:0.0} {units[unit]}";
+    }
+
+    private static string FormatLocalTime(DateTimeOffset? timestamp)
+    {
+        return timestamp is null ? string.Empty : timestamp.Value.ToLocalTime().ToString("HH:mm:ss");
     }
 
     private static string FormatMirrorPlacementProfile(MirrorPlacementProfile profile)
@@ -2850,6 +2947,38 @@ public sealed record CaptureStatusRow(
     string LastEvent,
     string NextForcedCapture,
     string Detail);
+
+public sealed record PerformanceMetricRow(
+    string Name,
+    string Value,
+    string Detail);
+
+public sealed record PerformanceLoopRow(
+    string Name,
+    string State,
+    string Detail,
+    long IterationCount,
+    string LastStarted,
+    string LastCompleted);
+
+public sealed record PerformanceBackgroundRow(
+    string Name,
+    string State,
+    int ActiveCount,
+    int PendingCount,
+    string Detail);
+
+public sealed record PerformanceSampleRow(
+    string Timestamp,
+    string Cpu,
+    string WorkingSet,
+    string GcHeap,
+    int ThreadCount,
+    int HandleCount,
+    int ActiveCaptureWorkers,
+    int WatcherBacklogCount,
+    long IpcTotalRequests,
+    long DroppedLogMessages);
 
 public sealed record FluxVaultProfileRow(
     string Id,

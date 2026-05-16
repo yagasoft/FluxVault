@@ -13,6 +13,7 @@ using FluxVault.Core.Capture;
 using FluxVault.Core.Chunking;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Content;
+using FluxVault.Core.Diagnostics;
 using FluxVault.Core.Service;
 using FluxVault.Core.Storage;
 using FluxVault.Core.Storage.Metadata;
@@ -1388,23 +1389,47 @@ public sealed class ServiceOperationsTests
         Assert.Equal("FSCTL_READ_USN_JOURNAL", durableChange.GetProperty("details")[0].GetProperty("operation").GetString());
     }
 
-    private static FluxVaultOperations CreateOperations(
-        TemporaryWorkspace workspace,
-        FluxVaultConfiguration configuration)
+    [Fact]
+    public async Task Get_performance_ipc_reports_runtime_metrics_and_background_work()
     {
-        return CreateOperations(
-            workspace,
-            configuration,
-            new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()));
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        var telemetry = new TelemetryCollector(TimeProvider.System);
+        var operations = CreateOperations(workspace, NewConfiguration(workspace, watched), telemetry: telemetry);
+        await operations.SaveConfigurationAsync(NewConfiguration(workspace, watched));
+        telemetry.RecordLoopState("Protection loop", "Waiting", "Delay");
+        telemetry.SampleOnce(DiagnosticsPolicy.CreateDefault(workspace.RootPath));
+
+        var response = await operations.HandleAsync(FluxVaultIpcRequest.GetPerformance());
+
+        Assert.True(response.Success);
+        Assert.NotNull(response.Performance);
+        Assert.Contains(response.Performance.Loops, loop => loop.Name == "Protection loop" && loop.State == "Waiting");
+        Assert.Contains(response.Performance.BackgroundWork, work => work.Name == "Backup" && work.State == "Idle");
+        Assert.NotEmpty(response.Performance.Samples);
     }
 
     private static FluxVaultOperations CreateOperations(
         TemporaryWorkspace workspace,
         FluxVaultConfiguration configuration,
-        IFileCaptureProvider captureProvider)
+        TelemetryCollector? telemetry = null)
+    {
+        return CreateOperations(
+            workspace,
+            configuration,
+            new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()),
+            telemetry);
+    }
+
+    private static FluxVaultOperations CreateOperations(
+        TemporaryWorkspace workspace,
+        FluxVaultConfiguration configuration,
+        IFileCaptureProvider captureProvider,
+        TelemetryCollector? telemetry = null)
     {
         var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
-        return CreateOperations(workspace, configuration, store, captureProvider);
+        return CreateOperations(workspace, configuration, store, captureProvider, telemetry: telemetry);
     }
 
     private static FluxVaultOperations CreateOperations(
@@ -1413,7 +1438,8 @@ public sealed class ServiceOperationsTests
         FileFluxVaultConfigurationStore store,
         IFileCaptureProvider captureProvider,
         IRepositoryMaintenanceStateStore? maintenanceStateStore = null,
-        string? maintenanceStateRoot = null)
+        string? maintenanceStateRoot = null,
+        TelemetryCollector? telemetry = null)
     {
         var metadataStore = new InMemoryRepositoryMetadataStore();
         return new FluxVaultOperations(
@@ -1422,7 +1448,8 @@ public sealed class ServiceOperationsTests
             maintenanceStateStore,
             maintenanceStateRoot,
             metadataStoreFactory: _ => metadataStore,
-            repositoryFactory: repositoryConfiguration => CreateRepository(repositoryConfiguration, metadataStore));
+            repositoryFactory: repositoryConfiguration => CreateRepository(repositoryConfiguration, metadataStore),
+            telemetryCollector: telemetry);
     }
 
     private static IChunkRepository CreateRepository(

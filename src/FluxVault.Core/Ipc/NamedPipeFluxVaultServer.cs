@@ -1,8 +1,10 @@
 using System.IO.Pipes;
+using System.Diagnostics;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using FluxVault.Abstractions.Ipc;
+using FluxVault.Core.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace FluxVault.Core.Ipc;
@@ -10,7 +12,8 @@ namespace FluxVault.Core.Ipc;
 public sealed class NamedPipeFluxVaultServer(
     IFluxVaultRequestHandler handler,
     string pipeName = NamedPipeFluxVaultServer.DefaultPipeName,
-    ILogger<NamedPipeFluxVaultServer>? logger = null)
+    ILogger<NamedPipeFluxVaultServer>? logger = null,
+    TelemetryCollector? telemetryCollector = null)
 {
     public const string DefaultPipeName = "FluxVault.Service";
     private const int MaxConcurrentClients = 32;
@@ -148,7 +151,18 @@ public sealed class NamedPipeFluxVaultServer(
     {
         try
         {
-            return await HandleSafeAsync(FluxVaultIpcSerializer.DeserializeRequest(line), cancellationToken).ConfigureAwait(false);
+            var request = FluxVaultIpcSerializer.DeserializeRequest(line);
+            var stopwatch = Stopwatch.StartNew();
+            telemetryCollector?.RecordIpcRequestStarted(request.Command);
+            logger?.LogTrace("IPC {Command} request started.", request.Command);
+            var response = await HandleSafeAsync(request, cancellationToken).ConfigureAwait(false);
+            telemetryCollector?.RecordIpcRequestCompleted(request.Command, stopwatch.Elapsed, response.Success);
+            logger?.LogTrace(
+                "IPC {Command} request completed in {ElapsedMilliseconds} ms with success={Success}.",
+                request.Command,
+                stopwatch.Elapsed.TotalMilliseconds,
+                response.Success);
+            return response;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or ArgumentException)
         {

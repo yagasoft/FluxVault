@@ -89,6 +89,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         ValidateSecurityPosture(configuration.SecurityPosture);
         ValidateFleet(configuration.Fleet);
         ValidateMetadataStore(configuration.MetadataStore);
+        ValidateDiagnosticsPolicy(configuration.DiagnosticsPolicy);
     }
 
     internal FluxVaultConfiguration Normalise(FluxVaultConfiguration configuration)
@@ -119,6 +120,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             SecurityPosture = (configuration.SecurityPosture ?? SecurityPostureConfiguration.CreateDefault()).Normalise(),
             Fleet = (configuration.Fleet ?? EnterpriseFleetConfiguration.CreateDefault()).Normalise(),
             MetadataStore = (configuration.MetadataStore ?? MetadataStoreConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
+            DiagnosticsPolicy = (configuration.DiagnosticsPolicy ?? DiagnosticsPolicy.CreateDefault(programDataPath)).Normalise(programDataPath),
             SelectionRules = selectionRules.Select(NormaliseSelectionRule).ToArray(),
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0
@@ -345,6 +347,34 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         if (configuration.ExportLagWarningThreshold <= TimeSpan.Zero)
         {
             throw new InvalidDataException("Metadata export lag warning threshold must be positive.");
+        }
+    }
+
+    private static void ValidateDiagnosticsPolicy(DiagnosticsPolicy configuration)
+    {
+        if (string.IsNullOrWhiteSpace(configuration.LogDirectory))
+        {
+            throw new InvalidDataException("Diagnostics log directory is required.");
+        }
+
+        if (configuration.MaxLogFileMegabytes < 1)
+        {
+            throw new InvalidDataException("Diagnostics max log file size must be at least 1 MB.");
+        }
+
+        if (configuration.RetainedLogFileCount < 1)
+        {
+            throw new InvalidDataException("Diagnostics retained log file count must be at least 1.");
+        }
+
+        if (configuration.TelemetrySampleInterval <= TimeSpan.Zero)
+        {
+            throw new InvalidDataException("Telemetry sample interval must be positive.");
+        }
+
+        if (configuration.RetainedTelemetrySampleCount < 1)
+        {
+            throw new InvalidDataException("Retained telemetry sample count must be at least 1.");
         }
     }
 

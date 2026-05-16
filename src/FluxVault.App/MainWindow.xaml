@@ -450,8 +450,12 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <DockPanel Grid.Row="0" LastChildFill="True">
-                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <ProgressBar Width="120"
                                          Height="4"
                                          Margin="0,0,8,0"
@@ -465,7 +469,7 @@
                             <Button Content="Preview selected"
                                     Command="{Binding OpenSelectedVersionPreviewCommand}" />
                         </StackPanel>
-                    </DockPanel>
+                    </Grid>
 
                     <DataGrid Name="RecentVersionsGrid"
                               Grid.Row="2"
@@ -734,6 +738,84 @@
                             <DataGridTextColumn Header="Last event" Binding="{Binding LastEvent}" Width="170" />
                             <DataGridTextColumn Header="Forced by" Binding="{Binding NextForcedCapture}" Width="170" />
                             <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="260" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="▥ Performance">
+                <Grid Margin="18">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="170" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="170" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
+                               Text="{Binding PerformanceStatusText}"
+                               FontSize="15"
+                               FontWeight="SemiBold"
+                               Foreground="#202124" />
+                    <DataGrid Grid.Row="2"
+                              ItemsSource="{Binding PerformanceMetricRows}"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Metric" Binding="{Binding Name}" Width="180" />
+                            <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="160" />
+                            <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <DataGrid Grid.Column="0"
+                                  ItemsSource="{Binding PerformanceLoopRows}"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Loop" Binding="{Binding Name}" Width="150" />
+                                <DataGridTextColumn Header="State" Binding="{Binding State}" Width="100" />
+                                <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="220" />
+                                <DataGridTextColumn Header="Count" Binding="{Binding IterationCount}" Width="80" />
+                                <DataGridTextColumn Header="Started" Binding="{Binding LastStarted}" Width="90" />
+                                <DataGridTextColumn Header="Completed" Binding="{Binding LastCompleted}" Width="90" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <DataGrid Grid.Column="2"
+                                  ItemsSource="{Binding PerformanceBackgroundRows}"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Work" Binding="{Binding Name}" Width="150" />
+                                <DataGridTextColumn Header="State" Binding="{Binding State}" Width="100" />
+                                <DataGridTextColumn Header="Active" Binding="{Binding ActiveCount}" Width="80" />
+                                <DataGridTextColumn Header="Pending" Binding="{Binding PendingCount}" Width="80" />
+                                <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                    <DataGrid Grid.Row="6"
+                              ItemsSource="{Binding PerformanceSampleRows}"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Time" Binding="{Binding Timestamp}" Width="90" />
+                            <DataGridTextColumn Header="CPU" Binding="{Binding Cpu}" Width="80" />
+                            <DataGridTextColumn Header="Working set" Binding="{Binding WorkingSet}" Width="120" />
+                            <DataGridTextColumn Header="GC heap" Binding="{Binding GcHeap}" Width="120" />
+                            <DataGridTextColumn Header="Threads" Binding="{Binding ThreadCount}" Width="80" />
+                            <DataGridTextColumn Header="Handles" Binding="{Binding HandleCount}" Width="80" />
+                            <DataGridTextColumn Header="Workers" Binding="{Binding ActiveCaptureWorkers}" Width="80" />
+                            <DataGridTextColumn Header="Backlog" Binding="{Binding WatcherBacklogCount}" Width="80" />
+                            <DataGridTextColumn Header="IPC" Binding="{Binding IpcTotalRequests}" Width="80" />
+                            <DataGridTextColumn Header="Dropped logs" Binding="{Binding DroppedLogMessages}" Width="100" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

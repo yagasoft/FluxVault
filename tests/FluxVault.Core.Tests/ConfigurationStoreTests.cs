@@ -63,6 +63,13 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(4, configuration.MetadataStore.MaxCaptureWorkers);
         Assert.Equal(8, configuration.MetadataStore.MaxDbWriterConcurrency);
         Assert.Equal(TimeSpan.FromMinutes(15), configuration.MetadataStore.ExportLagWarningThreshold);
+        Assert.True(configuration.DiagnosticsPolicy.IsFileLoggingEnabled);
+        Assert.Equal(DiagnosticLogLevel.Warning, configuration.DiagnosticsPolicy.FileLogLevel);
+        Assert.Equal(Path.Combine(programData, "logs"), configuration.DiagnosticsPolicy.LogDirectory);
+        Assert.Equal(25, configuration.DiagnosticsPolicy.MaxLogFileMegabytes);
+        Assert.Equal(8, configuration.DiagnosticsPolicy.RetainedLogFileCount);
+        Assert.Equal(TimeSpan.FromSeconds(5), configuration.DiagnosticsPolicy.TelemetrySampleInterval);
+        Assert.Equal(4320, configuration.DiagnosticsPolicy.RetainedTelemetrySampleCount);
     }
 
     [Fact]
@@ -171,6 +178,60 @@ public sealed class ConfigurationStoreTests
         Assert.Equal(ResourceProfile.Fast, watchedFolder.ResourceProfile);
         Assert.Equal(["*.txt", "*.docx"], watchedFolder.IncludePatterns);
         Assert.True(actual.RetentionPolicy.IsEnabled);
+    }
+
+    [Fact]
+    public async Task Save_and_load_round_trips_diagnostics_policy()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(
+            Path.Combine(workspace.RootPath, "config.json"),
+            workspace.RootPath);
+        var expected = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            DiagnosticsPolicy = new DiagnosticsPolicy(
+                IsFileLoggingEnabled: true,
+                FileLogLevel: DiagnosticLogLevel.Trace,
+                LogDirectory: Path.Combine(workspace.RootPath, "trace-logs"),
+                MaxLogFileMegabytes: 3,
+                RetainedLogFileCount: 4,
+                TelemetrySampleInterval: TimeSpan.FromSeconds(2),
+                RetainedTelemetrySampleCount: 12)
+        };
+
+        await store.SaveAsync(expected);
+
+        var actual = await store.LoadAsync();
+        Assert.Equal(expected.DiagnosticsPolicy, actual.DiagnosticsPolicy);
+    }
+
+    [Fact]
+    public async Task Save_clamps_diagnostics_policy_caps()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(
+            Path.Combine(workspace.RootPath, "config.json"),
+            workspace.RootPath);
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with
+        {
+            DiagnosticsPolicy = new DiagnosticsPolicy(
+                IsFileLoggingEnabled: true,
+                FileLogLevel: DiagnosticLogLevel.Trace,
+                LogDirectory: " ",
+                MaxLogFileMegabytes: 0,
+                RetainedLogFileCount: 0,
+                TelemetrySampleInterval: TimeSpan.Zero,
+                RetainedTelemetrySampleCount: 0)
+        };
+
+        await store.SaveAsync(configuration);
+
+        var actual = await store.LoadAsync();
+        Assert.Equal(Path.Combine(workspace.RootPath, "logs"), actual.DiagnosticsPolicy.LogDirectory);
+        Assert.Equal(1, actual.DiagnosticsPolicy.MaxLogFileMegabytes);
+        Assert.Equal(1, actual.DiagnosticsPolicy.RetainedLogFileCount);
+        Assert.Equal(DiagnosticsPolicy.DefaultTelemetrySampleInterval, actual.DiagnosticsPolicy.TelemetrySampleInterval);
+        Assert.Equal(1, actual.DiagnosticsPolicy.RetainedTelemetrySampleCount);
     }
 
     [Fact]

@@ -187,14 +187,35 @@ exported diagnostics can distinguish unable to open volume, unsupported volume,
 journal ID change, journal wrap, checkpoint seeding, file-id path resolution
 failures, and noisy-folder churn such as OneDrive/Office activity.
 
+## Service diagnostics and performance telemetry
+
+The service always keeps a bounded in-memory telemetry history for the active
+profile. By default it samples every 5 seconds and retains 4320 samples, which
+is 6 hours of history. The sampler records process CPU, working set, private
+memory, GC heap, collection counts, process threads and handles, ThreadPool
+availability and queue pressure, IPC request counts, loop state, backup/capture
+state, watcher backlog, and dropped service-log messages. The `GetPerformance`
+IPC command returns the current sample plus recent history; no sample history is
+persisted to disk.
+
+Rolling service file logs are controlled by the diagnostics policy in
+`config.json` and are editable from Advanced Options. They are enabled by
+default at `Warning` level, write JSONL files under
+`C:\ProgramData\FluxVault\logs`, cap each file at 25 MB, and retain 8 files.
+Switching the service file log level to `Trace` enables detailed request,
+profile reconciliation, protection-loop, USN catch-up, backup, maintenance, and
+diagnostics-export tracing for later support review without allowing unbounded
+disk growth. Trace file logging is separate from Windows Event Log; verbose
+diagnostic traces are not written to Event Log.
+
 ## Options and status UX
 
 Every editable Options control has a native WPF tooltip describing the
 operational effect of the setting; long tooltip text wraps inside a bounded
 width. Options now covers retention, scheduled maintenance, default workload
 preset, capture cadence, USN fallback cooldown, source deep verification,
-active compression choices, compression skip extensions, and Explorer
-integration. Future user-meaningful operational
+active compression choices, compression skip extensions, service diagnostics,
+performance telemetry, and Explorer integration. Future user-meaningful operational
 settings should follow the same pattern: typed defaults, compatibility for existing config files,
 Options load/save tests, and no exposed dormant fields. The selected dashboard
 direction is Concept A, the operational cockpit: stable primary commands in the
@@ -204,6 +225,12 @@ detailed durable-change information through the USN tooltip and diagnostics
 export. The main header constrains long service text with ellipsis trimming so
 it cannot overlap command buttons. The Capture tile is the live
 watcher/debounce queue; the USN tile is the latest durable catch-up result.
+
+The Performance workspace is an operator view over `GetPerformance`. It fetches
+telemetry only while selected and shows current process resources, loop state,
+background work, watcher/USN status, log health, IPC pressure, and capped recent
+samples. It is meant to answer "what is the service doing while idle?" before a
+full diagnostics export is needed.
 
 The Diagnostics workspace is the detailed health dashboard. It shows repository
 integrity, mirror state, restore rehearsal, USN state, and blocked-file rows, and

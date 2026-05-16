@@ -1085,6 +1085,27 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
+    public async Task Refresh_fetches_performance_telemetry_when_performance_tab_is_selected()
+    {
+        var capturedAt = new DateTimeOffset(2026, 5, 16, 18, 0, 0, TimeSpan.Zero);
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"))
+        {
+            PerformanceResponse = FluxVaultIpcResponse.WithPerformance(PerformanceStatus(capturedAt))
+        };
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromSeconds(5));
+        viewModel.SelectedWorkspaceIndex = 5;
+
+        await viewModel.RefreshAsync();
+
+        Assert.Contains(FluxVaultIpcCommand.GetPerformance, client.Commands);
+        Assert.Equal($"Performance: sampled {capturedAt.ToLocalTime():HH:mm:ss}", viewModel.PerformanceStatusText);
+        Assert.Contains(viewModel.PerformanceMetricRows, row => row.Name == "CPU" && row.Value == "12.5%");
+        Assert.Contains(viewModel.PerformanceLoopRows, row => row.Name == "Protection loop" && row.State == "Waiting");
+        Assert.Contains(viewModel.PerformanceBackgroundRows, row => row.Name == "Backup" && row.State == "Idle");
+        Assert.Single(viewModel.PerformanceSampleRows);
+    }
+
+    [Fact]
     public async Task Refresh_shows_durable_change_fallback_reason_and_tooltip_details()
     {
         var checkedAt = DateTimeOffset.UtcNow;
@@ -1646,6 +1667,37 @@ public sealed class MainWindowViewModelRefreshTests
         };
     }
 
+    private static PerformanceTelemetryStatus PerformanceStatus(DateTimeOffset capturedAt)
+    {
+        return new PerformanceTelemetryStatus(
+            CollectedAtUtc: capturedAt,
+            Process: new ProcessResourceRuntimeStatus(
+                CpuPercent: 12.5,
+                WorkingSetBytes: 128 * 1024 * 1024,
+                PrivateMemoryBytes: 256 * 1024 * 1024,
+                GcHeapBytes: 32 * 1024 * 1024,
+                Gen0Collections: 10,
+                Gen1Collections: 2,
+                Gen2Collections: 1,
+                ThreadCount: 17,
+                HandleCount: 222),
+            ThreadPool: new ThreadPoolRuntimeStatus(100, 200, 50, 100, 3),
+            Ipc: new IpcRuntimeStatus(7, 1, 0, "GetStatus", capturedAt),
+            Logs: new LogRuntimeStatus(true, @"C:\ProgramData\FluxVault\logs", "Warning", null, 0, 1, 0),
+            Loops:
+            [
+                new ServiceLoopRuntimeStatus("Protection loop", "Waiting", capturedAt, capturedAt, "Delay", 5)
+            ],
+            BackgroundWork:
+            [
+                new BackgroundWorkRuntimeStatus("Backup", "Idle", 0, 0, "No active backup")
+            ],
+            Samples:
+            [
+                new PerformanceTelemetrySample(capturedAt, 12.5, 128 * 1024 * 1024, 32 * 1024 * 1024, 17, 222, 0, 0, 7, 0)
+            ]);
+    }
+
     private static async Task WaitUntilAsync(Func<bool> condition)
     {
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -1834,6 +1886,8 @@ public sealed class MainWindowViewModelRefreshTests
 
         public FluxVaultIpcResponse MirrorRebalanceResponse { get; init; } = FluxVaultIpcResponse.Ok();
 
+        public FluxVaultIpcResponse PerformanceResponse { get; init; } = FluxVaultIpcResponse.Failure("No performance status configured.");
+
         public List<(FluxVaultIpcCommand Command, string? MirrorNodeId)> MirrorRepairRequests { get; } = [];
 
         public List<(FluxVaultIpcCommand Command, string? MirrorNodeId)> MirrorRebalanceRequests { get; } = [];
@@ -1932,6 +1986,11 @@ public sealed class MainWindowViewModelRefreshTests
             {
                 MirrorRebalanceRequests.Add((request.Command, request.MirrorNodeId));
                 return Task.FromResult(MirrorRebalanceResponse);
+            }
+
+            if (request.Command == FluxVaultIpcCommand.GetPerformance)
+            {
+                return Task.FromResult(PerformanceResponse);
             }
 
             var status = statuses.Count > 1 ? statuses.Dequeue() : statuses.Peek();

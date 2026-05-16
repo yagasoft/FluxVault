@@ -1,6 +1,7 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Configuration;
+using FluxVault.Core.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace FluxVault.Core.Service;
@@ -10,7 +11,8 @@ public sealed class RepositoryMaintenanceLoop(
     IFluxVaultConfigurationStore configurationStore,
     IRepositoryMaintenanceStateStore stateStore,
     TimeProvider timeProvider,
-    ILogger<RepositoryMaintenanceLoop>? logger = null)
+    ILogger<RepositoryMaintenanceLoop>? logger = null,
+    TelemetryCollector? telemetryCollector = null)
 {
     private static readonly TimeSpan PollInterval = TimeSpan.FromMinutes(5);
 
@@ -20,7 +22,9 @@ public sealed class RepositoryMaintenanceLoop(
         {
             try
             {
+                telemetryCollector?.RecordLoopState("Repository maintenance loop", "Running", "Checking due maintenance");
                 await RunDueMaintenanceOnceAsync(cancellationToken).ConfigureAwait(false);
+                telemetryCollector?.RecordLoopState("Repository maintenance loop", "Waiting", $"Delay {PollInterval:g}");
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -42,6 +46,7 @@ public sealed class RepositoryMaintenanceLoop(
         var policy = configuration.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault();
         if (!policy.IsEnabled)
         {
+            logger?.LogTrace("Repository maintenance skipped because policy is disabled.");
             return false;
         }
 
@@ -49,9 +54,14 @@ public sealed class RepositoryMaintenanceLoop(
         var now = timeProvider.GetUtcNow();
         if (state.LastMaintenanceUtc is not null && now - state.LastMaintenanceUtc.Value < policy.Interval)
         {
+            logger?.LogTrace(
+                "Repository maintenance not due. Last={LastMaintenanceUtc}; Interval={Interval}.",
+                state.LastMaintenanceUtc,
+                policy.Interval);
             return false;
         }
 
+        logger?.LogTrace("Repository maintenance starting scrub and restore rehearsal.");
         await operations.RunRepositoryScrubAsync(cancellationToken).ConfigureAwait(false);
         await operations.RunRestoreRehearsalAsync(cancellationToken).ConfigureAwait(false);
         var updated = await stateStore.LoadAsync(cancellationToken).ConfigureAwait(false);

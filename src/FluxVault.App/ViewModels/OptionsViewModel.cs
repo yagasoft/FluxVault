@@ -153,6 +153,27 @@ public sealed partial class OptionsViewModel : ObservableObject
     private int metadataStoreExportLagWarningMinutes;
 
     [ObservableProperty]
+    private bool diagnosticsFileLoggingEnabled = true;
+
+    [ObservableProperty]
+    private DiagnosticLogLevel diagnosticsFileLogLevel = DiagnosticLogLevel.Warning;
+
+    [ObservableProperty]
+    private string diagnosticsLogDirectory = string.Empty;
+
+    [ObservableProperty]
+    private int diagnosticsMaxLogFileMegabytes;
+
+    [ObservableProperty]
+    private int diagnosticsRetainedLogFileCount;
+
+    [ObservableProperty]
+    private int telemetrySampleIntervalSeconds;
+
+    [ObservableProperty]
+    private int telemetryRetainedSampleCount;
+
+    [ObservableProperty]
     private string previewText = "Retention preview has not been run.";
 
     [ObservableProperty]
@@ -183,6 +204,8 @@ public sealed partial class OptionsViewModel : ObservableObject
 
     public IReadOnlyList<CompressionPreference> Codecs { get; } = Enum.GetValues<CompressionPreference>();
 
+    public IReadOnlyList<DiagnosticLogLevel> DiagnosticLogLevels { get; } = Enum.GetValues<DiagnosticLogLevel>();
+
     public IReadOnlyList<MetadataStoreProvider> MetadataStoreProviders { get; } = Enum.GetValues<MetadataStoreProvider>();
 
     public IReadOnlyList<WorkloadPolicyPresetOption> WorkloadPresets { get; } = WorkloadPolicyPresetCatalog.PresetOptions;
@@ -208,6 +231,7 @@ public sealed partial class OptionsViewModel : ObservableObject
         ApplyMaintenance(currentConfiguration.RepositoryMaintenancePolicy);
         ApplyWorkload(currentConfiguration.WorkloadPolicy);
         ApplyMetadataStore(currentConfiguration.MetadataStore);
+        ApplyDiagnostics(currentConfiguration.DiagnosticsPolicy);
         ApplyExclusions(currentConfiguration.ExclusionRules ?? []);
         StatusText = "Options loaded.";
     }
@@ -233,6 +257,7 @@ public sealed partial class OptionsViewModel : ObservableObject
             RepositoryMaintenancePolicy = BuildMaintenance(),
             WorkloadPolicy = BuildWorkload(),
             MetadataStore = BuildMetadataStore(),
+            DiagnosticsPolicy = BuildDiagnostics(),
             ExclusionRules = []
         };
         var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(updated), cancellationToken)
@@ -456,6 +481,33 @@ public sealed partial class OptionsViewModel : ObservableObject
             MaxDbWriterConcurrency = Math.Max(1, MetadataStoreMaxDbWriterConcurrency),
             ExportLagWarningThreshold = TimeSpan.FromMinutes(Math.Max(1, MetadataStoreExportLagWarningMinutes))
         };
+    }
+
+    private void ApplyDiagnostics(DiagnosticsPolicy policy)
+    {
+        DiagnosticsFileLoggingEnabled = policy.IsFileLoggingEnabled;
+        DiagnosticsFileLogLevel = policy.FileLogLevel;
+        DiagnosticsLogDirectory = policy.LogDirectory;
+        DiagnosticsMaxLogFileMegabytes = Math.Max(1, policy.MaxLogFileMegabytes);
+        DiagnosticsRetainedLogFileCount = Math.Max(1, policy.RetainedLogFileCount);
+        TelemetrySampleIntervalSeconds = Math.Max(1, (int)Math.Round(policy.TelemetrySampleInterval.TotalSeconds));
+        TelemetryRetainedSampleCount = Math.Max(1, policy.RetainedTelemetrySampleCount);
+    }
+
+    private DiagnosticsPolicy BuildDiagnostics()
+    {
+        var defaults = currentConfiguration?.DiagnosticsPolicy
+            ?? DiagnosticsPolicy.CreateDefault(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        return new DiagnosticsPolicy(
+            IsFileLoggingEnabled: DiagnosticsFileLoggingEnabled,
+            FileLogLevel: DiagnosticsFileLogLevel,
+            LogDirectory: string.IsNullOrWhiteSpace(DiagnosticsLogDirectory)
+                ? defaults.LogDirectory
+                : DiagnosticsLogDirectory.Trim(),
+            MaxLogFileMegabytes: Math.Max(1, DiagnosticsMaxLogFileMegabytes),
+            RetainedLogFileCount: Math.Max(1, DiagnosticsRetainedLogFileCount),
+            TelemetrySampleInterval: TimeSpan.FromSeconds(Math.Max(1, TelemetrySampleIntervalSeconds)),
+            RetainedTelemetrySampleCount: Math.Max(1, TelemetryRetainedSampleCount));
     }
 
     private WorkloadPolicyConfiguration BuildWorkload()

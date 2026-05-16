@@ -1,4 +1,7 @@
 using FluxVault.Windows.Capture;
+using FluxVault.Abstractions.Configuration;
+using FluxVault.Core.Configuration;
+using FluxVault.Core.Diagnostics;
 using FluxVault.Core.Ipc;
 using FluxVault.Core.Service;
 
@@ -48,5 +51,48 @@ public sealed class FluxVaultServiceRuntime(
         var ipcTask = ipcServer.RunAsync(cancellationToken);
         var profileTask = profileManager.RunEnabledProfilesAsync(cancellationToken);
         return Task.WhenAll(ipcTask, profileTask);
+    }
+}
+
+public sealed class TelemetrySamplingService(
+    IFluxVaultProfileSetStore profileSetStore,
+    DiagnosticsPolicyRuntime diagnosticsPolicyRuntime,
+    TelemetryCollector telemetryCollector,
+    RollingJsonFileLoggerProvider rollingLogger,
+    ILogger<TelemetrySamplingService> logger) : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var delay = DiagnosticsPolicy.DefaultTelemetrySampleInterval;
+            try
+            {
+                telemetryCollector.RecordLoopState("Telemetry sampler", "Running", "Sampling process resources");
+                var profileSet = await profileSetStore.LoadAsync(stoppingToken).ConfigureAwait(false);
+                var policy = profileSet.ActiveProfile.Configuration.DiagnosticsPolicy
+                    ?? DiagnosticsPolicy.CreateDefault(Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                        "FluxVault"));
+                diagnosticsPolicyRuntime.Update(policy);
+                policy = diagnosticsPolicyRuntime.Current;
+                delay = policy.TelemetrySampleInterval;
+                telemetryCollector.SampleOnce(
+                    policy,
+                    droppedLogMessages: rollingLogger.GetStatus().DroppedMessageCount);
+                telemetryCollector.RecordLoopState("Telemetry sampler", "Waiting", $"Delay {delay:g}");
+                logger.LogTrace("Telemetry sample captured. Next sample in {Delay}.", delay);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                logger.LogWarning(exception, "Telemetry sampling failed; FluxVault will retry on the next telemetry interval.");
+            }
+
+            await Task.Delay(delay, stoppingToken).ConfigureAwait(false);
+        }
     }
 }

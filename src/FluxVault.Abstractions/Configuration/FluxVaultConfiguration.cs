@@ -21,7 +21,8 @@ public sealed record FluxVaultConfiguration(
     DirectCloudConfiguration DirectCloud = null!,
     SecurityPostureConfiguration SecurityPosture = null!,
     EnterpriseFleetConfiguration Fleet = null!,
-    MetadataStoreConfiguration MetadataStore = null!)
+    MetadataStoreConfiguration MetadataStore = null!,
+    DiagnosticsPolicy DiagnosticsPolicy = null!)
 {
     public static FluxVaultConfiguration CreateDefault(string programDataPath)
     {
@@ -45,6 +46,7 @@ public sealed record FluxVaultConfiguration(
             DirectCloud: DirectCloudConfiguration.CreateDefault(),
             SecurityPosture: SecurityPostureConfiguration.CreateDefault(),
             Fleet: EnterpriseFleetConfiguration.CreateDefault(),
-            MetadataStore: MetadataStoreConfiguration.CreateDefault(programDataPath));
+            MetadataStore: MetadataStoreConfiguration.CreateDefault(programDataPath),
+            DiagnosticsPolicy: DiagnosticsPolicy.CreateDefault(programDataPath));
     }
 }

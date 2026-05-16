@@ -204,6 +204,60 @@ public sealed class OptionsViewModelTests
     }
 
     [Fact]
+    public async Task Initialise_loads_diagnostics_policy_from_service_status()
+    {
+        var diagnostics = new DiagnosticsPolicy(
+            IsFileLoggingEnabled: true,
+            FileLogLevel: DiagnosticLogLevel.Trace,
+            LogDirectory: @"D:\FluxVaultLogs",
+            MaxLogFileMegabytes: 11,
+            RetainedLogFileCount: 6,
+            TelemetrySampleInterval: TimeSpan.FromSeconds(3),
+            RetainedTelemetrySampleCount: 99);
+        var client = new FakeFluxVaultServiceClient(StatusWithConfiguration(configuration => configuration with
+        {
+            DiagnosticsPolicy = diagnostics
+        }));
+        var viewModel = new OptionsViewModel(client);
+
+        await viewModel.InitialiseAsync();
+
+        Assert.True(viewModel.DiagnosticsFileLoggingEnabled);
+        Assert.Equal(DiagnosticLogLevel.Trace, viewModel.DiagnosticsFileLogLevel);
+        Assert.Equal(@"D:\FluxVaultLogs", viewModel.DiagnosticsLogDirectory);
+        Assert.Equal(11, viewModel.DiagnosticsMaxLogFileMegabytes);
+        Assert.Equal(6, viewModel.DiagnosticsRetainedLogFileCount);
+        Assert.Equal(3, viewModel.TelemetrySampleIntervalSeconds);
+        Assert.Equal(99, viewModel.TelemetryRetainedSampleCount);
+    }
+
+    [Fact]
+    public async Task Save_persists_diagnostics_policy()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
+        var viewModel = new OptionsViewModel(client);
+        await viewModel.InitialiseAsync();
+        viewModel.DiagnosticsFileLoggingEnabled = true;
+        viewModel.DiagnosticsFileLogLevel = DiagnosticLogLevel.Trace;
+        viewModel.DiagnosticsLogDirectory = @"D:\FluxVaultLogs";
+        viewModel.DiagnosticsMaxLogFileMegabytes = 5;
+        viewModel.DiagnosticsRetainedLogFileCount = 3;
+        viewModel.TelemetrySampleIntervalSeconds = 2;
+        viewModel.TelemetryRetainedSampleCount = 24;
+
+        await viewModel.SaveAsync();
+
+        var saved = Assert.Single(client.SavedConfigurations);
+        Assert.True(saved.DiagnosticsPolicy.IsFileLoggingEnabled);
+        Assert.Equal(DiagnosticLogLevel.Trace, saved.DiagnosticsPolicy.FileLogLevel);
+        Assert.Equal(@"D:\FluxVaultLogs", saved.DiagnosticsPolicy.LogDirectory);
+        Assert.Equal(5, saved.DiagnosticsPolicy.MaxLogFileMegabytes);
+        Assert.Equal(3, saved.DiagnosticsPolicy.RetainedLogFileCount);
+        Assert.Equal(TimeSpan.FromSeconds(2), saved.DiagnosticsPolicy.TelemetrySampleInterval);
+        Assert.Equal(24, saved.DiagnosticsPolicy.RetainedTelemetrySampleCount);
+    }
+
+    [Fact]
     public async Task Save_persists_codec_skip_extensions_from_options_text()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));

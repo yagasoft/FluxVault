@@ -246,6 +246,16 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="18" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="260" />
@@ -335,10 +345,48 @@
                                  Margin="0,0,0,18"
                                  ToolTip="FluxVault normalises entries to extensions such as .zip and removes duplicates when saving." />
 
-                        <TextBlock Grid.Row="15" Grid.ColumnSpan="2" Text="Explorer context menu" FontWeight="SemiBold" Margin="0,0,0,12" />
-                        <TextBlock Grid.Row="16" Grid.ColumnSpan="2" Text="{Binding ExplorerContextMenuStatus}" Foreground="#3C4043" TextWrapping="Wrap" Margin="0,0,0,8"
+                        <TextBlock Grid.Row="15" Grid.ColumnSpan="2" Text="Diagnostics" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <CheckBox Grid.Row="16" Grid.ColumnSpan="2"
+                                  Content="Enable service file logging"
+                                  IsChecked="{Binding DiagnosticsFileLoggingEnabled}"
+                                  Margin="0,0,0,8"
+                                  ToolTip="Write bounded rolling FluxVault service logs under the configured diagnostics directory." />
+                        <TextBlock Grid.Row="17" Text="Service file log level" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Minimum level written to rolling service files. Warning is the default; Trace is for diagnostic runs." />
+                        <ComboBox Grid.Row="17" Grid.Column="1"
+                                  ItemsSource="{Binding DiagnosticLogLevels}"
+                                  SelectedItem="{Binding DiagnosticsFileLogLevel}"
+                                  Padding="6"
+                                  Margin="0,0,0,8"
+                                  ToolTip="Trace captures detailed loop, IPC, and capture decisions. Event Log remains less verbose." />
+                        <TextBlock Grid.Row="18" Text="Log directory" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Directory for rolling JSONL service log files." />
+                        <TextBox Grid.Row="18" Grid.Column="1"
+                                 Text="{Binding DiagnosticsLogDirectory, UpdateSourceTrigger=PropertyChanged}"
+                                 Padding="8"
+                                 Margin="0,0,0,8"
+                                 ToolTip="Default is C:\ProgramData\FluxVault\logs." />
+                        <TextBlock Grid.Row="19" Text="Max MB / retained files" VerticalAlignment="Center" Margin="0,0,14,8"
+                                   ToolTip="Hard cap for each log file and number of rolled files retained." />
+                        <StackPanel Grid.Row="19" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBox Text="{Binding DiagnosticsMaxLogFileMegabytes, UpdateSourceTrigger=PropertyChanged}" Width="82" Padding="8"
+                                     ToolTip="Maximum size per JSONL log file in megabytes." />
+                            <TextBox Text="{Binding DiagnosticsRetainedLogFileCount, UpdateSourceTrigger=PropertyChanged}" Width="82" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="Number of rolled service log files to retain." />
+                        </StackPanel>
+                        <TextBlock Grid.Row="20" Text="Telemetry seconds / samples" VerticalAlignment="Center" Margin="0,0,14,18"
+                                   ToolTip="Always-on resource sample interval and capped in-memory sample history." />
+                        <StackPanel Grid.Row="20" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,18">
+                            <TextBox Text="{Binding TelemetrySampleIntervalSeconds, UpdateSourceTrigger=PropertyChanged}" Width="82" Padding="8"
+                                     ToolTip="Seconds between service telemetry samples." />
+                            <TextBox Text="{Binding TelemetryRetainedSampleCount, UpdateSourceTrigger=PropertyChanged}" Width="96" Padding="8" Margin="8,0,0,0"
+                                     ToolTip="Maximum samples retained in memory for the Performance tab." />
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="22" Grid.ColumnSpan="2" Text="Explorer context menu" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="23" Grid.ColumnSpan="2" Text="{Binding ExplorerContextMenuStatus}" Foreground="#3C4043" TextWrapping="Wrap" Margin="0,0,0,8"
                                    ToolTip="Current per-user Explorer full-menu and Windows 11 compact-menu registration status." />
-                        <StackPanel Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <StackPanel Grid.Row="24" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Name="RegisterExplorerContextMenuButton"
                                     Content="Register Explorer menu"
                                     Command="{Binding RegisterExplorerContextMenuCommand}"

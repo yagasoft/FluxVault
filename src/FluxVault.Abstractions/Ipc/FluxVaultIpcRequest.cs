@@ -41,6 +41,17 @@ public sealed record FluxVaultIpcRequest(
             StatusDetailLevel: statusDetailLevel);
     }
 
+    public static FluxVaultIpcRequest GetPerformance(string? profileId = null)
+    {
+        return new FluxVaultIpcRequest(
+            FluxVaultIpcCommand.GetPerformance,
+            null,
+            null,
+            null,
+            null,
+            ProfileId: profileId);
+    }
+
     public static FluxVaultIpcRequest SaveConfiguration(
         FluxVaultConfiguration configuration,
         string? profileId = null,

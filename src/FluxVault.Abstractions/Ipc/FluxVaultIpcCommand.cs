@@ -32,5 +32,6 @@ public enum FluxVaultIpcCommand
     RenameProfile = 27,
     DuplicateProfile = 28,
     DeleteProfile = 29,
-    SetActiveProfile = 30
+    SetActiveProfile = 30,
+    GetPerformance = 31
 }

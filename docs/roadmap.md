@@ -183,8 +183,9 @@ downloading or rewriting whole files unnecessarily.
   keep-remote, restore-as-copy, and mark-resolved actions.
 - Sync status shows peer heads, cursors, pending mappings, applied remote
   versions, hydration progress, conflicts, and blocked targets.
-- Live peer transport, background polling, file patch optimisation, and
-  full conflict UI workflow remain future sync polish built on these contracts.
+- Live peer transport, background polling, trusted-device editing, peer
+  exchange, file patch optimisation, and full conflict UI workflow remain
+  future sync work built on these contracts.
 - Direct cloud adapters may later optimise discovery with provider-native
   change feeds, but R3 multi-PC sync must work with ordinary cloud-sync folders
   using repository-owned peer metadata.
@@ -195,18 +196,19 @@ Expected user-visible result: best-in-class handling for huge, constantly
 changing files.
 
 - Optional FluxVault-managed workspace or drive for selected workloads.
-- Implemented: typed performance-workspace configuration records WinFsp mode,
-  workspace path, cache budget, and mount name with disabled-by-default
-  compatibility.
-- Implemented: service status and Diagnostics expose the prepared WinFsp
-  workspace state and explicitly report that driver checks and registration are
-  deferred.
-- Implemented: repo-owned `eng/winfsp` setup scripts and a registration
-  manifest are present for review and static tests only; they do not run during
-  tests or normal app flows.
+- Partially implemented foundation: typed performance-workspace configuration
+  records WinFsp mode, workspace path, cache budget, and mount name with
+  disabled-by-default compatibility.
+- Partially implemented foundation: service status and Diagnostics expose the
+  prepared WinFsp workspace state and explicitly report that driver checks and
+  registration are deferred.
+- Partially implemented foundation: repo-owned `eng/winfsp` setup scripts and a
+  registration manifest are present for review and static tests only; they do
+  not run during tests or normal app flows.
 - Future work can make WinFsp control the write path without a FluxVault-owned
   kernel driver, add write-range journalling for hot large-file workloads, and
-  add managed migration into or out of the workspace.
+  add managed migration into or out of the workspace. Any driver installation,
+  mount registration, or write-path control requires explicit approval.
 - The workspace is designed to use the same repository, mirror, retention, and
   sync metadata.
 
@@ -215,19 +217,21 @@ changing files.
 Expected user-visible result: Windows-native placeholder, hydration, and
 Explorer behaviour.
 
-- Implemented: typed shell-integration configuration records Cloud Files API
-  or ProjFS mode, sync-root path, display name, hydration policy, and
-  placeholder state path with disabled-by-default compatibility.
-- Implemented: service status and Diagnostics expose the prepared shell
-  integration state and explicitly report that registration and placeholder
-  creation are deferred.
-- Implemented: repo-owned `eng/shell-integration` setup scripts and a
-  manifest are present for review and static tests only; they do not run during
-  tests or normal app flows.
+- Partially implemented foundation: typed shell-integration configuration
+  records Cloud Files API or ProjFS mode, sync-root path, display name,
+  hydration policy, and placeholder state path with disabled-by-default
+  compatibility.
+- Partially implemented foundation: service status and Diagnostics expose the
+  prepared shell integration state and explicitly report that registration and
+  placeholder creation are deferred.
+- Partially implemented foundation: repo-owned `eng/shell-integration` setup
+  scripts and a manifest are present for review and static tests only; they do
+  not run during tests or normal app flows.
 - Future work can perform signed/package-aware sync-root registration,
   placeholder creation, hydration status, Explorer badges, context menu
   restore/version actions, `Always keep on this device`, and `free up local
-  space` workflows.
+  space` workflows. Any shell registration, placeholder creation, or package
+  identity change requires explicit approval.
 - R5 remains built on the R3 sync engine and R2 mirror fabric.
 
 ## R6 direct cloud adapters
@@ -235,33 +239,70 @@ Explorer behaviour.
 Expected user-visible result: FluxVault can use object storage without relying
 on a sync folder.
 
-- Implemented: typed direct-cloud configuration records Azure Blob,
-  S3-compatible, Dropbox, Google Drive, and OneDrive adapter metadata with
-  credential references, root/container/prefix fields, bandwidth policy, and
-  metered-network policy while defaulting disabled.
-- Implemented: provider-neutral object adapter contracts can be exercised with
-  fake clients, so tests cover object write/read/metadata/list/delete without
-  credentials or live account calls.
-- Implemented: provider SDK descriptors are compile-checked against official
-  package/client types for Azure Blob, S3-compatible storage, Dropbox, Google
-  Drive, and OneDrive.
-- Implemented: service status and Diagnostics expose direct-cloud readiness and
-  explicitly report that live validation is deferred.
+- Partially implemented foundation: typed direct-cloud configuration records
+  Azure Blob, S3-compatible, Dropbox, Google Drive, and OneDrive adapter
+  metadata with credential references, root/container/prefix fields, bandwidth
+  policy, and metered-network policy while defaulting disabled.
+- Partially implemented foundation: provider-neutral object adapter contracts
+  can be exercised with fake clients, so tests cover object
+  write/read/metadata/list/delete without credentials or live account calls.
+- Partially implemented foundation: provider SDK descriptors are
+  compile-checked against official package/client types for Azure Blob,
+  S3-compatible storage, Dropbox, Google Drive, and OneDrive.
+- Partially implemented foundation: service status and Diagnostics expose
+  direct-cloud readiness and explicitly report that live validation is deferred.
 - Future work can add credential acquisition, resumable upload execution,
   bandwidth windows, provider-native change feeds, metered-network runtime
   enforcement, object-lock support where available, lifecycle policy alignment,
   and live repository portability between cloud-folder and direct-adapter modes.
+  Any live provider validation or upload requires explicit credentials and
+  explicit approval.
+
+## R7 whole-PC metadata store
+
+Expected user-visible result: large vaults stay responsive because structured
+metadata is indexed locally instead of discovered by scanning manifest files.
+
+- Implemented: PostgreSQL is the normal runtime metadata source for service,
+  app, and CLI paths. Commits write structured rows plus `manifest_json`, and
+  list/status/inspect/restore/retention/scrub paths read metadata from the
+  database.
+- Implemented: Options exposes meaningful metadata-store settings, worker
+  limits, backup directory, backup retention, and export-lag threshold.
+- Implemented: metadata outbox rows export to immutable `metadata-journal`
+  files after database commit, and legacy file-manifest mode remains explicit
+  for developer diagnostics.
+- Planned local reliability work validates clean install/bootstrap, legacy
+  manifest import, backup/restore recovery, large-vault performance, and
+  release smoke coverage on real Windows validation machines.
+
+## Local reliability refinement lane
+
+Expected user-visible result: FluxVault feels boringly dependable before new
+ambitious runtime tracks are expanded.
+
+- Prioritise PostgreSQL install, migration, recovery, performance, and release
+  smoke validation before live cloud, shell placeholder, or WinFsp execution.
+- Tighten profile runtime coverage for multiple enabled vault profiles,
+  service restart behaviour, and profile-specific maintenance/watcher evidence.
+- Continue restore, mirror, folder-history, and File browser polish where it
+  directly improves local backup confidence.
+- Keep roadmap, requirements, architecture, storage-format, README, and About
+  copy aligned whenever capability status changes.
 
 ## Later be-all-end-all features
 
-- Implemented foundation: disabled-by-default client-side encryption
+- Partially implemented foundation: disabled-by-default client-side encryption
   configuration, key-reference records, encryption planning contracts, and
   Diagnostics security status. Future work performs repository encryption,
-  recovery-key flows, and key-provider integration.
-- Implemented foundation: disabled-by-default enterprise/fleet policy
+  recovery-key flows, and key-provider integration. Encryption execution
+  requires explicit approval because it changes repository artefact format and
+  recovery risk.
+- Partially implemented foundation: disabled-by-default enterprise/fleet policy
   configuration, local policy/status contracts, and Diagnostics fleet status.
   Future work adds remote policy distribution, device enrolment, and fleet
-  monitoring.
+  monitoring. Remote management requires explicit approval before enrolment or
+  external service calls.
 - Per-application optimisers.
 - Timeline restore with calendar/search view.
 - `What changed?` chunk-level version analytics.

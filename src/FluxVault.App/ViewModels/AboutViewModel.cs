@@ -61,8 +61,9 @@ public sealed partial class AboutViewModel : ObservableObject
         "V1: production hardening, richer restore history, repository health checks, and installer polish.",
         "R2: distributed mirror fabric with capacity-aware placement, redundancy, drain, and repair.",
         "R3: multi-PC sync with mapping confirmation, chunk-level hydration, blocked files, and conflict handling.",
-        "R4/R5: WinFsp performance workspace plus Cloud Files API and ProjFS shell integration.",
-        "R6: direct cloud adapters for Azure Blob, S3-compatible storage, Dropbox, Google Drive, and OneDrive."
+        "R4/R5 foundations: WinFsp performance workspace plus Cloud Files API and ProjFS shell integration.",
+        "R6 foundation: direct cloud adapters for Azure Blob, S3-compatible storage, Dropbox, Google Drive, and OneDrive.",
+        "R7: PostgreSQL whole-PC metadata runtime with local reliability validation next."
     ];
 
     public IAsyncRelayCommand OpenGitHubCommand { get; }

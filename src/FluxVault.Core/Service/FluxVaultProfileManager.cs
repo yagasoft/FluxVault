@@ -1,6 +1,7 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Core.Configuration;
+using FluxVault.Core.Diagnostics;
 using FluxVault.Core.Ipc;
 
 namespace FluxVault.Core.Service;
@@ -25,7 +26,9 @@ public sealed class FluxVaultProfileRuntime(
 
 public sealed class FluxVaultProfileManager(
     IFluxVaultProfileSetStore profileSetStore,
-    Func<FluxVaultProfileConfiguration, FluxVaultProfileRuntime> runtimeFactory) : IFluxVaultRequestHandler
+    Func<FluxVaultProfileConfiguration, FluxVaultProfileRuntime> runtimeFactory,
+    DiagnosticsPolicyRuntime? diagnosticsPolicyRuntime = null,
+    TelemetryCollector? telemetryCollector = null) : IFluxVaultRequestHandler
 {
     private readonly SemaphoreSlim gate = new(1, 1);
     private readonly Dictionary<string, FluxVaultProfileRuntime> runtimes = new(StringComparer.OrdinalIgnoreCase);
@@ -53,8 +56,11 @@ public sealed class FluxVaultProfileManager(
             while (!cancellationToken.IsCancellationRequested)
             {
                 var profileSet = await profileSetStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+                diagnosticsPolicyRuntime?.Update(profileSet.ActiveProfile.Configuration.DiagnosticsPolicy);
+                telemetryCollector?.RecordLoopState("Profile manager", "Running", "Reconciling enabled profiles");
                 await ReconcileRunningProfilesAsync(profileSet, cancellationToken).ConfigureAwait(false);
                 await ThrowIfAnyProfileRuntimeStoppedAsync().ConfigureAwait(false);
+                telemetryCollector?.RecordLoopState("Profile manager", "Waiting", "Delay");
                 await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken).ConfigureAwait(false);
             }
         }

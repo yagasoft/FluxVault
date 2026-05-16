@@ -20,7 +20,8 @@ public sealed record FluxVaultIpcResponse(
     MirrorRepairReport? MirrorRepair = null,
     MirrorRebalancePreviewReport? MirrorRebalance = null,
     RestoreSelectionSummary? RestoreSelection = null,
-    RepositoryPurgeResult? Purge = null)
+    RepositoryPurgeResult? Purge = null,
+    PerformanceTelemetryStatus? Performance = null)
 {
     public static FluxVaultIpcResponse Ok()
     {
@@ -161,6 +162,19 @@ public sealed record FluxVaultIpcResponse(
             null,
             null,
             Purge: purge);
+    }
+
+    public static FluxVaultIpcResponse WithPerformance(PerformanceTelemetryStatus performance)
+    {
+        return new FluxVaultIpcResponse(
+            true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            Performance: performance);
     }
 
     public static FluxVaultIpcResponse Failure(string errorMessage)

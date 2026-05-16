@@ -41,6 +41,94 @@ public sealed class IpcSerializationTests
     }
 
     [Fact]
+    public void Performance_request_serialization_preserves_command()
+    {
+        var roundTrip = FluxVaultIpcSerializer.DeserializeRequest(
+            FluxVaultIpcSerializer.SerializeRequest(FluxVaultIpcRequest.GetPerformance()));
+
+        Assert.Equal(FluxVaultIpcCommand.GetPerformance, roundTrip.Command);
+    }
+
+    [Fact]
+    public void Performance_response_serialization_preserves_runtime_metrics()
+    {
+        var timestamp = new DateTimeOffset(2026, 5, 16, 18, 0, 0, TimeSpan.Zero);
+        var telemetry = new PerformanceTelemetryStatus(
+            CollectedAtUtc: timestamp,
+            Process: new ProcessResourceRuntimeStatus(
+                CpuPercent: 12.5,
+                WorkingSetBytes: 128 * 1024 * 1024,
+                PrivateMemoryBytes: 256 * 1024 * 1024,
+                GcHeapBytes: 32 * 1024 * 1024,
+                Gen0Collections: 10,
+                Gen1Collections: 2,
+                Gen2Collections: 1,
+                ThreadCount: 17,
+                HandleCount: 222),
+            ThreadPool: new ThreadPoolRuntimeStatus(
+                AvailableWorkerThreads: 100,
+                MaxWorkerThreads: 200,
+                AvailableCompletionPortThreads: 50,
+                MaxCompletionPortThreads: 100,
+                PendingWorkItemCount: 3),
+            Ipc: new IpcRuntimeStatus(
+                TotalRequests: 7,
+                ActiveRequests: 1,
+                FailedRequests: 2,
+                LastCommand: "GetStatus",
+                LastRequestUtc: timestamp),
+            Logs: new LogRuntimeStatus(
+                IsFileLoggingEnabled: true,
+                LogDirectory: @"C:\ProgramData\FluxVault\logs",
+                EffectiveLevel: "Warning",
+                CurrentFilePath: @"C:\ProgramData\FluxVault\logs\fluxvault-service.jsonl",
+                CurrentFileBytes: 1024,
+                RetainedFileCount: 2,
+                DroppedMessageCount: 0),
+            Loops:
+            [
+                new ServiceLoopRuntimeStatus(
+                    Name: "Protection loop",
+                    State: "Waiting",
+                    LastStartedUtc: timestamp,
+                    LastCompletedUtc: timestamp,
+                    Detail: "Delay",
+                    IterationCount: 5)
+            ],
+            BackgroundWork:
+            [
+                new BackgroundWorkRuntimeStatus(
+                    Name: "Backup",
+                    State: "Idle",
+                    ActiveCount: 0,
+                    PendingCount: 0,
+                    Detail: "No active backup")
+            ],
+            Samples:
+            [
+                new PerformanceTelemetrySample(
+                    TimestampUtc: timestamp,
+                    CpuPercent: 12.5,
+                    WorkingSetBytes: 128 * 1024 * 1024,
+                    GcHeapBytes: 32 * 1024 * 1024,
+                    ThreadCount: 17,
+                    HandleCount: 222,
+                    ActiveCaptureWorkers: 0,
+                    WatcherBacklogCount: 0,
+                    IpcTotalRequests: 7,
+                    DroppedLogMessages: 0)
+            ]);
+
+        var roundTrip = FluxVaultIpcSerializer.DeserializeResponse(
+            FluxVaultIpcSerializer.SerializeResponse(FluxVaultIpcResponse.WithPerformance(telemetry)));
+
+        Assert.NotNull(roundTrip.Performance);
+        Assert.Equal(12.5, roundTrip.Performance.Process.CpuPercent);
+        Assert.Equal("Protection loop", Assert.Single(roundTrip.Performance.Loops).Name);
+        Assert.Equal(7, Assert.Single(roundTrip.Performance.Samples).IpcTotalRequests);
+    }
+
+    [Fact]
     public void Response_serialization_preserves_status_details()
     {
         var checkedAt = new DateTimeOffset(2026, 4, 27, 12, 1, 0, TimeSpan.Zero);

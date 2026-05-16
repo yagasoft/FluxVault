@@ -10,6 +10,7 @@ using FluxVault.Core.Chunking;
 using FluxVault.Core.Cloud;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Content;
+using FluxVault.Core.Diagnostics;
 using FluxVault.Core.Ipc;
 using FluxVault.Core.Policies;
 using FluxVault.Core.Storage;
@@ -25,7 +26,9 @@ public sealed class FluxVaultOperations(
     string? maintenanceStateRoot = null,
     Func<FluxVaultConfiguration, IRepositoryMetadataStore>? metadataStoreFactory = null,
     Func<FluxVaultConfiguration, IChunkRepository>? repositoryFactory = null,
-    ProtectionRuntimeCoordinator? runtimeCoordinator = null) : IFluxVaultRequestHandler
+    ProtectionRuntimeCoordinator? runtimeCoordinator = null,
+    TelemetryCollector? telemetryCollector = null,
+    Func<LogRuntimeStatus>? logStatusFactory = null) : IFluxVaultRequestHandler
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
     private readonly IRepositoryMaintenanceStateStore repositoryMaintenanceStateStore =
@@ -35,6 +38,8 @@ public sealed class FluxVaultOperations(
     private readonly Func<FluxVaultConfiguration, IChunkRepository> repositoryFactory =
         repositoryFactory ?? (configuration => CreateRepository(configuration, (metadataStoreFactory ?? CreateMetadataStore)(configuration)));
     private readonly ProtectionRuntimeCoordinator protectionRuntimeCoordinator = runtimeCoordinator ?? new ProtectionRuntimeCoordinator();
+    private readonly TelemetryCollector telemetryCollector = telemetryCollector ?? new TelemetryCollector(TimeProvider.System);
+    private readonly Func<LogRuntimeStatus>? logStatusFactory = logStatusFactory;
     private readonly string restoreRehearsalRoot = Path.Combine(
         maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
         "restore-rehearsal");
@@ -1097,6 +1102,49 @@ public sealed class FluxVaultOperations(
         }
     }
 
+    private IReadOnlyList<BackgroundWorkRuntimeStatus> BuildBackgroundWork(
+        BackupRuntimeStatus backup,
+        IReadOnlyList<WatcherRuntimeStatus> watchers)
+    {
+        var watcherBacklog = watchers.Sum(watcher => watcher.BacklogCount);
+        var watcherEventsPerMinute = watchers.Sum(watcher => watcher.EventsPerMinute);
+        var backupDetail = backup.IsRunning
+            ? $"{backup.Phase}; {backup.CapturedFileCount} captured, {backup.SkippedUnchangedFileCount} skipped, {backup.FailedFileCount} failed"
+            : backup.LastElapsed is null
+                ? "No active backup"
+                : $"Last elapsed {backup.LastElapsed.Value:g}";
+        var usnDetail = durableChange is null
+            ? "Durable change status has not been reported"
+            : durableChange.FallbackReason ?? durableChange.Status;
+        return
+        [
+            new BackgroundWorkRuntimeStatus(
+                "Backup",
+                backup.IsRunning ? backup.Phase : "Idle",
+                backup.ActiveWorkers,
+                Math.Max(0, backup.EnumeratedFileCount - backup.CapturedFileCount - backup.SkippedUnchangedFileCount - backup.FailedFileCount),
+                backupDetail),
+            new BackgroundWorkRuntimeStatus(
+                "Watchers",
+                watcherBacklog > 0 ? "Pending" : "Idle",
+                watchers.Count,
+                watcherBacklog,
+                $"{watcherEventsPerMinute:0.#} event(s)/minute across {watchers.Count} watcher(s)"),
+            new BackgroundWorkRuntimeStatus(
+                "USN",
+                durableChange is null ? "Unknown" : "Ready",
+                0,
+                backup.SuppressedFullScanCount,
+                usnDetail),
+            new BackgroundWorkRuntimeStatus(
+                "Repository maintenance",
+                "Waiting",
+                0,
+                0,
+                lastRetention is null ? "No retention result recorded" : FormatRetentionSummary(lastRetention))
+        ];
+    }
+
     private async Task<IReadOnlyList<RepositoryVersionSummary>> GetRecentVersionsForStatusAsync(
         FluxVaultConfiguration configuration,
         CancellationToken cancellationToken)
@@ -1253,6 +1301,21 @@ public sealed class FluxVaultOperations(
                 : await GetMetadataStoreStatusAsync(configuration, cancellationToken).ConfigureAwait(false));
     }
 
+    public async Task<PerformanceTelemetryStatus> GetPerformanceAsync(CancellationToken cancellationToken = default)
+    {
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var backup = GetBackupRuntime();
+        var watchers = GetWatcherStatuses();
+        var logStatus = logStatusFactory?.Invoke()
+            ?? LogRuntimeStatus.Disabled(configuration.DiagnosticsPolicy.LogDirectory);
+        telemetryCollector.SampleOnce(
+            configuration.DiagnosticsPolicy,
+            backup.ActiveWorkers,
+            watchers.Sum(watcher => watcher.BacklogCount),
+            logStatus.DroppedMessageCount);
+        return telemetryCollector.GetSnapshot(logStatus, BuildBackgroundWork(backup, watchers));
+    }
+
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
     {
         if (AllowsConcurrentRequest(request.Command))
@@ -1276,6 +1339,7 @@ public sealed class FluxVaultOperations(
         return request.Command switch
         {
             FluxVaultIpcCommand.GetStatus => FluxVaultIpcResponse.WithStatus(await GetStatusAsync(request.StatusDetailLevel, cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.GetPerformance => FluxVaultIpcResponse.WithPerformance(await GetPerformanceAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.SaveConfiguration => await SaveConfigurationResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.RunBackupNow => FluxVaultIpcResponse.WithBackup(await RunBackupNowAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.ListVersions => FluxVaultIpcResponse.WithVersions(await ListRepositoryHistoryAsync(cancellationToken).ConfigureAwait(false)),
@@ -1308,6 +1372,7 @@ public sealed class FluxVaultOperations(
     private static bool AllowsConcurrentRequest(FluxVaultIpcCommand command)
     {
         return command is FluxVaultIpcCommand.GetStatus
+            or FluxVaultIpcCommand.GetPerformance
             or FluxVaultIpcCommand.GetSyncStatus
             or FluxVaultIpcCommand.GetActivity
             or FluxVaultIpcCommand.ListBlockedFiles

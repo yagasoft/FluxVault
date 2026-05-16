@@ -95,6 +95,8 @@ FluxVault now has a developer-usable MVP loop:
 - Helpful wrapping tooltips across Options so each retention, maintenance,
   cadence, and compression setting explains its operational impact without
   clipping.
+- A Performance workspace for active service CPU, memory, GC, ThreadPool, IPC,
+  loop, watcher, background-work, log-health, and recent telemetry samples.
 - Safer restore workflow: the dashboard picks a destination before IPC,
   requires confirmation before overwriting an existing file, keeps the selected
   version on cancellation/failure, and reports IPC, locked-file, and
@@ -273,6 +275,16 @@ FluxVault temporary state folder, verifies logical length, records pass/fail
 results, then removes the temporary output without creating repository versions
 or restore-lineage hints.
 
+Open **Options** > **Advanced** > **Diagnostics** to control bounded service
+file logging and performance telemetry. Service JSONL logs are enabled by
+default at `Warning` level under `C:\ProgramData\FluxVault\logs`, with a 25 MB
+file cap and 8 retained files. Switching the service file log level to `Trace`
+records detailed service boundary, backup, USN, maintenance, and diagnostics
+trace events for later review without writing unbounded logs or sending data
+off-machine. The Performance workspace reads the service's in-memory telemetry
+history only while selected; default sampling is every 5 seconds with 4320
+retained samples.
+
 Mirror writes are secondary to the primary repository commit. FluxVault commits
 chunks, metadata, and manifests to the primary repository first, then mirrors
 new artefacts according to the active placement profile. `FullCopy` writes
@@ -357,6 +369,14 @@ without inline key material, security/fleet status appears in Diagnostics, and
 pure contract tests cover encryption planning and local fleet policy
 evaluation. Repository artefacts remain plain until a future encryption
 execution slice.
+
+FluxVault now uses PostgreSQL as the normal whole-PC metadata runtime for
+service, app, and CLI paths. Commits write structured database rows plus the
+exact manifest payload, large-vault queries read indexed metadata instead of
+scanning manifest files, and metadata outbox rows export to replayable
+`metadata-journal` files. The next local reliability work is validation:
+clean PostgreSQL bootstrap, legacy import, backup/restore recovery,
+large-vault performance, and release smoke coverage.
 
 Open **Options** to review retention, scheduled maintenance, and the default
 workload preset assigned to newly protected folders/files. The MVP

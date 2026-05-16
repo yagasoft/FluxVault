@@ -727,7 +727,28 @@ public sealed class XamlQualityTests
         Assert.Equal("Left", (string?)workspace.Attribute("TabStripPlacement"));
         Assert.Equal("{Binding SelectedWorkspaceIndex}", (string?)workspace.Attribute("SelectedIndex"));
         Assert.Contains(workspace.Descendants(XamlNamespace + "TabItem"), element => HasHeader(element, "File browser"));
+        Assert.Contains(workspace.Descendants(XamlNamespace + "TabItem"), element => HasHeader(element, "Performance"));
         Assert.Equal("4", (string?)footer.Attribute("Grid.Row"));
+    }
+
+    [Fact]
+    public void Performance_tab_exposes_service_resource_loop_and_sample_grids()
+    {
+        var document = LoadXaml("src", "FluxVault.App", "MainWindow.xaml");
+        var performanceTab = document
+            .Descendants(XamlNamespace + "TabItem")
+            .Single(element => HasHeader(element, "Performance"));
+
+        Assert.Contains(performanceTab.Descendants(XamlNamespace + "TextBlock"),
+            element => (string?)element.Attribute("Text") == "{Binding PerformanceStatusText}");
+        Assert.Contains(performanceTab.Descendants(XamlNamespace + "DataGrid"),
+            element => (string?)element.Attribute("ItemsSource") == "{Binding PerformanceMetricRows}");
+        Assert.Contains(performanceTab.Descendants(XamlNamespace + "DataGrid"),
+            element => (string?)element.Attribute("ItemsSource") == "{Binding PerformanceLoopRows}");
+        Assert.Contains(performanceTab.Descendants(XamlNamespace + "DataGrid"),
+            element => (string?)element.Attribute("ItemsSource") == "{Binding PerformanceBackgroundRows}");
+        Assert.Contains(performanceTab.Descendants(XamlNamespace + "DataGrid"),
+            element => (string?)element.Attribute("ItemsSource") == "{Binding PerformanceSampleRows}");
     }
 
     [Fact]

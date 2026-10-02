@@ -151,6 +151,9 @@ public sealed class MetadataPrimaryRepositoryTests
     {
         private readonly InMemoryRepositoryMetadataStore inner = new();
 
+        public Task<ChunkDescriptor?> FindChunkDescriptorAsync(string digest, CancellationToken cancellationToken = default) =>
+            inner.FindChunkDescriptorAsync(digest, cancellationToken);
+
         public int ListManifestsCallCount { get; private set; }
 
         public int RecordVersionCallCount { get; private set; }

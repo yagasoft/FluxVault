@@ -21,7 +21,8 @@ public sealed record FluxVaultIpcResponse(
     MirrorRebalancePreviewReport? MirrorRebalance = null,
     RestoreSelectionSummary? RestoreSelection = null,
     RepositoryPurgeResult? Purge = null,
-    PerformanceTelemetryStatus? Performance = null)
+    PerformanceTelemetryStatus? Performance = null,
+    RepositoryRestoreResult? RestoreResult = null)
 {
     public static FluxVaultIpcResponse Ok()
     {
@@ -52,6 +53,9 @@ public sealed record FluxVaultIpcResponse(
     {
         return new FluxVaultIpcResponse(true, null, null, null, null, null, outputPath);
     }
+
+    public static FluxVaultIpcResponse WithRestore(RepositoryRestoreResult result) =>
+        new(true, null, null, null, null, null, result.OutputPath, RestoreResult: result);
 
     public static FluxVaultIpcResponse WithRetentionPreview(RepositoryRetentionPreview preview)
     {

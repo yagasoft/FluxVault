@@ -1,0 +1,23 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.TestHost -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.TestHost\bin\Release\net10.0-windows\FluxVault.TestHost.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Cli -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Cli\bin\Release\net10.0\FluxVault.Cli.dll
+  FluxVault.Service -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Service\bin\Release\net10.0-windows\FluxVault.Service.dll
+  FluxVault.Integration.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.56]     FluxVault.Integration.Tests.ServiceOperationsTests.Preview_cleanup_preserves_fresh_empty_directories_that_may_have_active_writers [FAIL]
+  Failed FluxVault.Integration.Tests.ServiceOperationsTests.Preview_cleanup_preserves_fresh_empty_directories_that_may_have_active_writers [367 ms]
+  Error Message:
+   Cleanup deleted a fresh directory while a preview could be preparing its staged file.
+  Stack Trace:
+     at FluxVault.Integration.Tests.ServiceOperationsTests.Preview_cleanup_preserves_fresh_empty_directories_that_may_have_active_writers() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\ServiceOperationsTests.cs:line 126
+--- End of stack trace from previous location ---
+WARNING: Overwriting results file: C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\preview-diagnostic\preview-cleanup-red.trx
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\preview-diagnostic\preview-cleanup-red.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 382 ms - FluxVault.Integration.Tests.dll (net10.0)

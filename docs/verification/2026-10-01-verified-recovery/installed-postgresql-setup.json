@@ -1,0 +1,57 @@
+{
+  "recorded_utc": "2026-10-01T15:56:04.482110+00:00",
+  "scoped_local_rules": [
+    "host fluxvault_metadata fluxvault 127.0.0.1/32 trust",
+    "host fluxvault_metadata fluxvault ::1/128 trust"
+  ],
+  "temporary_administrator_access_removed": true,
+  "unrelated_authentication_rules_preserved": true,
+  "original_hba_backup": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_hba.conf.fluxvault.882d59538d714c23adefd30506a52e23.bak",
+  "original_hba_backup_sha256": "0c8dc6e6e57399790417a6e13b3a8e1b5e27aa19708a2122148fbfe3bdcecd42",
+  "authentication_probes": [
+    {
+      "endpoint": "127.0.0.1",
+      "role": "fluxvault",
+      "database": "fluxvault_metadata",
+      "exit_code": 0,
+      "result": "scoped access succeeded",
+      "process_exited": true
+    },
+    {
+      "endpoint": "127.0.0.1",
+      "role": "postgres",
+      "database": "postgres",
+      "exit_code": 2,
+      "result": "passwordless administrator denied",
+      "process_exited": true
+    },
+    {
+      "endpoint": "::1",
+      "role": "fluxvault",
+      "database": "fluxvault_metadata",
+      "exit_code": 0,
+      "result": "scoped access succeeded",
+      "process_exited": true
+    },
+    {
+      "endpoint": "::1",
+      "role": "postgres",
+      "database": "postgres",
+      "exit_code": 2,
+      "result": "passwordless administrator denied",
+      "process_exited": true
+    }
+  ],
+  "database": {
+    "database": "fluxvault_metadata",
+    "username": "fluxvault",
+    "schema_version": 1,
+    "database_owner": "fluxvault",
+    "superuser": false,
+    "create_database": false,
+    "create_role": false
+  },
+  "probe_credentials": "PGPASSWORD removed; PGPASSFILE points to absent unique file",
+  "all_probe_children_exited": true,
+  "repair": "Independent-review-approved runtime block added by reload only; no administrator rule or database reprovisioning"
+}

@@ -15,10 +15,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\FluxVault.TestHost\OwnedPostgreSqlCluster.cs" Link="Fixtures\OwnedPostgreSqlCluster.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FluxVault.TestHost\FluxVault.TestHost.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\..\src\FluxVault.Abstractions\FluxVault.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\FluxVault.Cli\FluxVault.Cli.csproj" />
     <ProjectReference Include="..\..\src\FluxVault.Core\FluxVault.Core.csproj" />

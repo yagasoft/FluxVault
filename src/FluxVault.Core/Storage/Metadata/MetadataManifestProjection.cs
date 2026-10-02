@@ -89,14 +89,14 @@ public sealed record MetadataManifestProjection(
                 .Select(group =>
                 {
                     var chunk = group.First();
-                    return new MetadataChunkRow(chunk.Digest, chunk.StoredLength, chunk.Encoding);
+                    return new MetadataChunkRow(chunk.Digest.ToLowerInvariant(), chunk.StoredLength, chunk.Encoding);
                 })
                 .ToArray(),
             manifest.Chunks
                 .Select((chunk, index) => new MetadataVersionChunkRow(
                     manifest.VersionId,
                     index,
-                    chunk.Digest,
+                    chunk.Digest.ToLowerInvariant(),
                     chunk.Offset,
                     chunk.Length,
                     chunk.StoredLength,

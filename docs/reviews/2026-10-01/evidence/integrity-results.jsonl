@@ -1,0 +1,4 @@
+{"root":"<scratch>\\integrity-probe\\data-5f8908c72e3e4293bc7d5834099f4b1c","scope":"Disposable legacy file-manifest API probes; no service or DB access"}
+{"probe":"same-length raw corruption","restoreReturnedSuccess":true,"restoredMatchesOriginal":false,"rehearsalHealth":"Healthy","rehearsalFailures":0,"scrubHealth":"Critical"}
+{"probe":"recommit with missing payload and surviving sidecar","commitReturnedSuccess":true,"chunkExists":false,"restoreResult":"FileNotFoundException"}
+{"probe":"drain sole healthy mirror while primary and remaining target are corrupt","drainHealth":"Healthy","healthyCopyStillExists":false,"scrubAfterDrain":"Critical"}

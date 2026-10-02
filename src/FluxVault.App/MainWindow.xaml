@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="FluxVault" MinHeight="680" MinWidth="1080" Height="760" Width="1220"
         Background="#F4F6F8"
-        Icon="Assets/FluxVault.ico">
+        Icon="/FluxVault.App;component/Assets/FluxVault.ico">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 

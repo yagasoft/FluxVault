@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="da07d8a5-2143-488d-8d3f-327781fd3e36" name="os008@OS008-HOME 2026-10-02 09:13:18" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T09:13:18.2070479+03:00" queuing="2026-10-02T09:13:18.2070481+03:00" start="2026-10-02T09:13:17.2549583+03:00" finish="2026-10-02T09:13:18.2111477+03:00" />
+  <TestSettings name="default" id="f57e0bae-c3d5-4bb5-bfe9-4cba76660e84">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-02_09_13_18" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="8621c904-3c11-42e6-88cb-96acea8cc986" testId="13f46a24-6eaa-2fa9-e778-6269ec8ba7c9" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_distinguishes_known_empty_inventory_from_invalidated_inventory" computerName="OS008-HOME" duration="00:00:00.0462469" startTime="2026-10-02T09:13:18.0794873+03:00" endTime="2026-10-02T09:13:18.1145935+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8621c904-3c11-42e6-88cb-96acea8cc986">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_distinguishes_known_empty_inventory_from_invalidated_inventory() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="242c9cfe-6a04-47f5-a50d-f74dd3f79134" testId="2271dd26-0091-bddc-0501-6e1d50c477d6" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_distinguishes_unloaded_inventory_without_reading_the_repository" computerName="OS008-HOME" duration="00:00:00.2296164" startTime="2026-10-02T09:13:17.8217467+03:00" endTime="2026-10-02T09:13:18.0665044+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="242c9cfe-6a04-47f5-a50d-f74dd3f79134">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_distinguishes_unloaded_inventory_without_reading_the_repository() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs:line 30&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_distinguishes_unloaded_inventory_without_reading_the_repository" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="2271dd26-0091-bddc-0501-6e1d50c477d6">
+      <Execution id="242c9cfe-6a04-47f5-a50d-f74dd3f79134" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="Fast_status_distinguishes_unloaded_inventory_without_reading_the_repository" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_distinguishes_known_empty_inventory_from_invalidated_inventory" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="13f46a24-6eaa-2fa9-e778-6269ec8ba7c9">
+      <Execution id="8621c904-3c11-42e6-88cb-96acea8cc986" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="Fast_status_distinguishes_known_empty_inventory_from_invalidated_inventory" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="13f46a24-6eaa-2fa9-e778-6269ec8ba7c9" executionId="8621c904-3c11-42e6-88cb-96acea8cc986" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2271dd26-0091-bddc-0501-6e1d50c477d6" executionId="242c9cfe-6a04-47f5-a50d-f74dd3f79134" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.44]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.44]       Expected: False&#xD;
+[xUnit.net 00:00:00.44]       Actual:   True&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs(30,0): at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_distinguishes_unloaded_inventory_without_reading_the_repository()&#xD;
+[xUnit.net 00:00:00.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.49]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.49]       Expected: False&#xD;
+[xUnit.net 00:00:00.49]       Actual:   True&#xD;
+[xUnit.net 00:00:00.49]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs(52,0): at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_distinguishes_known_empty_inventory_from_invalidated_inventory()&#xD;
+[xUnit.net 00:00:00.49]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.50]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:13:18.0689481+03:00">
+        <Text>[xUnit.net 00:00:00.44]     FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_distinguishes_unloaded_inventory_without_reading_the_repository [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:13:18.1149757+03:00">
+        <Text>[xUnit.net 00:00:00.49]     FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_distinguishes_known_empty_inventory_from_invalidated_inventory [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

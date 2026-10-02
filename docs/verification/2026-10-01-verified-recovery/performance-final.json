@@ -1,0 +1,201 @@
+{
+  "started_utc": "2026-10-01T14:52:02.748289+00:00",
+  "binary_sha256": {
+    "FluxVault.Cli.dll": "6adb46ebab42a0263ad2f60d17648b2c6e1e904f75d0fdfdcb40825dc01d22d8",
+    "FluxVault.Core.dll": "7b7cc841da035b4694959d93e974a3dab1f74163292404d2a55d8f52cd0ba87d",
+    "FluxVault.Abstractions.dll": "aa19c76ebdef19742e116f46a0e7b4839a37d0aa37380899dc5e25f8e160c4b7"
+  },
+  "runtime": "10.0.300",
+  "interface": "child CLI, explicit legacy-file-manifest mode",
+  "sample_interval_ms": 10,
+  "notes": "Fresh process per operation; Windows filesystem cache is warm after generation/capture. Random data uses a seeded PRNG with distinct blocks. Compressible data has one distinct header per MiB. No PostgreSQL or professional-app workload claim.",
+  "trials": [
+    {
+      "pattern": "random",
+      "compression": "off",
+      "mib": 64,
+      "bytes": 67108864,
+      "capture": {
+        "seconds": 2.938,
+        "sampled_peak_private_bytes": 40574976,
+        "observed_peak_working_set_bytes": 62464000,
+        "samples": 287,
+        "output": "Version: 01a0f7f381ab774ea5653d58599a745c\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\random-64\\source.bin\r\nBytes: 67108864\r\nChunks: 214\r\nNew chunks: 214",
+        "warnings": ""
+      },
+      "unchanged_recapture": {
+        "seconds": 0.766,
+        "sampled_peak_private_bytes": 31465472,
+        "observed_peak_working_set_bytes": 55578624,
+        "samples": 75,
+        "output": "Version: 01a0f7f384b8743ca30fcbb4948ff7f7\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\random-64\\source.bin\r\nBytes: 67108864\r\nChunks: 214\r\nNew chunks: 0",
+        "warnings": ""
+      },
+      "restore": {
+        "seconds": 0.75,
+        "sampled_peak_private_bytes": 16736256,
+        "observed_peak_working_set_bytes": 40611840,
+        "samples": 74,
+        "output": "Restored and verified: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\random-64\\restored.bin (67108864 bytes, 1 files)",
+        "warnings": ""
+      },
+      "independent_sha256_match": true
+    },
+    {
+      "pattern": "random",
+      "compression": "off",
+      "mib": 256,
+      "bytes": 268435456,
+      "capture": {
+        "seconds": 10.172,
+        "sampled_peak_private_bytes": 47542272,
+        "observed_peak_working_set_bytes": 71315456,
+        "samples": 995,
+        "output": "Version: 01a0f7f3b39975e4ab68888a0a003945\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\random-256\\source.bin\r\nBytes: 268435456\r\nChunks: 818\r\nNew chunks: 818",
+        "warnings": ""
+      },
+      "unchanged_recapture": {
+        "seconds": 2.422,
+        "sampled_peak_private_bytes": 40280064,
+        "observed_peak_working_set_bytes": 65982464,
+        "samples": 238,
+        "output": "Version: 01a0f7f3bd227e508dd2406af8b66ec7\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\random-256\\source.bin\r\nBytes: 268435456\r\nChunks: 818\r\nNew chunks: 0",
+        "warnings": ""
+      },
+      "restore": {
+        "seconds": 2.203,
+        "sampled_peak_private_bytes": 19361792,
+        "observed_peak_working_set_bytes": 44793856,
+        "samples": 215,
+        "output": "Restored and verified: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\random-256\\restored.bin (268435456 bytes, 1 files)",
+        "warnings": ""
+      },
+      "independent_sha256_match": true
+    },
+    {
+      "pattern": "random",
+      "compression": "off",
+      "mib": 1024,
+      "bytes": 1073741824,
+      "capture": {
+        "seconds": 44.297,
+        "sampled_peak_private_bytes": 49909760,
+        "observed_peak_working_set_bytes": 74518528,
+        "samples": 4328,
+        "output": "Version: 01a0f7f48299789abec9d3f80d7aa549\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\random-1024\\source.bin\r\nBytes: 1073741824\r\nChunks: 3314\r\nNew chunks: 3314",
+        "warnings": ""
+      },
+      "unchanged_recapture": {
+        "seconds": 9.703,
+        "sampled_peak_private_bytes": 49090560,
+        "observed_peak_working_set_bytes": 74854400,
+        "samples": 948,
+        "output": "Version: 01a0f7f4a87c75e49c2f78ed0abd9bea\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\random-1024\\source.bin\r\nBytes: 1073741824\r\nChunks: 3314\r\nNew chunks: 0",
+        "warnings": ""
+      },
+      "restore": {
+        "seconds": 8.797,
+        "sampled_peak_private_bytes": 32526336,
+        "observed_peak_working_set_bytes": 59420672,
+        "samples": 861,
+        "output": "Restored and verified: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\random-1024\\restored.bin (1073741824 bytes, 1 files)",
+        "warnings": ""
+      },
+      "independent_sha256_match": true
+    },
+    {
+      "pattern": "compressible",
+      "compression": "zstd",
+      "mib": 64,
+      "bytes": 67108864,
+      "capture": {
+        "seconds": 1.282,
+        "sampled_peak_private_bytes": 31117312,
+        "observed_peak_working_set_bytes": 56008704,
+        "samples": 125,
+        "output": "Version: 01a0f7f4d97a761faf8769fd9f5ab0a4\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\compressible-64\\source.bin\r\nBytes: 67108864\r\nChunks: 64\r\nNew chunks: 64",
+        "warnings": ""
+      },
+      "unchanged_recapture": {
+        "seconds": 0.562,
+        "sampled_peak_private_bytes": 26255360,
+        "observed_peak_working_set_bytes": 51941376,
+        "samples": 55,
+        "output": "Version: 01a0f7f4dbbc76a1bf2eecd4ed9651c7\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\compressible-64\\source.bin\r\nBytes: 67108864\r\nChunks: 64\r\nNew chunks: 0",
+        "warnings": ""
+      },
+      "restore": {
+        "seconds": 0.563,
+        "sampled_peak_private_bytes": 15642624,
+        "observed_peak_working_set_bytes": 39923712,
+        "samples": 55,
+        "output": "Restored and verified: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\compressible-64\\restored.bin (67108864 bytes, 1 files)",
+        "warnings": ""
+      },
+      "independent_sha256_match": true
+    },
+    {
+      "pattern": "compressible",
+      "compression": "zstd",
+      "mib": 256,
+      "bytes": 268435456,
+      "capture": {
+        "seconds": 4.453,
+        "sampled_peak_private_bytes": 31129600,
+        "observed_peak_working_set_bytes": 56119296,
+        "samples": 437,
+        "output": "Version: 01a0f7f4f1367795bc1046ab13f80b95\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\compressible-256\\source.bin\r\nBytes: 268435456\r\nChunks: 256\r\nNew chunks: 256",
+        "warnings": ""
+      },
+      "unchanged_recapture": {
+        "seconds": 1.313,
+        "sampled_peak_private_bytes": 24461312,
+        "observed_peak_working_set_bytes": 51998720,
+        "samples": 128,
+        "output": "Version: 01a0f7f4f65d782d93c9e047cbd07233\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\compressible-256\\source.bin\r\nBytes: 268435456\r\nChunks: 256\r\nNew chunks: 0",
+        "warnings": ""
+      },
+      "restore": {
+        "seconds": 1.484,
+        "sampled_peak_private_bytes": 15290368,
+        "observed_peak_working_set_bytes": 41861120,
+        "samples": 144,
+        "output": "Restored and verified: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\compressible-256\\restored.bin (268435456 bytes, 1 files)",
+        "warnings": ""
+      },
+      "independent_sha256_match": true
+    },
+    {
+      "pattern": "compressible",
+      "compression": "zstd",
+      "mib": 1024,
+      "bytes": 1073741824,
+      "capture": {
+        "seconds": 17.953,
+        "sampled_peak_private_bytes": 27467776,
+        "observed_peak_working_set_bytes": 56094720,
+        "samples": 1752,
+        "output": "Version: 01a0f7f548eb7e3c835a5de86b3dd837\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\compressible-1024\\source.bin\r\nBytes: 1073741824\r\nChunks: 1024\r\nNew chunks: 1024",
+        "warnings": ""
+      },
+      "unchanged_recapture": {
+        "seconds": 4.64,
+        "sampled_peak_private_bytes": 35733504,
+        "observed_peak_working_set_bytes": 62967808,
+        "samples": 453,
+        "output": "Version: 01a0f7f55b1b7ea5b64c50f677260b1f\r\nSource: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\compressible-1024\\source.bin\r\nBytes: 1073741824\r\nChunks: 1024\r\nNew chunks: 0",
+        "warnings": ""
+      },
+      "restore": {
+        "seconds": 5.782,
+        "sampled_peak_private_bytes": 18731008,
+        "observed_peak_working_set_bytes": 46854144,
+        "samples": 566,
+        "output": "Restored and verified: E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity.Bench\\4870fcced3ba4d92be1d408de720ed75\\compressible-1024\\restored.bin (1073741824 bytes, 1 files)",
+        "warnings": ""
+      },
+      "independent_sha256_match": true
+    }
+  ],
+  "completed_utc": "2026-10-01T14:54:14.085924+00:00"
+}

@@ -1,0 +1,84 @@
+{
+  "RecordedUtc": "2026-10-02T07:02:14.5158154+00:00",
+  "Version": "1.0.3",
+  "CandidateSha256": "9c434c7c5f91e59520c0fac3484af73d752bbc9027f10cdf75d4408910d6fb39",
+  "VerifiedInstalledPayloadFiles": 204,
+  "ServiceState": "Running",
+  "ServicePid": 37620,
+  "LocalSystem": true,
+  "DelayedAuto": true,
+  "Metadata": {
+    "provider": 0,
+    "endpoint": "localhost:5432/fluxvault_metadata",
+    "schemaInitialized": true,
+    "lastError": null,
+    "pendingOutboxCount": 0,
+    "oldestUnexportedUtc": null,
+    "oldestUnexportedAge": null,
+    "isExportLagExceeded": false
+  },
+  "WatchedFolderCount": 0,
+  "NormalPostgreSqlPid": 50372,
+  "NormalPostgreSqlStartedUtc": "2026-10-01T13:38:16.2557791Z",
+  "NormalPostgreSqlUnchanged": true,
+  "OriginalHbaBackupSha256": "0c8dc6e6e57399790417a6e13b3a8e1b5e27aa19708a2122148fbfe3bdcecd42",
+  "UnrelatedAuthenticationLinesPreserved": true,
+  "PasswordlessProbes": [
+    {
+      "Host": "127.0.0.1",
+      "Role": "fluxvault",
+      "Database": "fluxvault_metadata",
+      "ExpectedSuccess": true,
+      "ExitCode": 0,
+      "Pid": 4076,
+      "Exited": true
+    },
+    {
+      "Host": "127.0.0.1",
+      "Role": "postgres",
+      "Database": "postgres",
+      "ExpectedSuccess": false,
+      "ExitCode": 2,
+      "Pid": 18100,
+      "Exited": true
+    },
+    {
+      "Host": "127.0.0.1",
+      "Role": "fluxvault",
+      "Database": "postgres",
+      "ExpectedSuccess": false,
+      "ExitCode": 2,
+      "Pid": 55056,
+      "Exited": true
+    },
+    {
+      "Host": "::1",
+      "Role": "fluxvault",
+      "Database": "fluxvault_metadata",
+      "ExpectedSuccess": true,
+      "ExitCode": 0,
+      "Pid": 21256,
+      "Exited": true
+    },
+    {
+      "Host": "::1",
+      "Role": "postgres",
+      "Database": "postgres",
+      "ExpectedSuccess": false,
+      "ExitCode": 2,
+      "Pid": 55500,
+      "Exited": true
+    },
+    {
+      "Host": "::1",
+      "Role": "fluxvault",
+      "Database": "postgres",
+      "ExpectedSuccess": false,
+      "ExitCode": 2,
+      "Pid": 52332,
+      "Exited": true
+    }
+  ],
+  "TemporaryAdministratorAccessRemoved": true,
+  "AllProbeProcessesExited": true
+}

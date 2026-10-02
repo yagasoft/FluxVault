@@ -68,6 +68,7 @@ $bundleProject = Join-Path $root "installer\wix\FluxVault.Bundle\FluxVault.Bundl
 
 Invoke-Checked {
     dotnet build $installerProject `
+        /t:Rebuild `
         --configuration $Configuration `
         /p:PublishRoot=$publishRootFull `
         /p:ProductVersion=$productVersion `
@@ -77,6 +78,7 @@ Invoke-Checked {
 
 Invoke-Checked {
     dotnet build $bundleProject `
+        /t:Rebuild `
         --configuration $Configuration `
         /p:PublishRoot=$publishRootFull `
         /p:ProductVersion=$productVersion `

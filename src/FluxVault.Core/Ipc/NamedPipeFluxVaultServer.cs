@@ -9,12 +9,28 @@ using Microsoft.Extensions.Logging;
 
 namespace FluxVault.Core.Ipc;
 
-public sealed class NamedPipeFluxVaultServer(
-    IFluxVaultRequestHandler handler,
-    string pipeName = NamedPipeFluxVaultServer.DefaultPipeName,
-    ILogger<NamedPipeFluxVaultServer>? logger = null,
-    TelemetryCollector? telemetryCollector = null)
+public sealed class NamedPipeFluxVaultServer
 {
+    private readonly IFluxVaultRequestHandler handler;
+    private readonly ILogger<NamedPipeFluxVaultServer>? logger;
+    private readonly TelemetryCollector? telemetryCollector;
+    private readonly Func<NamedPipeServerStream> serverStreamFactory;
+
+    public NamedPipeFluxVaultServer(IFluxVaultRequestHandler handler, string pipeName = DefaultPipeName,
+        ILogger<NamedPipeFluxVaultServer>? logger = null, TelemetryCollector? telemetryCollector = null)
+        : this(handler, logger, telemetryCollector, () => CreateServerStreamForCurrentPlatform(pipeName))
+    {
+    }
+
+    internal NamedPipeFluxVaultServer(IFluxVaultRequestHandler handler, ILogger<NamedPipeFluxVaultServer>? logger,
+        TelemetryCollector? telemetryCollector, Func<NamedPipeServerStream> serverStreamFactory)
+    {
+        this.handler = handler;
+        this.logger = logger;
+        this.telemetryCollector = telemetryCollector;
+        this.serverStreamFactory = serverStreamFactory;
+    }
+
     public const string DefaultPipeName = "FluxVault.Service";
     private const int MaxConcurrentClients = 32;
     private const int PendingListenerCount = 8;
@@ -36,7 +52,7 @@ public sealed class NamedPipeFluxVaultServer(
 
             try
             {
-                pipe = CreateServerStreamForCurrentPlatform(pipeName);
+                pipe = serverStreamFactory();
                 await pipe.WaitForConnectionAsync(cancellationToken).ConfigureAwait(false);
                 var connectedPipe = pipe;
                 pipe = null;

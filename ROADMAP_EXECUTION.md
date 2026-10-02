@@ -1,5 +1,21 @@
 # FluxVault roadmap execution log
 
+This is a historical execution record. The [1 October 2026 improvement
+roadmap](docs/improvement-roadmap.md) now defines the delivery order and trust
+gates. Recorded completion and test counts below describe the earlier scope;
+the [current review](docs/reviews/2026-10-01/review.md) identifies unresolved
+integrity and runtime gaps. The historical workflow notes below are not new
+authorisation for deployment, data deletion or other operational actions.
+
+Current authorised slice: verified local recovery is implemented, deployed and
+live-validated as staging v1.0.4 on 2 October 2026. The [evidence and acceptance
+audit](docs/verification/2026-10-01-verified-recovery/README.md) records 687 passing
+tests, zero-warning builds, reviewed integrity corrections, six measured trials,
+204 matching installed payload files and native installed UI recovery with an
+independent hash. Temporary processes exited; PostgreSQL retained its original
+postmaster and scoped authentication. The source is integrated by this squash change. The
+broader improvement programme and modern UI rebuild remain future work.
+
 Pinned execution instructions:
 
 - Execute the roadmap end to end using TDD.

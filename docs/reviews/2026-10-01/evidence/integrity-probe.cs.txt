@@ -1,0 +1,36 @@
+using System.Text;
+using System.Text.Json;
+using FluxVault.Abstractions.Configuration;
+using FluxVault.Abstractions.Policies;
+using FluxVault.Abstractions.Storage;
+using FluxVault.Core.Chunking;
+using FluxVault.Core.Content;
+using FluxVault.Core.Storage;
+
+var root=Path.Combine(Path.GetTempPath(),"FluxVault-review-20261001","integrity-probe","data-"+Guid.NewGuid().ToString("N"));
+Directory.CreateDirectory(root);
+FileSystemChunkRepository Repo(string path, MirrorSetConfiguration? mirrors=null) => new(path,new FastCdcChunker(new ChunkingOptions(128,256,512)),new Blake3ContentHasher(),new ZstdChunkCodec(),mirrors);
+FileCommitRequest Request(string label) => new("review",Path.Combine(root,label+".txt"),DateTimeOffset.UtcNow,CaptureConsistency.CrashConsistent,CompressionPreference.Off,128,new MemoryStream(Encoding.UTF8.GetBytes("good payload to protect")));
+string Chunk(string path,string digest)=>Path.Combine(path,"chunks",digest[..2],digest+".chunk");
+void Log(object result)=>Console.WriteLine(JsonSerializer.Serialize(result));
+Log(new {root, scope="Disposable legacy file-manifest API probes; no service or DB access"});
+{
+ var p=Path.Combine(root,"corruption");var repo=Repo(p);var commit=await repo.CommitAsync(Request("corruption"));
+ var chunk=commit.Manifest.Chunks.Single();var bytes=await File.ReadAllBytesAsync(Chunk(p,chunk.Digest));bytes[0]^=0xFF;await File.WriteAllBytesAsync(Chunk(p,chunk.Digest),bytes);
+ var dest=Path.Combine(root,"corrupt-restored.txt");await repo.RestoreAsync(commit.Manifest.VersionId,dest);
+ var rehearsal=await repo.RunRestoreRehearsalAsync(Path.Combine(root,"rehearsal"),1);
+ var scrub=await repo.ScrubAsync(false);
+ Log(new {probe="same-length raw corruption", restoreReturnedSuccess=true,restoredMatchesOriginal=(await File.ReadAllBytesAsync(dest)).SequenceEqual(Encoding.UTF8.GetBytes("good payload to protect")),rehearsalHealth=rehearsal.HealthState.ToString(),rehearsalFailures=rehearsal.FailedVersionCount,scrubHealth=scrub.HealthState.ToString()});
+}
+{
+ var p=Path.Combine(root,"missing");var repo=Repo(p);var commit=await repo.CommitAsync(Request("missing"));var chunk=commit.Manifest.Chunks.Single();File.Delete(Chunk(p,chunk.Digest));
+ var second=await repo.CommitAsync(Request("missing")); string restoreResult;
+ try {await repo.RestoreAsync(second.Manifest.VersionId,Path.Combine(root,"missing-restored.txt"));restoreResult="success";}catch(Exception e){restoreResult=e.GetType().Name;}
+ Log(new {probe="recommit with missing payload and surviving sidecar",commitReturnedSuccess=true,chunkExists=File.Exists(Chunk(p,chunk.Digest)),restoreResult});
+}
+{
+ var p=Path.Combine(root,"drain");var a=Path.Combine(root,"mirror-a");var b=Path.Combine(root,"mirror-b");var repo=Repo(p,new MirrorSetConfiguration([new("a","A",a,true),new("b","B",b,true)]));
+ var commit=await repo.CommitAsync(Request("drain"));var chunk=commit.Manifest.Chunks.Single();var bad=Encoding.UTF8.GetBytes("bad! payload to protect");await File.WriteAllBytesAsync(Chunk(p,chunk.Digest),bad);await File.WriteAllBytesAsync(Chunk(b,chunk.Digest),bad);
+ var report=await repo.RunMirrorDrainAsync("a");var scrub=await repo.ScrubAsync(true);
+ Log(new {probe="drain sole healthy mirror while primary and remaining target are corrupt",drainHealth=report.HealthState.ToString(),healthyCopyStillExists=File.Exists(Chunk(a,chunk.Digest)),scrubAfterDrain=scrub.HealthState.ToString()});
+}

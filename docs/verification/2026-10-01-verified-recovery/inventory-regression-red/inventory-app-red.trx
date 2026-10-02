@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f463553c-eac1-4a5e-ab44-beb7b1d74870" name="os008@OS008-HOME 2026-10-02 09:12:32" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T09:12:32.8523339+03:00" queuing="2026-10-02T09:12:32.8523342+03:00" start="2026-10-02T09:12:30.9460761+03:00" finish="2026-10-02T09:12:37.0396307+03:00" />
+  <TestSettings name="default" id="d99b434a-cbc0-499f-8a6b-3a7d58d16ec7">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-02_09_12_32" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6f30927d-277a-451c-8e82-8807484247f9" testId="d49417f8-b414-89b1-c726-28c3ea4ebc28" testName="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(initiallyEmpty: False)" computerName="OS008-HOME" duration="00:00:00.0798789" startTime="2026-10-02T09:12:36.8271439+03:00" endTime="2026-10-02T09:12:36.9053859+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6f30927d-277a-451c-8e82-8807484247f9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Full&#xD;
+Actual:   Fast</Message>
+          <StackTrace>   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(Boolean initiallyEmpty) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 38&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="26001838-9c3a-4222-ad27-856fc037ec70" testId="9bb76f0d-c2a4-3f97-e385-cd79a9fc8f3f" testName="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(initiallyEmpty: True)" computerName="OS008-HOME" duration="00:00:00.0734000" startTime="2026-10-02T09:12:36.9060933+03:00" endTime="2026-10-02T09:12:36.9792889+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="26001838-9c3a-4222-ad27-856fc037ec70">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Full&#xD;
+Actual:   Fast</Message>
+          <StackTrace>   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(Boolean initiallyEmpty) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 38&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="de403c30-d2d3-4cac-a43c-7a4fd48cd2f9" testId="a51aca99-e644-2a8e-c09c-8abf182a9f2e" testName="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_applies_authoritative_empty_inventory_after_cache_invalidation" computerName="OS008-HOME" duration="00:00:00.2512957" startTime="2026-10-02T09:12:31.5441898+03:00" endTime="2026-10-02T09:12:31.8131669+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de403c30-d2d3-4cac-a43c-7a4fd48cd2f9">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index')</Message>
+          <StackTrace>   at System.Collections.Generic.List`1.get_Item(Int32 index)&#xD;
+   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_applies_authoritative_empty_inventory_after_cache_invalidation() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 59&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8dba5cb3-4298-4241-b808-1f9d3ab80dc4" testId="22b0fdc2-0b98-e699-c200-3860efdf394b" testName="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection" computerName="OS008-HOME" duration="00:00:05.0083168" startTime="2026-10-02T09:12:31.8281494+03:00" endTime="2026-10-02T09:12:36.8244764+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8dba5cb3-4298-4241-b808-1f9d3ab80dc4">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Threading.Tasks.TaskCanceledException : A task was canceled.</Message>
+          <StackTrace>   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.WaitUntilAsync(Func`1 condition) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 1798&#xD;
+   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 74&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(initiallyEmpty: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="d49417f8-b414-89b1-c726-28c3ea4ebc28">
+      <Execution id="6f30927d-277a-451c-8e82-8807484247f9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MainWindowViewModelRefreshTests" name="Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_applies_authoritative_empty_inventory_after_cache_invalidation" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="a51aca99-e644-2a8e-c09c-8abf182a9f2e">
+      <Execution id="de403c30-d2d3-4cac-a43c-7a4fd48cd2f9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MainWindowViewModelRefreshTests" name="Automatic_refresh_applies_authoritative_empty_inventory_after_cache_invalidation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="22b0fdc2-0b98-e699-c200-3860efdf394b">
+      <Execution id="8dba5cb3-4298-4241-b808-1f9d3ab80dc4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MainWindowViewModelRefreshTests" name="Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(initiallyEmpty: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="9bb76f0d-c2a4-3f97-e385-cd79a9fc8f3f">
+      <Execution id="26001838-9c3a-4222-ad27-856fc037ec70" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MainWindowViewModelRefreshTests" name="Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d49417f8-b414-89b1-c726-28c3ea4ebc28" executionId="6f30927d-277a-451c-8e82-8807484247f9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9bb76f0d-c2a4-3f97-e385-cd79a9fc8f3f" executionId="26001838-9c3a-4222-ad27-856fc037ec70" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a51aca99-e644-2a8e-c09c-8abf182a9f2e" executionId="de403c30-d2d3-4cac-a43c-7a4fd48cd2f9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22b0fdc2-0b98-e699-c200-3860efdf394b" executionId="8dba5cb3-4298-4241-b808-1f9d3ab80dc4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.47]       System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index')&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]            at System.Collections.Generic.List`1.get_Item(Int32 index)&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs(59,0): at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_applies_authoritative_empty_inventory_after_cache_invalidation()&#xD;
+[xUnit.net 00:00:00.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.48]       System.Threading.Tasks.TaskCanceledException : A task was canceled.&#xD;
+[xUnit.net 00:00:05.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.48]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs(1798,0): at FluxVault.App.Tests.MainWindowViewModelRefreshTests.WaitUntilAsync(Func`1 condition)&#xD;
+[xUnit.net 00:00:05.48]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs(74,0): at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection()&#xD;
+[xUnit.net 00:00:05.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.56]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:05.56]       Expected: Full&#xD;
+[xUnit.net 00:00:05.56]       Actual:   Fast&#xD;
+[xUnit.net 00:00:05.56]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.56]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs(38,0): at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(Boolean initiallyEmpty)&#xD;
+[xUnit.net 00:00:05.56]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.63]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:05.63]       Expected: Full&#xD;
+[xUnit.net 00:00:05.63]       Actual:   Fast&#xD;
+[xUnit.net 00:00:05.63]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.63]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs(38,0): at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(Boolean initiallyEmpty)&#xD;
+[xUnit.net 00:00:05.63]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.64]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:12:31.8162356+03:00">
+        <Text>[xUnit.net 00:00:00.47]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_applies_authoritative_empty_inventory_after_cache_invalidation [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:12:36.8250467+03:00">
+        <Text>[xUnit.net 00:00:05.48]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:12:36.9057558+03:00">
+        <Text>[xUnit.net 00:00:05.56]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(initiallyEmpty: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:12:36.9796596+03:00">
+        <Text>[xUnit.net 00:00:05.63]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(initiallyEmpty: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

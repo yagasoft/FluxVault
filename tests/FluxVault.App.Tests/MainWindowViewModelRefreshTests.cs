@@ -14,6 +14,126 @@ namespace FluxVault.App.Tests;
 
 public sealed class MainWindowViewModelRefreshTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Profile_command_unavailable_inventory_preserves_only_the_same_profile_without_retry(bool switchProfile)
+    {
+        using var workspace = TempFolder.Create();
+        var defaultProfile = new FluxVaultProfileRuntimeStatus("default", "Default", true, true, @"D:\Vault\repository", 0, 0);
+        var otherProfile = new FluxVaultProfileRuntimeStatus("other", "Other", true, false, @"D:\Vault\repository", 0, 0);
+        var initial = StatusWithVersions("v1") with
+        {
+            ActiveProfileId = "default", Profiles = [defaultProfile, otherProfile],
+            TrackedEntries = [new RepositoryVersionSummary("deleted-v1", Path.Combine(workspace.Path, "deleted.txt"),
+                DateTimeOffset.UtcNow, CaptureConsistency.BestEffort, 128, 1, IsDeleted: true)]
+        };
+        var changed = initial with
+        {
+            RecentVersions = [], TrackedEntries = null, HasVersionInventory = false,
+            ActiveProfileId = switchProfile ? "other" : "default",
+            Profiles = switchProfile
+                ? [defaultProfile with { IsActive = false }, otherProfile with { IsActive = true }]
+                : [defaultProfile with { DisplayName = "Renamed" }, otherProfile]
+        };
+        var client = new FakeFluxVaultServiceClient(initial, changed);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), new FakeProfileDialogService("Renamed"));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+        viewModel.FileBrowser.SelectFolder(new FileBrowserFolderNode(workspace.Path, "Staging", true, null));
+        Assert.Equal("deleted-v1", Assert.Single(viewModel.FileBrowser.Files).RestorableVersionId);
+
+        if (switchProfile)
+        {
+            viewModel.SelectedProfile = viewModel.Profiles.Single(profile => profile.Id == "other");
+            await WaitUntilAsync(() => viewModel.ActiveProfileName == "Other");
+            Assert.Empty(viewModel.RecentVersions);
+            Assert.Null(viewModel.SelectedVersion);
+        }
+        else
+        {
+            await viewModel.RenameProfileCommand.ExecuteAsync(null);
+            Assert.Equal("Renamed", viewModel.ActiveProfileName);
+            Assert.Equal("v1", Assert.Single(viewModel.RecentVersions).VersionId);
+            Assert.Equal("v1", viewModel.SelectedVersion?.VersionId);
+        }
+        Assert.Contains("inventory unavailable", viewModel.ServiceStatus);
+        Assert.True(viewModel.IsServiceWarningVisible);
+        viewModel.FileBrowser.SelectFolder(new FileBrowserFolderNode(workspace.Path, "Staging", true, null));
+        if (switchProfile) Assert.Empty(viewModel.FileBrowser.Files);
+        else Assert.Equal("deleted-v1", Assert.Single(viewModel.FileBrowser.Files).RestorableVersionId);
+        Assert.Single(client.ProfileRequests);
+        Assert.Equal(1, client.GetStatusCount);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(bool initiallyEmpty)
+    {
+        var client = new FakeFluxVaultServiceClient(
+            initiallyEmpty ? StatusWithVersions() : StatusWithVersions("v1"),
+            StatusWithVersions() with { HasVersionInventory = false },
+            StatusWithVersions("v2", "v1"));
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+        if (!initiallyEmpty) viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+
+        try
+        {
+            viewModel.StartAutoRefresh();
+            await WaitUntilAsync(() => viewModel.RecentVersions.Any(version => version.VersionId == "v2"));
+        }
+        finally { viewModel.StopAutoRefresh(); }
+
+        Assert.Equal(FluxVaultStatusDetailLevel.Fast, client.Requests[1].StatusDetailLevel);
+        Assert.Equal(FluxVaultStatusDetailLevel.Full, client.Requests[2].StatusDetailLevel);
+        Assert.Equal(2, client.Requests.Count(request => request.StatusDetailLevel == FluxVaultStatusDetailLevel.Full));
+        if (!initiallyEmpty) Assert.Equal("v1", viewModel.SelectedVersion?.VersionId);
+    }
+
+    [Fact]
+    public async Task Automatic_refresh_applies_authoritative_empty_inventory_after_cache_invalidation()
+    {
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"),
+            StatusWithVersions() with { HasVersionInventory = false }, StatusWithVersions());
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+
+        try
+        {
+            viewModel.StartAutoRefresh();
+            await WaitUntilAsync(() => viewModel.RecentVersions.Count == 0);
+        }
+        finally { viewModel.StopAutoRefresh(); }
+
+        Assert.Equal(FluxVaultStatusDetailLevel.Full, client.Requests[2].StatusDetailLevel);
+        Assert.Null(viewModel.SelectedVersion);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(bool missingFullInventory)
+    {
+        var client = new UnavailableInventoryClient(StatusWithVersions("v1"), missingFullInventory);
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+
+        try
+        {
+            viewModel.StartAutoRefresh();
+            await WaitUntilAsync(() => viewModel.ServiceStatus.Contains(missingFullInventory ? "inventory unavailable" : "inventory offline", StringComparison.Ordinal));
+        }
+        finally { viewModel.StopAutoRefresh(); }
+
+        Assert.Equal("v1", Assert.Single(viewModel.RecentVersions).VersionId);
+        Assert.Equal("v1", viewModel.SelectedVersion?.VersionId);
+        Assert.Equal(FluxVaultStatusDetailLevel.Full, client.Requests[2].StatusDetailLevel);
+    }
+
     [Fact]
     public async Task Refresh_populates_versions_from_service_status()
     {
@@ -1313,7 +1433,26 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Equal(destination, request.OutputPath);
         Assert.Equal(1, picker.PickCount);
         Assert.Equal(0, confirmation.ConfirmCount);
-        Assert.Contains("restored v1", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("restored and verified", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Restore_keeps_a_post_publication_warning_visible_after_refresh()
+    {
+        using var workspace = TempFolder.Create();
+        var destination = Path.Combine(workspace.Path, "restored.txt");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"))
+        {
+            RestoreResponse = FluxVaultIpcResponse.WithRestore(new RepositoryRestoreResult(destination, 128, 1,
+                ["Lineage recording failed; content is verified."]))
+        };
+        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker(destination), new FakeRestoreOverwriteConfirmation(true));
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+        await viewModel.RestoreSelectedCommand.ExecuteAsync(null);
+        Assert.Contains("restored and verified", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Lineage recording failed", viewModel.ServiceStatus);
     }
 
     [Fact]
@@ -1470,14 +1609,17 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.Contains("overwrite denied", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
     }
 
-    [Fact]
-    public async Task Restore_ipc_failure_shows_safe_failure_status_and_preserves_selection()
+    [Theory]
+    [InlineData("Destination is locked or access is denied.")]
+    [InlineData("Repository is busy; retry after the current operation finishes.")]
+    [InlineData("Chunk failed content verification.")]
+    public async Task Restore_ipc_failure_shows_safe_failure_status_and_preserves_selection(string errorMessage)
     {
         using var workspace = TempFolder.Create();
         var destination = Path.Combine(workspace.Path, "restored.txt");
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"))
         {
-            RestoreResponse = FluxVaultIpcResponse.Failure("Destination is locked or access is denied.")
+            RestoreResponse = FluxVaultIpcResponse.Failure(errorMessage)
         };
         var viewModel = new MainWindowViewModel(
             client,
@@ -1491,7 +1633,9 @@ public sealed class MainWindowViewModelRefreshTests
 
         Assert.NotNull(viewModel.SelectedVersion);
         Assert.Contains("restore failed", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("access is denied", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(errorMessage, viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Single(client.RestoreRequests);
+        Assert.False(File.Exists(destination));
     }
 
     [Fact]
@@ -1856,6 +2000,22 @@ public sealed class MainWindowViewModelRefreshTests
             Actions: []));
     }
 
+    private sealed class UnavailableInventoryClient(FluxVaultServiceStatus initialStatus, bool missingFullInventory) : IFluxVaultServiceClient
+    {
+        public List<FluxVaultIpcRequest> Requests { get; } = [];
+
+        public Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
+        {
+            Assert.Equal(FluxVaultIpcCommand.GetStatus, request.Command);
+            Requests.Add(request);
+            return Task.FromResult(Requests.Count == 1
+                ? FluxVaultIpcResponse.WithStatus(initialStatus)
+                : request.StatusDetailLevel == FluxVaultStatusDetailLevel.Fast || missingFullInventory
+                    ? FluxVaultIpcResponse.WithStatus(initialStatus with { RecentVersions = [], HasVersionInventory = false })
+                    : FluxVaultIpcResponse.Failure("inventory offline"));
+        }
+    }
+
     private sealed class FakeFluxVaultServiceClient(params FluxVaultServiceStatus[] statuses) : IFluxVaultServiceClient
     {
         private readonly Queue<FluxVaultServiceStatus> statuses = new(statuses);
@@ -1876,7 +2036,7 @@ public sealed class MainWindowViewModelRefreshTests
 
         public List<FluxVaultConfiguration> SavedConfigurations { get; } = [];
 
-        public FluxVaultIpcResponse RestoreResponse { get; init; } = FluxVaultIpcResponse.Ok();
+        public FluxVaultIpcResponse RestoreResponse { get; init; } = FluxVaultIpcResponse.WithRestore(new RepositoryRestoreResult("test destination", 128, 1, []));
 
         public FluxVaultIpcResponse RestorePreviewResponse { get; init; } = FluxVaultIpcResponse.Ok();
 

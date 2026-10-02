@@ -1,0 +1,86 @@
+using System.IO;
+using System.Text.Json;
+using FluxVault.Abstractions.Configuration;
+using FluxVault.Abstractions.Ipc;
+using FluxVault.App.ViewModels;
+using FluxVault.Core.Configuration;
+using FluxVault.Core.Ipc;
+
+var root = Path.Combine(Path.GetTempPath(), "FluxVault-review-20261001", "ui-probe", "data-" + Guid.NewGuid().ToString("N"));
+Directory.CreateDirectory(root);
+var original = FluxVaultConfiguration.CreateDefault(root);
+original = original with
+{
+    IsEnabled = false,
+    MetadataStore = original.MetadataStore with { DatabaseName = "review_specific_database", Port = 55432 },
+    RepositoryMaintenancePolicy = original.RepositoryMaintenancePolicy with { RunAutomatically = false, Interval = TimeSpan.FromHours(7) }
+};
+var client = new RecordingClient(original);
+var vm = new MainWindowViewModel(client, TimeSpan.FromHours(1));
+await vm.RefreshAsync();
+await vm.SaveConfigurationCommand.ExecuteAsync(null);
+var saved = client.Saved ?? throw new InvalidOperationException("No config save captured");
+var store = new FileFluxVaultConfigurationStore(Path.Combine(root, "config.json"), root);
+await store.SaveAsync(saved);
+var reloaded = await store.LoadAsync();
+Console.WriteLine(JsonSerializer.Serialize(new
+{
+    probe = "dashboard configuration preservation",
+    savedMetadataNull = saved.MetadataStore is null,
+    savedMaintenanceNull = saved.RepositoryMaintenancePolicy is null,
+    savedSyncNull = saved.Sync is null,
+    savedDiagnosticsNull = saved.DiagnosticsPolicy is null,
+    originalEnabled = original.IsEnabled,
+    savedEnabled = saved.IsEnabled,
+    expectedDatabase = original.MetadataStore.DatabaseName,
+    actualDatabaseAfterRoundTrip = reloaded.MetadataStore.DatabaseName,
+    expectedMaintenanceAutomatic = original.RepositoryMaintenancePolicy.RunAutomatically,
+    actualMaintenanceAutomatic = reloaded.RepositoryMaintenancePolicy.RunAutomatically,
+    expectedMaintenanceHours = original.RepositoryMaintenancePolicy.Interval.TotalHours,
+    actualMaintenanceHours = reloaded.RepositoryMaintenancePolicy.Interval.TotalHours
+}));
+
+client.FailSave = true;
+client.Commands.Clear();
+await vm.RunBackupNowCommand.ExecuteAsync(null);
+Console.WriteLine(JsonSerializer.Serialize(new
+{
+    probe = "backup after failed configuration save",
+    configurationRejected = client.FailSave,
+    backupStillRequested = client.Commands.Contains(FluxVaultIpcCommand.RunBackupNow)
+}));
+
+try
+{
+    await new OptionsViewModel(new ThrowingClient()).InitialiseAsync();
+    Console.WriteLine("Options unexpectedly absorbed timeout");
+}
+catch (TimeoutException)
+{
+    Console.WriteLine(JsonSerializer.Serialize(new { probe = "options missing service", timeoutEscapesInitialise = true }));
+}
+
+sealed class RecordingClient(FluxVaultConfiguration configuration) : IFluxVaultServiceClient
+{
+    public FluxVaultConfiguration? Saved { get; private set; }
+    public bool FailSave { get; set; }
+    public List<FluxVaultIpcCommand> Commands { get; } = [];
+    public Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
+    {
+        Commands.Add(request.Command);
+        if (request.Command == FluxVaultIpcCommand.GetStatus)
+            return Task.FromResult(FluxVaultIpcResponse.WithStatus(new FluxVaultServiceStatus(true, configuration, "Review fixture", null, [], [])));
+        if (request.Command == FluxVaultIpcCommand.SaveConfiguration)
+        {
+            Saved = request.Configuration;
+            if (FailSave) return Task.FromResult(new FluxVaultIpcResponse(false, "Synthetic validation rejection", null, null, null, null, null));
+        }
+        return Task.FromResult(FluxVaultIpcResponse.Ok());
+    }
+}
+
+sealed class ThrowingClient : IFluxVaultServiceClient
+{
+    public Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
+        => throw new TimeoutException("Synthetic unavailable service");
+}

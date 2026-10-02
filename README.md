@@ -4,6 +4,24 @@ FluxVault is a Windows 11 backup utility for frequent, versioned protection of
 large local files that may be open while users work. It combines a WPF dashboard,
 a tray app, and a per-machine Windows service.
 
+The [October 2026 improvement roadmap](docs/improvement-roadmap.md) sets the
+current staging priorities: trustworthy recovery, a modern professional UI,
+measured performance and complete local installation. The supporting
+[engineering review](docs/reviews/2026-10-01/review.md) records reproduced
+integrity failures and outstanding validation; the implementation inventory
+below should not be read as a release-readiness certification.
+
+The first integrity slice is implemented and
+installed as v1.0.4 on the staging PC. Its
+[verification record](docs/verification/2026-10-01-verified-recovery/README.md)
+records 687 passing tests, native fixture recovery, and installed service/CLI/UI
+recovery with independent hashes. Desktop validation also proved inventory and
+selection survive service cache invalidation. All temporary processes exited;
+the installed service remains healthy with no watched test folders. The UI rebuild has not started.
+Fresh owned local NTFS storage is required; existing unmarked non-empty roots
+are preserved and refused. Unrestricted use with working files remains outside
+this slice's verified scope.
+
 ## MVP direction
 
 - Watched local folders with recursive include/exclude policies.
@@ -208,8 +226,11 @@ restore a selected version to an alternate path. The **Protection** table shows
 inherited regex state and opens a per-folder backup inventory on double-click;
 each file expands to its versions. Restore asks for a destination and, when that
 file already exists, requires an explicit overwrite confirmation before the
-service restore IPC call is sent. Double-clicking a version opens a temporary
-preview instead of saving or recording a restore.
+service restore IPC call is sent. A single folder-version restore chooses a
+parent and a new folder name, and refuses an existing destination. Successful
+content restore reports verified bytes and files; a later lineage-hint failure
+appears as a warning. Double-clicking a file version reconstructs verified
+temporary content before opening it, without recording restore lineage.
 
 Use the **About** button for the FluxVault version, Yagasoft copyright,
 [`https://github.com/yagasoft/FluxVault`](https://github.com/yagasoft/FluxVault),

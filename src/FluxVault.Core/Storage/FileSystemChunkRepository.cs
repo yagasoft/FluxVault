@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
 using FluxVault.Abstractions.Configuration;
@@ -8,12 +7,12 @@ using FluxVault.Core.Chunking;
 using FluxVault.Core.Content;
 using FluxVault.Core.Retention;
 using FluxVault.Core.Storage.Metadata;
+using FluxVault.Core.Storage.Integrity;
 
 namespace FluxVault.Core.Storage;
 
 public sealed class FileSystemChunkRepository : IChunkRepository
 {
-    private static readonly ConcurrentDictionary<string, SemaphoreSlim> RepositoryLocks = new(StringComparer.OrdinalIgnoreCase);
 
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
@@ -22,15 +21,27 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     private readonly string rootPath;
     private readonly MirrorSetConfiguration mirrorSet;
-    private readonly IReadOnlyList<MirrorNodeConfiguration> mirrorNodes;
+    private IReadOnlyList<MirrorNodeConfiguration> mirrorNodes => leasedMirrorNodes;
     private readonly MirrorPlacementPlanner mirrorPlacementPlanner = new();
     private readonly StreamingFastCdcChunker streamingChunker;
     private readonly Blake3ContentHasher hasher;
     private readonly ZstdChunkCodec codec;
     private readonly IRepositoryMetadataStore? metadataStore;
+    private readonly RepositoryIntegrityLimits integrityLimits;
+    private readonly VerifiedChunkReader verifiedReader;
+    private readonly RepositoryObjectPublisher publisher;
+    private readonly RepositoryFaults? faults;
+    private readonly IReadOnlyList<MirrorNodeConfiguration> configuredMirrorNodes;
+    private IReadOnlyList<MirrorNodeConfiguration> leasedMirrorNodes = [];
     private List<FileVersionManifest>? mutationManifestCache;
 
-    private SemaphoreSlim RepositoryLock => RepositoryLocks.GetOrAdd(Path.GetFullPath(rootPath), _ => new SemaphoreSlim(1, 1));
+    private async ValueTask<RepositoryLeaseSet> AcquireLeaseAsync(MirrorLeaseMode mode, CancellationToken cancellationToken)
+    {
+        var lease = await RepositoryLeaseSet.AcquireAsync(rootPath, configuredMirrorNodes.Select(node => node.Path).ToArray(), mode, cancellationToken).ConfigureAwait(false);
+        foreach (var node in configuredMirrorNodes) lease.LabelMirror(StorageOwnership.Canonical(node.Path), node.Label);
+        leasedMirrorNodes = configuredMirrorNodes.Where(node => lease.MirrorRoots.Contains(StorageOwnership.Canonical(node.Path), StringComparer.OrdinalIgnoreCase)).ToArray();
+        return lease;
+    }
 
     public FileSystemChunkRepository(
         string rootPath,
@@ -58,22 +69,43 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         Blake3ContentHasher hasher,
         ZstdChunkCodec codec,
         MirrorSetConfiguration? mirrorSet,
-        IRepositoryMetadataStore? metadataStore)
+        IRepositoryMetadataStore? metadataStore,
+        RepositoryIntegrityLimits? integrityLimits = null)
+        : this(rootPath, chunker, hasher, codec, mirrorSet, metadataStore, integrityLimits, null)
+    {
+    }
+
+    internal FileSystemChunkRepository(string rootPath, FastCdcChunker chunker, Blake3ContentHasher hasher,
+        ZstdChunkCodec codec, MirrorSetConfiguration? mirrorSet, IRepositoryMetadataStore? metadataStore,
+        RepositoryIntegrityLimits? integrityLimits, RepositoryFaults? faults)
     {
         this.rootPath = rootPath;
         streamingChunker = new StreamingFastCdcChunker(chunker.Options);
         this.hasher = hasher;
         this.codec = codec;
         this.mirrorSet = (mirrorSet ?? MirrorSetConfiguration.CreateDefault()).Normalise();
-        mirrorNodes = this.mirrorSet.EnabledNodes;
+        configuredMirrorNodes = this.mirrorSet.EnabledNodes;
+        leasedMirrorNodes = configuredMirrorNodes;
         this.metadataStore = metadataStore;
+        this.integrityLimits = integrityLimits ?? new RepositoryIntegrityLimits();
+        this.integrityLimits.Validate();
+        if (chunker.Options.MaximumSize > this.integrityLimits.MaxDecodedChunkBytes)
+            throw new ArgumentOutOfRangeException(nameof(chunker), "Chunker exceeds the verified read limit.");
+        verifiedReader = new VerifiedChunkReader(hasher, codec, this.integrityLimits);
+        this.faults = faults;
+        publisher = new RepositoryObjectPublisher(verifiedReader, this.integrityLimits, faults);
+    }
+
+    internal async Task InitializeStorageAsync(CancellationToken cancellationToken)
+    {
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<FileCommitResult> CommitAsync(FileCommitRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
         await using var content = request.Content;
-        await RepositoryLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.BestEffort, cancellationToken).ConfigureAwait(false);
         try
         {
             Directory.CreateDirectory(ChunksPath(rootPath));
@@ -82,36 +114,53 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 Directory.CreateDirectory(ManifestsPath(rootPath));
             }
 
+            var existingManifests = metadataStore is null
+                ? await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false)
+                : null;
+            var localReferences = existingManifests?.SelectMany(manifest => manifest.Chunks).ToLookup(chunk => chunk.Digest, StringComparer.OrdinalIgnoreCase);
+            var verifiedDescriptors = new Dictionary<string, ChunkDescriptor>(StringComparer.OrdinalIgnoreCase);
+            var mirrorUsedBytes = new Dictionary<string, long>(GetMirrorNodeUsedBytes(), StringComparer.OrdinalIgnoreCase);
             var chunks = new List<ManifestChunk>();
-            var mirrorWarnings = new List<string>();
+            var mirrorWarnings = new List<string>(lease.Warnings);
             var newChunkCount = 0;
             var logicalLength = 0L;
 
             await foreach (var chunk in streamingChunker.ChunkAsync(content, cancellationToken))
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var raw = chunk.Payload.AsSpan();
-                var digest = hasher.Hash(raw);
-                var metadata = ReadChunkMetadata(rootPath, digest);
-
-                if (metadata is null)
+                var digest = hasher.Hash(chunk.Payload);
+                if (!verifiedDescriptors.TryGetValue(digest, out var descriptor))
                 {
-                    var prepared = PreparePayload(raw, digest, request.Compression, request.MinimumCompressionBytes);
-                    AtomicWrite(ChunkPath(rootPath, digest), prepared.Payload);
-                    AtomicWrite(MetadataPath(rootPath, digest), JsonSerializer.SerializeToUtf8Bytes(prepared.Metadata, JsonOptions));
-                    mirrorWarnings.AddRange(MirrorChunkIfNeeded(digest, prepared));
-                    metadata = prepared.Metadata;
-                    newChunkCount++;
+                    descriptor = metadataStore is null
+                        ? ChunkDescriptorLookup.Resolve(localReferences![digest])
+                        : await metadataStore.FindChunkDescriptorAsync(digest, cancellationToken).ConfigureAwait(false);
+                    if (descriptor is not null)
+                    {
+                        await verifiedReader.ReadAsync(rootPath, descriptor, cancellationToken).ConfigureAwait(false);
+                    }
+                    else if (File.Exists(ChunkPath(rootPath, digest)) || File.Exists(MetadataPath(rootPath, digest)))
+                    {
+                        var metadata = await verifiedReader.ReadMetadataAsync(rootPath, digest, cancellationToken).ConfigureAwait(false);
+                        descriptor = new ChunkDescriptor(digest, metadata.LogicalLength, metadata.StoredLength, metadata.Encoding);
+                        await verifiedReader.ReadAsync(rootPath, descriptor, cancellationToken).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        var prepared = PreparePayload(chunk.Payload, digest, request.Compression, request.MinimumCompressionBytes);
+                        descriptor = new ChunkDescriptor(digest, chunk.Payload.Length, prepared.Payload.Length, prepared.Metadata.Encoding);
+                        await publisher.PublishNewAsync(rootPath, descriptor, prepared.Payload, cancellationToken).ConfigureAwait(false);
+                        mirrorWarnings.AddRange(await MirrorChunkIfNeededAsync(descriptor, mirrorUsedBytes, cancellationToken).ConfigureAwait(false));
+                        newChunkCount++;
+                    }
+                    verifiedDescriptors[digest] = descriptor;
                 }
-
-                chunks.Add(new ManifestChunk(digest, chunk.Offset, chunk.Payload.Length, metadata.StoredLength, metadata.Encoding));
+                if (descriptor.LogicalLength != chunk.Payload.Length)
+                    throw new RepositoryIntegrityException(RepositoryIntegrityFailure.DescriptorConflict, "Captured bytes disagree with the acknowledged chunk length.");
+                chunks.Add(new ManifestChunk(digest, chunk.Offset, chunk.Payload.Length, descriptor.StoredLength, descriptor.Encoding));
                 logicalLength += chunk.Payload.Length;
             }
 
             var sourcePath = Path.GetFullPath(request.SourcePath);
-            var existingManifests = metadataStore is null
-                ? await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false)
-                : null;
             var contentSignature = ComputeContentSignature(logicalLength, chunks);
             var lineage = metadataStore is null
                 ? request.SyncOrigin is not null
@@ -162,12 +211,13 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
         finally
         {
-            RepositoryLock.Release();
+            mutationManifestCache = null;
         }
     }
 
     public async Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default)
     {
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
         if (metadataStore is not null)
         {
             return await metadataStore.ListVersionsAsync(cancellationToken).ConfigureAwait(false);
@@ -194,6 +244,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     public async Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default)
     {
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
         if (metadataStore is not null)
         {
             return await metadataStore.ListLatestEntriesAsync(cancellationToken).ConfigureAwait(false);
@@ -217,7 +268,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
-        await RepositoryLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.BestEffort, cancellationToken).ConfigureAwait(false);
         try
         {
             if (metadataStore is null)
@@ -242,7 +293,9 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 VersionId: Guid.CreateVersion7().ToString("N"),
                 WatchedFolderId: request.WatchedFolderId,
                 SourcePath: sourcePath,
-                CapturedAtUtc: request.DeletedAtUtc,
+                CapturedAtUtc: entryKind == RepositoryEntryKind.Folder
+                    ? NextFolderSnapshotTime(request.DeletedAtUtc, deletedFrom)
+                    : request.DeletedAtUtc,
                 Consistency: request.Consistency,
                 LogicalLength: deletedFrom.LogicalLength,
                 Chunks: [],
@@ -254,7 +307,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 FolderEntries: entryKind == RepositoryEntryKind.Folder ? deletedFrom.FolderEntries : null,
                 DeletedFromVersionId: deletedFrom.VersionId);
 
-            var mirrorWarnings = new List<string>();
+            var mirrorWarnings = new List<string>(lease.Warnings);
             var manifestsToRecord = new List<FileVersionManifest> { manifest };
             existingManifests?.Add(manifest);
             manifestsToRecord.AddRange(await BuildFolderCascadeManifestsAsync(
@@ -268,7 +321,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
         finally
         {
-            RepositoryLock.Release();
+            mutationManifestCache = null;
         }
     }
 
@@ -284,10 +337,11 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
 
         var preserveScopes = NormalisePurgeScopes(request.PreserveScopes ?? []);
-        await RepositoryLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.Required, cancellationToken).ConfigureAwait(false);
         try
         {
             var manifests = (await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false)).ToArray();
+            ValidateMaintenanceInputs(manifests);
             if (manifests.Length == 0)
             {
                 return new RepositoryPurgeResult(0, 0, 0, []);
@@ -311,7 +365,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 .Select(chunk => chunk.Digest)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray();
-            var mirrorWarnings = new List<string>();
+            var mirrorWarnings = new List<string>(lease.Warnings);
             var reclaimedBytes = 0L;
 
             mutationManifestCache = remainingManifests.ToList();
@@ -359,12 +413,13 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
         finally
         {
-            RepositoryLock.Release();
+            mutationManifestCache = null;
         }
     }
 
     public async Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default)
     {
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
         ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
         var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
         return new RepositoryInspection(
@@ -374,13 +429,17 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             manifest.Chunks.Sum(chunk => (long)chunk.StoredLength));
     }
 
-    public async Task RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
+    public async Task<RepositoryRestoreResult> RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
         ArgumentException.ThrowIfNullOrWhiteSpace(outputPath);
 
+        outputPath = Path.GetFullPath(outputPath);
+        ValidateRestoreDestination(outputPath);
+        var destinationExisted = File.Exists(outputPath);
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
         var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
-        await RestoreManifestAsync(manifest, outputPath, writeRestoreHint: true, cancellationToken).ConfigureAwait(false);
+        return await RestoreManifestAsync(manifest, outputPath, destinationExisted, writeRestoreHint: true, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task RestorePreviewAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
@@ -388,17 +447,27 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
         ArgumentException.ThrowIfNullOrWhiteSpace(outputPath);
 
+        outputPath = Path.GetFullPath(outputPath);
+        ValidateRestoreDestination(outputPath);
+        var destinationExisted = File.Exists(outputPath);
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
         var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
-        await RestoreManifestAsync(manifest, outputPath, writeRestoreHint: false, cancellationToken).ConfigureAwait(false);
+        await RestoreManifestAsync(manifest, outputPath, destinationExisted, writeRestoreHint: false, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<RepositoryScrubReport> ScrubAsync(
         bool autoRepairFromMirror,
         CancellationToken cancellationToken = default)
     {
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.Required, cancellationToken).ConfigureAwait(false);
         var issues = new List<RepositoryScrubIssue>();
         var manifests = await ReadRepairableManifestsAsync(autoRepairFromMirror, issues, cancellationToken).ConfigureAwait(false);
+        ValidateReferencedDescriptors(manifests);
+        manifests = await FilterValidManifestGraphsAsync(manifests, (manifest, exception) =>
+            issues.Add(new RepositoryScrubIssue(RepositoryScrubIssueSeverity.Critical, RepositoryScrubIssueKind.InvalidManifest,
+                rootPath, manifest.VersionId, null, exception.Message, RepositoryRepairAction.Unresolved)), cancellationToken).ConfigureAwait(false);
         var checkedChunks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var usedBytes = new Dictionary<string, long>(GetMirrorNodeUsedBytes(), StringComparer.OrdinalIgnoreCase);
 
         foreach (var manifest in manifests)
         {
@@ -424,7 +493,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                                 continue;
                             }
 
-                            RepairChunk(mirrorNode.Path, rootPath, chunk.Digest);
+                            await publisher.RepairAsync(mirrorNode.Path, rootPath, ChunkDescriptor.FromChunk(chunk), cancellationToken).ConfigureAwait(false);
                             issues.Add(new RepositoryScrubIssue(
                                 Severity: RepositoryScrubIssueSeverity.Warning,
                                 Kind: primary.IssueKind ?? RepositoryScrubIssueKind.CorruptChunk,
@@ -448,15 +517,15 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                             ChunkDigest: chunk.Digest,
                             Message: primary.Message ?? "Primary chunk is unavailable or corrupt and no healthy repair copy exists.",
                             RepairAction: RepositoryRepairAction.Unresolved));
+                        continue;
                     }
-
-                    continue;
                 }
 
-                var targetNodeIds = mirrorPlacementPlanner
-                    .SelectChunkTargets(chunk.Digest, chunk.StoredLength, mirrorSet, GetMirrorNodeUsedBytes())
-                    .TargetNodeIds
-                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                var selection = SelectVerifiedMirrorTargets(chunk, usedBytes);
+                if (selection.IsUnderSatisfied)
+                    issues.Add(new RepositoryScrubIssue(RepositoryScrubIssueSeverity.Warning, RepositoryScrubIssueKind.MirrorDrift,
+                        rootPath, manifest.VersionId, chunk.Digest, "Required mirror copies cannot fit within the available capacity.", RepositoryRepairAction.None));
+                var targetNodeIds = selection.TargetNodeIds.ToHashSet(StringComparer.OrdinalIgnoreCase);
                 foreach (var mirrorNode in mirrorNodes)
                 {
                     if (!targetNodeIds.Contains(mirrorNode.Id))
@@ -472,7 +541,9 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
                     if (autoRepairFromMirror)
                     {
-                        RepairChunk(rootPath, mirrorNode.Path, chunk.Digest);
+                        var oldBytes = GetFileLength(ChunkPath(mirrorNode.Path, chunk.Digest)) + GetFileLength(MetadataPath(mirrorNode.Path, chunk.Digest));
+                        await publisher.RepairAsync(rootPath, mirrorNode.Path, ChunkDescriptor.FromChunk(chunk), cancellationToken).ConfigureAwait(false);
+                        usedBytes[mirrorNode.Id] += GetFileLength(ChunkPath(mirrorNode.Path, chunk.Digest)) + GetFileLength(MetadataPath(mirrorNode.Path, chunk.Digest)) - oldBytes;
                         issues.Add(new RepositoryScrubIssue(
                             Severity: RepositoryScrubIssueSeverity.Warning,
                             Kind: RepositoryScrubIssueKind.MirrorDrift,
@@ -529,7 +600,10 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         string? requestedMirrorNodeId,
         CancellationToken cancellationToken)
     {
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.Required, cancellationToken).ConfigureAwait(false);
         var allNodes = mirrorNodes.ToArray();
+        var usedBytes = new Dictionary<string, long>(GetMirrorNodeUsedBytes(), StringComparer.OrdinalIgnoreCase);
+        var checkedChunks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var nodeIssues = allNodes.ToDictionary(
             node => node.Id,
             _ => new List<MirrorRepairIssue>(),
@@ -543,6 +617,11 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 primaryIssues,
                 cancellationToken)
             .ConfigureAwait(false);
+
+        ValidateReferencedDescriptors(manifests);
+        manifests = await FilterValidManifestGraphsAsync(manifests, (manifest, exception) =>
+            primaryIssues.Add(new MirrorRepairIssue(null, null, RepositoryScrubIssueSeverity.Critical, MirrorRepairArtefactKind.Manifest,
+                rootPath, manifest.VersionId, null, exception.Message, MirrorRepairAction.Unresolved)), cancellationToken).ConfigureAwait(false);
 
         foreach (var node in allNodes)
         {
@@ -571,7 +650,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             if (metadataStore is null)
             {
                 var primaryManifestPath = ManifestPath(rootPath, manifest.VersionId);
-                var primaryManifestBytes = await File.ReadAllBytesAsync(primaryManifestPath, cancellationToken).ConfigureAwait(false);
+                var primaryManifestBytes = (await ReadManifestObjectAsync(primaryManifestPath, cancellationToken).ConfigureAwait(false)).Bytes;
 
                 foreach (var node in allNodes)
                 {
@@ -588,7 +667,9 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
                     if (!isPreview && ShouldRepairNode(node, requestedMirrorNodeId))
                     {
+                        var oldBytes = GetFileLength(ManifestPath(node.Path, manifest.VersionId));
                         AtomicWriteOverwrite(ManifestPath(node.Path, manifest.VersionId), primaryManifestBytes);
+                        usedBytes[node.Id] += primaryManifestBytes.Length - oldBytes;
                         manifestIssue = manifestIssue with { RepairAction = MirrorRepairAction.RepairedMirrorFromPrimary };
                     }
 
@@ -599,6 +680,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             foreach (var chunk in manifest.Chunks)
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                if (!checkedChunks.Add(chunk.Digest)) continue;
                 var primaryValidation = ValidateChunk(rootPath, chunk);
                 var primaryHealthy = primaryValidation.IsHealthy;
                 if (!primaryHealthy)
@@ -612,7 +694,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                     if (!isPreview && repairAll && issue.RepairAction == MirrorRepairAction.RepairedPrimaryFromMirror)
                     {
                         var sourceMirror = allNodes.First(node => ValidateChunk(node.Path, chunk).IsHealthy);
-                        RepairChunk(sourceMirror.Path, rootPath, chunk.Digest);
+                        await publisher.RepairAsync(sourceMirror.Path, rootPath, ChunkDescriptor.FromChunk(chunk), cancellationToken).ConfigureAwait(false);
                         primaryHealthy = true;
                     }
 
@@ -624,10 +706,11 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                     continue;
                 }
 
-                var targetNodeIds = mirrorPlacementPlanner
-                    .SelectChunkTargets(chunk.Digest, chunk.StoredLength, mirrorSet, GetMirrorNodeUsedBytes())
-                    .TargetNodeIds
-                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                var selection = SelectVerifiedMirrorTargets(chunk, usedBytes);
+                if (selection.IsUnderSatisfied)
+                    primaryIssues.Add(new MirrorRepairIssue(null, null, RepositoryScrubIssueSeverity.Warning, MirrorRepairArtefactKind.Repository,
+                        rootPath, manifest.VersionId, chunk.Digest, "Required mirror copies cannot fit within the available capacity.", MirrorRepairAction.None));
+                var targetNodeIds = selection.TargetNodeIds.ToHashSet(StringComparer.OrdinalIgnoreCase);
                 foreach (var node in allNodes)
                 {
                     if (!targetNodeIds.Contains(node.Id))
@@ -648,7 +731,9 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
                     if (!isPreview && ShouldRepairNode(node, requestedMirrorNodeId))
                     {
-                        RepairChunk(rootPath, node.Path, chunk.Digest);
+                        var oldBytes = GetFileLength(ChunkPath(node.Path, chunk.Digest)) + GetFileLength(MetadataPath(node.Path, chunk.Digest));
+                        await publisher.RepairAsync(rootPath, node.Path, ChunkDescriptor.FromChunk(chunk), cancellationToken).ConfigureAwait(false);
+                        usedBytes[node.Id] += GetFileLength(ChunkPath(node.Path, chunk.Digest)) + GetFileLength(MetadataPath(node.Path, chunk.Digest)) - oldBytes;
                         issues = issues
                             .Select(issue => issue with { RepairAction = MirrorRepairAction.RepairedMirrorFromPrimary })
                             .ToList();
@@ -700,7 +785,9 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             var versionId = Path.GetFileNameWithoutExtension(path);
             try
             {
-                manifests.Add(await ReadManifestAsync(path, cancellationToken).ConfigureAwait(false));
+                var manifest = await ReadManifestByVersionAsync(Path.GetFileNameWithoutExtension(path), cancellationToken).ConfigureAwait(false);
+                await ValidateManifestGraphAsync(manifest, ReadManifestByVersionAsync, cancellationToken).ConfigureAwait(false);
+                manifests.Add(manifest);
             }
             catch (Exception exception) when (exception is JsonException or IOException or InvalidDataException)
             {
@@ -717,8 +804,10 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
                         try
                         {
-                            var mirrorManifest = await ReadManifestAsync(mirrorManifestPath, cancellationToken).ConfigureAwait(false);
-                            AtomicWriteOverwrite(path, await File.ReadAllBytesAsync(mirrorManifestPath, cancellationToken).ConfigureAwait(false));
+                            var (mirrorManifest, mirrorManifestBytes) = await ReadManifestObjectAsync(mirrorManifestPath, cancellationToken).ConfigureAwait(false);
+                            await ValidateManifestGraphAsync(mirrorManifest,
+                                (id, token) => ReadManifestAsync(ManifestPath(node.Path, id), token), cancellationToken).ConfigureAwait(false);
+                            AtomicWriteOverwrite(path, mirrorManifestBytes);
                             manifests.Add(mirrorManifest);
                             primaryIssues.Add(new MirrorRepairIssue(
                                 null,
@@ -849,7 +938,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
         try
         {
-            var bytes = File.ReadAllBytes(path);
+            var bytes = VerifiedChunkReader.ReadBoundedAsync(path, integrityLimits.MaxManifestBytes, default).GetAwaiter().GetResult();
             if (bytes.SequenceEqual(primaryManifestBytes))
             {
                 return null;
@@ -917,25 +1006,13 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         {
             try
             {
-                var payload = File.ReadAllBytes(path);
+                var payload = VerifiedChunkReader.ReadBoundedAsync(path, integrityLimits.MaxStoredChunkBytes, default).GetAwaiter().GetResult();
                 if (payload.Length != manifestChunk.StoredLength)
                 {
                     return NewChunkIssue($"Mirror '{node.Label}' chunk stored length differs from the manifest.");
                 }
 
-                var raw = manifestChunk.Encoding == ChunkEncoding.Raw
-                    ? payload
-                    : codec.Decompress(payload, manifestChunk.Length, manifestChunk.Encoding);
-                if (raw.Length != manifestChunk.Length)
-                {
-                    return NewChunkIssue($"Mirror '{node.Label}' chunk logical length differs from the manifest.");
-                }
-
-                var digest = hasher.Hash(raw);
-                if (!string.Equals(digest, manifestChunk.Digest, StringComparison.OrdinalIgnoreCase))
-                {
-                    return NewChunkIssue($"Mirror '{node.Label}' chunk digest differs from the manifest.");
-                }
+                verifiedReader.DecodeAndVerify(payload, ChunkDescriptor.FromChunk(manifestChunk));
 
                 return null;
             }
@@ -1004,6 +1081,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         int maxVersions,
         CancellationToken cancellationToken = default)
     {
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
         ArgumentException.ThrowIfNullOrWhiteSpace(tempRoot);
         var requested = Math.Max(0, maxVersions);
         var manifests = (await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false))
@@ -1013,20 +1091,22 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             .Take(requested)
             .ToArray();
         var results = new List<RestoreRehearsalResult>();
+        ValidateRestoreDestination(Path.GetFullPath(tempRoot));
+        var operationRoot = Path.Combine(Path.GetFullPath(tempRoot), $"rehearsal-{Guid.NewGuid():N}");
 
         try
         {
-            Directory.CreateDirectory(tempRoot);
+            Directory.CreateDirectory(operationRoot);
             foreach (var manifest in manifests)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var fileName = string.IsNullOrWhiteSpace(Path.GetFileName(manifest.SourcePath))
                     ? $"{manifest.VersionId}.rehearsal"
                     : $"{manifest.VersionId}-{Path.GetFileName(manifest.SourcePath)}";
-                var outputPath = Path.Combine(tempRoot, fileName);
+                var outputPath = Path.Combine(operationRoot, fileName);
                 try
                 {
-                    await RestoreManifestAsync(manifest, outputPath, writeRestoreHint: false, cancellationToken)
+                    await RestoreManifestAsync(manifest, outputPath, destinationExisted: false, writeRestoreHint: false, cancellationToken)
                         .ConfigureAwait(false);
                     var restoredLength = new FileInfo(outputPath).Length;
                     var success = restoredLength == manifest.LogicalLength;
@@ -1052,16 +1132,16 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
         finally
         {
-            if (Directory.Exists(tempRoot))
+            if (Directory.Exists(operationRoot))
             {
-                Directory.Delete(tempRoot, recursive: true);
+                Directory.Delete(operationRoot, recursive: true);
             }
         }
 
         var failures = results.Count(result => !result.Success);
         return new RestoreRehearsalReport(
             CompletedAtUtc: DateTimeOffset.UtcNow,
-            HealthState: failures == 0 ? RepositoryHealthState.Healthy : RepositoryHealthState.Critical,
+            HealthState: failures > 0 ? RepositoryHealthState.Critical : results.Count == 0 ? RepositoryHealthState.Warning : RepositoryHealthState.Healthy,
             RequestedVersionCount: requested,
             RehearsedVersionCount: results.Count - failures,
             FailedVersionCount: failures,
@@ -1073,6 +1153,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         DateTimeOffset nowUtc,
         CancellationToken cancellationToken = default)
     {
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
         ArgumentNullException.ThrowIfNull(policy);
         var state = await BuildRetentionStateAsync(policy, nowUtc, cancellationToken).ConfigureAwait(false);
         return new RepositoryRetentionPreview(
@@ -1089,11 +1170,11 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(policy);
-        await RepositoryLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.Required, cancellationToken).ConfigureAwait(false);
         try
         {
             var state = await BuildRetentionStateAsync(policy, nowUtc, cancellationToken).ConfigureAwait(false);
-            var mirrorWarnings = new List<string>();
+            var mirrorWarnings = new List<string>(lease.Warnings);
             var reclaimedBytes = 0L;
             if (state.PrunableManifests.Count > 0)
             {
@@ -1152,7 +1233,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         }
         finally
         {
-            RepositoryLock.Release();
+            mutationManifestCache = null;
         }
     }
 
@@ -1191,279 +1272,188 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         };
     }
 
-    private IReadOnlyList<string> MirrorChunkIfNeeded(string digest, PreparedChunk prepared)
+    private async Task<IReadOnlyList<string>> MirrorChunkIfNeededAsync(ChunkDescriptor descriptor,
+        Dictionary<string, long> usedBytes, CancellationToken cancellationToken)
     {
-        if (mirrorNodes.Count == 0)
-        {
-            return [];
-        }
-
         var warnings = new List<string>();
-        var selection = mirrorPlacementPlanner.SelectChunkTargets(
-            digest,
-            prepared.Metadata.StoredLength,
-            mirrorSet,
-            GetMirrorNodeUsedBytes());
+        var metadataBytes = JsonSerializer.SerializeToUtf8Bytes(new ChunkMetadata(descriptor.Digest, descriptor.LogicalLength, descriptor.StoredLength, descriptor.Encoding), JsonOptions).Length;
+        var selection = mirrorPlacementPlanner.SelectChunkTargets(descriptor.Digest, descriptor.StoredLength + metadataBytes,
+            new MirrorSetConfiguration(mirrorNodes, mirrorSet.PlacementPolicy), usedBytes);
         if (selection.IsUnderSatisfied)
-        {
-            warnings.Add($"Mirror placement for chunk {digest} is under-satisfied: {selection.TargetNodeIds.Count} of {selection.RequiredCopyCount} required mirror copy/copies are available.");
-        }
-
-        foreach (var mirrorNode in selection.TargetNodes)
+            warnings.Add($"Mirror placement for chunk {descriptor.Digest} is under-satisfied: {selection.TargetNodeIds.Count} of {selection.RequiredCopyCount} required mirror copies are available.");
+        foreach (var node in selection.TargetNodes)
         {
             try
             {
-                AtomicWrite(ChunkPath(mirrorNode.Path, digest), prepared.Payload);
-                AtomicWrite(MetadataPath(mirrorNode.Path, digest), JsonSerializer.SerializeToUtf8Bytes(prepared.Metadata, JsonOptions));
+                var oldLength = GetFileLength(ChunkPath(node.Path, descriptor.Digest)) + GetFileLength(MetadataPath(node.Path, descriptor.Digest));
+                await publisher.RepairAsync(rootPath, node.Path, descriptor, cancellationToken).ConfigureAwait(false);
+                usedBytes[node.Id] += GetFileLength(ChunkPath(node.Path, descriptor.Digest)) + GetFileLength(MetadataPath(node.Path, descriptor.Digest)) - oldLength;
             }
             catch (Exception exception) when (IsMirrorIoFailure(exception))
-            {
-                warnings.Add(FormatMirrorWarning(mirrorNode, $"write chunk {digest}", exception));
-            }
+            { warnings.Add(FormatMirrorWarning(node, $"write verified chunk {descriptor.Digest}", exception)); }
         }
-
         return warnings;
     }
 
-    public async Task<MirrorRebalancePreviewReport> PreviewMirrorRebalanceAsync(
-        CancellationToken cancellationToken = default)
+    public async Task<MirrorRebalancePreviewReport> PreviewMirrorRebalanceAsync(CancellationToken cancellationToken = default)
     {
-        return await BuildMirrorRebalanceReportAsync(cancellationToken, isPreview: true).ConfigureAwait(false);
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.Required, cancellationToken).ConfigureAwait(false);
+        return await BuildMirrorRebalanceReportAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<MirrorRebalancePreviewReport> RunMirrorRebalanceAsync(
-        CancellationToken cancellationToken = default)
+    public async Task<MirrorRebalancePreviewReport> RunMirrorRebalanceAsync(CancellationToken cancellationToken = default)
     {
-        var initial = await BuildMirrorRebalanceReportAsync(cancellationToken, isPreview: true).ConfigureAwait(false);
-        foreach (var action in initial.Actions.Where(action => action.Action == MirrorRebalanceActionKind.CopyToMirror))
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var sourcePath = action.ArtefactKind == MirrorRebalanceArtefactKind.Chunk
-                ? ChunkPath(rootPath, action.ChunkDigest)
-                : MetadataPath(rootPath, action.ChunkDigest);
-            if (!File.Exists(sourcePath))
-            {
-                continue;
-            }
-
-            AtomicWrite(action.Path, await File.ReadAllBytesAsync(sourcePath, cancellationToken).ConfigureAwait(false));
-        }
-
-        var afterCopies = await BuildMirrorRebalanceReportAsync(cancellationToken, isPreview: false).ConfigureAwait(false);
-        var blockedChunks = afterCopies.Actions
-            .Where(action => action.Action is MirrorRebalanceActionKind.CopyToMirror or MirrorRebalanceActionKind.Unresolved)
-            .Select(action => action.ChunkDigest)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var action in afterCopies.Actions.Where(action => action.Action == MirrorRebalanceActionKind.DeleteFromMirror))
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (blockedChunks.Contains(action.ChunkDigest))
-            {
-                continue;
-            }
-
-            if (File.Exists(action.Path))
-            {
-                File.Delete(action.Path);
-            }
-        }
-
-        return await BuildMirrorRebalanceReportAsync(cancellationToken, isPreview: false).ConfigureAwait(false);
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.Required, cancellationToken).ConfigureAwait(false);
+        var executed = await BuildMirrorRebalanceReportAsync(cancellationToken, isPreview: false, execute: true).ConfigureAwait(false);
+        var final = await BuildMirrorRebalanceReportAsync(cancellationToken, isPreview: false).ConfigureAwait(false);
+        var failures = executed.Actions.Where(action => action.Action == MirrorRebalanceActionKind.Unresolved).ToArray();
+        if (failures.Length == 0) return final;
+        var actions = final.Actions.Concat(failures).Distinct().ToArray();
+        return final with { HealthState = RepositoryHealthState.Warning, Actions = actions, ActionCount = actions.Length,
+            Nodes = mirrorNodes.Select(node => BuildMirrorNodeRebalancePreview(node, actions.Where(action => action.MirrorNodeId == node.Id).ToArray())).ToArray() };
     }
 
-    public async Task<MirrorRebalancePreviewReport> PreviewMirrorDrainAsync(
-        string mirrorNodeId,
-        CancellationToken cancellationToken = default)
+    public async Task<MirrorRebalancePreviewReport> PreviewMirrorDrainAsync(string mirrorNodeId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(mirrorNodeId);
-        return await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId, isPreview: true).ConfigureAwait(false);
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.Required, cancellationToken).ConfigureAwait(false);
+        return await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId).ConfigureAwait(false);
     }
 
-    public async Task<MirrorRebalancePreviewReport> RunMirrorDrainAsync(
-        string mirrorNodeId,
-        CancellationToken cancellationToken = default)
+    public async Task<MirrorRebalancePreviewReport> RunMirrorDrainAsync(string mirrorNodeId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(mirrorNodeId);
-        var initial = await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId, isPreview: true).ConfigureAwait(false);
-        foreach (var action in initial.Actions.Where(action => action.Action == MirrorRebalanceActionKind.CopyToMirror))
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var sourcePath = action.ArtefactKind == MirrorRebalanceArtefactKind.Chunk
-                ? ChunkPath(rootPath, action.ChunkDigest)
-                : MetadataPath(rootPath, action.ChunkDigest);
-            if (!File.Exists(sourcePath))
-            {
-                continue;
-            }
-
-            AtomicWrite(action.Path, await File.ReadAllBytesAsync(sourcePath, cancellationToken).ConfigureAwait(false));
-        }
-
-        var afterCopies = await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId, isPreview: false).ConfigureAwait(false);
-        var blockedChunks = afterCopies.Actions
-            .Where(action => action.Action is MirrorRebalanceActionKind.CopyToMirror or MirrorRebalanceActionKind.Unresolved)
-            .Select(action => action.ChunkDigest)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var action in afterCopies.Actions.Where(action => action.Action == MirrorRebalanceActionKind.DeleteFromMirror))
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (blockedChunks.Contains(action.ChunkDigest))
-            {
-                continue;
-            }
-
-            if (File.Exists(action.Path))
-            {
-                File.Delete(action.Path);
-            }
-        }
-
-        return await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId, isPreview: false).ConfigureAwait(false);
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.Required, cancellationToken).ConfigureAwait(false);
+        var executed = await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId, isPreview: false, execute: true).ConfigureAwait(false);
+        var final = await BuildMirrorRebalanceReportAsync(cancellationToken, mirrorNodeId, isPreview: false).ConfigureAwait(false);
+        var failures = executed.Actions.Where(action => action.Action == MirrorRebalanceActionKind.Unresolved).ToArray();
+        if (failures.Length == 0) return final;
+        var actions = final.Actions.Concat(failures).Distinct().ToArray();
+        return final with { HealthState = RepositoryHealthState.Warning, Actions = actions, ActionCount = actions.Length,
+            Nodes = mirrorNodes.Select(node => BuildMirrorNodeRebalancePreview(node, actions.Where(action => action.MirrorNodeId == node.Id).ToArray())).ToArray() };
     }
 
-    private async Task<MirrorRebalancePreviewReport> BuildMirrorRebalanceReportAsync(
-        CancellationToken cancellationToken,
-        string? drainMirrorNodeId = null,
-        bool isPreview = true)
+    private async Task<MirrorRebalancePreviewReport> BuildMirrorRebalanceReportAsync(CancellationToken cancellationToken,
+        string? drainMirrorNodeId = null, bool isPreview = true, bool execute = false)
     {
         var manifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
-        var chunks = manifests
-            .SelectMany(manifest => manifest.Chunks)
-            .GroupBy(chunk => chunk.Digest, StringComparer.OrdinalIgnoreCase)
-            .Select(group => group.First())
-            .ToArray();
-        var operation = string.IsNullOrWhiteSpace(drainMirrorNodeId)
-            ? MirrorRebalanceOperation.Placement
-            : MirrorRebalanceOperation.Drain;
-        var drainNode = operation == MirrorRebalanceOperation.Drain
-            ? mirrorNodes.FirstOrDefault(node => string.Equals(node.Id, drainMirrorNodeId, StringComparison.OrdinalIgnoreCase))
-            : null;
-        var nodeActions = mirrorNodes.ToDictionary(
-            node => node.Id,
-            _ => new List<MirrorRebalanceAction>(),
-            StringComparer.OrdinalIgnoreCase);
-        var usedBytes = GetMirrorNodeUsedBytes();
-
-        if (operation == MirrorRebalanceOperation.Drain && drainNode is null)
-        {
-            var invalidNodeActions = new[]
-            {
-                new MirrorRebalanceAction(
-                    MirrorRebalanceActionKind.Unresolved,
-                    MirrorRebalanceArtefactKind.Chunk,
-                    drainMirrorNodeId!,
-                    drainMirrorNodeId!,
-                    string.Empty,
-                    string.Empty,
-                    0,
-                    $"Mirror node '{drainMirrorNodeId}' is not an enabled configured mirror.")
-            };
-
-            return new MirrorRebalancePreviewReport(
-                DateTimeOffset.UtcNow,
-                RepositoryHealthState.Warning,
-                chunks.Length,
-                invalidNodeActions.Length,
-                0,
-                0,
-                mirrorNodes.Select(node => BuildMirrorNodeRebalancePreview(node, nodeActions[node.Id])).ToArray(),
-                invalidNodeActions,
-                operation,
-                isPreview,
-                drainMirrorNodeId);
-        }
-
-        var planningMirrorSet = operation == MirrorRebalanceOperation.Drain
-            ? new MirrorSetConfiguration(
-                mirrorSet.Nodes
-                    .Where(node => !string.Equals(node.Id, drainMirrorNodeId, StringComparison.OrdinalIgnoreCase))
-                    .ToArray(),
-                mirrorSet.PlacementPolicy).Normalise()
-            : mirrorSet;
-
-        foreach (var chunk in chunks)
+        ValidateReferencedDescriptors(manifests);
+        var chunks = manifests.SelectMany(manifest => manifest.Chunks).DistinctBy(chunk => chunk.Digest, StringComparer.OrdinalIgnoreCase).ToArray();
+        var draining = drainMirrorNodeId is not null;
+        var drainNode = mirrorNodes.FirstOrDefault(node => string.Equals(node.Id, drainMirrorNodeId, StringComparison.OrdinalIgnoreCase));
+        var nodeActions = mirrorNodes.ToDictionary(node => node.Id, _ => new List<MirrorRebalanceAction>(), StringComparer.OrdinalIgnoreCase);
+        var primaryActions = new List<MirrorRebalanceAction>();
+        var usedBytes = new Dictionary<string, long>(GetMirrorNodeUsedBytes(), StringComparer.OrdinalIgnoreCase);
+        var planningSet = new MirrorSetConfiguration(mirrorNodes.Where(node => !draining || node.Id != drainNode?.Id).ToArray(), mirrorSet.PlacementPolicy).Normalise();
+        if (draining && drainNode is null)
+            AddUnresolved(null, "", $"Mirror node '{drainMirrorNodeId}' is not an enabled configured mirror.");
+        else foreach (var chunk in chunks)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var primaryValidation = ValidateChunk(rootPath, chunk);
-            var selection = mirrorPlacementPlanner.SelectChunkTargets(
-                chunk.Digest,
-                chunk.StoredLength,
-                planningMirrorSet,
-                usedBytes);
-            var targetIds = selection.TargetNodeIds.ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-            if (operation == MirrorRebalanceOperation.Drain && targetIds.Count == 0 && drainNode is not null)
+            var descriptor = ChunkDescriptor.FromChunk(chunk);
+            var health = mirrorNodes.ToDictionary(node => node.Id, node => ValidateChunk(node.Path, chunk).IsHealthy, StringComparer.OrdinalIgnoreCase);
+            var primaryHealthy = ValidateChunk(rootPath, chunk).IsHealthy;
+            var donor = primaryHealthy ? rootPath : mirrorNodes.FirstOrDefault(node => health[node.Id])?.Path;
+            var sidecarBytes = JsonSerializer.SerializeToUtf8Bytes(new ChunkMetadata(descriptor.Digest, descriptor.LogicalLength, descriptor.StoredLength, descriptor.Encoding)).Length;
+            var footprint = descriptor.StoredLength + sidecarBytes;
+            var effectiveUsage = planningSet.EnabledNodes.ToDictionary(node => node.Id,
+                node => health[node.Id] ? Math.Min(usedBytes[node.Id], node.CapacityBudgetBytes ?? usedBytes[node.Id]) - footprint : usedBytes[node.Id],
+                StringComparer.OrdinalIgnoreCase);
+            var selection = mirrorPlacementPlanner.SelectChunkTargets(descriptor.Digest, footprint, planningSet, effectiveUsage);
+            var required = draining ? Math.Max(1, selection.RequiredCopyCount) : selection.RequiredCopyCount;
+            var targets = selection.TargetNodes;
+            var satisfied = targets.Count >= required;
+            if (donor is null)
             {
-                AddDrainWithoutTargetAction(nodeActions[drainNode.Id], drainNode, chunk.Digest);
+                AddUnresolved(drainNode, descriptor.Digest, "No verified donor matches the acknowledged chunk descriptor.");
+                continue;
             }
-
-            foreach (var node in mirrorNodes)
+            if (!primaryHealthy)
             {
-                if (!nodeActions.TryGetValue(node.Id, out var currentNodeActions))
+                if (execute)
                 {
+                    try
+                    {
+                        await publisher.RepairAsync(donor, rootPath, descriptor, cancellationToken).ConfigureAwait(false);
+                        primaryHealthy = true;
+                    }
+                    catch (Exception exception) when (IsMirrorIoFailure(exception))
+                    { AddUnresolved(null, descriptor.Digest, $"Primary repair failed: {exception.Message}"); continue; }
+                }
+                else AddUnresolved(null, descriptor.Digest, "Primary repair from a verified mirror is required before deletion.");
+            }
+            foreach (var target in targets.Where(node => !health[node.Id]))
+            {
+                if (!execute)
+                {
+                    AddAction(target, descriptor, MirrorRebalanceActionKind.CopyToMirror, "Verify and repair the required mirror copy before deleting any donor.");
                     continue;
                 }
-
-                if (operation == MirrorRebalanceOperation.Drain)
+                try
                 {
-                    if (string.Equals(node.Id, drainMirrorNodeId, StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (!Directory.Exists(node.Path))
-                        {
-                            AddUnavailableNodeAction(currentNodeActions, node, chunk.Digest);
-                            continue;
-                        }
-
-                        AddDrainDeleteAction(currentNodeActions, node, chunk, ChunkPath(node.Path, chunk.Digest), MirrorRebalanceArtefactKind.Chunk);
-                        AddDrainDeleteAction(currentNodeActions, node, chunk, MetadataPath(node.Path, chunk.Digest), MirrorRebalanceArtefactKind.Metadata);
-                        continue;
-                    }
-
-                    if (!targetIds.Contains(node.Id))
-                    {
-                        continue;
-                    }
+                    var oldBytes = GetFileLength(ChunkPath(target.Path, descriptor.Digest)) + GetFileLength(MetadataPath(target.Path, descriptor.Digest));
+                    await publisher.RepairAsync(rootPath, target.Path, descriptor, cancellationToken).ConfigureAwait(false);
+                    usedBytes[target.Id] += GetFileLength(ChunkPath(target.Path, descriptor.Digest)) + GetFileLength(MetadataPath(target.Path, descriptor.Digest)) - oldBytes;
+                    health[target.Id] = true;
                 }
-
-                if (!Directory.Exists(node.Path))
+                catch (Exception exception) when (IsMirrorIoFailure(exception))
+                { satisfied = false; AddUnresolved(target, descriptor.Digest, $"Mirror repair failed: {exception.Message}"); }
+            }
+            if (!satisfied)
+            {
+                AddUnresolved(drainNode, descriptor.Digest, $"Required mirror copies cannot be established ({targets.Count} of {required}); all departing objects were preserved.");
+                continue;
+            }
+            var targetIds = targets.Select(node => node.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var departing = mirrorNodes.Where(node => draining ? node.Id == drainNode!.Id : !targetIds.Contains(node.Id));
+            foreach (var node in departing)
+            {
+                if (!File.Exists(ChunkPath(node.Path, descriptor.Digest)) && !File.Exists(MetadataPath(node.Path, descriptor.Digest))) continue;
+                if (!execute)
                 {
-                    AddUnavailableNodeAction(currentNodeActions, node, chunk.Digest);
+                    AddAction(node, descriptor, MirrorRebalanceActionKind.DeleteFromMirror, "Remove only after primary and required surviving mirrors verify.");
                     continue;
                 }
-
-                var chunkPath = ChunkPath(node.Path, chunk.Digest);
-                var metadataPath = MetadataPath(node.Path, chunk.Digest);
-                if (targetIds.Contains(node.Id))
+                try
                 {
-                    AddMissingAction(currentNodeActions, node, chunk, chunkPath, MirrorRebalanceArtefactKind.Chunk, primaryValidation.IsHealthy);
-                    AddMissingAction(currentNodeActions, node, chunk, metadataPath, MirrorRebalanceArtefactKind.Metadata, primaryValidation.IsHealthy);
+                    // Validate complete surviving pairs immediately before either donor artefact is removed.
+                    await verifiedReader.ReadAsync(rootPath, descriptor, cancellationToken).ConfigureAwait(false);
+                    foreach (var target in targets) await verifiedReader.ReadAsync(target.Path, descriptor, cancellationToken).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var oldBytes = GetFileLength(ChunkPath(node.Path, descriptor.Digest)) + GetFileLength(MetadataPath(node.Path, descriptor.Digest));
+                    File.Delete(ChunkPath(node.Path, descriptor.Digest));
+                    faults?.Hit(RepositoryFaultPoint.DepartingPayloadDeleted, ChunkPath(node.Path, descriptor.Digest));
+                    File.Delete(MetadataPath(node.Path, descriptor.Digest));
+                    usedBytes[node.Id] -= oldBytes;
                 }
-                else
-                {
-                    AddExtraAction(currentNodeActions, node, chunk, chunkPath, MirrorRebalanceArtefactKind.Chunk);
-                    AddExtraAction(currentNodeActions, node, chunk, metadataPath, MirrorRebalanceArtefactKind.Metadata);
-                }
+                catch (Exception exception) when (IsMirrorIoFailure(exception))
+                { AddUnresolved(node, descriptor.Digest, $"Deletion was stopped: {exception.Message}"); }
             }
         }
-
-        var actions = nodeActions.Values.SelectMany(static actions => actions).ToArray();
-        var nodes = mirrorNodes
-            .Select(node => BuildMirrorNodeRebalancePreview(node, nodeActions[node.Id]))
-            .ToArray();
-        return new MirrorRebalancePreviewReport(
-            DateTimeOffset.UtcNow,
+        var actions = primaryActions.Concat(nodeActions.Values.SelectMany(actions => actions)).ToArray();
+        return new MirrorRebalancePreviewReport(DateTimeOffset.UtcNow,
             actions.Length == 0 ? RepositoryHealthState.Healthy : RepositoryHealthState.Warning,
-            chunks.Length,
-            actions.Length,
+            chunks.Length, actions.Length,
             actions.Where(action => action.Action == MirrorRebalanceActionKind.CopyToMirror).Sum(action => action.EstimatedBytes),
             actions.Where(action => action.Action == MirrorRebalanceActionKind.DeleteFromMirror).Sum(action => action.EstimatedBytes),
-            nodes,
-            actions,
-            operation,
-            isPreview,
-            drainMirrorNodeId);
+            mirrorNodes.Select(node => BuildMirrorNodeRebalancePreview(node, nodeActions[node.Id])).ToArray(), actions,
+            draining ? MirrorRebalanceOperation.Drain : MirrorRebalanceOperation.Placement, isPreview, drainMirrorNodeId);
+
+        void AddUnresolved(MirrorNodeConfiguration? node, string digest, string message)
+        {
+            var action = new MirrorRebalanceAction(MirrorRebalanceActionKind.Unresolved, MirrorRebalanceArtefactKind.Chunk,
+                node?.Id ?? "primary", node?.Label ?? "Primary", node?.Path ?? rootPath, digest, 0, message);
+            if (node is null) primaryActions.Add(action); else nodeActions[node.Id].Add(action);
+        }
+        void AddAction(MirrorNodeConfiguration node, ChunkDescriptor descriptor, MirrorRebalanceActionKind kind, string message)
+        {
+            if (kind == MirrorRebalanceActionKind.CopyToMirror || File.Exists(ChunkPath(node.Path, descriptor.Digest)))
+                nodeActions[node.Id].Add(new MirrorRebalanceAction(kind, MirrorRebalanceArtefactKind.Chunk, node.Id, node.Label,
+                    ChunkPath(node.Path, descriptor.Digest), descriptor.Digest, descriptor.StoredLength, message));
+            if (kind == MirrorRebalanceActionKind.CopyToMirror || File.Exists(MetadataPath(node.Path, descriptor.Digest)))
+                nodeActions[node.Id].Add(new MirrorRebalanceAction(kind, MirrorRebalanceArtefactKind.Metadata, node.Id, node.Label,
+                    MetadataPath(node.Path, descriptor.Digest), descriptor.Digest, integrityLimits.MaxSidecarBytes, message));
+        }
     }
 
     private IReadOnlyList<string> MirrorManifestIfNeeded(string versionId, byte[] manifestBytes)
@@ -1505,9 +1495,15 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             return [];
         }
 
+        var pending = manifests.ToDictionary(manifest => manifest.VersionId, StringComparer.OrdinalIgnoreCase);
+        foreach (var manifest in manifests)
+            await ValidateManifestGraphAsync(manifest, (id, token) => pending.TryGetValue(id, out var item)
+                ? Task.FromResult(item) : ReadManifestByVersionAsync(id, token), cancellationToken).ConfigureAwait(false);
+
         if (metadataStore is not null)
         {
             await metadataStore.RecordVersionsAsync(manifests, cancellationToken).ConfigureAwait(false);
+            faults?.Hit(RepositoryFaultPoint.AfterMetadataRecorded, manifests.First().VersionId);
             try
             {
                 await metadataStore.ExportOutboxAsync(
@@ -1564,7 +1560,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 VersionId: Guid.CreateVersion7().ToString("N"),
                 WatchedFolderId: childManifest.WatchedFolderId,
                 SourcePath: folderPath,
-                CapturedAtUtc: childManifest.CapturedAtUtc,
+                CapturedAtUtc: NextFolderSnapshotTime(currentChild.CapturedAtUtc, parent),
                 Consistency: childManifest.Consistency,
                 LogicalLength: logicalLength,
                 Chunks: [],
@@ -1582,132 +1578,22 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         return manifests;
     }
 
-    private static void AddMissingAction(
-        List<MirrorRebalanceAction> actions,
-        MirrorNodeConfiguration node,
-        ManifestChunk chunk,
-        string path,
-        MirrorRebalanceArtefactKind artefactKind,
-        bool isPrimaryHealthy)
+    private static DateTimeOffset NextFolderSnapshotTime(DateTimeOffset candidate, FileVersionManifest? previous)
     {
-        if (File.Exists(path))
+        if (previous is null) return candidate;
+        try
         {
-            return;
+            // Folder snapshots describe serial publication, whereas file timestamps describe capture.
+            // PostgreSQL stores microseconds, so advance by at least one microsecond, even for a
+            // later candidate within the same microsecond. Selection and publication hold the lease.
+            var next = previous.CapturedAtUtc.ToUniversalTime().AddTicks(10);
+            return candidate > next ? candidate : next;
         }
-
-        if (!isPrimaryHealthy)
+        catch (ArgumentOutOfRangeException)
         {
-            actions.Add(new MirrorRebalanceAction(
-                MirrorRebalanceActionKind.Unresolved,
-                artefactKind,
-                node.Id,
-                node.Label,
-                path,
-                chunk.Digest,
-                0,
-                $"Mirror '{node.Label}' cannot receive {artefactKind.ToString().ToLowerInvariant()} for chunk {chunk.Digest} because the primary repository copy is missing or corrupt."));
-            return;
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest,
+                "The next folder snapshot time cannot be represented; no new version was acknowledged.");
         }
-
-        actions.Add(new MirrorRebalanceAction(
-            MirrorRebalanceActionKind.CopyToMirror,
-            artefactKind,
-            node.Id,
-            node.Label,
-            path,
-            chunk.Digest,
-            artefactKind == MirrorRebalanceArtefactKind.Chunk ? chunk.StoredLength : GetFileLength(path),
-            $"Mirror '{node.Label}' is missing required {artefactKind.ToString().ToLowerInvariant()} for chunk {chunk.Digest}."));
-    }
-
-    private static void AddUnavailableNodeAction(
-        List<MirrorRebalanceAction> actions,
-        MirrorNodeConfiguration node,
-        string chunkDigest)
-    {
-        if (actions.Any(action => action.Action == MirrorRebalanceActionKind.Unresolved
-                                  && string.Equals(action.ChunkDigest, chunkDigest, StringComparison.OrdinalIgnoreCase)))
-        {
-            return;
-        }
-
-        actions.Add(new MirrorRebalanceAction(
-            MirrorRebalanceActionKind.Unresolved,
-            MirrorRebalanceArtefactKind.Chunk,
-            node.Id,
-            node.Label,
-            node.Path,
-            chunkDigest,
-            0,
-            $"Mirror '{node.Label}' is unavailable at its configured path."));
-    }
-
-    private static void AddExtraAction(
-        List<MirrorRebalanceAction> actions,
-        MirrorNodeConfiguration node,
-        ManifestChunk chunk,
-        string path,
-        MirrorRebalanceArtefactKind artefactKind)
-    {
-        if (!File.Exists(path))
-        {
-            return;
-        }
-
-        actions.Add(new MirrorRebalanceAction(
-            MirrorRebalanceActionKind.DeleteFromMirror,
-            artefactKind,
-            node.Id,
-            node.Label,
-            path,
-            chunk.Digest,
-            GetFileLength(path),
-            $"Mirror '{node.Label}' has non-target {artefactKind.ToString().ToLowerInvariant()} for chunk {chunk.Digest}."));
-    }
-
-    private static void AddDrainDeleteAction(
-        List<MirrorRebalanceAction> actions,
-        MirrorNodeConfiguration node,
-        ManifestChunk chunk,
-        string path,
-        MirrorRebalanceArtefactKind artefactKind)
-    {
-        if (!File.Exists(path))
-        {
-            return;
-        }
-
-        actions.Add(new MirrorRebalanceAction(
-            MirrorRebalanceActionKind.DeleteFromMirror,
-            artefactKind,
-            node.Id,
-            node.Label,
-            path,
-            chunk.Digest,
-            GetFileLength(path),
-            $"Mirror '{node.Label}' will delete drained {artefactKind.ToString().ToLowerInvariant()} for chunk {chunk.Digest} after required copies exist elsewhere."));
-    }
-
-    private static void AddDrainWithoutTargetAction(
-        List<MirrorRebalanceAction> actions,
-        MirrorNodeConfiguration node,
-        string chunkDigest)
-    {
-        if (actions.Any(action => action.Action == MirrorRebalanceActionKind.Unresolved
-                                  && string.Equals(action.ChunkDigest, chunkDigest, StringComparison.OrdinalIgnoreCase)))
-        {
-            return;
-        }
-
-        actions.Add(new MirrorRebalanceAction(
-            MirrorRebalanceActionKind.Unresolved,
-            MirrorRebalanceArtefactKind.Chunk,
-            node.Id,
-            node.Label,
-            node.Path,
-            chunkDigest,
-            0,
-            $"Mirror '{node.Label}' cannot be drained for chunk {chunkDigest} because no remaining enabled mirror can hold the required copy."));
     }
 
     private static MirrorNodeRebalancePreview BuildMirrorNodeRebalancePreview(
@@ -1725,6 +1611,16 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             actions.Where(action => action.Action == MirrorRebalanceActionKind.DeleteFromMirror).Sum(action => action.EstimatedBytes));
     }
 
+    private MirrorPlacementSelection SelectVerifiedMirrorTargets(ManifestChunk chunk, IReadOnlyDictionary<string, long> usedBytes)
+    {
+        var metadataBytes = JsonSerializer.SerializeToUtf8Bytes(new ChunkMetadata(chunk.Digest, chunk.Length, chunk.StoredLength, chunk.Encoding)).Length;
+        var footprint = chunk.StoredLength + metadataBytes;
+        var effective = mirrorNodes.ToDictionary(node => node.Id,
+            node => ValidateChunk(node.Path, chunk).IsHealthy ? Math.Min(usedBytes[node.Id], node.CapacityBudgetBytes ?? usedBytes[node.Id]) - footprint : usedBytes[node.Id],
+            StringComparer.OrdinalIgnoreCase);
+        return mirrorPlacementPlanner.SelectChunkTargets(chunk.Digest, footprint, mirrorSet, effective);
+    }
+
     private IReadOnlyDictionary<string, long> GetMirrorNodeUsedBytes()
     {
         return mirrorNodes.ToDictionary(
@@ -1733,7 +1629,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             StringComparer.OrdinalIgnoreCase);
     }
 
-    private static ChunkMetadata? ReadChunkMetadata(string root, string digest)
+    private ChunkMetadata? ReadChunkMetadata(string root, string digest)
     {
         var path = MetadataPath(root, digest);
         if (!File.Exists(path))
@@ -1741,121 +1637,117 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             return null;
         }
 
-        return JsonSerializer.Deserialize<ChunkMetadata>(File.ReadAllBytes(path), JsonOptions);
+        return verifiedReader.ReadMetadataAsync(root, digest, default).GetAwaiter().GetResult();
     }
 
     private async Task<FileVersionManifest> ReadManifestByVersionAsync(string versionId, CancellationToken cancellationToken)
     {
-        if (metadataStore is not null)
-        {
-            return await metadataStore.ReadManifestAsync(versionId, cancellationToken).ConfigureAwait(false);
-        }
-
-        var manifestPath = ManifestPath(rootPath, versionId);
-        if (!File.Exists(manifestPath))
-        {
-            throw new FileNotFoundException($"Manifest {versionId} was not found.", manifestPath);
-        }
-
-        return await ReadManifestAsync(manifestPath, cancellationToken).ConfigureAwait(false);
+        VerifiedChunkReader.ValidateHex(versionId, 32, "version id");
+        if (metadataStore is null && !File.Exists(ManifestPath(rootPath, versionId)))
+            throw new FileNotFoundException($"Manifest {versionId} was not found.");
+        var manifest = metadataStore is not null
+            ? await metadataStore.ReadManifestAsync(versionId, cancellationToken).ConfigureAwait(false)
+            : await ReadManifestAsync(ManifestPath(rootPath, versionId), cancellationToken).ConfigureAwait(false);
+        if (!string.Equals(manifest.VersionId, versionId, StringComparison.OrdinalIgnoreCase))
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Manifest identity does not match the requested version.");
+        return manifest;
     }
 
-    private static async Task<FileVersionManifest> ReadManifestAsync(string manifestPath, CancellationToken cancellationToken)
+    private async Task<FileVersionManifest> ReadManifestAsync(string manifestPath, CancellationToken cancellationToken) =>
+        (await ReadManifestObjectAsync(manifestPath, cancellationToken).ConfigureAwait(false)).Manifest;
+
+    private async Task<(FileVersionManifest Manifest, byte[] Bytes)> ReadManifestObjectAsync(string manifestPath, CancellationToken cancellationToken)
     {
-        const int maxAttempts = 5;
-        for (var attempt = 1; ; attempt++)
-        {
-            try
-            {
-                await using var manifestStream = new FileStream(
-                    manifestPath,
-                    FileMode.Open,
-                    FileAccess.Read,
-                    FileShare.ReadWrite | FileShare.Delete,
-                    bufferSize: 4096,
-                    FileOptions.Asynchronous | FileOptions.SequentialScan);
-                return await JsonSerializer.DeserializeAsync<FileVersionManifest>(manifestStream, JsonOptions, cancellationToken)
-                    .ConfigureAwait(false)
-                    ?? throw new InvalidDataException($"Manifest {manifestPath} could not be read.");
-            }
-            catch (IOException) when (attempt < maxAttempts)
-            {
-                await Task.Delay(TimeSpan.FromMilliseconds(25 * attempt), cancellationToken).ConfigureAwait(false);
-            }
-        }
-    }
-
-    private async Task RestoreManifestAsync(
-        FileVersionManifest manifest,
-        string outputPath,
-        bool writeRestoreHint,
-        CancellationToken cancellationToken)
-    {
-        if (manifest.IsDeleted)
-        {
-            if (string.IsNullOrWhiteSpace(manifest.DeletedFromVersionId))
-            {
-                throw new InvalidDataException($"Deleted manifest {manifest.VersionId} does not identify a restorable version.");
-            }
-
-            var deletedFrom = await ReadManifestByVersionAsync(manifest.DeletedFromVersionId, cancellationToken).ConfigureAwait(false);
-            await RestoreManifestAsync(deletedFrom, outputPath, writeRestoreHint, cancellationToken).ConfigureAwait(false);
-            return;
-        }
-
-        if (manifest.EntryKind == RepositoryEntryKind.Folder)
-        {
-            Directory.CreateDirectory(outputPath);
-            foreach (var entry in (manifest.FolderEntries ?? []).Where(entry => !entry.IsDeleted))
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var childManifest = await ReadManifestByVersionAsync(entry.VersionId, cancellationToken).ConfigureAwait(false);
-                await RestoreManifestAsync(
-                        childManifest,
-                        Path.Combine(outputPath, entry.Name),
-                        writeRestoreHint,
-                        cancellationToken)
-                    .ConfigureAwait(false);
-            }
-
-            return;
-        }
-
-        var outputDirectory = Path.GetDirectoryName(outputPath);
-        if (!string.IsNullOrWhiteSpace(outputDirectory))
-        {
-            Directory.CreateDirectory(outputDirectory);
-        }
-
-        var tempPath = $"{outputPath}.{Guid.NewGuid():N}.tmp";
+        var expectedId = Path.GetFileNameWithoutExtension(manifestPath);
+        VerifiedChunkReader.ValidateHex(expectedId, 32, "version id");
+        var bytes = await VerifiedChunkReader.ReadBoundedAsync(manifestPath, integrityLimits.MaxManifestBytes, cancellationToken).ConfigureAwait(false);
         try
         {
-            await using var output = File.Create(tempPath);
-            foreach (var chunk in manifest.Chunks.OrderBy(chunk => chunk.Offset))
+            var manifest = JsonSerializer.Deserialize<FileVersionManifest>(bytes, JsonOptions) ?? throw new JsonException("Null manifest.");
+            if (!string.Equals(manifest.VersionId, expectedId, StringComparison.OrdinalIgnoreCase))
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Manifest identity disagrees with its stored filename.");
+            return (manifest, bytes);
+        }
+        catch (JsonException)
+        {
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Manifest is invalid.");
+        }
+    }
+
+    private async Task<RepositoryRestoreResult> RestoreManifestAsync(FileVersionManifest manifest, string outputPath, bool destinationExisted,
+        bool writeRestoreHint, CancellationToken cancellationToken)
+    {
+        outputPath = Path.GetFullPath(outputPath);
+        ValidateRestoreDestination(outputPath);
+        var plan = await new RestoreGraphValidator(verifiedReader, integrityLimits, ReadManifestByVersionAsync)
+            .BuildAsync(manifest, outputPath, cancellationToken).ConfigureAwait(false);
+        var folder = plan.Kind == RepositoryEntryKind.Folder;
+        if (folder && (Directory.Exists(outputPath) || File.Exists(outputPath)))
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Folder recovery requires a new destination. Existing folders cannot be merged.");
+        Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+        var stagedPath = outputPath + $".{Guid.NewGuid():N}.tmp";
+        try
+        {
+            if (folder)
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                var payload = await File.ReadAllBytesAsync(ChunkPath(rootPath, chunk.Digest), cancellationToken);
-                var bytes = chunk.Encoding == ChunkEncoding.Raw
-                    ? payload
-                    : codec.Decompress(payload, chunk.Length, chunk.Encoding);
-
-                await output.WriteAsync(bytes, cancellationToken);
+                Directory.CreateDirectory(stagedPath);
+                foreach (var directory in plan.Directories) Directory.CreateDirectory(Path.Combine(stagedPath, directory));
+                foreach (var file in plan.Files)
+                    await WriteVerifiedRestoreFileAsync(file.Manifest, Path.Combine(stagedPath, file.RelativePath), cancellationToken).ConfigureAwait(false);
             }
-
-            output.Close();
-            File.Move(tempPath, outputPath, overwrite: true);
+            else
+                await WriteVerifiedRestoreFileAsync(plan.Files.Single().Manifest, stagedPath, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            faults?.Hit(RepositoryFaultPoint.BeforeRestorePublication, outputPath);
+            cancellationToken.ThrowIfCancellationRequested();
+            ValidateRestoreDestination(outputPath);
+            if (folder) Directory.Move(stagedPath, outputPath);
+            else File.Move(stagedPath, outputPath, overwrite: destinationExisted);
+            var warnings = new List<string>();
             if (writeRestoreHint)
             {
-                WriteRestoreHint(outputPath, manifest);
+                foreach (var file in plan.Files)
+                {
+                    var restoredPath = folder ? Path.Combine(outputPath, file.RelativePath) : outputPath;
+                    try
+                    {
+                        faults?.Hit(RepositoryFaultPoint.AfterRestorePublication, restoredPath);
+                        faults?.Hit(RepositoryFaultPoint.BeforeRestoreHint, restoredPath);
+                        WriteRestoreHint(restoredPath, file.Manifest);
+                    }
+                    catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or OperationCanceledException)
+                    { warnings.Add($"Content was restored and verified, but lineage recording failed for '{restoredPath}': {exception.Message}"); }
+                }
             }
+            return new RepositoryRestoreResult(outputPath, plan.LogicalBytes, plan.Files.Count, warnings);
         }
         finally
         {
-            if (File.Exists(tempPath))
-            {
-                File.Delete(tempPath);
-            }
+            if (folder && Directory.Exists(stagedPath)) Directory.Delete(stagedPath, recursive: true);
+            else if (!folder && File.Exists(stagedPath)) File.Delete(stagedPath);
         }
+    }
+
+    private void ValidateRestoreDestination(string outputPath)
+    {
+        StorageOwnership.RejectReparseComponents(outputPath);
+        if (new[] { rootPath }.Concat(configuredMirrorNodes.Select(node => node.Path)).Any(root => StorageOwnership.Contains(root, outputPath)))
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Restore destination must be outside repository storage.");
+    }
+
+    private async Task WriteVerifiedRestoreFileAsync(FileVersionManifest manifest, string stagedPath, CancellationToken cancellationToken)
+    {
+        StorageOwnership.RejectReparseComponents(stagedPath);
+        await using var output = new FileStream(stagedPath, FileMode.CreateNew, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous);
+        foreach (var chunk in manifest.Chunks)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var bytes = await verifiedReader.ReadAsync(rootPath, ChunkDescriptor.FromChunk(chunk), cancellationToken).ConfigureAwait(false);
+            await output.WriteAsync(bytes, cancellationToken).ConfigureAwait(false);
+        }
+        if (output.Length != manifest.LogicalLength)
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.CorruptObject, "Restored file length mismatch.");
+        output.Flush(flushToDisk: true);
     }
 
     private async Task<IReadOnlyList<FileVersionManifest>> ReadRepairableManifestsAsync(
@@ -1879,7 +1771,9 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
-                manifests.Add(await ReadManifestAsync(path, cancellationToken).ConfigureAwait(false));
+                var manifest = await ReadManifestByVersionAsync(Path.GetFileNameWithoutExtension(path), cancellationToken).ConfigureAwait(false);
+                await ValidateManifestGraphAsync(manifest, ReadManifestByVersionAsync, cancellationToken).ConfigureAwait(false);
+                manifests.Add(manifest);
             }
             catch (Exception exception) when (exception is JsonException or IOException or InvalidDataException)
             {
@@ -1897,9 +1791,11 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
                         try
                         {
-                            var mirrorManifest = await ReadManifestAsync(mirrorManifestPath, cancellationToken)
+                            var (mirrorManifest, mirrorManifestBytes) = await ReadManifestObjectAsync(mirrorManifestPath, cancellationToken)
                                 .ConfigureAwait(false);
-                            AtomicWriteOverwrite(path, await File.ReadAllBytesAsync(mirrorManifestPath, cancellationToken).ConfigureAwait(false));
+                            await ValidateManifestGraphAsync(mirrorManifest,
+                                (id, token) => ReadManifestAsync(ManifestPath(mirrorNode.Path, id), token), cancellationToken).ConfigureAwait(false);
+                            AtomicWriteOverwrite(path, mirrorManifestBytes);
                             manifests.Add(mirrorManifest);
                             issues.Add(new RepositoryScrubIssue(
                                 RepositoryScrubIssueSeverity.Warning,
@@ -1935,68 +1831,94 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         return manifests;
     }
 
-    private ChunkValidation ValidateChunk(string root, ManifestChunk chunk)
+    private void ValidateMaintenanceInputs(IReadOnlyList<FileVersionManifest> manifests)
     {
-        var chunkPath = ChunkPath(root, chunk.Digest);
-        if (!File.Exists(chunkPath))
+        var identities = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var manifest in manifests)
         {
-            return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.MissingChunk, $"Chunk {chunk.Digest} is missing.");
+            VerifiedChunkReader.ValidateHex(manifest.VersionId, 32, "version id");
+            if (!identities.Add(manifest.VersionId) || manifest.LogicalLength < 0 || manifest.Chunks is null || !Enum.IsDefined(manifest.EntryKind))
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Invalid maintenance manifest.");
+            if (manifest.IsDeleted)
+            {
+                VerifiedChunkReader.ValidateHex(manifest.DeletedFromVersionId, 32, "deleted version id");
+                if (manifest.Chunks.Count != 0)
+                    throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Tombstone contains chunk data.");
+            }
+            else if (manifest.EntryKind == RepositoryEntryKind.File) RestoreManifestValidator.ValidateFile(manifest, verifiedReader);
+            else if (manifest.Chunks.Count != 0)
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Folder contains chunk data.");
+            foreach (var entry in manifest.FolderEntries ?? [])
+            {
+                VerifiedChunkReader.ValidateHex(entry.VersionId, 32, "child version id");
+                RestoreGraphValidator.ValidateChildName(entry.Name);
+            }
         }
-
-        try
+        ValidateReferencedDescriptors(manifests);
+        foreach (var root in new[] { rootPath }.Concat(mirrorNodes.Select(node => node.Path)))
         {
-            var metadata = ReadChunkMetadataSafe(root, chunk.Digest);
-            if (metadata is null)
+            foreach (var manifest in manifests)
             {
-                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} metadata is missing or unreadable.");
+                StorageOwnership.RejectReparseComponents(ManifestPath(root, manifest.VersionId));
+                foreach (var chunk in manifest.Chunks)
+                {
+                    StorageOwnership.RejectReparseComponents(ChunkPath(root, chunk.Digest));
+                    StorageOwnership.RejectReparseComponents(MetadataPath(root, chunk.Digest));
+                }
             }
+        }
+    }
 
-            if (!string.Equals(metadata.Digest, chunk.Digest, StringComparison.OrdinalIgnoreCase)
-                || metadata.LogicalLength != chunk.Length
-                || metadata.StoredLength != chunk.StoredLength
-                || metadata.Encoding != chunk.Encoding)
-            {
-                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} metadata does not match the manifest.");
-            }
+    private async Task ValidateManifestGraphAsync(FileVersionManifest manifest,
+        Func<string, CancellationToken, Task<FileVersionManifest>> read, CancellationToken cancellationToken)
+    {
+        await new RestoreGraphValidator(verifiedReader, integrityLimits, read)
+            .BuildAsync(manifest, manifest.SourcePath, cancellationToken).ConfigureAwait(false);
+    }
 
-            var payload = File.ReadAllBytes(chunkPath);
-            if (payload.Length != chunk.StoredLength)
-            {
-                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} stored length mismatch.");
-            }
-
-            byte[] raw;
+    private async Task<IReadOnlyList<FileVersionManifest>> FilterValidManifestGraphsAsync(
+        IReadOnlyList<FileVersionManifest> manifests, Action<FileVersionManifest, Exception> report,
+        CancellationToken cancellationToken)
+    {
+        var byId = manifests.ToDictionary(manifest => manifest.VersionId, StringComparer.OrdinalIgnoreCase);
+        var valid = new List<FileVersionManifest>();
+        foreach (var manifest in manifests)
+        {
             try
             {
-                raw = chunk.Encoding == ChunkEncoding.Raw
-                    ? payload
-                    : codec.Decompress(payload, chunk.Length, chunk.Encoding);
+                await ValidateManifestGraphAsync(manifest, (id, token) => byId.TryGetValue(id, out var item)
+                    ? Task.FromResult(item) : ReadManifestByVersionAsync(id, token), cancellationToken).ConfigureAwait(false);
+                valid.Add(manifest);
             }
-            catch (Exception exception) when (exception is InvalidDataException or IOException)
+            catch (Exception exception) when (exception is IOException or JsonException)
             {
-                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} could not be decoded: {exception.Message}");
+                report(manifest, exception);
             }
+        }
+        return valid;
+    }
 
-            if (raw.Length != chunk.Length)
-            {
-                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} length mismatch.");
-            }
+    private void ValidateReferencedDescriptors(IEnumerable<FileVersionManifest> manifests)
+    {
+        foreach (var group in manifests.SelectMany(manifest => manifest.Chunks).GroupBy(chunk => chunk.Digest, StringComparer.OrdinalIgnoreCase))
+            verifiedReader.ValidateDescriptor(ChunkDescriptorLookup.Resolve(group)!);
+    }
 
-            var digest = hasher.Hash(raw);
-            if (!string.Equals(digest, chunk.Digest, StringComparison.OrdinalIgnoreCase))
-            {
-                return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} digest mismatch.");
-            }
-
+    private ChunkValidation ValidateChunk(string root, ManifestChunk chunk)
+    {
+        try
+        {
+            verifiedReader.ReadAsync(root, ChunkDescriptor.FromChunk(chunk), default).GetAwaiter().GetResult();
             return ChunkValidation.Healthy;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
-            return ChunkValidation.Unhealthy(RepositoryScrubIssueKind.CorruptChunk, $"Chunk {chunk.Digest} could not be read: {exception.Message}");
+            return ChunkValidation.Unhealthy(exception is RepositoryIntegrityException { Code: RepositoryIntegrityFailure.MissingObject }
+                ? RepositoryScrubIssueKind.MissingChunk : RepositoryScrubIssueKind.CorruptChunk, exception.Message);
         }
     }
 
-    private static ChunkMetadata? ReadChunkMetadataSafe(string root, string digest)
+    private ChunkMetadata? ReadChunkMetadataSafe(string root, string digest)
     {
         try
         {
@@ -2024,22 +1946,13 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         return RepositoryHealthState.Healthy;
     }
 
-    private static void RepairChunk(string sourceRoot, string destinationRoot, string digest)
-    {
-        AtomicWriteOverwrite(ChunkPath(destinationRoot, digest), File.ReadAllBytes(ChunkPath(sourceRoot, digest)));
-        var sourceMetadataPath = MetadataPath(sourceRoot, digest);
-        if (File.Exists(sourceMetadataPath))
-        {
-            AtomicWriteOverwrite(MetadataPath(destinationRoot, digest), File.ReadAllBytes(sourceMetadataPath));
-        }
-    }
-
     private async Task<RetentionState> BuildRetentionStateAsync(
         RetentionPolicy policy,
         DateTimeOffset nowUtc,
         CancellationToken cancellationToken)
     {
         var manifests = await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false);
+        ValidateMaintenanceInputs(manifests);
         var summaries = manifests.Select(ToSummary).ToArray();
 
         var decisions = ExpandRetentionReferences(
@@ -2243,7 +2156,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         foreach (var path in Directory.EnumerateFiles(ManifestsPath(rootPath), "*.json"))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            manifests.Add(await ReadManifestAsync(path, cancellationToken).ConfigureAwait(false));
+            manifests.Add(await ReadManifestByVersionAsync(Path.GetFileNameWithoutExtension(path), cancellationToken).ConfigureAwait(false));
         }
 
         return manifests;
@@ -2277,6 +2190,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     private static long DeleteLocalFile(string path)
     {
+        StorageOwnership.RejectReparseComponents(path);
         if (!File.Exists(path))
         {
             return 0;
@@ -2299,6 +2213,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
             try
             {
+                StorageOwnership.RejectReparseComponents(path);
                 File.Delete(path);
             }
             catch (Exception exception) when (IsMirrorIoFailure(exception))
@@ -2341,24 +2256,23 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     private static void AtomicWrite(string path, byte[] bytes)
     {
-        var directory = Path.GetDirectoryName(path) ?? throw new InvalidOperationException($"Path has no directory: {path}");
-        Directory.CreateDirectory(directory);
-
+        StorageOwnership.RejectReparseComponents(path);
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         if (File.Exists(path))
         {
+            using var existing = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (existing.Length != bytes.Length || !File.ReadAllBytes(path).AsSpan().SequenceEqual(bytes))
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.CorruptObject, "Existing publication conflicts with expected bytes.");
             return;
         }
-
-        var tempPath = Path.Combine(directory, $"{Path.GetFileName(path)}.{Guid.NewGuid():N}.tmp");
-        File.WriteAllBytes(tempPath, bytes);
+        var tempPath = path + $".{Guid.NewGuid():N}.tmp";
         try
         {
+            using (var stream = new FileStream(tempPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            { stream.Write(bytes); stream.Flush(flushToDisk: true); }
             File.Move(tempPath, path, overwrite: false);
         }
-        catch (IOException) when (File.Exists(path))
-        {
-            File.Delete(tempPath);
-        }
+        finally { if (File.Exists(tempPath)) File.Delete(tempPath); }
     }
 
     private void WriteRestoreHint(string outputPath, FileVersionManifest sourceManifest)
@@ -2623,45 +2537,11 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         return manifest.ContentSignature ?? ComputeContentSignature(manifest.LogicalLength, manifest.Chunks);
     }
 
-    private string ComputeContentSignature(long logicalLength, IReadOnlyList<ManifestChunk> chunks)
-    {
-        var builder = new StringBuilder();
-        builder.Append("fv-content-v1:").Append(logicalLength);
-        foreach (var chunk in chunks.OrderBy(chunk => chunk.Offset))
-        {
-            builder
-                .Append('|')
-                .Append(chunk.Offset)
-                .Append(':')
-                .Append(chunk.Digest)
-                .Append(':')
-                .Append(chunk.Length);
-        }
+    private static string ComputeContentSignature(long logicalLength, IReadOnlyList<ManifestChunk> chunks) =>
+        RepositoryMetadataStoreHelpers.ComputeContentSignature(logicalLength, chunks);
 
-        return hasher.Hash(Encoding.UTF8.GetBytes(builder.ToString()));
-    }
-
-    private string ComputeFolderContentSignature(IReadOnlyList<FolderVersionEntry> entries)
-    {
-        var builder = new StringBuilder("fv-folder-v1");
-        foreach (var entry in entries
-                     .OrderByDescending(entry => entry.EntryKind)
-                     .ThenBy(entry => entry.Name, StringComparer.OrdinalIgnoreCase)
-                     .ThenBy(entry => entry.SourcePath, StringComparer.OrdinalIgnoreCase))
-        {
-            builder
-                .Append('|')
-                .Append(entry.EntryKind)
-                .Append(':')
-                .Append(entry.Name)
-                .Append(':')
-                .Append(entry.VersionId)
-                .Append(':')
-                .Append(entry.IsDeleted ? "deleted" : "live");
-        }
-
-        return hasher.Hash(Encoding.UTF8.GetBytes(builder.ToString()));
-    }
+    private static string ComputeFolderContentSignature(IReadOnlyList<FolderVersionEntry> entries) =>
+        RepositoryMetadataStoreHelpers.ComputeFolderContentSignature(entries);
 
     private string ComputeDeletedContentSignature(string sourcePath, string deletedFromVersionId)
     {
@@ -2770,18 +2650,20 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     private static void AtomicWriteOverwrite(string path, byte[] bytes)
     {
-        var directory = Path.GetDirectoryName(path) ?? throw new InvalidOperationException($"Path has no directory: {path}");
-        Directory.CreateDirectory(directory);
-
-        var tempPath = Path.Combine(directory, $"{Path.GetFileName(path)}.{Guid.NewGuid():N}.tmp");
-        File.WriteAllBytes(tempPath, bytes);
-        File.Move(tempPath, path, overwrite: true);
+        StorageOwnership.RejectReparseComponents(path);
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        var tempPath = path + $".{Guid.NewGuid():N}.tmp";
+        try
+        {
+            using (var output = new FileStream(tempPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            { output.Write(bytes); output.Flush(flushToDisk: true); }
+            File.Move(tempPath, path, overwrite: true);
+        }
+        finally { if (File.Exists(tempPath)) File.Delete(tempPath); }
     }
 
-    private static bool PathEquals(string left, string right)
-    {
-        return string.Equals(Path.GetFullPath(left), Path.GetFullPath(right), StringComparison.OrdinalIgnoreCase);
-    }
+    private static bool PathEquals(string left, string right) =>
+        string.Equals(Path.GetFullPath(left), Path.GetFullPath(right), StringComparison.OrdinalIgnoreCase);
 
     private static string ChunksPath(string root) => Path.Combine(root, "chunks");
 
@@ -2793,16 +2675,19 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     private static string ChunkPath(string root, string digest)
     {
+        VerifiedChunkReader.ValidateHex(digest, 64, "chunk digest");
         return Path.Combine(ChunksPath(root), digest[..2], $"{digest}.chunk");
     }
 
     private static string MetadataPath(string root, string digest)
     {
+        VerifiedChunkReader.ValidateHex(digest, 64, "chunk digest");
         return Path.Combine(ChunksPath(root), digest[..2], $"{digest}.json");
     }
 
     private static string ManifestPath(string root, string versionId)
     {
+        VerifiedChunkReader.ValidateHex(versionId, 32, "version id");
         return Path.Combine(ManifestsPath(root), $"{versionId}.json");
     }
 

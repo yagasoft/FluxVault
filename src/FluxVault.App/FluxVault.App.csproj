@@ -22,9 +22,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Assets\FluxVault.ico">
+    <Resource Include="Assets\FluxVault.ico" />
+    <None Update="Assets\FluxVault.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="Assets\YagasoftLogo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

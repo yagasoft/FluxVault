@@ -1,0 +1,40 @@
+{
+  "recorded_utc": "2026-10-02T10:14:37.7402931+03:00",
+  "setup": "E:\\Drive\\Work (1)\\Code\\FluxVault\\artifacts\\release-integrity-v104\\Yagasoft-FluxVault-v1.0.4-win-x64-Setup.exe",
+  "sha256": "dd4c47dc6b20c0b348691289481965002466acdf373cea26e5d823ab9af84f61",
+  "version": "1.0.4",
+  "state": "Installed staging v1.0.4; authorised bounded recovery implementation/deployment/live service/CLI/UI validation passed",
+  "source_state": "uncommitted, unmerged codex/product-review-roadmap-20261001 based on b930ed5",
+  "target": {
+    "machine": "current Windows PC",
+    "postgresql_bin": "D:\\Program Files\\PostgreSQL\\18\\bin",
+    "postgresql_service": "postgresql-x64-18",
+    "port": 5432,
+    "database": "fluxvault_metadata",
+    "role": "fluxvault",
+    "program_data": "C:\\ProgramData\\FluxVault",
+    "install_root": "C:\\Program Files\\FluxVault",
+    "service": "FluxVaultService"
+  },
+  "pending": [],
+  "source_review": "independent-source-review.md",
+  "authentication": "User-approved passwordless loopback restricted to database/account; temporary admin access removed; PostgreSQL not restarted",
+  "measurement_binary_provenance": {
+    "report": "performance-v104.json",
+    "completed_utc": "2026-10-02T10:02:15.967441+03:00",
+    "verified_sha256": {
+      "FluxVault.Cli.dll": "a13b7c5a80f215068772800832391a95819b9485cb36c5f1dae3aeef7c1b3e9e",
+      "FluxVault.Core.dll": "bfb190f0e1553b0908c4d1883d7b1fab543790693664763df011aca96643cc0c",
+      "FluxVault.Abstractions.dll": "882399ba90a32b3b93894fecad79b0f3528cd2dbb76cf634998dedf68b32c66b"
+    },
+    "embedded_payload_match": true
+  },
+  "embedded_payload_verification": {
+    "report": "installed-payload-v104.json",
+    "msi_sha256": "53ac4aaf322d166d5cd0e007a6f93c37ca2e99b4d8cb9c141db418ebb3fdffdd",
+    "matching_file_count": 204,
+    "product_version": "1.0.4.0",
+    "all_installed_files_match": true
+  },
+  "artifact_relocation_note": "Checksum-identical setup retained in primary checkout artifacts before task worktree cleanup; validation reports retain their original checkpoint provenance."
+}

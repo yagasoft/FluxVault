@@ -1,16 +1,21 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Globalization;
+using System.Data;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Storage;
 using Npgsql;
 using NpgsqlTypes;
+using FluxVault.Core.Storage.Integrity;
 
 namespace FluxVault.Core.Storage.Metadata;
 
 public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
 {
+    // One dedicated metadata database is one mutation domain. This is a protocol key,
+    // shared by record/delete callers, not an operational concurrency setting.
+    private const long MetadataMutationLockKey = 0x46564D455441;
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         Converters = { new JsonStringEnumConverter() }
@@ -18,14 +23,17 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
 
     private readonly MetadataStoreConfiguration configuration;
     private readonly string deviceId;
+    private readonly RepositoryIntegrityLimits integrityLimits;
     private readonly SemaphoreSlim schemaGate = new(1, 1);
     private volatile bool schemaInitialized;
     private volatile string? lastError;
 
-    public PostgreSqlRepositoryMetadataStore(MetadataStoreConfiguration configuration, string? deviceId = null)
+    public PostgreSqlRepositoryMetadataStore(MetadataStoreConfiguration configuration, string? deviceId = null, RepositoryIntegrityLimits? integrityLimits = null)
     {
         this.configuration = configuration.Normalise(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
         this.deviceId = string.IsNullOrWhiteSpace(deviceId) ? Environment.MachineName : deviceId.Trim();
+        this.integrityLimits = integrityLimits ?? new RepositoryIntegrityLimits();
+        this.integrityLimits.Validate();
     }
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -66,6 +74,27 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         return RecordVersionsAsync([manifest], cancellationToken);
     }
 
+    public async Task<ChunkDescriptor?> FindChunkDescriptorAsync(string digest, CancellationToken cancellationToken = default)
+    {
+        VerifiedChunkReader.ValidateHex(digest, 64, "chunk digest");
+        await InitializeAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = new NpgsqlCommand("""
+            SELECT DISTINCT logical_length, stored_length, encoding
+            FROM fluxvault.version_chunks WHERE digest = @digest LIMIT 2;
+            """, connection);
+        command.Parameters.AddWithValue("digest", digest.ToLowerInvariant());
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false)) return null;
+        if (!Enum.TryParse<ChunkEncoding>(reader.GetString(2), out var encoding) || !Enum.IsDefined(encoding))
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.DescriptorConflict, "Acknowledged chunk codec is invalid.");
+        var descriptor = new ChunkDescriptor(digest.ToLowerInvariant(), reader.GetInt32(0), reader.GetInt32(1), encoding);
+        if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.DescriptorConflict, "Digest has conflicting acknowledged representations.");
+        return descriptor;
+    }
+
     public async Task RecordVersionsAsync(
         IReadOnlyCollection<FileVersionManifest> manifests,
         CancellationToken cancellationToken = default)
@@ -76,12 +105,16 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
             return;
         }
 
+        // Reject unsupported publication before opening a connection or starting the transaction.
+        foreach (var manifest in manifests) RepositoryManifestSize.Validate(manifest, integrityLimits);
         await InitializeAsync(cancellationToken).ConfigureAwait(false);
         await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
         try
         {
+            await AcquireMutationLockAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
+            await ValidateAcknowledgedDescriptorsAsync(connection, transaction, manifests, cancellationToken).ConfigureAwait(false);
             foreach (var manifest in manifests)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -106,16 +139,12 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
         await using var command = new NpgsqlCommand(
-            "SELECT manifest_json::text FROM fluxvault.versions WHERE version_id = @version_id;",
-            connection);
+            $"SELECT {BoundedManifestSql()} FROM fluxvault.versions WHERE version_id = @version_id;", connection);
         command.Parameters.AddWithValue("version_id", versionId);
-        var json = (string?)await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
-        if (json is null)
-        {
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             throw new FileNotFoundException($"Manifest {versionId} was not found.", versionId);
-        }
-
-        return DeserializeManifest(json, versionId);
+        return ReadBoundedManifest(reader, versionId);
     }
 
     public async Task<IReadOnlyList<FileVersionManifest>> ListManifestsAsync(CancellationToken cancellationToken = default)
@@ -124,8 +153,8 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
         await using var command = new NpgsqlCommand(
-            """
-            SELECT manifest_json::text, version_id
+            $"""
+            SELECT {BoundedManifestSql()}, version_id
             FROM fluxvault.versions
             ORDER BY captured_at_utc DESC, version_id DESC;
             """,
@@ -134,7 +163,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         var manifests = new List<FileVersionManifest>();
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
-            manifests.Add(DeserializeManifest(reader.GetString(0), reader.GetString(1)));
+            manifests.Add(ReadBoundedManifest(reader, reader.GetString(1)));
         }
 
         return manifests;
@@ -150,8 +179,8 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
         await using var command = new NpgsqlCommand(
-            """
-            SELECT manifest_json::text, version_id
+            $"""
+            SELECT {BoundedManifestSql()}, version_id
             FROM fluxvault.versions
             WHERE source_path = @source_path AND entry_kind = @entry_kind
             ORDER BY captured_at_utc DESC, version_id DESC
@@ -162,7 +191,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         command.Parameters.AddWithValue("entry_kind", entryKind.ToString());
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         return await reader.ReadAsync(cancellationToken).ConfigureAwait(false)
-            ? DeserializeManifest(reader.GetString(0), reader.GetString(1))
+            ? ReadBoundedManifest(reader, reader.GetString(1))
             : null;
     }
 
@@ -177,8 +206,8 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
         await using var command = new NpgsqlCommand(
-            """
-            SELECT manifest_json::text, version_id
+            $"""
+            SELECT {BoundedManifestSql()}, version_id
             FROM fluxvault.versions
             WHERE entry_kind = 'File'
               AND is_deleted = false
@@ -192,7 +221,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         command.Parameters.AddWithValue("content_signature", contentSignature);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         return await reader.ReadAsync(cancellationToken).ConfigureAwait(false)
-            ? DeserializeManifest(reader.GetString(0), reader.GetString(1))
+            ? ReadBoundedManifest(reader, reader.GetString(1))
             : null;
     }
 
@@ -208,8 +237,8 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
         await using var command = new NpgsqlCommand(
-            """
-            SELECT v.manifest_json::text, v.version_id
+            $"""
+            SELECT {BoundedManifestSql("v.")}, v.version_id
             FROM fluxvault.current_entries c
             JOIN fluxvault.versions v ON v.version_id = c.version_id
             ORDER BY c.source_path ASC, c.entry_kind DESC;
@@ -219,7 +248,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         var manifests = new List<FileVersionManifest>();
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
-            manifests.Add(DeserializeManifest(reader.GetString(0), reader.GetString(1)));
+            manifests.Add(ReadBoundedManifest(reader, reader.GetString(1)));
         }
 
         return manifests.Select(RepositoryMetadataStoreHelpers.ToSummary).ToArray();
@@ -237,9 +266,18 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         await InitializeAsync(cancellationToken).ConfigureAwait(false);
         await using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
         try
         {
+            await AcquireMutationLockAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
+            var affectedDigests = new List<string>();
+            await using (var affectedCommand = new NpgsqlCommand(
+                "SELECT DISTINCT digest FROM fluxvault.version_chunks WHERE version_id = ANY(@version_ids);", connection, transaction))
+            {
+                affectedCommand.Parameters.AddWithValue("version_ids", ids);
+                await using var reader = await affectedCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false)) affectedDigests.Add(reader.GetString(0));
+            }
             await using (var currentCommand = new NpgsqlCommand(
                 "DELETE FROM fluxvault.current_entries WHERE version_id = ANY(@version_ids);",
                 connection,
@@ -256,6 +294,19 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
             {
                 versionCommand.Parameters.AddWithValue("version_ids", ids);
                 await versionCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            // Retire only this deletion's now-unreferenced catalogue rows. Location rows
+            // have a non-cascading FK, and shared objects must keep their locations.
+            foreach (var table in new[] { "chunk_locations", "chunks" })
+            {
+                await using var retireCommand = new NpgsqlCommand($"""
+                    DELETE FROM fluxvault.{table} AS retired
+                    WHERE retired.digest = ANY(@digests)
+                      AND NOT EXISTS (SELECT 1 FROM fluxvault.version_chunks AS referenced WHERE referenced.digest = retired.digest);
+                    """, connection, transaction);
+                retireCommand.Parameters.AddWithValue("digests", affectedDigests.ToArray());
+                await retireCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
 
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -292,7 +343,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
             GROUP BY digest;
             """,
             connection);
-        command.Parameters.AddWithValue("digests", requested);
+        command.Parameters.AddWithValue("digests", requested.Select(digest => digest.ToLowerInvariant()).ToArray());
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
@@ -557,7 +608,9 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
                 inherited_from_source_path = EXCLUDED.inherited_from_source_path,
                 deleted_from_version_id = EXCLUDED.deleted_from_version_id,
                 source_last_write_utc = EXCLUDED.source_last_write_utc,
-                manifest_json = EXCLUDED.manifest_json;
+                manifest_json = EXCLUDED.manifest_json
+            WHERE fluxvault.versions.manifest_json = EXCLUDED.manifest_json
+            RETURNING 1;
             """,
             connection,
             transaction);
@@ -579,7 +632,46 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         AddNullable(command, "deleted_from_version_id", row.DeletedFromVersionId);
         AddNullable(command, "source_last_write_utc", row.SourceLastWriteUtc);
         command.Parameters.Add("manifest_json", NpgsqlDbType.Jsonb).Value = manifestJson;
+        if (await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is null)
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "An acknowledged version identity cannot be rewritten.");
+    }
+
+    private static async Task AcquireMutationLockAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        // A separate READ COMMITTED statement after this wait sees the preceding
+        // writer's committed references. No filesystem lease is acquired here.
+        await using var command = new NpgsqlCommand("SELECT pg_advisory_xact_lock(@key);", connection, transaction);
+        command.Parameters.AddWithValue("key", MetadataMutationLockKey);
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task ValidateAcknowledgedDescriptorsAsync(NpgsqlConnection connection, NpgsqlTransaction transaction,
+        IReadOnlyCollection<FileVersionManifest> manifests, CancellationToken cancellationToken)
+    {
+        var descriptors = new Dictionary<string, ChunkDescriptor>(StringComparer.OrdinalIgnoreCase);
+        foreach (var chunk in manifests.SelectMany(manifest => manifest.Chunks))
+        {
+            var descriptor = ChunkDescriptor.FromChunk(chunk);
+            if (descriptors.TryGetValue(descriptor.Digest, out var existing) && existing != descriptor)
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.DescriptorConflict, "Incoming versions disagree about a chunk representation.");
+            descriptors[descriptor.Digest] = descriptor;
+        }
+        if (descriptors.Count == 0) return;
+        var unique = descriptors.Values.ToArray();
+        await using var command = new NpgsqlCommand("""
+            SELECT EXISTS (
+                SELECT 1 FROM fluxvault.version_chunks AS acknowledged
+                JOIN unnest(@digests, @logical_lengths, @stored_lengths, @encodings)
+                    AS incoming(digest, logical_length, stored_length, encoding) ON acknowledged.digest = incoming.digest
+                WHERE acknowledged.logical_length <> incoming.logical_length
+                   OR acknowledged.stored_length <> incoming.stored_length OR acknowledged.encoding <> incoming.encoding);
+            """, connection, transaction);
+        command.Parameters.AddWithValue("digests", unique.Select(descriptor => descriptor.Digest).ToArray());
+        command.Parameters.AddWithValue("logical_lengths", unique.Select(descriptor => descriptor.LogicalLength).ToArray());
+        command.Parameters.AddWithValue("stored_lengths", unique.Select(descriptor => descriptor.StoredLength).ToArray());
+        command.Parameters.AddWithValue("encodings", unique.Select(descriptor => descriptor.Encoding.ToString()).ToArray());
+        if ((bool)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) ?? false))
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.DescriptorConflict, "Incoming chunk representation conflicts with an acknowledged version.");
     }
 
     private static async Task DeleteVersionChildrenAsync(
@@ -611,15 +703,18 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
             VALUES (@digest, @stored_length, @encoding)
             ON CONFLICT (digest)
             DO UPDATE SET
-                stored_length = GREATEST(fluxvault.chunks.stored_length, EXCLUDED.stored_length),
-                encoding = EXCLUDED.encoding;
+                stored_length = fluxvault.chunks.stored_length
+            WHERE fluxvault.chunks.stored_length = EXCLUDED.stored_length
+                AND fluxvault.chunks.encoding = EXCLUDED.encoding
+            RETURNING 1;
             """,
             connection,
             transaction);
         command.Parameters.AddWithValue("digest", row.Digest);
         command.Parameters.AddWithValue("stored_length", row.StoredLength);
         command.Parameters.AddWithValue("encoding", row.Encoding.ToString());
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        if (await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is null)
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.DescriptorConflict, "Chunk catalogue representation is immutable.");
     }
 
     private static async Task InsertVersionChunkAsync(
@@ -632,9 +727,12 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
             """
             INSERT INTO fluxvault.version_chunks (
                 version_id, chunk_ordinal, digest, logical_offset, logical_length, stored_length, encoding)
-            VALUES (
-                @version_id, @chunk_ordinal, @digest, @logical_offset, @logical_length, @stored_length, @encoding)
-            ON CONFLICT (version_id, chunk_ordinal) DO NOTHING;
+            SELECT @version_id, @chunk_ordinal, @digest, @logical_offset, @logical_length, @stored_length, @encoding
+            WHERE NOT EXISTS (
+                SELECT 1 FROM fluxvault.version_chunks
+                WHERE digest = @digest AND (logical_length <> @logical_length OR stored_length <> @stored_length OR encoding <> @encoding))
+            ON CONFLICT (version_id, chunk_ordinal) DO NOTHING
+            RETURNING 1;
             """,
             connection,
             transaction);
@@ -645,7 +743,8 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         command.Parameters.AddWithValue("logical_length", row.Length);
         command.Parameters.AddWithValue("stored_length", row.StoredLength);
         command.Parameters.AddWithValue("encoding", row.Encoding.ToString());
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        if (await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is null)
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.DescriptorConflict, "Acknowledged chunk descriptor is immutable.");
     }
 
     private static async Task InsertLineageEdgeAsync(
@@ -765,12 +864,28 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
             value is null ? DBNull.Value : value.Value;
     }
 
-    private static FileVersionManifest DeserializeManifest(string json, string versionId)
+    private string BoundedManifestSql(string prefix = "") =>
+        $"CASE WHEN octet_length({prefix}manifest_json::text) <= {integrityLimits.MaxManifestBytes} THEN {prefix}manifest_json::text ELSE NULL END";
+
+    private static FileVersionManifest ReadBoundedManifest(NpgsqlDataReader reader, string versionId)
+    {
+        if (reader.IsDBNull(0))
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.LimitExceeded, "Stored manifest exceeds its supported size limit.");
+        return DeserializeManifest(reader.GetString(0), versionId);
+    }
+
+    internal static FileVersionManifest DeserializeManifest(string json, string versionId)
     {
         try
         {
-            return JsonSerializer.Deserialize<FileVersionManifest>(json, JsonOptions)
+            var manifest = JsonSerializer.Deserialize<FileVersionManifest>(json, JsonOptions)
                 ?? throw new InvalidDataException($"Manifest {versionId} could not be deserialized.");
+            VerifiedChunkReader.ValidateHex(versionId, 32, "version id");
+            VerifiedChunkReader.ValidateHex(manifest.VersionId, 32, "manifest version id");
+            if (!string.Equals(manifest.VersionId, versionId, StringComparison.OrdinalIgnoreCase))
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest,
+                    "Stored manifest identity disagrees with its metadata row.");
+            return manifest;
         }
         catch (JsonException exception)
         {

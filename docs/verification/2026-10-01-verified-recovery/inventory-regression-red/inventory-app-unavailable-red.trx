@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="73378f6d-6c6b-4a9d-b63f-14759f5f27cc" name="os008@OS008-HOME 2026-10-02 09:14:55" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T09:14:55.5254611+03:00" queuing="2026-10-02T09:14:55.5254612+03:00" start="2026-10-02T09:14:49.7084273+03:00" finish="2026-10-02T09:15:00.5671606+03:00" />
+  <TestSettings name="default" id="24a9e9b1-e133-466b-8966-988fa04b545f">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-02_09_14_55" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0b7120e9-86d5-42b8-9c19-36dd55da1e22" testId="2f5c42c6-1850-5512-2907-aa2bbc12e983" testName="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(missingFullInventory: True)" computerName="OS008-HOME" duration="00:00:05.0137668" startTime="2026-10-02T09:14:55.5127764+03:00" endTime="2026-10-02T09:15:00.5109249+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b7120e9-86d5-42b8-9c19-36dd55da1e22">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Threading.Tasks.TaskCanceledException : A task was canceled.</Message>
+          <StackTrace>   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.WaitUntilAsync(Func`1 condition) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 1800&#xD;
+   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(Boolean missingFullInventory) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 76&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e9693a27-d335-42f4-8e5f-38d97cb355bf" testId="0928d523-b730-a739-6e10-987ea603b2d9" testName="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(missingFullInventory: False)" computerName="OS008-HOME" duration="00:00:05.2031639" startTime="2026-10-02T09:14:50.2766852+03:00" endTime="2026-10-02T09:14:55.4958913+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e9693a27-d335-42f4-8e5f-38d97cb355bf">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Threading.Tasks.TaskCanceledException : A task was canceled.</Message>
+          <StackTrace>   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.WaitUntilAsync(Func`1 condition) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 1800&#xD;
+   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(Boolean missingFullInventory) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 76&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(missingFullInventory: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="0928d523-b730-a739-6e10-987ea603b2d9">
+      <Execution id="e9693a27-d335-42f4-8e5f-38d97cb355bf" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MainWindowViewModelRefreshTests" name="Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(missingFullInventory: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="2f5c42c6-1850-5512-2907-aa2bbc12e983">
+      <Execution id="0b7120e9-86d5-42b8-9c19-36dd55da1e22" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MainWindowViewModelRefreshTests" name="Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2f5c42c6-1850-5512-2907-aa2bbc12e983" executionId="0b7120e9-86d5-42b8-9c19-36dd55da1e22" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0928d523-b730-a739-6e10-987ea603b2d9" executionId="e9693a27-d335-42f4-8e5f-38d97cb355bf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:05.41]       System.Threading.Tasks.TaskCanceledException : A task was canceled.&#xD;
+[xUnit.net 00:00:05.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.41]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs(1800,0): at FluxVault.App.Tests.MainWindowViewModelRefreshTests.WaitUntilAsync(Func`1 condition)&#xD;
+[xUnit.net 00:00:05.41]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs(76,0): at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(Boolean missingFullInventory)&#xD;
+[xUnit.net 00:00:05.41]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.42]       System.Threading.Tasks.TaskCanceledException : A task was canceled.&#xD;
+[xUnit.net 00:00:10.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.42]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs(1800,0): at FluxVault.App.Tests.MainWindowViewModelRefreshTests.WaitUntilAsync(Func`1 condition)&#xD;
+[xUnit.net 00:00:10.42]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs(76,0): at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(Boolean missingFullInventory)&#xD;
+[xUnit.net 00:00:10.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.43]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:14:55.4985499+03:00">
+        <Text>[xUnit.net 00:00:05.41]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(missingFullInventory: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:15:00.5114168+03:00">
+        <Text>[xUnit.net 00:00:10.42]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(missingFullInventory: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

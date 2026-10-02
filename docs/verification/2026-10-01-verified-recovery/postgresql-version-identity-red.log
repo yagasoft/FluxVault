@@ -1,0 +1,24 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.TestHost -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.TestHost\bin\Release\net10.0-windows\FluxVault.TestHost.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Cli -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Cli\bin\Release\net10.0\FluxVault.Cli.dll
+  FluxVault.Service -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Service\bin\Release\net10.0-windows\FluxVault.Service.dll
+  FluxVault.Integration.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.35]     FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Identical_replay_is_idempotent_and_changed_version_identity_rolls_back_the_batch [FAIL]
+  Failed FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Identical_replay_is_idempotent_and_changed_version_identity_rolls_back_the_batch [1 s]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Identical_replay_is_idempotent_and_changed_version_identity_rolls_back_the_batch() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\PostgreSqlRepositoryIntegrityTests.cs:line 93
+   at FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Identical_replay_is_idempotent_and_changed_version_identity_rolls_back_the_batch() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\PostgreSqlRepositoryIntegrityTests.cs:line 98
+--- End of stack trace from previous location ---
+Results File: E:\Temp\AppData\Local\Temp\FluxVault.Integrity.PostgreSql\2adc3f412e754673bbba2f03d6dc347f\results\os008_OS008-HOME_2026-10-01_17_00_56_net10.0.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - FluxVault.Integration.Tests.dll (net10.0)

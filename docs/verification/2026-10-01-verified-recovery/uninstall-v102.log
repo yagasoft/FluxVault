@@ -1,0 +1,79 @@
+[AEF4:DF1C][2026-10-01T19:29:48]i001: Burn x64 v7.0.0, Windows v10.0 x64 (Build 26200: Service Pack 0), path: C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity\Yagasoft-FluxVault-v1.0.2-win-x64-Setup.exe
+[AEF4:DF1C][2026-10-01T19:29:48]i009: Command Line: '-uninstall -quiet -norestart -log C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\uninstall-v102.log'
+[AEF4:DF1C][2026-10-01T19:29:48]i000: Setting string variable 'WixBundleSourceProcessPath' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity\Yagasoft-FluxVault-v1.0.2-win-x64-Setup.exe'
+[AEF4:DF1C][2026-10-01T19:29:48]i000: Setting string variable 'WixBundleSourceProcessFolder' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity\'
+[AEF4:DF1C][2026-10-01T19:29:48]i000: Setting string variable 'WixBundleOriginalSource' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity\Yagasoft-FluxVault-v1.0.2-win-x64-Setup.exe'
+[AEF4:DF1C][2026-10-01T19:29:48]i000: Setting string variable 'WixBundleOriginalSourceFolder' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity\'
+[AEF4:DF1C][2026-10-01T19:29:48]i000: Setting string variable 'WixBundleLog' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\uninstall-v102.log'
+[AEF4:A638][2026-10-01T19:29:48]i000: Setting version variable 'WixBundleFileVersion' to value '7.0.0.0'
+[AEF4:A638][2026-10-01T19:29:48]i000: Setting numeric variable 'WixStdBALanguageId' to value 1033
+[AEF4:DF1C][2026-10-01T19:29:48]i100: Detect begin, 1 packages
+[AEF4:DF1C][2026-10-01T19:29:48]i101: Detected package: FluxVaultMsi, state: Present, authored scope: PerMachine, detected scope: PerMachine, cached: Yes, install registration state: Present, cache registration state: Present
+[AEF4:DF1C][2026-10-01T19:29:48]i199: Detect complete, result: 0x0, registration state: Full, cached: Yes, eligible for cleanup: No
+[AEF4:DF1C][2026-10-01T19:29:48]i200: Plan begin, 1 packages, action: Uninstall, planned scope: Default
+[AEF4:DF1C][2026-10-01T19:29:48]w227: Bundle was already installed with scope: PerMachine. Scope cannot change during maintenance.
+[AEF4:DF1C][2026-10-01T19:29:48]i000: Setting string variable 'WixBundleRollbackLog_FluxVaultMsi' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\uninstall-v102_000_FluxVaultMsi_rollback.log'
+[AEF4:DF1C][2026-10-01T19:29:48]i000: Setting string variable 'WixBundleLog_FluxVaultMsi' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\uninstall-v102_000_FluxVaultMsi.log'
+[AEF4:DF1C][2026-10-01T19:29:48]i222: Planned rollback boundary: 'WixDefaultBoundary', vital: Yes, transaction: No (default: No)
+[AEF4:DF1C][2026-10-01T19:29:48]i201: Planned package: FluxVaultMsi, state: Present, default requested: Absent, ba requested: Absent, execute: Uninstall, rollback: Install, scope: PerMachine, default cache strategy: Keep, ba requested strategy: Keep, cache: NonVital, uncache: Yes, dependency: Unregister, expected install registration state: Absent, expected cache registration state: Absent
+[AEF4:DF1C][2026-10-01T19:29:48]i299: Plan complete, result: 0x0
+[AEF4:DF1C][2026-10-01T19:29:48]i300: Apply begin
+[AEF4:DF1C][2026-10-01T19:29:48]i010: Launching elevated engine process.
+[AEF4:DF1C][2026-10-01T19:29:48]i011: Launched elevated engine process.
+[AEF4:DF1C][2026-10-01T19:29:48]i012: Connected to elevated engine.
+[A3C4:B160][2026-10-01T19:29:49]i358: Pausing automatic updates.
+[A3C4:B160][2026-10-01T19:29:49]i359: Paused automatic updates.
+[A3C4:B160][2026-10-01T19:29:49]i360: Creating a system restore point.
+[A3C4:B160][2026-10-01T19:29:49]i361: Created a system restore point.
+[A3C4:B160][2026-10-01T19:29:49]i370: Session begin, registration key: SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{EBF81F90-6241-47B6-BA6D-35AB841D161E}, scope: PerMachine, options: 0x3, disable resume: No
+[A3C4:B160][2026-10-01T19:29:49]i000: Caching bundle from: 'C:\WINDOWS\TEMP\{52D34903-981C-4939-92FB-FC8EEFAE8448}\.be\FluxVault.Setup.exe' to: 'C:\ProgramData\Package Cache\{EBF81F90-6241-47B6-BA6D-35AB841D161E}\FluxVault.Setup.exe'
+[A3C4:B160][2026-10-01T19:29:49]i320: Registering bundle dependency provider: {EBF81F90-6241-47B6-BA6D-35AB841D161E}, version: 1.0.2.0
+[A3C4:B160][2026-10-01T19:29:49]i371: Updating session, registration key: SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{EBF81F90-6241-47B6-BA6D-35AB841D161E}, scope: PerMachine, resume: Active, restart initiated: No, disable resume: No, registration: Full
+[A3C4:A304][2026-10-01T19:29:49]i304: Verified existing payload: FluxVaultMsi at path: C:\ProgramData\Package Cache\{FA8D2F8B-909B-44E4-862C-BBA259087519}v1.0.2.0\FluxVault.Installer.msi.
+[A3C4:B160][2026-10-01T19:29:49]i326: Removed dependency: {EBF81F90-6241-47B6-BA6D-35AB841D161E} on package provider: {FA8D2F8B-909B-44E4-862C-BBA259087519}_v1.0.2.0, package FluxVaultMsi
+[A3C4:B160][2026-10-01T19:29:49]i329: Removed package dependency provider: {FA8D2F8B-909B-44E4-862C-BBA259087519}_v1.0.2.0, package: FluxVaultMsi
+[A3C4:B160][2026-10-01T19:29:49]i301: Applying execute package: FluxVaultMsi, action: Uninstall, path: (null), arguments: ' ARPSYSTEMCOMPONENT="1" MSIFASTINSTALL="7" BURNMSIUNINSTALL=1 REBOOT=ReallySuppress IGNOREDEPENDENCIES=ALL'
+[AEF4:DF1C][2026-10-01T19:29:50]i319: Applied execute package: FluxVaultMsi, result: 0x0, restart: None
+[A3C4:B160][2026-10-01T19:29:50]i351: Removing cached package: FluxVaultMsi, from path: C:\ProgramData\Package Cache\{FA8D2F8B-909B-44E4-862C-BBA259087519}v1.0.2.0\
+[AEF4:DF1C][2026-10-01T19:29:50]i373: Calculating whether to keep registration
+[AEF4:DF1C][2026-10-01T19:29:50]i374:   package: FluxVaultMsi, install registration state: Absent, cache registration state: Absent
+[AEF4:DF1C][2026-10-01T19:29:50]i372: Session end, registration key: SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{EBF81F90-6241-47B6-BA6D-35AB841D161E}, scope: PerMachine, resume: None, restart: None, disable resume: No, default registration: None, ba requested registration: None
+[A3C4:B160][2026-10-01T19:29:50]i330: Removed bundle dependency provider: {EBF81F90-6241-47B6-BA6D-35AB841D161E}
+[A3C4:B160][2026-10-01T19:29:50]i326: Removed dependency: {EBF81F90-6241-47B6-BA6D-35AB841D161E} on package provider: {FA8D2F8B-909B-44E4-862C-BBA259087519}_v1.0.2.0, package FluxVaultMsi
+[A3C4:B160][2026-10-01T19:29:50]i329: Removed package dependency provider: {FA8D2F8B-909B-44E4-862C-BBA259087519}_v1.0.2.0, package: FluxVaultMsi
+[A3C4:B160][2026-10-01T19:29:50]i352: Removing cached bundle: {EBF81F90-6241-47B6-BA6D-35AB841D161E}, from path: C:\ProgramData\Package Cache\{EBF81F90-6241-47B6-BA6D-35AB841D161E}\
+[A3C4:B160][2026-10-01T19:29:50]i371: Updating session, registration key: SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{EBF81F90-6241-47B6-BA6D-35AB841D161E}, scope: PerMachine, resume: None, restart initiated: No, disable resume: No, registration: None
+[A3C4:B160][2026-10-01T19:29:50]i420: Resuming automatic updates.
+[A3C4:B160][2026-10-01T19:29:50]i421: Resumed automatic updates.
+[AEF4:A638][2026-10-01T19:29:50]i000: Setting string variable 'WixStdBARestartRequired' to value ''
+[AEF4:DF1C][2026-10-01T19:29:50]i399: Apply complete, result: 0x0, restart: None, ba requested restart:  No
+[AEF4:DF1C][2026-10-01T19:29:50]i500: Shutting down, exit code: 0x0
+[AEF4:DF1C][2026-10-01T19:29:50]i502: Cleanup begin.
+[AEF4:DF1C][2026-10-01T19:29:50]i503: Cleanup not required due to running Apply.
+[AEF4:DF1C][2026-10-01T19:29:50]i599: Cleanup complete, result: 0x0
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: RebootPending = 1
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleAction = 4
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleAuthoredScope = 1
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleCommandLineAction = 4
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleDetectedScope = 1
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleElevated = 1
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleFileVersion = 7.0.0.0
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleInProgressName =
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleInstalled = 1
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleLog = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\uninstall-v102.log
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleLog_FluxVaultMsi = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\uninstall-v102_000_FluxVaultMsi.log
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleManufacturer = Yagasoft
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleName = FluxVault
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleOriginalSource = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity\Yagasoft-FluxVault-v1.0.2-win-x64-Setup.exe
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleOriginalSourceFolder = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity\
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundlePlannedScope = 1
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleProviderKey = {EBF81F90-6241-47B6-BA6D-35AB841D161E}
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleRollbackLog_FluxVaultMsi = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\uninstall-v102_000_FluxVaultMsi_rollback.log
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleSourceProcessFolder = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity\
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleSourceProcessPath = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity\Yagasoft-FluxVault-v1.0.2-win-x64-Setup.exe
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleTag =
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleUILevel = 2
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixBundleVersion = 1.0.2.0
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixStdBALanguageId = 1033
+[AEF4:DF1C][2026-10-01T19:29:50]i410: Variable: WixStdBARestartRequired =
+[AEF4:DF1C][2026-10-01T19:29:50]i007: Exit code: 0x0, restarting: No

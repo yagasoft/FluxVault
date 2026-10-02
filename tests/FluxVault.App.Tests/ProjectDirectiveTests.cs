@@ -108,11 +108,11 @@ public sealed class ProjectDirectiveTests
         Assert.Contains("| R4-010 | R4 | WinFsp write-path execution | Planned |", trackerText, StringComparison.Ordinal);
         Assert.Contains("| R5-010 | R5 | Shell placeholder registration and hydration execution | Planned |", trackerText, StringComparison.Ordinal);
         Assert.Contains("| R6-010 | R6 | Live direct-cloud credential and transfer execution | Planned |", trackerText, StringComparison.Ordinal);
-        Assert.Contains("| R7-010 | R7 | PostgreSQL install and bootstrap validation | Planned |", trackerText, StringComparison.Ordinal);
+        Assert.Contains("| R7-010 | R7 | PostgreSQL install and bootstrap validation | Partially implemented |", trackerText, StringComparison.Ordinal);
         Assert.Contains("| R7-011 | R7 | PostgreSQL migration and import validation | Planned |", trackerText, StringComparison.Ordinal);
         Assert.Contains("| R7-012 | R7 | PostgreSQL backup and restore recovery validation | Planned |", trackerText, StringComparison.Ordinal);
         Assert.Contains("| R7-013 | R7 | PostgreSQL performance and scale validation | Planned |", trackerText, StringComparison.Ordinal);
-        Assert.Contains("| R7-014 | R7 | PostgreSQL release-smoke validation | Planned |", trackerText, StringComparison.Ordinal);
+        Assert.Contains("| R7-014 | R7 | PostgreSQL release-smoke validation | Partially implemented |", trackerText, StringComparison.Ordinal);
         Assert.Contains("| LATER-010 | Later | Repository encryption execution | Planned |", trackerText, StringComparison.Ordinal);
         Assert.Contains("| LATER-011 | Later | Enterprise enrolment and remote fleet management | Planned |", trackerText, StringComparison.Ordinal);
     }

@@ -9,6 +9,28 @@ namespace FluxVault.Integration.Tests;
 public sealed class CliHarnessTests
 {
     [Fact]
+    public async Task Restore_rejects_corruption_without_changing_the_destination()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var source = Path.Combine(workspace.RootPath, "source.bin");
+        var restored = Path.Combine(workspace.RootPath, "restored.bin");
+        await File.WriteAllBytesAsync(source, CreatePayload());
+        var backup = await FluxVaultCli.RunAsync(["backup", "--source", source, "--repository", workspace.RepositoryPath,
+            "--compression", "off", "--legacy-file-manifest"]);
+        Assert.Equal(0, backup.ExitCode);
+        var payloadPath = Directory.EnumerateFiles(Path.Combine(workspace.RepositoryPath, "chunks"), "*.chunk", SearchOption.AllDirectories).First();
+        var bytes = await File.ReadAllBytesAsync(payloadPath);
+        bytes[0] ^= 0xff;
+        await File.WriteAllBytesAsync(payloadPath, bytes);
+        await File.WriteAllTextAsync(restored, "existing work");
+        var restore = await FluxVaultCli.RunAsync(["restore", "--repository", workspace.RepositoryPath,
+            "--version", ParseVersionId(backup.StandardOutput), "--output", restored, "--legacy-file-manifest"]);
+        Assert.Equal(3, restore.ExitCode);
+        Assert.Contains("verification", restore.StandardError);
+        Assert.Equal("existing work", await File.ReadAllTextAsync(restored));
+    }
+
+    [Fact]
     public async Task Backup_list_inspect_and_restore_round_trip_a_real_file()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -89,7 +111,7 @@ public sealed class CliHarnessTests
         var result = await FluxVaultCli.RunAsync([
             "restore",
             "--repository", workspace.RepositoryPath,
-            "--version", "missing",
+            "--version", new string('f', 32),
             "--output", Path.Combine(workspace.RootPath, "restored.bin"),
             "--legacy-file-manifest"
         ]);

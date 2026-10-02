@@ -1,0 +1,91 @@
+  Determining projects to restore...
+  Restored C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Abstractions\FluxVault.Abstractions.csproj (in 85 ms).
+  Restored C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Core\FluxVault.Core.csproj (in 225 ms).
+  1 of 3 projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Core.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.49]     FluxVault.Core.Tests.FolderPublicationOrderingTests.Unrepresentable_folder_publication_time_fails_without_acknowledging_new_versions [FAIL]
+[xUnit.net 00:00:00.60]     FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(deleteRoot: False, sameTime: False) [FAIL]
+[xUnit.net 00:00:00.70]     FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(deleteRoot: True, sameTime: True) [FAIL]
+[xUnit.net 00:00:00.80]     FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(deleteRoot: True, sameTime: False) [FAIL]
+[xUnit.net 00:00:00.90]     FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(deleteRoot: False, sameTime: True) [FAIL]
+[xUnit.net 00:00:00.98]     FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(captureOffsetTicks: 1) [FAIL]
+[xUnit.net 00:00:01.05]     FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(captureOffsetTicks: -10000) [FAIL]
+[xUnit.net 00:00:01.13]     FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(captureOffsetTicks: -1) [FAIL]
+[xUnit.net 00:00:01.20]     FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(captureOffsetTicks: 0) [FAIL]
+  Failed FluxVault.Core.Tests.FolderPublicationOrderingTests.Unrepresentable_folder_publication_time_fails_without_acknowledging_new_versions [228 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Core.Tests.FolderPublicationOrderingTests.Unrepresentable_folder_publication_time_fails_without_acknowledging_new_versions() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FolderPublicationOrderingTests.cs:line 80
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(deleteRoot: False, sameTime: False) [109 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(Boolean deleteRoot, Boolean sameTime) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FolderPublicationOrderingTests.cs:line 52
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(deleteRoot: True, sameTime: True) [97 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(Boolean deleteRoot, Boolean sameTime) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FolderPublicationOrderingTests.cs:line 53
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(deleteRoot: True, sameTime: False) [102 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(Boolean deleteRoot, Boolean sameTime) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FolderPublicationOrderingTests.cs:line 52
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(deleteRoot: False, sameTime: True) [104 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_deletion_advances_its_own_history_and_preserves_siblings(Boolean deleteRoot, Boolean sameTime) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FolderPublicationOrderingTests.cs:line 53
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(captureOffsetTicks: 1) [76 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(Int64 captureOffsetTicks) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FolderPublicationOrderingTests.cs:line 25
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(captureOffsetTicks: -10000) [70 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(Int64 captureOffsetTicks) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FolderPublicationOrderingTests.cs:line 25
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(captureOffsetTicks: -1) [74 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(Int64 captureOffsetTicks) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FolderPublicationOrderingTests.cs:line 25
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(captureOffsetTicks: 0) [74 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Core.Tests.FolderPublicationOrderingTests.Folder_history_follows_publication_and_preserves_siblings(Int64 captureOffsetTicks) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FolderPublicationOrderingTests.cs:line 25
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     9, Passed:     0, Skipped:     0, Total:     9, Duration: 966 ms - FluxVault.Core.Tests.dll (net10.0)

@@ -1,0 +1,19 @@
+server signaled
+CREATE ROLE
+server signaled
+FluxVault configuration updated: C:\ProgramData\FluxVault\config.json
+ ?column?
+----------
+        1
+(1 row)
+
+Metadata store: localhost:5432/fluxvault_metadata
+Schema initialized: True
+Schema version: 1
+Pending outbox: 0
+Oldest unexported UTC: (none)
+Export lag exceeded: False
+server signaled
+FluxVault PostgreSQL metadata store is ready.
+Original authentication configuration retained for rollback: D:\Program Files\PostgreSQL\18\data\pg_hba.conf.fluxvault.882d59538d714c23adefd30506a52e23.bak
+Run the app or start the service. Developer service install: eng\install-service.ps1

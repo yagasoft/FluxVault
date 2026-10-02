@@ -267,7 +267,7 @@ public sealed class RepositoryMaintenanceTests
     }
 
     [Fact]
-    public async Task Offline_mirror_repair_reports_unresolved_node_without_failing()
+    public async Task Offline_required_mirror_rejects_repair_without_writing()
     {
         using var workspace = TemporaryWorkspace.Create();
         var unavailableMirror = Path.Combine(workspace.RootPath, "unavailable-mirror");
@@ -278,12 +278,9 @@ public sealed class RepositoryMaintenanceTests
         ]));
         await repository.CommitAsync(NewRequest("local content"));
 
-        var report = await repository.RunMirrorRepairAsync();
-
-        var node = Assert.Single(report.Nodes);
-        Assert.Equal("offline", node.NodeId);
-        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
-        Assert.Contains(node.Issues, issue => issue.RepairAction == MirrorRepairAction.Unresolved);
+        await Assert.ThrowsAnyAsync<IOException>(() => repository.RunMirrorRepairAsync());
+        Assert.Equal("this file blocks directory access", await File.ReadAllTextAsync(unavailableMirror));
+        Assert.NotEmpty(Directory.EnumerateFiles(Path.Combine(workspace.RepositoryPath, "chunks"), "*.chunk", SearchOption.AllDirectories));
         AssertNoTemporaryFiles(workspace.RootPath);
     }
 
@@ -365,12 +362,7 @@ public sealed class RepositoryMaintenanceTests
 
         Directory.Delete(offlineMirror, recursive: true);
 
-        var report = await repository.PreviewMirrorRebalanceAsync();
-
-        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
-        var action = Assert.Single(report.Actions, action => action.MirrorNodeId == "offline");
-        Assert.Equal(MirrorRebalanceActionKind.Unresolved, action.Action);
-        Assert.Contains("unavailable", action.Message, StringComparison.OrdinalIgnoreCase);
+        await Assert.ThrowsAsync<DirectoryNotFoundException>(() => repository.PreviewMirrorRebalanceAsync());
         Assert.False(Directory.Exists(offlineMirror));
         AssertNoTemporaryFiles(workspace.RootPath);
     }
@@ -431,12 +423,7 @@ public sealed class RepositoryMaintenanceTests
         Directory.Delete(targetPath, recursive: true);
         var placementRepository = CreateRepository(workspace.RepositoryPath, placementMirrorSet);
 
-        var report = await placementRepository.RunMirrorRebalanceAsync();
-
-        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
-        Assert.Contains(report.Actions, action =>
-            action.MirrorNodeId == targetNodeId
-            && action.Action == MirrorRebalanceActionKind.Unresolved);
+        await Assert.ThrowsAsync<DirectoryNotFoundException>(() => placementRepository.RunMirrorRebalanceAsync());
         Assert.True(File.Exists(ChunkPath(extraPath, chunk.Digest)));
         Assert.True(File.Exists(MetadataPath(extraPath, chunk.Digest)));
         Assert.False(Directory.Exists(targetPath));
@@ -444,7 +431,7 @@ public sealed class RepositoryMaintenanceTests
     }
 
     [Fact]
-    public async Task Mirror_rebalance_run_reports_missing_primary_and_preserves_mirror_copies()
+    public async Task Mirror_rebalance_repairs_primary_and_required_target_before_removing_extra_copy()
     {
         using var workspace = TemporaryWorkspace.Create();
         var firstMirror = Path.Combine(workspace.RootPath, "first-mirror");
@@ -469,14 +456,12 @@ public sealed class RepositoryMaintenanceTests
 
         var report = await placementRepository.RunMirrorRebalanceAsync();
 
-        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
-        Assert.Contains(report.Actions, action =>
-            action.MirrorNodeId == targetNodeId
-            && action.Action == MirrorRebalanceActionKind.Unresolved
-            && action.Message.Contains("primary", StringComparison.OrdinalIgnoreCase));
-        Assert.False(File.Exists(ChunkPath(targetPath, chunk.Digest)));
-        Assert.True(File.Exists(ChunkPath(extraPath, chunk.Digest)));
-        Assert.True(File.Exists(MetadataPath(extraPath, chunk.Digest)));
+        Assert.Equal(RepositoryHealthState.Healthy, report.HealthState);
+        Assert.Empty(report.Actions);
+        Assert.Equal("rebalance missing primary content", await File.ReadAllTextAsync(ChunkPath(workspace.RepositoryPath, chunk.Digest)));
+        Assert.Equal("rebalance missing primary content", await File.ReadAllTextAsync(ChunkPath(targetPath, chunk.Digest)));
+        Assert.False(File.Exists(ChunkPath(extraPath, chunk.Digest)));
+        Assert.False(File.Exists(MetadataPath(extraPath, chunk.Digest)));
         AssertNoTemporaryFiles(workspace.RootPath);
     }
 
@@ -547,15 +532,7 @@ public sealed class RepositoryMaintenanceTests
         var chunk = Assert.Single(commit.Manifest.Chunks);
         Directory.Delete(secondMirror, recursive: true);
 
-        var report = await repository.RunMirrorDrainAsync("mirror");
-
-        Assert.Equal(MirrorRebalanceOperation.Drain, report.Operation);
-        Assert.False(report.IsPreview);
-        Assert.Equal(RepositoryHealthState.Warning, report.HealthState);
-        Assert.Contains(report.Actions, action =>
-            action.Action == MirrorRebalanceActionKind.Unresolved
-            && action.MirrorNodeId == "second"
-            && action.ChunkDigest == chunk.Digest);
+        await Assert.ThrowsAsync<DirectoryNotFoundException>(() => repository.RunMirrorDrainAsync("mirror"));
         Assert.True(File.Exists(ChunkPath(firstMirror, chunk.Digest)));
         Assert.True(File.Exists(MetadataPath(firstMirror, chunk.Digest)));
         Assert.False(Directory.Exists(secondMirror));

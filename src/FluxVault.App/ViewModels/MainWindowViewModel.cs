@@ -38,6 +38,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private bool isApplyingStatus;
     private bool hasLocalConfigurationChanges;
     private string? lastAppliedConfigurationFingerprint;
+    private (string ProfileId, string RepositoryPath, MetadataStoreConfiguration MetadataStore)? lastAppliedVersionInventoryIdentity;
     private RetentionPolicy currentRetentionPolicy = RetentionPolicy.CreateDefault();
     private CaptureCadencePolicy currentCaptureCadencePolicy = CaptureCadencePolicy.CreateDefault();
     private CodecPolicy currentCodecPolicy = CodecPolicy.CreateDefault();
@@ -550,10 +551,24 @@ public sealed partial class MainWindowViewModel : ObservableObject
                                 : FluxVaultStatusDetailLevel.Full),
                         cancellationToken)
                     .ConfigureAwait(true);
+                if (isAutomatic && response.Success && response.Status is { HasVersionInventory: false })
+                {
+                    response = await client.SendAsync(
+                            FluxVaultIpcRequest.GetStatus(statusDetailLevel: FluxVaultStatusDetailLevel.Full),
+                            cancellationToken)
+                        .ConfigureAwait(true);
+                }
                 if (!response.Success || response.Status is null)
                 {
                     SetServiceStatus($"Service connection: unavailable ({response.ErrorMessage ?? "no status returned"})");
                     SetServiceConnectionWarning(response.ErrorMessage ?? "The dashboard cannot connect to the FluxVault service.");
+                    return;
+                }
+
+                if (!response.Status.HasVersionInventory)
+                {
+                    SetServiceStatus("Service connection: running - repository inventory unavailable; previous versions retained");
+                    SetServiceConnectionWarning("The service has not supplied a repository version inventory.");
                     return;
                 }
 
@@ -1338,8 +1353,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        if ((File.Exists(destination) || selectedVersion.EntryKind == RepositoryEntryKind.Folder && Directory.Exists(destination))
-            && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
+        if (selectedVersion.EntryKind == RepositoryEntryKind.Folder && (File.Exists(destination) || Directory.Exists(destination)))
+        {
+            SetServiceStatus("Choose a new recovery folder. Existing folders cannot be merged.");
+            return;
+        }
+        if (File.Exists(destination) && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
         {
             SetServiceStatus("Service connection: restore overwrite denied.");
             return;
@@ -1349,14 +1368,21 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             var response = await client.SendAsync(FluxVaultIpcRequest.RestoreVersion(selectedVersion.VersionId, destination))
                 .ConfigureAwait(true);
-            SetServiceStatus(response.Success
-                ? $"Service connection: restored {selectedVersion.VersionId} to {destination}"
-                : $"Service connection: restore failed ({response.ErrorMessage})");
-            if (response.Success)
+            if (!response.Success)
             {
-                await RefreshAsync().ConfigureAwait(true);
-                SetServiceStatus($"Service connection: restored {selectedVersion.VersionId} to {destination}");
+                SetServiceStatus($"Service connection: restore failed ({response.ErrorMessage})");
+                return;
             }
+            if (response.RestoreResult is not { } result)
+            {
+                SetServiceStatus("The restore response did not include verification results. Check the destination before retrying.");
+                return;
+            }
+            var message = $"Restored and verified {result.RestoredFileCount} file(s) to {destination}. {string.Join(" ", result.Warnings)}".TrimEnd();
+            try { await RefreshAsync().ConfigureAwait(true); }
+            catch (Exception exception) when (exception is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+            { message += $" Status refresh failed: {exception.Message}"; }
+            SetServiceStatus(message);
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
         {
@@ -1387,14 +1413,18 @@ public sealed partial class MainWindowViewModel : ObservableObject
             }
 
             var summary = response.RestoreSelection;
-            SetServiceStatus(summary is null
-                ? $"Service connection: restored latest versions for {sourcePath}"
-                : $"Service connection: restored {summary.RestoredCount} of {summary.FileCount} item(s) for {sourcePath}");
-            await RefreshAsync().ConfigureAwait(true);
-            FileBrowser.RefreshBrowser();
-            SetServiceStatus(summary is null
-                ? $"Service connection: restored latest versions for {sourcePath}"
-                : $"Service connection: restored {summary.RestoredCount} of {summary.FileCount} item(s) for {sourcePath}");
+            if (summary is null)
+            {
+                SetServiceStatus("The restore response did not include results. Check the destination before retrying.");
+                return;
+            }
+            var message = $"Restored and verified {summary.RestoredCount} of {summary.FileCount} file(s).";
+            if (summary.FailedPaths.Count > 0) message += " Failed: " + string.Join("; ", summary.FailedPaths);
+            if (summary.Warnings is { Count: > 0 }) message += " " + string.Join(" ", summary.Warnings);
+            try { await RefreshAsync().ConfigureAwait(true); FileBrowser.RefreshBrowser(); }
+            catch (Exception exception) when (exception is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+            { message += $" Status refresh failed: {exception.Message}"; }
+            SetServiceStatus(message);
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
         {
@@ -1812,7 +1842,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
         bool isAutomatic = false,
         bool forceConfigurationReload = false)
     {
-        var selectedVersionId = SelectedVersion?.VersionId;
+        var inventoryIdentity = (
+            status.ActiveProfileId ?? status.Profiles?.FirstOrDefault(profile => profile.IsActive)?.Id
+                ?? FluxVaultProfileConfiguration.DefaultProfileId,
+            status.Configuration.RepositoryPath,
+            status.Configuration.MetadataStore);
+        var sameInventoryIdentity = lastAppliedVersionInventoryIdentity == inventoryIdentity;
+        var selectedVersionId = sameInventoryIdentity ? SelectedVersion?.VersionId : null;
         var configurationFingerprint = ComputeConfigurationFingerprint(status.Configuration);
         var shouldApplyConfiguration = !preserveLocalConfiguration
                                        && (!isAutomatic
@@ -1859,9 +1895,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 lastAppliedConfigurationFingerprint = configurationFingerprint;
             }
 
-            if (status.TrackedEntries is not null)
+            if (status.HasVersionInventory && status.TrackedEntries is not null)
             {
                 FileBrowser.LoadTrackedEntries(status.TrackedEntries);
+            }
+            else if (!sameInventoryIdentity)
+            {
+                FileBrowser.LoadTrackedEntries([]);
             }
 
             var visibleStatus = $"Service connection: running - {status.LastMessage.TrimEnd('.')}. Last refreshed {DateTime.Now:HH:mm:ss}";
@@ -1870,13 +1910,23 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 visibleStatus += $". Restore request: {RestoreHintPath}";
             }
 
-            if (status.RecentVersions.Count == 0)
+            if (!status.HasVersionInventory)
+            {
+                visibleStatus += sameInventoryIdentity
+                    ? ". Repository inventory unavailable; previous versions retained"
+                    : ". Repository inventory unavailable for this profile";
+            }
+            else if (status.RecentVersions.Count == 0)
             {
                 visibleStatus += ". Select a repository version after a backup completes before restoring";
             }
 
             SetServiceStatus(visibleStatus, BuildServiceStatusToolTip(visibleStatus, status.DurableChange));
-            if (windowsServiceStatus.State == FluxVaultWindowsServiceState.Running)
+            if (!status.HasVersionInventory)
+            {
+                SetServiceConnectionWarning("The service has not supplied a repository version inventory.");
+            }
+            else if (windowsServiceStatus.State == FluxVaultWindowsServiceState.Running)
             {
                 IsServiceWarningVisible = false;
                 ServiceWarningText = windowsServiceStatus.Message;
@@ -1913,23 +1963,33 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     runtimeStatus));
             }
 
-            RecentVersions.Clear();
-            foreach (var version in status.RecentVersions)
+            if (status.HasVersionInventory)
             {
-                RecentVersions.Add(new VersionRow(
-                    version.VersionId,
-                    version.SourcePath,
-                    version.CapturedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss"),
-                    version.Consistency,
-                    version.ChunkCount,
-                    FormatLineage(version),
-                    version.EntryKind,
-                    version.IsDeleted));
-            }
+                RecentVersions.Clear();
+                foreach (var version in status.RecentVersions)
+                {
+                    RecentVersions.Add(new VersionRow(
+                        version.VersionId,
+                        version.SourcePath,
+                        version.CapturedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss"),
+                        version.Consistency,
+                        version.ChunkCount,
+                        FormatLineage(version),
+                        version.EntryKind,
+                        version.IsDeleted));
+                }
 
-            SelectedVersion = selectedVersionId is null
-                ? FindRestoreHintVersion()
-                : RecentVersions.SingleOrDefault(version => version.VersionId == selectedVersionId) ?? FindRestoreHintVersion();
+                lastAppliedVersionInventoryIdentity = inventoryIdentity;
+                SelectedVersion = selectedVersionId is null
+                    ? FindRestoreHintVersion()
+                    : RecentVersions.SingleOrDefault(version => version.VersionId == selectedVersionId) ?? FindRestoreHintVersion();
+            }
+            else if (!sameInventoryIdentity)
+            {
+                RecentVersions.Clear();
+                SelectedVersion = null;
+                lastAppliedVersionInventoryIdentity = null;
+            }
             CaptureStatuses.Clear();
             foreach (var captureStatus in status.CaptureStatuses ?? [])
             {

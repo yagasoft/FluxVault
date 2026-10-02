@@ -14,4 +14,5 @@ public sealed record RestoreSelectionSummary(
     int FileCount,
     int ConflictCount,
     int RestoredCount,
-    IReadOnlyList<string> FailedPaths);
+    IReadOnlyList<string> FailedPaths,
+    IReadOnlyList<string>? Warnings = null);

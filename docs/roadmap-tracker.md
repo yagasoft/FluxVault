@@ -5,12 +5,21 @@ This is the authoritative implementation tracker for the FluxVault roadmap.
 actually been implemented, what is planned, and what evidence supports that
 status.
 
+The [1 October 2026 review](reviews/2026-10-01/review.md) found reproduced
+integrity failures and outstanding runtime/release validation despite passing
+automated tests. Historical `Implemented` rows record their named implementation
+scope; they are not a certification of current data safety or release readiness.
+The [`NEXT-*` improvement programme](improvement-roadmap.md) below defines the
+current delivery order and acceptance gates. Existing R7 validation and future
+execution gaps remain open; this documentation change does not mark them complete.
+
 ## Status values
 
 - `Implemented`: shipped in `main` with source and verification evidence for
   the named capability.
 - `Partially implemented`: usable foundation or partial slice exists, but the
   product capability is not complete.
+- `In progress`: an unmerged implementation has evidence for part of the capability; required gates remain open.
 - `Planned`: accepted on the roadmap, not implemented yet.
 - `Deferred`: intentionally later than the current roadmap stage.
 - `Blocked`: cannot proceed until an explicit dependency is resolved.
@@ -24,6 +33,43 @@ additions should create `Planned` rows; implementation PRs should update the
 affected rows to `Implemented` or `Partially implemented` with PR, commit, and
 verification evidence. CodeQL remains outside the PR gate unless explicitly
 requested.
+
+## Current improvement programme
+
+NEXT-001/003/005 are `Partially implemented` after the bounded integrity slice. The original review and probes remain baseline evidence, not verification of fixes.
+Detailed scope, dependencies, invariants and acceptance criteria are in the
+[improvement roadmap](improvement-roadmap.md); findings are in the
+[review](reviews/2026-10-01/review.md).
+
+The first [content-integrity slice](superpowers/specs/2026-10-01-verified-local-recovery-design.md)
+has a [six-batch implementation plan](superpowers/plans/2026-10-01-verified-local-recovery.md).
+It covers part of NEXT-003 and supporting NEXT-001/005 work. The
+implementation is deployed and validated as v1.0.4 on this staging PC. The
+[evidence and acceptance matrix](verification/2026-10-01-verified-recovery/README.md)
+record 687 passing tests, independent integrity review, native fixture file/folder
+recovery and installed service/CLI/UI recovery with independent hashes. PostgreSQL
+was provisioned under explicit scoped-authentication approval without restart.
+Live validation exposed and corrected managed-HBA cleanup and folder publication
+ordering defects; rejected stale installer payloads were caught before installation.
+Resumed desktop validation exposed and corrected inventory availability/cache
+invalidation handling. Installed recovery and selection preservation now pass;
+all temporary processes exited and the service has no watched test folders.
+None of the complete packages below is fully delivered.
+
+| ID | Priority | Capability | Status | Required verification |
+| --- | --- | --- | --- | --- |
+| NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |
+| NEXT-002 | P0 | Authorised IPC and vault isolation | Planned | Caller/resource denial and authorised success, bounded requests, malicious-path rejection and two-vault isolation. |
+| NEXT-003 | P0 | Verified publication, restore and safe mirrors | Partially implemented | Bit-flip/missing-payload/last-good-copy cases, validated manifests, bounded decoding and destination preservation. |
+| NEXT-004 | P0 | Correct configuration and user commands | Planned | Preserve all untouched settings, reject stale updates, stop after failed save, explicit pause and separate history deletion. |
+| NEXT-005 | P0 | Durable work and owned runtime lifecycle | Partially implemented | Journal acknowledgement, fault/stop/restart, watcher recovery, cross-process maintenance/restore and no post-stop writes. |
+| NEXT-006 | P0 | Independent local disaster recovery | Planned | Recover on a fresh environment without source/primary/DB, including replay/deletion and retained-checkpoint consistency. |
+| NEXT-007 | P1 | Modern shell and guided protection | Planned | Working overview/setup journey, truthful states, accessible adaptive layout and observed professional first use. |
+| NEXT-008 | P1 | Recovery, storage, activity and settings UX | Planned | Search/plan/restore/result, meaningful health/actions, settings runtime effects and error/cancel/offline flows. |
+| NEXT-009 | P1 | Bounded professional performance | Planned | Real service/DB/UI workload benchmarks, IO/CPU/memory/interference budgets and no integrity regression. |
+| NEXT-010 | P1 | Professional capture consistency and fidelity | Planned | Stable reads, linked capture sets, bounded VSS cleanup, Windows metadata contract and real application reopen. |
+| NEXT-011 | P1 | Complete installation and pilot release | Planned | Clean-VM install-to-recovery, local dependency lifecycle, release security/SBOM checks, current docs and pilot evidence. |
+| NEXT-012 | P2 | Differentiation and optional expansion | Planned | One complete validated outcome at a time, preserving local-first recovery and security/performance gates. |
 
 ## MVP and MVP+ tracker
 
@@ -81,11 +127,11 @@ requested.
 | R6-001 | R6 | Direct cloud adapter foundation | Partially implemented | Commit `927bb3a`; `src/FluxVault.Abstractions/Configuration/DirectCloudConfiguration.cs`; `src/FluxVault.Abstractions/Cloud/CloudObjectContracts.cs`; `src/FluxVault.Core/Cloud`; `Directory.Packages.props`; `src/FluxVault.Abstractions/Ipc/FluxVaultServiceStatus.cs`; `src/FluxVault.Core/Service/FluxVaultOperations.cs`; `src/FluxVault.App/ViewModels/MainWindowViewModel.cs`; README and roadmap docs | `tests/FluxVault.Core.Tests/ConfigurationStoreTests.cs`; `tests/FluxVault.Core.Tests/DirectCloudAdapterTests.cs`; `tests/FluxVault.Core.Tests/IpcSerializationTests.cs`; `tests/FluxVault.Integration.Tests/ServiceOperationsTests.cs`; `tests/FluxVault.Integration.Tests/PackagingTests.cs`; `tests/FluxVault.App.Tests/MainWindowViewModelRefreshTests.cs`; `tests/FluxVault.App.Tests/XamlQualityTests.cs` | Adds disabled-by-default direct-cloud configuration and fake-client-tested object adapter contracts for Azure Blob, S3-compatible storage, Dropbox, Google Drive, and OneDrive. SDK package/client descriptors are compile-checked. Service status and Diagnostics report direct-cloud readiness with live validation deferred. No credentials are used and no live cloud account calls are executed. |
 | R6-010 | R6 | Live direct-cloud credential and transfer execution | Planned | Not implemented yet. | Planned verification: credential acquisition, resumable transfers, provider-native listing/change feeds, metered network enforcement, retry/resume, and live-provider opt-in smoke tests. | Requires explicit credentials/account access and must keep no-secret config guarantees. |
 | R7-001 | R7 | PostgreSQL whole-PC metadata store runtime | Implemented | Commit `9f04869`; `src/FluxVault.Abstractions/Configuration/MetadataStoreConfiguration.cs`; `src/FluxVault.Abstractions/Ipc/FluxVaultServiceStatus.cs`; `src/FluxVault.Core/Storage/Metadata`; `src/FluxVault.Core/Storage/FileSystemChunkRepository.cs`; `src/FluxVault.Core/Service/FluxVaultOperations.cs`; `src/FluxVault.App/ViewModels/OptionsViewModel.cs`; `src/FluxVault.App/ViewModels/MainWindowViewModel.cs`; `src/FluxVault.App/OptionsWindow.xaml`; `eng/backup-fluxvault-db.ps1`; `eng/restore-fluxvault-db.ps1`; docs | `tests/FluxVault.Core.Tests/ConfigurationStoreTests.cs`; `tests/FluxVault.Core.Tests/PostgreSqlMetadataStoreTests.cs`; `tests/FluxVault.Core.Tests/MetadataPrimaryRepositoryTests.cs`; `tests/FluxVault.Core.Tests/FluxVaultOperationsPerformanceTests.cs`; `tests/FluxVault.App.Tests/OptionsViewModelTests.cs`; `tests/FluxVault.Integration.Tests/CliHarnessTests.cs` | PostgreSQL is now the normal runtime metadata source. Service/app commits record DB rows plus `manifest_json`, list/status/inspect/restore/retention/scrub paths read metadata instead of scanning manifest files, metadata outbox rows export to `metadata-journal`, status reports DB health/lag, and legacy file-manifest mode is explicit for developer diagnostics. |
-| R7-010 | R7 | PostgreSQL install and bootstrap validation | Planned | Not implemented yet. | Planned verification: setup script smoke on a clean validation machine, service account/database creation, loopback trust scoping, schema initialization, and failure rollback. | Local reliability priority before new sync/cloud execution. |
+| R7-010 | R7 | PostgreSQL install and bootstrap validation | Partially implemented | Staging recovery slice; `eng/setup-fluxvault-postgresql.ps1`; [setup evidence](verification/2026-10-01-verified-recovery/installed-postgresql-setup.json) | Actual owned SCRAM setup rehearsal, collision/non-ASCII preservation and scoped runtime access after admin cleanup; authorised normal Windows database/account/schema creation; IPv4/IPv6 runtime/admin/unrelated-database probes; original HBA lines and postmaster preserved. | Existing PostgreSQL bootstrap is verified on this PC. Clean-machine dependency installation, upgrade/lifecycle and broader recovery remain open. |
 | R7-011 | R7 | PostgreSQL migration and import validation | Planned | Not implemented yet. | Planned verification: legacy manifest import, mixed repository compatibility, duplicate/idempotent import handling, and diagnostics for import failures. | Needed before treating older vault transitions as routine user workflows. |
 | R7-012 | R7 | PostgreSQL backup and restore recovery validation | Planned | Not implemented yet. | Planned verification: `pg_dump`/`pg_restore` restore rehearsal, config/journal bundle recovery, service restart, and version restore after DB recovery. | Protects against losing metadata even when chunk payloads remain intact. |
 | R7-013 | R7 | PostgreSQL performance and scale validation | Planned | Not implemented yet. | Planned verification: large-vault list/status/inspect/retention/scrub benchmarks, DB writer concurrency limits, outbox lag reporting, and regression thresholds. | Confirms the whole-PC metadata track is faster and stable at realistic scale. |
-| R7-014 | R7 | PostgreSQL release-smoke validation | Planned | Not implemented yet. | Planned verification: installer/bootstrap/restart/uninstall smoke with PostgreSQL present, existing ProgramData preservation, and unsigned consumer release notes. | Keeps release validation separate from normal feature PR gates. |
+| R7-014 | R7 | PostgreSQL release-smoke validation | Partially implemented | Staging v1.0.4; [deployment](verification/2026-10-01-verified-recovery/staging-deployment.md) | Actual embedded/installed 204-file hash match, delayed-auto/recovery/Event Log policy, installed CLI and normal service/DB file/folder recovery, and failed v1.0.2 uninstall with ProgramData/database/history preservation. | Installed desktop recovery/hash and inventory preservation passed; v1.0.3 to v1.0.4 upgrade preserved configuration bytes and history. Clean-VM lifecycle and broader release certification are not claimed. |
 | LATER-001 | Later | Client-side encryption and enterprise/fleet foundations | Partially implemented | Commit `2a776af`; `src/FluxVault.Abstractions/Configuration/SecurityPostureConfiguration.cs`; `src/FluxVault.Abstractions/Configuration/EnterpriseFleetConfiguration.cs`; `src/FluxVault.Abstractions/Security/SecurityContracts.cs`; `src/FluxVault.Core/Security`; `src/FluxVault.Abstractions/Ipc/FluxVaultServiceStatus.cs`; `src/FluxVault.Core/Service/FluxVaultOperations.cs`; `src/FluxVault.App/ViewModels/MainWindowViewModel.cs`; README and roadmap docs | `tests/FluxVault.Core.Tests/ConfigurationStoreTests.cs`; `tests/FluxVault.Core.Tests/SecurityFoundationTests.cs`; `tests/FluxVault.Core.Tests/IpcSerializationTests.cs`; `tests/FluxVault.Integration.Tests/ServiceOperationsTests.cs`; `tests/FluxVault.App.Tests/MainWindowViewModelRefreshTests.cs`; `tests/FluxVault.App.Tests/XamlQualityTests.cs`; `tests/FluxVault.App.Tests/ProjectDirectiveTests.cs` | Adds disabled-by-default client-side encryption configuration, key-reference records without inline secret material, pure encryption planning contracts, disabled-by-default enterprise/fleet policy configuration, local fleet policy/status contracts, service status, and Diagnostics display. Repository artefacts remain plain until a future encryption execution slice; key-provider integration, recovery-key flows, remote fleet management, and fleet monitoring are still future work. |
 | LATER-010 | Later | Repository encryption execution | Planned | Not implemented yet. | Planned verification: key provider integration, recovery-key workflow, encrypted chunk metadata, restore after key rotation, and no-plaintext regression checks. | Requires explicit approval because it changes repository artefact format and recovery risk. |
 | LATER-011 | Later | Enterprise enrolment and remote fleet management | Planned | Not implemented yet. | Planned verification: device enrolment, policy distribution, compliance reporting, offline policy behavior, and tenant/service failure handling. | The current fleet work is local schema/status only. |

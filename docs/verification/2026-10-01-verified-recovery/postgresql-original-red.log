@@ -1,0 +1,44 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.TestHost -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.TestHost\bin\Release\net10.0-windows\FluxVault.TestHost.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Cli -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Cli\bin\Release\net10.0\FluxVault.Cli.dll
+  FluxVault.Service -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Service\bin\Release\net10.0-windows\FluxVault.Service.dll
+  FluxVault.Integration.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.25]     FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Descriptor_conflicts_roll_back_the_entire_metadata_transaction(field: "logical", sameVersion: True) [FAIL]
+  Failed FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Descriptor_conflicts_roll_back_the_entire_metadata_transaction(field: "logical", sameVersion: True) [1 s]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Descriptor_conflicts_roll_back_the_entire_metadata_transaction(String field, Boolean sameVersion) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\PostgreSqlRepositoryIntegrityTests.cs:line 75
+   at FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Descriptor_conflicts_roll_back_the_entire_metadata_transaction(String field, Boolean sameVersion) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\PostgreSqlRepositoryIntegrityTests.cs:line 79
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:03.93]     FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(operation: "retention") [FAIL]
+  Failed FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(operation: "retention") [779 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1
+  Stack Trace:
+     at FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(String operation) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\PostgreSqlRepositoryIntegrityTests.cs:line 51
+   at FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(String operation) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\PostgreSqlRepositoryIntegrityTests.cs:line 55
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:04.54]     FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(operation: "purge") [FAIL]
+  Failed FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(operation: "purge") [613 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1
+  Stack Trace:
+     at FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(String operation) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\PostgreSqlRepositoryIntegrityTests.cs:line 51
+   at FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(String operation) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\PostgreSqlRepositoryIntegrityTests.cs:line 55
+--- End of stack trace from previous location ---
+Results File: E:\Temp\AppData\Local\Temp\FluxVault.Integrity.PostgreSql\18883ef1884141c6b34f4285891195d6\results\os008_OS008-HOME_2026-10-01_16_49_22_net10.0.trx
+
+Failed!  - Failed:     3, Passed:     3, Skipped:     0, Total:     6, Duration: 4 s - FluxVault.Integration.Tests.dll (net10.0)

@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="844f4d4a-50e8-44a5-a061-a8ac83e57931" name="os008@OS008-HOME 2026-10-02 09:26:40" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T09:26:40.3578259+03:00" queuing="2026-10-02T09:26:40.3578260+03:00" start="2026-10-02T09:26:39.2779660+03:00" finish="2026-10-02T09:26:40.3622937+03:00" />
+  <TestSettings name="default" id="a856f619-34de-4de3-9f15-7a4baa4a1b9d">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-02_09_26_40" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1c249463-576d-4d98-b092-1cca3770f2b6" testId="47b8bdc3-936d-7025-06b1-d8076b1da465" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(changeMetadata: False)" computerName="OS008-HOME" duration="00:00:00.2556284" startTime="2026-10-02T09:26:39.8290372+03:00" endTime="2026-10-02T09:26:40.0999245+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c249463-576d-4d98-b092-1cca3770f2b6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(Boolean changeMetadata) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs:line 145&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="223c8f7f-7e3d-464f-bd63-205ade65e062" testId="eb60d811-e91e-d5eb-d670-e6b2e01f5982" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(blockTrackedEntries: True)" computerName="OS008-HOME" duration="00:00:00.0040070" startTime="2026-10-02T09:26:40.1254852+03:00" endTime="2026-10-02T09:26:40.1294441+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="223c8f7f-7e3d-464f-bd63-205ade65e062">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(Boolean blockTrackedEntries) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs:line 119&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3f2c12d4-5262-4daf-a5f6-beb5bea9d374" testId="ab85424b-9e09-2516-4519-fe3fc5e59fae" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(blockTrackedEntries: False)" computerName="OS008-HOME" duration="00:00:00.0101752" startTime="2026-10-02T09:26:40.1151484+03:00" endTime="2026-10-02T09:26:40.1250648+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3f2c12d4-5262-4daf-a5f6-beb5bea9d374">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(Boolean blockTrackedEntries) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs:line 119&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c33f7d00-dd57-4e80-af0a-3fa4472616dc" testId="812cc96b-cbfd-02b6-83d3-5d580e9fa2b1" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(changeMetadata: True)" computerName="OS008-HOME" duration="00:00:00.0126750" startTime="2026-10-02T09:26:40.1114717+03:00" endTime="2026-10-02T09:26:40.1135205+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c33f7d00-dd57-4e80-af0a-3fa4472616dc">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(Boolean changeMetadata) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs:line 145&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2b608aa1-f289-4fd2-8c5a-c87641fdf69c" testId="b79eeed7-b51b-5b8a-7017-4350a06243c9" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Full_status_treats_unavailable_storage_as_unknown_and_preserves_history" computerName="OS008-HOME" duration="00:00:00.1340883" startTime="2026-10-02T09:26:40.1298529+03:00" endTime="2026-10-02T09:26:40.2640149+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2b608aa1-f289-4fd2-8c5a-c87641fdf69c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Full_status_treats_unavailable_storage_as_unknown_and_preserves_history() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs:line 74&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(blockTrackedEntries: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="eb60d811-e91e-d5eb-d670-e6b2e01f5982">
+      <Execution id="223c8f7f-7e3d-464f-bd63-205ade65e062" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(changeMetadata: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="47b8bdc3-936d-7025-06b1-d8076b1da465">
+      <Execution id="1c249463-576d-4d98-b092-1cca3770f2b6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Full_status_treats_unavailable_storage_as_unknown_and_preserves_history" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="b79eeed7-b51b-5b8a-7017-4350a06243c9">
+      <Execution id="2b608aa1-f289-4fd2-8c5a-c87641fdf69c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="Full_status_treats_unavailable_storage_as_unknown_and_preserves_history" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(changeMetadata: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="812cc96b-cbfd-02b6-83d3-5d580e9fa2b1">
+      <Execution id="c33f7d00-dd57-4e80-af0a-3fa4472616dc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(blockTrackedEntries: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-product-review\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ab85424b-9e09-2516-4519-fe3fc5e59fae">
+      <Execution id="3f2c12d4-5262-4daf-a5f6-beb5bea9d374" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="47b8bdc3-936d-7025-06b1-d8076b1da465" executionId="1c249463-576d-4d98-b092-1cca3770f2b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb60d811-e91e-d5eb-d670-e6b2e01f5982" executionId="223c8f7f-7e3d-464f-bd63-205ade65e062" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab85424b-9e09-2516-4519-fe3fc5e59fae" executionId="3f2c12d4-5262-4daf-a5f6-beb5bea9d374" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="812cc96b-cbfd-02b6-83d3-5d580e9fa2b1" executionId="c33f7d00-dd57-4e80-af0a-3fa4472616dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b79eeed7-b51b-5b8a-7017-4350a06243c9" executionId="2b608aa1-f289-4fd2-8c5a-c87641fdf69c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="0" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.47]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.47]       Expected: False&#xD;
+[xUnit.net 00:00:00.47]       Actual:   True&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs(145,0): at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(Boolean changeMetadata)&#xD;
+[xUnit.net 00:00:00.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.48]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.48]       Expected: False&#xD;
+[xUnit.net 00:00:00.48]       Actual:   True&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs(145,0): at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(Boolean changeMetadata)&#xD;
+[xUnit.net 00:00:00.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.49]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.49]       Expected: False&#xD;
+[xUnit.net 00:00:00.49]       Actual:   True&#xD;
+[xUnit.net 00:00:00.49]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs(119,0): at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(Boolean blockTrackedEntries)&#xD;
+[xUnit.net 00:00:00.49]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.50]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.50]       Expected: False&#xD;
+[xUnit.net 00:00:00.50]       Actual:   True&#xD;
+[xUnit.net 00:00:00.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs(119,0): at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(Boolean blockTrackedEntries)&#xD;
+[xUnit.net 00:00:00.50]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.63]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.63]       Expected: False&#xD;
+[xUnit.net 00:00:00.63]       Actual:   True&#xD;
+[xUnit.net 00:00:00.63]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.63]         C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs(74,0): at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Full_status_treats_unavailable_storage_as_unknown_and_preserves_history()&#xD;
+[xUnit.net 00:00:00.63]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.64]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:26:40.1023775+03:00">
+        <Text>[xUnit.net 00:00:00.47]     FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(changeMetadata: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:26:40.1137747+03:00">
+        <Text>[xUnit.net 00:00:00.48]     FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(changeMetadata: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:26:40.1253010+03:00">
+        <Text>[xUnit.net 00:00:00.49]     FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(blockTrackedEntries: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:26:40.1295968+03:00">
+        <Text>[xUnit.net 00:00:00.50]     FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(blockTrackedEntries: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-02T09:26:40.2643285+03:00">
+        <Text>[xUnit.net 00:00:00.63]     FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Full_status_treats_unavailable_storage_as_unknown_and_preserves_history [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

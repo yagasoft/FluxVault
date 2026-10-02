@@ -9,6 +9,8 @@ param(
     [string]$RepositoryPath = "$env:ProgramData\FluxVault\repository",
     [string]$PostgresAdminUsername = "postgres",
     [string]$PostgresAdminPassword,
+    [string]$PostgreSqlBinPath,
+    [switch]$RequireFreshDatabase,
     [switch]$AllowTemporaryAdminTrustForExistingServer,
     [switch]$ConfigOnly,
     [string]$CliPath
@@ -46,6 +48,13 @@ function Get-ServiceInfo {
 }
 
 function Get-PostgreSqlBinDirectory {
+    if (-not [string]::IsNullOrWhiteSpace($PostgreSqlBinPath)) {
+        $resolved = (Resolve-Path -LiteralPath $PostgreSqlBinPath).Path
+        foreach ($tool in @('psql.exe', 'pg_ctl.exe', 'createdb.exe')) {
+            if (-not (Test-Path -LiteralPath (Join-Path $resolved $tool) -PathType Leaf)) { throw "Pinned PostgreSQL tool missing: $tool" }
+        }
+        return $resolved
+    }
     $psql = Get-Command "psql" -ErrorAction SilentlyContinue
     if ($null -ne $psql) {
         return Split-Path -Parent $psql.Source
@@ -125,6 +134,11 @@ function Set-ManagedPgHbaBlock {
         throw "pg_hba.conf was not found: $PgHbaPath"
     }
 
+    # This helper writes ASCII. Refuse input it cannot preserve before any edit.
+    foreach ($byte in [IO.File]::ReadAllBytes($PgHbaPath)) {
+        if ($byte -gt 127) { throw 'pg_hba.conf contains non-ASCII content; refusing to rewrite its encoding.' }
+    }
+
     $content = Get-Content -LiteralPath $PgHbaPath
     $output = New-Object System.Collections.Generic.List[string]
     $inside = $false
@@ -172,6 +186,11 @@ function Find-PgHbaInsertionIndex {
 
     for ($index = 0; $index -lt $Lines.Count; $index++) {
         $trimmed = $Lines[$index].Trim()
+        # Keep managed blocks independent. Inserting at the first host row in
+        # another block would nest them and its later removal would delete both.
+        if ($trimmed -in @('# FluxVault PostgreSQL local trust BEGIN', '# FluxVault PostgreSQL temporary admin trust BEGIN')) {
+            return $index
+        }
         if ($trimmed -match '^(host|hostssl|hostnossl)\s+') {
             return $index
         }
@@ -226,8 +245,7 @@ function Invoke-PgCtlReload {
 
     & $PgCtlPath reload -D $DataDirectory
     if ($LASTEXITCODE -ne 0) {
-        Restart-Service -Name $ServiceName -Force
-        Wait-ServiceRunning
+        throw "PostgreSQL configuration reload failed. The existing service was not restarted: $ServiceName"
     }
 }
 
@@ -514,6 +532,7 @@ $pgCtlPath = Join-Path $binDirectory "pg_ctl.exe"
 $createdbPath = Join-Path $binDirectory "createdb.exe"
 
 if ((-not $existingServer) -or (-not (Test-Path -LiteralPath $psqlPath))) {
+    if (-not [string]::IsNullOrWhiteSpace($PostgreSqlBinPath)) { throw 'Pinned existing PostgreSQL installation is unavailable; automatic installation is disabled.' }
     Install-PostgreSql
     $binDirectory = Get-PostgreSqlBinDirectory
     $psqlPath = Join-Path $binDirectory "psql.exe"
@@ -521,106 +540,93 @@ if ((-not $existingServer) -or (-not (Test-Path -LiteralPath $psqlPath))) {
     $createdbPath = Join-Path $binDirectory "createdb.exe"
 }
 
-$psqlPath = Resolve-CommandPath "psql" $psqlPath
-$pgCtlPath = Resolve-CommandPath "pg_ctl" $pgCtlPath
-$createdbPath = Resolve-CommandPath "createdb" $createdbPath
+if ([string]::IsNullOrWhiteSpace($PostgreSqlBinPath)) {
+    $psqlPath = Resolve-CommandPath "psql" $psqlPath
+    $pgCtlPath = Resolve-CommandPath "pg_ctl" $pgCtlPath
+    $createdbPath = Resolve-CommandPath "createdb" $createdbPath
+}
 
 Wait-ServiceRunning
 $dataDirectory = Get-PostgreSqlDataDirectory
 
-Set-FluxVaultTrust -DataDirectory $dataDirectory
-Invoke-PgCtlReload -PgCtlPath $pgCtlPath -DataDirectory $dataDirectory
-
-$existingFluxVaultConnectionReady = $existingServer `
-    -and [string]::IsNullOrWhiteSpace($script:EffectiveAdminPassword) `
-    -and (-not $AllowTemporaryAdminTrustForExistingServer) `
-    -and (Test-FluxVaultConnection -PsqlPath $psqlPath)
-if ($existingServer `
-    -and [string]::IsNullOrWhiteSpace($script:EffectiveAdminPassword) `
-    -and (-not $AllowTemporaryAdminTrustForExistingServer) `
-    -and (-not $existingFluxVaultConnectionReady)) {
-    throw "Existing PostgreSQL service '$ServiceName' found, but FluxVault cannot connect without a password. Pass -PostgresAdminPassword or explicitly pass -AllowTemporaryAdminTrustForExistingServer."
-}
-
+# Preserve exact original authentication bytes for failure recovery and operational rollback.
+$pgHbaPath = Join-Path $dataDirectory 'pg_hba.conf'
+$originalHba = [IO.File]::ReadAllBytes($pgHbaPath)
+$hbaBackup = "$pgHbaPath.fluxvault.$([guid]::NewGuid().ToString('N')).bak"
+[IO.File]::WriteAllBytes($hbaBackup, $originalHba)
+$provisioned = $false
 $temporaryAdminTrust = $existingServer -and [string]::IsNullOrWhiteSpace($script:EffectiveAdminPassword) -and $AllowTemporaryAdminTrustForExistingServer
-if ($temporaryAdminTrust) {
-    Set-TemporaryAdminTrust -DataDirectory $dataDirectory -Enabled $true
-    Invoke-PgCtlReload -PgCtlPath $pgCtlPath -DataDirectory $dataDirectory
-}
-
 try {
-    if (-not $existingFluxVaultConnectionReady) {
-        $adminNoPassword = [string]::IsNullOrWhiteSpace($script:EffectiveAdminPassword)
-        $roleExists = Invoke-PsqlScalar `
-            -PsqlPath $psqlPath `
-            -Database "postgres" `
-            -User $PostgresAdminUsername `
-            -Password $script:EffectiveAdminPassword `
-            -Command "SELECT 1 FROM pg_roles WHERE rolname = '$Username';" `
-            -NoPassword:$adminNoPassword
-        if ($roleExists -ne "1") {
-            Invoke-PsqlCommand `
-                -PsqlPath $psqlPath `
-                -Database "postgres" `
-                -User $PostgresAdminUsername `
-                -Password $script:EffectiveAdminPassword `
-                -Command "CREATE ROLE `"$Username`" LOGIN;" `
-                -NoPassword:$adminNoPassword
-        }
-
-        $databaseExists = Invoke-PsqlScalar `
-            -PsqlPath $psqlPath `
-            -Database "postgres" `
-            -User $PostgresAdminUsername `
-            -Password $script:EffectiveAdminPassword `
-            -Command "SELECT 1 FROM pg_database WHERE datname = '$DatabaseName';" `
-            -NoPassword:$adminNoPassword
-        if ($databaseExists -ne "1") {
-            Invoke-PostgresTool `
-                -ToolPath $createdbPath `
-                -Arguments @("--host=localhost", "--port=$Port", "--username=$PostgresAdminUsername", "--owner=$Username", "--encoding=UTF8", $DatabaseName) `
-                -Password $script:EffectiveAdminPassword `
-                -FailureMessage "createdb failed."
-        }
-
-        Invoke-PsqlCommand `
-            -PsqlPath $psqlPath `
-            -Database "postgres" `
-            -User $PostgresAdminUsername `
-            -Password $script:EffectiveAdminPassword `
-            -Command "ALTER DATABASE `"$DatabaseName`" OWNER TO `"$Username`"; GRANT CONNECT, TEMPORARY, CREATE ON DATABASE `"$DatabaseName`" TO `"$Username`";" `
-            -NoPassword:$adminNoPassword
-    }
-}
-finally {
+    # Enabling and reloading temporary authentication are both inside the cleanup region.
     if ($temporaryAdminTrust) {
-        Set-TemporaryAdminTrust -DataDirectory $dataDirectory -Enabled $false
+        Set-TemporaryAdminTrust -DataDirectory $dataDirectory -Enabled $true
         Invoke-PgCtlReload -PgCtlPath $pgCtlPath -DataDirectory $dataDirectory
     }
+    $existingFluxVaultConnectionReady = $existingServer `
+        -and [string]::IsNullOrWhiteSpace($script:EffectiveAdminPassword) `
+        -and (-not $AllowTemporaryAdminTrustForExistingServer) `
+        -and (Test-FluxVaultConnection -PsqlPath $psqlPath)
+    if ($existingFluxVaultConnectionReady -and $RequireFreshDatabase) { throw 'Fresh provisioning refused: the target database/role already exists.' }
+    if ($existingServer -and [string]::IsNullOrWhiteSpace($script:EffectiveAdminPassword) `
+        -and (-not $AllowTemporaryAdminTrustForExistingServer) -and (-not $existingFluxVaultConnectionReady)) {
+        throw "Existing PostgreSQL service '$ServiceName' requires administrator authentication. Supply credentials locally or explicitly authorise temporary localhost administrator trust."
+    }
+    if (-not $existingFluxVaultConnectionReady) {
+        $adminNoPassword = [string]::IsNullOrWhiteSpace($script:EffectiveAdminPassword)
+        $roleExists = Invoke-PsqlScalar -PsqlPath $psqlPath -Database 'postgres' -User $PostgresAdminUsername `
+            -Password $script:EffectiveAdminPassword -Command "SELECT 1 FROM pg_roles WHERE rolname = '$Username';" -NoPassword:$adminNoPassword
+        $databaseExists = Invoke-PsqlScalar -PsqlPath $psqlPath -Database 'postgres' -User $PostgresAdminUsername `
+            -Password $script:EffectiveAdminPassword -Command "SELECT 1 FROM pg_database WHERE datname = '$DatabaseName';" -NoPassword:$adminNoPassword
+        if ($RequireFreshDatabase -and ($roleExists -eq '1' -or $databaseExists -eq '1')) {
+            throw 'Fresh provisioning refused: the target role or database already exists; no ownership/grants were changed.'
+        }
+        if ($databaseExists -eq '1') {
+            $owner = Invoke-PsqlScalar -PsqlPath $psqlPath -Database 'postgres' -User $PostgresAdminUsername `
+                -Password $script:EffectiveAdminPassword -Command "SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname = '$DatabaseName';" -NoPassword:$adminNoPassword
+            if ($owner -ne $Username) { throw 'Existing database ownership differs from the configured FluxVault role; refusing to change it.' }
+        }
+        if ($roleExists -ne '1') {
+            Invoke-PsqlCommand -PsqlPath $psqlPath -Database 'postgres' -User $PostgresAdminUsername `
+                -Password $script:EffectiveAdminPassword -Command "CREATE ROLE $Username LOGIN;" -NoPassword:$adminNoPassword
+        }
+        if ($databaseExists -ne '1') {
+            Invoke-PostgresTool -ToolPath $createdbPath `
+                -Arguments @('--host=localhost', "--port=$Port", "--username=$PostgresAdminUsername", "--owner=$Username", '--encoding=UTF8', $DatabaseName) `
+                -Password $script:EffectiveAdminPassword -FailureMessage 'createdb failed.'
+        }
+    }
+    Set-FluxVaultTrust -DataDirectory $dataDirectory
+    Invoke-PgCtlReload -PgCtlPath $pgCtlPath -DataDirectory $dataDirectory
+    Update-FluxVaultConfig
+    Invoke-PsqlCommand -PsqlPath $psqlPath -Database $DatabaseName -User $Username -Password $null -Command 'SELECT 1;' -NoPassword
+    Invoke-FluxVaultCliMetadataInit
+    $schemaVersion = Invoke-PsqlScalar -PsqlPath $psqlPath -Database $DatabaseName -User $Username -Password $null `
+        -Command 'SELECT max(version) FROM fluxvault.schema_version;' -NoPassword
+    if ($schemaVersion -ne '1') { throw "Unexpected FluxVault metadata schema version: $schemaVersion" }
+    $provisioned = $true
+} finally {
+    $authenticationCleanupSucceeded = $false
+    try {
+        if ($temporaryAdminTrust) {
+            Set-TemporaryAdminTrust -DataDirectory $dataDirectory -Enabled $false
+            Invoke-PgCtlReload -PgCtlPath $pgCtlPath -DataDirectory $dataDirectory
+            if ([IO.File]::ReadAllText($pgHbaPath).Contains('# FluxVault PostgreSQL temporary admin trust BEGIN')) {
+                throw 'Temporary administrator authentication was not removed.'
+            }
+        }
+        if ($provisioned) {
+            # The runtime must still work after temporary administrator access
+            # is gone; an earlier successful connection cannot prove this.
+            Invoke-PsqlCommand -PsqlPath $psqlPath -Database $DatabaseName -User $Username -Password $null -Command 'SELECT 1;' -NoPassword
+        }
+        $authenticationCleanupSucceeded = $true
+    } finally {
+        if (-not $provisioned -or -not $authenticationCleanupSucceeded) {
+            [IO.File]::WriteAllBytes($pgHbaPath, $originalHba)
+            Invoke-PgCtlReload -PgCtlPath $pgCtlPath -DataDirectory $dataDirectory
+        }
+    }
 }
-
-Update-FluxVaultConfig
-
-Invoke-PsqlCommand `
-    -PsqlPath $psqlPath `
-    -Database $DatabaseName `
-    -User $Username `
-    -Password $null `
-    -Command "SELECT 1;" `
-    -NoPassword
-
-Invoke-FluxVaultCliMetadataInit
-
-$schemaVersion = Invoke-PsqlScalar `
-    -PsqlPath $psqlPath `
-    -Database $DatabaseName `
-    -User $Username `
-    -Password $null `
-    -Command "SELECT max(version) FROM fluxvault.schema_version;" `
-    -NoPassword
-if ($schemaVersion -ne "1") {
-    throw "Unexpected FluxVault metadata schema version: $schemaVersion"
-}
-
-Write-Host "FluxVault PostgreSQL metadata store is ready."
-Write-Host "Run the app or start the service. Developer service install: eng\install-service.ps1"
+Write-Host 'FluxVault PostgreSQL metadata store is ready.'
+Write-Host "Original authentication configuration retained for rollback: $hbaBackup"
+Write-Host 'Run the app or start the service. Developer service install: eng\install-service.ps1'

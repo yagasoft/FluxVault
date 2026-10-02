@@ -16,7 +16,7 @@ public interface IChunkRepository
 
     Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default);
 
-    Task RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default);
+    Task<RepositoryRestoreResult> RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default);
 
     Task RestorePreviewAsync(string versionId, string outputPath, CancellationToken cancellationToken = default);
 

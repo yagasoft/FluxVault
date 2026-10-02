@@ -1,0 +1,45 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.App.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.47]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_applies_authoritative_empty_inventory_after_cache_invalidation [FAIL]
+  Failed FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_applies_authoritative_empty_inventory_after_cache_invalidation [251 ms]
+  Error Message:
+   System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index')
+  Stack Trace:
+     at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_applies_authoritative_empty_inventory_after_cache_invalidation() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 59
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:05.48]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection [FAIL]
+  Failed FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection [5 s]
+  Error Message:
+   System.Threading.Tasks.TaskCanceledException : A task was canceled.
+  Stack Trace:
+     at FluxVault.App.Tests.MainWindowViewModelRefreshTests.WaitUntilAsync(Func`1 condition) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 1798
+   at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 74
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:05.56]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(initiallyEmpty: False) [FAIL]
+[xUnit.net 00:00:05.63]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(initiallyEmpty: True) [FAIL]
+  Failed FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(initiallyEmpty: False) [79 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Full
+Actual:   Fast
+  Stack Trace:
+     at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(Boolean initiallyEmpty) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 38
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(initiallyEmpty: True) [73 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Full
+Actual:   Fast
+  Stack Trace:
+     at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(Boolean initiallyEmpty) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 38
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\inventory-regression-red\inventory-app-red.trx
+
+Failed!  - Failed:     4, Passed:     0, Skipped:     0, Total:     4, Duration: 5 s - FluxVault.App.Tests.dll (net10.0)

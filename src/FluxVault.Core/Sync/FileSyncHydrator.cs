@@ -3,6 +3,7 @@ using FluxVault.Abstractions.Storage;
 using FluxVault.Abstractions.Sync;
 using FluxVault.Core.Content;
 using FluxVault.Core.Storage;
+using FluxVault.Core.Storage.Integrity;
 
 namespace FluxVault.Core.Sync;
 
@@ -13,7 +14,7 @@ public sealed class FileSyncHydrator(
     private readonly FileSyncApplicationStore applicationStore = new(localRepositoryPath);
     private readonly FileSyncConflictStore conflictStore = new(localRepositoryPath);
     private readonly FileSyncHydrationStore hydrationStore = new(localRepositoryPath);
-    private readonly ZstdChunkCodec codec = new();
+    private readonly VerifiedChunkReader verifiedReader = new(new Blake3ContentHasher(), new ZstdChunkCodec(), new RepositoryIntegrityLimits());
 
     public async Task<SyncHydrationRecord> ApplyRemoteVersionAsync(
         string remoteRepositoryPath,
@@ -27,14 +28,14 @@ public sealed class FileSyncHydrator(
         ArgumentException.ThrowIfNullOrWhiteSpace(remoteRepositoryPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(targetPath);
 
-        await CopyMissingChunksAsync(remoteRepositoryPath, remoteManifest, cancellationToken).ConfigureAwait(false);
+        await localRepository.InitializeStorageAsync(cancellationToken).ConfigureAwait(false);
 
         if (File.Exists(targetPath) && !CanOpenForExclusiveWrite(targetPath, out var lockedMessage))
         {
             return await RecordHydrationAsync(remoteManifest, targetPath, SyncHydrationState.Blocked, lockedMessage, origin, null, cancellationToken).ConfigureAwait(false);
         }
 
-        var remoteBytes = await BuildPayloadAsync(remoteManifest, cancellationToken).ConfigureAwait(false);
+        var remoteBytes = await BuildPayloadAsync(remoteRepositoryPath, remoteManifest, cancellationToken).ConfigureAwait(false);
         if (File.Exists(targetPath))
         {
             var localBytes = await File.ReadAllBytesAsync(targetPath, cancellationToken).ConfigureAwait(false);
@@ -81,41 +82,16 @@ public sealed class FileSyncHydrator(
         return await RecordHydrationAsync(remoteManifest, targetPath, SyncHydrationState.Applied, "Remote version applied.", origin, null, cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task CopyMissingChunksAsync(
-        string remoteRepositoryPath,
-        FileVersionManifest remoteManifest,
-        CancellationToken cancellationToken)
+    private async Task<byte[]> BuildPayloadAsync(string remoteRoot, FileVersionManifest manifest, CancellationToken cancellationToken)
     {
-        foreach (var chunk in remoteManifest.Chunks)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var destinationChunkPath = ChunkPath(localRepositoryPath, chunk.Digest);
-            var destinationMetadataPath = MetadataPath(localRepositoryPath, chunk.Digest);
-            if (!File.Exists(destinationChunkPath))
-            {
-                AtomicWrite(destinationChunkPath, await File.ReadAllBytesAsync(ChunkPath(remoteRepositoryPath, chunk.Digest), cancellationToken).ConfigureAwait(false), overwrite: true);
-            }
-
-            if (!File.Exists(destinationMetadataPath))
-            {
-                AtomicWrite(destinationMetadataPath, await File.ReadAllBytesAsync(MetadataPath(remoteRepositoryPath, chunk.Digest), cancellationToken).ConfigureAwait(false), overwrite: true);
-            }
-        }
-    }
-
-    private async Task<byte[]> BuildPayloadAsync(FileVersionManifest manifest, CancellationToken cancellationToken)
-    {
+        await using var lease = await RepositoryLeaseSet.AcquireAsync(remoteRoot, [], MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+        RestoreManifestValidator.ValidateFile(manifest, verifiedReader);
         using var output = new MemoryStream();
-        foreach (var chunk in manifest.Chunks.OrderBy(chunk => chunk.Offset))
+        foreach (var chunk in manifest.Chunks)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var payload = await File.ReadAllBytesAsync(ChunkPath(localRepositoryPath, chunk.Digest), cancellationToken).ConfigureAwait(false);
-            var bytes = chunk.Encoding == ChunkEncoding.Raw
-                ? payload
-                : codec.Decompress(payload, chunk.Length, chunk.Encoding);
+            var bytes = await verifiedReader.ReadAsync(remoteRoot, ChunkDescriptor.FromChunk(chunk), cancellationToken).ConfigureAwait(false);
             await output.WriteAsync(bytes, cancellationToken).ConfigureAwait(false);
         }
-
         return output.ToArray();
     }
 
@@ -185,18 +161,4 @@ public sealed class FileSyncHydrator(
         }
     }
 
-    private static void AtomicWrite(string path, byte[] bytes, bool overwrite)
-    {
-        var directory = Path.GetDirectoryName(path) ?? throw new InvalidOperationException("Path has no directory.");
-        Directory.CreateDirectory(directory);
-        var tempPath = $"{path}.{Guid.NewGuid():N}.tmp";
-        File.WriteAllBytes(tempPath, bytes);
-        File.Move(tempPath, path, overwrite);
-    }
-
-    private static string ChunksPath(string root) => Path.Combine(root, "chunks");
-
-    private static string ChunkPath(string root, string digest) => Path.Combine(ChunksPath(root), digest[..2], $"{digest}.chunk");
-
-    private static string MetadataPath(string root, string digest) => Path.Combine(ChunksPath(root), digest[..2], $"{digest}.json");
 }

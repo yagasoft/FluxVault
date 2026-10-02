@@ -17,6 +17,149 @@ namespace FluxVault.Core.Tests;
 public sealed class FluxVaultOperationsPerformanceTests
 {
     [Fact]
+    public async Task Fast_status_distinguishes_unloaded_inventory_without_reading_the_repository()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        await store.SaveAsync(FluxVaultConfiguration.CreateDefault(workspace.RootPath));
+        var operations = new FluxVaultOperations(store, new CountingCaptureProvider(),
+            repositoryFactory: _ => throw new InvalidOperationException("Fast status must not read repository content."));
+
+        var status = await operations.GetStatusAsync(FluxVaultStatusDetailLevel.Fast);
+
+        Assert.False(status.HasVersionInventory);
+        Assert.Empty(status.RecentVersions);
+    }
+
+    [Fact]
+    public async Task Fast_status_distinguishes_known_empty_inventory_from_invalidated_inventory()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        Directory.CreateDirectory(workspace.RepositoryPath);
+        await store.SaveAsync(FluxVaultConfiguration.CreateDefault(workspace.RootPath) with { RepositoryPath = workspace.RepositoryPath });
+        var operations = CreateOperations(store, new CountingCaptureProvider());
+
+        var full = await operations.GetStatusAsync();
+        var warm = await operations.GetStatusAsync(FluxVaultStatusDetailLevel.Fast);
+        var backup = await operations.RunBackupNowAsync();
+        var invalidated = await operations.GetStatusAsync(FluxVaultStatusDetailLevel.Fast);
+        var reloaded = await operations.GetStatusAsync();
+
+        Assert.True(full.HasVersionInventory);
+        Assert.True(warm.HasVersionInventory);
+        Assert.Empty(warm.RecentVersions);
+        Assert.True(backup.Success);
+        Assert.False(invalidated.HasVersionInventory);
+        Assert.True(reloaded.HasVersionInventory);
+        Assert.Empty(reloaded.RecentVersions);
+    }
+
+    [Fact]
+    public async Task Full_status_treats_unavailable_storage_as_unknown_and_preserves_history()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var source = Path.Combine(workspace.RootPath, "source");
+        Directory.CreateDirectory(source);
+        await File.WriteAllTextAsync(Path.Combine(source, "retained.txt"), "Retained history.");
+        var operations = await CreateOperationsAsync(workspace, source, recursive: false);
+        Assert.True((await operations.RunBackupNowAsync()).Success);
+        var before = await operations.GetStatusAsync();
+        Assert.NotEmpty(before.RecentVersions);
+        Directory.Move(workspace.RepositoryPath, workspace.RepositoryPath + ".unavailable");
+
+        var unavailable = await operations.GetStatusAsync();
+        var fast = await operations.GetStatusAsync(FluxVaultStatusDetailLevel.Fast);
+
+        Assert.False(unavailable.HasVersionInventory);
+        Assert.Null(unavailable.TrackedEntries);
+        Assert.False(fast.HasVersionInventory);
+        Assert.False(Directory.Exists(workspace.RepositoryPath));
+        Directory.Move(workspace.RepositoryPath + ".unavailable", workspace.RepositoryPath);
+        Assert.Equal(before.RecentVersions.Select(version => version.VersionId),
+            (await operations.GetStatusAsync()).RecentVersions.Select(version => version.VersionId));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Inventory_load_invalidated_after_snapshot_cannot_repopulate_either_cache(bool blockTrackedEntries)
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        Directory.CreateDirectory(workspace.RepositoryPath);
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with { RepositoryPath = workspace.RepositoryPath };
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        await store.SaveAsync(configuration);
+        IReadOnlyList<RepositoryVersionSummary> inventory = [new("old", "file.txt", DateTimeOffset.UtcNow, CaptureConsistency.BestEffort, 1, 1)];
+        var acquired = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var blocked = 0;
+        async Task<IReadOnlyList<RepositoryVersionSummary>> Read(bool tracked)
+        {
+            var snapshot = inventory.ToArray();
+            if (tracked == blockTrackedEntries && Interlocked.Exchange(ref blocked, 1) == 0)
+            {
+                acquired.SetResult();
+                await release.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            }
+            return snapshot;
+        }
+        var repository = new ThrowingPurgeRepository(() => Read(false), () => Read(true));
+        var operations = new FluxVaultOperations(store, new CountingCaptureProvider(),
+            metadataStoreFactory: _ => new InMemoryRepositoryMetadataStore(), repositoryFactory: _ => repository);
+        var loading = operations.GetStatusAsync();
+        try
+        {
+            await acquired.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            inventory = [new("new", "file.txt", DateTimeOffset.UtcNow, CaptureConsistency.BestEffort, 1, 1)];
+            await operations.SaveConfigurationAsync(configuration, purgeRemovedSelections: false);
+        }
+        finally { release.TrySetResult(); }
+
+        Assert.False((await loading).HasVersionInventory);
+        Assert.False((await operations.GetStatusAsync(FluxVaultStatusDetailLevel.Fast)).HasVersionInventory);
+        var refreshed = await operations.GetStatusAsync();
+        Assert.True(refreshed.HasVersionInventory);
+        Assert.Equal("new", Assert.Single(refreshed.RecentVersions).VersionId);
+        Assert.Equal("new", Assert.Single(refreshed.TrackedEntries!).VersionId);
+        Assert.Equal("new", Assert.Single((await operations.GetStatusAsync(FluxVaultStatusDetailLevel.Fast)).RecentVersions).VersionId);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Fast_status_does_not_reuse_inventory_from_another_repository_or_metadata_configuration(bool changeMetadata)
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        Directory.CreateDirectory(workspace.RepositoryPath);
+        var configuration = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with { RepositoryPath = workspace.RepositoryPath };
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        await store.SaveAsync(configuration);
+        var otherRepository = Path.Combine(workspace.RootPath, "other-repository");
+        Directory.CreateDirectory(otherRepository);
+        var operations = new FluxVaultOperations(store, new CountingCaptureProvider(),
+            metadataStoreFactory: _ => new InMemoryRepositoryMetadataStore(),
+            repositoryFactory: current =>
+            {
+                IReadOnlyList<RepositoryVersionSummary> rows = [new(
+                    current.RepositoryPath == configuration.RepositoryPath && current.MetadataStore == configuration.MetadataStore ? "old" : "new",
+                    "file.txt", DateTimeOffset.UtcNow, CaptureConsistency.BestEffort, 1, 1)];
+                return new ThrowingPurgeRepository(() => Task.FromResult(rows), () => Task.FromResult(rows));
+            });
+        Assert.True((await operations.GetStatusAsync()).HasVersionInventory);
+        Assert.True((await operations.GetStatusAsync(FluxVaultStatusDetailLevel.Fast)).HasVersionInventory);
+        await store.SaveAsync(changeMetadata
+            ? configuration with { MetadataStore = configuration.MetadataStore with { DatabaseName = "other_metadata" } }
+            : configuration with { RepositoryPath = otherRepository });
+
+        Assert.False((await operations.GetStatusAsync(FluxVaultStatusDetailLevel.Fast)).HasVersionInventory);
+        var refreshed = await operations.GetStatusAsync();
+        Assert.True(refreshed.HasVersionInventory);
+        Assert.Equal("new", Assert.Single(refreshed.RecentVersions).VersionId);
+        Assert.Equal("new", Assert.Single(refreshed.TrackedEntries!).VersionId);
+    }
+
+    [Fact]
     public async Task Backup_now_respects_maximum_concurrent_capture_workers()
     {
         using var workspace = TemporaryWorkspace.Create();
@@ -544,7 +687,9 @@ public sealed class FluxVaultOperationsPerformanceTests
         }
     }
 
-    private sealed class ThrowingPurgeRepository : IChunkRepository
+    private sealed class ThrowingPurgeRepository(
+        Func<Task<IReadOnlyList<RepositoryVersionSummary>>>? listVersions = null,
+        Func<Task<IReadOnlyList<RepositoryVersionSummary>>>? listEntries = null) : IChunkRepository
     {
         public Task<FileCommitResult> CommitAsync(FileCommitRequest request, CancellationToken cancellationToken = default)
         {
@@ -553,12 +698,12 @@ public sealed class FluxVaultOperationsPerformanceTests
 
         public Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotSupportedException();
+            return listVersions?.Invoke() ?? throw new NotSupportedException();
         }
 
         public Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotSupportedException();
+            return listEntries?.Invoke() ?? throw new NotSupportedException();
         }
 
         public Task<RepositoryDeletionResult?> RecordDeletionAsync(RepositoryDeletionRequest request, CancellationToken cancellationToken = default)
@@ -576,7 +721,7 @@ public sealed class FluxVaultOperationsPerformanceTests
             throw new NotSupportedException();
         }
 
-        public Task RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
+        public Task<RepositoryRestoreResult> RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }

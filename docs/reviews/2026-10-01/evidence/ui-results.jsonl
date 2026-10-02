@@ -1,0 +1,3 @@
+{"probe":"dashboard configuration preservation","savedMetadataNull":true,"savedMaintenanceNull":true,"savedSyncNull":true,"savedDiagnosticsNull":true,"originalEnabled":false,"savedEnabled":true,"expectedDatabase":"review_specific_database","actualDatabaseAfterRoundTrip":"fluxvault_metadata","expectedMaintenanceAutomatic":false,"actualMaintenanceAutomatic":false,"expectedMaintenanceHours":7,"actualMaintenanceHours":24}
+{"probe":"backup after failed configuration save","configurationRejected":true,"backupStillRequested":true}
+{"probe":"options missing service","timeoutEscapesInitialise":true}

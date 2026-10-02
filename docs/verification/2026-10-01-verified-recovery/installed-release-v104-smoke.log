@@ -1,0 +1,87 @@
+[904C:D368][2026-10-02T10:02:14]i001: Burn x64 v7.0.0, Windows v10.0 x64 (Build 26200: Service Pack 0), path: C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity-v104\Yagasoft-FluxVault-v1.0.4-win-x64-Setup.exe
+[904C:D368][2026-10-02T10:02:14]i009: Command Line: '-quiet -norestart -log C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install.log'
+[904C:D368][2026-10-02T10:02:14]i000: Setting string variable 'WixBundleSourceProcessPath' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity-v104\Yagasoft-FluxVault-v1.0.4-win-x64-Setup.exe'
+[904C:D368][2026-10-02T10:02:14]i000: Setting string variable 'WixBundleSourceProcessFolder' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity-v104\'
+[904C:D368][2026-10-02T10:02:14]i000: Setting string variable 'WixBundleOriginalSource' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity-v104\Yagasoft-FluxVault-v1.0.4-win-x64-Setup.exe'
+[904C:D368][2026-10-02T10:02:14]i000: Setting string variable 'WixBundleOriginalSourceFolder' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity-v104\'
+[904C:D368][2026-10-02T10:02:14]i000: Setting string variable 'WixBundleLog' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install.log'
+[904C:D368][2026-10-02T10:02:14]i000: Setting string variable 'WixBundleInProgressName' to value ''
+[904C:D368][2026-10-02T10:02:14]i000: Setting string variable 'WixBundleName' to value 'FluxVault'
+[904C:D368][2026-10-02T10:02:14]i000: Setting string variable 'WixBundleManufacturer' to value 'Yagasoft'
+[904C:C124][2026-10-02T10:02:14]i000: Setting version variable 'WixBundleFileVersion' to value '7.0.0.0'
+[904C:C124][2026-10-02T10:02:14]i000: Setting numeric variable 'WixStdBALanguageId' to value 1033
+[904C:D368][2026-10-02T10:02:15]i100: Detect begin, 1 packages
+[904C:D368][2026-10-02T10:02:15]i102: Detected related bundle: {08749688-D3A9-4034-B46B-1289956DB090}, type: Upgrade, scope: PerMachine, version: 1.0.3.0, cached: Yes
+[904C:D368][2026-10-02T10:02:15]i103: Detected related package: {6838A0BC-A5C1-4885-838C-647984B40CC9}, scope: PerMachine, version: 1.0.3.0, language: 0 operation: MajorUpgrade
+[904C:D368][2026-10-02T10:02:15]i101: Detected package: FluxVaultMsi, state: Absent, authored scope: PerMachine, detected scope: PerMachine, cached: No, install registration state: Absent, cache registration state: Absent
+[904C:D368][2026-10-02T10:02:15]i199: Detect complete, result: 0x0, registration state: None, cached: No, eligible for cleanup: No
+[904C:D368][2026-10-02T10:02:15]i200: Plan begin, 1 packages, action: Install, planned scope: Default
+[904C:D368][2026-10-02T10:02:15]i228: Upgraded bundle {08749688-D3A9-4034-B46B-1289956DB090} was already installed with scope: PerMachine. Scope cannot change during upgrade.
+[904C:D368][2026-10-02T10:02:15]i000: Setting string variable 'WixBundleRollbackLog_FluxVaultMsi' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install_000_FluxVaultMsi_rollback.log'
+[904C:D368][2026-10-02T10:02:15]i000: Setting string variable 'WixBundleLog_FluxVaultMsi' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install_000_FluxVaultMsi.log'
+[904C:D368][2026-10-02T10:02:15]i000: Setting string variable 'WixBundleLog_{08749688-D3A9-4034-B46B-1289956DB090}' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install_001_{08749688-D3A9-4034-B46B-1289956DB090}.log'
+[904C:D368][2026-10-02T10:02:15]i000: Setting string variable 'WixBundleRollbackLog_{08749688-D3A9-4034-B46B-1289956DB090}' to value 'C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install_001_{08749688-D3A9-4034-B46B-1289956DB090}_rollback.log'
+[904C:D368][2026-10-02T10:02:15]i222: Planned rollback boundary: 'WixDefaultBoundary', vital: Yes, transaction: No (default: No)
+[904C:D368][2026-10-02T10:02:15]i201: Planned package: FluxVaultMsi, state: Absent, default requested: Present, ba requested: Present, execute: Install, rollback: Uninstall, scope: PerMachine, default cache strategy: Keep, ba requested strategy: Keep, cache: Vital, uncache: No, dependency: Register, expected install registration state: Present, expected cache registration state: Present
+[904C:D368][2026-10-02T10:02:15]i207: Planned related bundle: {08749688-D3A9-4034-B46B-1289956DB090}, detect type: Upgrade, default plan type: Upgrade, ba plan type: Upgrade, default requested: Absent, ba requested: Absent, execute: Uninstall, rollback: Install, default requested restore: ForcePresent, ba requested restore: ForcePresent, restore: Install, dependency: None
+[904C:D368][2026-10-02T10:02:15]i299: Plan complete, result: 0x0
+[904C:D368][2026-10-02T10:02:15]i300: Apply begin
+[904C:D368][2026-10-02T10:02:15]i010: Launching elevated engine process.
+[904C:D368][2026-10-02T10:02:15]i011: Launched elevated engine process.
+[904C:D368][2026-10-02T10:02:15]i012: Connected to elevated engine.
+[7510:A79C][2026-10-02T10:02:15]i358: Pausing automatic updates.
+[7510:A79C][2026-10-02T10:02:15]i359: Paused automatic updates.
+[7510:A79C][2026-10-02T10:02:15]i360: Creating a system restore point.
+[7510:A79C][2026-10-02T10:02:15]i362: System restore disabled, system restore point not created.
+[7510:A79C][2026-10-02T10:02:15]i370: Session begin, registration key: SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1C6A8B81-E2D2-42D8-9594-FEE12CAF4D8A}, scope: PerMachine, options: 0x3, disable resume: No
+[7510:A79C][2026-10-02T10:02:15]i000: Caching bundle from: 'C:\WINDOWS\TEMP\{22468B93-0A96-40CB-811A-A983D67E2351}\.be\FluxVault.Setup.exe' to: 'C:\ProgramData\Package Cache\{1C6A8B81-E2D2-42D8-9594-FEE12CAF4D8A}\FluxVault.Setup.exe'
+[7510:A79C][2026-10-02T10:02:15]i320: Registering bundle dependency provider: {1C6A8B81-E2D2-42D8-9594-FEE12CAF4D8A}, version: 1.0.4.0
+[7510:A79C][2026-10-02T10:02:15]i371: Updating session, registration key: SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1C6A8B81-E2D2-42D8-9594-FEE12CAF4D8A}, scope: PerMachine, resume: Active, restart initiated: No, disable resume: No, registration: InProgress
+[7510:AF84][2026-10-02T10:02:15]i305: Verified acquired payload: FluxVaultMsi at path: C:\ProgramData\Package Cache\.unverified\FluxVaultMsi, moving to: C:\ProgramData\Package Cache\{452E2B18-DE4F-40D4-A16D-3D303A802437}v1.0.4.0\FluxVault.Installer.msi.
+[7510:A79C][2026-10-02T10:02:15]i323: Registering package dependency provider: {452E2B18-DE4F-40D4-A16D-3D303A802437}_v1.0.4.0, version: 1.0.4.0, package: FluxVaultMsi
+[7510:A79C][2026-10-02T10:02:15]i301: Applying execute package: FluxVaultMsi, action: Install, path: C:\ProgramData\Package Cache\{452E2B18-DE4F-40D4-A16D-3D303A802437}v1.0.4.0\FluxVault.Installer.msi, arguments: ' ARPSYSTEMCOMPONENT="1" MSIFASTINSTALL="7" BURNMSIINSTALL=1 REINSTALLMODE="muso" REBOOT=ReallySuppress'
+[904C:D368][2026-10-02T10:02:22]i319: Applied execute package: FluxVaultMsi, result: 0x0, restart: None
+[7510:A79C][2026-10-02T10:02:22]i325: Registering dependency: {1C6A8B81-E2D2-42D8-9594-FEE12CAF4D8A} on package provider: {452E2B18-DE4F-40D4-A16D-3D303A802437}_v1.0.4.0, package: FluxVaultMsi
+[7510:A79C][2026-10-02T10:02:22]i301: Applying execute package: {08749688-D3A9-4034-B46B-1289956DB090}, action: Uninstall, path: C:\ProgramData\Package Cache\{08749688-D3A9-4034-B46B-1289956DB090}\FluxVault.Setup.exe, arguments: ' -log "C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install_001_{08749688-D3A9-4034-B46B-1289956DB090}.log"'
+[7510:A79C][2026-10-02T10:02:27]i366: The process for package: {08749688-D3A9-4034-B46B-1289956DB090} exited with code: 0x0. The exit code has been translated to type: Success and restart: None.
+[904C:D368][2026-10-02T10:02:27]i319: Applied execute package: {08749688-D3A9-4034-B46B-1289956DB090}, result: 0x0, restart: None
+[904C:D368][2026-10-02T10:02:27]i373: Calculating whether to keep registration
+[904C:D368][2026-10-02T10:02:27]i374:   package: FluxVaultMsi, install registration state: Present, cache registration state: Present
+[904C:D368][2026-10-02T10:02:27]i372: Session end, registration key: SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1C6A8B81-E2D2-42D8-9594-FEE12CAF4D8A}, scope: PerMachine, resume: ARP, restart: None, disable resume: No, default registration: Full, ba requested registration: Full
+[7510:A79C][2026-10-02T10:02:27]i371: Updating session, registration key: SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1C6A8B81-E2D2-42D8-9594-FEE12CAF4D8A}, scope: PerMachine, resume: ARP, restart initiated: No, disable resume: No, registration: Full
+[7510:A79C][2026-10-02T10:02:27]i420: Resuming automatic updates.
+[7510:A79C][2026-10-02T10:02:27]i421: Resumed automatic updates.
+[904C:C124][2026-10-02T10:02:27]i000: Setting string variable 'WixStdBARestartRequired' to value ''
+[904C:D368][2026-10-02T10:02:27]i399: Apply complete, result: 0x0, restart: None, ba requested restart:  No
+[904C:D368][2026-10-02T10:02:27]i500: Shutting down, exit code: 0x0
+[904C:D368][2026-10-02T10:02:27]i502: Cleanup begin.
+[904C:D368][2026-10-02T10:02:27]i503: Cleanup not required due to running Apply.
+[904C:D368][2026-10-02T10:02:27]i599: Cleanup complete, result: 0x0
+[904C:D368][2026-10-02T10:02:27]i410: Variable: RebootPending = 1
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleAction = 6
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleAuthoredScope = 1
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleCommandLineAction = 6
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleDetectedScope = 0
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleElevated = 1
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleFileVersion = 7.0.0.0
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleInProgressName =
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleInstalled = 0
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleLog = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install.log
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleLog_FluxVaultMsi = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install_000_FluxVaultMsi.log
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleLog_{08749688-D3A9-4034-B46B-1289956DB090} = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install_001_{08749688-D3A9-4034-B46B-1289956DB090}.log
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleManufacturer = Yagasoft
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleName = FluxVault
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleOriginalSource = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity-v104\Yagasoft-FluxVault-v1.0.4-win-x64-Setup.exe
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleOriginalSourceFolder = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity-v104\
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundlePlannedScope = 1
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleProviderKey = {1C6A8B81-E2D2-42D8-9594-FEE12CAF4D8A}
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleRollbackLog_FluxVaultMsi = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install_000_FluxVaultMsi_rollback.log
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleRollbackLog_{08749688-D3A9-4034-B46B-1289956DB090} = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\installed-smoke-v104-e28b989525be402fb7fbb0d10d3e1fda\install_001_{08749688-D3A9-4034-B46B-1289956DB090}_rollback.log
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleSourceProcessFolder = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity-v104\
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleSourceProcessPath = C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\artifacts\release-integrity-v104\Yagasoft-FluxVault-v1.0.4-win-x64-Setup.exe
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleTag =
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleUILevel = 2
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixBundleVersion = 1.0.4.0
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixStdBALanguageId = 1033
+[904C:D368][2026-10-02T10:02:27]i410: Variable: WixStdBARestartRequired =
+[904C:D368][2026-10-02T10:02:27]i007: Exit code: 0x0, restarting: No

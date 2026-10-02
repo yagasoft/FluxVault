@@ -24,11 +24,11 @@ public sealed class MirrorPlacementPlanner
         var targetCount = Math.Min(requiredCopyCount, eligibleNodes.Length);
         var targets = normalised.PlacementPolicy.Profile switch
         {
-            MirrorPlacementProfile.FullCopy => enabledNodes,
+            MirrorPlacementProfile.FullCopy => eligibleNodes,
             MirrorPlacementProfile.CapacityBalanced => SelectByRendezvous(chunkDigest, eligibleNodes, 1),
             MirrorPlacementProfile.Redundant when targetCount >= eligibleNodes.Length => eligibleNodes,
             MirrorPlacementProfile.Redundant => SelectByRendezvous(chunkDigest, eligibleNodes, targetCount),
-            _ => enabledNodes
+            _ => eligibleNodes
         };
 
         return new MirrorPlacementSelection(

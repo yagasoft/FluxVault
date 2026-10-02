@@ -2,12 +2,12 @@
 
 ## Overview
 
-FluxVault has four main runtime parts:
+FluxVault has five main runtime parts:
 
 - `FluxVault.App`: WPF dashboard and tray shell.
 - `FluxVault.Service`: per-machine Windows service that owns background work.
-- `FluxVault.Core`: platform-neutral policy, chunking, repository, retention,
-  restore, and diagnostics logic.
+- `FluxVault.Core`: shared policy, chunking, repository, retention, restore and
+  diagnostics logic. Verified filesystem operations currently require Windows NTFS.
 - `FluxVault.Windows`: Windows-specific capture providers such as USN, file
   notifications, and VSS.
 - `FluxVault.Cli`: developer-facing backup/list/inspect/restore harness used to
@@ -35,6 +35,16 @@ cached runtime summaries, activity, recent versions, and live backup/watcher
 diagnostics without rebuilding the full tracked repository inventory every few
 seconds. Manual refreshes and views that need repository file-browser detail
 request full status.
+
+`HasVersionInventory` distinguishes an authoritative empty repository from a cold,
+invalidated or unavailable inventory snapshot. Fast status reads only a cache
+matching the current repository and metadata configuration. Generation checks
+prevent reads crossing invalidation from warming the cache with older results.
+Status never recreates an unavailable repository root. The dashboard performs at
+most one full read after an unavailable fast response, retains same-profile
+history and selection with a warning when no inventory is available, and clears
+previous-profile version and file-browser recovery entries when identity changes.
+Profile mutations are never retried to reload inventory.
 
 The dashboard checks the Windows service state separately from IPC. If
 `FluxVaultService` is stopped, missing, inaccessible, or running without an
@@ -101,9 +111,33 @@ made unreachable by retention. A healthy mirror copy may repair a primary
 manifest/chunk, and a healthy primary copy may repair mirror drift. If neither
 side is healthy, FluxVault reports a critical unresolved issue and does not read
 or trust the live source file as a repair source. Restore rehearsal restores
-recent versions to a FluxVault temporary state folder, verifies logical length,
+recent versions to an owned GUID child under the temporary state folder, verifies
+chunk digests and logical length,
 records pass/fail details, and deletes the temporary output without writing
 restore-lineage hints.
+
+## Integrity slice in progress
+
+The [verified recovery design](superpowers/specs/2026-10-01-verified-local-recovery-design.md)
+now has an unmerged implementation. Shared bounded verification, staged restore,
+immutable descriptor reuse, ownership and coarse physical-root leases protect
+content operations. Every operation keeps its lease across metadata references
+and final publication/deletion; private core methods avoid re-entering public
+leased methods. Fast service status uses cached summaries and stays outside
+these long content operations.
+
+The normal metadata store is injected directly into `FileSystemChunkRepository`;
+the unused after-commit decorator has been removed. Legacy manifests remain an
+explicit diagnostic lane, rather than fallback after a database error. Sync
+hydration reads verified peer chunks under a peer lease and publishes local chunks
+through ordinary commit. Its whole-file hydration buffer and target transaction
+remain deferred sync work.
+
+See [storage format](storage-format.md#verified-recovery-support-and-ownership)
+for ownership, ceilings and commit points, and the [acceptance matrix](verification/2026-10-01-verified-recovery/README.md)
+for observed evidence. Catalogue retirement and same-version descriptor checks
+still need correction under real PostgreSQL tests; caller authorisation, vault
+namespaces and independent disaster recovery remain separate P0 work.
 
 ## MVP capture flow
 
@@ -321,9 +355,10 @@ files default to the general-purpose preset, while Options controls the preset
 used for new File browser and Explorer Add selections.
 Folder and file context menus expose latest restore actions. The default latest
 restore writes elsewhere: file selections use a save-file picker, folder
-selections use a folder picker and preserve relative paths under the chosen
-destination. Latest restore to original requires overwrite confirmation when
-conflicts exist. Show versions opens the version inventory filtered to the
+version selections choose a parent and a new folder name; a single folder version
+never merges into an existing destination. Bulk file selections preserve relative
+paths and report any per-item failures. Latest file restore to original requires
+overwrite confirmation when conflicts exist. Show versions opens the version inventory filtered to the
 selected file or folder.
 
 Protected-selection removal is coordinated with the running service profile.
@@ -620,3 +655,15 @@ repository-owned peer metadata. R4 introduces a WinFsp managed workspace for
 high-frequency large-file workloads. R5 introduces Cloud Files API / ProjFS
 sync-root integration. R4 and R5 are separate tracks because they change the
 namespace and write-path assumptions.
+
+## Metadata mutation integrity
+
+The verified-recovery slice serialises record/delete transactions within each dedicated metadata database using a transaction-scoped PostgreSQL advisory lock. Both methods start a READ COMMITTED transaction, acquire the same lock in a separate statement, then validate references or mutate rows. A waiting writer therefore checks the preceding writer's committed state. Filesystem callers acquire their repository lease before the database transaction; metadata methods never acquire filesystem leases.
+
+Incoming batches must agree on each digest's decoded length, stored length and codec. These checks run before any existing version's children are removed. Persisted digest keys and lookup/reference-count parameters use lowercase. Replaying an identical version ID/JSONB payload is idempotent; a changed payload for that identity is refused and the batch rolls back. Version deletion collects affected digests before cascading references, then retires only their unreferenced location/catalogue rows. Shared and unrelated catalogue rows remain intact. The SQL lock does not replace the filesystem lease during physical object pruning.
+
+Provisioning can pin existing PostgreSQL binaries and require a fresh database/role. The setup helper refuses collisions and non-ASCII authentication files, preserves original authentication bytes for rollback, removes temporary administrator trust on every exit, and reports reload failure without restarting the existing service. Retained localhost trust remains restricted to the configured database and role; the staging operator must explicitly approve that authentication policy.
+
+Generated folder snapshots describe publication order, while file timestamps describe capture time. Under the existing repository lease, each folder snapshot and folder deletion tombstone uses the greater of its candidate time and the previous folder version plus one microsecond. Cascades propagate the updated child's time upwards. This stays distinct at PostgreSQL timestamp precision when file captures complete out of order. An unrepresentable successor fails before version acknowledgement. Existing history is never rewritten; this correction protects future publications rather than reconstructing previously incomplete snapshots.
+
+Managed authentication blocks are inserted outside any temporary administrator block. Setup reports success only after the administrator block has been removed and a new scoped runtime connection succeeds. The staging installation retains passwordless loopback access only for the approved FluxVault database/account; unrelated authentication lines remain unchanged.

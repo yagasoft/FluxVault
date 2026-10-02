@@ -1,0 +1,41 @@
+{
+  "recorded_utc": "2026-10-02T05:53:13.7682118+00:00",
+  "setup": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-product-review\\FluxVault\\artifacts\\release-integrity-v103\\Yagasoft-FluxVault-v1.0.3-win-x64-Setup.exe",
+  "sha256": "9c434c7c5f91e59520c0fac3484af73d752bbc9027f10cdf75d4408910d6fb39",
+  "version": "1.0.3",
+  "state": "installed staging; service/CLI validated; desktop recovery pending because Windows denied access after authorised resumption",
+  "source_state": "uncommitted, unmerged codex/product-review-roadmap-20261001 based on b930ed5",
+  "target": {
+    "machine": "current Windows PC",
+    "postgresql_bin": "D:\\Program Files\\PostgreSQL\\18\\bin",
+    "postgresql_service": "postgresql-x64-18",
+    "port": 5432,
+    "database": "fluxvault_metadata",
+    "role": "fluxvault",
+    "program_data": "C:\\ProgramData\\FluxVault",
+    "install_root": "C:\\Program Files\\FluxVault",
+    "service": "FluxVaultService"
+  },
+  "pending": [
+    "installed desktop recovery once Windows desktop access is available"
+  ],
+  "source_review": "independent-source-review.md",
+  "authentication": "User-approved passwordless loopback restricted to database/account; temporary admin access removed; PostgreSQL not restarted",
+  "measurement_binary_provenance": {
+    "report": "performance-v103.json",
+    "completed_utc": "2026-10-01T19:29:40.530663+03:00",
+    "verified_sha256": {
+      "FluxVault.Cli.dll": "d6c2d3846f3da518d91ec5198daf86db3037d3fb02424ed33b7feeac32fa9d91",
+      "FluxVault.Core.dll": "b5c18e58c8648ccf21506c8ebfadf405a2cefbe9e9ea01de49e6b6544e2b2af1",
+      "FluxVault.Abstractions.dll": "aa19c76ebdef19742e116f46a0e7b4839a37d0aa37380899dc5e25f8e160c4b7"
+    },
+    "embedded_payload_match": true
+  },
+  "embedded_payload_verification": {
+    "report": "installed-payload-v103.json",
+    "msi_sha256": "93b42067513747b998821033559ac75eb672c0e246ae0d990e2deb7e0ffee557",
+    "matching_file_count": 204,
+    "product_version": "1.0.3.0",
+    "all_installed_files_match": true
+  }
+}

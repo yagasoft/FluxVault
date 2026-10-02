@@ -1,0 +1,119 @@
+{
+  "RecordedUtc": "2026-10-02T06:08:34.5038587+00:00",
+  "FullBeforeCount": 10,
+  "Backup": {
+    "success": true,
+    "message": "Captured 0 file(s).",
+    "capturedFileCount": 0,
+    "failedFileCount": 0,
+    "completedAtUtc": "2026-10-02T09:08:34.4821797+03:00",
+    "enumeratedFileCount": 0,
+    "skippedUnchangedFileCount": 0,
+    "recordedDeletionCount": 0,
+    "elapsed": "00:00:00.0044436"
+  },
+  "FastAfterInvalidationCount": 0,
+  "FullAfterCount": 10,
+  "FastAfterFullCount": 10,
+  "DatabaseHistoryRetained": true,
+  "LastRetention": {
+    "decisions": [
+      {
+        "versionId": "01a0f84ecbf27d2582f300243fd13a95",
+        "sourcePath": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\working",
+        "capturedAtUtc": "2026-10-01T19:31:48.5418138+03:00",
+        "keep": true,
+        "reason": "Minimum latest versions",
+        "logicalLength": 1048650,
+        "chunkCount": 0
+      },
+      {
+        "versionId": "01a0f84ecbf17e6885e3c7796a103a97",
+        "sourcePath": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\working\\nested",
+        "capturedAtUtc": "2026-10-01T19:31:48.5418138+03:00",
+        "keep": true,
+        "reason": "Minimum latest versions",
+        "logicalLength": 1048576,
+        "chunkCount": 0
+      },
+      {
+        "versionId": "01a0f84ecbf076f682fa33fc43eec016",
+        "sourcePath": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\working\\nested\\project.bin",
+        "capturedAtUtc": "2026-10-01T19:31:48.5418138+03:00",
+        "keep": true,
+        "reason": "Minimum latest versions",
+        "logicalLength": 1048576,
+        "chunkCount": 1
+      },
+      {
+        "versionId": "01a0f84ecb6d77ef94a9e704dadda992",
+        "sourcePath": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\working",
+        "capturedAtUtc": "2026-10-01T19:31:48.5418088+03:00",
+        "keep": true,
+        "reason": "Minimum latest versions",
+        "logicalLength": 74,
+        "chunkCount": 0
+      },
+      {
+        "versionId": "01a0f84ecb69767da4db98106882f600",
+        "sourcePath": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\working\\sample.txt",
+        "capturedAtUtc": "2026-10-01T19:31:48.5418088+03:00",
+        "keep": true,
+        "reason": "Minimum latest versions",
+        "logicalLength": 74,
+        "chunkCount": 1
+      },
+      {
+        "versionId": "01a0f837ea0e7ae7802333bb55b74f3a",
+        "sourcePath": "C:\\ProgramData\\FluxVault\\staging-validation\\a074766c34154532a780a728415a3bfc\\working",
+        "capturedAtUtc": "2026-10-01T19:06:49.0039358+03:00",
+        "keep": true,
+        "reason": "Minimum latest versions",
+        "logicalLength": 1048576,
+        "chunkCount": 0
+      },
+      {
+        "versionId": "01a0f837ea0c73c2a6e7a9771cbd8530",
+        "sourcePath": "C:\\ProgramData\\FluxVault\\staging-validation\\a074766c34154532a780a728415a3bfc\\working\\nested",
+        "capturedAtUtc": "2026-10-01T19:06:49.0039358+03:00",
+        "keep": true,
+        "reason": "Minimum latest versions",
+        "logicalLength": 1048576,
+        "chunkCount": 0
+      },
+      {
+        "versionId": "01a0f837ea0878a88eeb974d3b593ea1",
+        "sourcePath": "C:\\ProgramData\\FluxVault\\staging-validation\\a074766c34154532a780a728415a3bfc\\working\\nested\\project.bin",
+        "capturedAtUtc": "2026-10-01T19:06:49.0039358+03:00",
+        "keep": true,
+        "reason": "Minimum latest versions",
+        "logicalLength": 1048576,
+        "chunkCount": 1
+      },
+      {
+        "versionId": "01a0f837ea98734780d14224664155ac",
+        "sourcePath": "C:\\ProgramData\\FluxVault\\staging-validation\\a074766c34154532a780a728415a3bfc\\working",
+        "capturedAtUtc": "2026-10-01T19:06:49.0039331+03:00",
+        "keep": true,
+        "reason": "Minimum latest versions",
+        "logicalLength": 1048650,
+        "chunkCount": 0
+      },
+      {
+        "versionId": "01a0f837ea92705ba090d6c34c65f3a3",
+        "sourcePath": "C:\\ProgramData\\FluxVault\\staging-validation\\a074766c34154532a780a728415a3bfc\\working\\sample.txt",
+        "capturedAtUtc": "2026-10-01T19:06:49.0039331+03:00",
+        "keep": true,
+        "reason": "Minimum latest versions",
+        "logicalLength": 74,
+        "chunkCount": 1
+      }
+    ],
+    "keptVersionCount": 10,
+    "prunedVersionCount": 0,
+    "deletedChunkCount": 0,
+    "reclaimedBytes": 0,
+    "repositorySizeBytes": 1060930,
+    "mirrorWarnings": []
+  }
+}

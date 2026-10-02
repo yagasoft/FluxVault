@@ -34,10 +34,21 @@ public sealed class SaveFileRestoreDestinationPicker : IRestoreDestinationPicker
     {
         using var dialog = new WinForms.FolderBrowserDialog
         {
-            Description = "Restore FluxVault versions to folder",
+            Description = "Choose the parent for a new recovery folder",
             UseDescriptionForTitle = true
         };
-        return dialog.ShowDialog() == WinForms.DialogResult.OK ? dialog.SelectedPath : null;
+        if (dialog.ShowDialog() != WinForms.DialogResult.OK) return null;
+        var initialName = Path.GetFileName(Path.TrimEndingDirectorySeparator(sourcePath)) + "-Recovered";
+        while (true)
+        {
+            var name = new ProfileDialogService().PromptForProfileName("Name the new recovery folder", initialName);
+            if (name is null) return null;
+            var destination = Path.Combine(dialog.SelectedPath, name);
+            if (name.IndexOfAny(Path.GetInvalidFileNameChars()) < 0 && name is not "." and not ".." &&
+                !name.EndsWith('.') && !File.Exists(destination) && !Directory.Exists(destination)) return destination;
+            WinForms.MessageBox.Show("Choose a valid folder name that does not already exist.", "New recovery folder", WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Information);
+            initialName = name;
+        }
     }
 }
 

@@ -1,0 +1,23 @@
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.19]     FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(operation: "retention") [FAIL]
+[xUnit.net 00:00:00.20]     FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(operation: "purge") [FAIL]
+  Failed FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(operation: "retention") [6 ms]
+  Error Message:
+   System.InvalidOperationException : PostgreSQL integrity tests require eng/test-repository-integrity.ps1 -PostgreSqlBinPath <existing bin directory>. No test was skipped.
+  Stack Trace:
+     at FluxVault.Testing.OwnedPostgreSqlCluster.Load() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.TestHost\OwnedPostgreSqlCluster.cs:line 15
+   at FluxVault.Integration.Tests.Fixtures.DisposablePostgreSqlFixture.CreateAsync() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\Fixtures\DisposablePostgreSqlFixture.cs:line 23
+   at FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(String operation) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\PostgreSqlRepositoryIntegrityTests.cs:line 37
+--- End of stack trace from previous location ---
+  Failed FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(operation: "purge") [< 1 ms]
+  Error Message:
+   System.InvalidOperationException : PostgreSQL integrity tests require eng/test-repository-integrity.ps1 -PostgreSqlBinPath <existing bin directory>. No test was skipped.
+  Stack Trace:
+     at FluxVault.Testing.OwnedPostgreSqlCluster.Load() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.TestHost\OwnedPostgreSqlCluster.cs:line 15
+   at FluxVault.Integration.Tests.Fixtures.DisposablePostgreSqlFixture.CreateAsync() in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\Fixtures\DisposablePostgreSqlFixture.cs:line 23
+   at FluxVault.Integration.Tests.PostgreSqlRepositoryIntegrityTests.Final_reference_removal_allows_recapture_under_a_new_compression_policy(String operation) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.Integration.Tests\PostgreSqlRepositoryIntegrityTests.cs:line 37
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\database-prerequisite-attempt\os008_OS008-HOME_2026-10-01_15_49_19_net10.0.trx
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 29 ms - FluxVault.Integration.Tests.dll (net10.0)

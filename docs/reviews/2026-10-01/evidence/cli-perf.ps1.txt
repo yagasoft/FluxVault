@@ -1,0 +1,76 @@
+param([string]$ReviewRoot)
+$ErrorActionPreference = 'Stop'
+$benchRoot = Join-Path $ReviewRoot ('cli-perf-' + [Guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $benchRoot | Out-Null
+$cliPath = Join-Path $ReviewRoot 'artifacts\bin\FluxVault.Cli\release\FluxVault.Cli.exe'
+$results = [Collections.Generic.List[object]]::new()
+function Invoke-Measure([string]$CaseName, [string]$Kind, [string[]]$CliArguments, [long]$LogicalBytes) {
+  $psi = [Diagnostics.ProcessStartInfo]::new()
+  $psi.FileName = $cliPath
+  $psi.UseShellExecute = $false
+  $psi.CreateNoWindow = $true
+  $psi.RedirectStandardOutput = $true
+  $psi.RedirectStandardError = $true
+  foreach ($argument in $CliArguments) { $psi.ArgumentList.Add($argument) }
+  $p = [Diagnostics.Process]::new()
+  $p.StartInfo = $psi
+  $watch = [Diagnostics.Stopwatch]::StartNew()
+  $p.Start() | Out-Null
+  $outTask = $p.StandardOutput.ReadToEndAsync()
+  $errTask = $p.StandardError.ReadToEndAsync()
+  $peakWorkingSet = 0L
+  $peakPrivateBytes = 0L
+  $cpuMilliseconds = 0.0
+  while (-not $p.HasExited) {
+    try {
+      $p.Refresh()
+      $peakWorkingSet = [Math]::Max($peakWorkingSet, $p.WorkingSet64)
+      $peakPrivateBytes = [Math]::Max($peakPrivateBytes, $p.PrivateMemorySize64)
+      $cpuMilliseconds = [Math]::Max($cpuMilliseconds, $p.TotalProcessorTime.TotalMilliseconds)
+    } catch {}
+    Start-Sleep -Milliseconds 10
+  }
+  $watch.Stop()
+  $stdout = $outTask.GetAwaiter().GetResult()
+  $stderr = $errTask.GetAwaiter().GetResult()
+  $record = [pscustomobject]@{ Case=$CaseName; Kind=$Kind; LogicalBytes=$LogicalBytes; Seconds=$watch.Elapsed.TotalSeconds; LogicalMiBPerSecond=($LogicalBytes/1MB/$watch.Elapsed.TotalSeconds); SampledPeakWorkingSetMiB=($peakWorkingSet/1MB); SampledPeakPrivateBytesMiB=($peakPrivateBytes/1MB); SampledCpuMilliseconds=$cpuMilliseconds; ExitCode=$p.ExitCode; Output=$stdout; Error=$stderr }
+  $results.Add($record)
+  $record | ConvertTo-Json -Compress | Add-Content -LiteralPath (Join-Path $benchRoot 'measurements.jsonl')
+  if ($p.ExitCode -ne 0) { throw "CLI failed: $CaseName / $Kind / $stderr" }
+  Write-Output "$CaseName $Kind seconds=$($watch.Elapsed.TotalSeconds) peakMiB=$($peakWorkingSet/1MB) output=$($stdout.Trim())"
+  return $stdout
+}
+foreach ($kind in @('random','compressible')) {
+  $caseRoot = Join-Path $benchRoot $kind
+  New-Item -ItemType Directory -Path $caseRoot | Out-Null
+  $source = Join-Path $caseRoot 'source.bin'
+  $repo = Join-Path $caseRoot 'repository'
+  $random = [Random]::new(42)
+  $buffer = [byte[]]::new(1MB)
+  if ($kind -eq 'compressible') {
+    $text = [Text.Encoding]::UTF8.GetBytes(('Office CAD Adobe document geometry layered assets ' * 22000))
+    [Array]::Copy($text,$buffer,$buffer.Length)
+  }
+  $file = [IO.File]::Open($source,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+  try { for ($i=0; $i -lt 256; $i++) { if ($kind -eq 'random') { $random.NextBytes($buffer) }; $file.Write($buffer,0,$buffer.Length) } } finally { $file.Dispose() }
+  $args = @('backup','--source',$source,'--repository',$repo,'--compression','zstd','--legacy-file-manifest')
+  $initialOutput = Invoke-Measure 'initial' $kind $args (256MB)
+  $unchangedOutput = Invoke-Measure 'unchanged' $kind $args (256MB)
+  $patch = [byte[]]::new(64KB); $random.NextBytes($patch)
+  $file = [IO.File]::Open($source,[IO.FileMode]::Open,[IO.FileAccess]::Write,[IO.FileShare]::None)
+  try { $file.Position = 128MB; $file.Write($patch,0,$patch.Length) } finally { $file.Dispose() }
+  $editOutput = Invoke-Measure 'middle-edit-64KiB' $kind $args (256MB)
+  $file = [IO.File]::Open($source,[IO.FileMode]::Append,[IO.FileAccess]::Write,[IO.FileShare]::None)
+  try { $random.NextBytes($buffer); $file.Write($buffer,0,$buffer.Length) } finally { $file.Dispose() }
+  $appendOutput = Invoke-Measure 'append-1MiB' $kind $args (257MB)
+  $versionId = (($appendOutput -split '\r?\n' | Where-Object { $_ -like 'Version:*' }) -replace '^Version:\s*','').Trim()
+  $restored = Join-Path $caseRoot 'restored.bin'
+  $restoreOutput = Invoke-Measure 'restore-latest' $kind @('restore','--repository',$repo,'--version',$versionId,'--output',$restored,'--legacy-file-manifest') (257MB)
+  $sourceHash = (Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash
+  $restoredHash = (Get-FileHash -LiteralPath $restored -Algorithm SHA256).Hash
+  if ($sourceHash -ne $restoredHash) { throw 'Restore hash mismatch' }
+  $repoBytes = (Get-ChildItem -LiteralPath $repo -Recurse -File | Measure-Object -Property Length -Sum).Sum
+  [pscustomobject]@{Kind=$kind; SourceSha256=$sourceHash; RestoredSha256=$restoredHash; RepositoryBytes=$repoBytes; LogicalSourceBytes=257MB} | ConvertTo-Json -Compress | Add-Content -LiteralPath (Join-Path $benchRoot 'hashes.jsonl')
+}
+$results | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $benchRoot 'measurements.json')
+Write-Output "EvidenceRoot=$benchRoot"

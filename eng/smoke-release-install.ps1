@@ -126,14 +126,16 @@ function Invoke-Bundle {
     )
 
     $argumentList = @($Arguments + @("-log", "`"$LogPath`""))
-    $process = Start-Process -FilePath $SetupPath -ArgumentList $argumentList -Wait -PassThru
-    if ($process.ExitCode -notin @(0, 3010)) {
-        throw "Installer command failed with exit code $($process.ExitCode). Log: $LogPath"
-    }
-
-    if ($process.ExitCode -eq 3010) {
-        Write-Warning "Installer reported success with reboot required. Continue validating installed state before any restart."
-    }
+    $process = Start-Process -FilePath $SetupPath -ArgumentList $argumentList -WindowStyle Hidden -PassThru
+    try {
+        $process.WaitForExit()
+        if ($process.ExitCode -notin @(0, 3010)) {
+            throw "Installer command failed with exit code $($process.ExitCode). Log: $LogPath"
+        }
+        if ($process.ExitCode -eq 3010) {
+            Write-Warning "Installer reported success with reboot required. Continue validating installed state before any restart."
+        }
+    } finally { $process.Dispose() }
 }
 
 function Assert-ServiceDelayedAutoStart {
@@ -170,21 +172,17 @@ function Invoke-CheckedCli {
 function Invoke-CliSmoke {
     param([string]$CliPath)
 
-    $cliSmokeRoot = Join-Path $SmokeRoot "cli"
+    $cliSmokeRoot = Join-Path $SmokeRoot ("cli-" + [guid]::NewGuid().ToString('N'))
     $repositoryPath = Join-Path $cliSmokeRoot "repository"
     $sourcePath = Join-Path $cliSmokeRoot "source.txt"
     $restorePath = Join-Path $cliSmokeRoot "restored.txt"
-
-    if (Test-Path -LiteralPath $cliSmokeRoot) {
-        Remove-Item -LiteralPath $cliSmokeRoot -Recurse -Force
-    }
 
     New-Item -ItemType Directory -Force -Path $cliSmokeRoot | Out-Null
     Set-Content -LiteralPath $sourcePath -Value "FluxVault release smoke payload" -Encoding UTF8
 
     Write-Host "Running CLI smoke: backup --source"
     $backupOutput = Invoke-CheckedCli -CliPath $CliPath -Arguments @(
-        "backup", "--source", $sourcePath, "--repository", $repositoryPath
+        "backup", "--source", $sourcePath, "--repository", $repositoryPath, "--legacy-file-manifest"
     )
     $versionLine = $backupOutput | Where-Object { $_ -like "Version:*" } | Select-Object -First 1
     if (-not $versionLine) {
@@ -193,14 +191,14 @@ function Invoke-CliSmoke {
 
     $versionId = $versionLine.Substring("Version:".Length).Trim()
     Write-Host "Running CLI smoke: list --repository"
-    $listOutput = Invoke-CheckedCli -CliPath $CliPath -Arguments @("list", "--repository", $repositoryPath)
+    $listOutput = Invoke-CheckedCli -CliPath $CliPath -Arguments @("list", "--repository", $repositoryPath, "--legacy-file-manifest")
     if (-not (($listOutput -join [Environment]::NewLine).Contains($versionId))) {
         throw "CLI list output did not include version $versionId."
     }
 
     Write-Host "Running CLI smoke: restore --repository"
     Invoke-CheckedCli -CliPath $CliPath -Arguments @(
-        "restore", "--repository", $repositoryPath, "--version", $versionId, "--output", $restorePath
+        "restore", "--repository", $repositoryPath, "--version", $versionId, "--output", $restorePath, "--legacy-file-manifest"
     ) | Out-Null
 
     $sourceHash = (Get-FileHash -LiteralPath $sourcePath -Algorithm SHA256).Hash

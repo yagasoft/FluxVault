@@ -180,9 +180,10 @@ public static class FluxVaultCli
         }
 
         var repository = await CreateRepositoryAsync(options).ConfigureAwait(false);
+        RepositoryRestoreResult result;
         try
         {
-            await repository.RestoreAsync(versionId, output).ConfigureAwait(false);
+            result = await repository.RestoreAsync(versionId, output).ConfigureAwait(false);
         }
         catch (FileNotFoundException)
         {
@@ -190,7 +191,8 @@ public static class FluxVaultCli
             return 2;
         }
 
-        await standardOutput.WriteLineAsync($"Restored: {output}").ConfigureAwait(false);
+        await standardOutput.WriteLineAsync($"Restored and verified: {result.OutputPath} ({result.VerifiedLogicalBytes} bytes, {result.RestoredFileCount} files)").ConfigureAwait(false);
+        foreach (var warning in result.Warnings) await standardError.WriteLineAsync($"Warning: {warning}").ConfigureAwait(false);
         return 0;
     }
 

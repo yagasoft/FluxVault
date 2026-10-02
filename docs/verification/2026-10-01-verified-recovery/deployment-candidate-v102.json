@@ -1,0 +1,40 @@
+{
+  "recorded_utc": "2026-10-01T15:14:28.126737+00:00",
+  "setup": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-product-review\\FluxVault\\artifacts\\release-integrity\\Yagasoft-FluxVault-v1.0.2-win-x64-Setup.exe",
+  "sha256": "93d35f64833b234ef82af9de1a2d1a49547448d19a4d198415ed05572b1efd53",
+  "version": "1.0.2",
+  "state": "prepared; not installed",
+  "published_icon_present": true,
+  "target": {
+    "machine": "current Windows PC",
+    "postgresql_bin": "D:\\Program Files\\PostgreSQL\\18\\bin",
+    "postgresql_service": "postgresql-x64-18",
+    "port": 5432,
+    "database": "fluxvault_metadata",
+    "role": "fluxvault",
+    "program_data": "C:\\ProgramData\\FluxVault",
+    "service": "FluxVaultService"
+  },
+  "pending": [
+    "authentication choice",
+    "desktop native folder checks",
+    "installation and installed live validation"
+  ],
+  "source_review": "approved; independent-source-review.md",
+  "measurement_binary_provenance": {
+    "publish_directory": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-product-review\\FluxVault\\artifacts\\publish-integrity\\cli",
+    "report": "performance-final.json",
+    "completed_utc": "2026-10-01T14:54:14.085924+00:00",
+    "verified_sha256": {
+      "FluxVault.Cli.dll": "6adb46ebab42a0263ad2f60d17648b2c6e1e904f75d0fdfdcb40825dc01d22d8",
+      "FluxVault.Core.dll": "7b7cc841da035b4694959d93e974a3dab1f74163292404d2a55d8f52cd0ba87d",
+      "FluxVault.Abstractions.dll": "aa19c76ebdef19742e116f46a0e7b4839a37d0aa37380899dc5e25f8e160c4b7"
+    }
+  },
+  "embedded_payload_verification": {
+    "report": "payload-inspection.json",
+    "msi_sha256": "f19220bbae9244a2244946db42da003f9a73f85e7a9b5e5a38eb697804b53971",
+    "matching_file_count": 204,
+    "measured_cli_hashes_match": true
+  }
+}

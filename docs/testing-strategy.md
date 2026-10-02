@@ -1,5 +1,60 @@
 # Testing strategy
 
+## Verified recovery lane
+
+The [October 2026 acceptance record](verification/2026-10-01-verified-recovery/README.md)
+is the source for observed results. A passing non-database run is not the full
+integrity gate. For quick checks without a disposable server:
+
+```powershell
+dotnet test FluxVault.slnx -c Release --filter "Category!=RequiresPostgreSql"
+```
+
+For the complete suite, supply an existing PostgreSQL server binary directory:
+
+```powershell
+./eng/test-repository-integrity.ps1 -PostgreSqlBinPath '<existing bin directory>' -RunFullSuite
+```
+
+The runner initialises a fresh GUID data directory under TEMP, uses a free
+loopback port other than 5432, starts only its owned hidden child process and
+retains version/log/TRX evidence. It does not install PostgreSQL, use the normal
+service/database or stop another server. Explicit database-test selection without
+this owned environment fails with an actionable prerequisite message; no tests
+silently skip. CI now calls this runner using installed server binaries; hosted
+execution is still unverified until the SQL gate passes.
+
+`FluxVault.TestHost` is test-only and excluded from installer/publish projects.
+Its child-process root must be a generated TEMP GUID. The private named pipe is
+current-user-only and has a generated name; fixture commands and paths are
+restricted. PostgreSQL fixtures confirm the owned process, server data directory,
+instance marker, user and port before accessing generated databases, and check
+their ownership comment before dropping them. No arbitrary endpoint is accepted.
+
+Process barriers prove OS lease release, restore/retention exclusion and
+capture/repair/drain exclusion. Process termination between object renames and
+during drain proves interrupted application-state handling. The prepared database
+barrier after commit tests lost process acknowledgement; it does not certify
+physical power failure or every network failure around COMMIT.
+
+The existing view-model tests cover verified counts, warnings and refused
+publication. Native success/corruption/folder-refusal inspection must use the
+fixture host, a fresh owned database and disposable paths. This is a bounded
+workflow check, not full accessibility/DPI or professional-application testing.
+
+For real-CLI measurements with independent hashes and sampled Windows process
+memory:
+
+```powershell
+python eng/measure-verified-recovery.py --cli src/FluxVault.Cli/bin/Release/net10.0/FluxVault.Cli.dll --output <evidence.json>
+```
+
+Use the default 64/256/1024 MiB cases. Record data pattern, compression, source
+bytes, process startup/cache/load conditions and all binary hashes. These trials
+exercise explicit legacy metadata; they do not stand in for PostgreSQL/VSS,
+large-vault listing or Office/CAD/Adobe workload measurements. Keep final combined
+verification, independent review and unrun gates visible in the acceptance matrix.
+
 ## Unit tests
 
 - Policy resolution and inheritance.
@@ -24,7 +79,11 @@
   backup request is still running.
 - Fast status IPC and dashboard automatic refresh must avoid full tracked-entry
   enumeration while preserving existing file-browser state until a full refresh
-  is requested.
+  is requested. Unavailable fast inventory triggers at most one full read-only
+  request; unavailable full inventory preserves same-profile versions/selection
+  with a warning. Profile/storage identity changes clear previous recovery entries.
+  Barrier-controlled cache invalidation and missing-root tests distinguish
+  unavailable snapshots from authoritative empty inventories.
 - IPC pipe security for LocalSystem, Administrators, desktop users, and
   packaged app tokens.
 - Durable-change detail serialisation for USN fallback diagnostics.
@@ -311,3 +370,15 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
 - Optional elevated VSS smoke check: with the developer service installed, lock
   a protected file, run a backup, and inspect Activity/Capture consistency
   detail. This is troubleshooting evidence only, not a V1 completion or CI gate.
+
+## Verified-recovery live lane
+
+Run `eng/test-repository-integrity.ps1 -PostgreSqlBinPath '<existing bin directory>' -RunFullSuite` on Windows. It uses `pg_ctl start` with PostgreSQL's restricted token, an owned GUID data directory and a non-standard loopback port. Its finally block stops owned UI/server children and the identified postmaster and verifies exit, including startup failures. It never uses or stops the installed PostgreSQL service. The `-InspectUi` mode opens the real WPF window on a private fixture pipe and ends on its generated `stop-ui.signal`, window exit or a bounded timeout.
+
+The PostgreSQL family proves immutable descriptor/reference transactions, same-version replay/refusal, digest canonicalisation, affected-only retirement (including chunk locations), barrier-controlled record/delete ordering, cancellation and rollback, and actual process loss after a committed transaction. Private IPC tests include capture/list/verified restore, corruption refusal and responsive status while content is leased. Missing ownership prerequisites fail visibly.
+
+The parameterised [setup rehearsal](verification/2026-10-01-verified-recovery/setup-rehearsal.ps1) takes an owned cluster marker and the existing binary directory. It substitutes a fixture-only service lookup, denies service start/restart, and runs the real provisioning script against that disposable cluster with ordinary SCRAM authentication. It checks schema initialisation, runtime access after temporary-admin removal, credential-free administrator denial, collision refusal and exact preservation of rejected non-ASCII authentication bytes. Its owned cluster listens on IPv4 only; the normal installed-state check separately probes both loopback addresses.
+
+`FolderPublicationOrderingTests` and `PostgreSqlFolderPublicationOrderingTests` cover reversed, equal and submicrosecond file capture times, subsequent nested updates, root/nested folder deletion, sibling preservation and SQL `current_entries`. Overflow refuses acknowledgement. Deletion-version recovery continues to follow the retained predecessor.
+
+The current staging v1.0.4 [evidence](verification/2026-10-01-verified-recovery/README.md) contains the full 687-test run, native fixture folder results, installed service/CLI/UI hash recovery and six measured published-CLI trials. Resumed desktop validation proved selection and inventory survive service cache invalidation, and recovery through the native dialogue produced the expected hash. Fault injection stays in owned fixtures. `eng/release-package.ps1` rebuilds both WiX projects to avoid stale incremental payloads; extracted MSI version and every embedded/published/installed file hash are checked before treating installation as validated. Preview cleanup tests require expired empty directories to be removed and fresh writer directories to survive. All temporary processes exited; normal PostgreSQL was not restarted.

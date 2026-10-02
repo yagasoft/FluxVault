@@ -1,5 +1,18 @@
 # Roadmap
 
+## Current improvement programme
+
+The [1 October 2026 improvement roadmap](improvement-roadmap.md) is the current
+delivery order following the [product and engineering review](reviews/2026-10-01/review.md).
+It prioritises verified local protection and independent recovery, a rebuilt
+professional desktop experience, measured performance and complete installation
+before further cloud, sync or native-driver expansion. The product is still in
+staging; backward compatibility may be dropped, Windows is the current target,
+and basic protection/recovery remain local-first. The first integrity slice is
+in progress with [verified PostgreSQL/process evidence and remaining native/install gates](verification/2026-10-01-verified-recovery/README.md);
+no improvement package is complete. The tracks below retain their
+historical product context; their ordering does not override the new trust gates.
+
 FluxVault is being built as a configurable, low-friction protection platform
 for large files on Windows. The roadmap deliberately separates one-PC
 reliability, mirror fabric, multi-PC sync, write-path optimisation, shell

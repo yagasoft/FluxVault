@@ -67,7 +67,29 @@ internal static class RepositoryMetadataStoreHelpers
         return manifest.ContentSignature ?? ComputeContentSignature(manifest.LogicalLength, manifest.Chunks);
     }
 
-    private static string ComputeContentSignature(long logicalLength, IReadOnlyList<ManifestChunk> chunks)
+    internal static string ComputeFolderContentSignature(IReadOnlyList<FolderVersionEntry> entries)
+    {
+        var builder = new StringBuilder("fv-folder-v1");
+        foreach (var entry in entries
+                     .OrderByDescending(entry => entry.EntryKind)
+                     .ThenBy(entry => entry.Name, StringComparer.OrdinalIgnoreCase)
+                     .ThenBy(entry => entry.SourcePath, StringComparer.OrdinalIgnoreCase))
+        {
+            builder
+                .Append('|')
+                .Append(entry.EntryKind)
+                .Append(':')
+                .Append(entry.Name)
+                .Append(':')
+                .Append(entry.VersionId)
+                .Append(':')
+                .Append(entry.IsDeleted ? "deleted" : "live");
+        }
+
+        return Hasher.Hash(Encoding.UTF8.GetBytes(builder.ToString()));
+    }
+
+    internal static string ComputeContentSignature(long logicalLength, IReadOnlyList<ManifestChunk> chunks)
     {
         var builder = new StringBuilder();
         builder.Append("fv-content-v1:").Append(logicalLength);

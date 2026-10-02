@@ -1,6 +1,7 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Core.Storage.Integrity;
 
 namespace FluxVault.Core.Storage.Metadata;
 
@@ -9,29 +10,31 @@ public sealed class InMemoryRepositoryMetadataStore : IRepositoryMetadataStore
     private readonly object gate = new();
     private readonly Dictionary<string, FileVersionManifest> manifests = new(StringComparer.OrdinalIgnoreCase);
 
-    public Task RecordVersionAsync(FileVersionManifest manifest, CancellationToken cancellationToken = default)
+    public Task<ChunkDescriptor?> FindChunkDescriptorAsync(string digest, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(manifest);
+        cancellationToken.ThrowIfCancellationRequested();
         lock (gate)
-        {
-            manifests[manifest.VersionId] = manifest;
-        }
-
-        return Task.CompletedTask;
+            return Task.FromResult(ChunkDescriptorLookup.Resolve(manifests.Values.SelectMany(manifest => manifest.Chunks)
+                .Where(chunk => string.Equals(chunk.Digest, digest, StringComparison.OrdinalIgnoreCase))));
     }
+
+    public Task RecordVersionAsync(FileVersionManifest manifest, CancellationToken cancellationToken = default) =>
+        RecordVersionsAsync([manifest], cancellationToken);
 
     public Task RecordVersionsAsync(IReadOnlyCollection<FileVersionManifest> manifestsToRecord, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(manifestsToRecord);
+        cancellationToken.ThrowIfCancellationRequested();
         lock (gate)
         {
-            foreach (var manifest in manifestsToRecord)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                manifests[manifest.VersionId] = manifest;
-            }
+            var requestedDigests = manifestsToRecord.SelectMany(manifest => manifest.Chunks).Select(chunk => chunk.Digest)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            foreach (var group in manifests.Values.Concat(manifestsToRecord).SelectMany(manifest => manifest.Chunks)
+                .Where(chunk => requestedDigests.Contains(chunk.Digest)).GroupBy(chunk => chunk.Digest, StringComparer.OrdinalIgnoreCase))
+                ChunkDescriptorLookup.Resolve(group);
+            cancellationToken.ThrowIfCancellationRequested();
+            foreach (var manifest in manifestsToRecord) manifests[manifest.VersionId] = manifest;
         }
-
         return Task.CompletedTask;
     }
 

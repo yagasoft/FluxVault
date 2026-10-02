@@ -1,0 +1,75 @@
+{
+  "RecordedUtc": "2026-10-01T19:31:48.8671242+03:00",
+  "Interface": "Installed FluxVault.Service named pipe and Windows service with PostgreSQL",
+  "SourceRoot": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\working",
+  "Backup": {
+    "success": true,
+    "message": "Captured 2 file(s). Retention kept 10 version(s), pruned 0, reclaimed 0 B.",
+    "capturedFileCount": 2,
+    "failedFileCount": 0,
+    "completedAtUtc": "2026-10-01T19:31:48.772357+03:00",
+    "enumeratedFileCount": 2,
+    "skippedUnchangedFileCount": 0,
+    "recordedDeletionCount": 0,
+    "elapsed": "00:00:00.2520276"
+  },
+  "FileVersionId": "01a0f84ecb69767da4db98106882f600",
+  "FolderVersionId": "01a0f84ecbf27d2582f300243fd13a95",
+  "VerifiedFileResult": {
+    "outputPath": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\restored\\ipc-file.txt",
+    "verifiedLogicalBytes": 74,
+    "restoredFileCount": 1,
+    "warnings": []
+  },
+  "VerifiedFolderResult": {
+    "outputPath": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\restored\\ipc-folder",
+    "verifiedLogicalBytes": 1048650,
+    "restoredFileCount": 2,
+    "warnings": []
+  },
+  "IndependentHashes": [
+    {
+      "Source": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\working\\sample.txt",
+      "Destination": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\restored\\ipc-file.txt",
+      "Sha256": "514e194ac56411228adfb15ab5573e6d0d2a89d0a4076085c6b3883c156734ec",
+      "Bytes": 74,
+      "Match": true
+    },
+    {
+      "Source": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\working\\sample.txt",
+      "Destination": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\restored\\ipc-folder\\sample.txt",
+      "Sha256": "514e194ac56411228adfb15ab5573e6d0d2a89d0a4076085c6b3883c156734ec",
+      "Bytes": 74,
+      "Match": true
+    },
+    {
+      "Source": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\working\\nested\\project.bin",
+      "Destination": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\restored\\ipc-folder\\nested\\project.bin",
+      "Sha256": "0ba0ee5576b7ab99bb9b9c74e1d22ff6fec30c3ff5f2c5d9a16723b964453085",
+      "Bytes": 1048576,
+      "Match": true
+    }
+  ],
+  "ExistingFolderRefusedAndPreserved": true,
+  "RepeatError": "Restore failed for C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\restored\\ipc-folder: Folder recovery requires a new destination. Existing folders cannot be merged.",
+  "NativeValidation": "Installed UI restore hash verified",
+  "OriginalConfigurationRestored": true,
+  "NativeHash": {
+    "Source": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\working\\sample.txt",
+    "Destination": "C:\\ProgramData\\FluxVault\\staging-validation\\69673aa76ee949dbb5004732ae54e04d\\restored\\native-file.txt",
+    "Sha256": "514e194ac56411228adfb15ab5573e6d0d2a89d0a4076085c6b3883c156734ec",
+    "Bytes": 74,
+    "Match": true
+  },
+  "FinalMetadataStatus": {
+    "provider": 0,
+    "endpoint": "localhost:5432/fluxvault_metadata",
+    "schemaInitialized": true,
+    "lastError": null,
+    "pendingOutboxCount": 0,
+    "oldestUnexportedUtc": null,
+    "oldestUnexportedAge": null,
+    "isExportLagExceeded": false
+  },
+  "FinalWatchedFolderCount": 0
+}

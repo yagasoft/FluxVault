@@ -12,6 +12,8 @@ public interface IRepositoryMetadataStore
 
     Task RecordVersionAsync(FileVersionManifest manifest, CancellationToken cancellationToken = default);
 
+    Task<ChunkDescriptor?> FindChunkDescriptorAsync(string digest, CancellationToken cancellationToken = default);
+
     async Task RecordVersionsAsync(
         IReadOnlyCollection<FileVersionManifest> manifests,
         CancellationToken cancellationToken = default)
@@ -55,14 +57,14 @@ public interface IRepositoryMetadataStore
 
     Task DeleteVersionsAsync(IReadOnlyCollection<string> versionIds, CancellationToken cancellationToken = default)
     {
-        return Task.CompletedTask;
+        throw new NotSupportedException("This metadata store cannot delete acknowledged versions.");
     }
 
     Task<IReadOnlyDictionary<string, long>> CountChunkReferencesAsync(
         IReadOnlyCollection<string> digests,
         CancellationToken cancellationToken = default)
     {
-        return Task.FromResult<IReadOnlyDictionary<string, long>>(new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase));
+        throw new NotSupportedException("This metadata store cannot establish authoritative chunk reference counts.");
     }
 
     Task<MetadataStoreRuntimeStatus> GetRuntimeStatusAsync(

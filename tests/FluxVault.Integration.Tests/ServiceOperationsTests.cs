@@ -85,14 +85,50 @@ public sealed class ServiceOperationsTests
 
         var response = await operations.HandleAsync(FluxVaultIpcRequest.RestoreVersionPreview(version.VersionId));
 
-        Assert.True(response.Success);
+        Assert.True(response.Success, response.ErrorMessage);
         Assert.NotNull(response.OutputPath);
         Assert.Equal(await Sha256Async(source), await Sha256Async(response.OutputPath));
         Assert.False(Directory.Exists(Path.Combine(workspace.RepositoryPath, "lineage", "restore-hints")));
     }
 
     [Fact]
-    public async Task Preview_restore_marks_file_readonly_and_reuses_cached_preview()
+    public async Task Preview_cleanup_preserves_fresh_empty_directories_that_may_have_active_writers()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var watched = Path.Combine(workspace.RootPath, "watched");
+        Directory.CreateDirectory(watched);
+        await File.WriteAllTextAsync(Path.Combine(watched, "draft.txt"), "preview version");
+        var configuration = NewConfiguration(workspace, watched);
+        var stateRoot = Path.Combine(workspace.RootPath, "maintenance");
+        var previewRoot = Path.Combine(stateRoot, "version-preview");
+        var freshDirectory = Path.Combine(previewRoot, new string('f', 64), "active-writer");
+        var oldEmptyDirectory = Path.Combine(previewRoot, "old");
+        Directory.CreateDirectory(freshDirectory);
+        Directory.CreateDirectory(oldEmptyDirectory);
+        Directory.SetLastWriteTimeUtc(oldEmptyDirectory, DateTime.UtcNow.AddDays(-3));
+        var operations = CreateOperations(workspace, configuration,
+            new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath),
+            new FallbackFileCaptureProvider(new NormalFileCaptureProvider(), new UnavailableVssCaptureProvider()),
+            maintenanceStateRoot: stateRoot);
+        await operations.SaveConfigurationAsync(configuration);
+        await operations.RunBackupNowAsync();
+        var version = Assert.Single(await operations.ListVersionsAsync());
+
+        var response = await operations.HandleAsync(FluxVaultIpcRequest.RestoreVersionPreview(version.VersionId));
+
+        if (response.OutputPath is not null && File.Exists(response.OutputPath))
+            File.SetAttributes(response.OutputPath, FileAttributes.Normal);
+        Assert.True(response.Success, response.ErrorMessage);
+        // Cleanup visits deeper/longer paths before this expired empty directory.
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (Directory.Exists(oldEmptyDirectory) && DateTime.UtcNow < deadline) await Task.Delay(10);
+        Assert.False(Directory.Exists(oldEmptyDirectory));
+        Assert.True(Directory.Exists(freshDirectory), "Cleanup deleted a fresh directory while a preview could be preparing its staged file.");
+        Assert.Equal("preview version", await File.ReadAllTextAsync(response.OutputPath!));
+    }
+
+    [Fact]
+    public async Task Preview_restore_regenerates_tampered_same_length_cached_content()
     {
         using var workspace = TemporaryWorkspace.Create();
         var watched = Path.Combine(workspace.RootPath, "watched");
@@ -108,8 +144,8 @@ public sealed class ServiceOperationsTests
         var first = await operations.HandleAsync(FluxVaultIpcRequest.RestoreVersionPreview(version.VersionId));
         Assert.True(first.Success);
         Assert.NotNull(first.OutputPath);
-        var firstWriteTime = File.GetLastWriteTimeUtc(first.OutputPath);
-        await Task.Delay(TimeSpan.FromMilliseconds(20));
+        File.SetAttributes(first.OutputPath!, FileAttributes.Normal);
+        await File.WriteAllTextAsync(first.OutputPath!, "tamper! version");
 
         var second = await operations.HandleAsync(FluxVaultIpcRequest.RestoreVersionPreview(version.VersionId));
 
@@ -117,7 +153,7 @@ public sealed class ServiceOperationsTests
         Assert.NotNull(second.OutputPath);
         Assert.Equal(first.OutputPath, second.OutputPath);
         Assert.True((File.GetAttributes(second.OutputPath!) & FileAttributes.ReadOnly) != 0);
-        Assert.Equal(firstWriteTime, File.GetLastWriteTimeUtc(second.OutputPath!));
+        Assert.Equal("preview version", await File.ReadAllTextAsync(second.OutputPath!));
     }
 
     [Fact]
@@ -1510,6 +1546,9 @@ public sealed class ServiceOperationsTests
 
     private static FluxVaultConfiguration NewConfiguration(TemporaryWorkspace workspace, string watched)
     {
+        var lease = FluxVault.Core.Storage.Integrity.RepositoryLeaseSet.AcquireAsync(workspace.RepositoryPath, [],
+            FluxVault.Core.Storage.Integrity.MirrorLeaseMode.None, default).AsTask().GetAwaiter().GetResult();
+        lease.DisposeAsync().AsTask().GetAwaiter().GetResult();
         return new FluxVaultConfiguration(
             RepositoryPath: workspace.RepositoryPath,
             MirrorPath: null,

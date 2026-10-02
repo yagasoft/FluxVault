@@ -1,0 +1,27 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.App.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.37]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Profile_command_unavailable_inventory_preserves_only_the_same_profile_without_retry(switchProfile: True) [FAIL]
+[xUnit.net 00:00:00.38]     FluxVault.App.Tests.MainWindowViewModelRefreshTests.Profile_command_unavailable_inventory_preserves_only_the_same_profile_without_retry(switchProfile: False) [FAIL]
+  Failed FluxVault.App.Tests.MainWindowViewModelRefreshTests.Profile_command_unavailable_inventory_preserves_only_the_same_profile_without_retry(switchProfile: True) [180 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "Service connection: running - Captured 1 "···
+Not found: "inventory unavailable"
+  Stack Trace:
+     at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Profile_command_unavailable_inventory_preserves_only_the_same_profile_without_retry(Boolean switchProfile) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 52
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.MainWindowViewModelRefreshTests.Profile_command_unavailable_inventory_preserves_only_the_same_profile_without_retry(switchProfile: False) [3 ms]
+  Error Message:
+   Assert.Single() Failure: The collection was empty
+  Stack Trace:
+     at FluxVault.App.Tests.MainWindowViewModelRefreshTests.Profile_command_unavailable_inventory_preserves_only_the_same_profile_without_retry(Boolean switchProfile) in C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\tests\FluxVault.App.Tests\MainWindowViewModelRefreshTests.cs:line 49
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-product-review\FluxVault\docs\verification\2026-10-01-verified-recovery\inventory-regression-red\inventory-profile-red.trx
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 203 ms - FluxVault.App.Tests.dll (net10.0)

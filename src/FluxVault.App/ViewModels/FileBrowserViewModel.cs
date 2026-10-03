@@ -165,6 +165,16 @@ public sealed partial class FileBrowserViewModel(
             .ToArray();
     }
 
+    public void AcknowledgeSelectionRules(IReadOnlyList<ProtectionSelectionRule> rules)
+    {
+        baselineRules.Clear();
+        foreach (var rule in rules.Select(Normalise).Where(rule => rule.IsEnabled))
+        {
+            baselineRules[rule.Path] = rule;
+        }
+        RefreshPendingChanges();
+    }
+
     public IReadOnlyList<RepositoryPurgeScope> GetRemovedSelectionPurgeScopes()
     {
         var currentScopes = GetProtectedSelectionPurgeScopes()

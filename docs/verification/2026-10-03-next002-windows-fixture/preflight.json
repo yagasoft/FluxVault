@@ -1,0 +1,52 @@
+{
+  "Group": "FVGate_261003",
+  "Users": [
+    "FVGateA_261003",
+    "FVGateB_261003"
+  ],
+  "PostgreSqlBinPath": "D:\\Program Files\\PostgreSQL\\18\\bin",
+  "ExistingServices": [
+    {
+      "Name": "postgresql-x64-18",
+      "State": "Running",
+      "StartName": "NT AUTHORITY\\NetworkService",
+      "ProcessId": 7296,
+      "PathName": "\"D:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe\" runservice -N \"postgresql-x64-18\" -D \"D:\\Program Files\\PostgreSQL\\18\\data\" -w"
+    },
+    {
+      "Name": "FluxVaultService",
+      "State": "Running",
+      "StartName": "LocalSystem",
+      "ProcessId": 40216,
+      "PathName": "\"C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe\""
+    }
+  ],
+  "CheckedUtc": "2026-10-03T20:31:20.7232336Z",
+  "FixtureRoot": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\43a32654d27a4e8fb0b20012702300af",
+  "ProtectedInstallationHashes": [
+    {
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_hba.conf",
+      "Sha256": "C37D219F5AEE60D710ABCD9628A1F3D6C94F5C9861B4E31A52290DE995D97379"
+    },
+    {
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_ident.conf",
+      "Sha256": "2151E28F0BF5A8BB69109F91DBE61EBFFE48C6F9B71620F6A7B0B02B410E7DE5"
+    },
+    {
+      "Path": "C:\\ProgramData\\FluxVault\\config.json",
+      "Sha256": "6C52FAFC7325B1C194DE6D4F510441DC6197CB6833A75E9A5570713CD982794F"
+    }
+  ],
+  "PostgreSqlServiceRole": "fv_gate_service",
+  "LoopbackHosts": [
+    "127.0.0.1",
+    "::1"
+  ],
+  "PostgreSqlDatabase": "fv_gate_261003",
+  "Elevated": true,
+  "ResourcesAbsent": true,
+  "FixtureId": "43a32654d27a4e8fb0b20012702300af",
+  "Port": "ephemeral, explicitly not 5432",
+  "ScheduledTask": "FluxVault-NEXT002-261003-SYSTEM",
+  "ProvisioningPerformed": false
+}

@@ -1,0 +1,32 @@
+{
+  "recorded_utc": "2026-10-03T21:37:35.936826+03:00",
+  "planning_date_client": "2026-10-03",
+  "baseline": "afdfe1f527ab7f0bef54c816a7ce858c36008444",
+  "branch": "codex/next002-planning-20261003",
+  "configuration_contract_tests": {
+    "passed": 1,
+    "failed_expected": 8,
+    "skipped": 0
+  },
+  "existing_app_tests": {
+    "passed": 187,
+    "failed": 0,
+    "skipped": 0
+  },
+  "new_documentation_and_test_whitespace": "passed",
+  "runtime_and_agreed_roadmap_unchanged": true,
+  "files_sha256": {
+    "docs/superpowers/specs/2026-10-03-next002-and-protection-save-design.md": "1d9def376e02326a234c27a603aef9d8a56774559a6c0de8da6ce66fc42714f9",
+    "docs/superpowers/plans/2026-10-03-next002-with-protection-save.md": "86830fa272bb541665baf8270d52ab7375c0f70e3441cc46ba43c06a9a3bff67",
+    "docs/ui-concepts/2026-10-03-next002/README.md": "567a9735cef3392681ac4c131a57b33edaf64029e81eaf87912a4c9b3edd970c",
+    "docs/verification/2026-10-03-next002-planning/README.md": "ec9b4bf0a74ff8475b5e079daa588e89330b1dd8f98bfae4d7b0bff68e1c1083",
+    "tests/FluxVault.App.Tests/ProtectionSaveContractTests.cs": "14361152adeb1e4115e09af9ab9c6e94b1a6d9fa3cc672d1914104c1a176e1ee",
+    "docs/verification/2026-10-03-next002-planning/independent-design-review.md": "44c062837de85743c867bc6c609059fbdb80e559ce57dde28d6d30ba8e239a87"
+  },
+  "local_links_checked": 21,
+  "independent_design_review": "approved planning proposal; user accepted reviewed creator-only default with explicit grants",
+  "decision_followup_checked_utc": "2026-10-03T19:20:40.9033112Z",
+  "accepted_access_default": "Creating Windows user; explicit grants for other Windows users or groups",
+  "implementation_status": "Paused at user request for model switch; resume with batch C",
+  "decision_followup_test_evidence": "Retained results; regression source and runtime unchanged; no tests rerun for documentation-only decision"
+}

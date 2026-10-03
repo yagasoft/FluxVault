@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="26541d3a-36ac-4d40-bf41-8e22ee99f18b" name="os008@OS008-HOME 2026-10-03 23:22:38" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T23:22:38.4882546+03:00" queuing="2026-10-03T23:22:38.4882547+03:00" start="2026-10-03T23:22:35.6664031+03:00" finish="2026-10-03T23:22:38.4928860+03:00" />
+  <TestSettings name="default" id="dd169b27-8b39-4fee-b2ea-bc1df7d341b3">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-03_23_22_38" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="2a91df00-128a-4e63-ad93-441447262715" testId="2e2b9d82-8668-25fe-3016-4894e4aebd25" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_close_cannot_enable_protection_saves_with_a_stale_baseline(delayedReload: False)" computerName="OS008-HOME" duration="00:00:01.3664563" startTime="2026-10-03T23:22:36.2227157+03:00" endTime="2026-10-03T23:22:37.6049604+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a91df00-128a-4e63-ad93-441447262715">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass23_0.&lt;&lt;Options_close_cannot_enable_protection_saves_with_a_stale_baseline&gt;b__0&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 724&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass14_1.&lt;&lt;RunOnStaAsync&gt;b__1&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 426&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 434&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9060a010-3688-4c36-b6a9-74c599e5779d" testId="0bbee217-c1ff-af2b-e2fd-41d45759b9f9" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_close_cannot_enable_protection_saves_with_a_stale_baseline(delayedReload: True)" computerName="OS008-HOME" duration="00:00:00.7369476" startTime="2026-10-03T23:22:37.6171097+03:00" endTime="2026-10-03T23:22:38.3434841+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9060a010-3688-4c36-b6a9-74c599e5779d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass23_0.&lt;&lt;Options_close_cannot_enable_protection_saves_with_a_stale_baseline&gt;b__0&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 724&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass14_1.&lt;&lt;RunOnStaAsync&gt;b__1&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 426&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 434&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_close_cannot_enable_protection_saves_with_a_stale_baseline(delayedReload: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="0bbee217-c1ff-af2b-e2fd-41d45759b9f9">
+      <Execution id="9060a010-3688-4c36-b6a9-74c599e5779d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_close_cannot_enable_protection_saves_with_a_stale_baseline" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_close_cannot_enable_protection_saves_with_a_stale_baseline(delayedReload: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="2e2b9d82-8668-25fe-3016-4894e4aebd25">
+      <Execution id="2a91df00-128a-4e63-ad93-441447262715" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_close_cannot_enable_protection_saves_with_a_stale_baseline" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2e2b9d82-8668-25fe-3016-4894e4aebd25" executionId="2a91df00-128a-4e63-ad93-441447262715" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0bbee217-c1ff-af2b-e2fd-41d45759b9f9" executionId="9060a010-3688-4c36-b6a9-74c599e5779d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:01.57]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:01.57]       Expected: False&#xD;
+[xUnit.net 00:00:01.57]       Actual:   True&#xD;
+[xUnit.net 00:00:01.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(724,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass23_0.&lt;&lt;Options_close_cannot_enable_protection_saves_with_a_stale_baseline&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.57]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(426,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass14_1.&lt;&lt;RunOnStaAsync&gt;b__1&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.57]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(434,0): at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action)&#xD;
+[xUnit.net 00:00:01.57]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.30]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:02.30]       Expected: False&#xD;
+[xUnit.net 00:00:02.30]       Actual:   True&#xD;
+[xUnit.net 00:00:02.30]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(724,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass23_0.&lt;&lt;Options_close_cannot_enable_protection_saves_with_a_stale_baseline&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:02.30]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(426,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass14_1.&lt;&lt;RunOnStaAsync&gt;b__1&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:02.30]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(434,0): at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action)&#xD;
+[xUnit.net 00:00:02.30]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.31]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:22:37.6074637+03:00">
+        <Text>[xUnit.net 00:00:01.57]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_close_cannot_enable_protection_saves_with_a_stale_baseline(delayedReload: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:22:38.3440016+03:00">
+        <Text>[xUnit.net 00:00:02.30]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_close_cannot_enable_protection_saves_with_a_stale_baseline(delayedReload: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

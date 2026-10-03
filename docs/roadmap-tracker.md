@@ -56,12 +56,19 @@ invalidation handling. Installed recovery and selection preservation now pass;
 all temporary processes exited and the service has no watched test folders.
 None of the complete packages below is fully delivered.
 
+Batch C of the [NEXT-002 plan](superpowers/plans/2026-10-03-next002-with-protection-save.md)
+implements the two requested NEXT-004 save fixes in the isolated branch. Its
+[evidence](verification/2026-10-03-protection-save/README.md) records real-store/VM
+regressions, native failure/retry states, independent review and 722 passing
+tests. It is not installed or merged; revision conflict handling, pause/resume,
+separate history deletion and every NEXT-002 security gate remain open.
+
 | ID | Priority | Capability | Status | Required verification |
 | --- | --- | --- | --- | --- |
 | NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |
 | NEXT-002 | P0 | Authorised IPC and vault isolation | Planned | Caller/resource denial and authorised success, bounded requests, malicious-path rejection and two-vault isolation. |
 | NEXT-003 | P0 | Verified publication, restore and safe mirrors | Partially implemented | Bit-flip/missing-payload/last-good-copy cases, validated manifests, bounded decoding and destination preservation. |
-| NEXT-004 | P0 | Correct configuration and user commands | Planned | Preserve all untouched settings, reject stale updates, stop after failed save, explicit pause and separate history deletion. |
+| NEXT-004 | P0 | Correct configuration and user commands | Partially implemented (isolated branch) | Preserve all untouched settings, reject stale updates, stop after failed save, explicit pause and separate history deletion. |
 | NEXT-005 | P0 | Durable work and owned runtime lifecycle | Partially implemented | Journal acknowledgement, fault/stop/restart, watcher recovery, cross-process maintenance/restore and no post-stop writes. |
 | NEXT-006 | P0 | Independent local disaster recovery | Planned | Recover on a fresh environment without source/primary/DB, including replay/deletion and retained-checkpoint consistency. |
 | NEXT-007 | P1 | Modern shell and guided protection | Planned | Working overview/setup journey, truthful states, accessible adaptive layout and observed professional first use. |

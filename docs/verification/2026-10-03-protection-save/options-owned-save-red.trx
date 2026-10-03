@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d7114bd8-d8b5-496a-b685-ac56801fbf55" name="os008@OS008-HOME 2026-10-03 23:23:50" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T23:23:50.1580624+03:00" queuing="2026-10-03T23:23:50.1580625+03:00" start="2026-10-03T23:23:48.4488745+03:00" finish="2026-10-03T23:23:50.1618574+03:00" />
+  <TestSettings name="default" id="068f1776-63e0-4581-a7fa-2744028ab4f2">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-03_23_23_50" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f32e4a58-b492-4aa4-9c1c-2f158bfe7927" testId="50fcaa50-fb14-d15c-dff0-f8984ee913ab" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_window_keeps_an_in_flight_save_owned_until_acknowledgement" computerName="OS008-HOME" duration="00:00:00.9596947" startTime="2026-10-03T23:23:49.0082652+03:00" endTime="2026-10-03T23:23:49.9841412+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f32e4a58-b492-4aa4-9c1c-2f158bfe7927">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c.&lt;&lt;Options_window_keeps_an_in_flight_save_owned_until_acknowledgement&gt;b__22_0&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 699&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c.&lt;&lt;Options_window_keeps_an_in_flight_save_owned_until_acknowledgement&gt;b__22_0&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 706&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass14_1.&lt;&lt;RunOnStaAsync&gt;b__1&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 426&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 434&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_window_keeps_an_in_flight_save_owned_until_acknowledgement" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="50fcaa50-fb14-d15c-dff0-f8984ee913ab">
+      <Execution id="f32e4a58-b492-4aa4-9c1c-2f158bfe7927" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_window_keeps_an_in_flight_save_owned_until_acknowledgement" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="50fcaa50-fb14-d15c-dff0-f8984ee913ab" executionId="f32e4a58-b492-4aa4-9c1c-2f158bfe7927" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:01.17]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:01.17]       Expected: True&#xD;
+[xUnit.net 00:00:01.17]       Actual:   False&#xD;
+[xUnit.net 00:00:01.17]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.17]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(699,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c.&lt;&lt;Options_window_keeps_an_in_flight_save_owned_until_acknowledgement&gt;b__22_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.17]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.17]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(706,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c.&lt;&lt;Options_window_keeps_an_in_flight_save_owned_until_acknowledgement&gt;b__22_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.17]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.17]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(426,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass14_1.&lt;&lt;RunOnStaAsync&gt;b__1&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.17]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.17]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(434,0): at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action)&#xD;
+[xUnit.net 00:00:01.17]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.18]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:23:49.9867029+03:00">
+        <Text>[xUnit.net 00:00:01.17]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_window_keeps_an_in_flight_save_owned_until_acknowledgement [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

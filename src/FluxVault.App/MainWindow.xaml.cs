@@ -33,18 +33,18 @@ public partial class MainWindow : Window
 
     private async void Options_Click(object sender, RoutedEventArgs e)
     {
-        if (DataContext is not MainWindowViewModel viewModel)
+        if (DataContext is not MainWindowViewModel viewModel || !viewModel.TryBeginOptionsEditing())
         {
             return;
         }
 
-        var optionsViewModel = new OptionsViewModel(viewModel.ServiceClient);
-        var window = new OptionsWindow(optionsViewModel)
+        try
         {
-            Owner = this
-        };
-        window.ShowDialog();
-        await viewModel.RefreshAsync().ConfigureAwait(true);
+            var optionsViewModel = new OptionsViewModel(viewModel.ServiceClient);
+            var window = new OptionsWindow(optionsViewModel) { Owner = this };
+            window.ShowDialog();
+        }
+        finally { await viewModel.EndOptionsEditingAsync().ConfigureAwait(true); }
         viewModel.FileBrowser.RefreshBrowser();
     }
 

@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="49e347d2-c173-4822-9eb7-cded194b3d16" name="os008@OS008-HOME 2026-10-03 22:33:28" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T22:33:28.6674046+03:00" queuing="2026-10-03T22:33:28.6674047+03:00" start="2026-10-03T22:33:27.1162680+03:00" finish="2026-10-03T22:33:28.6712017+03:00" />
+  <TestSettings name="default" id="75f3d4ae-57b7-46aa-b484-04056525fe64">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-03_22_33_28" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="7a0f9b80-9e03-4f65-8a2b-7e0d0b70d6cd" testId="a85c500e-baa3-91d1-0827-ce7e0ae2d9db" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Wpf_save_message_stays_visible_after_refresh_and_clears_after_retry" computerName="OS008-HOME" duration="00:00:00.7996721" startTime="2026-10-03T22:33:27.6769633+03:00" endTime="2026-10-03T22:33:28.4922622+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7a0f9b80-9e03-4f65-8a2b-7e0d0b70d6cd">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsType() Failure: Value is null&#xD;
+Expected: typeof(System.Windows.Controls.TextBlock)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c.&lt;&lt;Wpf_save_message_stays_visible_after_refresh_and_clears_after_retry&gt;b__11_0&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 335&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass12_1.&lt;&lt;RunOnStaAsync&gt;b__1&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 366&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 374&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Wpf_save_message_stays_visible_after_refresh_and_clears_after_retry" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="a85c500e-baa3-91d1-0827-ce7e0ae2d9db">
+      <Execution id="7a0f9b80-9e03-4f65-8a2b-7e0d0b70d6cd" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Wpf_save_message_stays_visible_after_refresh_and_clears_after_retry" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a85c500e-baa3-91d1-0827-ce7e0ae2d9db" executionId="7a0f9b80-9e03-4f65-8a2b-7e0d0b70d6cd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:01.00]       Assert.IsType() Failure: Value is null&#xD;
+[xUnit.net 00:00:01.00]       Expected: typeof(System.Windows.Controls.TextBlock)&#xD;
+[xUnit.net 00:00:01.00]       Actual:   null&#xD;
+[xUnit.net 00:00:01.00]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.00]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(335,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c.&lt;&lt;Wpf_save_message_stays_visible_after_refresh_and_clears_after_retry&gt;b__11_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.00]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.00]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(366,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass12_1.&lt;&lt;RunOnStaAsync&gt;b__1&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.00]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.00]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(374,0): at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action)&#xD;
+[xUnit.net 00:00:01.00]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.01]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T22:33:28.4950066+03:00">
+        <Text>[xUnit.net 00:00:01.00]     FluxVault.App.Tests.ProtectionSaveContractTests.Wpf_save_message_stays_visible_after_refresh_and_clears_after_retry [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,190 @@
+Window: "FluxVault protection-save fixture (cancelled)", App: FluxVault.TestHost.exe.
+	0 window FluxVault protection-save fixture (cancelled) Secondary Actions: Raise
+		1 title bar (settable, string) Value: FluxVault protection-save fixture (cancelled)
+			2 menu bar System ID: MenuBar
+				3 menu item System
+			4 button Minimize
+			5 button Maximize
+			6 button Close
+		7 text FluxVault
+		8 combo box Description: Active vault profile.
+		9 button + Description: Add a vault profile.
+			10 text +
+		11 button ⧉ Description: Duplicate the active vault profile.
+			12 text ⧉
+		13 button ✎ Description: Rename the active vault profile.
+			14 text ✎
+		15 button × Description: Delete the active vault profile.
+			16 text ×
+		17 text Service connection: running - Disposable fixture idle. Last refreshed 22:45:27. Select a repository version after a backup completes before restoring. Save cancelled; any service-side outcome must be checked before retrying. Your changes are kept. Backup has not started for this action.
+		18 button Description: Refresh dashboard status and version data.
+			19 text ⟳
+			20 text Refresh
+		21 button Description: Stop the FluxVault Windows service. ID: ServiceControlToggleButton
+			22 text ⚠
+			23 text Stop service
+		24 button Description: Run a full scan backup now.
+			25 text ↥
+			26 text Run backup now
+		27 button (disabled) Description: Restore the selected repository version.
+			28 text (disabled) ↙
+			29 text (disabled) Restore
+		30 button Description: Open retention, maintenance, capture, compression, and Explorer settings.
+			31 text ⚙
+			32 text Options
+		33 button Description: About FluxVault.
+			34 text ⓘ
+			35 text About
+		36 button Description: Export local service status, diagnostics, and health details.
+			37 text ▣
+			38 text Export diagnostics
+		39 tab ID: OperationalCockpitWorkspace
+			40 tab item (selectable) 🛡 Protection
+				41 text 🛡 Protection
+			42 tab item (selectable) 📁 File browser
+				43 text 📁 File browser
+				44 button Refresh file browser Description: Reload drives, expanded folders, visible files, and selection indicators.
+					45 text Refresh file browser
+				46 button Restore latest elsewhere Description: Restore the latest version of the selected file or folder to another destination.
+					47 text Restore latest elsewhere
+				48 button Restore latest original Description: Restore the latest version of the selected file or folder back to its original path after confirmation.
+					49 text Restore latest original
+				50 button Show versions Description: Open the version browser filtered to the selected file or folder.
+					51 text Show versions
+				52 button Cycle folder selection Description: Cycle the selected folder between recursive, immediate files only, deselected, and restored selections.
+					53 text Cycle folder selection
+				54 button Save selections Description: Save pending File browser selections to the service configuration.
+					55 text Save selections
+				56 button Discard changes Description: Discard unsaved File browser and configuration edits, then reload settings from the service.
+					57 text Discard changes
+				58 text Workload preset
+				59 combo box Description: Built-in conservative workload policy for the selected protected folder or file.
+				60 text Select a protected folder or file to manage its workload preset.
+				61 text Include regex
+				62 edit (settable, string) Description: One .NET regex per line. Inherited include regex rules are additive.
+				63 text Exclude regex
+				64 edit (settable, string) Description: One .NET regex per line. Exclude rules from selected parents and children are additive.
+				65 button Apply regex Description: Apply the regex lists to the currently selected protected folder or file.
+					66 text Apply regex
+				67 button Clear regex Description: Clear local regex lists from the currently selected protected folder or file.
+					68 text Clear regex
+				69 text Select a protected folder or file to manage scoped regex rules.
+				184 text Save cancelled; any service-side outcome must be checked before retrying. Your changes are kept. Backup has not started for this action. ID: ProtectionSaveStatusText
+				70 text Path
+				71 edit (settable, string) Description: Enter a file or folder path, then press Enter or Go.
+				72 button Go Description: Enter a file or folder path, then press Enter or Go.
+					73 text Go
+				74 tree view
+					75 tree view item (selectable) FluxVault.App.ViewModels.FileBrowserFolderNode
+						76 button ID: Expander
+						77 button ☐ Description: Not selected. Click to cycle this folder through protection modes.
+							78 text ☐
+						79 text Description: No local regex rules are defined on this folder.
+						80 text C:\
+					81 tree view item (selectable) FluxVault.App.ViewModels.FileBrowserFolderNode
+						82 button ID: Expander
+						83 button ☐ Description: Not selected. Click to cycle this folder through protection modes.
+							84 text ☐
+						85 text Description: No local regex rules are defined on this folder.
+						86 text D:\
+					87 tree view item (selectable) FluxVault.App.ViewModels.FileBrowserFolderNode
+						88 button ID: Expander
+						89 button ☐ Description: Not selected. Click to cycle this folder through protection modes.
+							90 text ☐
+						91 text Description: No local regex rules are defined on this folder.
+						92 text E:\
+					93 tree view item (selectable) FluxVault.App.ViewModels.FileBrowserFolderNode
+						94 button ID: Expander
+						95 button ☐ Description: Not selected. Click to cycle this folder through protection modes.
+							96 text ☐
+						97 text Description: No local regex rules are defined on this folder.
+						98 text F:\
+					99 tree view item (selectable) FluxVault.App.ViewModels.FileBrowserFolderNode
+						100 button ID: Expander
+						101 button ☐ Description: Not selected. Click to cycle this folder through protection modes.
+							102 text ☐
+						103 text Description: No local regex rules are defined on this folder.
+						104 text G:\
+					105 tree view item (selectable) FluxVault.App.ViewModels.FileBrowserFolderNode
+						106 button ID: Expander
+						107 button ☐ Description: Not selected. Click to cycle this folder through protection modes.
+							108 text ☐
+						109 text Description: No local regex rules are defined on this folder.
+						110 text H:\
+					111 tree view item (selectable) FluxVault.App.ViewModels.FileBrowserFolderNode
+						112 button ID: Expander
+						113 button ☐ Description: Not selected. Click to cycle this folder through protection modes.
+							114 text ☐
+						115 text Description: No local regex rules are defined on this folder.
+						116 text I:\
+					117 tree view item (selectable) FluxVault.App.ViewModels.FileBrowserFolderNode
+						118 button ID: Expander
+						119 button ☐ Description: Not selected. Click to cycle this folder through protection modes.
+							120 text ☐
+						121 text Description: No local regex rules are defined on this folder.
+						122 text J:\
+				123 datagrid ID: FileBrowserFilesGrid
+					124 header ID: PART_ColumnHeadersPresenter
+						125 header item Selected
+							126 text Selected
+							127 thumb ID: PART_RightHeaderGripper
+						128 header item File
+							129 text File
+							130 thumb ID: PART_LeftHeaderGripper
+							131 thumb ID: PART_RightHeaderGripper
+						132 header item Bytes
+							133 text Bytes
+							134 thumb ID: PART_LeftHeaderGripper
+							135 thumb ID: PART_RightHeaderGripper
+				136 datagrid ID: FileBrowserPendingChangesGrid
+					137 header ID: PART_ColumnHeadersPresenter
+						138 header item Change
+							139 text Change
+							140 thumb ID: PART_RightHeaderGripper
+						141 header item Path
+							142 text Path
+							143 thumb ID: PART_LeftHeaderGripper
+							144 thumb ID: PART_RightHeaderGripper
+						145 header item Profile
+							146 text Profile
+							147 thumb ID: PART_LeftHeaderGripper
+							148 thumb ID: PART_RightHeaderGripper
+						149 header item Regex
+							150 text Regex
+							151 thumb ID: PART_LeftHeaderGripper
+							152 thumb ID: PART_RightHeaderGripper
+						153 header item Detail
+							154 text Detail
+							155 thumb ID: PART_LeftHeaderGripper
+							156 thumb ID: PART_RightHeaderGripper
+					157 dataitem (selectable) PendingSelectionChangeRow { Change = Added, Path = E:\Temp\AppData\Local\Temp\FluxVault.Integrity\ad7d96cdbc124c799e1e600979a5cbc6\Working project, Profile = General purpose, Regex = None, Detail = Recursive folder }
+						158 data grid cell Added Value: Added
+							159 text Added
+						160 data grid cell E:\Temp\AppData\Local\Temp\FluxVault.Integrity\ad7d96cdbc124c799e1e600979a5cbc6\Working project Value: E:\Temp\AppData\Local\Temp\FluxVault.Integrity\ad7d96cdbc124c799e1e600979a5cbc6\Working project
+							161 text E:\Temp\AppData\Local\Temp\FluxVault.Integrity\ad7d96cdbc124c799e1e600979a5cbc6\Working project
+						162 data grid cell General purpose Value: General purpose
+							163 text General purpose
+						164 data grid cell None Value: None
+							165 text None
+						166 data grid cell Recursive folder Value: Recursive folder
+							167 text Recursive folder
+			168 tab item (selectable) 🧱 Repository
+				169 text 🧱 Repository
+			170 tab item (selectable) 🪞 Mirrors
+				171 text 🪞 Mirrors
+			172 tab item (selectable) ↯ Activity
+				173 text ↯ Activity
+			174 tab item (selectable) ▥ Performance
+				175 text ▥ Performance
+			176 tab item (selectable) ⚙ Options
+				177 text ⚙ Options
+			178 tab item (selectable) ▣ Diagnostics
+				179 text ▣ Diagnostics
+		180 text USN: reconciliation scan
+		181 text Retention: waiting
+		182 text Mirror: local only
+		183 text Capture: idle
+
+Document text: ```
+Added
+```

@@ -1,0 +1,50 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.App.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.46]     FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(discard: True) [FAIL]
+[xUnit.net 00:00:00.48]     FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(discard: False) [FAIL]
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(discard: True) [256 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   System.OperationCanceledException: Fixture status reload cancelled
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 744
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 585
+   at FluxVault.App.ViewModels.MainWindowViewModel.DiscardConfigurationChangesAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 914
+   at Xunit.Record.ExceptionAsync(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 76
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(Boolean discard) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 167
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(discard: False) [23 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Saved
+Actual:   Cancelled
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(Boolean discard) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 178
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:01.64]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_session_prevents_Explorer_save_until_the_dialogue_closes [FAIL]
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Options_session_prevents_Explorer_save_until_the_dialogue_closes [1 s]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "default"
+Actual:   "other"
+           ↑ (pos 0)
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.<>c__DisplayClass21_0.<<Options_session_prevents_Explorer_save_until_the_dialogue_closes>b__1>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 661
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.ProtectionSaveContractTests.<>c.<<Options_session_prevents_Explorer_save_until_the_dialogue_closes>b__21_0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 675
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.ProtectionSaveContractTests.<>c__DisplayClass14_1.<<RunOnStaAsync>b__1>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 426
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 434
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-03-protection-save\status-options-red.trx
+
+Failed!  - Failed:     3, Passed:     0, Skipped:     0, Total:     3, Duration: 1 s - FluxVault.App.Tests.dll (net10.0)

@@ -1,0 +1,371 @@
+{
+  "activeProfileId": "default",
+  "profiles": [
+    {
+      "id": "default",
+      "displayName": "Default",
+      "isEnabled": false,
+      "configuration": {
+        "repositoryPath": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\repository",
+        "mirrorPath": null,
+        "isEnabled": false,
+        "watchedFolders": [
+          {
+            "id": "fixture-project",
+            "path": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\Working project",
+            "recursive": true,
+            "includePatterns": [
+              "*"
+            ],
+            "excludePatterns": [
+              "~$*"
+            ],
+            "compression": "Zstd",
+            "resourceProfile": "Balanced",
+            "isEnabled": true
+          }
+        ],
+        "retentionPolicy": {
+          "isEnabled": true,
+          "keepAllFor": "1.00:00:00",
+          "keepHourlyFor": "30.00:00:00",
+          "keepDailyFor": "180.00:00:00",
+          "minimumVersionsPerFile": 20
+        },
+        "captureCadencePolicy": {
+          "watcherPollInterval": "00:00:05",
+          "periodicReconciliationInterval": "00:10:00",
+          "fastDebounce": "00:00:02",
+          "balancedDebounce": "00:00:08",
+          "quietDebounce": "00:00:30",
+          "fastMaxHotFileDelay": "00:00:30",
+          "balancedMaxHotFileDelay": "00:02:00",
+          "quietMaxHotFileDelay": "00:10:00",
+          "minimumSameFileCaptureInterval": "00:00:15",
+          "maximumConcurrentCaptures": 2,
+          "watcherEventBacklogLimit": 4096,
+          "usnFallbackFullScanCooldown": "00:30:00",
+          "sourceDeepVerificationInterval": "7.00:00:00"
+        },
+        "codecPolicy": {
+          "codec": "Zstd",
+          "profile": "Adaptive",
+          "level": 3,
+          "minimumBytes": 262144,
+          "skipExtensions": [
+            ".7z",
+            ".br",
+            ".cab",
+            ".gif",
+            ".gz",
+            ".jpg",
+            ".jpeg",
+            ".m4v",
+            ".mp3",
+            ".mp4",
+            ".mov",
+            ".png",
+            ".rar",
+            ".webp",
+            ".xz",
+            ".zip",
+            ".zst"
+          ],
+          "hotFileOverride": "Lz4",
+          "enableDictionaryMode": false,
+          "enableLongDistanceMode": false,
+          "threads": 0
+        },
+        "selectionRules": [
+          {
+            "id": "fixture-project",
+            "path": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\Working project",
+            "mode": "RecursiveFolder",
+            "compression": "Zstd",
+            "resourceProfile": "Balanced",
+            "isEnabled": true,
+            "includeRegexRules": [],
+            "excludeRegexRules": [],
+            "workloadPreset": "GeneralPurpose"
+          }
+        ],
+        "exclusionRules": [],
+        "repositoryMaintenancePolicy": {
+          "isEnabled": true,
+          "interval": "1.00:00:00",
+          "autoRepairFromMirror": true,
+          "restoreRehearsalVersionCount": 3,
+          "runAutomatically": false
+        },
+        "workloadPolicy": {
+          "defaultPreset": "GeneralPurpose"
+        },
+        "mirrorSet": {
+          "nodes": [],
+          "placementPolicy": {
+            "profile": "FullCopy",
+            "minimumMirrorCopies": 1
+          }
+        },
+        "sync": {
+          "localDevice": {
+            "deviceId": "fv-device-7afac67370d5113d",
+            "displayName": "OS008-HOME",
+            "createdAtUtc": "2026-10-03T19:40:39.4111226+00:00"
+          },
+          "trustedDevices": [
+            {
+              "deviceId": "fv-device-7afac67370d5113d",
+              "displayName": "OS008-HOME",
+              "trustState": "Local",
+              "trustedAtUtc": "2026-10-03T19:40:39.4111226+00:00",
+              "lastSeenAtUtc": null
+            }
+          ]
+        },
+        "performanceWorkspace": {
+          "isEnabled": false,
+          "mode": "WinFsp",
+          "workspacePath": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\performance-workspace",
+          "cacheSizeMegabytes": 1024,
+          "mountName": "FluxVaultWorkspace"
+        },
+        "shellIntegration": {
+          "isEnabled": false,
+          "mode": "CloudFilesApi",
+          "syncRootPath": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\shell-integration\\sync-root",
+          "displayName": "FluxVault",
+          "hydrationPolicy": "OnDemand",
+          "placeholderStatePath": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\shell-integration\\state"
+        },
+        "directCloud": {
+          "isEnabled": false,
+          "adapters": [],
+          "blockOnMeteredNetwork": true,
+          "bandwidthLimitBytesPerSecond": null
+        },
+        "securityPosture": {
+          "clientSideEncryption": {
+            "isEnabled": false,
+            "algorithm": "Aes256Gcm",
+            "metadataMode": "PlainMetadata",
+            "activeKeyReferenceId": null,
+            "keyReferences": []
+          }
+        },
+        "fleet": {
+          "isEnabled": false,
+          "mode": "LocalOnly",
+          "policySource": null,
+          "assignments": [],
+          "localStatuses": []
+        },
+        "metadataStore": {
+          "provider": "PostgreSql",
+          "host": "localhost",
+          "port": 5432,
+          "databaseName": "fluxvault_metadata",
+          "username": "fluxvault",
+          "serviceName": "postgresql-x64",
+          "backupDirectory": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\db-backups",
+          "backupRetentionDays": 30,
+          "maxCaptureWorkers": 4,
+          "maxDbWriterConcurrency": 8,
+          "exportLagWarningThreshold": "00:15:00"
+        },
+        "diagnosticsPolicy": {
+          "isFileLoggingEnabled": true,
+          "fileLogLevel": "Warning",
+          "logDirectory": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\logs",
+          "maxLogFileMegabytes": 25,
+          "retainedLogFileCount": 8,
+          "telemetrySampleInterval": "00:00:05",
+          "retainedTelemetrySampleCount": 4320
+        }
+      }
+    }
+  ],
+  "activeProfile": {
+    "id": "default",
+    "displayName": "Default",
+    "isEnabled": false,
+    "configuration": {
+      "repositoryPath": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\repository",
+      "mirrorPath": null,
+      "isEnabled": false,
+      "watchedFolders": [
+        {
+          "id": "fixture-project",
+          "path": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\Working project",
+          "recursive": true,
+          "includePatterns": [
+            "*"
+          ],
+          "excludePatterns": [
+            "~$*"
+          ],
+          "compression": "Zstd",
+          "resourceProfile": "Balanced",
+          "isEnabled": true
+        }
+      ],
+      "retentionPolicy": {
+        "isEnabled": true,
+        "keepAllFor": "1.00:00:00",
+        "keepHourlyFor": "30.00:00:00",
+        "keepDailyFor": "180.00:00:00",
+        "minimumVersionsPerFile": 20
+      },
+      "captureCadencePolicy": {
+        "watcherPollInterval": "00:00:05",
+        "periodicReconciliationInterval": "00:10:00",
+        "fastDebounce": "00:00:02",
+        "balancedDebounce": "00:00:08",
+        "quietDebounce": "00:00:30",
+        "fastMaxHotFileDelay": "00:00:30",
+        "balancedMaxHotFileDelay": "00:02:00",
+        "quietMaxHotFileDelay": "00:10:00",
+        "minimumSameFileCaptureInterval": "00:00:15",
+        "maximumConcurrentCaptures": 2,
+        "watcherEventBacklogLimit": 4096,
+        "usnFallbackFullScanCooldown": "00:30:00",
+        "sourceDeepVerificationInterval": "7.00:00:00"
+      },
+      "codecPolicy": {
+        "codec": "Zstd",
+        "profile": "Adaptive",
+        "level": 3,
+        "minimumBytes": 262144,
+        "skipExtensions": [
+          ".7z",
+          ".br",
+          ".cab",
+          ".gif",
+          ".gz",
+          ".jpg",
+          ".jpeg",
+          ".m4v",
+          ".mp3",
+          ".mp4",
+          ".mov",
+          ".png",
+          ".rar",
+          ".webp",
+          ".xz",
+          ".zip",
+          ".zst"
+        ],
+        "hotFileOverride": "Lz4",
+        "enableDictionaryMode": false,
+        "enableLongDistanceMode": false,
+        "threads": 0
+      },
+      "selectionRules": [
+        {
+          "id": "fixture-project",
+          "path": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\Working project",
+          "mode": "RecursiveFolder",
+          "compression": "Zstd",
+          "resourceProfile": "Balanced",
+          "isEnabled": true,
+          "includeRegexRules": [],
+          "excludeRegexRules": [],
+          "workloadPreset": "GeneralPurpose"
+        }
+      ],
+      "exclusionRules": [],
+      "repositoryMaintenancePolicy": {
+        "isEnabled": true,
+        "interval": "1.00:00:00",
+        "autoRepairFromMirror": true,
+        "restoreRehearsalVersionCount": 3,
+        "runAutomatically": false
+      },
+      "workloadPolicy": {
+        "defaultPreset": "GeneralPurpose"
+      },
+      "mirrorSet": {
+        "nodes": [],
+        "placementPolicy": {
+          "profile": "FullCopy",
+          "minimumMirrorCopies": 1
+        }
+      },
+      "sync": {
+        "localDevice": {
+          "deviceId": "fv-device-7afac67370d5113d",
+          "displayName": "OS008-HOME",
+          "createdAtUtc": "2026-10-03T19:40:39.4111226+00:00"
+        },
+        "trustedDevices": [
+          {
+            "deviceId": "fv-device-7afac67370d5113d",
+            "displayName": "OS008-HOME",
+            "trustState": "Local",
+            "trustedAtUtc": "2026-10-03T19:40:39.4111226+00:00",
+            "lastSeenAtUtc": null
+          }
+        ]
+      },
+      "performanceWorkspace": {
+        "isEnabled": false,
+        "mode": "WinFsp",
+        "workspacePath": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\performance-workspace",
+        "cacheSizeMegabytes": 1024,
+        "mountName": "FluxVaultWorkspace"
+      },
+      "shellIntegration": {
+        "isEnabled": false,
+        "mode": "CloudFilesApi",
+        "syncRootPath": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\shell-integration\\sync-root",
+        "displayName": "FluxVault",
+        "hydrationPolicy": "OnDemand",
+        "placeholderStatePath": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\shell-integration\\state"
+      },
+      "directCloud": {
+        "isEnabled": false,
+        "adapters": [],
+        "blockOnMeteredNetwork": true,
+        "bandwidthLimitBytesPerSecond": null
+      },
+      "securityPosture": {
+        "clientSideEncryption": {
+          "isEnabled": false,
+          "algorithm": "Aes256Gcm",
+          "metadataMode": "PlainMetadata",
+          "activeKeyReferenceId": null,
+          "keyReferences": []
+        }
+      },
+      "fleet": {
+        "isEnabled": false,
+        "mode": "LocalOnly",
+        "policySource": null,
+        "assignments": [],
+        "localStatuses": []
+      },
+      "metadataStore": {
+        "provider": "PostgreSql",
+        "host": "localhost",
+        "port": 5432,
+        "databaseName": "fluxvault_metadata",
+        "username": "fluxvault",
+        "serviceName": "postgresql-x64",
+        "backupDirectory": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\db-backups",
+        "backupRetentionDays": 30,
+        "maxCaptureWorkers": 4,
+        "maxDbWriterConcurrency": 8,
+        "exportLagWarningThreshold": "00:15:00"
+      },
+      "diagnosticsPolicy": {
+        "isFileLoggingEnabled": true,
+        "fileLogLevel": "Warning",
+        "logDirectory": "E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Integrity\\f86d1c69d105478984ff66cf9d76559e\\logs",
+        "maxLogFileMegabytes": 25,
+        "retainedLogFileCount": 8,
+        "telemetrySampleInterval": "00:00:05",
+        "retainedTelemetrySampleCount": 4320
+      }
+    }
+  }
+}

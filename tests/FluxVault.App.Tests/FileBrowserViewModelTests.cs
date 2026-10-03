@@ -684,7 +684,8 @@ public sealed class FileBrowserViewModelTests
         await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
 
         Assert.Single(client.SavedConfigurations);
-        Assert.Empty(viewModel.FileBrowser.PendingChanges);
+        // Keep the removal available for review when its dependent purge did not succeed.
+        Assert.Contains(viewModel.FileBrowser.PendingChanges, change => change.Change == "Removed" && change.Path == source);
         Assert.Contains("purge failed", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("metadata offline", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("history may remain", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);

@@ -37,6 +37,7 @@ internal static class Program
             Directory.CreateDirectory(scratch);
             var mode = Require(options, "mode");
             if (mode == "ui") { ShowUi(options, scratch); return 0; }
+            if (mode == "ui-save") { ProtectionSaveUiFixture.Show(options, scratch); return 0; }
             return RunAsync(options, scratch, mode).GetAwaiter().GetResult();
         }
         catch (Exception exception)

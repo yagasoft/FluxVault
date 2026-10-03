@@ -18,6 +18,10 @@ records 687 passing tests, native fixture recovery, and installed service/CLI/UI
 recovery with independent hashes. Desktop validation also proved inventory and
 selection survive service cache invalidation. All temporary processes exited;
 the installed service remains healthy with no watched test folders. The UI rebuild has not started.
+The bounded [protection-save repair](docs/protection-saves.md) preserves unrelated
+settings and stops dependent backup after an unsuccessful save. Its isolated
+[verification](docs/verification/2026-10-03-protection-save/README.md) does not
+establish NEXT-002 security or installed release readiness.
 Fresh owned local NTFS storage is required; existing unmarked non-empty roots
 are preserved and refused. Unrestricted use with working files remains outside
 this slice's verified scope.

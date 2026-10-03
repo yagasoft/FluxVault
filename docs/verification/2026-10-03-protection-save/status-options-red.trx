@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3e9b8700-4c77-4de7-a021-b64db210b085" name="os008@OS008-HOME 2026-10-03 23:13:29" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T23:13:29.8859561+03:00" queuing="2026-10-03T23:13:29.8859562+03:00" start="2026-10-03T23:13:28.0234166+03:00" finish="2026-10-03T23:13:30.1636086+03:00" />
+  <TestSettings name="default" id="510c6b27-4b4d-48e8-8827-909ec7a016ea">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-03_23_13_29" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f65c6551-bfc1-4e54-ac85-8a33dbd0df9b" testId="e44a89b0-79de-7921-cca0-31701f72cf54" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_session_prevents_Explorer_save_until_the_dialogue_closes" computerName="OS008-HOME" duration="00:00:01.1586215" startTime="2026-10-03T23:13:28.8729926+03:00" endTime="2026-10-03T23:13:30.0313398+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f65c6551-bfc1-4e54-ac85-8a33dbd0df9b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "default"&#xD;
+Actual:   "other"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass21_0.&lt;&lt;Options_session_prevents_Explorer_save_until_the_dialogue_closes&gt;b__1&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 661&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c.&lt;&lt;Options_session_prevents_Explorer_save_until_the_dialogue_closes&gt;b__21_0&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 675&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass14_1.&lt;&lt;RunOnStaAsync&gt;b__1&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 426&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 434&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dbd9ddcb-6ce4-49a4-98e9-e981b1bf082f" testId="a0dfe829-6eaa-1c91-8975-10fe93d78332" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(discard: False)" computerName="OS008-HOME" duration="00:00:00.0231859" startTime="2026-10-03T23:13:28.8603592+03:00" endTime="2026-10-03T23:13:28.8710403+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dbd9ddcb-6ce4-49a4-98e9-e981b1bf082f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Saved&#xD;
+Actual:   Cancelled</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(Boolean discard) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 178&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="86184c15-5ffb-4514-b7fe-bfdb7efa6a5e" testId="4e26f987-1082-432b-bde9-a9f1b05c8caf" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(discard: True)" computerName="OS008-HOME" duration="00:00:00.2560294" startTime="2026-10-03T23:13:28.5799539+03:00" endTime="2026-10-03T23:13:28.8468010+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86184c15-5ffb-4514-b7fe-bfdb7efa6a5e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Null() Failure: Value is not null&#xD;
+Expected: null&#xD;
+Actual:   System.OperationCanceledException: Fixture status reload cancelled&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 744&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 585&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.DiscardConfigurationChangesAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 914&#xD;
+   at Xunit.Record.ExceptionAsync(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 76</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(Boolean discard) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 167&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(discard: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="a0dfe829-6eaa-1c91-8975-10fe93d78332">
+      <Execution id="dbd9ddcb-6ce4-49a4-98e9-e981b1bf082f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_session_prevents_Explorer_save_until_the_dialogue_closes" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="e44a89b0-79de-7921-cca0-31701f72cf54">
+      <Execution id="f65c6551-bfc1-4e54-ac85-8a33dbd0df9b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_session_prevents_Explorer_save_until_the_dialogue_closes" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(discard: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="4e26f987-1082-432b-bde9-a9f1b05c8caf">
+      <Execution id="86184c15-5ffb-4514-b7fe-bfdb7efa6a5e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e44a89b0-79de-7921-cca0-31701f72cf54" executionId="f65c6551-bfc1-4e54-ac85-8a33dbd0df9b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a0dfe829-6eaa-1c91-8975-10fe93d78332" executionId="dbd9ddcb-6ce4-49a4-98e9-e981b1bf082f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e26f987-1082-432b-bde9-a9f1b05c8caf" executionId="86184c15-5ffb-4514-b7fe-bfdb7efa6a5e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.46]       Assert.Null() Failure: Value is not null&#xD;
+[xUnit.net 00:00:00.46]       Expected: null&#xD;
+[xUnit.net 00:00:00.46]       Actual:   System.OperationCanceledException: Fixture status reload cancelled&#xD;
+[xUnit.net 00:00:00.46]          at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 744&#xD;
+[xUnit.net 00:00:00.46]          at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 585&#xD;
+[xUnit.net 00:00:00.46]          at FluxVault.App.ViewModels.MainWindowViewModel.DiscardConfigurationChangesAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 914&#xD;
+[xUnit.net 00:00:00.46]          at Xunit.Record.ExceptionAsync(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 76&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(167,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(Boolean discard)&#xD;
+[xUnit.net 00:00:00.46]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.48]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.48]       Expected: Saved&#xD;
+[xUnit.net 00:00:00.48]       Actual:   Cancelled&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(178,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(Boolean discard)&#xD;
+[xUnit.net 00:00:00.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.64]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:01.64]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:01.64]       Expected: "default"&#xD;
+[xUnit.net 00:00:01.64]       Actual:   "other"&#xD;
+[xUnit.net 00:00:01.64]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:01.64]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.64]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(661,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass21_0.&lt;&lt;Options_session_prevents_Explorer_save_until_the_dialogue_closes&gt;b__1&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.64]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.64]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(675,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c.&lt;&lt;Options_session_prevents_Explorer_save_until_the_dialogue_closes&gt;b__21_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.64]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.64]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(426,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass14_1.&lt;&lt;RunOnStaAsync&gt;b__1&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.64]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.64]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(434,0): at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action)&#xD;
+[xUnit.net 00:00:01.64]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.64]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:13:28.8496648+03:00">
+        <Text>[xUnit.net 00:00:00.46]     FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(discard: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:13:28.8714173+03:00">
+        <Text>[xUnit.net 00:00:00.48]     FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_status_reload_does_not_reclassify_an_acknowledged_save_or_discard_the_draft(discard: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:13:30.0317265+03:00">
+        <Text>[xUnit.net 00:00:01.64]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_session_prevents_Explorer_save_until_the_dialogue_closes [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

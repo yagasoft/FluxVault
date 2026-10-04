@@ -27,6 +27,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private static readonly JsonSerializerOptions ConfigurationFingerprintJsonOptions = new(JsonSerializerDefaults.Web);
     private readonly IFluxVaultServiceClient client;
     private readonly IBackupOperationStore backupOperationStore;
+    private readonly FluxVault.Windows.Security.WindowsUserPreviewCache previewCache;
     private readonly IFluxVaultWindowsServiceController windowsServiceController;
     private readonly IRestoreDestinationPicker restoreDestinationPicker;
     private readonly IRestoreOverwriteConfirmation restoreOverwriteConfirmation;
@@ -344,10 +345,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
         IMirrorNodeDialogService? mirrorNodeDialogService = null,
         IVersionPreviewLauncher? versionPreviewLauncher = null,
         IProtectionRemovalConfirmation? protectionRemovalConfirmation = null,
-        IBackupOperationStore? backupOperationStore = null)
+        IBackupOperationStore? backupOperationStore = null,
+        FluxVault.Windows.Security.WindowsUserPreviewCache? previewCache = null)
     {
         this.client = client;
         this.backupOperationStore = backupOperationStore ?? new MemoryBackupOperationStore();
+        this.previewCache = previewCache ?? new();
         this.windowsServiceController = windowsServiceController;
         this.restoreDestinationPicker = restoreDestinationPicker;
         this.restoreOverwriteConfirmation = restoreOverwriteConfirmation;
@@ -1696,22 +1699,38 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         IsPreviewBusy = true;
         PreviewStatus = "Preparing preview...";
+        var copyCreated = false;
+        var publicationWarnings = string.Empty;
         try
         {
-            var response = await SendBoundAsync(FluxVaultIpcRequest.RestoreVersionPreview(selectedVersion.VersionId))
+            var path = previewCache.Allocate(selectedVersion.SourcePath, acceptedConfiguration?.VersionPreview ?? new());
+            var response = await SendBoundAsync(FluxVaultIpcRequest.RestoreVersionPreview(selectedVersion.VersionId) with { OutputPath = path })
                 .ConfigureAwait(true);
-            if (!response.Success || string.IsNullOrWhiteSpace(response.OutputPath))
+            if (!response.Success)
             {
-                SetServiceStatus($"Service connection: version preview failed ({response.ErrorMessage ?? "no preview path returned"})");
+                SetServiceStatus(response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown
+                    ? "Preview could not be confirmed; a copy may have been created. Nothing was opened."
+                    : $"Service connection: version preview failed ({response.ErrorMessage ?? "no preview returned"})");
                 return;
             }
-
-            versionPreviewLauncher.OpenFile(response.OutputPath);
-            SetServiceStatus($"Service connection: opened preview for {selectedVersion.VersionId}");
+            if (response.RestoreResult is not { RestoredFileCount: 1, VerifiedLogicalBytes: >= 0 } result ||
+                !string.Equals(response.OutputPath, path, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(result.OutputPath, path, StringComparison.OrdinalIgnoreCase))
+            {
+                SetServiceStatus("The preview acknowledgement did not match its verified destination. Nothing was opened.");
+                return;
+            }
+            copyCreated = true;
+            publicationWarnings = string.Join(" ", result.Warnings);
+            previewCache.MakeReadOnly(path);
+            versionPreviewLauncher.OpenFile(path);
+            SetServiceStatus($"Service connection: opened preview for {selectedVersion.VersionId}. {publicationWarnings}".TrimEnd());
         }
-        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException or ArgumentException or Win32Exception or OperationCanceledException)
         {
-            SetServiceStatus($"Service connection: version preview failed ({ex.Message})");
+            SetServiceStatus(copyCreated
+                ? $"The verified preview copy was created, but opening failed ({ex.Message}). {publicationWarnings}".TrimEnd()
+                : $"Version preview could not be prepared or confirmed ({ex.Message}); nothing was opened.");
         }
         finally
         {

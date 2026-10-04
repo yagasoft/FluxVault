@@ -472,8 +472,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     public Task<RepositoryRestoreResult> RestoreAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
         => RestoreToTargetAsync(versionId, target, writeRestoreHint: true, cancellationToken);
 
-    public async Task RestorePreviewAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
-        => await RestoreToTargetAsync(versionId, target, writeRestoreHint: false, cancellationToken).ConfigureAwait(false);
+    public Task<RepositoryRestoreResult> RestorePreviewAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
+        => RestoreToTargetAsync(versionId, target, writeRestoreHint: false, cancellationToken);
 
     private async Task<RepositoryRestoreResult> RestoreToTargetAsync(string versionId, IRepositoryRestoreTarget target,
         bool writeRestoreHint, CancellationToken cancellationToken)
@@ -490,6 +490,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
             var plan = await new RestoreGraphValidator(verifiedReader, integrityLimits, ReadManifestByVersionAsync)
                 .BuildAsync(manifest, outputPath, cancellationToken).ConfigureAwait(false);
+            if (!writeRestoreHint && plan.Kind != RepositoryEntryKind.File)
+                throw new InvalidDataException("Only file versions can be opened as previews.");
             await target.PrepareAsync(plan.Kind, cancellationToken).ConfigureAwait(false);
             foreach (var directory in plan.Directories.Where(path => path.Length > 0))
                 await target.CreateDirectoryAsync(directory, cancellationToken).ConfigureAwait(false);

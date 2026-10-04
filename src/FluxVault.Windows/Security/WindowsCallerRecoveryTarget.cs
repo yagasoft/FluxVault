@@ -37,6 +37,14 @@ public sealed class WindowsCallerRecoveryTarget : IRepositoryRestoreTarget
 
     public static Task<WindowsCallerRecoveryTarget> CreateAsync(FluxVaultCallerContext caller, string destination,
         CancellationToken cancellationToken = default)
+        => CreateCoreAsync(caller, destination, requireNewDestination: false, cancellationToken);
+
+    public static Task<WindowsCallerRecoveryTarget> CreateNewAsync(FluxVaultCallerContext caller, string destination,
+        CancellationToken cancellationToken = default)
+        => CreateCoreAsync(caller, destination, requireNewDestination: true, cancellationToken);
+
+    private static Task<WindowsCallerRecoveryTarget> CreateCoreAsync(FluxVaultCallerContext caller, string destination,
+        bool requireNewDestination, CancellationToken cancellationToken)
     {
         RequireSystem();
         ArgumentNullException.ThrowIfNull(caller);
@@ -61,6 +69,7 @@ public sealed class WindowsCallerRecoveryTarget : IRepositoryRestoreTarget
                     exists = true;
                 }
                 catch (IOException exception) when (exception.InnerException is Win32Exception { NativeErrorCode: 2 }) { }
+                if (requireNewDestination && exists) throw new IOException("Preview requires a new destination. The existing entry has been preserved.");
                 var result = new WindowsCallerRecoveryTarget(caller, path, pins, physical, exists);
                 return Task.FromResult(result);
             }

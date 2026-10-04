@@ -1446,8 +1446,11 @@ public sealed class MainWindowViewModelRefreshTests
     }
 
     [Fact]
-    public async Task Open_selected_version_preview_restores_to_service_preview_and_launches_returned_file()
+    public async Task Preview_returning_a_service_path_is_refused_without_launching_it()
     {
+        var cacheRoot = Path.Combine(Path.GetTempPath(), "FluxVault.PreviewResponse." + Guid.NewGuid().ToString("N"));
+        try
+        {
         var previewPath = Path.GetFullPath(@"C:\ProgramData\FluxVault\state\version-preview\v1\draft.txt");
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"))
         {
@@ -1457,16 +1460,22 @@ public sealed class MainWindowViewModelRefreshTests
         var viewModel = new MainWindowViewModel(
             new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
+            new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
+            new FakeWindowsServiceController(ServiceStatus(FluxVaultWindowsServiceState.Running, "Fixture running")),
             new FakeRestoreDestinationPicker(),
             new FakeRestoreOverwriteConfirmation(confirmOverwrite: true),
-            launcher);
+            versionPreviewLauncher: launcher,
+            previewCache: new FluxVault.Windows.Security.WindowsUserPreviewCache(cacheRoot));
         await viewModel.RefreshAsync();
         viewModel.SelectedVersion = viewModel.RecentVersions.Single();
 
         await viewModel.OpenSelectedVersionPreviewCommand.ExecuteAsync(null);
 
         Assert.Equal("v1", Assert.Single(client.RestorePreviewRequests));
-        Assert.Equal([previewPath], launcher.OpenedFiles);
+        Assert.Empty(launcher.OpenedFiles);
+        Assert.Contains("acknowledgement", viewModel.ServiceStatus);
+        }
+        finally { if (Directory.Exists(cacheRoot)) Directory.Delete(cacheRoot, true); }
     }
 
     [Fact]

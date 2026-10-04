@@ -7,6 +7,33 @@ namespace FluxVault.Core.Tests;
 public sealed class AuthorisedRestoreTargetTests
 {
     [Fact]
+    public async Task Owned_preview_returns_verified_result_and_publication_warnings()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repo = RepositoryIntegrityTests.Create(workspace.RepositoryPath);
+        var captured = await repo.CommitAsync(RepositoryIntegrityTests.Request("preview bytes"));
+        var target = new Target(Path.Combine(workspace.RootPath, "preview.txt")) { Warning = "Published with incomplete permissions." };
+        var result = await repo.RestorePreviewAsync(captured.Manifest.VersionId, target);
+        Assert.Equal(target.OutputPath, result.OutputPath);
+        Assert.Equal(13, result.VerifiedLogicalBytes);
+        Assert.Equal([target.Warning], result.Warnings);
+        Assert.Equal("preview bytes", Encoding.UTF8.GetString(target.Files[""]));
+        Assert.True(target.Published);
+        Assert.True(target.Disposed);
+    }
+
+    [Fact]
+    public async Task Owned_preview_refuses_folder_before_preparing_any_output()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var (repo, folder, _) = await FolderRestoreIntegrityTests.Seed(workspace);
+        var target = new Target(Path.Combine(workspace.RootPath, "preview"));
+        await Assert.ThrowsAsync<InvalidDataException>(() => repo.RestorePreviewAsync(folder.VersionId, target));
+        Assert.Equal(["dispose"], target.Trace);
+        Assert.False(target.Published);
+    }
+
+    [Fact]
     public async Task Verified_file_uses_only_owned_target_and_reports_published_permission_warning()
     {
         using var workspace = TemporaryWorkspace.Create();

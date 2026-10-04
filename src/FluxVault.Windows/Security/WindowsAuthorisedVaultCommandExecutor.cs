@@ -57,7 +57,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
         FluxVaultIpcCommand.SetVaultAccess or
         FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.GetActivity or
         FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.InspectVersion or
-        FluxVaultIpcCommand.RunBackupNow or FluxVaultIpcCommand.RestoreVersion => true,
+        FluxVaultIpcCommand.RunBackupNow or FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview => true,
         _ => false
     };
 
@@ -78,8 +78,8 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                 return Failure(FluxVaultIpcErrorCode.Denied, "The vault is unavailable or you do not have permission for this command.");
             if (!CanExecute(request) || request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess)
                 return Failure(FluxVaultIpcErrorCode.Unavailable, "This command requires its catalogue or provisioning flow.");
-            if (request.Command is FluxVaultIpcCommand.InspectVersion or FluxVaultIpcCommand.RestoreVersion && string.IsNullOrWhiteSpace(request.VersionId) ||
-                request.Command == FluxVaultIpcCommand.RestoreVersion && string.IsNullOrWhiteSpace(request.OutputPath))
+            if (request.Command is FluxVaultIpcCommand.InspectVersion or FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview && string.IsNullOrWhiteSpace(request.VersionId) ||
+                request.Command is FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview && string.IsNullOrWhiteSpace(request.OutputPath))
                 return Failure(FluxVaultIpcErrorCode.InvalidRequest, "A version and recovery destination are required.");
             var binding = vault.Binding; var configuration = vault.Configuration; var metadata = binding.MetadataStore;
             if (metadata.Host != endpoint.Host || metadata.Port != endpoint.Port || metadata.DatabaseName != endpoint.Database || metadata.Username != endpoint.ServiceRole ||
@@ -112,6 +112,14 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                     case FluxVaultIpcCommand.RestoreVersion:
                         await using (var target = await WindowsCallerRecoveryTarget.CreateAsync(caller, request.OutputPath!, cancellationToken))
                             return FluxVaultIpcResponse.WithRestore(await operations.RestoreVersionAsync(request.VersionId!, target, cancellationToken));
+                    case FluxVaultIpcCommand.RestoreVersionPreview:
+                        try
+                        {
+                            await using var target = await WindowsCallerRecoveryTarget.CreateNewAsync(caller, request.OutputPath!, cancellationToken);
+                            return FluxVaultIpcResponse.WithRestore(await repository.RestorePreviewAsync(request.VersionId!, target, cancellationToken));
+                        }
+                        catch (InvalidDataException)
+                        { return Failure(FluxVaultIpcErrorCode.InvalidRequest, "Only a valid file version can be opened as a preview."); }
                     default: return Failure(FluxVaultIpcErrorCode.Unavailable, "This command is not available in this build.");
                 }
             }

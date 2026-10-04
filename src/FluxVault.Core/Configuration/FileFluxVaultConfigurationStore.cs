@@ -121,6 +121,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             Fleet = (configuration.Fleet ?? EnterpriseFleetConfiguration.CreateDefault()).Normalise(),
             MetadataStore = (configuration.MetadataStore ?? MetadataStoreConfiguration.CreateDefault(programDataPath)).Normalise(programDataPath),
             DiagnosticsPolicy = (configuration.DiagnosticsPolicy ?? DiagnosticsPolicy.CreateDefault(programDataPath)).Normalise(programDataPath),
+            VersionPreview = (configuration.VersionPreview ?? new()).Normalise(),
             SelectionRules = selectionRules.Select(NormaliseSelectionRule).ToArray(),
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0

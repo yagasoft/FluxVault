@@ -181,6 +181,9 @@ public sealed partial class OptionsViewModel : ObservableObject
     private int telemetryRetainedSampleCount;
 
     [ObservableProperty]
+    private int previewRetentionDays = 2;
+
+    [ObservableProperty]
     private string previewText = "Retention preview has not been run.";
 
     [ObservableProperty]
@@ -244,6 +247,7 @@ public sealed partial class OptionsViewModel : ObservableObject
         ApplyWorkload(currentConfiguration.WorkloadPolicy);
         ApplyMetadataStore(currentConfiguration.MetadataStore);
         ApplyDiagnostics(currentConfiguration.DiagnosticsPolicy);
+        PreviewRetentionDays = (currentConfiguration.VersionPreview ?? new()).Normalise().RetentionDays;
         ApplyExclusions(currentConfiguration.ExclusionRules ?? []);
         StatusText = "Options loaded.";
     }
@@ -271,6 +275,7 @@ public sealed partial class OptionsViewModel : ObservableObject
             WorkloadPolicy = BuildWorkload(),
             MetadataStore = BuildMetadataStore(),
             DiagnosticsPolicy = BuildDiagnostics(),
+            VersionPreview = new VersionPreviewPolicy(PreviewRetentionDays).Normalise(),
             ExclusionRules = []
         };
         var operation = Guid.NewGuid();

@@ -105,7 +105,7 @@ public sealed class ShellVersionPreviewLauncher : IVersionPreviewLauncher
 {
     public void OpenFile(string filePath)
     {
-        Process.Start(new ProcessStartInfo
+        using var process = Process.Start(new ProcessStartInfo
         {
             FileName = filePath,
             UseShellExecute = true

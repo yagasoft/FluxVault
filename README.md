@@ -70,7 +70,7 @@ FluxVault now has a developer-usable MVP loop:
   captures without matching writer coverage are crash-consistent.
 - Version list, inspect, restore, diagnostics export, local repository, and a
   `MirrorSet` for optional mirrors. Version previews open through a temporary
-  FluxVault-owned copy and do not write restore-lineage hints.
+  copy private to the requesting Windows user and do not write restore-lineage hints.
 - Append-only version lineage in manifests. Same-path captures record parent
   versions, restores leave a pending lineage hint for the next capture, and
   identical copied files become visible inherited versions without re-uploading
@@ -413,6 +413,16 @@ runs after successful service backups; the dialog can preview reclaimable
 repository space and run retention immediately. Maintenance is enabled by
 default, runs every 24 hours, repairs from a healthy mirror when possible, and
 rehearses the newest three versions unless changed in Options.
+
+**Options** > **Advanced** > **Keep preview copies (days)** controls expiry of
+temporary file previews. The default is 2 days; the supported range is 1–365.
+Expired copies are removed on a later preview request in a bounded pass; files
+held open by a viewer remain for a later attempt. The single-vault service
+publishes verified bytes to a fresh caller-authorised destination, never
+replaces an existing preview, and refuses folder previews. The dashboard makes
+the copy read-only and opens it as the requesting user. Publication warnings
+remain visible even if opening fails. Read-only attributes discourage accidental
+editing; the copy's owner can still edit it deliberately.
 
 The **Advanced** options page controls capture cadence and compression. It also
 edits the skip-extension list used to avoid compressing formats such as archives

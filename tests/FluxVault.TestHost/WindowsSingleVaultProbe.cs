@@ -88,6 +88,24 @@ internal static class WindowsSingleVaultProbe
         Check(history.Versions!.Count(item => item.EntryKind == RepositoryEntryKind.File) == 3, "history contains both source folders' captured files");
         var inspection = await Send(Bind(FluxVaultIpcRequest.InspectVersion(fileVersion.VersionId)));
         Check(inspection.Inspection is not null, "authorised history inspection succeeds");
+        var previewCache = new WindowsUserPreviewCache(Path.Combine(output, "preview-cache"));
+        var previewFile = previewCache.Allocate(file, new());
+        var previewRequest = Bind(FluxVaultIpcRequest.RestoreVersionPreview(fileVersion.VersionId) with { OutputPath = previewFile });
+        var preview = await Send(previewRequest);
+        Check(preview.RestoreResult?.VerifiedLogicalBytes == new FileInfo(file).Length && Hash(file) == Hash(previewFile),
+            "preview uses caller-authorised publication and independently verified bytes");
+        previewCache.MakeReadOnly(previewFile);
+        Check(File.GetAttributes(previewFile).HasFlag(FileAttributes.ReadOnly), "the ordinary caller prepares a read-only preview copy");
+        var previewReplay = await Send(previewRequest);
+        Check(previewReplay.OperationId == preview.OperationId && previewReplay.OutputPath == previewFile,
+            "preview replay returns the original durable result");
+        var existingPreview = await client.SendAsync(previewRequest with { OperationId = Guid.NewGuid() }, deadline.Token);
+        Check(!existingPreview.Success && Hash(file) == Hash(previewFile), "preview refuses an existing destination without replacing it");
+        var folderPreviewPath = Path.Combine(destination, "folder-preview");
+        var folderPreview = await client.SendAsync(Bind(FluxVaultIpcRequest.RestoreVersionPreview(folderVersion.VersionId) with
+            { OutputPath = folderPreviewPath }), deadline.Token);
+        Check(!folderPreview.Success && folderPreview.ErrorCode == FluxVaultIpcErrorCode.InvalidRequest &&
+            !Directory.Exists(folderPreviewPath) && !File.Exists(folderPreviewPath), "folder preview is refused before output preparation");
         var recoveredFile = Path.Combine(destination, "recovered.docx");
         var restored = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(fileVersion.VersionId, recoveredFile)));
         Check(restored.RestoreResult?.VerifiedLogicalBytes == new FileInfo(file).Length && Hash(file) == Hash(recoveredFile),

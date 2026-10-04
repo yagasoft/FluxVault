@@ -23,6 +23,140 @@ public sealed class ProtectionSaveContractTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    public async Task Preview_retention_options_load_and_save_through_the_real_store(bool profileStore)
+    {
+        using var fixture = new StoreFixture(profileStore);
+        var original = NonDefaultConfiguration(fixture.Root) with { VersionPreview = new(11) };
+        await fixture.Store.SaveAsync(original);
+        var options = new OptionsViewModel(new StoreClient(fixture.Store));
+        await options.InitialiseAsync();
+        Assert.Equal(11, options.PreviewRetentionDays);
+        options.PreviewRetentionDays = 5;
+        await options.SaveAsync();
+        Assert.Equal(5, (await fixture.Reopen().LoadAsync()).VersionPreview.RetentionDays);
+        Assert.Equal(original.MetadataStore, (await fixture.Reopen().LoadAsync()).MetadataStore);
+    }
+
+    [Fact]
+    public Task Preview_retention_control_renders_and_edits_the_loaded_policy() => RunOnStaAsync(async () =>
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root) with { VersionPreview = new(11) });
+        var viewModel = new OptionsViewModel(new StoreClient(fixture.Store));
+        var window = new OptionsWindow(viewModel);
+        try
+        {
+            window.Show();
+            await viewModel.InitialiseAsync();
+            var shell = Assert.IsType<Grid>(window.FindName("OptionsShell"));
+            shell.Children.OfType<TabControl>().Single().SelectedIndex = 2;
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            window.UpdateLayout();
+            var control = Descendants(shell).OfType<TextBox>().Single(text =>
+                System.Windows.Automation.AutomationProperties.GetName(text) == "Keep preview copies in days");
+            control.BringIntoView();
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            Assert.Equal("11", control.Text);
+            Assert.True(control.ActualWidth > 40 && control.ActualHeight > 20);
+            Assert.True(control.Focusable);
+            control.Text = "5";
+            Assert.Equal(5, viewModel.PreviewRetentionDays);
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            window.UpdateLayout();
+            var renderPath = Environment.GetEnvironmentVariable("FLUXVAULT_PREVIEW_OPTIONS_RENDER");
+            if (!string.IsNullOrEmpty(renderPath))
+            {
+                var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap(
+                    (int)Math.Ceiling(shell.ActualWidth), (int)Math.Ceiling(shell.ActualHeight), 96, 96,
+                    System.Windows.Media.PixelFormats.Pbgra32);
+                var background = new System.Windows.Media.DrawingVisual();
+                using (var drawing = background.RenderOpen())
+                    drawing.DrawRectangle(window.Background, null, new Rect(0, 0, shell.ActualWidth, shell.ActualHeight));
+                bitmap.Render(background);
+                bitmap.Render(shell);
+                var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+                encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+                using var output = File.Create(renderPath);
+                encoder.Save(output);
+            }
+        }
+        finally { window.Close(); }
+    });
+
+    private static IEnumerable<DependencyObject> Descendants(DependencyObject parent)
+    {
+        for (var index = 0; index < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); index++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, index);
+            yield return child;
+            foreach (var descendant in Descendants(child)) yield return descendant;
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Preview_uses_a_fresh_user_destination_and_retains_publication_warnings(bool wrongOutput)
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { WrongPreviewOutput = wrongOutput };
+        var launcher = new PreviewLauncher();
+        var dashboard = new MainWindowViewModel(client, TimeSpan.FromHours(1),
+            new FileBrowserViewModel(new WindowsFileBrowserFileSystem()), new FixtureServiceController(),
+            new UnusedDestinationPicker(), new UnusedOverwriteConfirmation(), versionPreviewLauncher: launcher,
+            previewCache: new FluxVault.Windows.Security.WindowsUserPreviewCache(Path.Combine(fixture.Root, "previews")));
+        await dashboard.RefreshAsync();
+        await dashboard.OpenVersionPreviewAsync(new VersionRow("fixture-version", @"C:\work\document.docx", "today", CaptureConsistency.BestEffort, 1));
+        var dispatched = Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.RestoreVersionPreview);
+        Assert.NotNull(dispatched.OutputPath);
+        Assert.Equal(".docx", Path.GetExtension(dispatched.OutputPath));
+        if (wrongOutput) Assert.Empty(launcher.Opened);
+        else
+        {
+            Assert.Equal([dispatched.OutputPath], launcher.Opened);
+            Assert.True(File.GetAttributes(dispatched.OutputPath).HasFlag(FileAttributes.ReadOnly));
+            Assert.Contains("permissions warning", dashboard.ServiceStatus);
+        }
+        File.SetAttributes(dispatched.OutputPath, FileAttributes.Normal);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Published_preview_survives_a_failed_viewer_launch_and_keeps_its_warnings(bool cancelled)
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store);
+        var launcher = new PreviewLauncher
+        {
+            Failure = cancelled ? new OperationCanceledException("Viewer cancelled")
+                : new System.ComponentModel.Win32Exception("No viewer is registered")
+        };
+        var dashboard = new MainWindowViewModel(client, TimeSpan.FromHours(1),
+            new FileBrowserViewModel(new WindowsFileBrowserFileSystem()), new FixtureServiceController(),
+            new UnusedDestinationPicker(), new UnusedOverwriteConfirmation(), versionPreviewLauncher: launcher,
+            previewCache: new FluxVault.Windows.Security.WindowsUserPreviewCache(Path.Combine(fixture.Root, "previews")));
+        await dashboard.RefreshAsync();
+        await dashboard.OpenVersionPreviewAsync(new VersionRow("fixture-version", @"C:\work\document.docx", "today", CaptureConsistency.BestEffort, 1));
+        var request = Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.RestoreVersionPreview);
+        try
+        {
+            Assert.Equal("verified preview bytes", File.ReadAllText(request.OutputPath!));
+            Assert.True(File.GetAttributes(request.OutputPath!).HasFlag(FileAttributes.ReadOnly));
+            Assert.Empty(launcher.Opened);
+            Assert.Contains("copy was created, but opening failed", dashboard.ServiceStatus);
+            Assert.Contains("Fixture permissions warning", dashboard.ServiceStatus);
+            Assert.Contains(launcher.Failure.Message, dashboard.ServiceStatus);
+            Assert.False(dashboard.IsPreviewBusy);
+            Assert.Empty(dashboard.PreviewStatus);
+        }
+        finally { File.SetAttributes(request.OutputPath!, FileAttributes.Normal); }
+    }
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
     public async Task Restarted_dashboard_retains_the_durable_backup_identity_and_checks_it_without_a_second_backup(bool profileStore)
     {
         using var fixture = new StoreFixture(profileStore);
@@ -1248,6 +1382,7 @@ public sealed class ProtectionSaveContractTests
         public SaveFailure Failure { get; set; }
         public SaveFailure BackupFailure { get; init; }
         public bool BackupCompletedUnsuccessfully { get; init; }
+        public bool WrongPreviewOutput { get; init; }
         public SaveFailure ReceiptFailure { get; init; }
         public long? ReceiptRevisionOverride { get; set; }
         public FluxVaultIpcErrorCode? ReceiptErrorCode { get; init; }
@@ -1312,6 +1447,11 @@ public sealed class ProtectionSaveContractTests
                     return Envelope(CompletedBackupResponse());
                 case FluxVaultIpcCommand.ListVersions:
                     return Envelope(FluxVaultIpcResponse.WithVersions([]));
+                case FluxVaultIpcCommand.RestoreVersionPreview:
+                    if (request.OutputPath is null) return Envelope(FluxVaultIpcResponse.Failure("Missing caller preview destination"));
+                    File.WriteAllText(request.OutputPath, "verified preview bytes");
+                    return Envelope(FluxVaultIpcResponse.WithRestore(new RepositoryRestoreResult(
+                        WrongPreviewOutput ? request.OutputPath + ".unexpected" : request.OutputPath, 22, 1, ["Fixture permissions warning"])));
                 case FluxVaultIpcCommand.GetOperationStatus:
                     ReceiptDispatchCheck?.Invoke(request);
                     if (ReceiptFailure == SaveFailure.Io) throw new IOException("Receipt disconnected");
@@ -1372,6 +1512,16 @@ public sealed class ProtectionSaveContractTests
     private sealed class UnusedDestinationPicker : IRestoreDestinationPicker
     {
         public string? PickDestination(VersionRow version) => throw new InvalidOperationException("Unexpected restore dialogue");
+    }
+    private sealed class PreviewLauncher : IVersionPreviewLauncher
+    {
+        public List<string> Opened { get; } = [];
+        public Exception? Failure { get; init; }
+        public void OpenFile(string filePath)
+        {
+            if (Failure is not null) throw Failure;
+            Opened.Add(filePath);
+        }
     }
     private sealed class UnusedOverwriteConfirmation : IRestoreOverwriteConfirmation
     {

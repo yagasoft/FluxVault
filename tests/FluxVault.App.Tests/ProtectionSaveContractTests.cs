@@ -14,12 +14,83 @@ using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
+using FluxVault.Core.Security;
 
 namespace FluxVault.App.Tests;
 
 // Exercises public view-model commands through the production configuration stores.
 public sealed class ProtectionSaveContractTests
 {
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(bool profileStore, bool optionsFlow)
+    {
+        using var fixture = new StoreFixture(profileStore);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var original = await fixture.Store.LoadAsync();
+        var boundary = new RefusedCommandBoundary();
+        var handler = new AuthenticatedFluxVaultRequestHandler(boundary, boundary);
+        var client = new StoreClient(fixture.Store)
+        {
+            SaveDispatchHandler = async (request, token) =>
+            {
+                using var caller = new BoundaryCaller();
+                return await handler.HandleAsync(caller, request, token);
+            }
+        };
+        var store = new FileConfigurationSaveOperationStore(Path.Combine(fixture.Root, "pending-protection-save.json"));
+        if (optionsFlow)
+        {
+            var options = new OptionsViewModel(client, store);
+            await options.InitialiseAsync(); options.MinimumVersionsPerFile = 31;
+            await options.SaveCommand.ExecuteAsync(null);
+            Assert.False(options.HasUnconfirmedSave);
+            Assert.Equal(31, options.MinimumVersionsPerFile);
+            Assert.Contains("failed", options.StatusText);
+            Assert.True(options.CanSaveOptions);
+        }
+        else
+        {
+            var dashboard = CreateViewModel(client, saveStore: store);
+            await dashboard.RefreshAsync();
+            dashboard.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "unsubmitted-folder"));
+            await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+            Assert.False(dashboard.HasUnconfirmedProtectionSave);
+            Assert.NotEmpty(dashboard.FileBrowser.PendingChanges);
+            Assert.Equal(ProtectionSaveState.Failed, dashboard.ProtectionSaveState);
+            Assert.True(dashboard.CanDiscardConfigurationChanges);
+        }
+        Assert.Equal(0, boundary.Calls);
+        Assert.Null(store.Read());
+        Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+        Assert.Equal(JsonSerializer.Serialize(original), JsonSerializer.Serialize(await fixture.Reopen().LoadAsync()));
+    }
+
+    private sealed class BoundaryCaller : FluxVaultCallerContext
+    {
+        public override string UserSid => "S-1-5-21-1-2-3-1001";
+        public override IReadOnlySet<string> EnabledGroupSids => new HashSet<string>();
+        public override bool IsElevated => false;
+        public override bool ImpersonationPermitted => true;
+        public override Task<T> RunAsCallerAsync<T>(Func<Task<T>> action) => throw new InvalidOperationException("A refused command must not access caller files.");
+        public override void Dispose() { }
+    }
+
+    private sealed class RefusedCommandBoundary : IVaultCatalogue, IAuthorisedVaultCommandExecutor
+    {
+        internal int Calls;
+        public bool CanExecute(FluxVaultIpcRequest request) => false;
+        private Task<T> Unexpected<T>() { Calls++; throw new InvalidOperationException("A refused command must not reach admission or execution."); }
+        public Task<VaultAdmission> AdmitAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default) => Unexpected<VaultAdmission>();
+        public Task<VaultAdmission> SaveConfigurationAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default) => Unexpected<VaultAdmission>();
+        public Task<VaultAdmission> SetAccessAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default) => Unexpected<VaultAdmission>();
+        public Task<VaultOperationReceipt?> GetReceiptAsync(FluxVaultCallerContext caller, VaultId id, Guid operation, CancellationToken cancellationToken = default) => Unexpected<VaultOperationReceipt?>();
+        public Task CompleteAsync(VaultOperationReceipt receipt, FluxVaultIpcResponse response, CancellationToken cancellationToken = default) => Unexpected<object>();
+        public Task<FluxVaultIpcResponse> ExecuteAsync(FluxVaultCallerContext caller, VaultAdmission admission, FluxVaultIpcRequest request, CancellationToken cancellationToken = default) => Unexpected<FluxVaultIpcResponse>();
+    }
     [Fact]
     public Task Controlled_discard_completes_in_the_performance_workspace_without_an_optional_telemetry_request() => RunOnStaAsync(async () =>
     {
@@ -2106,6 +2177,7 @@ public sealed class ProtectionSaveContractTests
         public FluxVaultIpcErrorCode? ReceiptErrorCode { get; init; }
         public Action<FluxVaultIpcRequest>? BackupDispatchCheck { get; set; }
         public Action<FluxVaultIpcRequest>? SaveDispatchCheck { get; set; }
+        public Func<FluxVaultIpcRequest, CancellationToken, Task<FluxVaultIpcResponse>>? SaveDispatchHandler { get; init; }
         public Action<FluxVaultIpcRequest>? ReceiptDispatchCheck { get; set; }
         public bool RequireBoundRequests { get; init; }
         public bool HoldSave { get; init; }
@@ -2143,6 +2215,7 @@ public sealed class ProtectionSaveContractTests
                         "Fixture idle", null, [], [])));
                 case FluxVaultIpcCommand.SaveConfiguration:
                     SaveDispatchCheck?.Invoke(request);
+                    if (SaveDispatchHandler is not null) return await SaveDispatchHandler(request, cancellationToken);
                     if (RequireBoundRequests && (request.VaultId != Identity || request.ExpectedVaultRevision != revision || request.OperationId is null))
                         return FluxVaultIpcResponse.Failure("The accepted identity/revision is missing or stale") with { ErrorCode = FluxVaultIpcErrorCode.StaleRevision };
                     Events.Add("Save started");

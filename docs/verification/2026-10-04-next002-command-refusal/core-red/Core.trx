@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="dfc59a28-c945-4ac3-86aa-cbb745fa2bad" name="os008@OS008-HOME 2026-10-04 15:34:51" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T15:34:51.5518823+03:00" queuing="2026-10-04T15:34:51.5518824+03:00" start="2026-10-04T15:34:50.8073019+03:00" finish="2026-10-04T15:34:51.5562457+03:00" />
+  <TestSettings name="default" id="1aa64445-26c2-4a0e-8fcf-f2b248906e03">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_15_34_51" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6a09b59d-9626-483d-b064-09682aacfc93" testId="c6212dda-cb32-e39f-4974-6bd7754b57ad" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: SaveConfiguration)" computerName="OS008-HOME" duration="00:00:00.0001112" startTime="2026-10-04T15:34:51.4600103+03:00" endTime="2026-10-04T15:34:51.4600398+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6a09b59d-9626-483d-b064-09682aacfc93">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: InvalidRequest&#xD;
+Actual:   Unavailable</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(FluxVaultIpcCommand command) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ec086651-8302-410b-b919-f13fdfa5d973" testId="ba441b4e-c797-8ed3-2245-a7fabdb7b5d5" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: RestoreVersionPreview)" computerName="OS008-HOME" duration="00:00:00.0002645" startTime="2026-10-04T15:34:51.4587664+03:00" endTime="2026-10-04T15:34:51.4588268+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ec086651-8302-410b-b919-f13fdfa5d973">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: InvalidRequest&#xD;
+Actual:   Unavailable</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(FluxVaultIpcCommand command) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3b513af5-ccd0-410e-879b-aa5198374a10" testId="ea3482d4-912e-5085-5118-8f0324a42ef0" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: RunBackupNow)" computerName="OS008-HOME" duration="00:00:00.0158670" startTime="2026-10-04T15:34:51.4179249+03:00" endTime="2026-10-04T15:34:51.4467449+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3b513af5-ccd0-410e-879b-aa5198374a10">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: InvalidRequest&#xD;
+Actual:   Unavailable</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(FluxVaultIpcCommand command) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="34065791-3be8-4eb1-bbfa-bed5c05d2f12" testId="ecf7ae57-da39-3683-3c57-2e92806ffb80" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: ExportDiagnostics)" computerName="OS008-HOME" duration="00:00:00.0000411" startTime="2026-10-04T15:34:51.4596250+03:00" endTime="2026-10-04T15:34:51.4596572+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="34065791-3be8-4eb1-bbfa-bed5c05d2f12">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: InvalidRequest&#xD;
+Actual:   Unavailable</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(FluxVaultIpcCommand command) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: RunBackupNow)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ea3482d4-912e-5085-5118-8f0324a42ef0">
+      <Execution id="3b513af5-ccd0-410e-879b-aa5198374a10" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Unsupported_commands_are_definitely_refused_before_admission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: SaveConfiguration)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="c6212dda-cb32-e39f-4974-6bd7754b57ad">
+      <Execution id="6a09b59d-9626-483d-b064-09682aacfc93" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Unsupported_commands_are_definitely_refused_before_admission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: ExportDiagnostics)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ecf7ae57-da39-3683-3c57-2e92806ffb80">
+      <Execution id="34065791-3be8-4eb1-bbfa-bed5c05d2f12" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Unsupported_commands_are_definitely_refused_before_admission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: RestoreVersionPreview)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ba441b4e-c797-8ed3-2245-a7fabdb7b5d5">
+      <Execution id="ec086651-8302-410b-b919-f13fdfa5d973" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Unsupported_commands_are_definitely_refused_before_admission" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c6212dda-cb32-e39f-4974-6bd7754b57ad" executionId="6a09b59d-9626-483d-b064-09682aacfc93" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ba441b4e-c797-8ed3-2245-a7fabdb7b5d5" executionId="ec086651-8302-410b-b919-f13fdfa5d973" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ea3482d4-912e-5085-5118-8f0324a42ef0" executionId="3b513af5-ccd0-410e-879b-aa5198374a10" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ecf7ae57-da39-3683-3c57-2e92806ffb80" executionId="34065791-3be8-4eb1-bbfa-bed5c05d2f12" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.25]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.25]       Expected: InvalidRequest&#xD;
+[xUnit.net 00:00:00.25]       Actual:   Unavailable&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(23,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(FluxVaultIpcCommand command)&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.26]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.26]       Expected: InvalidRequest&#xD;
+[xUnit.net 00:00:00.26]       Actual:   Unavailable&#xD;
+[xUnit.net 00:00:00.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(23,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(FluxVaultIpcCommand command)&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.26]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.26]       Expected: InvalidRequest&#xD;
+[xUnit.net 00:00:00.26]       Actual:   Unavailable&#xD;
+[xUnit.net 00:00:00.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(23,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(FluxVaultIpcCommand command)&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.26]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.26]       Expected: InvalidRequest&#xD;
+[xUnit.net 00:00:00.26]       Actual:   Unavailable&#xD;
+[xUnit.net 00:00:00.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(23,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(FluxVaultIpcCommand command)&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:34:51.4493152+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: RunBackupNow) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:34:51.4590151+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: RestoreVersionPreview) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:34:51.4597958+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: ExportDiagnostics) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:34:51.4601641+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unsupported_commands_are_definitely_refused_before_admission(command: SaveConfiguration) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

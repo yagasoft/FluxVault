@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="12cea8ee-e34e-459f-9eb8-9a1e3b0efe79" name="os008@OS008-HOME 2026-10-04 15:34:39" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T15:34:39.4009061+03:00" queuing="2026-10-04T15:34:39.4009062+03:00" start="2026-10-04T15:34:38.3778440+03:00" finish="2026-10-04T15:34:39.4048547+03:00" />
+  <TestSettings name="default" id="439aca5d-c3d9-4ce7-af42-8e53528190a6">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_15_34_39" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d898f973-a105-4bd0-bbff-6c1d25cee424" testId="335f6503-e0ad-c7bf-3b0e-fda8d92a1def" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: True, optionsFlow: True)" computerName="OS008-HOME" duration="00:00:00.0062428" startTime="2026-10-04T15:34:39.3040761+03:00" endTime="2026-10-04T15:34:39.3102506+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d898f973-a105-4bd0-bbff-6c1d25cee424">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(Boolean profileStore, Boolean optionsFlow) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 50&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1c954939-34be-45b2-90f5-acc1b3796566" testId="1be03016-8054-ce5f-fe39-80d0d1d594a2" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: True, optionsFlow: False)" computerName="OS008-HOME" duration="00:00:00.0215162" startTime="2026-10-04T15:34:39.2824326+03:00" endTime="2026-10-04T15:34:39.3035951+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c954939-34be-45b2-90f5-acc1b3796566">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(Boolean profileStore, Boolean optionsFlow) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 61&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="853a40fe-146d-4b9f-ab2f-6aee65c9b299" testId="7fe43d40-3f40-7deb-f674-d01b93b806e8" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: False, optionsFlow: False)" computerName="OS008-HOME" duration="00:00:00.3131278" startTime="2026-10-04T15:34:38.9287212+03:00" endTime="2026-10-04T15:34:39.2564539+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="853a40fe-146d-4b9f-ab2f-6aee65c9b299">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(Boolean profileStore, Boolean optionsFlow) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 61&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d003c19b-bfc8-476b-9637-7115954949df" testId="519f1cb5-2d7d-f7cc-a356-bad874bd7843" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: False, optionsFlow: True)" computerName="OS008-HOME" duration="00:00:00.0243630" startTime="2026-10-04T15:34:39.2691626+03:00" endTime="2026-10-04T15:34:39.2816621+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d003c19b-bfc8-476b-9637-7115954949df">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(Boolean profileStore, Boolean optionsFlow) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 50&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: True, optionsFlow: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="1be03016-8054-ce5f-fe39-80d0d1d594a2">
+      <Execution id="1c954939-34be-45b2-90f5-acc1b3796566" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: True, optionsFlow: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="335f6503-e0ad-c7bf-3b0e-fda8d92a1def">
+      <Execution id="d898f973-a105-4bd0-bbff-6c1d25cee424" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: False, optionsFlow: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="519f1cb5-2d7d-f7cc-a356-bad874bd7843">
+      <Execution id="d003c19b-bfc8-476b-9637-7115954949df" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: False, optionsFlow: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7fe43d40-3f40-7deb-f674-d01b93b806e8">
+      <Execution id="853a40fe-146d-4b9f-ab2f-6aee65c9b299" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="335f6503-e0ad-c7bf-3b0e-fda8d92a1def" executionId="d898f973-a105-4bd0-bbff-6c1d25cee424" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1be03016-8054-ce5f-fe39-80d0d1d594a2" executionId="1c954939-34be-45b2-90f5-acc1b3796566" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7fe43d40-3f40-7deb-f674-d01b93b806e8" executionId="853a40fe-146d-4b9f-ab2f-6aee65c9b299" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="519f1cb5-2d7d-f7cc-a356-bad874bd7843" executionId="d003c19b-bfc8-476b-9637-7115954949df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.52]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.52]       Expected: False&#xD;
+[xUnit.net 00:00:00.53]       Actual:   True&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(61,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(Boolean profileStore, Boolean optionsFlow)&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.55]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.55]       Expected: False&#xD;
+[xUnit.net 00:00:00.55]       Actual:   True&#xD;
+[xUnit.net 00:00:00.55]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.55]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(50,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(Boolean profileStore, Boolean optionsFlow)&#xD;
+[xUnit.net 00:00:00.55]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.57]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.57]       Expected: False&#xD;
+[xUnit.net 00:00:00.57]       Actual:   True&#xD;
+[xUnit.net 00:00:00.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(61,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(Boolean profileStore, Boolean optionsFlow)&#xD;
+[xUnit.net 00:00:00.57]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.58]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.58]       Expected: False&#xD;
+[xUnit.net 00:00:00.58]       Actual:   True&#xD;
+[xUnit.net 00:00:00.58]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.58]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(50,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(Boolean profileStore, Boolean optionsFlow)&#xD;
+[xUnit.net 00:00:00.58]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.58]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:34:39.2591316+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: False, optionsFlow: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:34:39.2818401+03:00">
+        <Text>[xUnit.net 00:00:00.55]     FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: False, optionsFlow: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:34:39.3038227+03:00">
+        <Text>[xUnit.net 00:00:00.57]     FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: True, optionsFlow: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:34:39.3103877+03:00">
+        <Text>[xUnit.net 00:00:00.58]     FluxVault.App.Tests.ProtectionSaveContractTests.Unsupported_save_through_actual_dispatcher_keeps_real_store_and_drafts_without_false_uncertainty(profileStore: True, optionsFlow: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

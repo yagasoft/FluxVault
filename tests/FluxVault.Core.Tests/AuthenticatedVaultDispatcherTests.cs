@@ -8,6 +8,50 @@ namespace FluxVault.Core.Tests;
 public sealed class AuthenticatedVaultDispatcherTests
 {
     [Theory]
+    [InlineData(FluxVaultIpcCommand.SaveConfiguration)]
+    [InlineData(FluxVaultIpcCommand.RunBackupNow)]
+    [InlineData(FluxVaultIpcCommand.RestoreVersionPreview)]
+    [InlineData(FluxVaultIpcCommand.ExportDiagnostics)]
+    public async Task Unsupported_commands_are_definitely_refused_before_admission(FluxVaultIpcCommand command)
+    {
+        var fixture = new Fixture();
+        fixture.Executor.Supported = false;
+        var request = fixture.Request with { Command = command, OperationId = Guid.NewGuid(),
+            Configuration = command == FluxVaultIpcCommand.SaveConfiguration ? fixture.Catalogue.Entry.Configuration : null };
+        var response = await fixture.Handler.HandleAsync(fixture.Caller, request);
+        Assert.False(response.Success);
+        Assert.Equal(FluxVaultIpcErrorCode.InvalidRequest, response.ErrorCode);
+        Assert.Equal(request.VaultId, response.VaultId);
+        Assert.Equal(request.OperationId, response.OperationId);
+        Assert.Equal(0, fixture.Catalogue.Calls);
+        Assert.Equal(0, fixture.Executor.Calls);
+        Assert.False(fixture.Executor.EffectObserved);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Historical_receipt_lookup_remains_available_when_the_original_command_is_unsupported(bool completed)
+    {
+        var fixture = new Fixture();
+        fixture.Executor.Supported = false;
+        var operation = Guid.NewGuid();
+        var originalResponse = FluxVaultIpcResponse.Ok() with { VaultId = fixture.Request.VaultId, OperationId = operation, VaultRevision = 7 };
+        fixture.Catalogue.Replay = new(operation, fixture.Catalogue.Entry.Binding.Id, fixture.Caller.UserSid,
+            FluxVaultIpcCommand.SaveConfiguration, "original-payload", completed ? VaultOperationState.Completed : VaultOperationState.Admitted,
+            7, completed ? originalResponse : null);
+        var response = await fixture.Handler.HandleAsync(fixture.Caller, fixture.Request with
+            { Command = FluxVaultIpcCommand.GetOperationStatus, OperationId = operation });
+        Assert.Equal(operation, response.OperationId);
+        Assert.Equal(fixture.Request.VaultId, response.VaultId);
+        Assert.Equal(7, response.VaultRevision);
+        if (completed) Assert.Equal(originalResponse, response);
+        else Assert.Equal(FluxVaultIpcErrorCode.OutcomeUnknown, response.ErrorCode);
+        Assert.Equal(0, fixture.Executor.Calls);
+        Assert.False(fixture.Executor.EffectObserved);
+    }
+
+    [Theory]
     [InlineData((FluxVaultIpcCommand)26)]
     [InlineData((FluxVaultIpcCommand)27)]
     [InlineData((FluxVaultIpcCommand)28)]
@@ -188,6 +232,8 @@ public sealed class AuthenticatedVaultDispatcherTests
     }
     private sealed class Executor : IAuthorisedVaultCommandExecutor
     {
+        internal bool Supported = true;
+        public bool CanExecute(FluxVaultIpcRequest request) => Supported;
         internal int Calls;
         internal FluxVaultCallerContext? Caller;
         internal FluxVaultIpcRequest? Request;

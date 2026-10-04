@@ -444,6 +444,11 @@ different saved settings require review before protection can continue. Neither
 receipt checks nor reloads start backup. Edits that have never been submitted
 are not yet persisted across restart.
 
+Unsupported commands refused before admission report a definite failure for
+that attempt. Your edits remain available for review or discard, and a failed
+save cannot start its dependent backup. Uncertain outcomes after admission or
+execution keep their pending records.
+
 The **Advanced** options page controls capture cadence and compression. It also
 edits the skip-extension list used to avoid compressing formats such as archives
 or media that are already compressed. Workload presets use this skip list as the

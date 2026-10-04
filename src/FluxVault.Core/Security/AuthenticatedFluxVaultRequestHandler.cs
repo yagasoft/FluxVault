@@ -40,7 +40,7 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
                 return ReceiptResponse(receipt, request.VaultId.Value, request.OperationId.Value);
             }
             if (!executor.CanExecute(request))
-                return Failure(FluxVaultIpcErrorCode.Unavailable, "This command is not available in this build.", request);
+                return Failure(FluxVaultIpcErrorCode.InvalidRequest, "This command is not available in this build. No change was started by this request.", request);
             if (mutation)
             {
                 await mutationGate.WaitAsync(cancellationToken);

@@ -1561,6 +1561,8 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.SaveConfiguration => await SaveConfigurationResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.RunBackupNow => FluxVaultIpcResponse.WithBackup(await RunBackupNowAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.ListVersions => FluxVaultIpcResponse.WithVersions(await ListRepositoryHistoryAsync(cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.ListHistoryPage => await HistoryPageResponseAsync(request, cancellationToken).ConfigureAwait(false),
+            FluxVaultIpcCommand.GetSnapshotPage => await SnapshotPageResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.InspectVersion => FluxVaultIpcResponse.WithInspection(await InspectVersionAsync(Require(request.VersionId, "version id"), cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RestoreVersion => await RestoreVersionResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.RestoreVersionPreview => await RestoreVersionPreviewResponseAsync(request, cancellationToken).ConfigureAwait(false),
@@ -1595,6 +1597,8 @@ public sealed class FluxVaultOperations(
             or FluxVaultIpcCommand.GetActivity
             or FluxVaultIpcCommand.ListBlockedFiles
             or FluxVaultIpcCommand.ListVersions
+            or FluxVaultIpcCommand.ListHistoryPage
+            or FluxVaultIpcCommand.GetSnapshotPage
             or FluxVaultIpcCommand.InspectVersion
             or FluxVaultIpcCommand.GetRepositoryHealth
             or FluxVaultIpcCommand.PreviewRestoreSelection;
@@ -1615,6 +1619,19 @@ public sealed class FluxVaultOperations(
                 cancellationToken)
             .ConfigureAwait(false);
         return purge is null ? FluxVaultIpcResponse.Ok() : FluxVaultIpcResponse.WithPurge(purge);
+    }
+
+    private async Task<FluxVaultIpcResponse> HistoryPageResponseAsync(FluxVaultIpcRequest request, CancellationToken token)
+    {
+        var configuration = await configurationStore.LoadAsync(token).ConfigureAwait(false);
+        var page = await CreateRepository(configuration).ListHistoryPageAsync(request.HistoryQuery ?? throw new ArgumentException("Missing history query."), token).ConfigureAwait(false);
+        return FluxVaultIpcResponse.Ok() with { HistoryPage = page };
+    }
+    private async Task<FluxVaultIpcResponse> SnapshotPageResponseAsync(FluxVaultIpcRequest request, CancellationToken token)
+    {
+        var configuration = await configurationStore.LoadAsync(token).ConfigureAwait(false);
+        var page = await CreateRepository(configuration).GetSnapshotPageAsync(request.SnapshotQuery ?? throw new ArgumentException("Missing snapshot query."), token).ConfigureAwait(false);
+        return FluxVaultIpcResponse.Ok() with { SnapshotPage = page };
     }
 
     private async Task<FluxVaultIpcResponse> RestoreVersionResponseAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)

@@ -62,6 +62,12 @@ public interface IRepositoryMetadataStore
 
     Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default);
 
+    Task<RepositoryHistoryPage> ListHistoryPageAsync(RepositoryHistoryQuery query, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("This metadata store cannot page history.");
+
+    Task<RepositorySnapshotPage> GetSnapshotPageAsync(RepositorySnapshotQuery query, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("This metadata store cannot page snapshot contents.");
+
     Task DeleteVersionsAsync(IReadOnlyCollection<string> versionIds, CancellationToken cancellationToken = default)
     {
         throw new NotSupportedException("This metadata store cannot delete acknowledged versions.");

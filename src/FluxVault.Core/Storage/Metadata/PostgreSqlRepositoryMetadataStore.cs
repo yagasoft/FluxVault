@@ -190,7 +190,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
                 cancellationToken.ThrowIfCancellationRequested();
                 await RecordManifestAsync(connection, transaction, manifest, cancellationToken).ConfigureAwait(false);
             }
-
+            await AdvanceHistoryAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             lastError = null;
         }
@@ -345,6 +345,98 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         return manifests.Select(RepositoryMetadataStoreHelpers.ToSummary).ToArray();
     }
 
+    private async Task AdvanceHistoryAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken token)
+    {
+        await using var command = CreateCommand("UPDATE fluxvault.history_state SET generation=generation+1 WHERE singleton=true", connection, transaction);
+        if (await command.ExecuteNonQueryAsync(token).ConfigureAwait(false) != 1) throw new InvalidDataException("History generation is missing.");
+    }
+
+    public async Task<RepositoryHistoryPage> ListHistoryPageAsync(RepositoryHistoryQuery query, CancellationToken cancellationToken = default)
+    {
+        query = RepositoryHistoryPaging.Validate(query, binding?.Id);
+        cancellationToken.ThrowIfCancellationRequested();
+        await InitializeAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken).ConfigureAwait(false);
+        long generation;
+        await using (var state = CreateCommand("SELECT generation FROM fluxvault.history_state WHERE singleton=true", connection, transaction))
+            generation = (long)(await state.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) ?? throw new InvalidDataException("History generation is missing."));
+        if (query.Cursor is { } cursor && cursor.Generation != generation) throw new RepositoryHistoryChangedException();
+        var newer = query.Cursor?.Direction == HistoryPageDirection.Newer;
+        var direction = newer ? "ASC" : "DESC";
+        var comparison = newer ? ">" : "<";
+        var scope = query.SourcePath is null ? "true" : """
+            (p.normalised_key=@file_key OR p.normalised_key=@folder_key OR (@descendants AND p.normalised_key LIKE @prefix ESCAPE '\'))
+            """;
+        var after = query.Cursor is null ? "true" : $"(v.captured_at_ticks,v.version_id COLLATE \"C\") {comparison} (@ticks,@id COLLATE \"C\")";
+        await using var command = CreateCommand($"""
+            WITH selected AS MATERIALIZED (
+                SELECT v.* FROM fluxvault.versions v JOIN fluxvault.paths p ON p.path_id=v.path_id
+                WHERE {scope} AND (@kind IS NULL OR v.entry_kind=@kind) AND {after}
+                ORDER BY v.captured_at_ticks {direction}, v.version_id COLLATE "C" {direction} LIMIT @count
+            ), headers AS MATERIALIZED (
+                SELECT version_id,captured_at_ticks,manifest_json->>'vaultId' AS repository_id,source_path,entry_kind,
+                    CASE WHEN octet_length(manifest_json::text)<={integrityLimits.MaxManifestBytes} AND jsonb_typeof(manifest_json->'chunks')='array' THEN
+                        (manifest_json - 'chunks' - 'folderEntries' - 'parentVersionIds' ||
+                        jsonb_build_object('chunkCount',jsonb_array_length(manifest_json->'chunks')))::text ELSE NULL END AS header_json
+                FROM selected
+            ), sized AS (
+                SELECT *,sum(octet_length(header_json)) OVER (ORDER BY captured_at_ticks {direction},version_id COLLATE "C" {direction}
+                    ROWS UNBOUNDED PRECEDING) AS cumulative_bytes FROM headers
+            )
+            SELECT CASE WHEN cumulative_bytes<={RepositoryHistoryPaging.MaximumResponseBytes} THEN header_json ELSE NULL END,
+                version_id,captured_at_ticks,repository_id,source_path,entry_kind,header_json IS NULL
+            FROM sized ORDER BY captured_at_ticks {direction},version_id COLLATE "C" {direction}
+            """, connection, transaction);
+        command.Parameters.Add("kind", NpgsqlDbType.Text).Value = query.EntryKind is null ? DBNull.Value : query.EntryKind.ToString()!;
+        command.Parameters.AddWithValue("count", query.PageSize + 1);
+        if (query.SourcePath is { } path)
+        {
+            command.Parameters.AddWithValue("file_key", RepositoryMetadataStoreHelpers.ToEntryKey(path, RepositoryEntryKind.File));
+            command.Parameters.AddWithValue("folder_key", RepositoryMetadataStoreHelpers.ToEntryKey(path, RepositoryEntryKind.Folder));
+            command.Parameters.AddWithValue("descendants", query.IncludeDescendants);
+            var prefix = path.TrimEnd('\\', '/') + Path.DirectorySeparatorChar;
+            command.Parameters.AddWithValue("prefix", prefix.Replace("\\", "\\\\", StringComparison.Ordinal).Replace("%", "\\%", StringComparison.Ordinal).Replace("_", "\\_", StringComparison.Ordinal) + "%");
+        }
+        if (query.Cursor is { } key) { command.Parameters.AddWithValue("ticks", key.CapturedAtTicks); command.Parameters.AddWithValue("id", key.VersionId); }
+        var rows = new List<RepositoryVersionSummary>();
+        var hasMore = false;
+        await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
+        {
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                if (rows.Count == query.PageSize) { hasMore = true; break; }
+                if (reader.IsDBNull(0))
+                {
+                    // A size-limited page continues from its last emitted row. A corrupt
+                    // or individually oversized next header will fail when requested.
+                    if (rows.Count > 0 && !reader.GetBoolean(6)) { hasMore = true; break; }
+                    throw new InvalidDataException("Selected history header is invalid or exceeds the supported bound.");
+                }
+                RepositoryVersionSummary row;
+                try { row = JsonSerializer.Deserialize<RepositoryVersionSummary>(reader.GetString(0), JsonOptions) ?? throw new JsonException(); }
+                catch (JsonException) { throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Selected history header could not be decoded."); }
+                if (row.VersionId != reader.GetString(1) || row.CapturedAtUtc.UtcTicks != reader.GetInt64(2) ||
+                    row.SourcePath != reader.GetString(4) || row.EntryKind.ToString() != reader.GetString(5) ||
+                    binding is not null && (reader.IsDBNull(3) || reader.GetString(3) != binding.Id.ToString()) ||
+                    row.ChunkCount < 0 || !Enum.IsDefined(row.EntryKind) || !RepositoryHistoryPaging.Matches(row, query))
+                    throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Selected history keys disagree with its immutable manifest or repository binding.");
+                RepositoryHistoryPaging.ValidateVersionId(row.VersionId);
+                rows.Add(row);
+            }
+        }
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        if (newer) rows.Reverse();
+        return RepositoryHistoryPaging.Page(query, generation, rows, newer ? query.Cursor is not null : hasMore,
+            newer ? hasMore : query.Cursor is not null);
+    }
+
+    public async Task<RepositorySnapshotPage> GetSnapshotPageAsync(RepositorySnapshotQuery query, CancellationToken cancellationToken = default)
+    {
+        RepositoryHistoryPaging.Validate(query, binding?.Id);
+        return RepositoryHistoryPaging.Snapshot(query, await ReadManifestAsync(query.VersionId, cancellationToken).ConfigureAwait(false));
+    }
+
     public async Task DeleteVersionsAsync(IReadOnlyCollection<string> versionIds, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(versionIds);
@@ -383,7 +475,8 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
                 transaction))
             {
                 versionCommand.Parameters.AddWithValue("version_ids", ids);
-                await versionCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                if (await versionCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) > 0)
+                    await AdvanceHistoryAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
             }
 
             // Retire only this deletion's now-unreferenced catalogue rows. Location rows
@@ -1071,14 +1164,19 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
                 SELECT vault_id, primary_root, endpoint_key, (SELECT max(version) FROM {QuotedSchema}.schema_version),
                     EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass(@versions)
                         AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
-                        AND attnotnull AND NOT attisdropped)
+                        AND attnotnull AND NOT attisdropped),
+                    EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass(@history)
+                        AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped),
+                    (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM {QuotedSchema}.history_state)
                 FROM {QuotedSchema}.vault_binding WHERE singleton=true
                 """, connection);
             command.Parameters.AddWithValue("versions", QuotedSchema + ".versions");
+            command.Parameters.AddWithValue("history", QuotedSchema + ".history_state");
             await using var reader = await command.ExecuteReaderAsync(cancellationToken);
             if (!await reader.ReadAsync(cancellationToken) || reader.GetGuid(0) != binding!.Id.Value ||
                 reader.GetString(1) != CanonicalRoot(binding.RepositoryPath) || reader.GetString(2) != EndpointKey() ||
-                reader.IsDBNull(3) || reader.GetInt32(3) != PostgreSqlMetadataSchema.CurrentVersion || !reader.GetBoolean(4))
+                reader.IsDBNull(3) || reader.GetInt32(3) != PostgreSqlMetadataSchema.CurrentVersion || !reader.GetBoolean(4) ||
+                !reader.GetBoolean(5) || reader.IsDBNull(6) || !reader.GetBoolean(6))
                 throw new RepositoryIntegrityException(RepositoryIntegrityFailure.OwnershipMismatch, "Metadata identity, root, endpoint or schema version does not match the vault binding.");
         }
         catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.UndefinedTable)

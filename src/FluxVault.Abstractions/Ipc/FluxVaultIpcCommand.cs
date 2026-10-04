@@ -31,5 +31,7 @@ public enum FluxVaultIpcCommand
     // Wire values 26-30 and 32 are retired and must remain unassigned.
     GetPerformance = 31,
     GetOperationStatus = 33,
-    SetVaultAccess = 34
+    SetVaultAccess = 34,
+    ListHistoryPage = 35,
+    GetSnapshotPage = 36
 }

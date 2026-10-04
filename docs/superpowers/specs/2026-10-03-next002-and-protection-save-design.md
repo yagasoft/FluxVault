@@ -81,6 +81,37 @@ Mutation requests carry OperationId plus an expected configuration/binding revis
 
 Proposed typed service IPC bounds: maximum UTF-8 request 1 MiB, response 8 MiB, JSON depth 32, 16 concurrent accepted requests, 5-second frame-read timeout and 5-second response-write timeout. Validate positive/clamped internal values; no dormant Options controls. Inventory exceeding a frame is paged through the same vault-scoped contract rather than silently truncated. Long content operations get an operation identity/status and explicit cancellation outcome, not a 5-second execution timeout. Tune only against measured supported workloads while retaining finite bounds. Track and join accepted request work and dispose tokens on completion/cancel; unrelated lifecycle refactoring stays deferred.
 
+### Implemented recovery-history paging contract
+
+The bounded S2 history browser uses authenticated `ListHistoryPage` and
+`GetSnapshotPage` reads under ReadHistory authority. Queries and cursors bind the
+single repository identity, canonical source scope, optional kind and page size.
+Bidirectional keysets use exact UTC ticks and ordinal version IDs. A short
+repeatable-read transaction observes both page rows and history generation;
+capture/pruning commit generation changes in their existing transaction. Stale
+cursors return HistoryChanged without data. No server-held browsing session or
+full-history fallback is introduced.
+
+Fresh staging metadata is schema v3; unsupported existing schemas are refused
+before mutation. SQL limits selected headers and their cumulative transfer size.
+The handler measures the actual serialised authenticated envelope against the
+smaller of the 2 MiB history budget and configured response limit. A shortened
+page anchors continuation to its last emitted row; a single oversize row is an
+explicit failure. Folder contents are separately paged from one bounded exact
+immutable manifest, and child recovery resolves its recorded identity rather
+than latest-by-path.
+
+The WPF browser retains the last accepted page on errors/history changes and
+requires explicit refresh after invalidation. An unavailable initial binding is
+handled as unavailable without dispatch or authoritative-empty presentation.
+Outstanding reads are cancelled and joined before the window closes; stale
+selection responses cannot replace current contents. The typed optional
+RepositoryBrowse policy defaults to 100 items, normalises to 1–256 and is exposed
+in Options as Items per recovery page. Both real-store Options round trips and
+the original full-record protection-save regressions cover its preservation.
+Current-file paging and full scale/accessibility/lifecycle gates remain open.
+See [bounded evidence](../../verification/2026-10-04-next002-history-paging/README.md).
+
 ## Acceptance gates, unchanged in strength
 
 | ID | Required result and evidence | Owner batch |

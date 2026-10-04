@@ -142,12 +142,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        var inventory = await viewModel.CreateVersionInventoryAsync(viewModel.SelectedWatchedFolder).ConfigureAwait(true);
-        var window = new ProtectedFolderVersionsWindow(inventory)
-        {
-            Owner = this
-        };
-        window.ShowDialog();
+        await viewModel.ShowVersionsForPathAsync(viewModel.SelectedWatchedFolder.Path).ConfigureAwait(true);
     }
 
     private async void RecentVersionsGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

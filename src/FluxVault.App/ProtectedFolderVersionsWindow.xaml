@@ -35,10 +35,26 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <StackPanel>
         <TextBlock Text="{Binding FolderPath}"
                    FontSize="15"
                    FontWeight="SemiBold"
                    TextTrimming="CharacterEllipsis" />
+        <StackPanel Orientation="Horizontal" Margin="0,8,0,4" Visibility="{Binding IsPaged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Button Content="Newer" Command="{Binding LoadNewerCommand}" AutomationProperties.Name="Load newer history page" Margin="0,0,8,0" />
+            <Button Content="Older" Command="{Binding LoadOlderCommand}" AutomationProperties.Name="Load older history page" Margin="0,0,8,0" />
+            <Button Content="Refresh" Command="{Binding RefreshHistoryCommand}" AutomationProperties.Name="Refresh history from the first page" />
+        </StackPanel>
+        <TextBlock Text="{Binding HistoryStatus}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        <StackPanel Orientation="Horizontal" Margin="0,8,0,4" Visibility="{Binding IsPaged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Recorded snapshot" VerticalAlignment="Center" Margin="0,0,12,0" />
+            <Button Content="Selected version" Command="{Binding SelectedSnapshotCommand}" Margin="0,0,8,0" />
+            <Button Content="First entries" Command="{Binding FirstEntriesCommand}" AutomationProperties.Name="Load first folder entries page" Margin="0,0,8,0" />
+            <Button Content="More entries" Command="{Binding MoreEntriesCommand}" AutomationProperties.Name="Load next folder entries page" />
+        </StackPanel>
+        <TextBlock Text="{Binding SnapshotPath}" TextTrimming="CharacterEllipsis" />
+        <TextBlock Text="{Binding SnapshotStatus}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>

@@ -178,6 +178,16 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
             (mutation == Mutation.Admit && request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess))
             throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
         var modifying = IsMutation(request.Command);
+        if (request.Command is FluxVaultIpcCommand.ListHistoryPage or FluxVaultIpcCommand.GetSnapshotPage)
+        {
+            try
+            {
+                if (request.Command == FluxVaultIpcCommand.ListHistoryPage)
+                    Storage.Metadata.RepositoryHistoryPaging.Validate(request.HistoryQuery ?? throw new ArgumentException("Missing history query."), request.VaultId);
+                else Storage.Metadata.RepositoryHistoryPaging.Validate(request.SnapshotQuery ?? throw new ArgumentException("Missing snapshot query."), request.VaultId);
+            }
+            catch (ArgumentException exception) { throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration, exception.Message); }
+        }
         if (modifying && (request.OperationId is null || request.OperationId == Guid.Empty || request.ExpectedVaultRevision is null or <= 0))
             throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
         var fingerprint = RequestFingerprint(request);
@@ -517,7 +527,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         if (!caller.ImpersonationPermitted || string.IsNullOrWhiteSpace(caller.UserSid)) throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
     }
     public static bool IsMutation(FluxVaultIpcCommand command) => command is not (
-        FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.InspectVersion or
+        FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.ListHistoryPage or FluxVaultIpcCommand.GetSnapshotPage or FluxVaultIpcCommand.InspectVersion or
         FluxVaultIpcCommand.GetActivity or FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.GetSyncStatus or
         FluxVaultIpcCommand.GetRepositoryHealth or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.PreviewRetention or
         FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.PreviewMirrorDrain or

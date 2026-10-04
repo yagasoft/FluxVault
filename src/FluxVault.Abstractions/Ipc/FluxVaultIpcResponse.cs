@@ -28,7 +28,9 @@ public sealed record FluxVaultIpcResponse(
     long? VaultRevision = null,
     Guid? OperationId = null,
     FluxVaultIpcErrorCode? ErrorCode = null,
-    DiagnosticsExportResult? DiagnosticsExport = null)
+    DiagnosticsExportResult? DiagnosticsExport = null,
+    RepositoryHistoryPage? HistoryPage = null,
+    RepositorySnapshotPage? SnapshotPage = null)
 {
     public static FluxVaultIpcResponse Ok()
     {
@@ -193,4 +195,4 @@ public sealed record FluxVaultIpcResponse(
     }
 }
 
-public enum FluxVaultIpcErrorCode { Denied, StaleRevision, Unavailable, InvalidRequest, OperationConflict, OutcomeUnknown }
+public enum FluxVaultIpcErrorCode { Denied, StaleRevision, Unavailable, InvalidRequest, OperationConflict, OutcomeUnknown, HistoryChanged }

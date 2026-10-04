@@ -2,7 +2,7 @@ namespace FluxVault.Core.Storage.Metadata;
 
 public static class PostgreSqlMetadataSchema
 {
-    public const int CurrentVersion = 2;
+    public const int CurrentVersion = 3;
 
     public static string ForVault(FluxVault.Abstractions.Security.VaultId vaultId) =>
         CreateSchemaSql.Replace("fluxvault", '"' + vaultId.MetadataNamespace + '"', StringComparison.Ordinal);
@@ -15,12 +15,17 @@ public static class PostgreSqlMetadataSchema
                 IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
                     RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
                 END IF;
-                IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 2 OR NOT EXISTS (
+                IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 3 OR to_regclass('fluxvault.history_state') IS NULL OR NOT EXISTS (
                     SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
                       AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
                       AND attnotnull AND NOT attisdropped
                 ) THEN
                     RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+                END IF;
+                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.history_state')
+                    AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+                    OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM fluxvault.history_state) IS DISTINCT FROM true THEN
+                    RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
                 END IF;
             END IF;
         END
@@ -34,8 +39,14 @@ public static class PostgreSqlMetadataSchema
         );
 
         INSERT INTO fluxvault.schema_version (version)
-        VALUES (2)
+        VALUES (3)
         ON CONFLICT (version) DO NOTHING;
+
+        CREATE TABLE IF NOT EXISTS fluxvault.history_state (
+            singleton boolean PRIMARY KEY CHECK (singleton),
+            generation bigint NOT NULL CHECK (generation >= 0)
+        );
+        INSERT INTO fluxvault.history_state(singleton,generation) VALUES(true,0) ON CONFLICT(singleton) DO NOTHING;
 
         CREATE TABLE IF NOT EXISTS fluxvault.paths (
             path_id bigserial PRIMARY KEY,
@@ -89,6 +100,9 @@ public static class PostgreSqlMetadataSchema
 
         CREATE INDEX IF NOT EXISTS ix_versions_recent_ticks
             ON fluxvault.versions (captured_at_ticks DESC, version_id COLLATE "C" DESC);
+
+        CREATE INDEX IF NOT EXISTS ix_versions_path_ticks
+            ON fluxvault.versions (path_id, captured_at_ticks DESC, version_id COLLATE "C" DESC);
 
         CREATE INDEX IF NOT EXISTS ix_versions_content_signature
             ON fluxvault.versions (content_signature)

@@ -1427,7 +1427,7 @@ public sealed class MainWindowViewModelRefreshTests
     {
         var hintedPath = Path.GetFullPath(@"D:\Work\Docs\brief.docx");
         var siblingPath = Path.GetFullPath(@"D:\Work\Docs\notes.txt");
-        var client = new FakeFluxVaultServiceClient(StatusWithVersionSources(("v1", hintedPath), ("v2", siblingPath)));
+        var client = new FakeFluxVaultServiceClient(StatusWithVersionSources((1.ToString("x32"), hintedPath), (2.ToString("x32"), siblingPath)));
         var viewModel = new MainWindowViewModel(
             new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
@@ -1442,7 +1442,7 @@ public sealed class MainWindowViewModelRefreshTests
         Assert.NotNull(requested);
         var file = Assert.Single(requested.Files);
         Assert.Equal(hintedPath, file.Path);
-        Assert.Equal("v1", Assert.Single(file.Versions).VersionId);
+        Assert.Equal(1.ToString("x32"), Assert.Single(file.Versions).VersionId);
     }
 
     [Fact]
@@ -2036,6 +2036,18 @@ public sealed class MainWindowViewModelRefreshTests
             {
                 var inventoryStatus = statuses.Count > 0 ? statuses.Peek() : StatusWithVersions();
                 return Task.FromResult(FluxVaultIpcResponse.WithVersions(inventoryStatus.RecentVersions));
+            }
+
+            if (request.HistoryQuery is { } query)
+            {
+                var inventory = statuses.Count > 0 ? statuses.Peek() : StatusWithVersions();
+                var rows = inventory.RecentVersions.Where(v => FluxVault.Core.Storage.Metadata.RepositoryHistoryPaging.Matches(v, query)).Take(query.PageSize).ToArray();
+                return Task.FromResult(FluxVaultIpcResponse.Ok() with { HistoryPage = FluxVault.Core.Storage.Metadata.RepositoryHistoryPaging.Page(query, 1, rows, false, false) });
+            }
+            if (request.SnapshotQuery is { } snapshot)
+            {
+                var inventory = statuses.Count > 0 ? statuses.Peek() : StatusWithVersions();
+                return Task.FromResult(FluxVaultIpcResponse.Ok() with { SnapshotPage = new(snapshot, inventory.RecentVersions.Single(v => v.VersionId == snapshot.VersionId), [], null) });
             }
 
             if (request.Command == FluxVaultIpcCommand.RunRepositoryScrub)

@@ -43,16 +43,18 @@ internal static class WindowsSingleVaultProbe
                 FluxVaultIpcCommand.RunMirrorRepair, FluxVaultIpcCommand.PreviewMirrorRebalance, FluxVaultIpcCommand.RunMirrorRebalance,
                 FluxVaultIpcCommand.PreviewMirrorDrain, FluxVaultIpcCommand.RunMirrorDrain, FluxVaultIpcCommand.ExportDiagnostics,
                 FluxVaultIpcCommand.PreviewRestoreSelection, FluxVaultIpcCommand.RunRestoreSelection,
-                FluxVaultIpcCommand.SetProtectionPaused, FluxVaultIpcCommand.GetSyncStatus };
+                FluxVaultIpcCommand.SetProtectionPaused, FluxVaultIpcCommand.GetSyncStatus, FluxVaultIpcCommand.ListHistoryPage, FluxVaultIpcCommand.GetSnapshotPage };
             foreach (var command in commands)
             {
                 var response = await client.SendAsync(new(command, null, null, null, Path.Combine(fixture.Root, "output-B"), MirrorNodeId: "first",
-                    VaultId: new(Guid.ParseExact(fixture.FixtureId, "N")), ExpectedVaultRevision: 1, OperationId: Guid.NewGuid()), deadline.Token);
+                    VaultId: new(Guid.ParseExact(fixture.FixtureId, "N")), ExpectedVaultRevision: 1, OperationId: Guid.NewGuid(),
+                    HistoryQuery: command == FluxVaultIpcCommand.ListHistoryPage ? new(new(Guid.ParseExact(fixture.FixtureId, "N"))) : null,
+                    SnapshotQuery: command == FluxVaultIpcCommand.GetSnapshotPage ? new(new(Guid.ParseExact(fixture.FixtureId, "N")), new string('1', 32)) : null), deadline.Token);
                 if (response.Success || response.ErrorCode != FluxVaultIpcErrorCode.Denied ||
                     response.VaultId is { } disclosed && disclosed.Value != Guid.ParseExact(fixture.FixtureId, "N") ||
                     response.RepositoryHealth is not null || response.RepositoryScrub is not null || response.RestoreRehearsal is not null ||
                     response.MirrorRepair is not null || response.MirrorRebalance is not null || response.RetentionPreview is not null || response.RetentionResult is not null ||
-                    response.DiagnosticsExport is not null || response.OutputPath is not null || response.RestoreResult is not null || response.RestoreSelection is not null || response.Status is not null)
+                    response.DiagnosticsExport is not null || response.OutputPath is not null || response.RestoreResult is not null || response.RestoreSelection is not null || response.Status is not null || response.HistoryPage is not null || response.SnapshotPage is not null)
                     throw new InvalidOperationException("Ungrant user received maintenance data or admission.");
             }
             Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Denied = true, NoIdentityOrHistory = true, MaintenanceDenied = commands.Length }));
@@ -110,6 +112,7 @@ internal static class WindowsSingleVaultProbe
             item.SourcePath.StartsWith(Path.Combine(output, "historical-fallback") + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) == 2,
             "legacy fallback fixture retains exactly two independent file histories");
         var inspection = await Send(Bind(FluxVaultIpcRequest.InspectVersion(fileVersion.VersionId)));
+        await WindowsHistoryPagingProbe.RunAsync(client, id, source, destination, history.Versions!, Bind, Send, checks, deadline.Token);
         Check(inspection.Inspection is not null, "authorised history inspection succeeds");
         var previewCache = new WindowsUserPreviewCache(Path.Combine(output, "preview-cache"));
         var previewFile = previewCache.Allocate(file, new());
@@ -352,7 +355,7 @@ internal static class WindowsSingleVaultProbe
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Passed = checks.Count, Checks = checks, SingleVault = true, VaultId = id,
             CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true,
             MaintenanceCommandsVerified = true, DrainCommandsVerified = true, DiagnosticsCommandsVerified = true, SelectionCommandsVerified = true,
-            ProtectionStateCommandsVerified = true }));
+            ProtectionStateCommandsVerified = true, HistoryPagingVerified = true }));
         return 0;
 
         FluxVaultIpcRequest Bind(FluxVaultIpcRequest request) => request with { VaultId = id,

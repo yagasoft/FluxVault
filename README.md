@@ -428,6 +428,23 @@ repository space and run retention immediately. Maintenance is enabled by
 default, runs every 24 hours, repairs from a healthy mirror when possible, and
 rehearses the newest three versions unless changed in Options.
 
+The single-vault recovery browser loads bounded history pages. **Older** and
+**Newer** browse the selected path's history; **Refresh** starts again from the
+latest page if capture or pruning changed that history. Errors retain the
+displayed page and explain that a new page could not be confirmed. An unavailable
+initial service binding does not open an empty history window.
+
+Selecting a recorded folder loads its recorded children on demand. **More
+entries**, **First entries** and **Selected version** browse that immutable
+snapshot. Recovering a child uses its recorded version identity, even when that
+version is outside the displayed history page. A missing or pruned child is
+reported; it is not replaced by the latest live file.
+
+**Options** > **Advanced** > **Items per recovery page** controls history and
+recorded-folder page size. It defaults to 100 and normalises to 1–256. The service
+may return fewer rows to keep the response within its size limit. The typed
+`repositoryBrowse.itemsPerPage` setting survives full-record protection saves.
+
 **Options** > **Advanced** > **Keep preview copies (days)** controls expiry of
 temporary file previews. The default is 2 days; the supported range is 1–365.
 Expired copies are removed on a later preview request in a bounded pass; files

@@ -59,7 +59,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
         FluxVaultIpcCommand.SaveConfiguration => true,
         FluxVaultIpcCommand.SetVaultAccess or FluxVaultIpcCommand.SetProtectionPaused or FluxVaultIpcCommand.GetSyncStatus or
         FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.GetActivity or
-        FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.InspectVersion or
+        FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.ListHistoryPage or FluxVaultIpcCommand.GetSnapshotPage or FluxVaultIpcCommand.InspectVersion or
         FluxVaultIpcCommand.RunBackupNow or FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview or
         FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.RunRestoreSelection or
         FluxVaultIpcCommand.GetRepositoryHealth or FluxVaultIpcCommand.PreviewRetention or FluxVaultIpcCommand.RunRetentionNow or
@@ -120,7 +120,9 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                     case FluxVaultIpcCommand.GetPerformance: return FluxVaultIpcResponse.WithPerformance(await operations.GetPerformanceAsync(cancellationToken));
                     case FluxVaultIpcCommand.GetActivity: return FluxVaultIpcResponse.WithActivity(operations.GetActivity());
                     case FluxVaultIpcCommand.ListBlockedFiles: return FluxVaultIpcResponse.WithBlockedFiles(operations.ListBlockedFiles());
-                    case FluxVaultIpcCommand.ListVersions: return await operations.HandleAsync(request, cancellationToken);
+                    case FluxVaultIpcCommand.ListVersions:
+                    case FluxVaultIpcCommand.ListHistoryPage:
+                    case FluxVaultIpcCommand.GetSnapshotPage: return await operations.HandleAsync(request, cancellationToken);
                     case FluxVaultIpcCommand.GetRepositoryHealth:
                     case FluxVaultIpcCommand.PreviewRetention:
                     case FluxVaultIpcCommand.RunRetentionNow:

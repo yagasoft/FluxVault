@@ -300,6 +300,22 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             .ToArray();
     }
 
+    public async Task<RepositoryHistoryPage> ListHistoryPageAsync(RepositoryHistoryQuery query, CancellationToken cancellationToken = default)
+    {
+        RepositoryHistoryPaging.Validate(query, binding?.Id);
+        if (metadataStore is null) throw new NotSupportedException("Paged history requires the authoritative metadata store.");
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+        return await metadataStore.ListHistoryPageAsync(query, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<RepositorySnapshotPage> GetSnapshotPageAsync(RepositorySnapshotQuery query, CancellationToken cancellationToken = default)
+    {
+        RepositoryHistoryPaging.Validate(query, binding?.Id);
+        if (metadataStore is null) throw new NotSupportedException("Paged snapshots require the authoritative metadata store.");
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+        return await metadataStore.GetSnapshotPageAsync(query, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<RepositoryDeletionResult?> RecordDeletionAsync(
         RepositoryDeletionRequest request,
         CancellationToken cancellationToken = default)

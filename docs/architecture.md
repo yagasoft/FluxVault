@@ -42,12 +42,17 @@ Overview keeps its existing fifty-version history window. The protected
 PostgreSQL route applies that limit before loading or decoding manifests,
 using an index on exact UTC ticks and ordinal hexadecimal version IDs. Selected
 rows must match both ordering keys in their immutable manifests; size and
-repository-binding checks remain in force. Full history and the current-file
-inventory retain their existing semantics and still need bounded paging.
-Legacy filesystem/developer repositories use a complete-history fallback.
+repository-binding checks remain in force. The recovery browser now uses scoped
+bidirectional history pages and lazy recorded-folder contents through authorised
+service reads. Exact recorded child identities remain recoverable outside the
+visible history page; stale generation or unavailable binding is explained
+without presenting authoritative empty history. Reads are cancelled and joined
+before window closure. Current-file inventory still needs bounded paging.
+Legacy filesystem/developer recent-history repositories retain their fallback;
+the new recovery paging route has no complete-history fallback.
 
-Fresh staging metadata uses schema version 2 with a non-null bigint UTC-tick
-key written in the same version transaction. Existing unsupported schemas are
+Fresh staging metadata uses schema version 3 with a non-null bigint UTC-tick
+key and history generation written in the version transaction. Existing unsupported schemas are
 refused before schema changes; no backfill or automatic upgrade occurs. Retain
 the previous installation and its database/storage assets for recovery. Normal
 installation rollout and any migration remain separate reviewed operations.

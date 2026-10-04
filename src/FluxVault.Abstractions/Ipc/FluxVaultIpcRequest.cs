@@ -28,7 +28,9 @@ public sealed record FluxVaultIpcRequest(
     VaultId? VaultId = null,
     long? ExpectedVaultRevision = null,
     Guid? OperationId = null,
-    IReadOnlyList<VaultAccessGrant>? AccessGrants = null)
+    IReadOnlyList<VaultAccessGrant>? AccessGrants = null,
+    RepositoryHistoryQuery? HistoryQuery = null,
+    RepositorySnapshotQuery? SnapshotQuery = null)
 {
     public string? DestinationPath => OutputPath;
 

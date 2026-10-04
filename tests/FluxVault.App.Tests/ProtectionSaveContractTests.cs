@@ -22,6 +22,26 @@ namespace FluxVault.App.Tests;
 public sealed class ProtectionSaveContractTests
 {
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Recovery_page_setting_round_trips_through_actual_Options_save_and_real_store(bool profileStore)
+    {
+        using var fixture = new StoreFixture(profileStore);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var before = await fixture.Reopen().LoadAsync();
+        var client = new StoreClient(fixture.Store);
+        var options = new OptionsViewModel(client);
+        await options.InitialiseAsync();
+        Assert.Equal(37, options.RecoveryItemsPerPage);
+        options.RecoveryItemsPerPage = 73;
+        await options.SaveCommand.ExecuteAsync(null);
+        var reopened = await fixture.Reopen().LoadAsync();
+        Assert.Equal(73, reopened.RepositoryBrowse.ItemsPerPage);
+        Assert.Equal(JsonSerializer.Serialize(before.Sync), JsonSerializer.Serialize(reopened.Sync));
+        Assert.Equal(JsonSerializer.Serialize(before.SelectionRules), JsonSerializer.Serialize(reopened.SelectionRules));
+        Assert.Equal(before.IsEnabled, reopened.IsEnabled);
+    }
+    [Theory]
     [InlineData(false, false)]
     [InlineData(false, true)]
     [InlineData(true, false)]
@@ -2137,6 +2157,7 @@ public sealed class ProtectionSaveContractTests
         return defaults with
         {
             IsEnabled = false,
+            RepositoryBrowse = new RepositoryBrowsePolicy(37),
             MetadataStore = defaults.MetadataStore with
             {
                 Host = "127.0.0.1", Port = 55432, DatabaseName = "preserve_this_database",

@@ -2,6 +2,8 @@ using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Security;
 using FluxVault.Core.Ipc;
 using Microsoft.Extensions.Logging;
+using FluxVault.Abstractions.Storage;
+using FluxVault.Core.Storage.Metadata;
 
 namespace FluxVault.Core.Security;
 
@@ -63,6 +65,7 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
             executionStarted = true;
             var response = await executor.ExecuteAsync(caller, admission, boundRequest, cancellationToken);
             response = response with { VaultId = id, VaultRevision = admission.Vault.Revision, OperationId = request.OperationId };
+            response = RepositoryHistoryPaging.BoundResponse(response, Math.Min(RepositoryHistoryPaging.MaximumResponseBytes, (limits ?? new()).MaximumResponseBytes));
             if (admission.Receipt is not null)
             {
                 if (request.Command == FluxVaultIpcCommand.RunMirrorDrain)
@@ -91,6 +94,10 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
         {
             logger?.LogWarning(exception, "Vault request or stored payload was rejected");
             return Failure(FluxVaultIpcErrorCode.InvalidRequest, "The request or stored vault data could not be validated.", request);
+        }
+        catch (RepositoryHistoryChangedException)
+        {
+            return Failure(FluxVaultIpcErrorCode.HistoryChanged, "History changed. Refresh before browsing further.", request);
         }
         catch (Exception exception)
         {

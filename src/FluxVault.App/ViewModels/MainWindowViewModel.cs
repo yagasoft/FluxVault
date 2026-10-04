@@ -1995,76 +1995,37 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    internal async Task<VersionInventoryViewModel> CreateVersionInventoryAsync(WatchedFolderRow folder)
-    {
-        try
-        {
-            var response = await SendBoundAsync(FluxVaultIpcRequest.ListVersions()).ConfigureAwait(true);
-            if (!response.Success || response.Versions is null)
-            {
-                SetServiceStatus($"Service connection: backup inventory failed ({response.ErrorMessage ?? "no versions returned"})");
-                return EmptyVersionInventory(folder.Path);
-            }
-
-            return new VersionInventoryViewModel(
-                folder.Path,
-                response.Versions,
-                version => RestoreVersionAsync(ToVersionRow(version)),
-                version => OpenVersionPreviewAsync(ToVersionRow(version)));
-        }
-        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
-        {
-            SetServiceStatus($"Service connection: backup inventory failed ({ex.Message})");
-            return EmptyVersionInventory(folder.Path);
-        }
-    }
-
     internal async Task<VersionInventoryViewModel> CreateVersionInventoryForPathAsync(string path)
     {
+        if (acceptedVaultId is null) await RefreshAsync().ConfigureAwait(true);
+        if (acceptedVaultId is not { } id) throw new InvalidOperationException("Load the vault's verified configuration before browsing history.");
+        var query = new RepositoryHistoryQuery(id, Path.GetFullPath(path), IncludeDescendants: true,
+            PageSize: (acceptedConfiguration?.RepositoryBrowse ?? new()).Normalise().ItemsPerPage);
+        var inventory = new VersionInventoryViewModel(path, query,
+            (history, token) => SendBoundAsync(new(FluxVaultIpcCommand.ListHistoryPage, null, null, null, null, HistoryQuery: history), token),
+            (snapshot, token) => SendBoundAsync(new(FluxVaultIpcCommand.GetSnapshotPage, null, null, null, null, SnapshotQuery: snapshot), token),
+            version => RestoreVersionAsync(ToVersionRow(version)), version => OpenVersionPreviewAsync(ToVersionRow(version)));
+        await inventory.InitialiseAsync().ConfigureAwait(true);
+        return inventory;
+    }
+
+    internal async Task ShowVersionsForPathAsync(string path)
+    {
+        VersionInventoryViewModel inventory;
         try
         {
-            var response = await SendBoundAsync(FluxVaultIpcRequest.ListVersions()).ConfigureAwait(true);
-            if (!response.Success || response.Versions is null)
-            {
-                SetServiceStatus($"Service connection: backup inventory failed ({response.ErrorMessage ?? "no versions returned"})");
-                return EmptyVersionInventory(path);
-            }
-
-            var fullPath = Path.GetFullPath(path);
-            var exactMatch = response.Versions.Any(version => IsSamePath(version.SourcePath, fullPath));
-            var folderPath = exactMatch
-                ? Path.GetDirectoryName(fullPath) ?? fullPath
-                : fullPath;
-            return new VersionInventoryViewModel(
-                folderPath,
-                response.Versions,
-                version => RestoreVersionAsync(ToVersionRow(version)),
-                version => OpenVersionPreviewAsync(ToVersionRow(version)),
-                fullPath);
+            inventory = await CreateVersionInventoryForPathAsync(path).ConfigureAwait(true);
         }
-        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or TimeoutException or
+            InvalidOperationException or ArgumentException or OperationCanceledException)
         {
-            SetServiceStatus($"Service connection: backup inventory failed ({ex.Message})");
-            return EmptyVersionInventory(path);
+            SetServiceStatus($"History unavailable ({ex.Message}). Refresh the service status and try again.");
+            return;
         }
-    }
-
-    private async Task ShowVersionsForPathAsync(string path)
-    {
-        var inventory = await CreateVersionInventoryForPathAsync(path).ConfigureAwait(true);
         VersionInventoryRequested?.Invoke(this, new VersionInventoryRequestedEventArgs(inventory));
-        SetServiceStatus(inventory.Versions.Count == 0
+        SetServiceStatus(!inventory.HasAuthoritativeHistory ? inventory.HistoryStatus : inventory.Versions.Count == 0
             ? $"Service connection: no restorable versions found for {path}"
             : $"Service connection: showing versions for {path}");
-    }
-
-    private VersionInventoryViewModel EmptyVersionInventory(string folderPath)
-    {
-        return new VersionInventoryViewModel(
-            folderPath,
-            [],
-            version => RestoreVersionAsync(ToVersionRow(version)),
-            version => OpenVersionPreviewAsync(ToVersionRow(version)));
     }
 
     private static VersionRow ToVersionRow(VersionInventoryVersionRow version)

@@ -154,7 +154,7 @@ public partial class App : System.Windows.Application
         {
             activityPaneWindow = new ActivityPaneWindow
             {
-                DataContext = new ActivityPaneViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient()),
+                DataContext = new ActivityPaneViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient(FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService())),
                 ShowInTaskbar = false
             };
             activityPaneWindow.Closed += (_, _) => activityPaneWindow = null;
@@ -196,7 +196,7 @@ public partial class App : System.Windows.Application
             owner = mainWindow;
         }
 
-        var window = new OptionsWindow(new OptionsViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient()))
+        var window = new OptionsWindow(new OptionsViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient(FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService())))
         {
             Owner = owner
         };
@@ -209,7 +209,7 @@ public partial class App : System.Windows.Application
 
     private static async Task SetProtectionPausedAsync()
     {
-        var client = new FluxVault.Core.Ipc.NamedPipeFluxVaultClient();
+        var client = new FluxVault.Core.Ipc.NamedPipeFluxVaultClient(FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService());
         _ = await client.SendAsync(FluxVault.Abstractions.Ipc.FluxVaultIpcRequest.SetProtectionPaused());
     }
 

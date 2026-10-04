@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8f5dfb3f-a301-4cff-bef5-e16e3fe6f5f2" name="os008@OS008-HOME 2026-10-04 04:39:39" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T04:39:39.2968757+03:00" queuing="2026-10-04T04:39:39.2968757+03:00" start="2026-10-04T04:39:38.2817161+03:00" finish="2026-10-04T04:39:39.3016075+03:00" />
+  <TestSettings name="default" id="00de77e2-5fa4-4155-9641-670473c56e2b">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_04_39_39" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="5fa1eb7e-895a-4f2d-b515-0f931efbbba2" testId="b77c9197-34fe-9274-205a-497ae8cc6009" testName="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(kind: &quot;claimed-identity&quot;)" computerName="OS008-HOME" duration="00:00:00.0014211" startTime="2026-10-04T04:39:39.2046738+03:00" endTime="2026-10-04T04:39:39.2051565+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5fa1eb7e-895a-4f2d-b515-0f931efbbba2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 0&#xD;
+Actual:   1</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 38&#xD;
+   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 39&#xD;
+   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 44&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="10acd0c7-5e39-4829-a8b0-cb993c4c9cab" testId="fbf48df7-e2f1-c594-1d7b-048f97cd2f63" testName="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(kind: &quot;oversize&quot;)" computerName="OS008-HOME" duration="00:00:00.1076951" startTime="2026-10-04T04:39:39.1090542+03:00" endTime="2026-10-04T04:39:39.2033963+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="10acd0c7-5e39-4829-a8b0-cb993c4c9cab">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 0&#xD;
+Actual:   1</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 38&#xD;
+   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 39&#xD;
+   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 44&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5d66a399-19b5-45df-832d-4ca386452870" testId="dafd0a67-a7c7-1a6a-3909-b0d93de80b09" testName="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Stop_joins_accepted_work_before_returning" computerName="OS008-HOME" duration="00:00:00.2723123" startTime="2026-10-04T04:39:38.8045120+03:00" endTime="2026-10-04T04:39:39.0932481+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5d66a399-19b5-45df-832d-4ca386452870">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Stop_joins_accepted_work_before_returning() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 64&#xD;
+   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Stop_joins_accepted_work_before_returning() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 71&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dc935dfa-99b5-4002-8d9c-df2bac6bf9d5" testId="3cfa0169-3e9f-e987-ed57-ea747e0bc12b" testName="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(kind: &quot;depth&quot;)" computerName="OS008-HOME" duration="00:00:00.0017596" startTime="2026-10-04T04:39:39.2056592+03:00" endTime="2026-10-04T04:39:39.2072570+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc935dfa-99b5-4002-8d9c-df2bac6bf9d5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 0&#xD;
+Actual:   1</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 38&#xD;
+   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 39&#xD;
+   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 44&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(kind: &quot;oversize&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="fbf48df7-e2f1-c594-1d7b-048f97cd2f63">
+      <Execution id="10acd0c7-5e39-4829-a8b0-cb993c4c9cab" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests" name="Invalid_request_is_refused_before_dispatch" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Stop_joins_accepted_work_before_returning" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="dafd0a67-a7c7-1a6a-3909-b0d93de80b09">
+      <Execution id="5d66a399-19b5-45df-832d-4ca386452870" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests" name="Stop_joins_accepted_work_before_returning" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(kind: &quot;claimed-identity&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="b77c9197-34fe-9274-205a-497ae8cc6009">
+      <Execution id="5fa1eb7e-895a-4f2d-b515-0f931efbbba2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests" name="Invalid_request_is_refused_before_dispatch" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(kind: &quot;depth&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="3cfa0169-3e9f-e987-ed57-ea747e0bc12b">
+      <Execution id="dc935dfa-99b5-4002-8d9c-df2bac6bf9d5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests" name="Invalid_request_is_refused_before_dispatch" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b77c9197-34fe-9274-205a-497ae8cc6009" executionId="5fa1eb7e-895a-4f2d-b515-0f931efbbba2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fbf48df7-e2f1-c594-1d7b-048f97cd2f63" executionId="10acd0c7-5e39-4829-a8b0-cb993c4c9cab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dafd0a67-a7c7-1a6a-3909-b0d93de80b09" executionId="5d66a399-19b5-45df-832d-4ca386452870" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3cfa0169-3e9f-e987-ed57-ea747e0bc12b" executionId="dc935dfa-99b5-4002-8d9c-df2bac6bf9d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.11]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.14]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.45]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.45]       Expected: False&#xD;
+[xUnit.net 00:00:00.45]       Actual:   True&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(64,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Stop_joins_accepted_work_before_returning()&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(71,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Stop_joins_accepted_work_before_returning()&#xD;
+[xUnit.net 00:00:00.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.56]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.56]       Expected: 0&#xD;
+[xUnit.net 00:00:00.56]       Actual:   1&#xD;
+[xUnit.net 00:00:00.56]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(38,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind)&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(39,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind)&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(44,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind)&#xD;
+[xUnit.net 00:00:00.56]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.56]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.56]       Expected: 0&#xD;
+[xUnit.net 00:00:00.56]       Actual:   1&#xD;
+[xUnit.net 00:00:00.56]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(38,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind)&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(39,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind)&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(44,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind)&#xD;
+[xUnit.net 00:00:00.56]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.56]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.56]       Expected: 0&#xD;
+[xUnit.net 00:00:00.56]       Actual:   1&#xD;
+[xUnit.net 00:00:00.56]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(38,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind)&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(39,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind)&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(44,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(String kind)&#xD;
+[xUnit.net 00:00:00.56]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.57]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:39:39.0960928+03:00">
+        <Text>[xUnit.net 00:00:00.45]     FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Stop_joins_accepted_work_before_returning [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:39:39.2037562+03:00">
+        <Text>[xUnit.net 00:00:00.56]     FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(kind: "oversize") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:39:39.2053011+03:00">
+        <Text>[xUnit.net 00:00:00.56]     FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(kind: "claimed-identity") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:39:39.2074040+03:00">
+        <Text>[xUnit.net 00:00:00.56]     FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Invalid_request_is_refused_before_dispatch(kind: "depth") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

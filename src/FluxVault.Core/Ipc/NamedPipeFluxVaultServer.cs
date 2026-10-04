@@ -1,211 +1,165 @@
-using System.IO.Pipes;
 using System.Diagnostics;
-using System.Runtime.Versioning;
-using System.Security.AccessControl;
-using System.Security.Principal;
+using System.IO.Pipes;
+using System.Text.Json;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Core.Diagnostics;
+using FluxVault.Core.Security;
 using Microsoft.Extensions.Logging;
 
 namespace FluxVault.Core.Ipc;
 
-public sealed class NamedPipeFluxVaultServer
+public sealed class NamedPipeFluxVaultServer(
+    IAuthenticatedFluxVaultRequestHandler handler,
+    IFluxVaultPipeServerFactory serverStreamFactory,
+    IFluxVaultCallerContextProvider callerContextProvider,
+    FluxVaultIpcLimits? limits = null,
+    ILogger<NamedPipeFluxVaultServer>? logger = null,
+    TelemetryCollector? telemetryCollector = null)
 {
-    private readonly IFluxVaultRequestHandler handler;
-    private readonly ILogger<NamedPipeFluxVaultServer>? logger;
-    private readonly TelemetryCollector? telemetryCollector;
-    private readonly Func<NamedPipeServerStream> serverStreamFactory;
-
-    public NamedPipeFluxVaultServer(IFluxVaultRequestHandler handler, string pipeName = DefaultPipeName,
-        ILogger<NamedPipeFluxVaultServer>? logger = null, TelemetryCollector? telemetryCollector = null)
-        : this(handler, logger, telemetryCollector, () => CreateServerStreamForCurrentPlatform(pipeName))
-    {
-    }
-
-    internal NamedPipeFluxVaultServer(IFluxVaultRequestHandler handler, ILogger<NamedPipeFluxVaultServer>? logger,
-        TelemetryCollector? telemetryCollector, Func<NamedPipeServerStream> serverStreamFactory)
-    {
-        this.handler = handler;
-        this.logger = logger;
-        this.telemetryCollector = telemetryCollector;
-        this.serverStreamFactory = serverStreamFactory;
-    }
-
     public const string DefaultPipeName = "FluxVault.Service";
-    private const int MaxConcurrentClients = 32;
-    private const int PendingListenerCount = 8;
+    private readonly FluxVaultIpcLimits limits = Validate(limits ?? new());
+    private readonly HashSet<Task> accepted = [];
+    private readonly object acceptedGate = new();
+    private int started;
 
     public async Task RunAsync(CancellationToken cancellationToken)
     {
-        var listeners = Enumerable
-            .Range(0, PendingListenerCount)
-            .Select(_ => AcceptLoopAsync(cancellationToken))
-            .ToArray();
-        await Task.WhenAll(listeners).ConfigureAwait(false);
+        if (Interlocked.Exchange(ref started, 1) != 0) throw new InvalidOperationException("A pipe server has one lifetime.");
+        using var stop = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        using var capacity = new SemaphoreSlim(limits.MaximumConcurrentRequests);
+        // Acquire once before accepting. A collision is fatal; there is no attach/retry fallback.
+        await using var anchor = serverStreamFactory.CreateFirstListener();
+        var listeners = new[] { ServeAnchorAsync(anchor, capacity, stop.Token) }
+            .Concat(Enumerable.Range(1, limits.PendingListeners - 1).Select(_ => AcceptLoopAsync(capacity, stop.Token))).ToArray();
+        try
+        {
+            await Task.WhenAny(listeners).ConfigureAwait(false);
+            await stop.CancelAsync().ConfigureAwait(false);
+            await Task.WhenAll(listeners).ConfigureAwait(false);
+        }
+        finally
+        {
+            await stop.CancelAsync().ConfigureAwait(false);
+            try { await Task.WhenAll(listeners).ConfigureAwait(false); }
+            finally
+            {
+                Task[] pending;
+                lock (acceptedGate) pending = accepted.ToArray();
+                await Task.WhenAll(pending).ConfigureAwait(false);
+            }
+        }
     }
 
-    private async Task AcceptLoopAsync(CancellationToken cancellationToken)
+    private async Task ServeAnchorAsync(NamedPipeServerStream anchor, SemaphoreSlim capacity, CancellationToken cancellationToken)
     {
-        while (!cancellationToken.IsCancellationRequested)
+        try
         {
-            NamedPipeServerStream? pipe = null;
-
-            try
+            while (true)
             {
-                pipe = serverStreamFactory();
-                await pipe.WaitForConnectionAsync(cancellationToken).ConfigureAwait(false);
-                var connectedPipe = pipe;
-                pipe = null;
-                _ = Task.Run(() => HandleConnectionAsync(connectedPipe, cancellationToken), CancellationToken.None);
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                if (pipe is not null)
+                await capacity.WaitAsync(cancellationToken).ConfigureAwait(false);
+                var connected = false;
+                try
                 {
-                    await pipe.DisposeAsync().ConfigureAwait(false);
+                    await anchor.WaitForConnectionAsync(cancellationToken).ConfigureAwait(false);
+                    connected = true;
+                    await HandleConnectionAsync(anchor, cancellationToken).ConfigureAwait(false);
                 }
-
-                return;
-            }
-            catch (IOException)
-            {
-                if (pipe is not null)
+                finally
                 {
-                    await pipe.DisposeAsync().ConfigureAwait(false);
+                    // Handler completion alone is insufficient; HandleConnection includes response delivery.
+                    // EOF can make IsConnected false while the native instance still needs resetting.
+                    if (connected) anchor.Disconnect();
+                    capacity.Release();
                 }
-
-                await Task.Delay(TimeSpan.FromMilliseconds(50), cancellationToken).ConfigureAwait(false);
             }
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
     }
 
-    private static NamedPipeServerStream CreateServerStreamForCurrentPlatform(string pipeName)
+    private async Task AcceptLoopAsync(SemaphoreSlim capacity, CancellationToken cancellationToken)
     {
-        if (OperatingSystem.IsWindows())
+        try
         {
-            return CreateServerStream(pipeName);
+            while (true)
+            {
+                await capacity.WaitAsync(cancellationToken).ConfigureAwait(false);
+                NamedPipeServerStream? pipe = null;
+                var handedOff = false;
+                try
+                {
+                    pipe = serverStreamFactory.CreateAdditionalListener();
+                    await pipe.WaitForConnectionAsync(cancellationToken).ConfigureAwait(false);
+                    var connected = pipe;
+                    pipe = null;
+                    var work = Task.Run(async () =>
+                    {
+                        try { await HandleConnectionAsync(connected, cancellationToken).ConfigureAwait(false); }
+                        finally { await connected.DisposeAsync().ConfigureAwait(false); capacity.Release(); }
+                    }, CancellationToken.None);
+                    handedOff = true;
+                    lock (acceptedGate) accepted.Add(work);
+                    _ = work.ContinueWith(completed =>
+                    {
+                        if (completed.IsFaulted) logger?.LogError(completed.Exception, "FluxVault IPC connection terminated unexpectedly.");
+                        lock (acceptedGate) accepted.Remove(completed);
+                    },
+                        CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+                }
+                finally
+                {
+                    if (pipe is not null) await pipe.DisposeAsync().ConfigureAwait(false);
+                    if (!handedOff) capacity.Release();
+                }
+            }
         }
-
-        return new NamedPipeServerStream(
-            pipeName,
-            PipeDirection.InOut,
-            maxNumberOfServerInstances: MaxConcurrentClients,
-            PipeTransmissionMode.Byte,
-            PipeOptions.Asynchronous);
-    }
-
-    [SupportedOSPlatform("windows")]
-    internal static NamedPipeServerStream CreateServerStream(string pipeName)
-    {
-        return NamedPipeServerStreamAcl.Create(
-            pipeName,
-            PipeDirection.InOut,
-            maxNumberOfServerInstances: MaxConcurrentClients,
-            PipeTransmissionMode.Byte,
-            PipeOptions.Asynchronous,
-            inBufferSize: 0,
-            outBufferSize: 0,
-            CreateDefaultPipeSecurity(),
-            HandleInheritability.None);
-    }
-
-    [SupportedOSPlatform("windows")]
-    internal static PipeSecurity CreateDefaultPipeSecurity()
-    {
-        var security = new PipeSecurity();
-        var currentUser = WindowsIdentity.GetCurrent().User;
-        if (currentUser is not null)
-        {
-            AddAllowRule(security, currentUser, PipeAccessRights.FullControl);
-        }
-
-        AddAllowRule(security, WellKnownSidType.LocalSystemSid, PipeAccessRights.FullControl);
-        AddAllowRule(security, WellKnownSidType.BuiltinAdministratorsSid, PipeAccessRights.FullControl);
-        AddAllowRule(security, WellKnownSidType.AuthenticatedUserSid, PipeAccessRights.ReadWrite);
-        AddAllowRule(security, WellKnownSidType.WinBuiltinAnyPackageSid, PipeAccessRights.ReadWrite);
-        return security;
-    }
-
-    [SupportedOSPlatform("windows")]
-    private static void AddAllowRule(PipeSecurity security, WellKnownSidType sidType, PipeAccessRights rights)
-    {
-        var sid = new SecurityIdentifier(sidType, null);
-        AddAllowRule(security, sid, rights);
-    }
-
-    [SupportedOSPlatform("windows")]
-    private static void AddAllowRule(PipeSecurity security, SecurityIdentifier sid, PipeAccessRights rights)
-    {
-        security.AddAccessRule(new PipeAccessRule(sid, rights, AccessControlType.Allow));
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
     }
 
     private async Task HandleConnectionAsync(NamedPipeServerStream pipe, CancellationToken cancellationToken)
     {
+        FluxVaultCallerContext? caller = null;
         try
         {
-            using var reader = new StreamReader(pipe, leaveOpen: true);
-            await using var writer = new StreamWriter(pipe, leaveOpen: true) { AutoFlush = true };
-            var line = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false);
-            var response = line is null
-                ? FluxVaultIpcResponse.Failure("Empty IPC request.")
-                : await DeserializeAndHandleSafeAsync(line, cancellationToken).ConfigureAwait(false);
-            await writer.WriteLineAsync(FluxVaultIpcSerializer.SerializeResponse(response)).ConfigureAwait(false);
+            FluxVaultIpcResponse response;
+            try
+            {
+                var request = await FluxVaultIpcFrame.ReadAsync<FluxVaultIpcRequest>(pipe, limits.MaximumRequestBytes,
+                    limits.MaximumJsonDepth, limits.FrameReadTimeout, cancellationToken).ConfigureAwait(false);
+                caller = callerContextProvider.Capture(pipe);
+                var stopwatch = Stopwatch.StartNew();
+                telemetryCollector?.RecordIpcRequestStarted(request.Command);
+                response = await handler.HandleAsync(caller, request, cancellationToken).ConfigureAwait(false);
+                telemetryCollector?.RecordIpcRequestCompleted(request.Command, stopwatch.Elapsed, response.Success);
+            }
+            catch (UnauthorizedAccessException exception)
+            {
+                logger?.LogWarning(exception, "FluxVault IPC caller authentication or authorisation failed.");
+                response = FluxVaultIpcResponse.Failure("Access to the requested vault is denied.");
+            }
+            catch (Exception exception) when (exception is InvalidDataException or JsonException or ArgumentException or IOException)
+            {
+                logger?.LogWarning(exception, "FluxVault IPC request was refused.");
+                response = FluxVaultIpcResponse.Failure("The service could not accept this request.");
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                logger?.LogError(exception, "FluxVault IPC operation failed.");
+                response = FluxVaultIpcResponse.Failure("The service could not complete this request.");
+            }
+            await FluxVaultIpcFrame.WriteAsync(pipe, response, limits.MaximumResponseBytes, limits.MaximumJsonDepth,
+                limits.FrameWriteTimeout, cancellationToken).ConfigureAwait(false);
+            using var receiptDeadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            receiptDeadline.CancelAfter(limits.FrameWriteTimeout);
+            var receipt = new byte[1];
+            var received = await pipe.ReadAsync(receipt, receiptDeadline.Token).ConfigureAwait(false);
+            if (received != 1 || receipt[0] != 6)
+                logger?.LogTrace("FluxVault IPC response receipt was not confirmed.");
         }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-        }
-        catch (IOException)
-        {
-        }
-        finally
-        {
-            await pipe.DisposeAsync().ConfigureAwait(false);
-        }
+        catch (OperationCanceledException) { }
+        catch (IOException) { }
+        catch (InvalidDataException exception) { logger?.LogWarning(exception, "FluxVault IPC response exceeds the frame limit."); }
+        finally { caller?.Dispose(); }
     }
 
-    private async Task<FluxVaultIpcResponse> DeserializeAndHandleSafeAsync(string line, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var request = FluxVaultIpcSerializer.DeserializeRequest(line);
-            var stopwatch = Stopwatch.StartNew();
-            telemetryCollector?.RecordIpcRequestStarted(request.Command);
-            logger?.LogTrace("IPC {Command} request started.", request.Command);
-            var response = await HandleSafeAsync(request, cancellationToken).ConfigureAwait(false);
-            telemetryCollector?.RecordIpcRequestCompleted(request.Command, stopwatch.Elapsed, response.Success);
-            logger?.LogTrace(
-                "IPC {Command} request completed in {ElapsedMilliseconds} ms with success={Success}.",
-                request.Command,
-                stopwatch.Elapsed.TotalMilliseconds,
-                response.Success);
-            return response;
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or ArgumentException)
-        {
-            return FluxVaultIpcResponse.Failure(ex.Message);
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
-            logger?.LogWarning(ex, "Failed to process FluxVault IPC request payload.");
-            return FluxVaultIpcResponse.Failure(ex.Message);
-        }
-    }
-
-    private async Task<FluxVaultIpcResponse> HandleSafeAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
-    {
-        try
-        {
-            return await handler.HandleAsync(request, cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or ArgumentException)
-        {
-            return FluxVaultIpcResponse.Failure(ex.Message);
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
-            logger?.LogError(ex, "Unexpected FluxVault IPC handler exception for {Command}.", request.Command);
-            return FluxVaultIpcResponse.Failure(ex.Message);
-        }
-    }
-
+    private static FluxVaultIpcLimits Validate(FluxVaultIpcLimits value) { value.Validate(); return value; }
 }

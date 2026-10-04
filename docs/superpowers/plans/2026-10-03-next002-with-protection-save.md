@@ -1,6 +1,6 @@
 # NEXT-002 with the bounded protection-save batch
 
-Status: implementation resumed after the user's approval, 3 October 2026. Batch C is complete in the isolated branch: 722 passing tests, zero-warning Release build, native failure/retry checks and independent review. S1–S3 are unimplemented. Baseline `afdfe1f`; branch `codex/next002-planning-20261003`. One implementation owner; independent review at the consequential security/isolation gates. No normal-installation change, deployment or merge is included.
+Status: implementation resumed after the user's approval, 3 October 2026. Batch C is complete in the isolated branch: 722 passing tests, zero-warning Release build, native failure/retry checks and independent review. S1 is underway with reviewed disposable SSPI and authenticated/bounded transport prerequisites; the product vault authorisation/isolation and S1–S3 acceptance remain incomplete. Baseline `afdfe1f`; branch `codex/next002-planning-20261003`. One implementation owner; independent review at the consequential security/isolation gates. No normal-installation change, deployment or merge is included.
 
 [Independent Astra planning review](../../verification/2026-10-03-next002-planning/independent-design-review.md) approved this proposal without blocking corrections. The user subsequently accepted the recommended default: a new vault belongs to its creating Windows user, with explicit access grants for other users or groups. This resolves the review's pending product decision; it does not replace future runtime evidence or authorise implementation during the requested pause.
 
@@ -69,6 +69,8 @@ This batch is consequential. Read the recorded independent architecture/security
 
 The [disposable Windows prerequisite](../../verification/2026-10-03-next002-windows-fixture/README.md) passed independent review on 4 October: actual SYSTEM password-free SSPI admission, A/B database and protected-file denials on both loopbacks, complete teardown and unchanged installation. This clears the prerequisite investigation, not the unimplemented product security or normal-installation gates below.
 
+The [bounded pipe transport milestone](../../verification/2026-10-04-next002-pipe/README.md) is implemented and independently approved: connected-handle owner/DACL checks before data, owned effective caller tokens, retained served anchor, bounded framing/admission and joined shutdown. Native standard-user-to-SYSTEM, packaged/remote and vault policy/path/isolation cases remain required. This intermediate branch is not deployable until the authenticated vault dispatcher is composed and the full gates pass.
+
 **Source map:**
 
 | Boundary | Existing files | New focused contracts/helpers proposed |
@@ -132,4 +134,4 @@ Do not rewrite or reorder the programme to accommodate this batch. If S1 remains
 
 The requested pause ended when the user approved implementation after the model switch. No model change is claimed or performed by this plan. Continue in this existing worktree using the spec, plan and retained evidence; do not repeat the completed audit, regenerate concepts or reopen the accepted access-default decision without new evidence.
 
-Batch C is complete in this worktree; preserve its red/green and native evidence. The user authorised the [named Windows fixture](../../verification/2026-10-03-next002-windows-fixture/README.md) on 4 October; its reviewed disposable rehearsal is underway. S1–S3 product security and their runtime gates remain incomplete. C can be delivered independently without weakening NEXT-002. A visual direction still needs selection before the broader UI implementation, but does not block C or security work. Normal deployment or installed PostgreSQL changes retain their separate concrete authorisation gate.
+Batch C is complete in this worktree; preserve its red/green and native evidence. The user authorised the [named Windows fixture](../../verification/2026-10-03-next002-windows-fixture/README.md) on 4 October; its reviewed disposable rehearsal passed with complete teardown. The reviewed transport prerequisite is also implemented. S1–S3 product security and their runtime gates remain incomplete. C can be delivered independently without weakening NEXT-002. A visual direction still needs selection before the broader UI implementation, but does not block C or security work. Normal deployment or installed PostgreSQL changes retain their separate concrete authorisation gate.

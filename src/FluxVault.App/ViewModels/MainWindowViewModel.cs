@@ -228,7 +228,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel()
         : this(
-            new NamedPipeFluxVaultClient(),
+            new NamedPipeFluxVaultClient(FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService()),
             TimeSpan.FromSeconds(5),
             new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
             new WindowsFluxVaultServiceController(),

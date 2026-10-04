@@ -17,6 +17,10 @@ using FluxVault.Core.Storage;
 using FluxVault.Core.Storage.Integrity;
 using FluxVault.Core.Storage.Metadata;
 using FluxVault.Testing;
+using FluxVault.Windows.Security;
+using FluxVault.Core.Security;
+using System.Security.Principal;
+using System.Runtime.Versioning;
 
 namespace FluxVault.TestHost;
 
@@ -114,9 +118,7 @@ internal static class Program
                     maintenanceStateRoot: Path.Combine(scratch, "state"), metadataStoreFactory: _ => store,
                     repositoryFactory: _ => new FileSystemChunkRepository(root, new FastCdcChunker(new ChunkingOptions(64 * 1024, 256 * 1024, 1024 * 1024)),
                         new Blake3ContentHasher(), new ZstdChunkCodec(), mirrors, store, null, faults));
-                var server = new NamedPipeFluxVaultServer(new FixtureHandler(operations, scratch), null, null,
-                    () => new NamedPipeServerStream(pipe, PipeDirection.InOut, 32, PipeTransmissionMode.Byte,
-                        PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly));
+                var server = CreatePrivateServer(pipe, operations, scratch);
                 var serving = server.RunAsync(CancellationToken.None);
                 Console.WriteLine("READY");
                 await serving;
@@ -172,7 +174,7 @@ internal static class Program
 
     private static void ShowUi(Dictionary<string, string> options, string scratch)
     {
-        var client = new NamedPipeFluxVaultClient(PrivatePipe(options));
+        var client = CreatePrivateClient(PrivatePipe(options));
         var application = new System.Windows.Application();
         var viewModel = new MainWindowViewModel(client, TimeSpan.FromSeconds(2),
             new FileBrowserViewModel(new FixtureFileSystem(scratch)), new FixtureServiceController(),
@@ -203,10 +205,27 @@ internal static class Program
         public Task<FluxVaultConfiguration> LoadAsync(CancellationToken cancellationToken = default) => Task.FromResult(configuration);
         public Task SaveAsync(FluxVaultConfiguration value, CancellationToken cancellationToken = default) => throw new NotSupportedException("Fixture configuration is fixed.");
     }
-    private sealed class FixtureHandler(FluxVaultOperations operations, string scratch) : IFluxVaultRequestHandler
+    [SupportedOSPlatform("windows")]
+    private static NamedPipeFluxVaultServer CreatePrivateServer(string pipe, FluxVaultOperations operations, string scratch)
     {
-        public Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
+        using var identity = WindowsIdentity.GetCurrent();
+        return new(new FixtureHandler(operations, scratch, identity.User!.Value),
+            WindowsFluxVaultPipeServerFactory.ForPrivateFixture(pipe), new WindowsFluxVaultCallerContextProvider());
+    }
+
+    [SupportedOSPlatform("windows")]
+    private static NamedPipeFluxVaultClient CreatePrivateClient(string pipe)
+    {
+        using var identity = WindowsIdentity.GetCurrent();
+        return new(WindowsFluxVaultPipeClientFactory.ForPrivateFixture(pipe, identity.User!.Value));
+    }
+
+    private sealed class FixtureHandler(FluxVaultOperations operations, string scratch, string ownerSid) : IAuthenticatedFluxVaultRequestHandler
+    {
+        public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
         {
+            if (caller.UserSid != ownerSid || !caller.ImpersonationPermitted)
+                return FluxVaultIpcResponse.Failure("Access to the fixture is denied.");
             if (request.Command is not (FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.GetActivity or FluxVaultIpcCommand.GetPerformance or
                 FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.GetSyncStatus or FluxVaultIpcCommand.GetRepositoryHealth or
                 FluxVaultIpcCommand.RunBackupNow or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.InspectVersion or
@@ -215,12 +234,17 @@ internal static class Program
                 FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair or FluxVaultIpcCommand.RunRepositoryScrub or
                 FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain or FluxVaultIpcCommand.PreviewMirrorRebalance or
                 FluxVaultIpcCommand.RunMirrorRebalance or FluxVaultIpcCommand.RunRestoreRehearsal))
-                return Task.FromResult(FluxVaultIpcResponse.Failure("Command is outside the isolated fixture scope."));
+                return FluxVaultIpcResponse.Failure("Command is outside the isolated fixture scope.");
             if (request.SourcePath is not null) FixturePath(scratch, request.SourcePath);
-            if (request.Configuration is not null) return Task.FromResult(FluxVaultIpcResponse.Failure("Fixture configuration cannot be changed."));
+            if (request.Configuration is not null) return FluxVaultIpcResponse.Failure("Fixture configuration cannot be changed.");
             if (request.OutputPath is not null) FixturePath(scratch, request.OutputPath);
             if (request.DestinationPath is not null) FixturePath(scratch, request.DestinationPath);
-            return operations.HandleAsync(request, cancellationToken);
+            try { return await operations.HandleAsync(request, cancellationToken); }
+            catch (IOException exception)
+            {
+                // This explicit same-owner fixture validates all paths above before exposing a domain error.
+                return FluxVaultIpcResponse.Failure(exception.Message);
+            }
         }
     }
     private sealed class FixturePreviewLauncher(string scratch) : IVersionPreviewLauncher

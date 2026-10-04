@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ca6f3e2d-6353-4cb7-b112-9f5dc239c53e" name="os008@OS008-HOME 2026-10-04 04:51:41" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T04:51:41.9751063+03:00" queuing="2026-10-04T04:51:41.9751070+03:00" start="2026-10-04T04:51:38.6183010+03:00" finish="2026-10-04T04:51:43.3498382+03:00" />
+  <TestSettings name="default" id="f929056d-b7ae-4b3b-8cd8-e48035241f4d">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_04_51_41" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="5b17b736-a45a-44d3-a469-a0d9464517c0" testId="2535ba27-32a3-556a-ab30-ac50fbb25e0a" testName="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(kind: &quot;truncated&quot;)" computerName="OS008-HOME" duration="00:00:02.0178026" startTime="2026-10-04T04:51:39.1453201+03:00" endTime="2026-10-04T04:51:41.1786464+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b17b736-a45a-44d3-a469-a0d9464517c0">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.IOException : Pipe is broken.</Message>
+          <StackTrace>   at System.IO.Pipes.NamedPipeServerStream.CheckConnectOperationsServer()&#xD;
+   at System.IO.Pipes.NamedPipeServerStream.WaitForConnectionCoreAsync(CancellationToken cancellationToken)&#xD;
+   at System.IO.Pipes.NamedPipeServerStream.WaitForConnectionAsync(CancellationToken cancellationToken)&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.ServeAnchorAsync(NamedPipeServerStream anchor, SemaphoreSlim capacity, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs:line 62&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs:line 43&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs:line 48&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs:line 48&#xD;
+   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 137&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9789b71f-f02a-4083-abe9-6c4fb5e0f90c" testId="7e45e134-5059-f94e-38f3-4623d662e086" testName="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(kind: &quot;no-frame&quot;)" computerName="OS008-HOME" duration="00:00:02.0060170" startTime="2026-10-04T04:51:41.1906204+03:00" endTime="2026-10-04T04:51:43.1859538+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9789b71f-f02a-4083-abe9-6c4fb5e0f90c">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.IOException : Pipe is broken.</Message>
+          <StackTrace>   at System.IO.Pipes.NamedPipeServerStream.CheckConnectOperationsServer()&#xD;
+   at System.IO.Pipes.NamedPipeServerStream.WaitForConnectionCoreAsync(CancellationToken cancellationToken)&#xD;
+   at System.IO.Pipes.NamedPipeServerStream.WaitForConnectionAsync(CancellationToken cancellationToken)&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.ServeAnchorAsync(NamedPipeServerStream anchor, SemaphoreSlim capacity, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs:line 62&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs:line 43&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs:line 48&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs:line 48&#xD;
+   at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(String kind) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs:line 137&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="67cf7ebb-6cc8-49f9-aa89-55b346c1435c" testId="6fa9a32b-8fc5-ed38-d4b9-f5e43f80c585" testName="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(kind: &quot;no-receipt&quot;)" computerName="OS008-HOME" duration="00:00:00.1087778" startTime="2026-10-04T04:51:43.1875605+03:00" endTime="2026-10-04T04:51:43.2952938+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="67cf7ebb-6cc8-49f9-aa89-55b346c1435c" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(kind: &quot;no-frame&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="7e45e134-5059-f94e-38f3-4623d662e086">
+      <Execution id="9789b71f-f02a-4083-abe9-6c4fb5e0f90c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests" name="Broken_peer_does_not_release_the_anchor_or_stop_later_requests" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(kind: &quot;truncated&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="2535ba27-32a3-556a-ab30-ac50fbb25e0a">
+      <Execution id="5b17b736-a45a-44d3-a469-a0d9464517c0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests" name="Broken_peer_does_not_release_the_anchor_or_stop_later_requests" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(kind: &quot;no-receipt&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="6fa9a32b-8fc5-ed38-d4b9-f5e43f80c585">
+      <Execution id="67cf7ebb-6cc8-49f9-aa89-55b346c1435c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests" name="Broken_peer_does_not_release_the_anchor_or_stop_later_requests" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2535ba27-32a3-556a-ab30-ac50fbb25e0a" executionId="5b17b736-a45a-44d3-a469-a0d9464517c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7e45e134-5059-f94e-38f3-4623d662e086" executionId="9789b71f-f02a-4083-abe9-6c4fb5e0f90c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6fa9a32b-8fc5-ed38-d4b9-f5e43f80c585" executionId="67cf7ebb-6cc8-49f9-aa89-55b346c1435c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="1" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.14]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:02.20]       System.IO.IOException : Pipe is broken.&#xD;
+[xUnit.net 00:00:02.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.20]            at System.IO.Pipes.NamedPipeServerStream.CheckConnectOperationsServer()&#xD;
+[xUnit.net 00:00:02.20]            at System.IO.Pipes.NamedPipeServerStream.WaitForConnectionCoreAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.20]            at System.IO.Pipes.NamedPipeServerStream.WaitForConnectionAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs(62,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.ServeAnchorAsync(NamedPipeServerStream anchor, SemaphoreSlim capacity, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs(43,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs(48,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs(48,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(137,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(String kind)&#xD;
+[xUnit.net 00:00:02.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.20]       System.IO.IOException : Pipe is broken.&#xD;
+[xUnit.net 00:00:04.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.20]            at System.IO.Pipes.NamedPipeServerStream.CheckConnectOperationsServer()&#xD;
+[xUnit.net 00:00:04.20]            at System.IO.Pipes.NamedPipeServerStream.WaitForConnectionCoreAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.20]            at System.IO.Pipes.NamedPipeServerStream.WaitForConnectionAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs(62,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.ServeAnchorAsync(NamedPipeServerStream anchor, SemaphoreSlim capacity, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs(43,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs(48,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultServer.cs(48,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultServer.RunAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\NamedPipeServiceBoundaryTests.cs(137,0): at FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(String kind)&#xD;
+[xUnit.net 00:00:04.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.32]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:51:41.1813769+03:00">
+        <Text>[xUnit.net 00:00:02.20]     FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(kind: "truncated") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:51:43.1866951+03:00">
+        <Text>[xUnit.net 00:00:04.20]     FluxVault.Windows.Tests.NamedPipeServiceBoundaryTests.Broken_peer_does_not_release_the_anchor_or_stop_later_requests(kind: "no-frame") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

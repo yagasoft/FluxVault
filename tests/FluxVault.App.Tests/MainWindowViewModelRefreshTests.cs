@@ -903,9 +903,9 @@ public sealed class MainWindowViewModelRefreshTests
         var saved = Assert.Single(client.SavedConfigurations);
         Assert.Equal(expectedPerformance, saved.PerformanceWorkspace);
         Assert.Equal(expectedShell, saved.ShellIntegration);
-        Assert.Equal(expectedDirectCloud, saved.DirectCloud);
-        Assert.Equal(expectedSecurity, saved.SecurityPosture);
-        Assert.Equal(expectedFleet, saved.Fleet);
+        Assert.Equal(System.Text.Json.JsonSerializer.Serialize(expectedDirectCloud), System.Text.Json.JsonSerializer.Serialize(saved.DirectCloud));
+        Assert.Equal(System.Text.Json.JsonSerializer.Serialize(expectedSecurity), System.Text.Json.JsonSerializer.Serialize(saved.SecurityPosture));
+        Assert.Equal(System.Text.Json.JsonSerializer.Serialize(expectedFleet), System.Text.Json.JsonSerializer.Serialize(saved.Fleet));
     }
 
     [Fact]

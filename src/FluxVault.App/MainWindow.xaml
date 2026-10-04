@@ -64,6 +64,10 @@
                         HorizontalAlignment="Left" Margin="0,6,0,0"
                         Visibility="{Binding HasUnconfirmedBackup, Converter={StaticResource BooleanToVisibilityConverter}}"
                         ToolTip="Check the retained operation receipt without requesting another backup." />
+                <Button Name="CheckProtectionSaveOutcomeButton" Content="Check save outcome" Command="{Binding CheckProtectionSaveOutcomeCommand}"
+                        HorizontalAlignment="Left" Margin="0,6,0,0"
+                        Visibility="{Binding HasUnconfirmedProtectionSave, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        ToolTip="Check the original protection save receipt. This does not save again or start a backup." />
                 <Border Name="ServiceAvailabilityWarning"
                         Background="#FFF4CE"
                         BorderBrush="#F0B429"

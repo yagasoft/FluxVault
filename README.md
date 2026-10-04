@@ -424,6 +424,16 @@ the copy read-only and opens it as the requesting user. Publication warnings
 remain visible even if opening fails. Read-only attributes discourage accidental
 editing; the copy's owner can still edit it deliberately.
 
+The single-vault dashboard retains a protection save's full submitted snapshot
+and original operation identity before dispatch. If its acknowledgement is lost,
+reopening shows **Check save outcome**. Refreshing settings alone does not prove
+that save completed, and checking its receipt never starts a backup. Missing or
+mismatched receipts keep the snapshot blocked. A confirmed purge failure or a
+historical save followed by different current settings requires review and an
+explicit **Discard changes** reload before continuing. Unreadable records are
+preserved. This protection-save recovery does not yet persist Options saves or
+edits that have never been submitted.
+
 The **Advanced** options page controls capture cadence and compression. It also
 edits the skip-extension list used to avoid compressing formats such as archives
 or media that are already compressed. Workload presets use this skip list as the

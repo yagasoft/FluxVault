@@ -21,6 +21,233 @@ namespace FluxVault.App.Tests;
 public sealed class ProtectionSaveContractTests
 {
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Restarted_dashboard_retains_the_durable_backup_identity_and_checks_it_without_a_second_backup(bool profileStore)
+    {
+        using var fixture = new StoreFixture(profileStore);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var path = Path.Combine(fixture.Root, "pending-backup.json");
+        var client = new StoreClient(fixture.Store) { BackupFailure = SaveFailure.Timeout, RequireBoundRequests = true };
+        client.BackupDispatchCheck = request =>
+        {
+            var persisted = Assert.IsType<PendingBackupOperation>(new FileBackupOperationStore(path).Read());
+            Assert.Equal(request.VaultId!.Value.Value, persisted.RepositoryId);
+            Assert.Equal(request.OperationId, persisted.OperationId);
+            Assert.Equal(request.ExpectedVaultRevision, persisted.Revision);
+        };
+        var first = CreateViewModel(client, backupStore: new FileBackupOperationStore(path));
+        await first.RefreshAsync();
+        first.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "pending-project"));
+        await first.RunBackupNowCommand.ExecuteAsync(null);
+        var operation = first.UnconfirmedBackupOperationId;
+        Assert.NotNull(operation);
+        var restarted = CreateViewModel(client, backupStore: new FileBackupOperationStore(path));
+        await restarted.RefreshAsync();
+        Assert.Equal(operation, restarted.UnconfirmedBackupOperationId);
+        await restarted.RunBackupNowCommand.ExecuteAsync(null);
+        Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.RunBackupNow);
+        await restarted.CheckBackupOutcomeCommand.ExecuteAsync(null);
+        Assert.Equal(operation, Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.GetOperationStatus).OperationId);
+        Assert.Null(restarted.UnconfirmedBackupOperationId);
+        Assert.Null(new FileBackupOperationStore(path).Read());
+    }
+
+    [Fact]
+    public async Task Pending_backup_from_a_different_repository_blocks_dispatch_and_is_preserved()
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var path = Path.Combine(fixture.Root, "pending-backup.json");
+        var store = new FileBackupOperationStore(path);
+        var pending = new PendingBackupOperation(Guid.NewGuid(), Guid.NewGuid(), 1);
+        store.Reserve(pending);
+        var client = new StoreClient(fixture.Store);
+        var dashboard = CreateViewModel(client, backupStore: store);
+        await dashboard.RefreshAsync();
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        await dashboard.CheckBackupOutcomeCommand.ExecuteAsync(null);
+        Assert.DoesNotContain(client.Requests, request => request.Command is FluxVaultIpcCommand.RunBackupNow or FluxVaultIpcCommand.GetOperationStatus);
+        Assert.Equal(pending, store.Read());
+        Assert.Contains("binding", dashboard.BackupOutcomeMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Unreadable_or_busy_client_record_prevents_backup_dispatch_and_keeps_the_draft(bool corrupt)
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var path = Path.Combine(fixture.Root, "pending-backup.json");
+        if(corrupt) File.WriteAllText(path, "not-json");
+        using var held = corrupt ? null : new FileStream(path + ".lock", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        var client = new StoreClient(fixture.Store);
+        var dashboard = CreateViewModel(client, backupStore: new FileBackupOperationStore(path));
+        await dashboard.RefreshAsync();
+        dashboard.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "pending-project"));
+        Assert.Null(await Record.ExceptionAsync(() => dashboard.RunBackupNowCommand.ExecuteAsync(null)));
+        Assert.DoesNotContain(client.Requests, request => request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.RunBackupNow);
+        Assert.NotEmpty(dashboard.FileBrowser.PendingChanges);
+        Assert.Contains("record", dashboard.BackupOutcomeMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Receipt_for_a_different_revision_cannot_clear_the_durable_backup_record()
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var store = new FileBackupOperationStore(Path.Combine(fixture.Root, "pending-backup.json"));
+        var client = new StoreClient(fixture.Store) { BackupFailure = SaveFailure.Timeout, ReceiptRevisionOverride = 900 };
+        var dashboard = CreateViewModel(client, backupStore: store);
+        await dashboard.RefreshAsync();
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        var pending = Assert.IsType<PendingBackupOperation>(store.Read());
+        await dashboard.CheckBackupOutcomeCommand.ExecuteAsync(null);
+        Assert.Equal(pending, store.Read());
+        Assert.Equal(pending.OperationId, dashboard.UnconfirmedBackupOperationId);
+    }
+
+    [Fact]
+    public async Task Confirmed_backup_clears_the_record_and_can_be_requested_again()
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var store = new FileBackupOperationStore(Path.Combine(fixture.Root, "pending-backup.json"));
+        var client = new StoreClient(fixture.Store);
+        var dashboard = CreateViewModel(client, backupStore: store);
+        await dashboard.RefreshAsync();
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        Assert.Null(store.Read());
+        Assert.False(dashboard.HasUnconfirmedBackup);
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        Assert.Equal(2, client.Requests.Count(request => request.Command == FluxVaultIpcCommand.RunBackupNow));
+        Assert.Null(store.Read());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(bool acknowledgementLost)
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var path = Path.Combine(fixture.Root, "pending-backup.json");
+        var client = new StoreClient(fixture.Store)
+        {
+            BackupFailure = acknowledgementLost ? SaveFailure.Timeout : SaveFailure.None,
+            BackupCompletedUnsuccessfully = true
+        };
+        var dashboard = CreateViewModel(client, backupStore: new FileBackupOperationStore(path));
+        await dashboard.RefreshAsync();
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        if (acknowledgementLost)
+        {
+            Assert.True(dashboard.HasUnconfirmedBackup);
+            dashboard = CreateViewModel(client, backupStore: new FileBackupOperationStore(path));
+            await dashboard.RefreshAsync();
+            await dashboard.CheckBackupOutcomeCommand.ExecuteAsync(null);
+        }
+        Assert.False(dashboard.HasUnconfirmedBackup);
+        Assert.Null(new FileBackupOperationStore(path).Read());
+        Assert.Contains("failed", dashboard.BackupOutcomeMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("capture unavailable", dashboard.BackupOutcomeMessage, StringComparison.OrdinalIgnoreCase);
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        Assert.Equal(2, client.Requests.Count(request => request.Command == FluxVaultIpcCommand.RunBackupNow));
+    }
+
+    [Fact]
+    public async Task A_failed_record_clear_keeps_the_confirmed_operation_pending_until_it_can_be_cleared()
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var path = Path.Combine(fixture.Root, "pending-backup.json");
+        var store = new FileBackupOperationStore(path);
+        FileStream? held = null;
+        var client = new StoreClient(fixture.Store)
+        {
+            BackupDispatchCheck = _ => held = new FileStream(path + ".lock", FileMode.Open, FileAccess.ReadWrite, FileShare.None)
+        };
+        var dashboard = CreateViewModel(client, backupStore: store);
+        try
+        {
+            await dashboard.RefreshAsync();
+            await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+            Assert.True(dashboard.HasUnconfirmedBackup);
+            Assert.Contains("could not be cleared", dashboard.BackupOutcomeMessage);
+        }
+        finally { held?.Dispose(); }
+        var pending = Assert.IsType<PendingBackupOperation>(store.Read());
+        Assert.Equal(pending.OperationId, dashboard.UnconfirmedBackupOperationId);
+        await dashboard.CheckBackupOutcomeCommand.ExecuteAsync(null);
+        Assert.Null(store.Read());
+        Assert.False(dashboard.HasUnconfirmedBackup);
+        Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.RunBackupNow);
+    }
+
+    [Theory]
+    [InlineData(FluxVaultIpcErrorCode.Denied)]
+    [InlineData(FluxVaultIpcErrorCode.Unavailable)]
+    [InlineData(FluxVaultIpcErrorCode.OutcomeUnknown)]
+    public async Task A_refused_or_missing_receipt_keeps_the_original_durable_operation(FluxVaultIpcErrorCode error)
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var store = new FileBackupOperationStore(Path.Combine(fixture.Root, "pending-backup.json"));
+        var client = new StoreClient(fixture.Store) { BackupFailure = SaveFailure.Timeout, ReceiptErrorCode = error };
+        var dashboard = CreateViewModel(client, backupStore: store);
+        await dashboard.RefreshAsync();
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        var pending = Assert.IsType<PendingBackupOperation>(store.Read());
+        await dashboard.CheckBackupOutcomeCommand.ExecuteAsync(null);
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        Assert.Equal(pending, store.Read());
+        Assert.Equal(pending.OperationId, dashboard.UnconfirmedBackupOperationId);
+        Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.RunBackupNow);
+    }
+
+    [Fact]
+    public async Task A_confirmed_original_receipt_can_clear_after_configuration_revision_has_advanced()
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var store = new FileBackupOperationStore(Path.Combine(fixture.Root, "pending-backup.json"));
+        var client = new StoreClient(fixture.Store) { BackupFailure = SaveFailure.Timeout };
+        var dashboard = CreateViewModel(client, backupStore: store);
+        await dashboard.RefreshAsync();
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        var pending = Assert.IsType<PendingBackupOperation>(store.Read());
+        client.ReceiptRevisionOverride = pending.Revision;
+        dashboard.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "later-edit"));
+        await dashboard.SaveConfigurationCommand.ExecuteAsync(null);
+        Assert.True(Assert.Single(client.Requests.Where(request => request.Command == FluxVaultIpcCommand.SaveConfiguration).TakeLast(1)).ExpectedVaultRevision >= pending.Revision);
+        await dashboard.CheckBackupOutcomeCommand.ExecuteAsync(null);
+        Assert.Null(store.Read());
+        Assert.False(dashboard.HasUnconfirmedBackup);
+        Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.RunBackupNow);
+    }
+
+    [Fact]
+    public async Task Receipt_clear_cannot_remove_a_newer_operation_from_another_session()
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var store = new FileBackupOperationStore(Path.Combine(fixture.Root, "pending-backup.json"));
+        var client = new StoreClient(fixture.Store) { BackupFailure = SaveFailure.Timeout };
+        var dashboard = CreateViewModel(client, backupStore: store);
+        await dashboard.RefreshAsync();
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        var first = Assert.IsType<PendingBackupOperation>(store.Read());
+        var newer = first with { OperationId = Guid.NewGuid() };
+        client.ReceiptDispatchCheck = _ => { store.Clear(first); store.Reserve(newer); };
+        await dashboard.CheckBackupOutcomeCommand.ExecuteAsync(null);
+        Assert.Equal(newer, store.Read());
+        await dashboard.RefreshAsync();
+        Assert.Equal(newer.OperationId, dashboard.UnconfirmedBackupOperationId);
+        Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.RunBackupNow);
+    }
+
+    [Theory]
     [InlineData(false, SaveFailure.Io)]
     [InlineData(false, SaveFailure.Timeout)]
     [InlineData(false, SaveFailure.Cancelled)]
@@ -1006,10 +1233,10 @@ public sealed class ProtectionSaveContractTests
         };
     }
 
-    private static MainWindowViewModel CreateViewModel(StoreClient client, IProtectionRemovalConfirmation? confirmation = null) => new(
+    private static MainWindowViewModel CreateViewModel(StoreClient client, IProtectionRemovalConfirmation? confirmation = null, IBackupOperationStore? backupStore = null) => new(
         client, TimeSpan.FromHours(1), new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
         new FixtureServiceController(), new UnusedDestinationPicker(), new UnusedOverwriteConfirmation(),
-        protectionRemovalConfirmation: confirmation);
+        protectionRemovalConfirmation: confirmation, backupOperationStore: backupStore);
 
     public enum SaveFailure { None, Rejected, Io, Timeout, Denied, Cancelled, AcknowledgementLost }
 
@@ -1020,7 +1247,12 @@ public sealed class ProtectionSaveContractTests
         internal EnvelopeFault SaveEnvelopeFault { get; init; }
         public SaveFailure Failure { get; set; }
         public SaveFailure BackupFailure { get; init; }
+        public bool BackupCompletedUnsuccessfully { get; init; }
         public SaveFailure ReceiptFailure { get; init; }
+        public long? ReceiptRevisionOverride { get; set; }
+        public FluxVaultIpcErrorCode? ReceiptErrorCode { get; init; }
+        public Action<FluxVaultIpcRequest>? BackupDispatchCheck { get; set; }
+        public Action<FluxVaultIpcRequest>? ReceiptDispatchCheck { get; set; }
         public bool RequireBoundRequests { get; init; }
         public bool HoldSave { get; init; }
         public bool PurgeFails { get; init; }
@@ -1070,23 +1302,32 @@ public sealed class ProtectionSaveContractTests
                         ? FluxVaultIpcResponse.WithPurge(new RepositoryPurgeResult(0, 0, 0, [], Success: false, ErrorMessage: "Fixture purge denied"))
                         : FluxVaultIpcResponse.Ok());
                 case FluxVaultIpcCommand.RunBackupNow:
+                    BackupDispatchCheck?.Invoke(request);
                     ConfigurationAtBackup = await store.LoadAsync(cancellationToken);
                     Events.Add("Backup requested");
                     if (BackupFailure == SaveFailure.Io) throw new IOException("Disconnected after backup execution");
                     if (BackupFailure == SaveFailure.Timeout) throw new TimeoutException("Lost backup acknowledgement");
                     if (BackupFailure == SaveFailure.Cancelled) throw new OperationCanceledException("Backup acknowledgement cancelled");
                     if (BackupFailure == SaveFailure.Denied) throw new UnauthorizedAccessException("Pipe server identity was refused");
-                    return Envelope(FluxVaultIpcResponse.Ok());
+                    return Envelope(CompletedBackupResponse());
                 case FluxVaultIpcCommand.ListVersions:
                     return Envelope(FluxVaultIpcResponse.WithVersions([]));
                 case FluxVaultIpcCommand.GetOperationStatus:
+                    ReceiptDispatchCheck?.Invoke(request);
                     if (ReceiptFailure == SaveFailure.Io) throw new IOException("Receipt disconnected");
                     if (ReceiptFailure == SaveFailure.Timeout) throw new TimeoutException("Receipt timed out");
                     if (ReceiptFailure == SaveFailure.Cancelled) throw new OperationCanceledException("Receipt cancelled");
                     if (ReceiptFailure == SaveFailure.Denied) throw new UnauthorizedAccessException("Pipe identity refused");
-                    return Envelope(FluxVaultIpcResponse.Ok());
+                    var receiptResponse = Envelope(ReceiptErrorCode is { } error
+                        ? FluxVaultIpcResponse.Failure("The receipt is not available") with { ErrorCode = error }
+                        : CompletedBackupResponse());
+                    return ReceiptRevisionOverride is { } receiptRevision ? receiptResponse with { VaultRevision = receiptRevision } : receiptResponse;
                 default: throw new InvalidOperationException($"Unexpected fixture command: {request.Command}");
             }
+            FluxVaultIpcResponse CompletedBackupResponse() => BackupCompletedUnsuccessfully
+                ? FluxVaultIpcResponse.WithBackup(new BackupRunSummary(false, "Fixture capture unavailable", 0, 1, DateTimeOffset.UtcNow)) with
+                    { Success = false, ErrorCode = FluxVaultIpcErrorCode.Unavailable, ErrorMessage = "Fixture capture unavailable" }
+                : FluxVaultIpcResponse.Ok();
             FluxVaultIpcResponse Envelope(FluxVaultIpcResponse response)
             {
                 var result = response with { VaultId = Identity, VaultRevision = revision, OperationId = request.OperationId };

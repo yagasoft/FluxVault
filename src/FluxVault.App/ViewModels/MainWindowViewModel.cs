@@ -26,6 +26,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private const int PerformanceWorkspaceIndex = 5;
     private static readonly JsonSerializerOptions ConfigurationFingerprintJsonOptions = new(JsonSerializerDefaults.Web);
     private readonly IFluxVaultServiceClient client;
+    private readonly IBackupOperationStore backupOperationStore;
     private readonly IFluxVaultWindowsServiceController windowsServiceController;
     private readonly IRestoreDestinationPicker restoreDestinationPicker;
     private readonly IRestoreOverwriteConfirmation restoreOverwriteConfirmation;
@@ -45,10 +46,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private bool requiresPurgeReconciliation;
     private bool requiresSaveStatusCheck;
     private FluxVaultConfiguration? lastDispatchedSaveConfiguration;
-    private Guid? unconfirmedBackupOperationId;
+    private PendingBackupOperation? unconfirmedBackup;
 
-    public Guid? UnconfirmedBackupOperationId => unconfirmedBackupOperationId;
-    public bool HasUnconfirmedBackup => unconfirmedBackupOperationId is not null;
+    public Guid? UnconfirmedBackupOperationId => unconfirmedBackup?.OperationId;
+    public bool HasUnconfirmedBackup => unconfirmedBackup is not null;
 
     [ObservableProperty]
     private string backupOutcomeMessage = string.Empty;
@@ -236,7 +237,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new WindowsFluxVaultServiceController(),
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
-            new WpfMirrorNodeDialogService())
+            new WpfMirrorNodeDialogService(),
+            backupOperationStore: new FileBackupOperationStore())
     {
     }
 
@@ -341,9 +343,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
         IRestoreOverwriteConfirmation restoreOverwriteConfirmation,
         IMirrorNodeDialogService? mirrorNodeDialogService = null,
         IVersionPreviewLauncher? versionPreviewLauncher = null,
-        IProtectionRemovalConfirmation? protectionRemovalConfirmation = null)
+        IProtectionRemovalConfirmation? protectionRemovalConfirmation = null,
+        IBackupOperationStore? backupOperationStore = null)
     {
         this.client = client;
+        this.backupOperationStore = backupOperationStore ?? new MemoryBackupOperationStore();
         this.windowsServiceController = windowsServiceController;
         this.restoreDestinationPicker = restoreDestinationPicker;
         this.restoreOverwriteConfirmation = restoreOverwriteConfirmation;
@@ -613,6 +617,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     isAutomatic,
                     forceConfigurationReload,
                     reconcileOptions, response.VaultId, response.VaultRevision);
+                TryLoadPendingBackupRecord();
                 if (SelectedWorkspaceIndex == PerformanceWorkspaceIndex)
                 {
                     await RefreshPerformanceAsync(cancellationToken).ConfigureAwait(true);
@@ -1325,9 +1330,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanSaveProtection))]
     private async Task RunBackupNowAsync()
     {
+        if (!TryLoadPendingBackupRecord()) return;
         if (HasUnconfirmedBackup)
         {
-            SetServiceStatus("Check the previous backup outcome before requesting another backup.");
+            SetServiceStatus(BackupOutcomeMessage);
             return;
         }
         var outcome = await SaveConfigurationCoreAsync().ConfigureAwait(true);
@@ -1338,24 +1344,36 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             return;
         }
-        var operationId = Guid.NewGuid();
+        var pending = new PendingBackupOperation(outcome.VaultId!.Value.Value, Guid.NewGuid(), outcome.Revision!.Value);
+        try
+        {
+            backupOperationStore.Reserve(pending);
+            SetUnconfirmedBackup(pending);
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            TryLoadPendingBackupRecord();
+            BackupOutcomeMessage = $"The backup record could not be saved. No backup was sent. Check the record before retrying. {exception.Message}";
+            SetServiceStatus(BackupOutcomeMessage);
+            return;
+        }
         FluxVaultIpcResponse response;
         try
         {
             response = await SendBoundAsync(FluxVaultIpcRequest.RunBackupNow() with
-            { VaultId = outcome.VaultId, ExpectedVaultRevision = outcome.Revision, OperationId = operationId }).ConfigureAwait(true);
+            { VaultId = outcome.VaultId, ExpectedVaultRevision = outcome.Revision, OperationId = pending.OperationId }).ConfigureAwait(true);
         }
         catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
         {
             response = FluxVaultIpcResponse.Failure(exception.Message) with { ErrorCode = FluxVaultIpcErrorCode.OutcomeUnknown };
         }
-        if (response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown)
+        if (!ConfirmsBackupOutcome(response, pending))
         {
-            SetUnconfirmedBackup(operationId);
             BackupOutcomeMessage = "The backup outcome could not be confirmed. It may have run. Check its outcome before retrying.";
             SetServiceStatus(BackupOutcomeMessage);
             return;
         }
+        if (!TryClearPendingBackup(pending)) return;
         BackupOutcomeMessage = response.Success
             ? response.Backup?.Message ?? "Backup request completed."
             : $"Backup failed ({response.ErrorMessage}).";
@@ -1366,30 +1384,77 @@ public sealed partial class MainWindowViewModel : ObservableObject
         FileBrowser.RefreshBrowser();
     }
 
-    private void SetUnconfirmedBackup(Guid? operationId)
+    private void SetUnconfirmedBackup(PendingBackupOperation? operation)
     {
-        unconfirmedBackupOperationId = operationId;
+        unconfirmedBackup = operation;
         OnPropertyChanged(nameof(UnconfirmedBackupOperationId));
         OnPropertyChanged(nameof(HasUnconfirmedBackup));
         CheckBackupOutcomeCommand.NotifyCanExecuteChanged();
     }
 
+    private bool TryLoadPendingBackupRecord()
+    {
+        try
+        {
+            var pending = backupOperationStore.Read();
+            var changed = pending != unconfirmedBackup;
+            SetUnconfirmedBackup(pending);
+            if (pending is null) return true;
+            if (acceptedVaultId?.Value != pending.RepositoryId)
+            {
+                BackupOutcomeMessage = "The pending backup record does not match this installation's repository binding. It has been preserved; no backup or receipt check will be sent.";
+                SetServiceStatus(BackupOutcomeMessage);
+                return false;
+            }
+            if (changed)
+                BackupOutcomeMessage = "A previous backup outcome is pending. It may have run. Check its original operation before requesting another backup.";
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            BackupOutcomeMessage = $"The pending backup record could not be read. It has been preserved; no backup will be sent. {exception.Message}";
+            SetServiceStatus(BackupOutcomeMessage);
+            return false;
+        }
+    }
+
+    private static bool ConfirmsBackupOutcome(FluxVaultIpcResponse response, PendingBackupOperation pending) =>
+        (response.ErrorCode is null || response is { Success: false, ErrorCode: FluxVaultIpcErrorCode.Unavailable, Backup.Success: false }) &&
+        response.VaultId?.Value == pending.RepositoryId &&
+        response.OperationId == pending.OperationId && response.VaultRevision == pending.Revision;
+
+    private bool TryClearPendingBackup(PendingBackupOperation pending)
+    {
+        try
+        {
+            backupOperationStore.Clear(pending);
+            SetUnconfirmedBackup(null);
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            BackupOutcomeMessage = $"The backup outcome was returned, but its pending record could not be cleared. Check again before retrying. {exception.Message}";
+            SetServiceStatus(BackupOutcomeMessage);
+            return false;
+        }
+    }
+
     [RelayCommand(CanExecute = nameof(HasUnconfirmedBackup))]
     private async Task CheckBackupOutcomeAsync()
     {
-        if (unconfirmedBackupOperationId is not { } operationId) return;
+        if (!TryLoadPendingBackupRecord() || unconfirmedBackup is not { } pending) return;
         try
         {
             var response = await SendBoundAsync(new FluxVaultIpcRequest(
-                FluxVaultIpcCommand.GetOperationStatus, null, null, null, null, OperationId: operationId)).ConfigureAwait(true);
-            if (response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown || response.VaultId != acceptedVaultId ||
-                response.OperationId != operationId || response.VaultRevision is not > 0)
+                FluxVaultIpcCommand.GetOperationStatus, null, null, null, null,
+                VaultId: new VaultId(pending.RepositoryId), OperationId: pending.OperationId)).ConfigureAwait(true);
+            if (!ConfirmsBackupOutcome(response, pending))
             {
                 BackupOutcomeMessage = "The backup outcome could not be confirmed. Keep this operation pending and check again when the service is available.";
             }
             else
             {
-                SetUnconfirmedBackup(null);
+                if (!TryClearPendingBackup(pending)) return;
                 BackupOutcomeMessage = response.Success
                     ? response.Backup?.Message ?? "The previous backup completed."
                     : $"The previous backup failed ({response.ErrorMessage}).";

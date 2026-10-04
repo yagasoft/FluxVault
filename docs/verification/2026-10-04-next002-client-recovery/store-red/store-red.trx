@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a18d3b69-258c-42b8-838f-3d615d6ad98f" name="os008@OS008-HOME 2026-10-04 13:07:40" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T13:07:40.3193880+03:00" queuing="2026-10-04T13:07:40.3193882+03:00" start="2026-10-04T13:07:39.4873317+03:00" finish="2026-10-04T13:07:40.3265857+03:00" />
+  <TestSettings name="default" id="61b5874f-dd58-4961-9012-cd06c5291153">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_13_07_40" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d77e4672-3486-4b00-8233-f761feb5023f" testId="c7cfd1bd-a4ab-ccb9-44e1-9c0b99b138dc" testName="FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: &quot;{\&quot;revision\&quot;:1,\&quot;revision\&quot;:2}&quot;)" computerName="OS008-HOME" duration="00:00:00.0007473" startTime="2026-10-04T13:07:40.2184636+03:00" endTime="2026-10-04T13:07:40.2184994+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d77e4672-3486-4b00-8233-f761feb5023f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.67c8f8894c9d4a5391b2e5c97763a79d\pending.json</Message>
+          <StackTrace>   at FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(String content) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 52&#xD;
+   at InvokeStub_BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileBackupOperationStore.Read() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 19&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass2_0.&lt;Corrupt_records_are_preserved_and_refuse_another_backup&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 52</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="488b1aa8-839c-4795-9d50-e43da1211c24" testId="02e9b042-8e18-05a0-b080-ed9e2d822e20" testName="FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: &quot;{\&quot;repositoryId\&quot;:\&quot;00000000-0000-0000-0000-000000&quot;···)" computerName="OS008-HOME" duration="00:00:00.0008972" startTime="2026-10-04T13:07:40.2178327+03:00" endTime="2026-10-04T13:07:40.2178706+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="488b1aa8-839c-4795-9d50-e43da1211c24">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.1b7679ac104441b7bb756986d3e64cab\pending.json</Message>
+          <StackTrace>   at FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(String content) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 52&#xD;
+   at InvokeStub_BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileBackupOperationStore.Read() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 19&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass2_0.&lt;Corrupt_records_are_preserved_and_refuse_another_backup&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 52</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f4c9da14-2366-4506-a625-791bdb3b4eb6" testId="02e2016e-8f7c-4a2e-a834-caff4efb07d4" testName="FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: &quot;{}&quot;)" computerName="OS008-HOME" duration="00:00:00.0014393" startTime="2026-10-04T13:07:40.2171737+03:00" endTime="2026-10-04T13:07:40.2172228+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4c9da14-2366-4506-a625-791bdb3b4eb6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.4e18aaf2c9ab4d158979bb0a540b752a\pending.json</Message>
+          <StackTrace>   at FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(String content) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 52&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileBackupOperationStore.Read() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 19&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass2_0.&lt;Corrupt_records_are_preserved_and_refuse_another_backup&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 52</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7406055d-5be4-4d4e-ae43-8023d8ddc1ad" testId="96c0cd21-8dce-1286-a89b-289ddb1a4616" testName="FluxVault.App.Tests.BackupOperationStoreTests.Competing_instances_publish_only_one_record_and_never_delete_a_newer_record" computerName="OS008-HOME" duration="00:00:00.0193730" startTime="2026-10-04T13:07:40.1700663+03:00" endTime="2026-10-04T13:07:40.2019011+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7406055d-5be4-4d4e-ae43-8023d8ddc1ad">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection did not contain any matching items&#xD;
+Expected:   (predicate expression)&#xD;
+Collection: [System.NotImplementedException: E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.2d01ab07cc634ac98d2a4cb0befdf2dd\pending.json&#xD;
+   at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass1_1.&lt;Competing_instances_publish_only_one_record_and_never_delete_a_newer_record&gt;b__7() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 32&#xD;
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25, System.NotImplementedException: E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.2d01ab07cc634ac98d2a4cb0befdf2dd\pending.json&#xD;
+   at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass1_1.&lt;Competing_instances_publish_only_one_record_and_never_delete_a_newer_record&gt;b__7() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 32&#xD;
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25, System.NotImplementedException: E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.2d01ab07cc634ac98d2a4cb0befdf2dd\pending.json&#xD;
+   at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass1_1.&lt;Competing_instances_publish_only_one_record_and_never_delete_a_newer_record&gt;b__7() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 32&#xD;
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25, System.NotImplementedException: E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.2d01ab07cc634ac98d2a4cb0befdf2dd\pending.json&#xD;
+   at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass1_1.&lt;Competing_instances_publish_only_one_record_and_never_delete_a_newer_record&gt;b__7() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 32&#xD;
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25, System.NotImplementedException: E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.2d01ab07cc634ac98d2a4cb0befdf2dd\pending.json&#xD;
+   at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass1_1.&lt;Competing_instances_publish_only_one_record_and_never_delete_a_newer_record&gt;b__7() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 32&#xD;
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25, ···]</Message>
+          <StackTrace>   at FluxVault.App.Tests.BackupOperationStoreTests.Competing_instances_publish_only_one_record_and_never_delete_a_newer_record() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 33&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="796f7833-bd25-4354-80d6-c58d00a01620" testId="e361f07c-c693-b075-c2d7-32a938116eac" testName="FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: &quot;{&quot;)" computerName="OS008-HOME" duration="00:00:00.0007688" startTime="2026-10-04T13:07:40.2234286+03:00" endTime="2026-10-04T13:07:40.2234616+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="796f7833-bd25-4354-80d6-c58d00a01620">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.a4a779cbdca448a9919949201da7ebc4\pending.json</Message>
+          <StackTrace>   at FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(String content) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 52&#xD;
+   at InvokeStub_BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileBackupOperationStore.Read() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 19&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass2_0.&lt;Corrupt_records_are_preserved_and_refuse_another_backup&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 52</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="23afc8be-28bf-460d-be2d-c9a20a5a7898" testId="c031841c-c15e-6344-49ea-c55ebbf4ea43" testName="FluxVault.App.Tests.BackupOperationStoreTests.Store_round_trips_and_cannot_overwrite_or_clear_a_different_operation" computerName="OS008-HOME" duration="00:00:00.0009364" startTime="2026-10-04T13:07:40.2240211+03:00" endTime="2026-10-04T13:07:40.2240522+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="23afc8be-28bf-460d-be2d-c9a20a5a7898">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.dfc8edcba1e8474a856addfe62da0893\pending.json</Message>
+          <StackTrace>   at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.Store_round_trips_and_cannot_overwrite_or_clear_a_different_operation() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 14&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="095d6eab-9e49-4b9d-b237-3f4ee1802f26" testId="53e23693-c199-17de-a897-231e073b2899" testName="FluxVault.App.Tests.BackupOperationStoreTests.A_busy_cross_session_store_gate_refuses_access_instead_of_racing_the_other_writer" computerName="OS008-HOME" duration="00:00:00.0023053" startTime="2026-10-04T13:07:40.2158363+03:00" endTime="2026-10-04T13:07:40.2159289+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="095d6eab-9e49-4b9d-b237-3f4ee1802f26">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.168b5d65f4554c1f8d73fef726fc0662\pending.json</Message>
+          <StackTrace>   at FluxVault.App.Tests.BackupOperationStoreTests.A_busy_cross_session_store_gate_refuses_access_instead_of_racing_the_other_writer() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 62&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+   at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass3_0.&lt;A_busy_cross_session_store_gate_refuses_access_instead_of_racing_the_other_writer&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 62</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: &quot;{\&quot;revision\&quot;:1,\&quot;revision\&quot;:2}&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="c7cfd1bd-a4ab-ccb9-44e1-9c0b99b138dc">
+      <Execution id="d77e4672-3486-4b00-8233-f761feb5023f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.BackupOperationStoreTests" name="Corrupt_records_are_preserved_and_refuse_another_backup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: &quot;{\&quot;repositoryId\&quot;:\&quot;00000000-0000-0000-0000-000000&quot;···)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="02e9b042-8e18-05a0-b080-ed9e2d822e20">
+      <Execution id="488b1aa8-839c-4795-9d50-e43da1211c24" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.BackupOperationStoreTests" name="Corrupt_records_are_preserved_and_refuse_another_backup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.BackupOperationStoreTests.A_busy_cross_session_store_gate_refuses_access_instead_of_racing_the_other_writer" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="53e23693-c199-17de-a897-231e073b2899">
+      <Execution id="095d6eab-9e49-4b9d-b237-3f4ee1802f26" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.BackupOperationStoreTests" name="A_busy_cross_session_store_gate_refuses_access_instead_of_racing_the_other_writer" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: &quot;{}&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="02e2016e-8f7c-4a2e-a834-caff4efb07d4">
+      <Execution id="f4c9da14-2366-4506-a625-791bdb3b4eb6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.BackupOperationStoreTests" name="Corrupt_records_are_preserved_and_refuse_another_backup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.BackupOperationStoreTests.Competing_instances_publish_only_one_record_and_never_delete_a_newer_record" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="96c0cd21-8dce-1286-a89b-289ddb1a4616">
+      <Execution id="7406055d-5be4-4d4e-ae43-8023d8ddc1ad" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.BackupOperationStoreTests" name="Competing_instances_publish_only_one_record_and_never_delete_a_newer_record" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.BackupOperationStoreTests.Store_round_trips_and_cannot_overwrite_or_clear_a_different_operation" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="c031841c-c15e-6344-49ea-c55ebbf4ea43">
+      <Execution id="23afc8be-28bf-460d-be2d-c9a20a5a7898" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.BackupOperationStoreTests" name="Store_round_trips_and_cannot_overwrite_or_clear_a_different_operation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: &quot;{&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="e361f07c-c693-b075-c2d7-32a938116eac">
+      <Execution id="796f7833-bd25-4354-80d6-c58d00a01620" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.BackupOperationStoreTests" name="Corrupt_records_are_preserved_and_refuse_another_backup" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c7cfd1bd-a4ab-ccb9-44e1-9c0b99b138dc" executionId="d77e4672-3486-4b00-8233-f761feb5023f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02e9b042-8e18-05a0-b080-ed9e2d822e20" executionId="488b1aa8-839c-4795-9d50-e43da1211c24" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02e2016e-8f7c-4a2e-a834-caff4efb07d4" executionId="f4c9da14-2366-4506-a625-791bdb3b4eb6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="96c0cd21-8dce-1286-a89b-289ddb1a4616" executionId="7406055d-5be4-4d4e-ae43-8023d8ddc1ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e361f07c-c693-b075-c2d7-32a938116eac" executionId="796f7833-bd25-4354-80d6-c58d00a01620" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c031841c-c15e-6344-49ea-c55ebbf4ea43" executionId="23afc8be-28bf-460d-be2d-c9a20a5a7898" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="53e23693-c199-17de-a897-231e073b2899" executionId="095d6eab-9e49-4b9d-b237-3f4ee1802f26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="0" failed="7" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.14]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.24]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.27]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.32]       Assert.Single() Failure: The collection did not contain any matching items&#xD;
+[xUnit.net 00:00:00.32]       Expected:   (predicate expression)&#xD;
+[xUnit.net 00:00:00.32]       Collection: [System.NotImplementedException: E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.2d01ab07cc634ac98d2a4cb0befdf2dd\pending.json&#xD;
+[xUnit.net 00:00:00.32]          at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+[xUnit.net 00:00:00.32]          at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass1_1.&lt;Competing_instances_publish_only_one_record_and_never_delete_a_newer_record&gt;b__7() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 32&#xD;
+[xUnit.net 00:00:00.32]          at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25, System.NotImplementedException: E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.2d01ab07cc634ac98d2a4cb0befdf2dd\pending.json&#xD;
+[xUnit.net 00:00:00.32]          at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+[xUnit.net 00:00:00.32]          at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass1_1.&lt;Competing_instances_publish_only_one_record_and_never_delete_a_newer_record&gt;b__7() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 32&#xD;
+[xUnit.net 00:00:00.32]          at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25, System.NotImplementedException: E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.2d01ab07cc634ac98d2a4cb0befdf2dd\pending.json&#xD;
+[xUnit.net 00:00:00.32]          at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+[xUnit.net 00:00:00.32]          at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass1_1.&lt;Competing_instances_publish_only_one_record_and_never_delete_a_newer_record&gt;b__7() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 32&#xD;
+[xUnit.net 00:00:00.32]          at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25, System.NotImplementedException: E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.2d01ab07cc634ac98d2a4cb0befdf2dd\pending.json&#xD;
+[xUnit.net 00:00:00.32]          at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+[xUnit.net 00:00:00.32]          at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass1_1.&lt;Competing_instances_publish_only_one_record_and_never_delete_a_newer_record&gt;b__7() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 32&#xD;
+[xUnit.net 00:00:00.32]          at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25, System.NotImplementedException: E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.2d01ab07cc634ac98d2a4cb0befdf2dd\pending.json&#xD;
+[xUnit.net 00:00:00.32]          at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs:line 20&#xD;
+[xUnit.net 00:00:00.32]          at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass1_1.&lt;Competing_instances_publish_only_one_record_and_never_delete_a_newer_record&gt;b__7() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs:line 32&#xD;
+[xUnit.net 00:00:00.32]          at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25, ···]&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(33,0): at FluxVault.App.Tests.BackupOperationStoreTests.Competing_instances_publish_only_one_record_and_never_delete_a_newer_record()&#xD;
+[xUnit.net 00:00:00.32]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.33]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.33]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.33]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.33]       ---- System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.168b5d65f4554c1f8d73fef726fc0662\pending.json&#xD;
+[xUnit.net 00:00:00.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.33]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(62,0): at FluxVault.App.Tests.BackupOperationStoreTests.A_busy_cross_session_store_gate_refuses_access_instead_of_racing_the_other_writer()&#xD;
+[xUnit.net 00:00:00.33]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.33]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.33]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.33]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs(20,0): at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation)&#xD;
+[xUnit.net 00:00:00.33]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(62,0): at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass3_0.&lt;A_busy_cross_session_store_gate_refuses_access_instead_of_racing_the_other_writer&gt;b__0()&#xD;
+[xUnit.net 00:00:00.33]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.33]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.33]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.33]       ---- System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.4e18aaf2c9ab4d158979bb0a540b752a\pending.json&#xD;
+[xUnit.net 00:00:00.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.33]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(52,0): at FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(String content)&#xD;
+[xUnit.net 00:00:00.33]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.33]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.33]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.33]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs(19,0): at FluxVault.App.Services.FileBackupOperationStore.Read()&#xD;
+[xUnit.net 00:00:00.33]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(52,0): at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass2_0.&lt;Corrupt_records_are_preserved_and_refuse_another_backup&gt;b__0()&#xD;
+[xUnit.net 00:00:00.33]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.33]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.33]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.33]       ---- System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.1b7679ac104441b7bb756986d3e64cab\pending.json&#xD;
+[xUnit.net 00:00:00.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.33]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(52,0): at FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(String content)&#xD;
+[xUnit.net 00:00:00.33]            at InvokeStub_BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.33]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.33]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.33]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs(19,0): at FluxVault.App.Services.FileBackupOperationStore.Read()&#xD;
+[xUnit.net 00:00:00.33]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(52,0): at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass2_0.&lt;Corrupt_records_are_preserved_and_refuse_another_backup&gt;b__0()&#xD;
+[xUnit.net 00:00:00.33]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.33]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.33]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.34]       ---- System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.67c8f8894c9d4a5391b2e5c97763a79d\pending.json&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(52,0): at FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(String content)&#xD;
+[xUnit.net 00:00:00.34]            at InvokeStub_BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.34]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.34]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs(19,0): at FluxVault.App.Services.FileBackupOperationStore.Read()&#xD;
+[xUnit.net 00:00:00.34]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(52,0): at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass2_0.&lt;Corrupt_records_are_preserved_and_refuse_another_backup&gt;b__0()&#xD;
+[xUnit.net 00:00:00.34]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.34]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.34]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.34]       ---- System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.a4a779cbdca448a9919949201da7ebc4\pending.json&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(52,0): at FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(String content)&#xD;
+[xUnit.net 00:00:00.34]            at InvokeStub_BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.34]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.34]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs(19,0): at FluxVault.App.Services.FileBackupOperationStore.Read()&#xD;
+[xUnit.net 00:00:00.34]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(52,0): at FluxVault.App.Tests.BackupOperationStoreTests.&lt;&gt;c__DisplayClass2_0.&lt;Corrupt_records_are_preserved_and_refuse_another_backup&gt;b__0()&#xD;
+[xUnit.net 00:00:00.34]       System.NotImplementedException : E:\Temp\AppData\Local\Temp\FluxVault.BackupOperation.dfc8edcba1e8474a856addfe62da0893\pending.json&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\BackupOperationStore.cs(20,0): at FluxVault.App.Services.FileBackupOperationStore.Reserve(PendingBackupOperation operation)&#xD;
+[xUnit.net 00:00:00.34]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\BackupOperationStoreTests.cs(14,0): at FluxVault.App.Tests.BackupOperationStoreTests.Store_round_trips_and_cannot_overwrite_or_clear_a_different_operation()&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.34]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:07:40.2045928+03:00">
+        <Text>[xUnit.net 00:00:00.32]     FluxVault.App.Tests.BackupOperationStoreTests.Competing_instances_publish_only_one_record_and_never_delete_a_newer_record [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:07:40.2162219+03:00">
+        <Text>[xUnit.net 00:00:00.33]     FluxVault.App.Tests.BackupOperationStoreTests.A_busy_cross_session_store_gate_refuses_access_instead_of_racing_the_other_writer [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:07:40.2173696+03:00">
+        <Text>[xUnit.net 00:00:00.33]     FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: "{}") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:07:40.2179742+03:00">
+        <Text>[xUnit.net 00:00:00.33]     FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: "{\"repositoryId\":\"00000000-0000-0000-0000-000000"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:07:40.2186297+03:00">
+        <Text>[xUnit.net 00:00:00.33]     FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: "{\"revision\":1,\"revision\":2}") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:07:40.2236070+03:00">
+        <Text>[xUnit.net 00:00:00.34]     FluxVault.App.Tests.BackupOperationStoreTests.Corrupt_records_are_preserved_and_refuse_another_backup(content: "{") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:07:40.2241673+03:00">
+        <Text>[xUnit.net 00:00:00.34]     FluxVault.App.Tests.BackupOperationStoreTests.Store_round_trips_and_cannot_overwrite_or_clear_a_different_operation [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

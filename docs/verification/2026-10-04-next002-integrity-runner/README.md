@@ -1,10 +1,10 @@
-# Owned PostgreSQL integrity suite preparation
+# Owned PostgreSQL integrity suite
 
-Status: implementation prepared; native execution awaits the scoped resource extension below. G01 has not passed. This extends the existing disposable Windows fixture, not the installed PostgreSQL or FluxVault service.
+Status: the user approved the exact resource extension below and the native integrity portion of G01 passed in [fixture 331c3d15c3e24989b4b88bd58101097f](live/331c3d15c3e24989b4b88bd58101097f/result.json). All 40 tests passed without skips; owned teardown and unchanged installation were independently accepted. The broader final-implementation G01 gate and normal rollout remain open.
 
 The old `eng/test-repository-integrity.ps1` elevated/unprotected trust runner has been replaced by an entry point to `eng/test-windows-database-boundary.ps1 -RunIntegrityTests`. No new toolchain or persistent environment is created. Prebuilt Integration/TestHost binaries run from protected copies, with absolute trusted dotnet, private working/TEMP/results paths and a fresh parent-held SYSTEM process job. Startup admission, finite deadlines, failure recovery, joined descendants and unchanged-installation checks remain.
 
-## Concrete extension requiring operational authorisation
+## Authorised resource extension
 
 Existing approval covers `FVGateA_261003`, `FVGateB_261003`, `FVGate_261003`, the one-off `FluxVault-NEXT002-261003-SYSTEM` task and fresh GUID roots under `C:\ProgramData\FluxVault.Tests\NEXT002`. These remain unchanged. The following additions are restricted to the generated private cluster on a non-5432 port:
 
@@ -32,7 +32,7 @@ Rollback is owned fixture teardown from its protected journal, followed by exact
 - The direct metadata authentication regression [failed before the fix](direct-auth-red/direct-auth-red.trx), then all four focused metadata cases [passed](metadata-auth-green/metadata-auth-green.trx). Direct metadata connections now require SSPI and `pg_catalog`; no insecure authentication setting is exposed in Options.
 - Six owned-helper admission cases [failed before the fix](owned-admission-red/owned-admission-red.trx). The [ordinary adapter suite](ordinary-adapters-green/ordinary-adapters-green.trx) then passed all 163 cases with no skips. Unrelated/invalid database names and the permissive old account are refused.
 - Release solution and affected Integration builds passed with zero warnings/errors. All affected PowerShell scripts parse; the diff passes whitespace checks.
-- The original 37 PostgreSQL-dependent cases are retained. Three additional native cases cover durable database intent/public admission, refused cleanup after identity tampering, and the limit of CREATEDB privileges. The runner requires at least 40 cases, all passing with no skips. These cases remain **unexecuted pending authorisation**.
+- The original 37 PostgreSQL-dependent cases are retained. Three additional native cases cover durable database intent/public admission, refused cleanup after identity tampering, and the limit of CREATEDB privileges. The [actual native TRX](live/331c3d15c3e24989b4b88bd58101097f/results/PostgreSql.trx) records 40/40 passing, zero failed/skipped/aborted, with SYSTEM suite exit 0 and 26-second test duration.
 - Read-only discovery through the actual absolute VSTest DLL found exactly 40 matching cases, including the retained real trust-rejection and process-death cases. Discovery is not execution evidence. Its temporary processes exited; only the original installed service/PostgreSQL processes remain.
 
-The [independent Astra review](independent-review.md) approved concrete preflight after resolving SDK-selection, reused-task deadline and partial-initialisation cleanup blockers. Native execution still awaits the scoped resource extension requested from the user; technical review is not operational authorisation.
+The [independent Astra review](independent-review.md) approved concrete preflight after resolving SDK-selection, reused-task deadline and partial-initialisation cleanup blockers, then accepted the authorised native evidence. All 38 generated database intents are removed. [Cleanup](live/331c3d15c3e24989b4b88bd58101097f/cleanup.json) and [final census](live/331c3d15c3e24989b4b88bd58101097f/final-census.json) verify joined jobs, absent root/accounts/group/task/test processes and unchanged normal service identities and configuration hashes. Normal PostgreSQL was not restarted.

@@ -123,7 +123,8 @@ internal static class VaultCatalogueProbe
             await using var durability = new NpgsqlCommand("SELECT current_setting('fsync') = 'on' AND current_setting('synchronous_commit') = 'on' AND current_setting('full_page_writes') = 'on'", connection);
             Check(await durability.ExecuteScalarAsync() is true, "acknowledgement durability settings");
             var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one, two) : null;
-            return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true, StoreHost = host, Metadata = metadata };
+            var repository = fixture.RunMetadataTests ? await VaultRepositoryProbe.RunAsync(dataSource, one) : null;
+            return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true, StoreHost = host, Metadata = metadata, Repository = repository };
         }
         finally
         {

@@ -1,0 +1,110 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Core.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.39]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Foreign_mirror_marker_rejects_capture_before_content_publication [FAIL]
+[xUnit.net 00:00:00.43]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(changed: "vault") [FAIL]
+[xUnit.net 00:00:00.46]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(changed: "endpoint") [FAIL]
+[xUnit.net 00:00:00.48]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(changed: "state") [FAIL]
+[xUnit.net 00:00:00.51]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(changed: "root") [FAIL]
+[xUnit.net 00:00:00.54]     FluxVault.Core.Tests.VaultRepositoryBindingTests.File_folder_and_deletion_manifests_keep_identity_across_reopen_and_verified_recovery [FAIL]
+[xUnit.net 00:00:00.59]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Missing_or_foreign_manifest_identity_preserves_recovery_destination(foreign: True) [FAIL]
+[xUnit.net 00:00:00.62]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Missing_or_foreign_manifest_identity_preserves_recovery_destination(foreign: False) [FAIL]
+[xUnit.net 00:00:00.65]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Bound_repository_preserves_existing_legacy_storage_without_adoption [FAIL]
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Foreign_mirror_marker_rejects_capture_before_content_publication [170 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.Rejected(Func`1 action, RepositoryIntegrityFailure expected) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 161
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Foreign_mirror_marker_rejects_capture_before_content_publication() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 113
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(changed: "vault") [34 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.Rejected(Func`1 action, RepositoryIntegrityFailure expected) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 161
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(String changed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 97
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(changed: "endpoint") [26 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.Rejected(Func`1 action, RepositoryIntegrityFailure expected) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 161
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(String changed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 97
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(changed: "state") [25 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.Rejected(Func`1 action, RepositoryIntegrityFailure expected) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 161
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(String changed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 97
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(changed: "root") [25 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.Rejected(Func`1 action, RepositoryIntegrityFailure expected) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 161
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Changed_binding_cannot_read_or_mutate_an_existing_root(String changed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 97
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.File_folder_and_deletion_manifests_keep_identity_across_reopen_and_verified_recovery [33 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 1b76e14c-a653-4b14-998e-411a619ed7ee
+Actual:   null
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.File_folder_and_deletion_manifests_keep_identity_across_reopen_and_verified_recovery() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 42
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Missing_or_foreign_manifest_identity_preserves_recovery_destination(foreign: True) [44 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.Rejected(Func`1 action, RepositoryIntegrityFailure expected) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 161
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Missing_or_foreign_manifest_identity_preserves_recovery_destination(Boolean foreign) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 131
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Missing_or_foreign_manifest_identity_preserves_recovery_destination(foreign: False) [38 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.Rejected(Func`1 action, RepositoryIntegrityFailure expected) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 161
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Missing_or_foreign_manifest_identity_preserves_recovery_destination(Boolean foreign) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 131
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Bound_repository_preserves_existing_legacy_storage_without_adoption [24 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.Rejected(Func`1 action, RepositoryIntegrityFailure expected) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 161
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Bound_repository_preserves_existing_legacy_storage_without_adoption() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:00.67]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Ordinary_bound_access_never_creates_or_adopts_storage [FAIL]
+[xUnit.net 00:00:00.67]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Public_service_constructor_rejects_unbound_or_different_metadata_store [FAIL]
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Ordinary_bound_access_never_creates_or_adopts_storage [6 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.Rejected(Func`1 action, RepositoryIntegrityFailure expected) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 161
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Ordinary_bound_access_never_creates_or_adopts_storage() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 24
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Public_service_constructor_rejects_unbound_or_different_metadata_store [6 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Core.Tests.VaultRepositoryBindingTests.Public_service_constructor_rejects_unbound_or_different_metadata_store() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 142
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Public_service_constructor_rejects_unbound_or_different_metadata_store() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 145
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-repository\red\repository-binding-red.trx
+
+Failed!  - Failed:    11, Passed:     0, Skipped:     0, Total:    11, Duration: 464 ms - FluxVault.Core.Tests.dll (net10.0)

@@ -502,6 +502,7 @@ host all all ::1/128 reject
             if(-not $probe.Result.Authenticated -or -not $probe.Result.FixtureVerified){throw 'SYSTEM password-free Npgsql authentication failed.'}
             if($RunCatalogueTests -and ($null -eq $probe.Result.Catalogue -or $probe.Result.Catalogue.Passed -lt 40 -or -not $probe.Result.Catalogue.PolicyActorsAreDoubles)){throw 'Required real catalogue contracts did not complete.'}
             if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Metadata -or $probe.Result.Catalogue.Metadata.Passed -lt 20 -or $probe.Result.Catalogue.StoreHost -ne $hostAddress)){throw 'Required same-database namespace contracts did not complete on their loopback.'}
+            if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Repository -or $probe.Result.Catalogue.Repository.Passed -lt 13)){throw 'Required bound repository capture/recovery contracts did not complete.'}
         }elseif($probe.ExitCode -ne 0 -or $probe.Output -ne "$FixtureId|fv_gate_261003|fv_gate_service"){throw 'SYSTEM password-free libpq authentication failed.'}
     }}
     foreach($actor in @('A','B')) {

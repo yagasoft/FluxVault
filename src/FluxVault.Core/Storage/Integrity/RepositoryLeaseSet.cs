@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using FluxVault.Core.Security;
 
 namespace FluxVault.Core.Storage.Integrity;
 
@@ -24,7 +25,7 @@ internal sealed class RepositoryLeaseSet : IAsyncDisposable
 
     internal static async ValueTask<RepositoryLeaseSet> AcquireAsync(string primaryRoot,
         IReadOnlyList<string> mirrorRoots, MirrorLeaseMode mirrorMode, CancellationToken cancellationToken,
-        Action<string>? validateVolume = null)
+        Action<string>? validateVolume = null, VaultBinding? binding = null, bool provision = false)
     {
         var primary = StorageOwnership.Canonical(primaryRoot);
         var roots = new[] { primary }.Concat(mirrorRoots.Select(StorageOwnership.Canonical)).ToArray();
@@ -36,6 +37,8 @@ internal sealed class RepositoryLeaseSet : IAsyncDisposable
                 if (StorageOwnership.Contains(roots[i], roots[j]) || StorageOwnership.Contains(roots[j], roots[i]))
                     throw new RepositoryIntegrityException(RepositoryIntegrityFailure.OwnershipMismatch, "Repository and mirror roots must be distinct and non-overlapping.");
         }
+        if (binding is not null && provision)
+            foreach (var root in roots) StorageOwnership.AssertFreshVaultRoot(root);
         var lease = new RepositoryLeaseSet { gate = Gates.GetOrAdd(primary, _ => new SemaphoreSlim(1, 1)) };
         await lease.gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
@@ -47,13 +50,20 @@ internal sealed class RepositoryLeaseSet : IAsyncDisposable
                 try
                 {
                     (validateVolume ?? StorageRootPolicy.Validate)(root);
-                    if (root != primary && mirrorMode == MirrorLeaseMode.Required && !Directory.Exists(root))
+                    if (binding is not null)
+                    {
+                        if (provision) StorageOwnership.AssertFreshVaultRoot(root);
+                        else if (root != primary && mirrorMode == MirrorLeaseMode.BestEffort && !Directory.Exists(root))
+                            throw new DirectoryNotFoundException("The bound mirror is unavailable.");
+                        else StorageOwnership.Ensure(root, binding.Id.Value.ToString("N"), root == primary ? "primary" : "mirror", binding);
+                    }
+                    if (!provision && root != primary && mirrorMode == MirrorLeaseMode.Required && !Directory.Exists(root))
                         throw new DirectoryNotFoundException($"Required mirror '{root}' is unavailable; maintenance was not started.");
-                    Directory.CreateDirectory(root);
+                    if (binding is null || provision) Directory.CreateDirectory(root);
                     StorageOwnership.RejectReparseComponents(root);
                     var lockPath = Path.Combine(root, StorageOwnership.LockName);
                     StorageOwnership.RejectReparseComponents(lockPath);
-                    lease.handles.Add(new FileStream(lockPath, FileMode.OpenOrCreate,
+                    lease.handles.Add(new FileStream(lockPath, binding is not null && !provision ? FileMode.Open : FileMode.OpenOrCreate,
                         FileAccess.ReadWrite, FileShare.None));
                     openedRoots.Add(root);
                 }
@@ -67,10 +77,10 @@ internal sealed class RepositoryLeaseSet : IAsyncDisposable
                     lease.warnings.Add($"Mirror '{root}' was not accessed: {exception.Message}");
                 }
             }
-            lease.StorageId = StorageOwnership.Ensure(primary, null, "primary");
+            lease.StorageId = StorageOwnership.Ensure(primary, null, "primary", binding, provision);
             foreach (var root in openedRoots.Where(root => root != primary))
             {
-                StorageOwnership.Ensure(root, lease.StorageId, "mirror");
+                StorageOwnership.Ensure(root, lease.StorageId, "mirror", binding, provision);
                 lease.mirrors.Add(root);
             }
             return lease;

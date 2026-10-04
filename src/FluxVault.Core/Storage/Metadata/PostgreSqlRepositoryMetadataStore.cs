@@ -120,6 +120,12 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         }
     }
 
+    public async Task VerifyBindingAsync(CancellationToken cancellationToken = default)
+    {
+        if (binding is null) throw new InvalidOperationException("Explicit vault binding is required.");
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     public Task RecordVersionAsync(FileVersionManifest manifest, CancellationToken cancellationToken = default)
     {
         return RecordVersionsAsync([manifest], cancellationToken);

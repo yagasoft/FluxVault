@@ -35,6 +35,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly IProtectionRemovalConfirmation protectionRemovalConfirmation;
     private readonly IVersionPreviewLauncher versionPreviewLauncher;
     private readonly IMirrorNodeDialogService mirrorNodeDialogService;
+    private readonly IDiagnosticsExportFolderPicker diagnosticsExportFolderPicker;
     private readonly TimeSpan autoRefreshInterval;
     private readonly SemaphoreSlim refreshGate = new(1, 1);
     private CancellationTokenSource? autoRefreshCancellation;
@@ -360,9 +361,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
         IProtectionRemovalConfirmation? protectionRemovalConfirmation = null,
         IBackupOperationStore? backupOperationStore = null,
         FluxVault.Windows.Security.WindowsUserPreviewCache? previewCache = null,
-        IConfigurationSaveOperationStore? saveOperationStore = null)
+        IConfigurationSaveOperationStore? saveOperationStore = null,
+        IDiagnosticsExportFolderPicker? diagnosticsExportFolderPicker = null)
     {
         this.client = client;
+        this.diagnosticsExportFolderPicker = diagnosticsExportFolderPicker ?? new DiagnosticsExportFolderPicker();
         this.backupOperationStore = backupOperationStore ?? new MemoryBackupOperationStore();
         this.saveOperationStore = saveOperationStore ?? new MemoryConfigurationSaveOperationStore();
         this.previewCache = previewCache ?? new();
@@ -2041,20 +2044,51 @@ public sealed partial class MainWindowViewModel : ObservableObject
             version.IsDeleted);
     }
 
-    [RelayCommand]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ExportDiagnosticsCommand))]
+    private bool isDiagnosticsExportBusy;
+
+    public bool CanExportDiagnostics => !IsDiagnosticsExportBusy;
+
+    [RelayCommand(CanExecute = nameof(CanExportDiagnostics))]
     private async Task ExportDiagnosticsAsync()
     {
-        var path = BrowseFolder(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
-        if (string.IsNullOrWhiteSpace(path))
+        if (!CanExportDiagnostics) return;
+        IsDiagnosticsExportBusy = true;
+        Guid? operation = null;
+        try
         {
-            return;
+            var path = diagnosticsExportFolderPicker.PickFolder();
+            if (string.IsNullOrWhiteSpace(path)) return;
+            if (acceptedVaultId is not { IsValid: true } identity || acceptedConfigurationRevision is not > 0)
+            { DiagnosticsText = "Diagnostics export failed: refresh the vault's verified settings first."; return; }
+            var revision = acceptedConfigurationRevision.Value;
+            operation = Guid.NewGuid();
+            var request = FluxVaultIpcRequest.ExportDiagnostics(path) with
+            { VaultId = identity, ExpectedVaultRevision = revision, OperationId = operation };
+            var expected = Path.Combine(path, $"fluxvault-diagnostics-{operation:N}.json");
+            var response = await SendBoundAsync(request).ConfigureAwait(true);
+            if (!response.Success)
+            {
+                DiagnosticsText = response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown
+                    ? UnknownExport(operation.Value)
+                    : $"Diagnostics export failed: {response.ErrorMessage ?? "no confirmed result returned"}";
+                return;
+            }
+            if (response.DiagnosticsExport is not { Warnings: not null } result ||
+                !string.Equals(response.OutputPath, expected, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(result.OutputPath, expected, StringComparison.OrdinalIgnoreCase))
+            { DiagnosticsText = UnknownExport(operation.Value); return; }
+            DiagnosticsText = $"Diagnostics exported to {result.OutputPath}" +
+                (result.Warnings.Count == 0 ? string.Empty : Environment.NewLine + string.Join(Environment.NewLine, result.Warnings));
         }
-
-        var response = await SendBoundAsync(FluxVaultIpcRequest.ExportDiagnostics(path)).ConfigureAwait(true);
-        DiagnosticsText = response.Success
-            ? $"Diagnostics exported to {response.OutputPath}"
-            : $"Diagnostics export failed: {response.ErrorMessage}";
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        { DiagnosticsText = operation is { } id ? UnknownExport(id) : $"Diagnostics export failed: {exception.Message}"; }
+        finally { IsDiagnosticsExportBusy = false; }
     }
+
+    private static string UnknownExport(Guid operation) =>
+        $"The diagnostics export outcome could not be confirmed (operation {operation:D}). A report may already exist in the selected folder; inspect it before starting another export.";
 
     [RelayCommand]
     private async Task RunRepositoryScrubAsync()

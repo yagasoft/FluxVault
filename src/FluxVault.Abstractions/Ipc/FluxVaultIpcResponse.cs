@@ -27,7 +27,8 @@ public sealed record FluxVaultIpcResponse(
     VaultId? VaultId = null,
     long? VaultRevision = null,
     Guid? OperationId = null,
-    FluxVaultIpcErrorCode? ErrorCode = null)
+    FluxVaultIpcErrorCode? ErrorCode = null,
+    DiagnosticsExportResult? DiagnosticsExport = null)
 {
     public static FluxVaultIpcResponse Ok()
     {

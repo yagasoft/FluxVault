@@ -69,7 +69,7 @@ public sealed class WindowsCallerRecoveryTarget : IRepositoryRestoreTarget
                     exists = true;
                 }
                 catch (IOException exception) when (exception.InnerException is Win32Exception { NativeErrorCode: 2 }) { }
-                if (requireNewDestination && exists) throw new IOException("Preview requires a new destination. The existing entry has been preserved.");
+                if (requireNewDestination && exists) throw new IOException("Publication requires a new destination. The existing entry has been preserved.");
                 var result = new WindowsCallerRecoveryTarget(caller, path, pins, physical, exists);
                 return Task.FromResult(result);
             }

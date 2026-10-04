@@ -156,11 +156,12 @@ internal static class VaultCatalogueProbe
             Check(await acl.ExecuteScalarAsync() is false, "PUBLIC has no control schema access");
             await using var durability = new NpgsqlCommand("SELECT current_setting('fsync') = 'on' AND current_setting('synchronous_commit') = 'on' AND current_setting('full_page_writes') = 'on'", connection);
             Check(await durability.ExecuteScalarAsync() is true, "acknowledgement durability settings");
+            await VaultDiagnosticsExportProbe.RunAsync(store, owner, fresh, checks);
             await VaultMirrorDrainProbe.RunAsync(store, owner, fresh, checks);
             var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one) : null;
             var repository = fixture.RunMetadataTests ? await VaultRepositoryProbe.RunAsync(dataSource, one) : null;
             return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true,
-                MirrorDrainCatalogueVerified = true, StoreHost = host, Metadata = metadata, Repository = repository };
+                MirrorDrainCatalogueVerified = true, DiagnosticsCatalogueVerified = true, StoreHost = host, Metadata = metadata, Repository = repository };
         }
         finally
         {

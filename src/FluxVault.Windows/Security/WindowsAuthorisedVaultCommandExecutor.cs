@@ -18,6 +18,7 @@ namespace FluxVault.Windows.Security;
 [SupportedOSPlatform("windows")]
 public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultCommandExecutor, IAsyncDisposable
 {
+    internal const string AutomaticProtectionNotice = "Automatic protection unavailable; manual backup available. ";
     private readonly VaultCatalogueEndpoint endpoint;
     private readonly WindowsVaultStorageGuard storage = new();
     private readonly NpgsqlDataSource source;
@@ -62,7 +63,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
         FluxVaultIpcCommand.RunRepositoryScrub or FluxVaultIpcCommand.RunRestoreRehearsal or
         FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair or
         FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.RunMirrorRebalance or
-        FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain => true,
+        FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain or FluxVaultIpcCommand.ExportDiagnostics => true,
         _ => false
     };
 
@@ -138,6 +139,14 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                     case FluxVaultIpcCommand.RestoreVersion:
                         await using (var target = await WindowsCallerRecoveryTarget.CreateAsync(caller, request.OutputPath!, cancellationToken))
                             return FluxVaultIpcResponse.WithRestore(await operations.RestoreVersionAsync(request.VersionId!, target, cancellationToken));
+                    case FluxVaultIpcCommand.ExportDiagnostics:
+                        var exportDirectory = WindowsLocalPath.Validate(request.ExportPath ?? string.Empty);
+                        var exportPath = Path.Combine(exportDirectory, $"fluxvault-diagnostics-{admission.Receipt!.OperationId:N}.json");
+                        await using (var target = await WindowsCallerRecoveryTarget.CreateNewAsync(caller, exportPath, cancellationToken))
+                        {
+                            var exported = await operations.ExportDiagnosticsAsync(target, binding.Id, vault.Revision, cancellationToken, AutomaticProtectionNotice);
+                            return FluxVaultIpcResponse.WithOutputPath(exported.OutputPath) with { DiagnosticsExport = exported };
+                        }
                     case FluxVaultIpcCommand.RestoreVersionPreview:
                         try
                         {

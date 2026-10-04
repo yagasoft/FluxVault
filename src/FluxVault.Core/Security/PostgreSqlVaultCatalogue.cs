@@ -205,6 +205,12 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         }
         if (request.ExpectedVaultRevision is not null && request.ExpectedVaultRevision != vault.Revision)
             throw new VaultCatalogueException(VaultCatalogueFailure.StaleRevision);
+        if (request.Command == FluxVaultIpcCommand.ExportDiagnostics)
+        {
+            try { _ = WindowsLocalPath.Validate(request.ExportPath ?? string.Empty); }
+            catch (Exception exception) when (exception is UnauthorizedAccessException or ArgumentException or NotSupportedException)
+            { throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration, "Choose an unambiguous absolute local directory for diagnostics."); }
+        }
         if (request.Command is FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair or
                 FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain &&
             (request.MirrorNodeId is null ? request.Command is FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain :

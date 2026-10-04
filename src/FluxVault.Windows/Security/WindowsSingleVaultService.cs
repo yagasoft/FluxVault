@@ -47,7 +47,7 @@ public sealed class WindowsSingleVaultService : IAuthenticatedFluxVaultRequestHa
     {
         var response = await handler.HandleAsync(caller, request, cancellationToken);
         return response.Status is not { } status ? response : response with
-        { Status = status with { LastMessage = "Automatic protection unavailable; manual backup available. " + status.LastMessage } };
+        { Status = status with { LastMessage = WindowsAuthorisedVaultCommandExecutor.AutomaticProtectionNotice + status.LastMessage } };
     }
 
     // The pipe server must join accepted requests before its owner disposes this scope.

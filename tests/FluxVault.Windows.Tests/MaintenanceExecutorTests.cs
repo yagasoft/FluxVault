@@ -10,13 +10,18 @@ namespace FluxVault.Windows.Tests;
 [SupportedOSPlatform("windows")]
 public sealed class MaintenanceExecutorTests
 {
+    [Fact]
+    public void Repeated_separators_are_rejected_before_Windows_normalisation()
+    {
+        Assert.Throws<UnauthorizedAccessException>(() => WindowsCallerFileAccess.ValidatePath(@"C:\work\\ambiguous"));
+    }
     public static TheoryData<FluxVaultIpcCommand> SupportedCommands => new()
     {
         FluxVaultIpcCommand.GetRepositoryHealth, FluxVaultIpcCommand.PreviewRetention, FluxVaultIpcCommand.RunRetentionNow,
         FluxVaultIpcCommand.RunRepositoryScrub, FluxVaultIpcCommand.RunRestoreRehearsal,
         FluxVaultIpcCommand.PreviewMirrorRepair, FluxVaultIpcCommand.RunMirrorRepair,
         FluxVaultIpcCommand.PreviewMirrorRebalance, FluxVaultIpcCommand.RunMirrorRebalance, FluxVaultIpcCommand.PreviewMirrorDrain,
-        FluxVaultIpcCommand.RunMirrorDrain
+        FluxVaultIpcCommand.RunMirrorDrain, FluxVaultIpcCommand.ExportDiagnostics
     };
 
     [Theory]
@@ -43,6 +48,7 @@ public sealed class MaintenanceExecutorTests
     [InlineData(FluxVaultIpcCommand.PreviewMirrorDrain, VaultPermission.Maintain)]
     [InlineData(FluxVaultIpcCommand.RunMirrorDrain, VaultPermission.Maintain)]
     [InlineData(FluxVaultIpcCommand.GetRepositoryHealth, VaultPermission.Maintain)]
+    [InlineData(FluxVaultIpcCommand.ExportDiagnostics, VaultPermission.Maintain)]
     public async Task Missing_required_permissions_are_refused_before_storage(FluxVaultIpcCommand command, VaultPermission granted)
     {
         var fixture = new Fixture(command);
@@ -73,8 +79,9 @@ public sealed class MaintenanceExecutorTests
             var configuration = FluxVaultConfiguration.CreateDefault(root) with { RepositoryPath = binding.RepositoryPath, MetadataStore = metadata };
             Entry = new(binding, 7, "FluxVault", new(Caller.UserSid, []), configuration);
             var mutation = PostgreSqlVaultCatalogue.IsMutation(command);
-            Request = new(command, null, null, null, null, MirrorNodeId: "first", VaultId: binding.Id,
-                ExpectedVaultRevision: mutation ? Entry.Revision : null, OperationId: mutation ? Guid.NewGuid() : null);
+            Request = new FluxVaultIpcRequest(command, null, null, null, null, MirrorNodeId: "first", VaultId: binding.Id,
+                ExpectedVaultRevision: mutation ? Entry.Revision : null, OperationId: mutation ? Guid.NewGuid() : null) with
+                { ExportPath = command == FluxVaultIpcCommand.ExportDiagnostics ? Path.Combine(root, "output") : null };
             Admission = new(Entry, mutation ? new(Request.OperationId!.Value, binding.Id, Caller.UserSid, command, "owned payload",
                 VaultOperationState.Admitted, Entry.Revision, null, VaultPermission.All) : null, false);
         }

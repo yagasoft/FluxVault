@@ -227,8 +227,22 @@ failures, and noisy-folder churn such as OneDrive/Office activity.
 
 ## Service diagnostics and performance telemetry
 
-The service always keeps a bounded in-memory telemetry history for the active
-profile. By default it samples every 5 seconds and retains 4320 samples, which
+Protected diagnostics export requires history-read authority and a bound
+operation/revision. Catalogue admission validates local directory syntax without
+filesystem access. The Windows executor derives a new filename from the admitted
+operation and uses the caller-created, pinned output target through publication;
+it cannot write into a destination denied to that caller or overwrite an existing
+entry. Core streams the versioned status document and owns/disposes the target
+from entry, including status-generation, write and cancellation failures. The
+document records the repository identity and configuration revision; publication
+warnings are retained in the durable response. Exact replay/status returns that
+response without creating output again, even if the caller edited or deleted the
+file. Publication followed by an unconfirmed receipt/acknowledgement remains an
+unknown outcome. The view-model checks both returned paths against its captured
+operation-specific destination and keeps pending protection edits.
+
+The service always keeps a bounded in-memory telemetry history for the
+installation. By default it samples every 5 seconds and retains 4320 samples, which
 is 6 hours of history. The sampler records process CPU, working set, private
 memory, GC heap, collection counts, process threads and handles, ThreadPool
 availability and queue pressure, IPC request counts, loop state, backup/capture

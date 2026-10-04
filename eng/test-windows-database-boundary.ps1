@@ -581,7 +581,8 @@ host all all ::1/128 reject
         if($clientKind -eq 'Npgsql'){
             if(-not $probe.Result.Authenticated -or -not $probe.Result.FixtureVerified){throw 'SYSTEM password-free Npgsql authentication failed.'}
             if($RunCatalogueTests -and ($null -eq $probe.Result.Catalogue -or $probe.Result.Catalogue.Passed -lt 40 -or
-                -not $probe.Result.Catalogue.PolicyActorsAreDoubles -or -not $probe.Result.Catalogue.MirrorDrainCatalogueVerified)) {
+                -not $probe.Result.Catalogue.PolicyActorsAreDoubles -or -not $probe.Result.Catalogue.MirrorDrainCatalogueVerified -or
+                -not $probe.Result.Catalogue.DiagnosticsCatalogueVerified)) {
                 throw 'Required current catalogue/drain contracts did not complete; rebuild the Release test host before running.'
             }
             # Multi-vault collision/coexistence cases are retired. Retain all single-repository binding/integrity contracts.
@@ -615,8 +616,8 @@ host all all ::1/128 reject
                     $null -ne $_.PSObject.Properties['NativeCallerFiles']) -and $_.NativeCallerFiles.Actor -eq 'B' } |
                 ForEach-Object { $_.NativeCallerFiles.Results | Where-Object Kind -eq 'CallerFiles' })
             if($creatorProof.Count -ne 1 -or -not $creatorProof[0].Result.MaintenanceCommandsVerified -or
-                -not $creatorProof[0].Result.DrainCommandsVerified -or
-                $deniedProof.Count -ne 1 -or $deniedProof[0].Result.MaintenanceDenied -ne 11 -or
+                -not $creatorProof[0].Result.DrainCommandsVerified -or -not $creatorProof[0].Result.DiagnosticsCommandsVerified -or
+                $deniedProof.Count -ne 1 -or $deniedProof[0].Result.MaintenanceDenied -ne 12 -or -not $proof[0].Result.DiagnosticsOutputCleaned -or
                 -not $proof[0].Result.ProtectedRehearsalOutputCleaned -or -not $proof[0].Result.DrainEffectVerified) {
                 throw 'Required current maintenance proof is missing; rebuild the Release test host before running.'
             }

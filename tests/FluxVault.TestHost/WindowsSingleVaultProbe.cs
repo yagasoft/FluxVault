@@ -41,15 +41,16 @@ internal static class WindowsSingleVaultProbe
             var commands = new[] { FluxVaultIpcCommand.GetRepositoryHealth, FluxVaultIpcCommand.PreviewRetention, FluxVaultIpcCommand.RunRetentionNow,
                 FluxVaultIpcCommand.RunRepositoryScrub, FluxVaultIpcCommand.RunRestoreRehearsal, FluxVaultIpcCommand.PreviewMirrorRepair,
                 FluxVaultIpcCommand.RunMirrorRepair, FluxVaultIpcCommand.PreviewMirrorRebalance, FluxVaultIpcCommand.RunMirrorRebalance,
-                FluxVaultIpcCommand.PreviewMirrorDrain, FluxVaultIpcCommand.RunMirrorDrain };
+                FluxVaultIpcCommand.PreviewMirrorDrain, FluxVaultIpcCommand.RunMirrorDrain, FluxVaultIpcCommand.ExportDiagnostics };
             foreach (var command in commands)
             {
-                var response = await client.SendAsync(new(command, null, null, null, null, MirrorNodeId: "first",
+                var response = await client.SendAsync(new(command, null, null, null, Path.Combine(fixture.Root, "output-B"), MirrorNodeId: "first",
                     VaultId: new(Guid.ParseExact(fixture.FixtureId, "N")), ExpectedVaultRevision: 1, OperationId: Guid.NewGuid()), deadline.Token);
                 if (response.Success || response.ErrorCode != FluxVaultIpcErrorCode.Denied ||
                     response.VaultId is { } disclosed && disclosed.Value != Guid.ParseExact(fixture.FixtureId, "N") ||
                     response.RepositoryHealth is not null || response.RepositoryScrub is not null || response.RestoreRehearsal is not null ||
-                    response.MirrorRepair is not null || response.MirrorRebalance is not null || response.RetentionPreview is not null || response.RetentionResult is not null)
+                    response.MirrorRepair is not null || response.MirrorRebalance is not null || response.RetentionPreview is not null || response.RetentionResult is not null ||
+                    response.DiagnosticsExport is not null || response.OutputPath is not null)
                     throw new InvalidOperationException("Ungrant user received maintenance data or admission.");
             }
             Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Denied = true, NoIdentityOrHistory = true, MaintenanceDenied = commands.Length }));
@@ -305,9 +306,42 @@ internal static class WindowsSingleVaultProbe
         var verifiedAfterDrain = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(latestAfterDrain.VersionId, recoveredAfterDrain)));
         Check(verifiedAfterDrain.RestoreResult?.VerifiedLogicalBytes == new FileInfo(file).Length && Hash(file) == Hash(recoveredAfterDrain),
             "save and drain revisions still permit backup, history and independent verified recovery");
+        var diagnosticsRequest = Bind(FluxVaultIpcRequest.ExportDiagnostics(destination));
+        var diagnostics = await Send(diagnosticsRequest);
+        var diagnosticsPath = Path.Combine(destination, $"fluxvault-diagnostics-{diagnosticsRequest.OperationId:N}.json");
+        Check(diagnostics.OutputPath == diagnosticsPath && diagnostics.DiagnosticsExport?.OutputPath == diagnosticsPath &&
+            diagnostics.DiagnosticsExport.Warnings is not null, "native diagnostics returns its exact operation-specific destination");
+        using (var report = JsonDocument.Parse(await File.ReadAllBytesAsync(diagnosticsPath, deadline.Token)))
+        {
+            var document = report.RootElement;
+            Check(document.GetProperty("formatVersion").GetInt32() == 1 && document.GetProperty("vaultId").GetString() == id.ToString() &&
+                document.GetProperty("configurationRevision").GetInt64() == revision, "diagnostics JSON retains its admitted repository identity and revision");
+            Check(document.GetProperty("status").GetProperty("lastMessage").GetString()!.Contains("Automatic protection unavailable", StringComparison.Ordinal),
+                "diagnostics truthfully explains unavailable automatic protection");
+            Check(document.GetProperty("status").GetProperty("recentVersions").GetArrayLength() > 0, "diagnostics contains actual repository status and inventory");
+        }
+        await File.WriteAllTextAsync(diagnosticsPath, "caller edited report", deadline.Token);
+        var diagnosticsReplay = await Send(diagnosticsRequest);
+        var diagnosticsReceipt = await Send(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null, VaultId: id, OperationId: diagnosticsRequest.OperationId));
+        Check(JsonSerializer.Serialize(diagnostics) == JsonSerializer.Serialize(diagnosticsReplay) &&
+            JsonSerializer.Serialize(diagnostics) == JsonSerializer.Serialize(diagnosticsReceipt) && await File.ReadAllTextAsync(diagnosticsPath, deadline.Token) == "caller edited report",
+            "caller can edit published report and exact replay/status does not overwrite it");
+        File.Delete(diagnosticsPath);
+        await Send(diagnosticsRequest);
+        Check(!File.Exists(diagnosticsPath), "exact replay does not recreate a deleted diagnostics report");
+        var another = await Send(Bind(FluxVaultIpcRequest.ExportDiagnostics(destination)));
+        Check(another.OutputPath != diagnosticsPath && File.Exists(another.OutputPath), "distinct diagnostics operations create separate reports");
+        var privateDirectory = Path.Combine(fixture.Root, "catalogue", "single", "state");
+        var deniedDiagnosticsRequest = Bind(FluxVaultIpcRequest.ExportDiagnostics(privateDirectory));
+        var deniedDiagnostics = await client.SendAsync(deniedDiagnosticsRequest, deadline.Token);
+        Check(!deniedDiagnostics.Success, "SYSTEM service cannot export into a directory denied to the native caller");
+        var deniedDiagnosticsReceipt = await client.SendAsync(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null,
+            VaultId: id, OperationId: deniedDiagnosticsRequest.OperationId), deadline.Token);
+        Check(!deniedDiagnosticsReceipt.Success && deniedDiagnosticsReceipt.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown,
+            "failed admitted diagnostics does not report a completed export or repeat its effect");
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Passed = checks.Count, Checks = checks, SingleVault = true, VaultId = id,
             CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true,
-            MaintenanceCommandsVerified = true, DrainCommandsVerified = true }));
+            MaintenanceCommandsVerified = true, DrainCommandsVerified = true, DiagnosticsCommandsVerified = true }));
         return 0;
 
         FluxVaultIpcRequest Bind(FluxVaultIpcRequest request) => request with { VaultId = id,
@@ -376,9 +410,12 @@ internal static class WindowsSingleVaultProbe
             !Directory.EnumerateFiles(Path.Combine(mirrorTwo, "chunks"), "*", SearchOption.AllDirectories).Any())
             throw new InvalidOperationException("Drained mirror still contains artefacts or the remaining mirror has no protected copy.");
         if (!handler.CreatorVerified || !handler.UngrantDenied || handler.Completed < 8) throw new InvalidOperationException("Native command pipeline evidence is incomplete.");
+        if (Directory.EnumerateFileSystemEntries(Path.Combine(fixture.Root, "output-A"), ".FluxVault-recovery-*", SearchOption.AllDirectories).Any() ||
+            Directory.EnumerateFiles(statePath, "fluxvault-diagnostics-*", SearchOption.AllDirectories).Any())
+            throw new InvalidOperationException("Diagnostics left staging output or wrote into a caller-denied directory.");
         Console.WriteLine(JsonSerializer.Serialize(new { Passed = handler.Completed, NativeCallerTokens = true, SingleVault = true, ProtectedProductComposition = true,
             ActualCatalogueAndExecutor = true, ProtectedRehearsalOutputCleaned = true, DrainEffectVerified = true,
-            handler.CreatorVerified, handler.UngrantDenied, ExactInstalledBinding = binding.Id }));
+            DiagnosticsOutputCleaned = true, handler.CreatorVerified, handler.UngrantDenied, ExactInstalledBinding = binding.Id }));
         return 0;
     }
 

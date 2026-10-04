@@ -1,0 +1,805 @@
+{
+  "Observations": [
+    {
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "RunId": "87042a8eec7e414bb2a37aab634d7dc5",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Result": {
+            "FixtureId": "963ff329f22848788f7ef9c7592d6293",
+            "ProbeId": "d0de28909c004be89234d302e63b868a",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Kind": "Npgsql"
+        },
+        {
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL"
+        }
+      ],
+      "Actor": "System",
+      "ServerLogStart": 897,
+      "ServerLogEnd": 2307
+    },
+    {
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "Results": [
+        {
+          "Output": "",
+          "Host": "127.0.0.1",
+          "ExitCode": 2,
+          "ProbeId": "ac7186cd2ecc40918588774336122396",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 60661 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Kind": "libpq"
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "WriteRuntime": true,
+          "ReadProtected": true
+        }
+      ],
+      "Complete": true,
+      "RunId": "cad55c195cfb49ab8ede33651aac6a99",
+      "ServerLogStart": 2307,
+      "ServerLogEnd": 3007
+    },
+    {
+      "RunId": "b21b04b2e7aa41268e5f74c7be152d37",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "963ff329f22848788f7ef9c7592d6293",
+            "ProbeId": "cda2d546ac444a65aaf2948b93181930",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "WriteRuntime": true
+        }
+      ],
+      "Complete": true,
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 3007,
+      "ServerLogEnd": 4395
+    },
+    {
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "RunId": "3d80053d11e04470a0fe63605bd0fa7b",
+      "Complete": true,
+      "Results": [
+        {
+          "ExitCode": 2,
+          "Kind": "libpq",
+          "Error": "psql: error: connection to server at \"::1\", port 60661 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Output": "",
+          "ProbeId": "a1206d71b05e4714bc5677d6079eb283",
+          "Host": "::1"
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "Kind": "ACL"
+        }
+      ],
+      "ServerLogStart": 4395,
+      "ServerLogEnd": 5089
+    },
+    {
+      "RunId": "b2d4c61280f440adabd07bb51533d5ec",
+      "Actor": "System",
+      "Complete": true,
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "963ff329f22848788f7ef9c7592d6293",
+            "ProbeId": "6f800ab1c89a464fbda17a11ad8463af",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 83,
+              "Checks": [
+                "creator and initial revision",
+                "initial authorised status resolves only the installed repository without mutation",
+                "ungranted initial status reveals no installed identity",
+                "installation already initialised refuses another repository identity",
+                "rejected replacement preserves installed binding",
+                "ungranted admission",
+                "omitted target",
+                "unknown target",
+                "generic admission cannot consume save identity",
+                "saved round trip and revision",
+                "full configuration round trip",
+                "exact committed save replay",
+                "operation fingerprint collision",
+                "stale revision CAS",
+                "metadata rebinding rejected",
+                "privileged log rebinding rejected",
+                "generic admission cannot consume access identity",
+                "owner cannot manage access",
+                "read grant admits history",
+                "read grant cannot restore",
+                "acknowledged revocation blocks new admission",
+                "revocation persists across store restart",
+                "installed binding and configuration persist across store restart",
+                "catalogue identity mismatch fails closed",
+                "durable admission before side effects",
+                "automatic retention authority is durable with backup admission",
+                "interrupted mutation cannot be replayed",
+                "receipt reconciliation after completion",
+                "other actor cannot inspect receipt",
+                "cross actor collision rejects malformed response before decoding",
+                "effective purge permissions are durable",
+                "partial revocation denies purge receipt",
+                "partial revocation denies purge replay",
+                "protection-only backup cannot prune enabled retention",
+                "protection-only save cannot change retention policy",
+                "real catalogue denial precedes repository executor",
+                "real catalogue dispatch retains installed binding and revision",
+                "lost save acknowledgement does not execute dependent repository command",
+                "durable save is reconciled after acknowledgement loss",
+                "same save returns committed receipt without repeating effect",
+                "retention-policy edit authority is durable",
+                "protection-only capture allowed when automatic retention is disabled",
+                "ordinary protection edit does not require destructive authority",
+                "protection-only caller cannot enable automatic pruning",
+                "denied retention edit preserves authoritative configuration and revision",
+                "PUBLIC has no control schema access",
+                "acknowledgement durability settings",
+                "invalid diagnostics directory refused before receipt: relative",
+                "invalid diagnostics directory refused before receipt: C:relative",
+                "invalid diagnostics directory refused before receipt: \\\\server\\share",
+                "invalid diagnostics directory refused before receipt: C:\\work\\..\\elsewhere",
+                "invalid diagnostics directory refused before receipt: C:\\work\\CON.txt",
+                "invalid diagnostics directory refused before receipt: C:\\work\\trailing.",
+                "invalid diagnostics directory refused before receipt: C:\\work\\\\ambiguous",
+                "invalid diagnostics directory refused before receipt: ",
+                "syntactically valid diagnostics directory admits without privileged filesystem access",
+                "real diagnostics receipt round trip retains publication warning without re-execution",
+                "drain completion rejects a changed request fingerprint",
+                "drain completion rejects a different reported destination",
+                "drain completion rejects a changed durable permission receipt",
+                "ordinary completion cannot bypass drain configuration CAS",
+                "rejected drain completion retains the admitted receipt",
+                "cancelled drain completion keeps its receipt admitted and configuration enabled",
+                "remaining actions prevent disabling even with a healthy zero-count report",
+                "incomplete drain preserves every configuration field and revision",
+                "failed drain result is retained without a configuration revision",
+                "failed drain completion preserves enabled mirrors and untouched settings",
+                "drain completion CAS rejects newer configuration after repository effects",
+                "failed drain CAS preserves newer configuration and revision",
+                "failed drain CAS remains uncertain rather than falsely completed",
+                "failure before drain commit rolls back configuration and receipt together",
+                "rolled-back drain has no configuration effect",
+                "rolled-back drain keeps its original admitted revision",
+                "completed drain atomically increments revision and disables only its requested mirror",
+                "disabled destination drain replays its exact completed response before current selector validation",
+                "lost drain acknowledgement leaves a durable atomic result",
+                "lost drain acknowledgement reconciles exactly once without another configuration effect",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: null",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination:  ",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: missing",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: first",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: third",
+                "invalid and final-destination drain refusal preserves configuration and revision"
+              ],
+              "NativeActor": "SYSTEM",
+              "PolicyActorsAreDoubles": true,
+              "MirrorDrainCatalogueVerified": true,
+              "DiagnosticsCatalogueVerified": true,
+              "StoreHost": "127.0.0.1",
+              "Metadata": null,
+              "Repository": null
+            }
+          },
+          "Kind": "Npgsql",
+          "Host": "127.0.0.1"
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WriteRuntime": true
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 5152,
+      "ServerLogEnd": 8986
+    },
+    {
+      "RunId": "9ba27ee8ebeb40abb0b8750f26062784",
+      "Results": [
+        {
+          "Kind": "libpq",
+          "ProbeId": "f7e229c5319e479da419fce09a857cb2",
+          "Output": "963ff329f22848788f7ef9c7592d6293|fv_gate_261003|fv_gate_service",
+          "Host": "127.0.0.1",
+          "ExitCode": 0,
+          "Error": ""
+        },
+        {
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "Kind": "ACL"
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "Actor": "System",
+      "ServerLogStart": 8986,
+      "ServerLogEnd": 9539
+    },
+    {
+      "Actor": "System",
+      "RunId": "4fae2dfe295b422f9df673f5101035d1",
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "963ff329f22848788f7ef9c7592d6293",
+            "ProbeId": "5446dc8f54a84adfa887e74a1b1159d0",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 83,
+              "Checks": [
+                "creator and initial revision",
+                "initial authorised status resolves only the installed repository without mutation",
+                "ungranted initial status reveals no installed identity",
+                "installation already initialised refuses another repository identity",
+                "rejected replacement preserves installed binding",
+                "ungranted admission",
+                "omitted target",
+                "unknown target",
+                "generic admission cannot consume save identity",
+                "saved round trip and revision",
+                "full configuration round trip",
+                "exact committed save replay",
+                "operation fingerprint collision",
+                "stale revision CAS",
+                "metadata rebinding rejected",
+                "privileged log rebinding rejected",
+                "generic admission cannot consume access identity",
+                "owner cannot manage access",
+                "read grant admits history",
+                "read grant cannot restore",
+                "acknowledged revocation blocks new admission",
+                "revocation persists across store restart",
+                "installed binding and configuration persist across store restart",
+                "catalogue identity mismatch fails closed",
+                "durable admission before side effects",
+                "automatic retention authority is durable with backup admission",
+                "interrupted mutation cannot be replayed",
+                "receipt reconciliation after completion",
+                "other actor cannot inspect receipt",
+                "cross actor collision rejects malformed response before decoding",
+                "effective purge permissions are durable",
+                "partial revocation denies purge receipt",
+                "partial revocation denies purge replay",
+                "protection-only backup cannot prune enabled retention",
+                "protection-only save cannot change retention policy",
+                "real catalogue denial precedes repository executor",
+                "real catalogue dispatch retains installed binding and revision",
+                "lost save acknowledgement does not execute dependent repository command",
+                "durable save is reconciled after acknowledgement loss",
+                "same save returns committed receipt without repeating effect",
+                "retention-policy edit authority is durable",
+                "protection-only capture allowed when automatic retention is disabled",
+                "ordinary protection edit does not require destructive authority",
+                "protection-only caller cannot enable automatic pruning",
+                "denied retention edit preserves authoritative configuration and revision",
+                "PUBLIC has no control schema access",
+                "acknowledgement durability settings",
+                "invalid diagnostics directory refused before receipt: relative",
+                "invalid diagnostics directory refused before receipt: C:relative",
+                "invalid diagnostics directory refused before receipt: \\\\server\\share",
+                "invalid diagnostics directory refused before receipt: C:\\work\\..\\elsewhere",
+                "invalid diagnostics directory refused before receipt: C:\\work\\CON.txt",
+                "invalid diagnostics directory refused before receipt: C:\\work\\trailing.",
+                "invalid diagnostics directory refused before receipt: C:\\work\\\\ambiguous",
+                "invalid diagnostics directory refused before receipt: ",
+                "syntactically valid diagnostics directory admits without privileged filesystem access",
+                "real diagnostics receipt round trip retains publication warning without re-execution",
+                "drain completion rejects a changed request fingerprint",
+                "drain completion rejects a different reported destination",
+                "drain completion rejects a changed durable permission receipt",
+                "ordinary completion cannot bypass drain configuration CAS",
+                "rejected drain completion retains the admitted receipt",
+                "cancelled drain completion keeps its receipt admitted and configuration enabled",
+                "remaining actions prevent disabling even with a healthy zero-count report",
+                "incomplete drain preserves every configuration field and revision",
+                "failed drain result is retained without a configuration revision",
+                "failed drain completion preserves enabled mirrors and untouched settings",
+                "drain completion CAS rejects newer configuration after repository effects",
+                "failed drain CAS preserves newer configuration and revision",
+                "failed drain CAS remains uncertain rather than falsely completed",
+                "failure before drain commit rolls back configuration and receipt together",
+                "rolled-back drain has no configuration effect",
+                "rolled-back drain keeps its original admitted revision",
+                "completed drain atomically increments revision and disables only its requested mirror",
+                "disabled destination drain replays its exact completed response before current selector validation",
+                "lost drain acknowledgement leaves a durable atomic result",
+                "lost drain acknowledgement reconciles exactly once without another configuration effect",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: null",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination:  ",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: missing",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: first",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: third",
+                "invalid and final-destination drain refusal preserves configuration and revision"
+              ],
+              "NativeActor": "SYSTEM",
+              "PolicyActorsAreDoubles": true,
+              "MirrorDrainCatalogueVerified": true,
+              "DiagnosticsCatalogueVerified": true,
+              "StoreHost": "::1",
+              "Metadata": null,
+              "Repository": null
+            }
+          },
+          "Kind": "Npgsql"
+        },
+        {
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL"
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 9539,
+      "ServerLogEnd": 13325
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Results": [
+        {
+          "Kind": "libpq",
+          "ExitCode": 0,
+          "Error": "",
+          "ProbeId": "83b0b1aee1fa4ed3b7022cdf175b6069",
+          "Host": "::1",
+          "Output": "963ff329f22848788f7ef9c7592d6293|fv_gate_261003|fv_gate_service"
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "Kind": "ACL"
+        }
+      ],
+      "Complete": true,
+      "RunId": "998e816c1ee04e71954532f918cfdaf3",
+      "Actor": "System",
+      "ServerLogStart": 13325,
+      "ServerLogEnd": 13872
+    },
+    {
+      "Actor": "A",
+      "Complete": true,
+      "RunId": "ff2099408117412b81efe9b87d94b990",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Result": {
+            "FixtureId": "963ff329f22848788f7ef9c7592d6293",
+            "ProbeId": "24756636826b4cdea84bbcd4d9b071f9",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Kind": "Npgsql"
+        },
+        {
+          "WriteRuntime": false,
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+          "Kind": "ACL"
+        }
+      ],
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+      "ServerLogStart": 13872,
+      "ServerLogEnd": 15306
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+      "Actor": "A",
+      "RunId": "34f964579971486e85384f3ff168de71",
+      "Results": [
+        {
+          "Output": "",
+          "Host": "127.0.0.1",
+          "ProbeId": "08ffb44c9f2b44018d20d54f6e7dfa06",
+          "Kind": "libpq",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 60661 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ExitCode": 2
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+          "ReadProtected": false,
+          "Kind": "ACL",
+          "WriteRuntime": false
+        }
+      ],
+      "Complete": true,
+      "ServerLogStart": 15306,
+      "ServerLogEnd": 16023
+    },
+    {
+      "Complete": true,
+      "RunId": "db6791ab39a84dd7ba1afb221b291c69",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+      "Actor": "A",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "963ff329f22848788f7ef9c7592d6293",
+            "ProbeId": "a81e81332222499f9e0842b8444ea2db",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "ReadProtected": false,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+          "WriteRuntime": false
+        }
+      ],
+      "ServerLogStart": 16023,
+      "ServerLogEnd": 17435
+    },
+    {
+      "Actor": "A",
+      "Complete": true,
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+      "Results": [
+        {
+          "Error": "psql: error: connection to server at \"::1\", port 60661 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ExitCode": 2,
+          "Host": "::1",
+          "Kind": "libpq",
+          "Output": "",
+          "ProbeId": "8dabf065436a470b8898c6ec6176d72f"
+        },
+        {
+          "ReadProtected": false,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+          "WriteRuntime": false
+        }
+      ],
+      "RunId": "d777954375274841b939c70460d0afa4",
+      "ServerLogStart": 17435,
+      "ServerLogEnd": 18141
+    },
+    {
+      "Actor": "B",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+      "Complete": true,
+      "RunId": "0b3c4beb46614b68a774690629592752",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "127.0.0.1",
+          "Result": {
+            "FixtureId": "963ff329f22848788f7ef9c7592d6293",
+            "ProbeId": "c29c6fce5e304dcb9f101be8c4c769f8",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "ReadProtected": false,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+          "WriteRuntime": false
+        }
+      ],
+      "ServerLogStart": 18141,
+      "ServerLogEnd": 19575
+    },
+    {
+      "Complete": true,
+      "Actor": "B",
+      "Results": [
+        {
+          "Kind": "libpq",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 60661 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Host": "127.0.0.1",
+          "Output": "",
+          "ExitCode": 2,
+          "ProbeId": "424ac16f43914d2d86589675b06d5b85"
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+          "Kind": "ACL",
+          "WriteRuntime": false,
+          "ReadProtected": false
+        }
+      ],
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+      "RunId": "f075d70cdb4e4f0c9e17ab203652459a",
+      "ServerLogStart": 19575,
+      "ServerLogEnd": 20292
+    },
+    {
+      "RunId": "9ac20c09d9514b49aa43aa3604ecff03",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "963ff329f22848788f7ef9c7592d6293",
+            "ProbeId": "549885f2fd9248d2b37a2ba24cfbe67b",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+          "WriteRuntime": false,
+          "ReadProtected": false
+        }
+      ],
+      "Complete": true,
+      "Actor": "B",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+      "ServerLogStart": 20292,
+      "ServerLogEnd": 21704
+    },
+    {
+      "Complete": true,
+      "Results": [
+        {
+          "Output": "",
+          "Kind": "libpq",
+          "ProbeId": "c5ea2fbf7c4040528a2be8102aed5116",
+          "ExitCode": 2,
+          "Host": "::1",
+          "Error": "psql: error: connection to server at \"::1\", port 60661 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\""
+        },
+        {
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+          "WriteRuntime": false,
+          "Kind": "ACL"
+        }
+      ],
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+      "RunId": "c8ccd515c07c4e01889598c3d2f7495c",
+      "Actor": "B",
+      "ServerLogStart": 21704,
+      "ServerLogEnd": 22410
+    },
+    {
+      "NativeCallerFiles": {
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163",
+        "Actor": "A",
+        "RunId": "31ace93bdc3246a39eccebe11f3aa201",
+        "Complete": true,
+        "Results": [
+          {
+            "Result": {
+              "Actor": "A",
+              "Passed": 72,
+              "Checks": [
+                "product composition truthfully reports blocked automatic protection",
+                "native creator receives the installed identity and configuration",
+                "real PostgreSQL save preserves every untouched configuration property",
+                "multiple protected folders and file types persist in the single vault",
+                "stale save cannot replace accepted configuration",
+                "wrong repository identity cannot read history",
+                "native caller files are captured through the authenticated executor",
+                "duplicate backup returns its durable receipt without repeated execution",
+                "history contains both source folders' captured files",
+                "authorised history inspection succeeds",
+                "preview uses caller-authorised publication and independently verified bytes",
+                "the ordinary caller prepares a read-only preview copy",
+                "preview replay returns the original durable result",
+                "preview refuses an existing destination without replacing it",
+                "folder preview is refused before output preparation",
+                "standalone recovery publishes independently verified bytes to the caller",
+                "nested folder recovery preserves independently verified bytes",
+                "new status requests retain completed backup state",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "combined save commits once and removes only confirmed CAD history",
+                "save-purge replay and receipt lookup return the original retained result",
+                "CAD history is gone and preserved Office history remains",
+                "preserved Office bytes remain independently recoverable after purge",
+                "caller working copy is captured after its CAD parent",
+                "preservation conflict reports saved configuration and failed purge",
+                "preservation refusal leaves all PostgreSQL history unchanged",
+                "failed purge replay never executes the destructive effect again",
+                "preserved inherited working bytes remain independently recoverable after refusal",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "authorised repository health loads its protected state",
+                "RunRepositoryScrub replay and status return its exact durable outcome",
+                "native scrub verifies real PostgreSQL repository chunks",
+                "RunRestoreRehearsal replay and status return its exact durable outcome",
+                "native rehearsal verifies recovery in protected temporary storage",
+                "repair preview accepts the configured selector case-insensitively and reports both mirrors",
+                "RunMirrorRepair replay and status return its exact durable outcome",
+                "explicit all-mirror repair completes through the authorised service",
+                "mirror placement preview remains available",
+                "RunMirrorRebalance replay and status return its exact durable outcome",
+                "mirror placement executes through its durable receipt",
+                "mirror drain preview reports the selected destination without disabling it",
+                "health retains each report after concurrent-capable snapshot publication",
+                "retention preview identifies disposable superseded versions",
+                "RunRetentionNow replay and status return its exact durable outcome",
+                "retention actually prunes only owned fixture history",
+                "history and cached status reflect retention while retaining the latest working version",
+                "latest working bytes remain independently recoverable after maintenance and retention",
+                "RunMirrorDrain replay and status return its exact durable outcome",
+                "native mirror drain publishes its completed result and incremented configuration revision",
+                "native drain changes only the selected mirror enablement and preserves every untouched setting",
+                "an old save cannot re-enable the drained mirror",
+                "the final enabled mirror is refused before new receipt admission",
+                "backup uses the remaining enabled mirror after the drain revision",
+                "save and drain revisions still permit backup, history and independent verified recovery",
+                "native diagnostics returns its exact operation-specific destination",
+                "diagnostics JSON retains its admitted repository identity and revision",
+                "diagnostics truthfully explains unavailable automatic protection",
+                "diagnostics contains actual repository status and inventory",
+                "caller can edit published report and exact replay/status does not overwrite it",
+                "exact replay does not recreate a deleted diagnostics report",
+                "distinct diagnostics operations create separate reports",
+                "SYSTEM service cannot export into a directory denied to the native caller",
+                "failed admitted diagnostics does not report a completed export or repeat its effect"
+              ],
+              "SingleVault": true,
+              "VaultId": "963ff329-f228-4878-8f7e-f9c7592d6293",
+              "CallerCanEditPublished": true,
+              "IndependentSha256": true,
+              "ActualCatalogueAndExecutor": true,
+              "MaintenanceCommandsVerified": true,
+              "DrainCommandsVerified": true,
+              "DiagnosticsCommandsVerified": true
+            },
+            "Kind": "CallerFiles"
+          },
+          {
+            "ReadProtected": false,
+            "Kind": "ACL",
+            "WriteRuntime": false,
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1163"
+          }
+        ]
+      }
+    },
+    {
+      "NativeCallerFiles": {
+        "Complete": true,
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+        "RunId": "71838329374547eba1ddc0cb8615c6bd",
+        "Results": [
+          {
+            "Result": {
+              "Actor": "B",
+              "Denied": true,
+              "NoIdentityOrHistory": true,
+              "MaintenanceDenied": 12
+            },
+            "Kind": "CallerFiles"
+          },
+          {
+            "Kind": "ACL",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1164",
+            "WriteRuntime": false,
+            "ReadProtected": false
+          }
+        ],
+        "Actor": "B"
+      }
+    },
+    {
+      "NativeCallerFiles": {
+        "RunId": "cceaafe2188d47218846831cd56aea6d",
+        "Actor": "System",
+        "WindowsSid": "S-1-5-18",
+        "Results": [
+          {
+            "Result": {
+              "Passed": 84,
+              "NativeCallerTokens": true,
+              "SingleVault": true,
+              "ProtectedProductComposition": true,
+              "ActualCatalogueAndExecutor": true,
+              "ProtectedRehearsalOutputCleaned": true,
+              "DrainEffectVerified": true,
+              "DiagnosticsOutputCleaned": true,
+              "CreatorVerified": true,
+              "UngrantDenied": true,
+              "ExactInstalledBinding": "963ff329-f228-4878-8f7e-f9c7592d6293"
+            },
+            "Kind": "CallerFiles"
+          },
+          {
+            "WindowsSid": "S-1-5-18",
+            "WriteRuntime": true,
+            "ReadProtected": true,
+            "Kind": "ACL"
+          }
+        ],
+        "Complete": true
+      }
+    }
+  ],
+  "FailureLocation": null,
+  "FixtureId": "963ff329f22848788f7ef9c7592d6293",
+  "Failure": null
+}

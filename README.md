@@ -300,6 +300,17 @@ FluxVault temporary state folder, verifies logical length, records pass/fail
 results, then removes the temporary output without creating repository versions
 or restore-lineage hints.
 
+**Export diagnostics** asks for a local
+folder and cancels without dispatching an operation if you dismiss the picker.
+The protected service creates a new `fluxvault-diagnostics-<operation-id>.json`
+report through your Windows file permissions. The versioned report contains the
+admitted repository identity, configuration revision and current status, including
+any unavailable runtime capability. Publication warnings remain visible. An
+unconfirmed acknowledgement explains that a report may already exist; inspect
+the selected folder before another export. Replaying an operation returns its
+recorded result without overwriting an edited report or recreating a deleted one.
+Export preserves pending protection edits and does not start backup.
+
 Open **Options** > **Advanced** > **Diagnostics** to control bounded service
 file logging and performance telemetry. Service JSONL logs are enabled by
 default at `Warning` level under `C:\ProgramData\FluxVault\logs`, with a 25 MB

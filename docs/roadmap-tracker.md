@@ -74,8 +74,15 @@ complete cleanup with the normal installation unchanged. The subsequent
 publishes disablement, revision and retained result. It passes 73 real-store
 checks per loopback, 63 native creator checks, eleven ungranted-user denials
 and all 1,099 ordinary tests, with verified physical mirror effects and cleanup.
-Pending UI edits survive completion and newer accepted settings cannot regress;
-remaining command/background,
+Pending UI edits survive completion and newer accepted settings cannot regress.
+The [diagnostics export batch](verification/2026-10-04-next002-diagnostics/README.md)
+adds caller-authorised new-file publication, bound status JSON and retained
+warnings/receipts. Invalid directories fail before admission; cancelled selection
+dispatches nothing, and unconfirmed results retain edits without dependent backup.
+It passes 83 real-store checks per loopback, 72 native creator checks, twelve
+ungranted-user denials and 1,118 ordinary tests. The zero-warning build and fresh
+census confirm both fixtures and temporary workers are gone, with normal services
+and data unchanged. Remaining command/background,
 interruption, performance/accessibility, full G01 and rollout gates stay open.
 This updates progress without expanding the agreed roadmap.
 

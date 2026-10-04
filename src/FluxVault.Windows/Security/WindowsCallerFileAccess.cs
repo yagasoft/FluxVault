@@ -153,23 +153,7 @@ public sealed class WindowsCallerFileAccess
     }
 
     internal static string ValidatePath(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value) || value.Length > 32767 || value.Length < 3 || !char.IsAsciiLetter(value[0]) ||
-            value[1] != ':' || value[2] != '\\') Denied("An absolute local drive path is required.");
-        var trimmed = value.TrimEnd('\\');
-        foreach (var part in trimmed[2..].Split('\\', StringSplitOptions.RemoveEmptyEntries))
-        {
-            if (part.Length > 255 || part is "." or ".." || part.EndsWith(' ') || part.EndsWith('.') ||
-                part.Any(character => character < 32 || "<>:\"/|?*".Contains(character))) Denied("Ambiguous Windows paths are unsupported.");
-            var device = part.Split('.')[0].ToUpperInvariant();
-            if (device is "CON" or "PRN" or "AUX" or "NUL" or "CLOCK$" or "CONIN$" or "CONOUT$" ||
-                device.Length == 4 && (device.StartsWith("COM", StringComparison.Ordinal) || device.StartsWith("LPT", StringComparison.Ordinal)) &&
-                "123456789¹²³".Contains(device[3])) Denied("Windows device names are unsupported.");
-        }
-        var full = Path.GetFullPath(value);
-        if (full[3..].Contains("\\\\", StringComparison.Ordinal)) Denied("Ambiguous Windows paths are unsupported.");
-        return Path.TrimEndingDirectorySeparator(full);
-    }
+        => WindowsLocalPath.Validate(value);
 
     internal static SafeFileHandle Open(SafeFileHandle? parent, string name, bool directory)
         => OpenNative(parent, name, directory ? 0x1000A0u : 0x120089u, directory, asynchronous: !directory);

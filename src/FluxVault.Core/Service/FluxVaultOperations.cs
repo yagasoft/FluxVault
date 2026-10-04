@@ -814,6 +814,30 @@ public sealed class FluxVaultOperations(
         return report;
     }
 
+    public async Task<DiagnosticsExportResult> ExportDiagnosticsAsync(IRepositoryRestoreTarget target,
+        FluxVault.Abstractions.Security.VaultId vaultId, long configurationRevision,
+        CancellationToken cancellationToken = default, string? runtimeNotice = null)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        await using (target.ConfigureAwait(false))
+        {
+            if (!vaultId.IsValid || configurationRevision <= 0) throw new ArgumentException("A verified repository identity and revision are required.");
+            cancellationToken.ThrowIfCancellationRequested();
+            var status = await GetStatusAsync(cancellationToken).ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(runtimeNotice)) status = status with { LastMessage = runtimeNotice + status.LastMessage };
+            var document = new DiagnosticsExportDocument(1, DateTimeOffset.UtcNow, vaultId, configurationRevision, status);
+            await target.PrepareAsync(RepositoryEntryKind.File, cancellationToken).ConfigureAwait(false);
+            await using (var file = await target.CreateFileAsync(string.Empty, cancellationToken).ConfigureAwait(false))
+            {
+                await JsonSerializer.SerializeAsync(file, document, JsonOptions, cancellationToken).ConfigureAwait(false);
+                await target.FlushFileAsync(file, cancellationToken).ConfigureAwait(false);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            var warnings = await target.PublishAsync(cancellationToken).ConfigureAwait(false);
+            return new(target.OutputPath, warnings);
+        }
+    }
+
     public async Task<string> ExportDiagnosticsAsync(string exportPath, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(exportPath);

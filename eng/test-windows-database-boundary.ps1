@@ -7,10 +7,13 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$RunMetadataTests,
     [switch]$RunCallerFileTests,
     [switch]$RunSingleVaultTests,
+    [switch]$RunIntegrityTests,
+    [ValidateRange(60,600)][int]$IntegrityTimeoutSeconds = 300,
     [string]$EvidenceDirectory = (Join-Path $PSScriptRoot ("../docs/verification/2026-10-03-next002-windows-fixture/live/$FixtureId")))
 $ErrorActionPreference = 'Stop'
 if($RunMetadataTests -and -not $RunCatalogueTests){throw 'Metadata proof requires the catalogue contracts.'}
 if($RunCallerFileTests -and $RunSingleVaultTests){throw 'Select one native file workflow per fresh fixture.'}
+if($RunIntegrityTests -and ($RunCallerFileTests -or $RunSingleVaultTests)){throw 'Run the integrity suite in its own fresh fixture.'}
 Set-StrictMode -Version Latest
 Import-Module (Join-Path $PSScriptRoot 'fixtures/vault-windows-fixture.psm1') -Force
 Import-Module (Join-Path $PSScriptRoot 'fixtures/verified-postgresql-snapshot.psm1') -Force
@@ -20,6 +23,14 @@ $fixtureRoot = Resolve-VaultFixtureRoot -Root (Join-Path $fixtureParent $Fixture
 $fixtureBin = Join-Path $fixtureRoot 'postgresql/bin'
 $fixturePwsh = (Get-Command pwsh).Source
 $fixtureDotnet = (Get-Command dotnet).Source
+$fixtureVstest = $null
+if($RunIntegrityTests) {
+    # Bypass SDK resolution entirely: an ancestor global.json must never choose privileged code.
+    $sdkRoot=Join-Path (Split-Path $fixtureDotnet -Parent) 'sdk'
+    $sdk=@(Get-ChildItem -LiteralPath $sdkRoot -Directory | Where-Object {$_.Name -match '^10\.0\.\d+$'} | Sort-Object {[version]$_.Name} -Descending)
+    if(-not $sdk.Count){throw 'A trusted installed .NET 10 VSTest runtime is required.'}
+    $fixtureVstest=Join-Path $sdk[0].FullName 'vstest.console.dll'
+}
 $fixtureTask = 'FluxVault-NEXT002-261003-SYSTEM'
 $fixtureDescription = "FluxVault N2 $FixtureId" # Windows local-account descriptions allow at most 48 characters.
 $fixtureData = Join-Path $fixtureRoot 'data'
@@ -107,9 +118,9 @@ function Get-OwnedPostmaster {
 }
 
 function Read-ActorResult {
-    param([string]$Actor,[string]$RunId)
+    param([string]$Actor,[string]$RunId,[int]$TimeoutSeconds=70)
     $path=Join-Path $fixtureRoot ("output-$Actor/$RunId-result.json")
-    $deadline=[DateTime]::UtcNow.AddSeconds(70)
+    $deadline=[DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
     while (-not (Test-Path -LiteralPath $path)) {
         $earlyError=if($Actor -eq 'System'){Join-Path $fixtureRoot 'system-actor-error.json'}else{Join-Path $fixtureRoot ("output-$Actor/$RunId-error.json")}
         if(Test-Path -LiteralPath $earlyError){
@@ -130,7 +141,8 @@ function Invoke-SystemActor {
     $runId=[guid]::NewGuid().ToString('N')
     $arguments='-NoProfile -NonInteractive -File "'+(Join-Path $fixtureRoot 'runtime/invoke-windows-database-actor.ps1')+'" -Root "'+$fixtureRoot+'" -Actor System -RunId mission'
     $action=New-ScheduledTaskAction -Execute $fixturePwsh -Argument $arguments
-    $settings=New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 2) -MultipleInstances IgnoreNew
+    $taskSeconds=if($RunIntegrityTests){$IntegrityTimeoutSeconds+30}else{120}
+    $settings=New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Seconds $taskSeconds) -MultipleInstances IgnoreNew
     $existing=Get-ScheduledTask -TaskName $fixtureTask -ErrorAction SilentlyContinue
     if ($null -ne $existing) {
         $resource=@($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Task' -and $_.Name -eq $fixtureTask -and $_.State -eq 'Created'})
@@ -180,7 +192,7 @@ function Invoke-SystemActor {
             }
             'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/caller-files-stop')
         }
-        $result=Read-ActorResult System $runId
+        $result=Read-ActorResult System $runId -TimeoutSeconds $(if($ClientKind -eq 'Integrity'){$IntegrityTimeoutSeconds+10}else{70})
         Wait-SystemTaskIdle $registered
         Join-ActorProcesses System $runId
         if($fixtureJobs[$jobName].ProcessIds().Length){throw 'SYSTEM invocation job is not empty after completion.'}
@@ -397,6 +409,15 @@ function Remove-OwnedFixture {
         Assert-VaultFixtureTrustedPath $toolResult.FullName
         Copy-Item -LiteralPath $toolResult.FullName -Destination (Join-Path $fixtureEvidence $toolResult.Name)
     }
+    if(Test-Path -LiteralPath (Join-Path $fixtureRoot 'integrity')) {
+        foreach($section in @('results','database-intents')) {
+            $sectionPath=Join-Path $fixtureRoot ('integrity/'+$section)
+            if(-not(Test-Path -LiteralPath $sectionPath)){continue}
+            Assert-VaultFixtureTrustedPath $sectionPath
+            foreach($entry in Get-ChildItem -LiteralPath $sectionPath -Recurse -Force){Assert-VaultFixtureTrustedPath $entry.FullName}
+            Copy-Item -LiteralPath $sectionPath -Destination (Join-Path $fixtureEvidence $section) -Recurse
+        }
+    }
     Remove-VaultFixtureTree $fixtureRoot $fixtureParent $FixtureId
     $after=Get-InstallationSnapshot
     $after | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $fixtureEvidence 'after.json')
@@ -420,6 +441,7 @@ if($Mode -eq 'Cleanup') {
 
 $fixtureBefore=Get-InstallationSnapshot
 foreach($path in @($fixturePwsh,$fixtureDotnet)) { Assert-VaultFixtureTrustedPath $path }
+if($RunIntegrityTests){Assert-VaultFixtureTrustedPath $fixtureVstest}
 foreach($name in @('FVGateA_261003','FVGateB_261003')){if(Get-LocalUser -Name $name -ErrorAction SilentlyContinue){throw 'Fixture account collision.'}}
 if(Get-LocalGroup -Name 'FVGate_261003' -ErrorAction SilentlyContinue){throw 'Fixture group collision.'}
 if(Get-ScheduledTask -TaskName $fixtureTask -ErrorAction SilentlyContinue){throw 'Fixture task collision.'}
@@ -459,6 +481,14 @@ try {
     $hostOutput=Join-Path $PSScriptRoot '../tests/FluxVault.TestHost/bin/Release/net10.0-windows'
     foreach($entry in Get-ChildItem -LiteralPath $hostOutput -Recurse -Force){if($entry.Attributes -band [IO.FileAttributes]::ReparsePoint){throw 'Host payload contains a link.'}}
     Copy-Item -Path (Join-Path $hostOutput '*') -Destination (Join-Path $fixtureRoot 'runtime') -Recurse
+    if($RunIntegrityTests) {
+        $integrationOutput=Join-Path $PSScriptRoot '../tests/FluxVault.Integration.Tests/bin/Release/net10.0-windows'
+        foreach($entry in Get-ChildItem -LiteralPath $integrationOutput -Recurse -Force){if($entry.Attributes -band [IO.FileAttributes]::ReparsePoint){throw 'Integration payload contains a link.'}}
+        New-VaultFixtureProtectedDirectory (Join-Path $fixtureRoot 'runtime/integration')
+        Copy-Item -Path (Join-Path $integrationOutput '*') -Destination (Join-Path $fixtureRoot 'runtime/integration') -Recurse
+        New-VaultFixtureProtectedDirectory (Join-Path $fixtureRoot 'integrity')
+        foreach($section in @('temp','results','database-intents')) {New-VaultFixtureProtectedDirectory (Join-Path $fixtureRoot ('integrity/'+$section))}
+    }
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'fixtures/vault-windows-fixture.psm1'),(Join-Path $PSScriptRoot 'fixtures/invoke-windows-database-actor.ps1'),(Join-Path $PSScriptRoot 'fixtures/invoke-owned-tool.ps1'),(Join-Path $PSScriptRoot 'fixtures/owned-windows-job.cs') -Destination (Join-Path $fixtureRoot 'runtime')
     foreach($actor in @('Cluster')) {
         $kernelName='Global\FluxVault.NEXT002.'+[guid]::NewGuid().ToString('N')
@@ -471,7 +501,7 @@ try {
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
     @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
-    @{Dotnet=$fixtureDotnet;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot)} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
+    @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     foreach($entry in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'runtime') -Recurse -Force){Assert-VaultFixtureTrustedPath $entry.FullName}
     $bootstrap=[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(48))
     $passwordFile=Join-Path $fixtureRoot 'bootstrap.pw'
@@ -489,8 +519,9 @@ log_connections = 'all'
 log_line_prefix = '[%p] %a '
 fluxvault.test_instance = '$FixtureId'
 "@ | Add-Content -LiteralPath (Join-Path $fixtureData 'postgresql.conf')
+    $bootstrapDatabases=if($RunIntegrityTests){'postgres,fv_gate_trust_control'}else{'postgres'}
     @"
-host postgres fv_gate_bootstrap 127.0.0.1/32 scram-sha-256
+host $bootstrapDatabases fv_gate_bootstrap 127.0.0.1/32 scram-sha-256
 host all all 127.0.0.1/32 reject
 host all all ::1/128 reject
 "@ | Set-Content -LiteralPath (Join-Path $fixtureData 'pg_hba.conf')
@@ -500,15 +531,33 @@ host all all ::1/128 reject
     if($null -ne $postmaster){Set-VaultFixtureResourceState $fixtureJournal Postmaster postgres Created $postmaster}
     if($launch.ExitCode -ne 0 -or $null -eq $postmaster){throw 'Owned PostgreSQL readiness failed.'}
     if($postmaster.ProcessId -notin $fixtureJobs.Cluster.ProcessIds()){throw 'Owned PostgreSQL escaped fixture process containment.'}
+    if($RunIntegrityTests) {
+        @{InstanceId=$FixtureId;DataDirectory=$fixtureData;Port=$fixturePort;ProcessId=$postmaster.ProcessId;ProcessStartedUtc=$postmaster.StartedUtc} |
+            ConvertTo-Json | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/integrity-cluster.json')
+    }
     try {
         $bootstrapConnection="host=127.0.0.1 port=$fixturePort dbname=postgres user=fv_gate_bootstrap connect_timeout=5 require_auth=scram-sha-256"
-        $sql="CREATE ROLE fv_gate_service LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;`nCREATE DATABASE fv_gate_261003 OWNER fv_gate_service;`nALTER ROLE fv_gate_bootstrap NOLOGIN PASSWORD NULL;`nSELECT rolcanlogin, rolpassword IS NULL FROM pg_authid WHERE rolname='fv_gate_bootstrap';`n"
+        $createDb=if($RunIntegrityTests){'CREATEDB'}else{'NOCREATEDB'}
+        $sql="CREATE ROLE fv_gate_service LOGIN NOSUPERUSER $createDb NOCREATEROLE NOREPLICATION;`nCREATE DATABASE fv_gate_261003 OWNER fv_gate_service;`nREVOKE ALL ON DATABASE fv_gate_261003 FROM PUBLIC;`n"
+        if($RunIntegrityTests) {
+            $sql+="CREATE ROLE fv_gate_trust_control LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;`nCREATE DATABASE fv_gate_trust_control OWNER fv_gate_bootstrap;`nREVOKE ALL ON DATABASE fv_gate_trust_control FROM PUBLIC;`nGRANT CONNECT ON DATABASE fv_gate_trust_control TO fv_gate_trust_control;`n"
+            # This separate control contains no repository. It exists only to prove RequireAuth rejects actual trust.
+            $sql+='\connect fv_gate_trust_control'+"`nREVOKE CREATE ON SCHEMA public FROM PUBLIC;`n"+'\connect postgres'+"`n"
+        }
+        $sql+="ALTER ROLE fv_gate_bootstrap NOLOGIN PASSWORD NULL;`nSELECT rolcanlogin, rolpassword IS NULL FROM pg_authid WHERE rolname='fv_gate_bootstrap';`n"
         $provision=Invoke-OwnedTool (Join-Path $fixtureBin 'psql.exe') @('-X','-w','-A','-t','-v','ON_ERROR_STOP=1','--dbname',$bootstrapConnection) $sql @{PGPASSWORD=$bootstrap}
         if($provision.ExitCode -ne 0 -or -not $provision.Output.Contains('f|t')){throw 'Bootstrap-role disabling failed.'}
     } finally {$bootstrap=$null; $sql=$null}
+    $integrityAdmission=if($RunIntegrityTests){@"
+host "/^fv_test_[0-9a-f]{32}$" fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1
+host "/^fv_test_[0-9a-f]{32}$" fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1
+host fv_gate_trust_control fv_gate_trust_control 127.0.0.1/32 trust
+host fv_gate_trust_control fv_gate_trust_control ::1/128 trust
+"@}else{''}
     @"
 host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1
 host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1
+$integrityAdmission
 host all all 127.0.0.1/32 reject
 host all all ::1/128 reject
 "@ | Set-Content -LiteralPath (Join-Path $fixtureData 'pg_hba.conf')
@@ -555,6 +604,17 @@ host all all ::1/128 reject
         $proof=@($native.Results | Where-Object {$_.Kind -eq 'CallerFiles'})
         if($proof.Count -ne 1 -or $proof[0].Result.Passed -lt 8 -or -not $proof[0].Result.NativeCallerTokens){throw 'Native caller file contracts did not complete.'}
         if($RunSingleVaultTests -and (-not $proof[0].Result.SingleVault -or -not $proof[0].Result.ActualCatalogueAndExecutor -or -not $proof[0].Result.CreatorVerified -or -not $proof[0].Result.UngrantDenied)){throw 'Required native single-vault command flow did not complete.'}
+    }
+    if($RunIntegrityTests) {
+        $suite=Invoke-SystemActor '127.0.0.1' 'Integrity'
+        $fixtureObservations.Add(@{IntegritySuite=$suite})
+        $suiteProof=@($suite.Results | Where-Object {$_.Kind -eq 'Integrity'})
+        if($suiteProof.Count -ne 1 -or $suiteProof[0].ExitCode -ne 0){throw 'The owned PostgreSQL integrity suite failed.'}
+        $trxPath=Join-Path $fixtureRoot 'integrity/results/PostgreSql.trx'
+        Assert-VaultFixtureTrustedPath $trxPath
+        [xml]$trx=Get-Content -LiteralPath $trxPath -Raw
+        $counters=$trx.TestRun.ResultSummary.Counters
+        if([int]$counters.total -lt 40 -or [int]$counters.passed -ne [int]$counters.total -or [int]$counters.notExecuted -ne 0){throw 'Required PostgreSQL tests did not all pass without skips.'}
     }
 } catch { $fixtureFailure=$_.Exception.Message; $fixtureFailureLocation=$_.ScriptStackTrace }
 finally {

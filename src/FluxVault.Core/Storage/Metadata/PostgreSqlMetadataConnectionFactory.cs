@@ -14,6 +14,8 @@ public static class PostgreSqlMetadataConnectionFactory
             Port = configuration.Port,
             Database = configuration.DatabaseName,
             Username = configuration.Username,
+            RequireAuth = "SSPI",
+            SearchPath = "pg_catalog",
             Pooling = true,
             MinPoolSize = 0,
             MaxPoolSize = Math.Max(1, configuration.MaxDbWriterConcurrency + configuration.MaxCaptureWorkers),

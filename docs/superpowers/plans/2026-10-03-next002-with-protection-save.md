@@ -47,6 +47,7 @@ Completed, bounded prerequisites remain evidence rather than a claim of full ser
 ### S3 — Combined verification and independent closeout
 
 - Focused real-store and actual VM regressions first; relevant combined suite, zero-warning Release build and full owned PostgreSQL integrity suite afterward. Adapt the legacy full-suite runner to the protected owned fixture before using it; its old elevated trust/unowned-process path is not suitable.
+- The [G01 runner adaptation](../../verification/2026-10-04-next002-integrity-runner/README.md) is prepared with the original 37 database cases and three fixture/recovery regressions. Its generated databases, temporary CREATEDB and empty trust-rejection control extend the previously named resources, requiring bounded independent review and scoped operational authorisation before native execution. Normal installation/rollout authority remains separate.
 - Native standard/elevated/packaged identities, direct DB/storage refusal, source/output ACL/race cases, allowed save/recovery and interruption/resource checks remain applicable. No identity/database case may silently skip.
 - Record C01–C03, S01/S02/S04–S08, D01 and G01 with exact evidence; S03 is explicitly retired. Obtain independent consequential security/integrity review, resolve blockers and rerun affected checks only.
 - Prepare exact normal installation target, preserved data/rollback and live probes. Request the separately gated rollout approval only after preparation and technical review; no PostgreSQL restart.

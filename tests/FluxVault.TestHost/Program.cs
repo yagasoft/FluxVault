@@ -155,8 +155,9 @@ internal static class Program
         var database = Require(options, "database");
         if (port <= 1024 || port == 5432 || !database.StartsWith("fv_test_", StringComparison.Ordinal) ||
             !Guid.TryParseExact(database[8..], "N", out _)) throw new ArgumentException("Explicit disposable PostgreSQL endpoint required.");
+        OwnedPostgreSqlCluster.ValidateGeneratedDatabase(database);
         return MetadataStoreConfiguration.CreateDefault(scratch) with
-        { Host = "127.0.0.1", Port = port, DatabaseName = database, Username = "fv_test", ServiceName = "fixture-only" };
+        { Host = "127.0.0.1", Port = port, DatabaseName = database, Username = OwnedPostgreSqlCluster.ServiceRole, ServiceName = "fixture-only" };
     }
 
     private static string PrivatePipe(Dictionary<string, string> options)

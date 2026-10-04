@@ -31,8 +31,8 @@ public sealed class WindowsDatabaseProbeTests
     public async Task Accepted_connection_with_a_failed_verification_query_is_never_reported_as_denied()
     {
         var cluster = OwnedPostgreSqlCluster.Load();
-        await cluster.VerifyAsync("postgres");
-        await using var connection = cluster.Connection("postgres");
+        await cluster.VerifyAsync(OwnedPostgreSqlCluster.MaintenanceDatabase);
+        await using var connection = cluster.Connection(OwnedPostgreSqlCluster.MaintenanceDatabase);
         await using var dataSource = NpgsqlDataSource.Create(connection.ConnectionString);
         var result = await WindowsDatabaseProbe.ProbeAsync(dataSource, async opened =>
         {
@@ -49,8 +49,22 @@ public sealed class WindowsDatabaseProbeTests
     public async Task Sspi_probe_refuses_real_PostgreSQL_trust_authentication()
     {
         var cluster = OwnedPostgreSqlCluster.Load();
-        await cluster.VerifyAsync("postgres"); // Confirms this owned server accepts an unrestricted control connection.
-        await using var connection = cluster.Connection("postgres");
+        await cluster.VerifyAsync(OwnedPostgreSqlCluster.MaintenanceDatabase);
+        await using var connection = cluster.TrustControlConnection();
+        // Prove the real isolated trust endpoint, with fixed identity SQL and no repository privileges.
+        await connection.OpenAsync();
+        await using (var identity = new NpgsqlCommand("SELECT current_user, current_database(), current_setting('fluxvault.test_instance'), current_setting('port'), has_database_privilege(current_user,'fv_gate_261003','CONNECT'), has_database_privilege(current_user,current_database(),'CREATE'), has_database_privilege(current_user,current_database(),'TEMP')", connection))
+        await using (var reader = await identity.ExecuteReaderAsync())
+        {
+            Assert.True(await reader.ReadAsync());
+            Assert.Equal(OwnedPostgreSqlCluster.TrustControl, reader.GetString(0));
+            Assert.Equal(OwnedPostgreSqlCluster.TrustControl, reader.GetString(1));
+            Assert.Equal(cluster.InstanceId, reader.GetString(2));
+            Assert.Equal(cluster.Port, int.Parse(reader.GetString(3)));
+            Assert.False(reader.GetBoolean(4));
+            Assert.False(reader.GetBoolean(5));
+            Assert.False(reader.GetBoolean(6));
+        }
         await using var dataSource = WindowsDatabaseProbe.CreateDataSource(new(connection.ConnectionString));
         var verificationCalled = false;
         var result = await WindowsDatabaseProbe.ProbeAsync(dataSource, _ =>

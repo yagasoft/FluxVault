@@ -45,7 +45,7 @@ catch {
     try { $admissionState=[FluxVault.Fixtures.OwnedWindowsJob]::CurrentContainment() } catch { $admissionState='Containment query failed: '+$_.Exception.Message }
     throw ($admissionError+'; '+$admissionState)
 }
-if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles')) { throw 'Actor requires one explicit loopback/client probe.' }
+if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles','Integrity')) { throw 'Actor requires one explicit loopback/client probe.' }
 $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 if ($sid -ne $configuration.Actors.$Actor -or -not [guid]::TryParseExact($RunId, 'N', [ref]$parsed) -or $parsed -eq [guid]::Empty) { throw 'Actor identity mismatch.' }
 $expectedRoot = Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $configuration.FixtureId
@@ -62,14 +62,25 @@ function Invoke-ActorTool {
     $start.WorkingDirectory=$runtime.WorkingDirectory
     $start.RedirectStandardOutput = $true; $start.RedirectStandardError = $true
     foreach ($argument in $Arguments) { $start.ArgumentList.Add($argument) }
-    foreach ($key in @($start.Environment.Keys | Where-Object { $_ -like 'PG*' -or $_ -like 'NPGSQL*' })) { $start.Environment.Remove($key) | Out-Null }
+    foreach ($key in @($start.Environment.Keys | Where-Object { $_ -match '^(PG|NPGSQL|DOTNET_|MSBUILD|VSTEST|COMPlus_|CORECLR_|COR_|FLUXVAULT_)' })) { $start.Environment.Remove($key) | Out-Null }
     $start.Environment['PATH']=$runtime.SafePath
+    if($ClientKind -eq 'Integrity') {
+        $start.WorkingDirectory=Join-Path $Root 'integrity'
+        $start.Environment['TEMP']=Join-Path $Root 'integrity/temp'
+        $start.Environment['TMP']=$start.Environment['TEMP']
+        $start.Environment['DOTNET_CLI_HOME']=$start.Environment['TEMP']
+        $start.Environment['DOTNET_CLI_TELEMETRY_OPTOUT']='1'
+        $start.Environment['DOTNET_NOLOGO']='1'
+        $start.Environment['FLUXVAULT_TEST_PG_MARKER']=Join-Path $Root 'runtime/integrity-cluster.json'
+        $start.Environment['FLUXVAULT_INTEGRITY_HOST']=Join-Path $Root 'runtime/FluxVault.TestHost.dll'
+        $start.Environment['FLUXVAULT_TEST_DOTNET']=$runtime.Dotnet
+    }
     $child = [Diagnostics.Process]::Start($start)
     try {
         $stdout = $child.StandardOutput.ReadToEndAsync(); $stderr = $child.StandardError.ReadToEndAsync()
         $childIdentity = Get-VaultFixtureLiveProcessIdentity $child
         if ($null -ne $childIdentity) { ($childIdentity | ConvertTo-Json -Compress) | Add-Content -LiteralPath $processJournal }
-        $limit=if($ClientKind -eq 'CallerFiles'){60000}else{20000}
+        $limit=if($ClientKind -eq 'Integrity'){[int]$runtime.IntegrityTimeoutSeconds*1000}elseif($ClientKind -eq 'CallerFiles'){60000}else{20000}
         if (-not $child.WaitForExit($limit)) { throw 'Actor tool exceeded its finite deadline.' }
         return @{ ExitCode=$child.ExitCode; Output=$stdout.GetAwaiter().GetResult(); Error=$stderr.GetAwaiter().GetResult() }
     } finally {
@@ -80,7 +91,19 @@ function Invoke-ActorTool {
 }
 try {
     $probeId = [guid]::NewGuid().ToString('N')
-    if ($ClientKind -eq 'CallerFiles') {
+    if($ClientKind -eq 'Integrity') {
+        if($Actor -ne 'System' -or $HostAddress -ne '127.0.0.1'){throw 'The owned integrity suite requires the SYSTEM actor.'}
+        $rootOwner=(Get-Acl -LiteralPath $Root).GetOwner([Security.Principal.SecurityIdentifier]).Value
+        foreach($path in @($Root,(Join-Path $Root 'runtime'),(Join-Path $Root 'integrity'),$runtime.Dotnet,$runtime.Vstest)) {
+            Assert-VaultFixtureTrustedPath $path -AdditionalTrustedOwnerSid $rootOwner
+        }
+        foreach($entry in Get-ChildItem -LiteralPath (Join-Path $Root 'runtime') -Recurse -Force) {
+            Assert-VaultFixtureTrustedPath $entry.FullName -AdditionalTrustedOwnerSid $rootOwner
+        }
+        $suite=Invoke-ActorTool $runtime.Dotnet @('exec',$runtime.Vstest,(Join-Path $Root 'runtime/integration/FluxVault.Integration.Tests.dll'),
+            '/TestCaseFilter:Category=RequiresPostgreSql','/Logger:trx;LogFileName=PostgreSql.trx',('/ResultsDirectory:'+(Join-Path $Root 'integrity/results')))
+        $results.Add(@{Kind='Integrity';ExitCode=$suite.ExitCode;Output=$suite.Output;Error=$suite.Error})
+    } elseif ($ClientKind -eq 'CallerFiles') {
         $singleVault=($configuration.PSObject.Properties.Name -contains 'RunSingleVaultTests') -and $configuration.RunSingleVaultTests
         $mode=if($singleVault){if($Actor -eq 'System'){'windows-single-server'}else{'windows-single-client'}}else{if($Actor -eq 'System'){'windows-file-server'}else{'windows-file-client'}}
         $result=Invoke-ActorTool -Executable $runtime.Dotnet -Arguments @((Join-Path $Root 'runtime/FluxVault.TestHost.dll'),'--mode',$mode,

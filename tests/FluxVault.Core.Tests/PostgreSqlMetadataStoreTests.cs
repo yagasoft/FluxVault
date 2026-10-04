@@ -33,7 +33,7 @@ public sealed class PostgreSqlMetadataStoreTests
         Assert.Contains("CREATE TABLE IF NOT EXISTS fluxvault.metadata_outbox", sql);
         Assert.Contains("CREATE TABLE IF NOT EXISTS fluxvault.peer_operations", sql);
         Assert.Contains("CREATE INDEX IF NOT EXISTS ix_versions_source_path_captured", sql);
-        Assert.Contains("CREATE UNIQUE INDEX IF NOT EXISTS ux_current_entries_path_kind", sql);
+        Assert.Contains("path_id bigint PRIMARY KEY REFERENCES fluxvault.paths(path_id)", sql);
     }
 
     [Fact]

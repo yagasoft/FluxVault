@@ -51,8 +51,13 @@ before window closure. Current-file inventory still needs bounded paging.
 Legacy filesystem/developer recent-history repositories retain their fallback;
 the new recovery paging route has no complete-history fallback.
 
-Fresh staging metadata uses schema version 3 with a non-null bigint UTC-tick
-key and history generation written in the version transaction. Existing unsupported schemas are
+Fresh staging metadata uses schema version 4. Current entries have one row per
+canonical Windows path and entry kind, keyed by the existing path identity.
+Exact UTC ticks and ordinal version IDs select the winner, including tombstones;
+pruning restores the newest retained version in the same transaction. Current
+reads validate the pointer against its canonical path and immutable version.
+The non-null bigint UTC-tick keys and history generation are written in the
+version transaction. Existing unsupported schemas are
 refused before schema changes; no backfill or automatic upgrade occurs. Retain
 the previous installation and its database/storage assets for recovery. Normal
 installation rollout and any migration remain separate reviewed operations.

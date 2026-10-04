@@ -32,6 +32,7 @@ internal static class VaultMetadataProbe
         await store.RecordVersionAsync(folder);
         Check((await store.ReadManifestAsync(parentId)).FolderEntries!.Single().LogicalLength == 10, "folder and lineage round trip");
         Check((await store.ListLatestEntriesAsync()).Count == 2, "current entry inventory");
+        checks.AddRange(await VaultCurrentEntriesProbe.RunAsync(source, binding, store, manifest));
         checks.AddRange(await VaultRecentVersionsProbe.RunAsync(source, binding, store, manifest));
         checks.AddRange(await VaultHistoryPagingProbe.RunAsync(source, binding, store, manifest));
         await using (var barrier = await source.OpenConnectionAsync())
@@ -75,7 +76,7 @@ internal static class VaultMetadataProbe
         await using var poison = new NpgsqlCommand($"UPDATE \"{binding.MetadataNamespace}\".vault_binding SET primary_root = 'changed'", connection);
         await poison.ExecuteNonQueryAsync();
         await Rejected(() => store.ReadManifestAsync(versionId), RepositoryIntegrityFailure.OwnershipMismatch, "binding is rechecked after cached initialisation");
-        return new { Passed = checks.Count, Checks = checks, RecentVersionsVerified = true, HistoryPagingVerified = true };
+        return new { Passed = checks.Count, Checks = checks, RecentVersionsVerified = true, HistoryPagingVerified = true, CurrentProjectionVerified = true };
 
         void Check(bool result, string name) { if (!result) throw new InvalidOperationException("Metadata binding contract failed: " + name); checks.Add(name); }
         async Task Rejected(Func<Task> action, RepositoryIntegrityFailure failure, string name)

@@ -92,7 +92,9 @@ capture/pruning commit generation changes in their existing transaction. Stale
 cursors return HistoryChanged without data. No server-held browsing session or
 full-history fallback is introduced.
 
-Fresh staging metadata is schema v3; unsupported existing schemas are refused
+History paging introduced schema v3; fresh staging metadata now uses v4 with
+canonical current-entry keys, exact winner ordering and transactional retained
+history fallback after pruning. Unsupported existing schemas are refused
 before mutation. SQL limits selected headers and their cumulative transfer size.
 The handler measures the actual serialised authenticated envelope against the
 smaller of the 2 MiB history budget and configured response limit. A shortened

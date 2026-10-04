@@ -26,10 +26,14 @@ developer diagnostics, but normal large-vault query paths read PostgreSQL
 tables instead of scanning `manifests/*.json`.
 
 The isolated single-vault NEXT-002 staging implementation creates fresh metadata
-schema version 3. Exact UTC capture ticks and ordinal version IDs provide stable
+schema version 4. Exact UTC capture ticks and ordinal version IDs provide stable
 history ordering; a transactional history generation invalidates a cursor after
 capture or pruning. History responses project bounded headers before transfer,
 while folder contents are read separately from the exact immutable manifest.
+Current entries use the existing canonical path/kind identity as their primary
+key. The winning version supplies display casing and deletion state; pruning
+rebuilds affected pointers from retained history, including tombstones, within
+the deletion transaction. Reads refuse mismatched pointers, paths and ticks.
 Existing unsupported schemas are refused without automatic upgrade or adoption.
 Retain the v1.0.4 installation and its original database/storage assets for
 existing-data recovery; do not point old binaries at new staging metadata.

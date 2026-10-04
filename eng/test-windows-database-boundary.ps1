@@ -588,7 +588,8 @@ host all all ::1/128 reject
             }
             # Multi-vault collision/coexistence cases are retired. Retain all single-repository binding/integrity contracts.
             if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Metadata -or $probe.Result.Catalogue.Metadata.Passed -lt 18 -or
-                -not $probe.Result.Catalogue.Metadata.RecentVersionsVerified -or -not $probe.Result.Catalogue.Metadata.HistoryPagingVerified -or $probe.Result.Catalogue.StoreHost -ne $hostAddress)){throw 'Required bound metadata, recent inventory and history paging contracts did not complete on their loopback.'}
+                -not $probe.Result.Catalogue.Metadata.RecentVersionsVerified -or -not $probe.Result.Catalogue.Metadata.HistoryPagingVerified -or
+                -not $probe.Result.Catalogue.Metadata.CurrentProjectionVerified -or $probe.Result.Catalogue.StoreHost -ne $hostAddress)){throw 'Required bound metadata, recent/history paging and current projection contracts did not complete on their loopback.'}
             if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Repository -or $probe.Result.Catalogue.Repository.Passed -lt 10)){throw 'Required bound repository capture/recovery contracts did not complete.'}
         }elseif($probe.ExitCode -ne 0 -or $probe.Output -ne "$FixtureId|fv_gate_261003|fv_gate_service"){throw 'SYSTEM password-free libpq authentication failed.'}
     }}

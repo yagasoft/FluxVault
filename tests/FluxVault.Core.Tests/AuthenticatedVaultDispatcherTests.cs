@@ -188,6 +188,23 @@ public sealed class AuthenticatedVaultDispatcherTests
         Assert.DoesNotContain("private", response.ErrorMessage);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Pause_catalogue_acknowledgement_loss_is_uncertain_even_for_payload_exceptions(bool json)
+    {
+        var fixture = new Fixture();
+        fixture.Catalogue.Error = json ? new System.Text.Json.JsonException("lost committed acknowledgement") :
+            new ArgumentException("lost committed acknowledgement");
+        var request = fixture.Request with { Command = FluxVaultIpcCommand.SetProtectionPaused, OperationId = Guid.NewGuid() };
+
+        var response = await fixture.Handler.HandleAsync(fixture.Caller, request);
+
+        Assert.Equal(FluxVaultIpcErrorCode.OutcomeUnknown, response.ErrorCode);
+        Assert.Equal(request.OperationId, response.OperationId);
+        Assert.Equal(0, fixture.Executor.Calls);
+    }
+
     private sealed class Fixture
     {
         internal Caller Caller { get; } = new();

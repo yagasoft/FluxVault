@@ -22,7 +22,8 @@ public sealed class MaintenanceExecutorTests
         FluxVaultIpcCommand.PreviewMirrorRepair, FluxVaultIpcCommand.RunMirrorRepair,
         FluxVaultIpcCommand.PreviewMirrorRebalance, FluxVaultIpcCommand.RunMirrorRebalance, FluxVaultIpcCommand.PreviewMirrorDrain,
         FluxVaultIpcCommand.RunMirrorDrain, FluxVaultIpcCommand.ExportDiagnostics,
-        FluxVaultIpcCommand.PreviewRestoreSelection, FluxVaultIpcCommand.RunRestoreSelection
+        FluxVaultIpcCommand.PreviewRestoreSelection, FluxVaultIpcCommand.RunRestoreSelection,
+        FluxVaultIpcCommand.GetSyncStatus
     };
 
     [Theory]
@@ -52,6 +53,8 @@ public sealed class MaintenanceExecutorTests
     [InlineData(FluxVaultIpcCommand.ExportDiagnostics, VaultPermission.Maintain)]
     [InlineData(FluxVaultIpcCommand.PreviewRestoreSelection, VaultPermission.ReadHistory)]
     [InlineData(FluxVaultIpcCommand.RunRestoreSelection, VaultPermission.ReadHistory)]
+    [InlineData(FluxVaultIpcCommand.GetSyncStatus, VaultPermission.ManageProtection)]
+    [InlineData(FluxVaultIpcCommand.SetProtectionPaused, VaultPermission.ReadHistory)]
     public async Task Missing_required_permissions_are_refused_before_storage(FluxVaultIpcCommand command, VaultPermission granted)
     {
         var fixture = new Fixture(command);
@@ -62,6 +65,20 @@ public sealed class MaintenanceExecutorTests
         var response = await executor.ExecuteAsync(fixture.Caller, admission, fixture.Request);
 
         Assert.Equal(FluxVaultIpcErrorCode.Denied, response.ErrorCode);
+        Assert.False(Directory.Exists(fixture.Entry.Binding.RepositoryPath));
+    }
+
+    [Fact]
+    public async Task Pause_support_requires_catalogue_completion_and_never_toggles_an_admitted_snapshot_in_the_executor()
+    {
+        var fixture = new Fixture(FluxVaultIpcCommand.SetProtectionPaused);
+        await using var executor = new WindowsAuthorisedVaultCommandExecutor(fixture.Endpoint, fixture.Entry.Binding);
+
+        Assert.True(executor.CanExecute(fixture.Request));
+        var response = await executor.ExecuteAsync(fixture.Caller, fixture.Admission, fixture.Request);
+
+        Assert.Equal(FluxVaultIpcErrorCode.Unavailable, response.ErrorCode);
+        Assert.Contains("catalogue", response.ErrorMessage);
         Assert.False(Directory.Exists(fixture.Entry.Binding.RepositoryPath));
     }
 

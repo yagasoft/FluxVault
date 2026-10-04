@@ -245,6 +245,23 @@ the recorded outcome without rewriting caller-edited or deleted output. The
 view-model retains pending settings and requires matching source, destination,
 operation/revision and actual verification before claiming success.
 
+The existing `SetProtectionPaused` service command toggles only the authoritative
+`IsEnabled` field under the catalogue transaction. Its incremented configuration
+revision and completed operation receipt commit together; replay returns that
+historical result before stale-revision checks and cannot toggle again. It
+requires protection-management authority and never runs in the repository
+executor. Save, capture and toggle admission remain in the same mutation gate.
+A disabled backup returns before source inspection, enumeration, capture,
+deletion reconciliation or retention; protected binding/storage checks still
+apply. Status and diagnostics distinguish
+paused manual backup from unavailable automatic protection. The activity pane's
+automatic-protection control remains disabled until background/VSS capture is
+validated; explicit pause/resume UI remains within NEXT-004.
+
+`GetSyncStatus` requires history-read authority and returns the existing full
+status/sync snapshot through the protected binding. It creates no mutation
+receipt, changes no revision and starts no sync, cloud or background work.
+
 ## Service diagnostics and performance telemetry
 
 Protected diagnostics export requires history-read authority and a bound

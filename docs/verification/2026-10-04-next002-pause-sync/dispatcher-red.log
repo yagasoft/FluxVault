@@ -1,0 +1,29 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Core.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Pause_catalogue_acknowledgement_loss_is_uncertain_even_for_payload_exceptions(json: True) [FAIL]
+[xUnit.net 00:00:00.26]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Pause_catalogue_acknowledgement_loss_is_uncertain_even_for_payload_exceptions(json: False) [FAIL]
+  Failed FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Pause_catalogue_acknowledgement_loss_is_uncertain_even_for_payload_exceptions(json: True) [15 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: OutcomeUnknown
+Actual:   InvalidRequest
+  Stack Trace:
+     at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Pause_catalogue_acknowledgement_loss_is_uncertain_even_for_payload_exceptions(Boolean json) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 203
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Pause_catalogue_acknowledgement_loss_is_uncertain_even_for_payload_exceptions(json: False) [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: OutcomeUnknown
+Actual:   InvalidRequest
+  Stack Trace:
+     at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Pause_catalogue_acknowledgement_loss_is_uncertain_even_for_payload_exceptions(Boolean json) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 203
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-pause-sync\dispatcher-red.trx
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 40 ms - FluxVault.Core.Tests.dll (net10.0)

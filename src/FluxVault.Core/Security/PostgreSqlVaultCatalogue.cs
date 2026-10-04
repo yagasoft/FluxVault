@@ -245,7 +245,18 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
             var access = new VaultAccessPolicy(vault.Access.OwnerSid, request.AccessGrants);
             vault = vault with { Revision = checked(vault.Revision + 1), Access = access };
         }
-        if (mutation != Mutation.Admit)
+        var toggling = request.Command == FluxVaultIpcCommand.SetProtectionPaused;
+        if (toggling)
+        {
+            if (request.Configuration is not null || request.AccessGrants is not null || request.PurgeRemovedSelections ||
+                request.RemovedSelections is not null || request.PreservedSelections is not null)
+                throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration,
+                    "A protection toggle cannot save other settings, change access or remove history.");
+            // Toggle the authoritative full record under the catalogue lock, never a caller snapshot.
+            vault = vault with { Revision = checked(vault.Revision + 1),
+                Configuration = vault.Configuration with { IsEnabled = !vault.Configuration.IsEnabled } };
+        }
+        if (mutation != Mutation.Admit || toggling)
         {
             await using var update = new NpgsqlCommand("UPDATE fv_control.vault SET revision=@revision, configuration=@configuration, grants=@grants WHERE singleton=true AND vault_id=@id", connection, transaction);
             update.Parameters.AddWithValue("revision", vault.Revision);
@@ -257,7 +268,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         VaultOperationReceipt? recorded = null;
         if (modifying)
         {
-            var completed = mutation == Mutation.Access || (mutation == Mutation.Save && !request.PurgeRemovedSelections);
+            var completed = toggling || mutation == Mutation.Access || (mutation == Mutation.Save && !request.PurgeRemovedSelections);
             var response = completed ? FluxVaultIpcResponse.Ok() with { VaultId = id, VaultRevision = vault.Revision, OperationId = request.OperationId } : null;
             recorded = new(request.OperationId!.Value, id, caller.UserSid, request.Command, fingerprint,
                 completed ? VaultOperationState.Completed : VaultOperationState.Admitted, vault.Revision, response, requirement.Permissions);

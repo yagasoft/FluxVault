@@ -80,14 +80,16 @@ public sealed class AuthenticatedVaultSequencingTests
         finally { fixture.Catalogue.CompletionRelease.TrySetResult(); await Task.WhenAll(backup, save); }
     }
 
-    [Fact]
-    public async Task Cancelled_queued_mutation_touches_neither_catalogue_nor_executor_and_releases_its_wait()
+    [Theory]
+    [InlineData(FluxVaultIpcCommand.SaveConfiguration)]
+    [InlineData(FluxVaultIpcCommand.SetProtectionPaused)]
+    public async Task Cancelled_queued_mutation_touches_neither_catalogue_nor_executor_and_releases_its_wait(FluxVaultIpcCommand command)
     {
         using var fixture = new Fixture();
         var backup = fixture.Handler.HandleAsync(fixture.Caller, fixture.Request(FluxVaultIpcCommand.RunBackupNow));
         await fixture.Executor.Entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
         using var cancellation = new CancellationTokenSource();
-        var save = fixture.Handler.HandleAsync(fixture.Caller, fixture.Request(FluxVaultIpcCommand.SaveConfiguration), cancellation.Token);
+        var save = fixture.Handler.HandleAsync(fixture.Caller, fixture.Request(command), cancellation.Token);
         cancellation.Cancel();
         try
         {
@@ -105,6 +107,7 @@ public sealed class AuthenticatedVaultSequencingTests
     [Theory]
     [InlineData(FluxVaultIpcCommand.GetStatus)]
     [InlineData(FluxVaultIpcCommand.GetPerformance)]
+    [InlineData(FluxVaultIpcCommand.GetSyncStatus)]
     public async Task Read_requests_remain_available_during_an_admitted_backup(FluxVaultIpcCommand command)
     {
         using var fixture = new Fixture();

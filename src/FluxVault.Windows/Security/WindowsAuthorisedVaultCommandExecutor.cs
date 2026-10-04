@@ -19,6 +19,8 @@ namespace FluxVault.Windows.Security;
 public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultCommandExecutor, IAsyncDisposable
 {
     internal const string AutomaticProtectionNotice = "Automatic protection unavailable; manual backup available. ";
+    internal static string ProtectionNotice(bool isEnabled) => isEnabled ? AutomaticProtectionNotice :
+        "Automatic protection unavailable; manual backup paused. ";
     private readonly VaultCatalogueEndpoint endpoint;
     private readonly WindowsVaultStorageGuard storage = new();
     private readonly NpgsqlDataSource source;
@@ -55,7 +57,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
     public bool CanExecute(FluxVaultIpcRequest request) => request.Command switch
     {
         FluxVaultIpcCommand.SaveConfiguration => true,
-        FluxVaultIpcCommand.SetVaultAccess or
+        FluxVaultIpcCommand.SetVaultAccess or FluxVaultIpcCommand.SetProtectionPaused or FluxVaultIpcCommand.GetSyncStatus or
         FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.GetActivity or
         FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.InspectVersion or
         FluxVaultIpcCommand.RunBackupNow or FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview or
@@ -87,7 +89,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
             if (request.Command == FluxVaultIpcCommand.SaveConfiguration && request.PurgeRemovedSelections &&
                 request.ExpectedVaultRevision != vault.Revision - 1)
                 return Failure(FluxVaultIpcErrorCode.Denied, "The committed save revision could not be verified.");
-            if (!CanExecute(request) || request.Command == FluxVaultIpcCommand.SetVaultAccess ||
+            if (!CanExecute(request) || request.Command is FluxVaultIpcCommand.SetVaultAccess or FluxVaultIpcCommand.SetProtectionPaused ||
                 request.Command == FluxVaultIpcCommand.SaveConfiguration && !request.PurgeRemovedSelections)
                 return Failure(FluxVaultIpcErrorCode.Unavailable, "This command requires its catalogue or provisioning flow.");
             if (request.Command is FluxVaultIpcCommand.InspectVersion or FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview && string.IsNullOrWhiteSpace(request.VersionId) ||
@@ -114,6 +116,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                 switch (request.Command)
                 {
                     case FluxVaultIpcCommand.GetStatus: return FluxVaultIpcResponse.WithStatus(await operations.GetStatusAsync(request.StatusDetailLevel, cancellationToken));
+                    case FluxVaultIpcCommand.GetSyncStatus: return FluxVaultIpcResponse.WithStatus(await operations.GetStatusAsync(cancellationToken));
                     case FluxVaultIpcCommand.GetPerformance: return FluxVaultIpcResponse.WithPerformance(await operations.GetPerformanceAsync(cancellationToken));
                     case FluxVaultIpcCommand.GetActivity: return FluxVaultIpcResponse.WithActivity(operations.GetActivity());
                     case FluxVaultIpcCommand.ListBlockedFiles: return FluxVaultIpcResponse.WithBlockedFiles(operations.ListBlockedFiles());
@@ -148,7 +151,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                         var exportPath = Path.Combine(exportDirectory, $"fluxvault-diagnostics-{admission.Receipt!.OperationId:N}.json");
                         await using (var target = await WindowsCallerRecoveryTarget.CreateNewAsync(caller, exportPath, cancellationToken))
                         {
-                            var exported = await operations.ExportDiagnosticsAsync(target, binding.Id, vault.Revision, cancellationToken, AutomaticProtectionNotice);
+                            var exported = await operations.ExportDiagnosticsAsync(target, binding.Id, vault.Revision, cancellationToken, ProtectionNotice(configuration.IsEnabled));
                             return FluxVaultIpcResponse.WithOutputPath(exported.OutputPath) with { DiagnosticsExport = exported };
                         }
                     case FluxVaultIpcCommand.RestoreVersionPreview:

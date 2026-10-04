@@ -48,7 +48,8 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
             }
             cancellationToken.ThrowIfCancellationRequested();
             admissionStarted = true;
-            catalogueMutationStarted = request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess;
+            catalogueMutationStarted = request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess or
+                FluxVaultIpcCommand.SetProtectionPaused;
             var admission = request.Command switch
             {
                 FluxVaultIpcCommand.SaveConfiguration => await catalogue.SaveConfigurationAsync(caller, request, cancellationToken),

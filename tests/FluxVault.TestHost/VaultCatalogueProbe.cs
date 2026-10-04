@@ -159,10 +159,12 @@ internal static class VaultCatalogueProbe
             await VaultSelectionAdmissionProbe.RunAsync(store, owner, fresh, checks);
             await VaultDiagnosticsExportProbe.RunAsync(store, owner, fresh, checks);
             await VaultMirrorDrainProbe.RunAsync(store, owner, fresh, checks);
+            using (var ungrantedToggleCaller = new PolicyCaller("S-1-5-21-111-222-333-9876"))
+                await VaultProtectionStateProbe.RunAsync(store, owner, ungrantedToggleCaller, checks);
             var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one) : null;
             var repository = fixture.RunMetadataTests ? await VaultRepositoryProbe.RunAsync(dataSource, one) : null;
             return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true,
-                MirrorDrainCatalogueVerified = true, DiagnosticsCatalogueVerified = true, SelectionCatalogueVerified = true,
+                MirrorDrainCatalogueVerified = true, DiagnosticsCatalogueVerified = true, SelectionCatalogueVerified = true, ProtectionStateCatalogueVerified = true,
                 StoreHost = host, Metadata = metadata, Repository = repository };
         }
         finally

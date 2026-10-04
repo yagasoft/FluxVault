@@ -97,6 +97,20 @@ unchanged. NEXT-002 remains in progress; its remaining commands, background,
 interruption, resource/performance/accessibility, G01 and rollout gates stay open.
 This updates progress without expanding the agreed roadmap.
 
+The bounded [atomic toggle/sync-status batch](verification/2026-10-04-next002-pause-sync/README.md)
+continues NEXT-002 with the existing protection toggle committed together with
+its configuration revision and completed receipt, and read-only sync status.
+Real-store replay, lost/held acknowledgement, cancellation and queued-backup
+checks preserve untouched settings and ordering. Native pause/resume retains
+history while paused and verifies actual capture/recovery after resume. It
+passes 125 catalogue cases per loopback, 102 creator checks, sixteen ungranted
+user denials and all 1,178 ordinary tests. The Release build has no warnings or
+errors; both fixtures and 24 captured process identities are gone, with normal
+services/data unchanged. Explicit pause/resume UI remains within NEXT-004 and
+the activity control remains disabled while automatic capture is unavailable.
+Conflict handling and the remaining NEXT-002/background/interruption/resource,
+performance/accessibility, G01 and separately approved rollout gates stay open.
+
 | ID | Priority | Capability | Status | Required verification |
 | --- | --- | --- | --- | --- |
 | NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |

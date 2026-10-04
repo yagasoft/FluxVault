@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ff451c1c-2842-4930-8a2b-a381d271bada" name="os008@OS008-HOME 2026-10-04 17:53:52" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T17:53:52.9824788+03:00" queuing="2026-10-04T17:53:52.9824789+03:00" start="2026-10-04T17:53:51.9236280+03:00" finish="2026-10-04T17:53:52.9869587+03:00" />
+  <TestSettings name="default" id="ed6805dd-78f6-44a0-97c8-e3e289a4cc03">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_17_53_52" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="433ab59a-21c7-455d-abcc-df3901b1e83c" testId="2e42a76b-8ac0-1fa8-e278-19c6fe35c0c1" testName="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: Unknown)" computerName="OS008-HOME" duration="00:00:00.0050318" startTime="2026-10-04T17:53:52.7778119+03:00" endTime="2026-10-04T17:53:52.7778653+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="433ab59a-21c7-455d-abcc-df3901b1e83c" />
+    <UnitTestResult executionId="9a48b0b2-658b-460a-9c03-cca427959033" testId="43b82e84-0158-709e-5d03-bc0bb2bc64b2" testName="FluxVault.App.Tests.MirrorDrainContractTests.Delayed_drain_acknowledgement_cannot_overwrite_a_newer_accepted_configuration_or_draft" computerName="OS008-HOME" duration="00:00:00.0116584" startTime="2026-10-04T17:53:52.8766852+03:00" endTime="2026-10-04T17:53:52.8884193+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a48b0b2-658b-460a-9c03-cca427959033" />
+    <UnitTestResult executionId="91270fd0-74a8-4685-9c3a-4ac1c9d1fd82" testId="0a8fcfb6-0022-9b23-a7c9-218632627d5a" testName="FluxVault.App.Tests.MirrorDrainContractTests.Completed_drain_rebases_only_the_disabled_mirror_and_revision_preserving_pending_protection_edits" computerName="OS008-HOME" duration="00:00:00.0869775" startTime="2026-10-04T17:53:52.7898785+03:00" endTime="2026-10-04T17:53:52.8764794+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="91270fd0-74a8-4685-9c3a-4ac1c9d1fd82" />
+    <UnitTestResult executionId="60f1b4a8-9e8e-4178-aa29-588d2f5db486" testId="73fdae55-9814-521b-1d13-f6a7a3137f26" testName="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: Incomplete)" computerName="OS008-HOME" duration="00:00:00.2633563" startTime="2026-10-04T17:53:52.4991175+03:00" endTime="2026-10-04T17:53:52.7693568+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60f1b4a8-9e8e-4178-aa29-588d2f5db486" />
+    <UnitTestResult executionId="fc32145f-0531-4830-8aef-9d61c49511f0" testId="73d9e2da-35ef-ea7b-632c-2ab2edf3591c" testName="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: WrongRevision)" computerName="OS008-HOME" duration="00:00:00.0088978" startTime="2026-10-04T17:53:52.7792928+03:00" endTime="2026-10-04T17:53:52.7883478+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc32145f-0531-4830-8aef-9d61c49511f0" />
+    <UnitTestResult executionId="77663855-7a92-4c89-99a9-3a7c62642c97" testId="05a7c76f-1abc-2244-f537-12a610224208" testName="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: WrongSelector)" computerName="OS008-HOME" duration="00:00:00.0036485" startTime="2026-10-04T17:53:52.7783407+03:00" endTime="2026-10-04T17:53:52.7792224+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="77663855-7a92-4c89-99a9-3a7c62642c97" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Completed_drain_rebases_only_the_disabled_mirror_and_revision_preserving_pending_protection_edits" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="0a8fcfb6-0022-9b23-a7c9-218632627d5a">
+      <Execution id="91270fd0-74a8-4685-9c3a-4ac1c9d1fd82" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Completed_drain_rebases_only_the_disabled_mirror_and_revision_preserving_pending_protection_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: WrongRevision)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="73d9e2da-35ef-ea7b-632c-2ab2edf3591c">
+      <Execution id="fc32145f-0531-4830-8aef-9d61c49511f0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: Unknown)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="2e42a76b-8ac0-1fa8-e278-19c6fe35c0c1">
+      <Execution id="433ab59a-21c7-455d-abcc-df3901b1e83c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: Incomplete)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="73fdae55-9814-521b-1d13-f6a7a3137f26">
+      <Execution id="60f1b4a8-9e8e-4178-aa29-588d2f5db486" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Delayed_drain_acknowledgement_cannot_overwrite_a_newer_accepted_configuration_or_draft" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="43b82e84-0158-709e-5d03-bc0bb2bc64b2">
+      <Execution id="9a48b0b2-658b-460a-9c03-cca427959033" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Delayed_drain_acknowledgement_cannot_overwrite_a_newer_accepted_configuration_or_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: WrongSelector)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="05a7c76f-1abc-2244-f537-12a610224208">
+      <Execution id="77663855-7a92-4c89-99a9-3a7c62642c97" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2e42a76b-8ac0-1fa8-e278-19c6fe35c0c1" executionId="433ab59a-21c7-455d-abcc-df3901b1e83c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="43b82e84-0158-709e-5d03-bc0bb2bc64b2" executionId="9a48b0b2-658b-460a-9c03-cca427959033" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a8fcfb6-0022-9b23-a7c9-218632627d5a" executionId="91270fd0-74a8-4685-9c3a-4ac1c9d1fd82" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="73fdae55-9814-521b-1d13-f6a7a3137f26" executionId="60f1b4a8-9e8e-4178-aa29-588d2f5db486" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="73d9e2da-35ef-ea7b-632c-2ab2edf3591c" executionId="fc32145f-0531-4830-8aef-9d61c49511f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05a7c76f-1abc-2244-f537-12a610224208" executionId="77663855-7a92-4c89-99a9-3a7c62642c97" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="6" executed="6" passed="6" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.60]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

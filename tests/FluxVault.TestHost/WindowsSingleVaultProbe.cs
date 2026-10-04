@@ -41,7 +41,7 @@ internal static class WindowsSingleVaultProbe
             var commands = new[] { FluxVaultIpcCommand.GetRepositoryHealth, FluxVaultIpcCommand.PreviewRetention, FluxVaultIpcCommand.RunRetentionNow,
                 FluxVaultIpcCommand.RunRepositoryScrub, FluxVaultIpcCommand.RunRestoreRehearsal, FluxVaultIpcCommand.PreviewMirrorRepair,
                 FluxVaultIpcCommand.RunMirrorRepair, FluxVaultIpcCommand.PreviewMirrorRebalance, FluxVaultIpcCommand.RunMirrorRebalance,
-                FluxVaultIpcCommand.PreviewMirrorDrain };
+                FluxVaultIpcCommand.PreviewMirrorDrain, FluxVaultIpcCommand.RunMirrorDrain };
             foreach (var command in commands)
             {
                 var response = await client.SendAsync(new(command, null, null, null, null, MirrorNodeId: "first",
@@ -274,8 +274,40 @@ internal static class WindowsSingleVaultProbe
         var verifiedAfterRetention = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(latest.VersionId, recoveredAfterRetention)));
         Check(verifiedAfterRetention.RestoreResult?.VerifiedLogicalBytes == new FileInfo(file).Length && Hash(file) == Hash(recoveredAfterRetention),
             "latest working bytes remain independently recoverable after maintenance and retention");
+
+        var beforeDrain = await Send(Bind(FluxVaultIpcRequest.GetStatus()));
+        var drained = await Maintenance(FluxVaultIpcRequest.RunMirrorDrain("FIRST"));
+        Check(drained.MirrorRebalance is { IsCompletedDrain: true, RequestedMirrorNodeId: "FIRST" } && drained.VaultRevision == revision + 1,
+            "native mirror drain publishes its completed result and incremented configuration revision");
+        revision = drained.VaultRevision!.Value;
+        var afterDrain = await Send(Bind(FluxVaultIpcRequest.GetStatus()));
+        var expectedAfterDrain = beforeDrain.Status!.Configuration with { MirrorSet = new(
+            beforeDrain.Status.Configuration.MirrorSet.Nodes.Select(node => node.Id == "first" ? node with { IsEnabled = false } : node).ToArray(),
+            beforeDrain.Status.Configuration.MirrorSet.PlacementPolicy) };
+        Check(afterDrain.VaultRevision == revision && JsonSerializer.Serialize(expectedAfterDrain) == JsonSerializer.Serialize(afterDrain.Status!.Configuration),
+            "native drain changes only the selected mirror enablement and preserves every untouched setting");
+        var staleAfterDrain = await client.SendAsync(Bind(FluxVaultIpcRequest.SaveConfiguration(beforeDrain.Status.Configuration)) with
+            { ExpectedVaultRevision = revision - 1 }, deadline.Token);
+        Check(!staleAfterDrain.Success && staleAfterDrain.ErrorCode == FluxVaultIpcErrorCode.StaleRevision,
+            "an old save cannot re-enable the drained mirror");
+        var finalDrain = Bind(FluxVaultIpcRequest.RunMirrorDrain("second"));
+        var finalRefusal = await client.SendAsync(finalDrain, deadline.Token);
+        var finalReceipt = await client.SendAsync(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null,
+            VaultId: id, OperationId: finalDrain.OperationId), deadline.Token);
+        Check(!finalRefusal.Success && finalRefusal.ErrorCode == FluxVaultIpcErrorCode.InvalidRequest && finalReceipt.ErrorCode == FluxVaultIpcErrorCode.Denied,
+            "the final enabled mirror is refused before new receipt admission");
+        await File.WriteAllBytesAsync(file, Enumerable.Range(0, 256 * 1024).Select(index => (byte)((index * 11 + 23) % 251)).ToArray(), deadline.Token);
+        var backupAfterDrain = await Send(Bind(FluxVaultIpcRequest.RunBackupNow()));
+        Check(backupAfterDrain.Backup is { Success: true, CapturedFileCount: 1 }, "backup uses the remaining enabled mirror after the drain revision");
+        var historyAfterDrain = await Send(Bind(FluxVaultIpcRequest.ListVersions()));
+        var latestAfterDrain = historyAfterDrain.Versions!.Where(version => version.SourcePath == file).OrderByDescending(version => version.CapturedAtUtc).First();
+        var recoveredAfterDrain = Path.Combine(destination, "after-drain.docx");
+        var verifiedAfterDrain = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(latestAfterDrain.VersionId, recoveredAfterDrain)));
+        Check(verifiedAfterDrain.RestoreResult?.VerifiedLogicalBytes == new FileInfo(file).Length && Hash(file) == Hash(recoveredAfterDrain),
+            "save and drain revisions still permit backup, history and independent verified recovery");
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Passed = checks.Count, Checks = checks, SingleVault = true, VaultId = id,
-            CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true, MaintenanceCommandsVerified = true }));
+            CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true,
+            MaintenanceCommandsVerified = true, DrainCommandsVerified = true }));
         return 0;
 
         FluxVaultIpcRequest Bind(FluxVaultIpcRequest request) => request with { VaultId = id,
@@ -340,9 +372,13 @@ internal static class WindowsSingleVaultProbe
         var rehearsalRoot = Path.Combine(statePath, "restore-rehearsal");
         if (Directory.Exists(rehearsalRoot) && Directory.EnumerateFileSystemEntries(rehearsalRoot).Any())
             throw new InvalidOperationException("Protected rehearsal output was not cleaned before service exit.");
+        if (Directory.EnumerateFiles(Path.Combine(mirrorOne, "chunks"), "*", SearchOption.AllDirectories).Any() ||
+            !Directory.EnumerateFiles(Path.Combine(mirrorTwo, "chunks"), "*", SearchOption.AllDirectories).Any())
+            throw new InvalidOperationException("Drained mirror still contains artefacts or the remaining mirror has no protected copy.");
         if (!handler.CreatorVerified || !handler.UngrantDenied || handler.Completed < 8) throw new InvalidOperationException("Native command pipeline evidence is incomplete.");
         Console.WriteLine(JsonSerializer.Serialize(new { Passed = handler.Completed, NativeCallerTokens = true, SingleVault = true, ProtectedProductComposition = true,
-            ActualCatalogueAndExecutor = true, ProtectedRehearsalOutputCleaned = true, handler.CreatorVerified, handler.UngrantDenied, ExactInstalledBinding = binding.Id }));
+            ActualCatalogueAndExecutor = true, ProtectedRehearsalOutputCleaned = true, DrainEffectVerified = true,
+            handler.CreatorVerified, handler.UngrantDenied, ExactInstalledBinding = binding.Id }));
         return 0;
     }
 

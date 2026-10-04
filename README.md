@@ -337,7 +337,10 @@ workspace. **Drain selected** copies required chunk/metadata artefacts from the
 healthy primary repository to remaining target mirrors first, then deletes the
 selected mirror's chunk/metadata copies only when those required copies are
 satisfied. A successful drain disables the selected mirror node in
-configuration. Ordinary **Remove from configuration** remains a separate
+configuration. The protected service requires another enabled destination and
+publishes the disablement, revision and retained result together. An incomplete
+drain keeps the destination enabled and explains the remaining work; pending
+protection edits are retained. Ordinary **Remove from configuration** remains a separate
 unsaved configuration edit and does not move or clean existing mirror data.
 Editing an existing mirror's path, enabled state, capacity, or priority marks
 the mirror as needing explicit migration work; saving persists configuration

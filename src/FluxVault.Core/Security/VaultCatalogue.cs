@@ -50,4 +50,6 @@ public interface IVaultCatalogue
     Task<VaultAdmission> SetAccessAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default);
     Task<VaultOperationReceipt?> GetReceiptAsync(FluxVaultCallerContext caller, VaultId vaultId, Guid operationId, CancellationToken cancellationToken = default);
     Task CompleteAsync(VaultOperationReceipt receipt, FluxVaultIpcResponse response, CancellationToken cancellationToken = default);
+    Task<FluxVaultIpcResponse> CompleteMirrorDrainAsync(VaultOperationReceipt receipt, FluxVaultIpcRequest request,
+        FluxVaultIpcResponse response, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 }

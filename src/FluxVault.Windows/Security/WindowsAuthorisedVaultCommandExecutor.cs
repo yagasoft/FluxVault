@@ -61,7 +61,8 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
         FluxVaultIpcCommand.GetRepositoryHealth or FluxVaultIpcCommand.PreviewRetention or FluxVaultIpcCommand.RunRetentionNow or
         FluxVaultIpcCommand.RunRepositoryScrub or FluxVaultIpcCommand.RunRestoreRehearsal or
         FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair or
-        FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.RunMirrorRebalance or FluxVaultIpcCommand.PreviewMirrorDrain => true,
+        FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.RunMirrorRebalance or
+        FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain => true,
         _ => false
     };
 
@@ -126,6 +127,9 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                     case FluxVaultIpcCommand.RunMirrorRebalance:
                     case FluxVaultIpcCommand.PreviewMirrorDrain:
                         return await operations.HandleAsync(request, cancellationToken);
+                    case FluxVaultIpcCommand.RunMirrorDrain:
+                        return FluxVaultIpcResponse.WithMirrorRebalance(await operations.RunMirrorDrainRepositoryEffectsAsync(
+                            request.MirrorNodeId!, cancellationToken));
                     case FluxVaultIpcCommand.InspectVersion: return FluxVaultIpcResponse.WithInspection(await operations.InspectVersionAsync(request.VersionId!, cancellationToken));
                     case FluxVaultIpcCommand.RunBackupNow:
                         var backup = await operations.RunBackupNowAsync(cancellationToken);

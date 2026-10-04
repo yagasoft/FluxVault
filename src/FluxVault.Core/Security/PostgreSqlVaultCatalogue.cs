@@ -36,6 +36,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
     };
     public VaultCatalogueEndpoint Endpoint { get; }
     internal Func<Guid, CancellationToken, Task>? AfterMutationCommit { get; init; }
+    internal Func<Guid, CancellationToken, Task>? BeforeMirrorDrainCommit { get; init; }
 
     public PostgreSqlVaultCatalogue(VaultCatalogueEndpoint endpoint, FluxVaultIpcLimits? limits = null)
     {
@@ -179,7 +180,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         var modifying = IsMutation(request.Command);
         if (modifying && (request.OperationId is null || request.OperationId == Guid.Empty || request.ExpectedVaultRevision is null or <= 0))
             throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
-        var fingerprint = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(request, JsonOptions)));
+        var fingerprint = RequestFingerprint(request);
         await using var connection = await OpenVerifiedAsync(ct);
         await using var transaction = await connection.BeginTransactionAsync(ct);
         // The installation lock is held only for bounded catalogue transactions.
@@ -204,12 +205,16 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         }
         if (request.ExpectedVaultRevision is not null && request.ExpectedVaultRevision != vault.Revision)
             throw new VaultCatalogueException(VaultCatalogueFailure.StaleRevision);
-        if (request.Command is FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair or FluxVaultIpcCommand.PreviewMirrorDrain &&
-            (request.MirrorNodeId is null ? request.Command == FluxVaultIpcCommand.PreviewMirrorDrain :
+        if (request.Command is FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair or
+                FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain &&
+            (request.MirrorNodeId is null ? request.Command is FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain :
                 string.IsNullOrWhiteSpace(request.MirrorNodeId) || !vault.Configuration.MirrorSet.EnabledNodes.Any(node =>
                     string.Equals(node.Id, request.MirrorNodeId, StringComparison.OrdinalIgnoreCase))))
             throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration,
                 "Choose an enabled mirror destination. Only repair supports no selection to target all mirrors.");
+        if (request.Command == FluxVaultIpcCommand.RunMirrorDrain && vault.Configuration.MirrorSet.EnabledNodes.Count < 2)
+            throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration,
+                "Keep at least one enabled mirror destination after draining the selected destination.");
         if (mutation == Mutation.Save)
         {
             if (request.Configuration is null) throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);
@@ -275,6 +280,8 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
 
     public async Task CompleteAsync(VaultOperationReceipt receipt, FluxVaultIpcResponse response, CancellationToken cancellationToken = default)
     {
+        if (receipt.Command == FluxVaultIpcCommand.RunMirrorDrain)
+            throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
         response = response with { VaultId = receipt.VaultId, VaultRevision = receipt.Revision, OperationId = receipt.OperationId };
         await using var connection = await OpenVerifiedAsync(cancellationToken);
         await using var command = new NpgsqlCommand("""
@@ -284,6 +291,74 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         AddReceiptParameters(command, receipt with { Response = response });
         if (await command.ExecuteNonQueryAsync(cancellationToken) != 1) throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
     }
+
+    /// <summary>Repository effects already ran. Publish their result and the single mirror disablement together.</summary>
+    public async Task<FluxVaultIpcResponse> CompleteMirrorDrainAsync(VaultOperationReceipt receipt, FluxVaultIpcRequest request,
+        FluxVaultIpcResponse response, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (receipt.Command != FluxVaultIpcCommand.RunMirrorDrain || receipt.State != VaultOperationState.Admitted ||
+            request.Command != receipt.Command || request.VaultId != receipt.VaultId || request.OperationId != receipt.OperationId ||
+            request.ExpectedVaultRevision != receipt.Revision || string.IsNullOrWhiteSpace(request.MirrorNodeId) ||
+            RequestFingerprint(request) != receipt.Fingerprint)
+            throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
+        var report = response.MirrorRebalance;
+        if (response.Success && report is null || report is not null &&
+            (report.Operation != MirrorRebalanceOperation.Drain || report.IsPreview || report.Actions is null || report.Nodes is null ||
+             !string.Equals(report.RequestedMirrorNodeId, request.MirrorNodeId, StringComparison.OrdinalIgnoreCase)))
+            throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
+        await using var connection = await OpenVerifiedAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await LockAsync(connection, transaction, cancellationToken);
+        var vault = await LoadAsync(connection, transaction, receipt.VaultId, cancellationToken);
+        var durable = await ReadReceiptAsync(connection, transaction, receipt.OperationId, cancellationToken);
+        if (vault is null || durable != receipt)
+            throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
+        if (vault.Revision != receipt.Revision)
+            throw new VaultCatalogueException(VaultCatalogueFailure.StaleRevision);
+        var completed = response.Success && report is { IsCompletedDrain: true };
+        if (completed)
+        {
+            var mirrors = vault.Configuration.MirrorSet;
+            if (mirrors.EnabledNodes.Count < 2 || !mirrors.EnabledNodes.Any(node =>
+                string.Equals(node.Id, request.MirrorNodeId, StringComparison.OrdinalIgnoreCase)))
+                throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
+            // No general infrastructure-save route: change only the confirmed destination.
+            var configuration = vault.Configuration with { MirrorSet = new(mirrors.Nodes.Select(node =>
+                string.Equals(node.Id, request.MirrorNodeId, StringComparison.OrdinalIgnoreCase) ? node with { IsEnabled = false } : node).ToArray(),
+                mirrors.PlacementPolicy) };
+            vault = vault with { Revision = checked(vault.Revision + 1), Configuration = configuration };
+            await using var update = new NpgsqlCommand("""
+                UPDATE fv_control.vault SET revision=@revision,configuration=@configuration
+                WHERE singleton=true AND vault_id=@id AND revision=@original
+                """, connection, transaction);
+            update.Parameters.AddWithValue("revision", vault.Revision);
+            update.Parameters.AddWithValue("configuration", Encode(configuration));
+            update.Parameters.AddWithValue("id", receipt.VaultId.Value);
+            update.Parameters.AddWithValue("original", receipt.Revision);
+            if (await update.ExecuteNonQueryAsync(cancellationToken) != 1)
+                throw new VaultCatalogueException(VaultCatalogueFailure.StaleRevision);
+        }
+        response = response with { VaultId = receipt.VaultId, VaultRevision = vault.Revision, OperationId = receipt.OperationId };
+        await using (var finish = new NpgsqlCommand("""
+            UPDATE fv_control.operations SET state=1,revision=@completed_revision,response=@response,completed_at_utc=now()
+            WHERE operation_id=@operation AND vault_id=@id AND actor_sid=@actor AND command=@command
+                AND fingerprint=@fingerprint AND revision=@revision AND required_permissions=@permissions AND state=0
+            """, connection, transaction))
+        {
+            AddReceiptParameters(finish, receipt with { Response = response });
+            finish.Parameters.AddWithValue("completed_revision", vault.Revision);
+            if (await finish.ExecuteNonQueryAsync(cancellationToken) != 1)
+                throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
+        }
+        if (BeforeMirrorDrainCommit is not null) await BeforeMirrorDrainCommit(receipt.OperationId, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        if (AfterMutationCommit is not null) await AfterMutationCommit(receipt.OperationId, cancellationToken);
+        return response;
+    }
+
+    private static string RequestFingerprint(FluxVaultIpcRequest request) =>
+        Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(request, JsonOptions)));
 
     private const string SelectVault = "SELECT vault_id,revision,display_name,owner_sid,grants,binding,configuration FROM fv_control.vault";
 

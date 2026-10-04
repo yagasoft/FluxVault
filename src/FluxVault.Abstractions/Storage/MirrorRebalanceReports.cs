@@ -50,4 +50,10 @@ public sealed record MirrorRebalancePreviewReport(
     IReadOnlyList<MirrorRebalanceAction> Actions,
     MirrorRebalanceOperation Operation = MirrorRebalanceOperation.Placement,
     bool IsPreview = true,
-    string? RequestedMirrorNodeId = null);
+    string? RequestedMirrorNodeId = null)
+{
+    [System.Text.Json.Serialization.JsonIgnore]
+    public bool IsCompletedDrain => Operation == MirrorRebalanceOperation.Drain && !IsPreview &&
+        HealthState == RepositoryHealthState.Healthy && ActionCount == 0 && Actions is { Count: 0 } &&
+        !string.IsNullOrWhiteSpace(RequestedMirrorNodeId);
+}

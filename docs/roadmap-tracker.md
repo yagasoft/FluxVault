@@ -69,8 +69,13 @@ rehearsal, repair/placement and drain preview now use the installed single-vault
 binding and permission/receipt flow. Native creator A passed 56 checks, ungranted
 B was denied ten maintenance commands, all 1,077 ordinary tests passed and the
 Release build has no warnings/errors. Independent review accepted runtime and
-complete cleanup with the normal installation unchanged. Drain execution still
-needs its coherent catalogue revision/receipt flow; remaining background,
+complete cleanup with the normal installation unchanged. The subsequent
+[mirror-drain batch](verification/2026-10-04-next002-drain/README.md) atomically
+publishes disablement, revision and retained result. It passes 73 real-store
+checks per loopback, 63 native creator checks, eleven ungranted-user denials
+and all 1,099 ordinary tests, with verified physical mirror effects and cleanup.
+Pending UI edits survive completion and newer accepted settings cannot regress;
+remaining command/background,
 interruption, performance/accessibility, full G01 and rollout gates stay open.
 This updates progress without expanding the agreed roadmap.
 

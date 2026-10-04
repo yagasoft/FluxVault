@@ -1108,11 +1108,15 @@ public sealed partial class MainWindowViewModel : ObservableObject
             OperationId = request.OperationId ?? (mutation ? Guid.NewGuid() : null) };
         var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(true);
         if (!response.Success) return response;
+        var completedDrain = request.Command == FluxVaultIpcCommand.RunMirrorDrain && response.MirrorRebalance is { IsCompletedDrain: true };
         var expectedAcknowledgedRevision = request.ExpectedVaultRevision +
-            (request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess ? 1 : 0);
+            (request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess || completedDrain ? 1 : 0);
         if (response.VaultId is not { IsValid: true } returnedId || response.VaultRevision is not > 0 ||
             target is not null && returnedId != target || mutation && response.OperationId != request.OperationId ||
             mutation && response.VaultRevision != expectedAcknowledgedRevision ||
+            request.Command == FluxVaultIpcCommand.RunMirrorDrain && (response.MirrorRebalance is not { Operation: MirrorRebalanceOperation.Drain, IsPreview: false } drain ||
+                drain.Actions is null || drain.Nodes is null ||
+                !string.Equals(drain.RequestedMirrorNodeId, request.MirrorNodeId, StringComparison.OrdinalIgnoreCase)) ||
             request.Command == FluxVaultIpcCommand.GetStatus && acceptedConfigurationRevision is { } current && response.VaultRevision < current)
             return FluxVaultIpcResponse.Failure(mutation
                 ? "The operation acknowledgement did not match this vault. Check its status before retrying."
@@ -2203,6 +2207,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private async Task RunMirrorDrainCoreAsync(bool isPreview, string mirrorNodeId)
     {
+        var originalConfiguration = acceptedConfiguration;
+        var originalVaultId = acceptedVaultId;
+        var originalRevision = acceptedConfigurationRevision;
         try
         {
             var request = isPreview
@@ -2216,15 +2223,40 @@ public sealed partial class MainWindowViewModel : ObservableObject
             }
 
             currentMirrorRebalanceReport = response.MirrorRebalance;
+            var completedDrain = !isPreview && response.MirrorRebalance.IsCompletedDrain;
+            if (completedDrain && originalConfiguration is not null && acceptedVaultId == originalVaultId &&
+                acceptedConfigurationRevision == originalRevision && acceptedConfiguration is not null &&
+                ComputeConfigurationFingerprint(acceptedConfiguration) == ComputeConfigurationFingerprint(originalConfiguration))
+            {
+                // Apply only the service-confirmed infrastructure change to this
+                // exact baseline. Selection and other pending edits stay in place.
+                var mirrorSet = originalConfiguration.MirrorSet;
+                acceptedConfiguration = originalConfiguration with { MirrorSet = new MirrorSetConfiguration(
+                    mirrorSet.Nodes.Select(node => string.Equals(node.Id, mirrorNodeId, StringComparison.OrdinalIgnoreCase)
+                        ? node with { IsEnabled = false } : node).ToArray(), mirrorSet.PlacementPolicy) };
+                acceptedConfigurationRevision = response.VaultRevision;
+                lastAppliedConfigurationFingerprint = ComputeConfigurationFingerprint(acceptedConfiguration);
+                isApplyingStatus = true;
+                try
+                {
+                    var row = MirrorNodes.SingleOrDefault(node => string.Equals(node.Id, mirrorNodeId, StringComparison.OrdinalIgnoreCase));
+                    if (row is not null) row.IsEnabled = false;
+                }
+                finally { isApplyingStatus = false; }
+                UpdateMirrorSummary();
+                NotifyConfigurationCommandAvailability();
+            }
             ApplyRepositoryHealth(new RepositoryHealthSnapshot(
                 DateTimeOffset.UtcNow,
                 CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport?.HealthState, currentMirrorRebalanceReport.HealthState),
-                isPreview ? "Mirror drain preview completed." : "Mirror drain completed.",
+                isPreview ? "Mirror drain preview completed." : completedDrain ? "Mirror drain completed." : "Mirror drain incomplete; destination remains enabled.",
                 currentScrubReport,
                 currentRestoreRehearsalReport,
                 currentMirrorRepairReport,
                 currentMirrorRebalanceReport));
-            RepositoryHealthStatus = $"{(isPreview ? "Mirror drain preview" : "Mirror drain")} completed - {response.MirrorRebalance.HealthState}";
+            RepositoryHealthStatus = isPreview || completedDrain
+                ? $"{(isPreview ? "Mirror drain preview" : "Mirror drain")} completed - {response.MirrorRebalance.HealthState}"
+                : $"Mirror drain incomplete - {response.MirrorRebalance.HealthState}. The destination remains enabled; review the report before retrying.";
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
         {

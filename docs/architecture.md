@@ -524,6 +524,15 @@ target issue. On a healthy completion the selected mirror node is disabled in
 configuration. Version metadata remains in PostgreSQL and metadata-journal
 exports; drain does not act as a destructive repository purge.
 
+The single-vault protected service admits drain only for an enabled destination
+with another enabled destination remaining. Repository execution does not save
+configuration. Catalogue completion verifies the original request fingerprint,
+durable receipt and admitted revision, then commits only the selected disablement,
+new revision and completed response together. Incomplete/failed results keep the
+destination enabled; unconfirmed effects are reconciled using the retained
+operation identity without automatic re-execution. The UI preserves pending
+protection edits and applies the disablement only to its matching accepted baseline.
+
 ## Whole-PC metadata store
 
 PostgreSQL is now the primary metadata runtime for the whole-PC storage track.

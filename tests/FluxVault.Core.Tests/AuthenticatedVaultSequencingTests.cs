@@ -1,12 +1,56 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Security;
+using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Security;
 
 namespace FluxVault.Core.Tests;
 
 public sealed class AuthenticatedVaultSequencingTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(bool incomplete)
+    {
+        using var fixture = new Fixture();
+        fixture.Executor.IncompleteDrain = incomplete;
+        var request = fixture.Request(FluxVaultIpcCommand.RunMirrorDrain) with { MirrorNodeId = "first" };
+        var response = await fixture.Handler.HandleAsync(fixture.Caller, request);
+        Assert.True(response.Success);
+        Assert.Equal(incomplete ? 1 : 2, response.VaultRevision);
+        Assert.Equal(request, fixture.Catalogue.DrainRequest);
+        Assert.Equal(1, fixture.Catalogue.DrainCompletions);
+    }
+
+    [Fact]
+    public async Task Drain_completion_failure_after_repository_effect_is_unknown_and_does_not_report_a_configuration_change()
+    {
+        using var fixture = new Fixture();
+        fixture.Catalogue.FailDrainCompletion = true;
+        var response = await fixture.Handler.HandleAsync(fixture.Caller,
+            fixture.Request(FluxVaultIpcCommand.RunMirrorDrain) with { MirrorNodeId = "first" });
+        Assert.False(response.Success);
+        Assert.Equal(FluxVaultIpcErrorCode.OutcomeUnknown, response.ErrorCode);
+        Assert.Equal(1, fixture.Catalogue.DrainCompletions);
+        Assert.Equal(1, fixture.Executor.Calls);
+    }
+
+    [Fact]
+    public async Task Drain_holds_the_mutation_gate_until_configuration_and_receipt_completion()
+    {
+        using var fixture = new Fixture();
+        fixture.Catalogue.HoldCompletion = true;
+        var drain = fixture.Handler.HandleAsync(fixture.Caller,
+            fixture.Request(FluxVaultIpcCommand.RunMirrorDrain) with { MirrorNodeId = "first" });
+        await fixture.Catalogue.CompletionEntered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        var save = fixture.Handler.HandleAsync(fixture.Caller, fixture.Request(FluxVaultIpcCommand.SaveConfiguration));
+        try { Assert.Equal(0, fixture.Catalogue.Saves); Assert.False(save.IsCompleted); }
+        finally { fixture.Catalogue.CompletionRelease.TrySetResult(); await Task.WhenAll(drain, save); }
+        Assert.True((await drain).Success);
+        Assert.Equal(2, (await drain).VaultRevision);
+    }
+
     [Fact]
     public async Task Save_cannot_replace_configuration_while_an_admitted_backup_is_running()
     {
@@ -100,6 +144,9 @@ public sealed class AuthenticatedVaultSequencingTests
     {
         internal VaultCatalogueEntry Entry { get; }
         internal int Saves;
+        internal int DrainCompletions;
+        internal bool FailDrainCompletion;
+        internal FluxVaultIpcRequest? DrainRequest;
         internal bool HoldCompletion;
         internal TaskCompletionSource CompletionEntered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         internal TaskCompletionSource CompletionRelease { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -118,7 +165,19 @@ public sealed class AuthenticatedVaultSequencingTests
             Entry.Binding.Id, Entry.Access.OwnerSid, request.Command, "fingerprint", state, Entry.Revision,
             state == VaultOperationState.Completed ? FluxVaultIpcResponse.Ok() : null, VaultPermission.ManageProtection);
         public async Task CompleteAsync(VaultOperationReceipt receipt, FluxVaultIpcResponse response, CancellationToken cancellationToken = default)
-        { CompletionEntered.TrySetResult(); if (HoldCompletion) await CompletionRelease.Task.WaitAsync(cancellationToken); }
+        {
+            CompletionEntered.TrySetResult();
+            if (HoldCompletion) await CompletionRelease.Task.WaitAsync(cancellationToken);
+            if (receipt.Command == FluxVaultIpcCommand.RunMirrorDrain) throw new InvalidOperationException("Drain requires atomic configuration completion.");
+        }
+        public async Task<FluxVaultIpcResponse> CompleteMirrorDrainAsync(VaultOperationReceipt receipt, FluxVaultIpcRequest request,
+            FluxVaultIpcResponse response, CancellationToken cancellationToken = default)
+        {
+            DrainCompletions++; DrainRequest = request; CompletionEntered.TrySetResult();
+            if (HoldCompletion) await CompletionRelease.Task.WaitAsync(cancellationToken);
+            if (FailDrainCompletion) throw new IOException("No catalogue completion acknowledgement.");
+            return response with { VaultRevision = receipt.Revision + (response.MirrorRebalance!.IsCompletedDrain ? 1 : 0) };
+        }
         public Task<VaultAdmission> SetAccessAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<VaultOperationReceipt?> GetReceiptAsync(FluxVaultCallerContext caller, VaultId vaultId, Guid operationId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     }
@@ -127,11 +186,16 @@ public sealed class AuthenticatedVaultSequencingTests
         internal TaskCompletionSource Entered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         internal TaskCompletionSource Release { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         internal int Calls;
+        internal bool IncompleteDrain;
         public async Task<FluxVaultIpcResponse> ExecuteAsync(FluxVaultCallerContext caller, VaultAdmission admission,
             FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
         {
             Interlocked.Increment(ref Calls);
             if (request.Command == FluxVaultIpcCommand.RunBackupNow) { Entered.TrySetResult(); await Release.Task.WaitAsync(cancellationToken); }
+            if (request.Command == FluxVaultIpcCommand.RunMirrorDrain)
+                return FluxVaultIpcResponse.WithMirrorRebalance(new(DateTimeOffset.UtcNow,
+                    IncompleteDrain ? RepositoryHealthState.Warning : RepositoryHealthState.Healthy, 1, 0, 0, 0, [], [],
+                    MirrorRebalanceOperation.Drain, false, request.MirrorNodeId));
             return FluxVaultIpcResponse.Ok();
         }
     }

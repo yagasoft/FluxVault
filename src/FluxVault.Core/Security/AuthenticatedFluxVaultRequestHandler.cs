@@ -62,7 +62,12 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
             executionStarted = true;
             var response = await executor.ExecuteAsync(caller, admission, boundRequest, cancellationToken);
             response = response with { VaultId = id, VaultRevision = admission.Vault.Revision, OperationId = request.OperationId };
-            if (admission.Receipt is not null) await catalogue.CompleteAsync(admission.Receipt, response, cancellationToken);
+            if (admission.Receipt is not null)
+            {
+                if (request.Command == FluxVaultIpcCommand.RunMirrorDrain)
+                    return await catalogue.CompleteMirrorDrainAsync(admission.Receipt, boundRequest, response, cancellationToken);
+                await catalogue.CompleteAsync(admission.Receipt, response, cancellationToken);
+            }
             return response;
         }
         catch (OperationCanceledException) when (!admissionStarted)

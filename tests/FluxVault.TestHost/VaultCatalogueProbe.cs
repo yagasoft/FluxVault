@@ -4,6 +4,7 @@ using System.Text.Json;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Security;
+using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Security;
 using FluxVault.Testing;
 using Npgsql;
@@ -93,7 +94,9 @@ internal static class VaultCatalogueProbe
             await Denied(() => store.GetReceiptAsync(other, one.Id, mutation.OperationId.Value), "other actor cannot inspect receipt");
             var permitted = await store.SetAccessAsync(administrator, Request(revoked.Vault, FluxVaultIpcCommand.SetVaultAccess) with { OperationId = Guid.NewGuid(), AccessGrants = [new(other.UserSid, VaultPermission.ManageProtection | VaultPermission.Maintain | VaultPermission.DeleteHistory)] });
             await Failure(() => store.AdmitAsync(other, mutation with { ExpectedVaultRevision = permitted.Vault.Revision }), VaultCatalogueFailure.OperationConflict, "cross actor collision rejects malformed response before decoding");
-            var purge = Request(permitted.Vault, FluxVaultIpcCommand.SaveConfiguration) with { OperationId = Guid.NewGuid(), Configuration = permitted.Vault.Configuration, PurgeRemovedSelections = true };
+            var purge = Request(permitted.Vault, FluxVaultIpcCommand.SaveConfiguration) with { OperationId = Guid.NewGuid(),
+                Configuration = permitted.Vault.Configuration, PurgeRemovedSelections = true,
+                RemovedSelections = [new(Path.Combine(fixture.Root, "working"), RepositoryPurgeScopeKind.RecursiveFolder)], PreservedSelections = [] };
             var purgeSaved = await store.SaveConfigurationAsync(other, purge);
             Check(purgeSaved.Receipt?.RequiredPermissions == (VaultPermission.ManageProtection | VaultPermission.Maintain | VaultPermission.DeleteHistory), "effective purge permissions are durable");
             await store.CompleteAsync(purgeSaved.Receipt!, FluxVaultIpcResponse.Ok());
@@ -153,9 +156,11 @@ internal static class VaultCatalogueProbe
             Check(await acl.ExecuteScalarAsync() is false, "PUBLIC has no control schema access");
             await using var durability = new NpgsqlCommand("SELECT current_setting('fsync') = 'on' AND current_setting('synchronous_commit') = 'on' AND current_setting('full_page_writes') = 'on'", connection);
             Check(await durability.ExecuteScalarAsync() is true, "acknowledgement durability settings");
+            await VaultMirrorDrainProbe.RunAsync(store, owner, fresh, checks);
             var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one) : null;
             var repository = fixture.RunMetadataTests ? await VaultRepositoryProbe.RunAsync(dataSource, one) : null;
-            return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true, StoreHost = host, Metadata = metadata, Repository = repository };
+            return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true,
+                MirrorDrainCatalogueVerified = true, StoreHost = host, Metadata = metadata, Repository = repository };
         }
         finally
         {
@@ -170,7 +175,10 @@ internal static class VaultCatalogueProbe
             var state = Path.Combine(fixture.Root, "catalogue", id.ToString());
             return new(id, Path.Combine(state, "repository"), Path.Combine(state, "state"), MetadataStoreConfiguration.CreateDefault(state) with { Host = host, Port = fixture.Port, DatabaseName = fixture.Database, Username = fixture.Role });
         }
-        FluxVaultConfiguration Configuration(VaultBinding binding) => FluxVaultConfiguration.CreateDefault(binding.StateRoot) with { RepositoryPath = binding.RepositoryPath, MetadataStore = binding.MetadataStore };
+        FluxVaultConfiguration Configuration(VaultBinding binding) => FluxVaultConfiguration.CreateDefault(binding.StateRoot) with
+        { RepositoryPath = binding.RepositoryPath, MetadataStore = binding.MetadataStore,
+            MirrorSet = new MirrorSetConfiguration([new("first", "First", Path.Combine(binding.StateRoot, "first")),
+                new("second", "Second", Path.Combine(binding.StateRoot, "second")), new("third", "Third", Path.Combine(binding.StateRoot, "third"))]).Normalise() };
         void Check(bool result, string name) { if (!result) throw new InvalidOperationException("Catalogue contract failed: " + name); checks.Add(name); }
         async Task Failure(Func<Task> action, VaultCatalogueFailure expected, string name)
         {

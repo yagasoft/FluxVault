@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ba1dc72f-caae-47da-b937-b86865fb1e0f" name="os008@OS008-HOME 2026-10-04 17:45:31" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T17:45:31.2646964+03:00" queuing="2026-10-04T17:45:31.2646965+03:00" start="2026-10-04T17:45:30.2111357+03:00" finish="2026-10-04T17:45:31.2692950+03:00" />
+  <TestSettings name="default" id="bac0fd7b-ff2d-4496-a8a0-6c0d5af20bf3">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_17_45_31" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1b9676e1-1272-4dc5-a200-b6c3d86b1f82" testId="6f1a8202-7e5b-9e12-53fa-e5d1b6b751fc" testName="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: True, health: Healthy, count: 0, hiddenAction: False, operation: Drain, selector: &quot;first&quot;, complete: False)" computerName="OS008-HOME" duration="00:00:00.0004910" startTime="2026-10-04T17:45:30.8621345+03:00" endTime="2026-10-04T17:45:30.8621895+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1b9676e1-1272-4dc5-a200-b6c3d86b1f82" />
+    <UnitTestResult executionId="00292842-d102-4d3d-a03b-e4e5c8a3325c" testId="54694609-e34e-db8c-bf13-c60cffbd3950" testName="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Admitted_drain_moves_verified_copies_and_reports_health_without_a_configuration_write" computerName="OS008-HOME" duration="00:00:00.3017565" startTime="2026-10-04T17:45:30.8706204+03:00" endTime="2026-10-04T17:45:31.1706033+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00292842-d102-4d3d-a03b-e4e5c8a3325c">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Specified method is not supported.</Message>
+          <StackTrace>   at FluxVault.Core.Service.FluxVaultOperations.RunMirrorDrainRepositoryEffectsAsync(String mirrorNodeId, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Service\FluxVaultOperations.cs:line 807&#xD;
+   at FluxVault.Core.Tests.AdmittedMirrorDrainTests.Admitted_drain_moves_verified_copies_and_reports_health_without_a_configuration_write() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AdmittedMirrorDrainTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="17212d33-811e-49ba-b62a-7cca2e4ea848" testId="18b4633e-47e7-211e-d801-7edb09e88696" testName="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 0, hiddenAction: False, operation: Placement, selector: &quot;first&quot;, complete: False)" computerName="OS008-HOME" duration="00:00:00.0000092" startTime="2026-10-04T17:45:30.8628169+03:00" endTime="2026-10-04T17:45:30.8628420+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17212d33-811e-49ba-b62a-7cca2e4ea848" />
+    <UnitTestResult executionId="5c9123af-6b61-4ece-9429-507a2f798077" testId="c7af15ec-9707-7d22-6c03-d32cb61fd85e" testName="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 0, hiddenAction: False, operation: Drain, selector: null, complete: False)" computerName="OS008-HOME" duration="00:00:00.0000159" startTime="2026-10-04T17:45:30.8628871+03:00" endTime="2026-10-04T17:45:30.8629117+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5c9123af-6b61-4ece-9429-507a2f798077" />
+    <UnitTestResult executionId="78082762-299b-4f9b-9e08-c39d90948bf4" testId="11fa741d-91c1-e448-2e48-9d85c92092b9" testName="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 1, hiddenAction: False, operation: Drain, selector: &quot;first&quot;, complete: False)" computerName="OS008-HOME" duration="00:00:00.0000176" startTime="2026-10-04T17:45:30.8627379+03:00" endTime="2026-10-04T17:45:30.8627643+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78082762-299b-4f9b-9e08-c39d90948bf4" />
+    <UnitTestResult executionId="b1ed0cd0-bda3-4cff-840c-a4ef054e25b8" testId="78c2f2dc-f268-f1ef-441b-20ea5d439cd9" testName="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 0, hiddenAction: False, operation: Drain, selector: &quot;first&quot;, complete: True)" computerName="OS008-HOME" duration="00:00:00.0014009" startTime="2026-10-04T17:45:30.8629546+03:00" endTime="2026-10-04T17:45:30.8652892+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b1ed0cd0-bda3-4cff-840c-a4ef054e25b8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(Boolean preview, RepositoryHealthState health, Int32 count, Boolean hiddenAction, MirrorRebalanceOperation operation, String selector, Boolean complete) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AdmittedMirrorDrainTests.cs:line 66&#xD;
+   at InvokeStub_AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithManyArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="89b4b6f3-0cc0-4a62-9067-31556fe0b3f8" testId="a2551279-bd64-55b5-ed5a-e0130ca4ed51" testName="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 0, hiddenAction: True, operation: Drain, selector: &quot;first&quot;, complete: False)" computerName="OS008-HOME" duration="00:00:00.0026032" startTime="2026-10-04T17:45:30.8626449+03:00" endTime="2026-10-04T17:45:30.8626750+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="89b4b6f3-0cc0-4a62-9067-31556fe0b3f8" />
+    <UnitTestResult executionId="ad13d4e2-aa5e-496f-9b3e-38f157781dd2" testId="14b5de9f-84ec-a03b-0a84-6bbf99cbda5c" testName="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Warning, count: 0, hiddenAction: False, operation: Drain, selector: &quot;first&quot;, complete: False)" computerName="OS008-HOME" duration="00:00:00.0499244" startTime="2026-10-04T17:45:30.7979002+03:00" endTime="2026-10-04T17:45:30.8537935+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad13d4e2-aa5e-496f-9b3e-38f157781dd2" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 0, hiddenAction: False, operation: Drain, selector: &quot;first&quot;, complete: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="78c2f2dc-f268-f1ef-441b-20ea5d439cd9">
+      <Execution id="b1ed0cd0-bda3-4cff-840c-a4ef054e25b8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AdmittedMirrorDrainTests" name="Completion_requires_a_healthy_applied_drain_with_no_remaining_actions" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 0, hiddenAction: False, operation: Drain, selector: null, complete: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="c7af15ec-9707-7d22-6c03-d32cb61fd85e">
+      <Execution id="5c9123af-6b61-4ece-9429-507a2f798077" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AdmittedMirrorDrainTests" name="Completion_requires_a_healthy_applied_drain_with_no_remaining_actions" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Warning, count: 0, hiddenAction: False, operation: Drain, selector: &quot;first&quot;, complete: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="14b5de9f-84ec-a03b-0a84-6bbf99cbda5c">
+      <Execution id="ad13d4e2-aa5e-496f-9b3e-38f157781dd2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AdmittedMirrorDrainTests" name="Completion_requires_a_healthy_applied_drain_with_no_remaining_actions" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 1, hiddenAction: False, operation: Drain, selector: &quot;first&quot;, complete: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="11fa741d-91c1-e448-2e48-9d85c92092b9">
+      <Execution id="78082762-299b-4f9b-9e08-c39d90948bf4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AdmittedMirrorDrainTests" name="Completion_requires_a_healthy_applied_drain_with_no_remaining_actions" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Admitted_drain_moves_verified_copies_and_reports_health_without_a_configuration_write" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="54694609-e34e-db8c-bf13-c60cffbd3950">
+      <Execution id="00292842-d102-4d3d-a03b-e4e5c8a3325c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AdmittedMirrorDrainTests" name="Admitted_drain_moves_verified_copies_and_reports_health_without_a_configuration_write" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 0, hiddenAction: True, operation: Drain, selector: &quot;first&quot;, complete: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="a2551279-bd64-55b5-ed5a-e0130ca4ed51">
+      <Execution id="89b4b6f3-0cc0-4a62-9067-31556fe0b3f8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AdmittedMirrorDrainTests" name="Completion_requires_a_healthy_applied_drain_with_no_remaining_actions" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 0, hiddenAction: False, operation: Placement, selector: &quot;first&quot;, complete: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="18b4633e-47e7-211e-d801-7edb09e88696">
+      <Execution id="17212d33-811e-49ba-b62a-7cca2e4ea848" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AdmittedMirrorDrainTests" name="Completion_requires_a_healthy_applied_drain_with_no_remaining_actions" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: True, health: Healthy, count: 0, hiddenAction: False, operation: Drain, selector: &quot;first&quot;, complete: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="6f1a8202-7e5b-9e12-53fa-e5d1b6b751fc">
+      <Execution id="1b9676e1-1272-4dc5-a200-b6c3d86b1f82" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AdmittedMirrorDrainTests" name="Completion_requires_a_healthy_applied_drain_with_no_remaining_actions" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6f1a8202-7e5b-9e12-53fa-e5d1b6b751fc" executionId="1b9676e1-1272-4dc5-a200-b6c3d86b1f82" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54694609-e34e-db8c-bf13-c60cffbd3950" executionId="00292842-d102-4d3d-a03b-e4e5c8a3325c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="18b4633e-47e7-211e-d801-7edb09e88696" executionId="17212d33-811e-49ba-b62a-7cca2e4ea848" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7af15ec-9707-7d22-6c03-d32cb61fd85e" executionId="5c9123af-6b61-4ece-9429-507a2f798077" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11fa741d-91c1-e448-2e48-9d85c92092b9" executionId="78082762-299b-4f9b-9e08-c39d90948bf4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78c2f2dc-f268-f1ef-441b-20ea5d439cd9" executionId="b1ed0cd0-bda3-4cff-840c-a4ef054e25b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a2551279-bd64-55b5-ed5a-e0130ca4ed51" executionId="89b4b6f3-0cc0-4a62-9067-31556fe0b3f8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="14b5de9f-84ec-a03b-0a84-6bbf99cbda5c" executionId="ad13d4e2-aa5e-496f-9b3e-38f157781dd2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="6" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.28]       Expected: True&#xD;
+[xUnit.net 00:00:00.28]       Actual:   False&#xD;
+[xUnit.net 00:00:00.28]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.29]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AdmittedMirrorDrainTests.cs(66,0): at FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(Boolean preview, RepositoryHealthState health, Int32 count, Boolean hiddenAction, MirrorRebalanceOperation operation, String selector, Boolean complete)&#xD;
+[xUnit.net 00:00:00.29]            at InvokeStub_AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.29]            at System.Reflection.MethodBaseInvoker.InvokeWithManyArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.59]       System.NotSupportedException : Specified method is not supported.&#xD;
+[xUnit.net 00:00:00.59]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.59]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Service\FluxVaultOperations.cs(807,0): at FluxVault.Core.Service.FluxVaultOperations.RunMirrorDrainRepositoryEffectsAsync(String mirrorNodeId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.59]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AdmittedMirrorDrainTests.cs(40,0): at FluxVault.Core.Tests.AdmittedMirrorDrainTests.Admitted_drain_moves_verified_copies_and_reports_health_without_a_configuration_write()&#xD;
+[xUnit.net 00:00:00.59]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.59]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T17:45:30.8676334+03:00">
+        <Text>[xUnit.net 00:00:00.28]     FluxVault.Core.Tests.AdmittedMirrorDrainTests.Completion_requires_a_healthy_applied_drain_with_no_remaining_actions(preview: False, health: Healthy, count: 0, hiddenAction: False, operation: Drain, selector: "first", complete: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T17:45:31.1710396+03:00">
+        <Text>[xUnit.net 00:00:00.59]     FluxVault.Core.Tests.AdmittedMirrorDrainTests.Admitted_drain_moves_verified_copies_and_reports_health_without_a_configuration_write [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

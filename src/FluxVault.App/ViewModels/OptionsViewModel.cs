@@ -19,23 +19,32 @@ public sealed partial class OptionsViewModel : ObservableObject
 {
     private readonly IFluxVaultServiceClient client;
     private readonly IExplorerContextMenuService explorerContextMenuService;
+    private readonly IConfigurationSaveOperationStore saveOperationStore;
     private FluxVaultConfiguration? currentConfiguration;
     private VaultId? acceptedVaultId;
     private long? acceptedRevision;
-    private Guid? unconfirmedSaveOperation;
-    private FluxVaultConfiguration? dispatchedConfiguration;
+    private PendingConfigurationSave? pendingSave;
+    private bool saveRecordBlocked;
+    private bool saveConfirmedForReview;
+    private readonly SemaphoreSlim initialiseGate = new(1, 1);
+    private readonly SemaphoreSlim saveGate = new(1, 1);
 
     public OptionsViewModel(IFluxVaultServiceClient client)
         : this(client, new WindowsExplorerContextMenuService())
     {
     }
 
+    public OptionsViewModel(IFluxVaultServiceClient client, IConfigurationSaveOperationStore saveOperationStore)
+        : this(client, new WindowsExplorerContextMenuService(), saveOperationStore) { }
+
     public OptionsViewModel(
         IFluxVaultServiceClient client,
-        IExplorerContextMenuService explorerContextMenuService)
+        IExplorerContextMenuService explorerContextMenuService,
+        IConfigurationSaveOperationStore? saveOperationStore = null)
     {
         this.client = client;
         this.explorerContextMenuService = explorerContextMenuService;
+        this.saveOperationStore = saveOperationStore ?? new MemoryConfigurationSaveOperationStore();
         RefreshExplorerContextMenuStatus();
     }
 
@@ -226,114 +235,255 @@ public sealed partial class OptionsViewModel : ObservableObject
 
     public async Task InitialiseAsync(CancellationToken cancellationToken = default)
     {
-        RefreshExplorerContextMenuStatus();
-        FluxVaultIpcResponse response;
-        try { response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true); }
-        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
-        { StatusText = "Could not load options; the service acknowledgement is unavailable. Your edits are kept."; return; }
-        if (!response.Success || response.Status is null || response.VaultId is not { IsValid: true } || response.VaultRevision is not > 0)
+        await initialiseGate.WaitAsync(cancellationToken).ConfigureAwait(true);
+        try
         {
-            StatusText = $"Could not load options: {response.ErrorMessage ?? "no status returned"}";
-            return;
-        }
+            if (currentConfiguration is not null) return;
+            RefreshExplorerContextMenuStatus();
+            FluxVaultIpcResponse response;
+            try { response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true); }
+            catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+            { StatusText = "Could not load options; the service acknowledgement is unavailable. Your edits are kept."; return; }
+            if (!response.Success || response.Status is null || response.VaultId is not { IsValid: true } || response.VaultRevision is not > 0)
+            {
+                StatusText = $"Could not load options: {response.ErrorMessage ?? "no status returned"}";
+                return;
+            }
 
-        currentConfiguration = response.Status.Configuration;
-        acceptedVaultId = response.VaultId;
-        acceptedRevision = response.VaultRevision;
-        ApplyPolicy(currentConfiguration.RetentionPolicy);
-        ApplyCadence(currentConfiguration.CaptureCadencePolicy);
-        ApplyCodec(currentConfiguration.CodecPolicy);
-        ApplyMaintenance(currentConfiguration.RepositoryMaintenancePolicy);
-        ApplyWorkload(currentConfiguration.WorkloadPolicy);
-        ApplyMetadataStore(currentConfiguration.MetadataStore);
-        ApplyDiagnostics(currentConfiguration.DiagnosticsPolicy);
-        PreviewRetentionDays = (currentConfiguration.VersionPreview ?? new()).Normalise().RetentionDays;
-        ApplyExclusions(currentConfiguration.ExclusionRules ?? []);
-        StatusText = "Options loaded.";
+            currentConfiguration = response.Status.Configuration;
+            acceptedVaultId = response.VaultId;
+            acceptedRevision = response.VaultRevision;
+            ApplyEditableConfiguration(currentConfiguration);
+            StatusText = "Options loaded.";
+            TryReadPendingSave(restoreDraft: true);
+        }
+        finally { initialiseGate.Release(); }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanSaveOptions))]
     public async Task SaveAsync(CancellationToken cancellationToken = default)
     {
-        if (currentConfiguration is null || acceptedVaultId is null || acceptedRevision is not > 0)
-        {
-            StatusText = "Options save failed: load the verified configuration first. Your edits are kept.";
-            return;
-        }
-        if (unconfirmedSaveOperation is not null)
-        {
-            StatusText = "Options save could not be confirmed. Check the previous save outcome before retrying; your edits are kept.";
-            return;
-        }
-
-        var updated = currentConfiguration with
-        {
-            RetentionPolicy = BuildPolicy(),
-            CaptureCadencePolicy = BuildCadence(),
-            CodecPolicy = BuildCodec(),
-            RepositoryMaintenancePolicy = BuildMaintenance(),
-            WorkloadPolicy = BuildWorkload(),
-            MetadataStore = BuildMetadataStore(),
-            DiagnosticsPolicy = BuildDiagnostics(),
-            VersionPreview = new VersionPreviewPolicy(PreviewRetentionDays).Normalise(),
-            ExclusionRules = []
-        };
-        var operation = Guid.NewGuid();
-        dispatchedConfiguration = updated;
-        FluxVaultIpcResponse response;
+        var entered = false;
         try
         {
-            response = await SendBoundAsync(FluxVaultIpcRequest.SaveConfiguration(updated) with { OperationId = operation }, cancellationToken)
-                .ConfigureAwait(true);
+            entered = await saveGate.WaitAsync(0, cancellationToken).ConfigureAwait(true);
+            if (!entered) return;
+            if (currentConfiguration is null || acceptedVaultId is null || acceptedRevision is not > 0)
+            {
+                StatusText = "Options save failed: load the verified configuration first. Your edits are kept.";
+                return;
+            }
+            if (!TryReadPendingSave() || HasUnconfirmedSave)
+            {
+                if (!saveRecordBlocked && pendingSave?.Origin == ConfigurationSaveOrigin.Options)
+                    StatusText = "Options save could not be confirmed. Check the previous save outcome before retrying; your edits are kept.";
+                return;
+            }
+
+            var updated = BuildEditedConfiguration();
+            var pending = new PendingConfigurationSave(acceptedVaultId.Value.Value, Guid.NewGuid(), acceptedRevision.Value,
+                updated, false, [], [], ConfigurationSaveOrigin.Options).Freeze();
+            saveOperationStore.Reserve(pending);
+            SetPendingSave(pending);
+            FluxVaultIpcResponse response;
+            try
+            {
+                response = await SendBoundAsync(pending.Request, cancellationToken)
+                    .ConfigureAwait(true);
+            }
+            catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+            {
+                response = FluxVaultIpcResponse.Failure(exception.Message) with { ErrorCode = FluxVaultIpcErrorCode.OutcomeUnknown };
+            }
+            if (response.Success && response.ErrorCode is null)
+            {
+                if (!TryClearPendingSave(pending)) return;
+                currentConfiguration = pending.Configuration;
+                acceptedRevision = response.VaultRevision;
+                StatusText = "Options saved.";
+            }
+            else
+            {
+                if (response.ErrorCode is FluxVaultIpcErrorCode.Denied or FluxVaultIpcErrorCode.InvalidRequest or FluxVaultIpcErrorCode.StaleRevision)
+                    if (!TryClearPendingSave(pending)) return;
+                StatusText = $"Options save failed: {response.ErrorMessage}. Your edits are kept.";
+            }
         }
-        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
         {
-            response = FluxVaultIpcResponse.Failure(exception.Message) with { ErrorCode = FluxVaultIpcErrorCode.OutcomeUnknown };
+            TryReadPendingSave();
+            StatusText = $"Options save did not complete. Your edits and any pending record are kept; no backup has started. {exception.Message}";
         }
-        if (response.Success)
-        {
-            currentConfiguration = updated;
-            acceptedRevision = response.VaultRevision;
-            StatusText = "Options saved.";
-        }
-        else
-        {
-            if (response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown) unconfirmedSaveOperation = operation;
-            StatusText = $"Options save failed: {response.ErrorMessage}. Your edits are kept.";
-            CheckSaveOutcomeCommand.NotifyCanExecuteChanged();
-        }
+        finally { if (entered) saveGate.Release(); }
     }
 
-    public bool HasUnconfirmedSave => unconfirmedSaveOperation is not null;
+    public bool HasUnconfirmedSave => pendingSave is not null || saveRecordBlocked;
+    public bool CanSaveOptions => currentConfiguration is not null && acceptedVaultId is not null && acceptedRevision is > 0 && !HasUnconfirmedSave;
+    public bool CanCheckSaveOutcome => pendingSave?.Origin == ConfigurationSaveOrigin.Options && !saveRecordBlocked;
+    public bool CanReloadSavedOptions => CanCheckSaveOutcome && saveConfirmedForReview;
 
-    [RelayCommand(CanExecute = nameof(HasUnconfirmedSave))]
+    [RelayCommand(CanExecute = nameof(CanCheckSaveOutcome))]
     public async Task CheckSaveOutcomeAsync(CancellationToken cancellationToken = default)
     {
-        if (unconfirmedSaveOperation is not { } operation) return;
+        var entered = false;
         try
         {
+            entered = await saveGate.WaitAsync(0, cancellationToken).ConfigureAwait(true);
+            if (!entered || !TryReadPendingSave() || !CanCheckSaveOutcome || pendingSave is not { } pending) return;
             var response = await SendBoundAsync(new FluxVaultIpcRequest(FluxVaultIpcCommand.GetOperationStatus,
-                null, null, null, null, OperationId: operation), cancellationToken).ConfigureAwait(true);
-            if (response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown || response.VaultId != acceptedVaultId ||
-                response.OperationId != operation || response.VaultRevision is not > 0)
+                null, null, null, null, OperationId: pending.OperationId), cancellationToken).ConfigureAwait(true);
+            if (!response.Success || response.ErrorCode is not null || response.VaultId?.Value != pending.RepositoryId ||
+                response.OperationId != pending.OperationId || response.VaultRevision != pending.Revision + 1)
             {
                 StatusText = "The Options save outcome could not be confirmed. Your edits are kept; check again later.";
                 return;
             }
-            if (response.Success) { currentConfiguration = dispatchedConfiguration; acceptedRevision = response.VaultRevision; }
-            unconfirmedSaveOperation = null;
-            CheckSaveOutcomeCommand.NotifyCanExecuteChanged();
-            StatusText = response.Success ? "Previous Options save confirmed. Any newer edits are kept." : $"Previous Options save failed: {response.ErrorMessage}. Your edits are kept.";
+            var current = await SendBoundAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true);
+            if (!IsSamePendingSave(pending)) return;
+            if (response.Purge is not null || !current.Success || current.Status is null || current.VaultRevision != pending.Revision + 1 ||
+                !SameConfiguration(current.Status.Configuration, pending.Configuration))
+            {
+                saveConfirmedForReview = true;
+                NotifySaveState();
+                StatusText = "The historical Options save is confirmed, but current settings differ or could not be verified. The record and your edits are kept. Review, then use Reload saved options to discard these edits and load current settings. No backup has started.";
+                return;
+            }
+            if (!TryClearPendingSave(pending)) return;
+            currentConfiguration = current.Status.Configuration;
+            acceptedRevision = current.VaultRevision;
+            StatusText = "Previous Options save confirmed. Any newer edits are kept. No backup has started.";
         }
         catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
         { StatusText = "The Options save outcome could not be confirmed. Your edits are kept; check again later."; }
+        finally { if (entered) saveGate.Release(); }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanReloadSavedOptions))]
+    public async Task ReloadSavedOptionsAsync(CancellationToken cancellationToken = default)
+    {
+        var entered = false;
+        try
+        {
+            entered = await saveGate.WaitAsync(0, cancellationToken).ConfigureAwait(true);
+            var reviewed = saveConfirmedForReview ? pendingSave : null;
+            if (!entered || reviewed is null || !TryReadPendingSave() || !CanReloadSavedOptions || !IsSamePendingSave(reviewed)) return;
+            var reviewedEdits = BuildEditedConfiguration();
+            var current = await SendBoundAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true);
+            if (!current.Success || current.Status is null || current.VaultRevision < acceptedRevision)
+            { StatusText = "Reload did not complete: current saved settings could not be verified. Your edits and pending record are kept."; return; }
+            if (!IsSamePendingSave(reviewed)) return;
+            if (!SameConfiguration(reviewedEdits, BuildEditedConfiguration()))
+            { StatusText = "Reload stopped because newer edits arrived. Your edits and pending record are kept; review them before reloading again."; return; }
+            if (!TryClearPendingSave(reviewed)) return;
+            currentConfiguration = current.Status.Configuration;
+            acceptedRevision = current.VaultRevision;
+            ApplyEditableConfiguration(currentConfiguration);
+            StatusText = "Current saved options reloaded. The reviewed pending save is cleared. No backup has started.";
+        }
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        { StatusText = "Reload did not complete. Your edits and pending record are kept; check again later."; }
+        finally { if (entered) saveGate.Release(); }
+    }
+
+    private static bool SameConfiguration(FluxVaultConfiguration left, FluxVaultConfiguration right) =>
+        System.Text.Json.JsonSerializer.Serialize(left, FileConfigurationSaveOperationStore.JsonOptions) ==
+        System.Text.Json.JsonSerializer.Serialize(right, FileConfigurationSaveOperationStore.JsonOptions);
+
+    private FluxVaultConfiguration BuildEditedConfiguration() => currentConfiguration! with
+    {
+        RetentionPolicy = BuildPolicy(), CaptureCadencePolicy = BuildCadence(), CodecPolicy = BuildCodec(),
+        RepositoryMaintenancePolicy = BuildMaintenance(), WorkloadPolicy = BuildWorkload(),
+        MetadataStore = BuildMetadataStore(), DiagnosticsPolicy = BuildDiagnostics(),
+        VersionPreview = new VersionPreviewPolicy(PreviewRetentionDays).Normalise(), ExclusionRules = []
+    };
+
+    private void ApplyEditableConfiguration(FluxVaultConfiguration configuration)
+    {
+        ApplyPolicy(configuration.RetentionPolicy);
+        ApplyCadence(configuration.CaptureCadencePolicy);
+        ApplyCodec(configuration.CodecPolicy);
+        ApplyMaintenance(configuration.RepositoryMaintenancePolicy);
+        ApplyWorkload(configuration.WorkloadPolicy);
+        ApplyMetadataStore(configuration.MetadataStore);
+        ApplyDiagnostics(configuration.DiagnosticsPolicy);
+        PreviewRetentionDays = (configuration.VersionPreview ?? new()).Normalise().RetentionDays;
+        ApplyExclusions(configuration.ExclusionRules ?? []);
+    }
+
+    private void SetPendingSave(PendingConfigurationSave? pending)
+    {
+        pendingSave = pending;
+        saveRecordBlocked = false;
+        saveConfirmedForReview = false;
+        NotifySaveState();
+    }
+
+    private void NotifySaveState()
+    {
+        OnPropertyChanged(nameof(HasUnconfirmedSave));
+        OnPropertyChanged(nameof(CanSaveOptions));
+        OnPropertyChanged(nameof(CanCheckSaveOutcome));
+        OnPropertyChanged(nameof(CanReloadSavedOptions));
+        CheckSaveOutcomeCommand.NotifyCanExecuteChanged();
+        SaveCommand.NotifyCanExecuteChanged();
+        ReloadSavedOptionsCommand.NotifyCanExecuteChanged();
+    }
+
+    private bool TryReadPendingSave(bool restoreDraft = false)
+    {
+        try
+        {
+            var pending = saveOperationStore.Read();
+            if (pending is null) { SetPendingSave(null); return true; }
+            if (pendingSave is null || !FileConfigurationSaveOperationStore.Encode(pending).AsSpan().SequenceEqual(FileConfigurationSaveOperationStore.Encode(pendingSave)))
+                SetPendingSave(pending);
+            saveRecordBlocked = pending.Origin != ConfigurationSaveOrigin.Options || acceptedVaultId?.Value != pending.RepositoryId;
+            NotifySaveState();
+            if (saveRecordBlocked)
+            {
+                StatusText = pending.Origin == ConfigurationSaveOrigin.Protect
+                    ? "A protection save is pending. Resolve it in Protect before saving Options. Its record and your edits are kept."
+                    : "The pending Options save does not match this repository binding. Its record and your edits are kept; no save or receipt check will be sent.";
+                return false;
+            }
+            if (restoreDraft) ApplyEditableConfiguration(pending.Configuration);
+            StatusText = "A previous Options save could not be confirmed. Its submitted options are kept. Check the original save outcome before retrying; no backup has started.";
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            saveRecordBlocked = true;
+            saveConfirmedForReview = false;
+            NotifySaveState();
+            StatusText = $"The pending save could not be read. Its record and your edits are kept; no save or backup will be sent. {exception.Message}";
+            return false;
+        }
+    }
+
+    private bool IsSamePendingSave(PendingConfigurationSave expected)
+    {
+        if (!TryReadPendingSave()) return false;
+        if (pendingSave is not null && FileConfigurationSaveOperationStore.Encode(expected).AsSpan().SequenceEqual(FileConfigurationSaveOperationStore.Encode(pendingSave))) return true;
+        StatusText = "The pending save changed in another session. Its record and your edits are kept. Check the original outcome again before continuing.";
+        return false;
+    }
+
+    private bool TryClearPendingSave(PendingConfigurationSave pending)
+    {
+        try { saveOperationStore.Clear(pending); SetPendingSave(null); return true; }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            TryReadPendingSave();
+            StatusText = $"The pending save could not be cleared. Its record and your edits are kept; check again before retrying. {exception.Message}";
+            return false;
+        }
     }
 
     private async Task<FluxVaultIpcResponse> SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
     {
         if (acceptedVaultId is null) return FluxVaultIpcResponse.Failure("Load the verified configuration first.");
         var mutation = PostgreSqlVaultCatalogue.IsMutation(request.Command);
-        request = request with { VaultId = acceptedVaultId, ExpectedVaultRevision = mutation ? acceptedRevision : null,
+        request = request with { VaultId = acceptedVaultId, ExpectedVaultRevision = request.ExpectedVaultRevision ?? (mutation ? acceptedRevision : null),
             OperationId = request.OperationId ?? (mutation ? Guid.NewGuid() : null) };
         var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(true);
         if (!response.Success) return response;

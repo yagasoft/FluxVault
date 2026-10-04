@@ -83,7 +83,7 @@ public sealed class XamlQualityTests
             .Descendants(XamlNamespace + "Grid")
             .First(element => (string?)element.Attribute("Name") == "OptionsShell");
         var footer = document
-            .Descendants(XamlNamespace + "StackPanel")
+            .Descendants()
             .Single(element => (string?)element.Attribute("Name") == "OptionsStickyFooter");
         var tabControl = document
             .Descendants(XamlNamespace + "TabControl")

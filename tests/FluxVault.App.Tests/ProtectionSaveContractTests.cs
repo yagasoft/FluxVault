@@ -29,7 +29,7 @@ public sealed class ProtectionSaveContractTests
         { SelectionRules = [selection], WatchedFolders = ProtectionSelectionCompiler.Compile([selection]) });
         var path = Path.Combine(fixture.Root, "pending-save.json");
         var client = new StoreClient(fixture.Store) { PurgeFails = true };
-        var dashboard = CreateViewModel(client, new AcceptRemoval(), saveStore: new FileProtectionSaveOperationStore(path));
+        var dashboard = CreateViewModel(client, new AcceptRemoval(), saveStore: new FileConfigurationSaveOperationStore(path));
         await dashboard.RefreshAsync();
         dashboard.FileBrowser.RemovePathSelection(selection.Path, true);
         await dashboard.SaveConfigurationCommand.ExecuteAsync(null);
@@ -40,7 +40,7 @@ public sealed class ProtectionSaveContractTests
         var telemetryCount = client.Commands.Count(command => command == FluxVaultIpcCommand.GetPerformance);
         client.PerformanceThrows = true;
         await dashboard.DiscardConfigurationChangesCommand.ExecuteAsync(null);
-        Assert.Null(new FileProtectionSaveOperationStore(path).Read());
+        Assert.Null(new FileConfigurationSaveOperationStore(path).Read());
         Assert.False(dashboard.HasUnconfirmedProtectionSave);
         Assert.Empty(dashboard.FileBrowser.GetSelectionRules());
         Assert.Equal(telemetryCount, client.Commands.Count(command => command == FluxVaultIpcCommand.GetPerformance));
@@ -55,7 +55,7 @@ public sealed class ProtectionSaveContractTests
         { SelectionRules = [selection], WatchedFolders = ProtectionSelectionCompiler.Compile([selection]) });
         var path = Path.Combine(fixture.Root, "pending-save.json");
         var client = new StoreClient(fixture.Store) { PurgeFails = true };
-        var dashboard = CreateViewModel(client, new AcceptRemoval(), saveStore: new FileProtectionSaveOperationStore(path));
+        var dashboard = CreateViewModel(client, new AcceptRemoval(), saveStore: new FileConfigurationSaveOperationStore(path));
         await dashboard.RefreshAsync();
         dashboard.FileBrowser.RemovePathSelection(selection.Path, true);
         await dashboard.SaveConfigurationCommand.ExecuteAsync(null);
@@ -78,20 +78,20 @@ public sealed class ProtectionSaveContractTests
         await fixture.Store.SaveAsync(configuration);
         var path = Path.Combine(fixture.Root, "pending-save.json");
         var client = new StoreClient(fixture.Store);
-        var dashboard = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var dashboard = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await dashboard.RefreshAsync();
         var draft = Selection(fixture.Root, "local-edit");
         dashboard.FileBrowser.ReplaceSelectionRule(draft);
         client.HoldStatus = true;
         var discard = dashboard.DiscardConfigurationChangesCommand.ExecuteAsync(null);
-        var pending = new PendingProtectionSave(client.Identity.Value, Guid.NewGuid(), 1, configuration, false, [], []);
+        var pending = new PendingConfigurationSave(client.Identity.Value, Guid.NewGuid(), 1, configuration, false, [], []);
         try
         {
             await client.StatusEntered.Task.WaitAsync(TimeSpan.FromSeconds(10));
-            new FileProtectionSaveOperationStore(path).Reserve(pending);
+            new FileConfigurationSaveOperationStore(path).Reserve(pending);
         }
         finally { client.HoldStatus = false; client.ReleaseStatus.TrySetResult(); await discard.WaitAsync(TimeSpan.FromSeconds(10)); }
-        Assert.Equal(pending.OperationId, new FileProtectionSaveOperationStore(path).Read()!.OperationId);
+        Assert.Equal(pending.OperationId, new FileConfigurationSaveOperationStore(path).Read()!.OperationId);
         Assert.Contains(dashboard.FileBrowser.GetSelectionRules(), rule => rule.Path == draft.Path);
         await dashboard.RunBackupNowCommand.ExecuteAsync(null);
         Assert.All(client.Commands, command => Assert.Equal(FluxVaultIpcCommand.GetStatus, command));
@@ -106,10 +106,10 @@ public sealed class ProtectionSaveContractTests
         await fixture.Store.SaveAsync(configuration);
         var path = Path.Combine(fixture.Root, "pending-save.json");
         var client = new StoreClient(fixture.Store);
-        var dashboard = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var dashboard = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await dashboard.RefreshAsync();
         Assert.True(dashboard.CanOpenOptions);
-        new FileProtectionSaveOperationStore(path).Reserve(new(client.Identity.Value, Guid.NewGuid(), 1, configuration, false, [], []));
+        new FileConfigurationSaveOperationStore(path).Reserve(new(client.Identity.Value, Guid.NewGuid(), 1, configuration, false, [], []));
         Assert.False(dashboard.TryBeginOptionsEditing());
         Assert.True(dashboard.HasUnconfirmedProtectionSave);
     }
@@ -120,12 +120,12 @@ public sealed class ProtectionSaveContractTests
         await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
         var path = Path.Combine(fixture.Root, "pending-save.json");
         var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost };
-        var first = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var first = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await first.RefreshAsync();
         first.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "pending-project"));
         await first.RunBackupNowCommand.ExecuteAsync(null);
         var request = Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
-        var restarted = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var restarted = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await restarted.RefreshAsync();
         var window = new MainWindow(new FileDataGridLayoutStore(Path.Combine(fixture.Root, "layout.json"))) { DataContext = restarted };
         try
@@ -151,14 +151,14 @@ public sealed class ProtectionSaveContractTests
         await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
         var path = Path.Combine(fixture.Root, "pending-save.json");
         var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost };
-        var dashboard = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var dashboard = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await dashboard.RefreshAsync();
         await dashboard.SaveConfigurationCommand.ExecuteAsync(null);
         client.StatusFails = true;
         await dashboard.CheckProtectionSaveOutcomeCommand.ExecuteAsync(null);
-        Assert.NotNull(new FileProtectionSaveOperationStore(path).Read());
+        Assert.NotNull(new FileConfigurationSaveOperationStore(path).Read());
         await dashboard.DiscardConfigurationChangesCommand.ExecuteAsync(null);
-        Assert.NotNull(new FileProtectionSaveOperationStore(path).Read());
+        Assert.NotNull(new FileConfigurationSaveOperationStore(path).Read());
         Assert.True(dashboard.HasUnconfirmedProtectionSave);
         Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
     }
@@ -172,7 +172,7 @@ public sealed class ProtectionSaveContractTests
         await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
         var path = Path.Combine(fixture.Root, "pending-save.json");
         var client = new StoreClient(fixture.Store);
-        var dashboard = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var dashboard = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await dashboard.RefreshAsync();
         dashboard.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "local-edit"));
         FileStream? gate = null;
@@ -202,12 +202,12 @@ public sealed class ProtectionSaveContractTests
         await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
         var path = Path.Combine(fixture.Root, "pending-save.json");
         var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost, ReceiptErrorCode = error, ReceiptRevisionOverride = revision };
-        var first = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var first = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await first.RefreshAsync();
         first.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "pending-project"));
         await first.SaveConfigurationCommand.ExecuteAsync(null);
         var snapshot = File.ReadAllText(path);
-        var restarted = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var restarted = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await restarted.RefreshAsync();
         await restarted.CheckProtectionSaveOutcomeCommand.ExecuteAsync(null);
         await restarted.RunBackupNowCommand.ExecuteAsync(null);
@@ -225,23 +225,23 @@ public sealed class ProtectionSaveContractTests
         await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
         var path = Path.Combine(fixture.Root, "pending-save.json");
         var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost, ReceiptRevisionOverride = 2, RequireBoundRequests = true };
-        var first = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var first = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await first.RefreshAsync();
         first.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "pending-project"));
         await first.SaveConfigurationCommand.ExecuteAsync(null);
         client.Failure = SaveFailure.None;
         var newer = (await fixture.Reopen().LoadAsync()) with { VersionPreview = new(33) };
         await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(newer) with { VaultId = client.Identity, ExpectedVaultRevision = 2, OperationId = Guid.NewGuid() });
-        var restarted = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var restarted = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await restarted.RefreshAsync();
         await restarted.CheckProtectionSaveOutcomeCommand.ExecuteAsync(null);
         await restarted.RunBackupNowCommand.ExecuteAsync(null);
-        Assert.NotNull(new FileProtectionSaveOperationStore(path).Read());
+        Assert.NotNull(new FileConfigurationSaveOperationStore(path).Read());
         Assert.Contains("historical", restarted.ProtectionSaveMessage);
         Assert.Equal(33, (await fixture.Reopen().LoadAsync()).VersionPreview.RetentionDays);
         Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
         await restarted.DiscardConfigurationChangesCommand.ExecuteAsync(null);
-        Assert.Null(new FileProtectionSaveOperationStore(path).Read());
+        Assert.Null(new FileConfigurationSaveOperationStore(path).Read());
         Assert.False(restarted.HasUnconfirmedProtectionSave);
         Assert.Equal(33, (await fixture.Reopen().LoadAsync()).VersionPreview.RetentionDays);
     }
@@ -259,22 +259,22 @@ public sealed class ProtectionSaveContractTests
             PurgeFails = true,
             ReceiptResponseOverride = FluxVaultIpcResponse.WithPurge(new RepositoryPurgeResult(0, 0, 0, [], Success: false, ErrorMessage: "Fixture purge denied"))
         };
-        var first = CreateViewModel(client, new AcceptRemoval(), saveStore: new FileProtectionSaveOperationStore(path));
+        var first = CreateViewModel(client, new AcceptRemoval(), saveStore: new FileConfigurationSaveOperationStore(path));
         await first.RefreshAsync();
         first.FileBrowser.RemovePathSelection(selection.Path, true);
         await first.RunBackupNowCommand.ExecuteAsync(null);
-        Assert.NotNull(new FileProtectionSaveOperationStore(path).Read());
-        var restarted = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        Assert.NotNull(new FileConfigurationSaveOperationStore(path).Read());
+        var restarted = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await restarted.RefreshAsync();
         Assert.False(restarted.CanDiscardConfigurationChanges);
         await restarted.CheckProtectionSaveOutcomeCommand.ExecuteAsync(null);
         Assert.Contains("purge failed", restarted.ProtectionSaveMessage);
-        Assert.NotNull(new FileProtectionSaveOperationStore(path).Read());
+        Assert.NotNull(new FileConfigurationSaveOperationStore(path).Read());
         Assert.True(restarted.CanDiscardConfigurationChanges);
         await restarted.RunBackupNowCommand.ExecuteAsync(null);
         Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
         await restarted.DiscardConfigurationChangesCommand.ExecuteAsync(null);
-        Assert.Null(new FileProtectionSaveOperationStore(path).Read());
+        Assert.Null(new FileConfigurationSaveOperationStore(path).Read());
         Assert.False(restarted.HasUnconfirmedProtectionSave);
     }
 
@@ -289,17 +289,17 @@ public sealed class ProtectionSaveContractTests
         var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost, RequireBoundRequests = true };
         client.SaveDispatchCheck = request =>
         {
-            var pending = Assert.IsType<PendingProtectionSave>(new FileProtectionSaveOperationStore(path).Read());
+            var pending = Assert.IsType<PendingConfigurationSave>(new FileConfigurationSaveOperationStore(path).Read());
             Assert.Equal(request.OperationId, pending.OperationId);
             Assert.Equal(request.ExpectedVaultRevision, pending.Revision);
             Assert.Equal(JsonSerializer.Serialize(request.Configuration), JsonSerializer.Serialize(pending.Configuration));
         };
-        var first = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var first = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await first.RefreshAsync();
         first.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "pending-project"));
         await first.RunBackupNowCommand.ExecuteAsync(null);
         var request = Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
-        var restarted = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var restarted = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await restarted.RefreshAsync();
         Assert.True(restarted.HasUnconfirmedProtectionSave);
         Assert.Contains(restarted.FileBrowser.GetSelectionRules(), rule => rule.Path.EndsWith("pending-project"));
@@ -310,7 +310,7 @@ public sealed class ProtectionSaveContractTests
         client.ReceiptRevisionOverride = request.ExpectedVaultRevision + 1;
         await restarted.CheckProtectionSaveOutcomeCommand.ExecuteAsync(null);
         Assert.Equal(request.OperationId, Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.GetOperationStatus).OperationId);
-        Assert.Null(new FileProtectionSaveOperationStore(path).Read());
+        Assert.Null(new FileConfigurationSaveOperationStore(path).Read());
         Assert.False(restarted.HasUnconfirmedProtectionSave);
         Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
     }
@@ -323,15 +323,15 @@ public sealed class ProtectionSaveContractTests
         await fixture.Store.SaveAsync(configuration);
         var path = Path.Combine(fixture.Root, "pending-save.json");
         var foreign = configuration with { RepositoryPath = Path.Combine(fixture.Root, "foreign-private-repository") };
-        new FileProtectionSaveOperationStore(path).Reserve(new(Guid.NewGuid(), Guid.NewGuid(), 1, foreign, false, [], []));
+        new FileConfigurationSaveOperationStore(path).Reserve(new(Guid.NewGuid(), Guid.NewGuid(), 1, foreign, false, [], []));
         var client = new StoreClient(fixture.Store);
-        var dashboard = CreateViewModel(client, saveStore: new FileProtectionSaveOperationStore(path));
+        var dashboard = CreateViewModel(client, saveStore: new FileConfigurationSaveOperationStore(path));
         await dashboard.RefreshAsync();
         await dashboard.RunBackupNowCommand.ExecuteAsync(null);
         await dashboard.CheckProtectionSaveOutcomeCommand.ExecuteAsync(null);
         Assert.Equal(configuration.RepositoryPath, dashboard.RepositoryPath);
         Assert.All(client.Commands, command => Assert.Equal(FluxVaultIpcCommand.GetStatus, command));
-        Assert.NotNull(new FileProtectionSaveOperationStore(path).Read());
+        Assert.NotNull(new FileConfigurationSaveOperationStore(path).Read());
         Assert.Contains("binding", dashboard.ProtectionSaveMessage);
     }
     [Theory]
@@ -752,6 +752,405 @@ public sealed class ProtectionSaveContractTests
         Assert.Single(client.Requests, r => r.Command == FluxVaultIpcCommand.SaveConfiguration);
         Assert.True(options.HasUnconfirmedSave);
     }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(bool profileStore)
+    {
+        using var fixture = new StoreFixture(profileStore);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var path = Path.Combine(fixture.Root, "pending-protection-save.json");
+        var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost, RequireBoundRequests = true };
+        var first = new OptionsViewModel(client, new FileConfigurationSaveOperationStore(path));
+        await first.InitialiseAsync();
+        first.MinimumVersionsPerFile = 31;
+        client.SaveDispatchCheck = request =>
+        {
+            var record = Assert.IsType<PendingConfigurationSave>(new FileConfigurationSaveOperationStore(path).Read());
+            Assert.Equal(ConfigurationSaveOrigin.Options, record.Origin);
+            Assert.Equal(request.OperationId, record.OperationId);
+            Assert.Equal(request.ExpectedVaultRevision, record.Revision);
+            Assert.Equal(JsonSerializer.Serialize(request.Configuration), JsonSerializer.Serialize(record.Configuration));
+            Assert.False(record.PurgeRemovedSelections);
+            Assert.Empty(record.RemovedSelections); Assert.Empty(record.PreservedSelections);
+        };
+        await first.SaveAsync();
+        var dispatched = Assert.Single(client.Requests, r => r.Command == FluxVaultIpcCommand.SaveConfiguration);
+        var restarted = new OptionsViewModel(client, new FileConfigurationSaveOperationStore(path));
+        await restarted.InitialiseAsync();
+        Assert.True(restarted.HasUnconfirmedSave);
+        Assert.Equal(31, restarted.MinimumVersionsPerFile);
+        restarted.MinimumVersionsPerFile = 40;
+        await restarted.InitialiseAsync(); // Loaded/explicit initialisation must not erase newer edits.
+        Assert.Equal(40, restarted.MinimumVersionsPerFile);
+        await restarted.SaveAsync();
+        Assert.Single(client.Requests, r => r.Command == FluxVaultIpcCommand.SaveConfiguration);
+        await restarted.CheckSaveOutcomeAsync();
+        Assert.Equal(dispatched.OperationId, Assert.Single(client.Requests, r => r.Command == FluxVaultIpcCommand.GetOperationStatus).OperationId);
+        Assert.False(restarted.HasUnconfirmedSave);
+        Assert.False(File.Exists(path));
+        Assert.Equal(40, restarted.MinimumVersionsPerFile);
+        client.Failure = SaveFailure.None;
+        await restarted.SaveAsync();
+        Assert.Equal(40, (await fixture.Reopen().LoadAsync()).RetentionPolicy.MinimumVersionsPerFile);
+        Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+    }
+
+    [Theory]
+    [InlineData(FluxVaultIpcErrorCode.Denied)]
+    [InlineData(FluxVaultIpcErrorCode.Unavailable)]
+    [InlineData(FluxVaultIpcErrorCode.OutcomeUnknown)]
+    public async Task Options_failed_receipt_never_releases_the_pending_snapshot(FluxVaultIpcErrorCode error)
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost, ReceiptErrorCode = error };
+        var options = new OptionsViewModel(client);
+        await options.InitialiseAsync(); options.MinimumVersionsPerFile = 31;
+        await options.SaveAsync();
+        options.MinimumVersionsPerFile = 40;
+        await options.CheckSaveOutcomeAsync();
+        Assert.True(options.HasUnconfirmedSave);
+        Assert.Equal(40, options.MinimumVersionsPerFile);
+        await options.SaveAsync();
+        Assert.Single(client.Requests, r => r.Command == FluxVaultIpcCommand.SaveConfiguration);
+        Assert.Contains("kept", options.StatusText);
+    }
+
+    [Fact]
+    public async Task Options_historical_receipt_requires_review_when_current_settings_differ()
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost };
+        var path = Path.Combine(fixture.Root, "pending-protection-save.json");
+        var options = new OptionsViewModel(client, new FileConfigurationSaveOperationStore(path));
+        await options.InitialiseAsync(); options.MinimumVersionsPerFile = 31;
+        await options.SaveAsync();
+        var saved = await fixture.Store.LoadAsync();
+        await fixture.Store.SaveAsync(saved with { DiagnosticsPolicy = saved.DiagnosticsPolicy with { RetainedLogFileCount = 6 } });
+        options.MinimumVersionsPerFile = 40;
+        await options.CheckSaveOutcomeAsync();
+        Assert.True(options.HasUnconfirmedSave);
+        Assert.True(File.Exists(path));
+        Assert.Equal(40, options.MinimumVersionsPerFile);
+        Assert.Contains("review", options.StatusText, StringComparison.OrdinalIgnoreCase);
+        await options.SaveAsync();
+        Assert.Single(client.Requests, r => r.Command == FluxVaultIpcCommand.SaveConfiguration);
+        Assert.Equal(6, (await fixture.Reopen().LoadAsync()).DiagnosticsPolicy.RetainedLogFileCount);
+    }
+
+    [Fact]
+    public async Task Options_reload_preserves_newer_edits_and_pending_record_while_status_is_in_flight()
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost };
+        var store = new FileConfigurationSaveOperationStore(Path.Combine(fixture.Root, "pending-protection-save.json"));
+        var options = new OptionsViewModel(client, store);
+        await options.InitialiseAsync(); options.MinimumVersionsPerFile = 31;
+        await options.SaveAsync();
+        var saved = await fixture.Store.LoadAsync();
+        await fixture.Store.SaveAsync(saved with { DiagnosticsPolicy = saved.DiagnosticsPolicy with { RetainedLogFileCount = 6 } });
+        await options.CheckSaveOutcomeAsync();
+        Assert.True(options.CanReloadSavedOptions);
+        options.MinimumVersionsPerFile = 40;
+        client.HoldStatus = true;
+        var reload = options.ReloadSavedOptionsAsync();
+        try
+        {
+            await client.StatusEntered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            options.MinimumVersionsPerFile = 42;
+            client.ReleaseStatus.TrySetResult();
+            await reload.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.Equal(42, options.MinimumVersionsPerFile);
+            Assert.True(options.HasUnconfirmedSave);
+            Assert.NotNull(store.Read());
+            Assert.Contains("newer edits", options.StatusText, StringComparison.OrdinalIgnoreCase);
+        }
+        finally { client.ReleaseStatus.TrySetResult(); await reload.WaitAsync(TimeSpan.FromSeconds(10)); }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Options_reviewed_reload_clears_only_its_record_and_loads_current_real_settings(bool profileStore)
+    {
+        using var fixture = new StoreFixture(profileStore);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost };
+        var store = new FileConfigurationSaveOperationStore(Path.Combine(fixture.Root, "pending-protection-save.json"));
+        var options = new OptionsViewModel(client, store);
+        await options.InitialiseAsync(); options.MinimumVersionsPerFile = 31;
+        await options.SaveAsync();
+        var saved = await fixture.Store.LoadAsync();
+        await fixture.Store.SaveAsync(saved with { DiagnosticsPolicy = saved.DiagnosticsPolicy with { RetainedLogFileCount = 6 } });
+        options.MinimumVersionsPerFile = 40;
+        await options.CheckSaveOutcomeAsync();
+        Assert.True(options.CanReloadSavedOptions);
+        await options.ReloadSavedOptionsAsync();
+        Assert.False(options.HasUnconfirmedSave);
+        Assert.Null(store.Read());
+        Assert.Equal(31, options.MinimumVersionsPerFile);
+        Assert.Equal(6, options.DiagnosticsRetainedLogFileCount);
+        Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+    }
+
+    [Fact]
+    public async Task Options_reload_never_clears_a_changed_cross_session_record()
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost };
+        var store = new FileConfigurationSaveOperationStore(Path.Combine(fixture.Root, "pending-protection-save.json"));
+        var options = new OptionsViewModel(client, store);
+        await options.InitialiseAsync(); options.MinimumVersionsPerFile = 31;
+        await options.SaveAsync();
+        var reviewed = store.Read()!;
+        var saved = await fixture.Store.LoadAsync();
+        await fixture.Store.SaveAsync(saved with { DiagnosticsPolicy = saved.DiagnosticsPolicy with { RetainedLogFileCount = 6 } });
+        await options.CheckSaveOutcomeAsync();
+        options.MinimumVersionsPerFile = 40;
+        client.HoldStatus = true;
+        var reload = options.ReloadSavedOptionsAsync();
+        try
+        {
+            await client.StatusEntered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            store.Clear(reviewed);
+            var newer = reviewed with { OperationId = Guid.NewGuid() };
+            store.Reserve(newer);
+            client.ReleaseStatus.TrySetResult(); await reload.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.Equal(newer.OperationId, store.Read()!.OperationId);
+            Assert.Equal(40, options.MinimumVersionsPerFile);
+            Assert.True(options.HasUnconfirmedSave);
+            Assert.False(options.CanReloadSavedOptions);
+        }
+        finally { client.ReleaseStatus.TrySetResult(); await reload.WaitAsync(TimeSpan.FromSeconds(10)); }
+    }
+
+    [Fact]
+    public async Task Options_never_adopts_or_clears_a_protection_origin_record()
+    {
+        using var fixture = new StoreFixture(false);
+        var configuration = NonDefaultConfiguration(fixture.Root);
+        await fixture.Store.SaveAsync(configuration);
+        var client = new StoreClient(fixture.Store);
+        var path = Path.Combine(fixture.Root, "pending-protection-save.json");
+        var store = new FileConfigurationSaveOperationStore(path);
+        var pending = new PendingConfigurationSave(client.Identity.Value, Guid.NewGuid(), 1,
+            configuration with { RetentionPolicy = configuration.RetentionPolicy with { MinimumVersionsPerFile = 31 } }, false, [], []);
+        store.Reserve(pending);
+        var options = new OptionsViewModel(client, store);
+        await options.InitialiseAsync();
+        Assert.Equal(20, options.MinimumVersionsPerFile);
+        Assert.True(options.HasUnconfirmedSave);
+        await options.CheckSaveOutcomeAsync(); await options.SaveAsync();
+        Assert.DoesNotContain(FluxVaultIpcCommand.GetOperationStatus, client.Commands);
+        Assert.DoesNotContain(FluxVaultIpcCommand.SaveConfiguration, client.Commands);
+        Assert.Equal(pending.OperationId, store.Read()!.OperationId);
+    }
+
+    [Fact]
+    public async Task Pending_Options_recovery_opens_without_erasing_protection_edits_on_close()
+    {
+        using var fixture = new StoreFixture(false);
+        var configuration = NonDefaultConfiguration(fixture.Root);
+        await fixture.Store.SaveAsync(configuration);
+        var client = new StoreClient(fixture.Store);
+        var store = new FileConfigurationSaveOperationStore(Path.Combine(fixture.Root, "pending-protection-save.json"));
+        var dashboard = CreateViewModel(client, saveStore: store);
+        await dashboard.RefreshAsync();
+        var selection = Selection(fixture.Root, "pending-protection-folder");
+        dashboard.FileBrowser.ReplaceSelectionRule(selection);
+        store.Reserve(new(client.Identity.Value, Guid.NewGuid(), 1, configuration, false, [], [], ConfigurationSaveOrigin.Options));
+        Assert.True(dashboard.TryBeginOptionsEditing());
+        Assert.False(dashboard.CanSaveProtection);
+        await dashboard.EndOptionsEditingAsync();
+        Assert.Equal(selection.Path, Assert.Single(dashboard.FileBrowser.GetSelectionRules()).Path);
+        Assert.NotEmpty(dashboard.FileBrowser.PendingChanges);
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+        Assert.DoesNotContain(FluxVaultIpcCommand.SaveConfiguration, client.Commands);
+        Assert.NotNull(store.Read());
+    }
+
+    [Fact]
+    public async Task Options_recovery_close_preserves_protection_draft_without_rebasing_onto_changed_options()
+    {
+        using var fixture = new StoreFixture(false);
+        var configuration = NonDefaultConfiguration(fixture.Root);
+        await fixture.Store.SaveAsync(configuration);
+        var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost };
+        var store = new FileConfigurationSaveOperationStore(Path.Combine(fixture.Root, "pending-protection-save.json"));
+        var dashboard = CreateViewModel(client, saveStore: store);
+        await dashboard.RefreshAsync();
+        var options = new OptionsViewModel(client, store);
+        await options.InitialiseAsync(); options.MinimumVersionsPerFile = 31;
+        await options.SaveAsync();
+        var selection = Selection(fixture.Root, "pending-protection-folder");
+        dashboard.FileBrowser.ReplaceSelectionRule(selection);
+        Assert.True(dashboard.TryBeginOptionsEditing());
+        await options.CheckSaveOutcomeAsync();
+        Assert.Null(store.Read());
+        await dashboard.EndOptionsEditingAsync();
+        Assert.Equal(selection.Path, Assert.Single(dashboard.FileBrowser.GetSelectionRules()).Path);
+        Assert.NotEmpty(dashboard.FileBrowser.PendingChanges);
+        Assert.False(dashboard.CanSaveProtection);
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        Assert.Single(client.Requests, r => r.Command == FluxVaultIpcCommand.SaveConfiguration);
+        Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+        Assert.Equal(31, (await fixture.Reopen().LoadAsync()).RetentionPolicy.MinimumVersionsPerFile);
+        await dashboard.DiscardConfigurationChangesCommand.ExecuteAsync(null);
+        Assert.True(dashboard.CanSaveProtection);
+    }
+
+    [Theory]
+    [InlineData("corrupt")]
+    [InlineData("busy")]
+    [InlineData("wrong-binding")]
+    public async Task Options_unreadable_or_foreign_record_blocks_dispatch_without_losing_edits(string fault)
+    {
+        using var fixture = new StoreFixture(false);
+        var configuration = NonDefaultConfiguration(fixture.Root);
+        await fixture.Store.SaveAsync(configuration);
+        var client = new StoreClient(fixture.Store);
+        var path = Path.Combine(fixture.Root, "pending-protection-save.json");
+        var store = new FileConfigurationSaveOperationStore(path);
+        if (fault == "corrupt") File.WriteAllText(path, "{");
+        else store.Reserve(new(fault == "wrong-binding" ? Guid.NewGuid() : client.Identity.Value, Guid.NewGuid(), 1,
+            configuration, false, [], [], ConfigurationSaveOrigin.Options));
+        var bytes = File.ReadAllBytes(path);
+        using var gate = fault == "busy" ? new FileStream(path + ".lock", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None) : null;
+        var options = new OptionsViewModel(client, store);
+        await options.InitialiseAsync(); options.MinimumVersionsPerFile = 40;
+        await options.SaveAsync(); await options.CheckSaveOutcomeAsync(); await options.ReloadSavedOptionsAsync();
+        Assert.True(options.HasUnconfirmedSave);
+        Assert.Equal(40, options.MinimumVersionsPerFile);
+        Assert.Equal(bytes, File.ReadAllBytes(path));
+        Assert.DoesNotContain(FluxVaultIpcCommand.SaveConfiguration, client.Commands);
+        Assert.DoesNotContain(FluxVaultIpcCommand.GetOperationStatus, client.Commands);
+        Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+    }
+
+    [Theory]
+    [InlineData(SaveFailure.Io)]
+    [InlineData(SaveFailure.Timeout)]
+    [InlineData(SaveFailure.Cancelled)]
+    [InlineData(SaveFailure.Denied)]
+    public async Task Options_transport_failure_keeps_pending_snapshot_across_restart_and_blocks_backup(SaveFailure failure)
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { Failure = failure };
+        var store = new FileConfigurationSaveOperationStore(Path.Combine(fixture.Root, "pending-protection-save.json"));
+        var options = new OptionsViewModel(client, store);
+        await options.InitialiseAsync(); options.MinimumVersionsPerFile = 31;
+        await options.SaveAsync();
+        var dispatched = Assert.Single(client.Requests, r => r.Command == FluxVaultIpcCommand.SaveConfiguration);
+        var pending = store.Read()!;
+        Assert.Equal(dispatched.OperationId, pending.OperationId);
+        var reopened = new OptionsViewModel(client, store);
+        await reopened.InitialiseAsync();
+        Assert.True(reopened.HasUnconfirmedSave);
+        Assert.Equal(31, reopened.MinimumVersionsPerFile);
+        var dashboard = CreateViewModel(client, saveStore: store);
+        await dashboard.RefreshAsync();
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        Assert.Single(client.Requests, r => r.Command == FluxVaultIpcCommand.SaveConfiguration);
+        Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+        Assert.Contains("kept", reopened.StatusText);
+        Assert.Equal(20, (await fixture.Reopen().LoadAsync()).RetentionPolicy.MinimumVersionsPerFile);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(3)]
+    public async Task Options_receipt_requires_the_original_save_revision_plus_one(long revision)
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost, ReceiptRevisionOverride = revision };
+        var store = new FileConfigurationSaveOperationStore(Path.Combine(fixture.Root, "pending-protection-save.json"));
+        var options = new OptionsViewModel(client, store);
+        await options.InitialiseAsync(); options.MinimumVersionsPerFile = 31; await options.SaveAsync();
+        await options.CheckSaveOutcomeAsync();
+        Assert.True(options.HasUnconfirmedSave);
+        Assert.False(options.CanReloadSavedOptions);
+        Assert.NotNull(store.Read());
+        Assert.Equal(31, options.MinimumVersionsPerFile);
+    }
+
+    [Fact]
+    public Task Options_visible_recovery_actions_use_the_shared_store_and_keep_an_in_flight_reload_owned() => RunOnStaAsync(async () =>
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { Failure = SaveFailure.AcknowledgementLost };
+        var store = new FileConfigurationSaveOperationStore(Path.Combine(fixture.Root, "pending-protection-save.json"));
+        var first = new OptionsViewModel(client, store);
+        await first.InitialiseAsync(); first.MinimumVersionsPerFile = 31; await first.SaveAsync();
+        var saved = await fixture.Store.LoadAsync();
+        await fixture.Store.SaveAsync(saved with { DiagnosticsPolicy = saved.DiagnosticsPolicy with { RetainedLogFileCount = 6 } });
+        var reopened = new OptionsViewModel(client, store);
+        var window = new OptionsWindow(reopened) { Width = 640, Height = 620 };
+        Task? reload = null;
+        try
+        {
+            window.Show(); await reopened.InitialiseAsync(); window.UpdateLayout();
+            var check = Assert.IsType<Button>(window.FindName("CheckOptionsSaveOutcomeButton"));
+            var reloadButton = Assert.IsType<Button>(window.FindName("ReloadSavedOptionsButton"));
+            var saveButton = Assert.IsType<Button>(window.FindName("SaveOptionsButton"));
+            Assert.Same(reopened.CheckSaveOutcomeCommand, check.Command);
+            Assert.Same(reopened.ReloadSavedOptionsCommand, reloadButton.Command);
+            Assert.True(check.IsEnabled); Assert.False(reloadButton.IsEnabled);
+            Assert.False(saveButton.IsEnabled);
+            await reopened.CheckSaveOutcomeCommand.ExecuteAsync(null);
+            window.UpdateLayout(); Assert.True(reloadButton.IsEnabled);
+            var footer = Assert.IsType<WrapPanel>(window.FindName("OptionsStickyFooter"));
+            Assert.True(footer.ActualWidth <= Assert.IsType<Grid>(window.FindName("OptionsShell")).ActualWidth);
+            var optionsShell = Assert.IsType<Grid>(window.FindName("OptionsShell"));
+            foreach (Button button in footer.Children)
+            {
+                Assert.True(button.ActualWidth > 0 && button.ActualHeight > 0);
+                var bounds = button.TransformToAncestor(optionsShell).TransformBounds(new Rect(button.RenderSize));
+                Assert.True(bounds.Left >= 0 && bounds.Top >= 0 && bounds.Right <= optionsShell.ActualWidth + 1 && bounds.Bottom <= optionsShell.ActualHeight + 1);
+            }
+            Assert.Equal("Check save outcome", System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(check)!.GetName());
+            Assert.Equal("Reload saved options", System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(reloadButton)!.GetName());
+            var renderPath = Environment.GetEnvironmentVariable("FLUXVAULT_OPTIONS_RECOVERY_RENDER");
+            if (!string.IsNullOrEmpty(renderPath))
+            {
+                var shell = Assert.IsType<Grid>(window.FindName("OptionsShell"));
+                var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(shell.ActualWidth),
+                    (int)Math.Ceiling(shell.ActualHeight), 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+                var background = new System.Windows.Media.DrawingVisual();
+                using (var drawing = background.RenderOpen())
+                {
+                    drawing.DrawRectangle(window.Background, null, new Rect(0, 0, shell.ActualWidth, shell.ActualHeight));
+                    drawing.DrawRectangle(new System.Windows.Media.VisualBrush(shell), null, new Rect(0, 0, shell.ActualWidth, shell.ActualHeight));
+                }
+                bitmap.Render(background);
+                var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+                encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+                using var output = File.Create(renderPath); encoder.Save(output);
+            }
+            client.HoldStatus = true;
+            reload = reopened.ReloadSavedOptionsCommand.ExecuteAsync(null);
+            await client.StatusEntered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            window.Close(); Assert.True(window.IsVisible);
+            client.ReleaseStatus.TrySetResult(); await reload.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.Null(store.Read()); Assert.Equal(6, reopened.DiagnosticsRetainedLogFileCount);
+            window.Close(); Assert.False(window.IsVisible);
+        }
+        finally
+        {
+            client.ReleaseStatus.TrySetResult();
+            if (reload is not null) await reload.WaitAsync(TimeSpan.FromSeconds(10));
+            window.Close();
+        }
+    });
 
     [Fact]
     public async Task Options_lost_save_acknowledgement_reconciles_receipt_without_erasing_newer_edits()
@@ -1686,7 +2085,7 @@ public sealed class ProtectionSaveContractTests
     }
 
     private static MainWindowViewModel CreateViewModel(StoreClient client, IProtectionRemovalConfirmation? confirmation = null, IBackupOperationStore? backupStore = null,
-        IProtectionSaveOperationStore? saveStore = null) => new(
+        IConfigurationSaveOperationStore? saveStore = null) => new(
         client, TimeSpan.FromHours(1), new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
         new FixtureServiceController(), new UnusedDestinationPicker(), new UnusedOverwriteConfirmation(),
         protectionRemovalConfirmation: confirmation, backupOperationStore: backupStore, saveOperationStore: saveStore);

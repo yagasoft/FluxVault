@@ -43,7 +43,7 @@ public partial class MainWindow : Window
 
         try
         {
-            var optionsViewModel = new OptionsViewModel(viewModel.ServiceClient);
+            var optionsViewModel = new OptionsViewModel(viewModel.ServiceClient, viewModel.ConfigurationSaveOperationStore);
             var window = new OptionsWindow(optionsViewModel) { Owner = this };
             window.ShowDialog();
         }

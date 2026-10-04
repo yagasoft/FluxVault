@@ -27,7 +27,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private static readonly JsonSerializerOptions ConfigurationFingerprintJsonOptions = new(JsonSerializerDefaults.Web);
     private readonly IFluxVaultServiceClient client;
     private readonly IBackupOperationStore backupOperationStore;
-    private readonly IProtectionSaveOperationStore saveOperationStore;
+    private readonly IConfigurationSaveOperationStore saveOperationStore;
     private readonly FluxVault.Windows.Security.WindowsUserPreviewCache previewCache;
     private readonly IFluxVaultWindowsServiceController windowsServiceController;
     private readonly IRestoreDestinationPicker restoreDestinationPicker;
@@ -52,7 +52,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public Guid? UnconfirmedBackupOperationId => unconfirmedBackup?.OperationId;
     public bool HasUnconfirmedBackup => unconfirmedBackup is not null;
-    private PendingProtectionSave? unconfirmedProtectionSave;
+    private PendingConfigurationSave? unconfirmedProtectionSave;
     private bool saveRecordBlocked;
     private bool saveConfirmedForReview;
     public bool HasUnconfirmedProtectionSave => unconfirmedProtectionSave is not null || saveRecordBlocked;
@@ -87,9 +87,16 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public bool CanSaveProtection => !IsProtectionSaveBusy && !isOptionsEditing && !requiresOptionsReconciliation && !HasUnconfirmedProtectionSave;
 
-    public bool CanDiscardConfigurationChanges => !IsProtectionSaveBusy && !isOptionsEditing && (!HasUnconfirmedProtectionSave || saveConfirmedForReview);
+    public bool CanDiscardConfigurationChanges => !IsProtectionSaveBusy && !isOptionsEditing &&
+        (!HasUnconfirmedProtectionSave || saveConfirmedForReview && unconfirmedProtectionSave?.Origin == ConfigurationSaveOrigin.Protect);
 
-    public bool CanOpenOptions => CanSaveProtection && !hasLocalConfigurationChanges && acceptedConfiguration is not null;
+    public bool CanOpenOptions => acceptedConfiguration is not null && !IsProtectionSaveBusy && !isOptionsEditing &&
+        (!requiresOptionsReconciliation && !HasUnconfirmedProtectionSave && !hasLocalConfigurationChanges ||
+         !saveRecordBlocked && unconfirmedProtectionSave?.Origin == ConfigurationSaveOrigin.Options &&
+         unconfirmedProtectionSave.RepositoryId == acceptedVaultId?.Value);
+
+    public bool CanCheckProtectionSaveOutcome => HasUnconfirmedProtectionSave &&
+        unconfirmedProtectionSave?.Origin != ConfigurationSaveOrigin.Options;
 
     public string OptionsEntryToolTip => CanOpenOptions
         ? "Open retention, maintenance, capture, compression, and Explorer settings."
@@ -103,7 +110,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     internal bool TryBeginOptionsEditing()
     {
-        if (!TryLoadPendingProtectionSave()) return false;
+        if (!TryLoadPendingConfigurationSave()) return false;
         if (!CanOpenOptions) return false;
         isOptionsEditing = true;
         NotifyConfigurationCommandAvailability();
@@ -115,7 +122,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         requiresOptionsReconciliation = true;
         try
         {
-            var applied = await RefreshAsync(isAutomatic: false, forceConfigurationReload: true,
+            var applied = await RefreshAsync(isAutomatic: false, forceConfigurationReload: !hasLocalConfigurationChanges,
                 expectedEditGeneration: configurationEditGeneration).ConfigureAwait(true);
             if (!applied)
             {
@@ -245,7 +252,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
             new WpfMirrorNodeDialogService(),
-            backupOperationStore: new FileBackupOperationStore(), saveOperationStore: new FileProtectionSaveOperationStore())
+            backupOperationStore: new FileBackupOperationStore(), saveOperationStore: new FileConfigurationSaveOperationStore())
     {
     }
 
@@ -353,11 +360,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
         IProtectionRemovalConfirmation? protectionRemovalConfirmation = null,
         IBackupOperationStore? backupOperationStore = null,
         FluxVault.Windows.Security.WindowsUserPreviewCache? previewCache = null,
-        IProtectionSaveOperationStore? saveOperationStore = null)
+        IConfigurationSaveOperationStore? saveOperationStore = null)
     {
         this.client = client;
         this.backupOperationStore = backupOperationStore ?? new MemoryBackupOperationStore();
-        this.saveOperationStore = saveOperationStore ?? new MemoryProtectionSaveOperationStore();
+        this.saveOperationStore = saveOperationStore ?? new MemoryConfigurationSaveOperationStore();
         this.previewCache = previewCache ?? new();
         this.windowsServiceController = windowsServiceController;
         this.restoreDestinationPicker = restoreDestinationPicker;
@@ -468,6 +475,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         MirrorPlacementProfile != MirrorPlacementProfile.Redundant || EnabledMirrorCount >= MinimumMirrorCopies;
 
     public IFluxVaultServiceClient ServiceClient => client;
+    internal IConfigurationSaveOperationStore ConfigurationSaveOperationStore => saveOperationStore;
 
     public IReadOnlyList<string> ResourceProfiles { get; } =
     [
@@ -572,7 +580,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         bool forceConfigurationReload = false,
         long? expectedEditGeneration = null,
         bool validateDiscardReview = false,
-        PendingProtectionSave? discardReview = null)
+        PendingConfigurationSave? discardReview = null)
     {
         var reconcileOptions = requiresOptionsReconciliation;
         try
@@ -625,6 +633,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
                 var discardGenerationMatches = expectedEditGeneration is null || expectedEditGeneration == configurationEditGeneration;
                 if (validateDiscardReview && !ValidateDiscardReview(discardReview)) return false;
+                var preservedOptionsDraft = reconcileOptions && hasLocalConfigurationChanges && !forceConfigurationReload &&
+                    acceptedConfiguration is not null && response.VaultId == acceptedVaultId && response.VaultRevision == acceptedConfigurationRevision &&
+                    ComputeConfigurationFingerprint(response.Status.Configuration) == ComputeConfigurationFingerprint(acceptedConfiguration);
                 var appliedConfiguration = ApplyStatus(
                     response.Status,
                     preserveLocalConfiguration: hasLocalConfigurationChanges && (!forceConfigurationReload || !discardGenerationMatches),
@@ -632,12 +643,18 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     forceConfigurationReload,
                     reconcileOptions, response.VaultId, response.VaultRevision);
                 TryLoadPendingBackupRecord();
-                if (!validateDiscardReview) TryLoadPendingProtectionSave();
+                if (!validateDiscardReview) TryLoadPendingConfigurationSave();
+                if (preservedOptionsDraft)
+                {
+                    requiresOptionsReconciliation = false;
+                    requiresSaveStatusCheck = HasUnconfirmedProtectionSave;
+                    NotifyConfigurationCommandAvailability();
+                }
                 if (SelectedWorkspaceIndex == PerformanceWorkspaceIndex && !validateDiscardReview)
                 {
                     await RefreshPerformanceAsync(cancellationToken).ConfigureAwait(true);
                 }
-                return appliedConfiguration;
+                return appliedConfiguration || preservedOptionsDraft;
             }
             finally
             {
@@ -779,7 +796,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         var vaultId = acceptedVaultId;
         var generation = configurationEditGeneration;
         IReadOnlyList<RepositoryPurgeScope> dispatchedRemovedSelections = [];
-        if (!TryLoadPendingProtectionSave() || HasUnconfirmedProtectionSave)
+        if (!TryLoadPendingConfigurationSave() || HasUnconfirmedProtectionSave)
             return new ProtectionSaveOutcome(ProtectionSaveState.Unknown, vaultId, generation, acceptedConfigurationRevision);
         if (!CanSaveProtection)
         {
@@ -810,10 +827,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     "Save cancelled; removed selections were not purged. Your changes are kept. Backup has not started for this action.");
             }
 
-            var pending = new PendingProtectionSave(vaultId.Value.Value, Guid.NewGuid(), acceptedConfigurationRevision.Value,
+            var pending = new PendingConfigurationSave(vaultId.Value.Value, Guid.NewGuid(), acceptedConfigurationRevision.Value,
                 BuildConfiguration(), removedSelections.Count > 0, removedSelections, FileBrowser.GetProtectedSelectionPurgeScopes()).Freeze();
             saveOperationStore.Reserve(pending);
-            SetPendingProtectionSave(pending);
+            SetPendingConfigurationSave(pending);
             var configuration = pending.Configuration;
             lastDispatchedSaveConfiguration = configuration;
             dispatchedRemovedSelections = removedSelections;
@@ -829,7 +846,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     return CompleteProtectionSave(ProtectionSaveState.Unknown, vaultId, generation,
                         $"Save could not be confirmed ({response.ErrorMessage}). Your changes are kept. Backup has not started for this action.");
                 }
-                if (!TryClearPendingProtectionSave(pending))
+                if (!TryClearPendingConfigurationSave(pending))
                     return new ProtectionSaveOutcome(ProtectionSaveState.Unknown, vaultId, generation, acceptedConfigurationRevision);
                 return CompleteProtectionSave(ProtectionSaveState.Failed, vaultId, generation,
                     $"Save failed ({response.ErrorMessage ?? "no acknowledgement returned"}). Your changes are kept. Backup has not started for this action.");
@@ -844,7 +861,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 return CompleteProtectionSave(ProtectionSaveState.Failed, vaultId, generation,
                     $"Configuration saved; purge failed ({response.Purge.ErrorMessage ?? "unknown error"}). Backup history may remain. Your pending changes are kept for review. Backup has not started for this action.");
             }
-            if (!TryClearPendingProtectionSave(pending))
+            if (!TryClearPendingConfigurationSave(pending))
                 return new ProtectionSaveOutcome(ProtectionSaveState.Unknown, vaultId, generation, acceptedConfigurationRevision);
             if (generation != configurationEditGeneration || acceptedVaultId != vaultId)
             {
@@ -917,25 +934,26 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private sealed record ProtectionSaveOutcome(ProtectionSaveState Kind, VaultId? VaultId, long EditGeneration, long? Revision);
 
-    private void SetPendingProtectionSave(PendingProtectionSave? pending)
+    private void SetPendingConfigurationSave(PendingConfigurationSave? pending)
     {
         unconfirmedProtectionSave = pending;
         saveRecordBlocked = false;
         saveConfirmedForReview = false;
         OnPropertyChanged(nameof(HasUnconfirmedProtectionSave));
+        OnPropertyChanged(nameof(CanCheckProtectionSaveOutcome));
         CheckProtectionSaveOutcomeCommand.NotifyCanExecuteChanged();
         NotifyConfigurationCommandAvailability();
     }
 
-    private bool TryLoadPendingProtectionSave()
+    private bool TryLoadPendingConfigurationSave()
     {
         try
         {
             var pending = saveOperationStore.Read();
             var changed = pending is not null && (unconfirmedProtectionSave is null ||
-                !FileProtectionSaveOperationStore.Encode(pending).AsSpan().SequenceEqual(FileProtectionSaveOperationStore.Encode(unconfirmedProtectionSave)));
-            if (pending is null) { if (unconfirmedProtectionSave is not null || saveRecordBlocked) SetPendingProtectionSave(null); return true; }
-            if (changed || saveRecordBlocked) SetPendingProtectionSave(pending);
+                !FileConfigurationSaveOperationStore.Encode(pending).AsSpan().SequenceEqual(FileConfigurationSaveOperationStore.Encode(unconfirmedProtectionSave)));
+            if (pending is null) { if (unconfirmedProtectionSave is not null || saveRecordBlocked) SetPendingConfigurationSave(null); return true; }
+            if (changed || saveRecordBlocked) SetPendingConfigurationSave(pending);
             requiresSaveStatusCheck = true;
             if (acceptedVaultId?.Value != pending.RepositoryId)
             {
@@ -943,6 +961,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
                     "The pending save does not match this installation's repository binding. Its record and your edits are kept; no save, receipt check or backup will be sent.");
                 return false;
+            }
+            if (pending.Origin == ConfigurationSaveOrigin.Options)
+            {
+                CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
+                    "A previous Options save could not be confirmed. Its submitted settings and your protection edits are kept. Open Options to check the original save outcome; no save or backup will be sent until it is resolved.");
+                return true;
             }
             if (changed && !hasLocalConfigurationChanges)
             {
@@ -961,6 +985,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             saveRecordBlocked = true;
             saveConfirmedForReview = false;
             OnPropertyChanged(nameof(HasUnconfirmedProtectionSave));
+            OnPropertyChanged(nameof(CanCheckProtectionSaveOutcome));
             CheckProtectionSaveOutcomeCommand.NotifyCanExecuteChanged();
             NotifyConfigurationCommandAvailability();
             CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
@@ -986,14 +1011,14 @@ public sealed partial class MainWindowViewModel : ObservableObject
         finally { isApplyingStatus = false; }
     }
 
-    private bool ValidateDiscardReview(PendingProtectionSave? reviewed)
+    private bool ValidateDiscardReview(PendingConfigurationSave? reviewed)
     {
         try
         {
             var current = saveOperationStore.Read();
             if (reviewed is null && current is null || reviewed is not null && current is not null && saveConfirmedForReview &&
-                FileProtectionSaveOperationStore.Encode(reviewed).AsSpan().SequenceEqual(FileProtectionSaveOperationStore.Encode(current))) return true;
-            if (current is not null) SetPendingProtectionSave(current);
+                FileConfigurationSaveOperationStore.Encode(reviewed).AsSpan().SequenceEqual(FileConfigurationSaveOperationStore.Encode(current))) return true;
+            if (current is not null) SetPendingConfigurationSave(current);
             saveConfirmedForReview = false;
             CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
                 "Discard stopped because the pending save changed. Its record and your edits are kept. Check the original save outcome before continuing.");
@@ -1001,17 +1026,17 @@ public sealed partial class MainWindowViewModel : ObservableObject
         catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
         {
             saveConfirmedForReview = false;
-            TryLoadPendingProtectionSave();
+            TryLoadPendingConfigurationSave();
         }
         return false;
     }
 
-    private bool TryClearPendingProtectionSave(PendingProtectionSave pending)
+    private bool TryClearPendingConfigurationSave(PendingConfigurationSave pending)
     {
         try
         {
             saveOperationStore.Clear(pending);
-            SetPendingProtectionSave(null);
+            SetPendingConfigurationSave(null);
             requiresSaveStatusCheck = false;
             return true;
         }
@@ -1023,10 +1048,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    [RelayCommand(CanExecute = nameof(HasUnconfirmedProtectionSave))]
+    [RelayCommand(CanExecute = nameof(CanCheckProtectionSaveOutcome))]
     private async Task CheckProtectionSaveOutcomeAsync()
     {
-        if (!TryLoadPendingProtectionSave() || unconfirmedProtectionSave is not { } pending) return;
+        if (!TryLoadPendingConfigurationSave() || unconfirmedProtectionSave is not { Origin: ConfigurationSaveOrigin.Protect } pending) return;
         try
         {
             var response = await SendBoundAsync(new FluxVaultIpcRequest(FluxVaultIpcCommand.GetOperationStatus,
@@ -1058,7 +1083,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 NotifyConfigurationCommandAvailability();
                 return;
             }
-            if (!TryClearPendingProtectionSave(pending)) return;
+            if (!TryClearPendingConfigurationSave(pending)) return;
             FileBrowser.AcknowledgeSelectionRules(pending.Configuration.SelectionRules ?? []);
             hasLocalConfigurationChanges = ComputeConfigurationFingerprint(BuildConfiguration()) != ComputeConfigurationFingerprint(current.Status.Configuration);
             NotifyConfigurationCommandAvailability();
@@ -1100,7 +1125,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanDiscardConfigurationChanges))]
     private async Task DiscardConfigurationChangesAsync()
     {
-        if (!TryLoadPendingProtectionSave()) return;
+        if (!TryLoadPendingConfigurationSave()) return;
         if (!CanDiscardConfigurationChanges) return;
         var reviewed = saveConfirmedForReview ? unconfirmedProtectionSave : null;
         var draft = acceptedConfiguration is null ? null : BuildConfiguration();
@@ -1115,7 +1140,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 SetServiceStatus($"Service connection: {ProtectionSaveMessage}");
                 return;
             }
-            if (reviewed is not null && !TryClearPendingProtectionSave(reviewed))
+            if (reviewed is not null && !TryClearPendingConfigurationSave(reviewed))
             {
                 if (draft is not null) RestoreProtectionDraft(draft);
                 return;
@@ -2294,7 +2319,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             SetServiceStatus("Service connection: repository binding could not be confirmed; your pending changes are kept. Backup has not started for this action.");
             return false;
         }
-        if (requiresSaveStatusCheck && preserveLocalConfiguration)
+        if (requiresSaveStatusCheck && preserveLocalConfiguration && !requiresOptionsReconciliation &&
+            unconfirmedProtectionSave?.Origin != ConfigurationSaveOrigin.Options)
         {
             // Rebase only an observed pre-save or dispatched snapshot. An unrelated
             // configuration change needs explicit reload rather than a blind overwrite.

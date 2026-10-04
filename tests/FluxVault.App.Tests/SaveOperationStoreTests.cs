@@ -7,6 +7,47 @@ namespace FluxVault.App.Tests;
 
 public sealed class SaveOperationStoreTests
 {
+    [Theory]
+    [InlineData(987, false)]
+    [InlineData((int)ConfigurationSaveOrigin.Options, true)]
+    public void Unknown_origin_and_options_purge_intent_are_refused_before_reservation(int origin, bool purge)
+    {
+        using var files = new Files();
+        var snapshot = files.Snapshot with { Origin = (ConfigurationSaveOrigin)origin, PurgeRemovedSelections = purge };
+        Assert.Throws<InvalidDataException>(() => files.Store.Reserve(snapshot));
+        Assert.False(File.Exists(files.Path));
+    }
+
+    [Fact]
+    public void Options_records_with_removed_or_preserved_scopes_are_refused_and_existing_bytes_are_kept()
+    {
+        using var files = new Files();
+        foreach (var preserved in new[] { false, true })
+        {
+            var scope = new FluxVault.Abstractions.Storage.RepositoryPurgeScope("folder", FluxVault.Abstractions.Storage.RepositoryPurgeScopeKind.RecursiveFolder);
+            var snapshot = files.Snapshot with { Origin = ConfigurationSaveOrigin.Options, PurgeRemovedSelections = false,
+                RemovedSelections = preserved ? [] : [scope], PreservedSelections = preserved ? [scope] : [] };
+            Assert.Throws<InvalidDataException>(() => files.Store.Reserve(snapshot));
+            var bytes = JsonSerializer.Serialize(snapshot, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+            File.WriteAllText(files.Path, bytes);
+            Assert.Throws<InvalidDataException>(() => files.Store.Read());
+            Assert.Equal(bytes, File.ReadAllText(files.Path));
+            File.Delete(files.Path);
+        }
+    }
+
+    [Fact]
+    public void Existing_record_without_origin_keeps_its_filename_and_defaults_to_protection()
+    {
+        using var files = new Files();
+        var node = System.Text.Json.Nodes.JsonNode.Parse(JsonSerializer.Serialize(files.Snapshot, new JsonSerializerOptions(JsonSerializerDefaults.Web)))!;
+        node.AsObject().Remove("origin");
+        File.WriteAllText(files.Path, node.ToJsonString());
+        var pending = files.Store.Read()!;
+        Assert.Equal(ConfigurationSaveOrigin.Protect, pending.Origin);
+        files.Store.Clear(pending);
+        Assert.False(File.Exists(files.Path));
+    }
     [Fact]
     public void Case_variant_nested_fields_are_refused_without_reinterpreting_the_snapshot()
     {
@@ -45,7 +86,7 @@ public sealed class SaveOperationStoreTests
         using var files = new Files();
         var first = files.Snapshot;
         files.Store.Reserve(first);
-        var read = Assert.IsType<PendingProtectionSave>(new FileProtectionSaveOperationStore(files.Path).Read());
+        var read = Assert.IsType<PendingConfigurationSave>(new FileConfigurationSaveOperationStore(files.Path).Read());
         Assert.Equal(JsonSerializer.Serialize(first), JsonSerializer.Serialize(read));
         var changed = first with { Configuration = first.Configuration with { IsEnabled = !first.Configuration.IsEnabled } };
         Assert.Throws<InvalidOperationException>(() => files.Store.Clear(changed));
@@ -96,8 +137,8 @@ public sealed class SaveOperationStoreTests
     {
         private readonly string root = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "FluxVault.SaveOperation." + Guid.NewGuid().ToString("N"));
         public string Path => System.IO.Path.Combine(root, "pending.json");
-        public FileProtectionSaveOperationStore Store => new(Path);
-        public PendingProtectionSave Snapshot => new(Guid.NewGuid(), Guid.NewGuid(), 3,
+        public FileConfigurationSaveOperationStore Store => new(Path);
+        public PendingConfigurationSave Snapshot => new(Guid.NewGuid(), Guid.NewGuid(), 3,
             FluxVaultConfiguration.CreateDefault(root) with { IsEnabled = false, VersionPreview = new(19) }, false, [], []);
         public Files() => Directory.CreateDirectory(root);
         public void Dispose() => Directory.Delete(root, true);

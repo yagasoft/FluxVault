@@ -8,45 +8,51 @@ using System.Text.Json.Serialization;
 
 namespace FluxVault.App.Services;
 
-public sealed record PendingProtectionSave(Guid RepositoryId, Guid OperationId, long Revision,
+public enum ConfigurationSaveOrigin { Protect, Options }
+
+public sealed record PendingConfigurationSave(Guid RepositoryId, Guid OperationId, long Revision,
     FluxVaultConfiguration Configuration, bool PurgeRemovedSelections,
-    IReadOnlyList<RepositoryPurgeScope> RemovedSelections, IReadOnlyList<RepositoryPurgeScope> PreservedSelections)
+    IReadOnlyList<RepositoryPurgeScope> RemovedSelections, IReadOnlyList<RepositoryPurgeScope> PreservedSelections,
+    ConfigurationSaveOrigin Origin = ConfigurationSaveOrigin.Protect)
 {
     internal void Validate()
     {
         if (RepositoryId == Guid.Empty || OperationId == Guid.Empty || Revision <= 0 || Revision == long.MaxValue ||
             Configuration is null || string.IsNullOrWhiteSpace(Configuration.RepositoryPath) || RemovedSelections is null || PreservedSelections is null)
             throw new InvalidDataException("The pending protection save has invalid or missing fields. It has been preserved.");
+        if (!Enum.IsDefined(Origin) || Origin == ConfigurationSaveOrigin.Options &&
+            (PurgeRemovedSelections || RemovedSelections.Count != 0 || PreservedSelections.Count != 0))
+            throw new InvalidDataException("The pending save has an invalid origin or incompatible purge intent. It has been preserved.");
     }
     internal FluxVaultIpcRequest Request => FluxVaultIpcRequest.SaveConfiguration(Configuration,
         purgeRemovedSelections: PurgeRemovedSelections, removedSelections: RemovedSelections, preservedSelections: PreservedSelections) with
         { VaultId = new VaultId(RepositoryId), OperationId = OperationId, ExpectedVaultRevision = Revision };
-    internal PendingProtectionSave Freeze()
+    internal PendingConfigurationSave Freeze()
     {
         Validate();
-        var request = JsonSerializer.SerializeToUtf8Bytes(Request, FileProtectionSaveOperationStore.JsonOptions);
-        FileProtectionSaveOperationStore.ValidateJson(request);
-        return JsonSerializer.Deserialize<PendingProtectionSave>(FileProtectionSaveOperationStore.Encode(this), FileProtectionSaveOperationStore.JsonOptions)!;
+        var request = JsonSerializer.SerializeToUtf8Bytes(Request, FileConfigurationSaveOperationStore.JsonOptions);
+        FileConfigurationSaveOperationStore.ValidateJson(request);
+        return JsonSerializer.Deserialize<PendingConfigurationSave>(FileConfigurationSaveOperationStore.Encode(this), FileConfigurationSaveOperationStore.JsonOptions)!;
     }
 }
 
-public interface IProtectionSaveOperationStore
+public interface IConfigurationSaveOperationStore
 {
-    PendingProtectionSave? Read();
-    void Reserve(PendingProtectionSave save);
-    void Clear(PendingProtectionSave save);
+    PendingConfigurationSave? Read();
+    void Reserve(PendingConfigurationSave save);
+    void Clear(PendingConfigurationSave save);
 }
 
-public sealed class FileProtectionSaveOperationStore(string path) : IProtectionSaveOperationStore
+public sealed class FileConfigurationSaveOperationStore(string path) : IConfigurationSaveOperationStore
 {
     private readonly string recordPath = Path.GetFullPath(path);
     internal static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     { PropertyNameCaseInsensitive = false, UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow, MaxDepth = 32 };
     private const int MaximumBytes = 1024 * 1024;
-    public FileProtectionSaveOperationStore() : this(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+    public FileConfigurationSaveOperationStore() : this(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "FluxVault", "pending-protection-save.json")) { }
-    public PendingProtectionSave? Read() { using var gate = OpenGate(); return ReadRecord(); }
-    public void Reserve(PendingProtectionSave save)
+    public PendingConfigurationSave? Read() { using var gate = OpenGate(); return ReadRecord(); }
+    public void Reserve(PendingConfigurationSave save)
     {
         var bytes = Encode(save.Freeze()); // Validate the complete frozen wire snapshot before creating a record.
         using var gate = OpenGate();
@@ -55,7 +61,7 @@ public sealed class FileProtectionSaveOperationStore(string path) : IProtectionS
         output.Write(bytes);
         output.Flush(true);
     }
-    public void Clear(PendingProtectionSave save)
+    public void Clear(PendingConfigurationSave save)
     {
         var expected = Encode(save);
         using var gate = OpenGate();
@@ -70,7 +76,7 @@ public sealed class FileProtectionSaveOperationStore(string path) : IProtectionS
         Directory.CreateDirectory(Path.GetDirectoryName(recordPath)!);
         return new(recordPath + ".lock", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
     }
-    private PendingProtectionSave? ReadRecord()
+    private PendingConfigurationSave? ReadRecord()
     {
         FileStream input;
         try { input = new(recordPath, FileMode.Open, FileAccess.Read, FileShare.Read); }
@@ -83,16 +89,18 @@ public sealed class FileProtectionSaveOperationStore(string path) : IProtectionS
             {
                 ValidateJson(bytes);
                 using var document = JsonDocument.Parse(bytes, new() { MaxDepth = 32 });
-                if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Count() != 7)
+                if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Count() is not (7 or 8) ||
+                    new[] { "repositoryId", "operationId", "revision", "configuration", "purgeRemovedSelections", "removedSelections", "preservedSelections" }
+                        .Any(name => !document.RootElement.TryGetProperty(name, out _)))
                     throw new InvalidDataException("The pending save has missing fields. It has been preserved.");
-                var pending = document.RootElement.Deserialize<PendingProtectionSave>(JsonOptions)!;
+                var pending = document.RootElement.Deserialize<PendingConfigurationSave>(JsonOptions)!;
                 pending.Validate();
                 return pending.Freeze();
             }
             catch (JsonException exception) { throw new InvalidDataException("The pending save could not be read. It has been preserved.", exception); }
         }
     }
-    internal static byte[] Encode(PendingProtectionSave save)
+    internal static byte[] Encode(PendingConfigurationSave save)
     {
         save.Validate();
         var bytes = JsonSerializer.SerializeToUtf8Bytes(save, JsonOptions);
@@ -121,18 +129,18 @@ public sealed class FileProtectionSaveOperationStore(string path) : IProtectionS
     }
 }
 
-internal sealed class MemoryProtectionSaveOperationStore : IProtectionSaveOperationStore
+internal sealed class MemoryConfigurationSaveOperationStore : IConfigurationSaveOperationStore
 {
-    private PendingProtectionSave? pending;
-    public PendingProtectionSave? Read() => pending;
-    public void Reserve(PendingProtectionSave save)
+    private PendingConfigurationSave? pending;
+    public PendingConfigurationSave? Read() => pending;
+    public void Reserve(PendingConfigurationSave save)
     {
         if (pending is not null) throw new InvalidOperationException("A protection save is still pending.");
         pending = save.Freeze();
     }
-    public void Clear(PendingProtectionSave save)
+    public void Clear(PendingConfigurationSave save)
     {
-        if (pending is not null && !FileProtectionSaveOperationStore.Encode(pending).AsSpan().SequenceEqual(FileProtectionSaveOperationStore.Encode(save)))
+        if (pending is not null && !FileConfigurationSaveOperationStore.Encode(pending).AsSpan().SequenceEqual(FileConfigurationSaveOperationStore.Encode(save)))
             throw new InvalidOperationException("The pending protection save changed.");
         pending = null;
     }

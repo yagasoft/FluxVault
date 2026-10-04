@@ -431,8 +431,18 @@ that save completed, and checking its receipt never starts a backup. Missing or
 mismatched receipts keep the snapshot blocked. A confirmed purge failure or a
 historical save followed by different current settings requires review and an
 explicit **Discard changes** reload before continuing. Unreadable records are
-preserved. This protection-save recovery does not yet persist Options saves or
-edits that have never been submitted.
+preserved.
+
+Options uses the same pending-save record. Reopening restores its submitted
+settings after verified repository binding, and **Check save outcome** checks
+the original receipt and current saved configuration. Denied, unavailable or
+mismatched receipts keep the save blocked. A confirmed historical save with
+different current settings requires review and an explicit **Reload saved
+options** action. Failed reloads, concurrent record changes and newer edits
+retain the pending record and edits. Closing Options preserves protection drafts;
+different saved settings require review before protection can continue. Neither
+receipt checks nor reloads start backup. Edits that have never been submitted
+are not yet persisted across restart.
 
 The **Advanced** options page controls capture cadence and compression. It also
 edits the skip-extension list used to avoid compressing formats such as archives

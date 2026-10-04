@@ -11,9 +11,9 @@ public partial class OptionsWindow : Window
         DataContext = viewModel;
         Closing += (_, e) =>
         {
-            if (!viewModel.SaveCommand.IsRunning) return;
+            if (!viewModel.SaveCommand.IsRunning && !viewModel.CheckSaveOutcomeCommand.IsRunning && !viewModel.ReloadSavedOptionsCommand.IsRunning) return;
             e.Cancel = true;
-            viewModel.StatusText = "Please wait for the Options save to finish before closing.";
+            viewModel.StatusText = "Please wait for the Options operation to finish before closing.";
         };
     }
 

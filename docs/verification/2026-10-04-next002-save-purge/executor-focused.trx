@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="175348bb-b9ca-42a8-8d48-7851c088c339" name="os008@OS008-HOME 2026-10-04 16:05:38" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T16:05:38.4942337+03:00" queuing="2026-10-04T16:05:38.4942340+03:00" start="2026-10-04T16:05:37.7575997+03:00" finish="2026-10-04T16:05:38.4983808+03:00" />
+  <TestSettings name="default" id="d8df8f76-f969-4b15-9ddd-180f7e5d4edd">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_16_05_38" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="140266bd-0790-40ac-991a-249ed6041aa4" testId="5ee17873-c7a2-6a50-dc3f-89e118eed98f" testName="FluxVault.Windows.Tests.CommittedSaveExecutorTests.Combined_save_purge_refuses_inconsistent_admission_before_storage(defect: &quot;permissions&quot;)" computerName="OS008-HOME" duration="00:00:00.0007297" startTime="2026-10-04T16:05:38.4029619+03:00" endTime="2026-10-04T16:05:38.4030009+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="140266bd-0790-40ac-991a-249ed6041aa4" />
+    <UnitTestResult executionId="5325966c-2151-43ae-a900-d8617ec87c64" testId="8886a836-1f34-80c4-d194-745b3f00c2bc" testName="FluxVault.Windows.Tests.CommittedSaveExecutorTests.Combined_save_purge_refuses_inconsistent_admission_before_storage(defect: &quot;receipt-revision&quot;)" computerName="OS008-HOME" duration="00:00:00.0042058" startTime="2026-10-04T16:05:38.4023019+03:00" endTime="2026-10-04T16:05:38.4023700+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5325966c-2151-43ae-a900-d8617ec87c64" />
+    <UnitTestResult executionId="e548bc8b-26d5-4f90-8e77-2f98c60909bc" testId="cbbbc4b5-393b-1b03-8596-7ae4872f329d" testName="FluxVault.Windows.Tests.CommittedSaveExecutorTests.Combined_save_purge_refuses_inconsistent_admission_before_storage(defect: &quot;request-revision&quot;)" computerName="OS008-HOME" duration="00:00:00.0004168" startTime="2026-10-04T16:05:38.4028384+03:00" endTime="2026-10-04T16:05:38.4028853+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e548bc8b-26d5-4f90-8e77-2f98c60909bc" />
+    <UnitTestResult executionId="da85487d-97ba-473b-92ea-59770469f3f5" testId="bfeb05f7-172c-41f7-c653-d8bcda9951aa" testName="FluxVault.Windows.Tests.CommittedSaveExecutorTests.Combined_save_purge_is_supported_and_reports_saved_configuration_when_storage_is_unavailable" computerName="OS008-HOME" duration="00:00:00.0645773" startTime="2026-10-04T16:05:38.3224282+03:00" endTime="2026-10-04T16:05:38.3930951+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da85487d-97ba-473b-92ea-59770469f3f5" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.CommittedSaveExecutorTests.Combined_save_purge_refuses_inconsistent_admission_before_storage(defect: &quot;request-revision&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="cbbbc4b5-393b-1b03-8596-7ae4872f329d">
+      <Execution id="e548bc8b-26d5-4f90-8e77-2f98c60909bc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.CommittedSaveExecutorTests" name="Combined_save_purge_refuses_inconsistent_admission_before_storage" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.CommittedSaveExecutorTests.Combined_save_purge_refuses_inconsistent_admission_before_storage(defect: &quot;receipt-revision&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="8886a836-1f34-80c4-d194-745b3f00c2bc">
+      <Execution id="5325966c-2151-43ae-a900-d8617ec87c64" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.CommittedSaveExecutorTests" name="Combined_save_purge_refuses_inconsistent_admission_before_storage" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.CommittedSaveExecutorTests.Combined_save_purge_refuses_inconsistent_admission_before_storage(defect: &quot;permissions&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="5ee17873-c7a2-6a50-dc3f-89e118eed98f">
+      <Execution id="140266bd-0790-40ac-991a-249ed6041aa4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.CommittedSaveExecutorTests" name="Combined_save_purge_refuses_inconsistent_admission_before_storage" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.CommittedSaveExecutorTests.Combined_save_purge_is_supported_and_reports_saved_configuration_when_storage_is_unavailable" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="bfeb05f7-172c-41f7-c653-d8bcda9951aa">
+      <Execution id="da85487d-97ba-473b-92ea-59770469f3f5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.CommittedSaveExecutorTests" name="Combined_save_purge_is_supported_and_reports_saved_configuration_when_storage_is_unavailable" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5ee17873-c7a2-6a50-dc3f-89e118eed98f" executionId="140266bd-0790-40ac-991a-249ed6041aa4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8886a836-1f34-80c4-d194-745b3f00c2bc" executionId="5325966c-2151-43ae-a900-d8617ec87c64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cbbbc4b5-393b-1b03-8596-7ae4872f329d" executionId="e548bc8b-26d5-4f90-8e77-2f98c60909bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bfeb05f7-172c-41f7-c653-d8bcda9951aa" executionId="da85487d-97ba-473b-92ea-59770469f3f5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.26]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

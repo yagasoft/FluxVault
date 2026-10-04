@@ -93,24 +93,36 @@ public sealed class FluxVaultOperations(
         var effectivePreservedSelections = preservedSelections
             ?? GetProtectedSelectionScopes(configuration.SelectionRules);
         await configurationStore.SaveAsync(configuration, cancellationToken).ConfigureAwait(false);
+        return await ApplyCommittedConfigurationAsync(configuration, purgeRemovedSelections,
+            effectiveRemovedSelections, effectivePreservedSelections, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Applies an already durable configuration; never writes it a second time.</summary>
+    public async Task<RepositoryPurgeResult?> ApplyCommittedConfigurationAsync(
+        FluxVaultConfiguration configuration,
+        bool purgeRemovedSelections,
+        IReadOnlyList<RepositoryPurgeScope> removedSelections,
+        IReadOnlyList<RepositoryPurgeScope> preservedSelections,
+        CancellationToken cancellationToken = default)
+    {
         SetCurrentConfiguration(configuration);
-        if (effectiveRemovedSelections.Count > 0)
+        if (removedSelections.Count > 0)
         {
-            protectionRuntimeCoordinator.NotifyConfigurationChanged(effectiveRemovedSelections);
-            CancelActiveCapturesForRemovedScopes(effectiveRemovedSelections);
+            protectionRuntimeCoordinator.NotifyConfigurationChanged(removedSelections);
+            CancelActiveCapturesForRemovedScopes(removedSelections);
         }
 
-        ClearRuntimeStateForRemovedScopes(effectiveRemovedSelections);
+        ClearRuntimeStateForRemovedScopes(removedSelections);
         InvalidateRecentVersionStatusCache();
         lastMirrorWarnings = [];
         RepositoryPurgeResult? purge = null;
-        if (purgeRemovedSelections && effectiveRemovedSelections.Count > 0)
+        if (purgeRemovedSelections && removedSelections.Count > 0)
         {
             try
             {
                 var repository = CreateRepository(configuration);
                 purge = await repository.PurgeAsync(
-                        new RepositoryPurgeRequest(effectiveRemovedSelections, effectivePreservedSelections),
+                        new RepositoryPurgeRequest(removedSelections, preservedSelections),
                         cancellationToken)
                     .ConfigureAwait(false);
                 lastMirrorWarnings = purge.MirrorWarnings;
@@ -131,12 +143,18 @@ public sealed class FluxVaultOperations(
                     ErrorMessage: errorMessage);
                 lastMirrorWarnings = [$"Repository purge failed: {errorMessage}"];
             }
+            finally
+            {
+                // A concurrent status read may have cached history while purge ran.
+                // Failed/cancelled purges can also have removed some history.
+                InvalidateRecentVersionStatusCache();
+            }
         }
 
         lastMessage = purge switch
         {
             null => "Configuration saved.",
-            { Success: false } => $"Configuration saved, but purge failed: {purge.ErrorMessage}. Backup history may remain until retry.",
+            { Success: false } => $"Configuration saved, but purge failed: {purge.ErrorMessage}. History may be partially removed; review it before retrying.",
             _ => $"Configuration saved. Purged {purge.PurgedVersionCount} version(s) and {purge.DeletedChunkCount} chunk(s)."
         };
         return purge;

@@ -118,6 +118,76 @@ internal static class WindowsSingleVaultProbe
             "nested folder recovery preserves independently verified bytes");
         var after = await Send(Bind(FluxVaultIpcRequest.GetStatus()));
         Check(after.Status?.LastCaptureUtc is not null && after.Status.BackupRuntime?.CapturedFileCount == 3, "new status requests retain completed backup state");
+        var officeOnly = accepted.Status.Configuration with
+        {
+            WatchedFolders = accepted.Status.Configuration.WatchedFolders.Where(folder => folder.Id == "office").ToArray()
+        };
+        var purgeRequest = Bind(FluxVaultIpcRequest.SaveConfiguration(officeOnly, purgeRemovedSelections: true,
+            removedSelections: [new(cad, RepositoryPurgeScopeKind.RecursiveFolder)],
+            preservedSelections: [new(source, RepositoryPurgeScopeKind.RecursiveFolder)]));
+        var invalidDraft = officeOnly with { IsEnabled = !officeOnly.IsEnabled };
+        foreach (var malformed in new[]
+        {
+            purgeRequest with { RemovedSelections = [] },
+            purgeRequest with { PreservedSelections = null },
+            purgeRequest with { RemovedSelections = [new("relative-cad", RepositoryPurgeScopeKind.RecursiveFolder)] },
+            purgeRequest with { PreservedSelections = [new(source, (RepositoryPurgeScopeKind)999)] },
+            purgeRequest with { RemovedSelections = [null!] }
+        })
+        {
+            var invalid = malformed with { Configuration = invalidDraft, OperationId = Guid.NewGuid() };
+            var refusal = await client.SendAsync(invalid, deadline.Token);
+            var unchanged = await Send(Bind(FluxVaultIpcRequest.GetStatus()));
+            var noReceipt = await client.SendAsync(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null,
+                VaultId: id, OperationId: invalid.OperationId), deadline.Token);
+            Check(!refusal.Success && refusal.ErrorCode == FluxVaultIpcErrorCode.InvalidRequest && unchanged.VaultRevision == revision &&
+                JsonSerializer.Serialize(unchanged.Status!.Configuration) == JsonSerializer.Serialize(accepted.Status.Configuration) &&
+                noReceipt.ErrorCode == FluxVaultIpcErrorCode.Denied,
+                "malformed purge scopes are refused before configuration CAS and receipt admission");
+        }
+        var purged = await Send(purgeRequest);
+        Check(purged.Purge is { Success: true, PurgedVersionCount: > 0 } && purged.VaultRevision == revision + 1,
+            "combined save commits once and removes only confirmed CAD history");
+        revision = purged.VaultRevision!.Value;
+        var purgeReplay = await Send(purgeRequest);
+        var purgeReceipt = await Send(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null, VaultId: id, OperationId: purgeRequest.OperationId));
+        Check(JsonSerializer.Serialize(purged) == JsonSerializer.Serialize(purgeReplay) && JsonSerializer.Serialize(purged) == JsonSerializer.Serialize(purgeReceipt),
+            "save-purge replay and receipt lookup return the original retained result");
+        var remaining = await Send(Bind(FluxVaultIpcRequest.ListVersions()));
+        Check(!remaining.Versions!.Any(version => version.SourcePath == drawing) && remaining.Versions!.Any(version => version.VersionId == fileVersion.VersionId),
+            "CAD history is gone and preserved Office history remains");
+        var recoveredAfterPurge = Path.Combine(destination, "after-purge.docx");
+        var verifiedAfterPurge = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(fileVersion.VersionId, recoveredAfterPurge)));
+        Check(verifiedAfterPurge.RestoreResult?.VerifiedLogicalBytes == new FileInfo(file).Length && Hash(file) == Hash(recoveredAfterPurge),
+            "preserved Office bytes remain independently recoverable after purge");
+
+        // Reintroduce CAD explicitly, then capture a working copy that inherits its
+        // history. This exercises preservation against the real PostgreSQL closure.
+        var reintroduced = await Send(Bind(FluxVaultIpcRequest.SaveConfiguration(accepted.Status.Configuration)));
+        revision = reintroduced.VaultRevision!.Value;
+        await Send(Bind(FluxVaultIpcRequest.RunBackupNow()));
+        var inheritedCopy = Path.Combine(source, "drawing-copy.docx");
+        File.Copy(drawing, inheritedCopy);
+        var copyBackup = await Send(Bind(FluxVaultIpcRequest.RunBackupNow()));
+        Check(copyBackup.Backup is { Success: true, CapturedFileCount: 1 }, "caller working copy is captured after its CAD parent");
+        var beforeRefusal = await Send(Bind(FluxVaultIpcRequest.ListVersions()));
+        var copyVersion = beforeRefusal.Versions!.Single(version => version.SourcePath == inheritedCopy && version.EntryKind == RepositoryEntryKind.File);
+        var conflicting = Bind(FluxVaultIpcRequest.SaveConfiguration(officeOnly, purgeRemovedSelections: true,
+            removedSelections: [new(cad, RepositoryPurgeScopeKind.RecursiveFolder)],
+            preservedSelections: [new(source, RepositoryPurgeScopeKind.RecursiveFolder)]));
+        var refusedPurge = await Send(conflicting);
+        Check(refusedPurge.Purge is { Success: false } && refusedPurge.Purge.ErrorMessage!.Contains("preserved", StringComparison.OrdinalIgnoreCase) &&
+            refusedPurge.VaultRevision == revision + 1, "preservation conflict reports saved configuration and failed purge");
+        revision = refusedPurge.VaultRevision!.Value;
+        var afterRefusal = await Send(Bind(FluxVaultIpcRequest.ListVersions()));
+        Check(beforeRefusal.Versions!.Select(version => version.VersionId).Order().SequenceEqual(afterRefusal.Versions!.Select(version => version.VersionId).Order()),
+            "preservation refusal leaves all PostgreSQL history unchanged");
+        var refusedReplay = await Send(conflicting);
+        Check(JsonSerializer.Serialize(refusedReplay) == JsonSerializer.Serialize(refusedPurge), "failed purge replay never executes the destructive effect again");
+        var copyRecovered = Path.Combine(destination, "preserved-copy.docx");
+        var copyRecovery = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(copyVersion.VersionId, copyRecovered)));
+        Check(copyRecovery.RestoreResult?.VerifiedLogicalBytes == new FileInfo(drawing).Length && Hash(drawing) == Hash(copyRecovered),
+            "preserved inherited working bytes remain independently recoverable after refusal");
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Passed = checks.Count, Checks = checks, SingleVault = true, VaultId = id,
             CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true }));
         return 0;

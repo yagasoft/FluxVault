@@ -376,6 +376,10 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
             var purgeIds = SelectInitialPurgeIds(manifests, scopes, preserveScopes);
             ExpandPurgeReferences(manifests, purgeIds);
+            if (manifests.Any(manifest => purgeIds.Contains(manifest.VersionId) &&
+                preserveScopes.Any(scope => PurgeScopeMatches(scope, manifest))))
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest,
+                    "Purge refused because its lineage or folder references include preserved history. No history was deleted.");
             if (purgeIds.Count == 0)
             {
                 return new RepositoryPurgeResult(0, 0, 0, []);

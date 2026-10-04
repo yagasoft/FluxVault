@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="38766e0a-2d7a-42a4-8ac0-27b811854c3a" name="os008@OS008-HOME 2026-10-04 16:10:07" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T16:10:07.7778565+03:00" queuing="2026-10-04T16:10:07.7778566+03:00" start="2026-10-04T16:10:06.7333225+03:00" finish="2026-10-04T16:10:07.7821280+03:00" />
+  <TestSettings name="default" id="43e226d0-e41b-4d84-8156-93ddcc807f53">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_16_10_07" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="cffb8d4d-b4e1-4338-a79c-21a9cd3ef6fd" testId="21111e73-7cd8-d324-2c6f-67271877a72c" testName="FluxVault.Core.Tests.RepositoryReviewRegressionTests.Preserved_reference_closure_is_refused_before_metadata_primary_or_mirror_deletion(folderReference: True)" computerName="OS008-HOME" duration="00:00:00.0642017" startTime="2026-10-04T16:10:07.6255052+03:00" endTime="2026-10-04T16:10:07.6818276+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cffb8d4d-b4e1-4338-a79c-21a9cd3ef6fd" />
+    <UnitTestResult executionId="1e0c3ed1-d614-491c-bd1e-af245539a821" testId="b9480f34-0618-eaa1-5781-ba8b7e98638c" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.History_cached_during_purge_is_invalidated_after_success_or_partial_failure(fails: False)" computerName="OS008-HOME" duration="00:00:00.0041144" startTime="2026-10-04T16:10:07.6507221+03:00" endTime="2026-10-04T16:10:07.6546198+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1e0c3ed1-d614-491c-bd1e-af245539a821" />
+    <UnitTestResult executionId="f8137db3-bc47-45df-889a-e56b8efbc444" testId="5588b0df-3091-f78d-bdec-3dd544f719b6" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.History_cached_during_purge_is_invalidated_after_success_or_partial_failure(fails: True)" computerName="OS008-HOME" duration="00:00:00.2689123" startTime="2026-10-04T16:10:07.3759695+03:00" endTime="2026-10-04T16:10:07.6501051+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f8137db3-bc47-45df-889a-e56b8efbc444" />
+    <UnitTestResult executionId="1dfca20a-1233-4df9-95e9-18fdd39a5878" testId="1b496f77-f1af-b616-8f1b-bf3cd942af62" testName="FluxVault.Core.Tests.RepositoryReviewRegressionTests.Preserved_reference_closure_is_refused_before_metadata_primary_or_mirror_deletion(folderReference: False)" computerName="OS008-HOME" duration="00:00:00.2305438" startTime="2026-10-04T16:10:07.3773471+03:00" endTime="2026-10-04T16:10:07.6165535+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1dfca20a-1233-4df9-95e9-18fdd39a5878" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.History_cached_during_purge_is_invalidated_after_success_or_partial_failure(fails: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="b9480f34-0618-eaa1-5781-ba8b7e98638c">
+      <Execution id="1e0c3ed1-d614-491c-bd1e-af245539a821" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="History_cached_during_purge_is_invalidated_after_success_or_partial_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.RepositoryReviewRegressionTests.Preserved_reference_closure_is_refused_before_metadata_primary_or_mirror_deletion(folderReference: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="21111e73-7cd8-d324-2c6f-67271877a72c">
+      <Execution id="cffb8d4d-b4e1-4338-a79c-21a9cd3ef6fd" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.RepositoryReviewRegressionTests" name="Preserved_reference_closure_is_refused_before_metadata_primary_or_mirror_deletion" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.History_cached_during_purge_is_invalidated_after_success_or_partial_failure(fails: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="5588b0df-3091-f78d-bdec-3dd544f719b6">
+      <Execution id="f8137db3-bc47-45df-889a-e56b8efbc444" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="History_cached_during_purge_is_invalidated_after_success_or_partial_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.RepositoryReviewRegressionTests.Preserved_reference_closure_is_refused_before_metadata_primary_or_mirror_deletion(folderReference: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="1b496f77-f1af-b616-8f1b-bf3cd942af62">
+      <Execution id="1dfca20a-1233-4df9-95e9-18fdd39a5878" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.RepositoryReviewRegressionTests" name="Preserved_reference_closure_is_refused_before_metadata_primary_or_mirror_deletion" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="21111e73-7cd8-d324-2c6f-67271877a72c" executionId="cffb8d4d-b4e1-4338-a79c-21a9cd3ef6fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b9480f34-0618-eaa1-5781-ba8b7e98638c" executionId="1e0c3ed1-d614-491c-bd1e-af245539a821" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5588b0df-3091-f78d-bdec-3dd544f719b6" executionId="f8137db3-bc47-45df-889a-e56b8efbc444" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1b496f77-f1af-b616-8f1b-bf3cd942af62" executionId="1dfca20a-1233-4df9-95e9-18fdd39a5878" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.54]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

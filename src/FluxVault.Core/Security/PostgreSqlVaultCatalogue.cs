@@ -1,6 +1,7 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Security;
+using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
 using System.Security.Cryptography;
@@ -154,6 +155,18 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
 
     private enum Mutation { Admit, Save, Access }
 
+    private static bool ValidPurgeScopes(IReadOnlyList<RepositoryPurgeScope> scopes)
+    {
+        foreach (var scope in scopes)
+        {
+            if (scope is null || !Enum.IsDefined(scope.Kind) || string.IsNullOrWhiteSpace(scope.SourcePath) ||
+                !Path.IsPathFullyQualified(scope.SourcePath)) return false;
+            try { _ = Path.GetFullPath(scope.SourcePath); }
+            catch (Exception exception) when (exception is ArgumentException or NotSupportedException) { return false; }
+        }
+        return true;
+    }
+
     private async Task<VaultAdmission> MutateAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, Mutation mutation, CancellationToken ct)
     {
         RequireCaller(caller);
@@ -194,6 +207,9 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         if (mutation == Mutation.Save)
         {
             if (request.Configuration is null) throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);
+            if (request.PurgeRemovedSelections && (request.RemovedSelections is not { Count: > 0 } ||
+                request.PreservedSelections is null || !ValidPurgeScopes(request.RemovedSelections) || !ValidPurgeScopes(request.PreservedSelections)))
+                throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);
             var configuration = Normalize(vault.Binding, request.Configuration);
             ValidateBindingConfiguration(vault.Binding, configuration);
             if (!SameInfrastructure(vault.Configuration, configuration)) throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);

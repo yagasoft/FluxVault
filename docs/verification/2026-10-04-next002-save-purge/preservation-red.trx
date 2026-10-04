@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="5bf74412-a20a-42d6-91be-8adfc8b6c888" name="os008@OS008-HOME 2026-10-04 15:57:21" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T15:57:21.6360845+03:00" queuing="2026-10-04T15:57:21.6360846+03:00" start="2026-10-04T15:57:20.7314142+03:00" finish="2026-10-04T15:57:21.6401661+03:00" />
+  <TestSettings name="default" id="46762f0a-9100-4e27-bf10-1a1fb79f32ad">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_15_57_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="22222451-1380-4fb8-8502-10d573380bdf" testId="7d60ff80-9fcc-2ba3-21b8-b231769b5bae" testName="FluxVault.Core.Tests.RepositoryLineageTests.Purge_refuses_folder_reference_closure_and_leaves_the_preserved_snapshot_recoverable" computerName="OS008-HOME" duration="00:00:00.0494539" startTime="2026-10-04T15:57:21.5061836+03:00" endTime="2026-10-04T15:57:21.5448846+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22222451-1380-4fb8-8502-10d573380bdf">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.RepositoryLineageTests.Purge_refuses_folder_reference_closure_and_leaves_the_preserved_snapshot_recoverable() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\RepositoryLineageTests.cs:line 180&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3629b21f-cb3a-461a-8292-0f86f5efe29f" testId="ad147ea9-697c-06c4-3539-ea6b1a8d4bd3" testName="FluxVault.Core.Tests.RepositoryLineageTests.Purge_refuses_lineage_closure_that_would_delete_a_preserved_copy" computerName="OS008-HOME" duration="00:00:00.1762573" startTime="2026-10-04T15:57:21.3025482+03:00" endTime="2026-10-04T15:57:21.4935742+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3629b21f-cb3a-461a-8292-0f86f5efe29f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.RepositoryLineageTests.Purge_refuses_lineage_closure_that_would_delete_a_preserved_copy() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\RepositoryLineageTests.cs:line 153&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.RepositoryLineageTests.Purge_refuses_lineage_closure_that_would_delete_a_preserved_copy" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ad147ea9-697c-06c4-3539-ea6b1a8d4bd3">
+      <Execution id="3629b21f-cb3a-461a-8292-0f86f5efe29f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.RepositoryLineageTests" name="Purge_refuses_lineage_closure_that_would_delete_a_preserved_copy" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.RepositoryLineageTests.Purge_refuses_folder_reference_closure_and_leaves_the_preserved_snapshot_recoverable" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="7d60ff80-9fcc-2ba3-21b8-b231769b5bae">
+      <Execution id="22222451-1380-4fb8-8502-10d573380bdf" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.RepositoryLineageTests" name="Purge_refuses_folder_reference_closure_and_leaves_the_preserved_snapshot_recoverable" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7d60ff80-9fcc-2ba3-21b8-b231769b5bae" executionId="22222451-1380-4fb8-8502-10d573380bdf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ad147ea9-697c-06c4-3539-ea6b1a8d4bd3" executionId="3629b21f-cb3a-461a-8292-0f86f5efe29f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.40]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.40]       Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+[xUnit.net 00:00:00.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.40]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\RepositoryLineageTests.cs(153,0): at FluxVault.Core.Tests.RepositoryLineageTests.Purge_refuses_lineage_closure_that_would_delete_a_preserved_copy()&#xD;
+[xUnit.net 00:00:00.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.45]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.45]       Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\RepositoryLineageTests.cs(180,0): at FluxVault.Core.Tests.RepositoryLineageTests.Purge_refuses_folder_reference_closure_and_leaves_the_preserved_snapshot_recoverable()&#xD;
+[xUnit.net 00:00:00.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.46]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:57:21.4965311+03:00">
+        <Text>[xUnit.net 00:00:00.40]     FluxVault.Core.Tests.RepositoryLineageTests.Purge_refuses_lineage_closure_that_would_delete_a_preserved_copy [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:57:21.5452347+03:00">
+        <Text>[xUnit.net 00:00:00.45]     FluxVault.Core.Tests.RepositoryLineageTests.Purge_refuses_folder_reference_closure_and_leaves_the_preserved_snapshot_recoverable [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

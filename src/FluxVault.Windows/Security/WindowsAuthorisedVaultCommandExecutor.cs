@@ -53,7 +53,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
 
     public bool CanExecute(FluxVaultIpcRequest request) => request.Command switch
     {
-        FluxVaultIpcCommand.SaveConfiguration => !request.PurgeRemovedSelections,
+        FluxVaultIpcCommand.SaveConfiguration => true,
         FluxVaultIpcCommand.SetVaultAccess or
         FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.GetActivity or
         FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.InspectVersion or
@@ -74,9 +74,14 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                 PostgreSqlVaultCatalogue.IsMutation(request.Command) &&
                 (admission.Receipt is not { State: VaultOperationState.Admitted } receipt || receipt.VaultId != vault.Binding.Id ||
                     receipt.ActorSid != caller.UserSid || receipt.Command != request.Command || receipt.OperationId != request.OperationId ||
+                    receipt.Revision != vault.Revision ||
                     (receipt.RequiredPermissions & policy.Permissions) != policy.Permissions))
                 return Failure(FluxVaultIpcErrorCode.Denied, "The vault is unavailable or you do not have permission for this command.");
-            if (!CanExecute(request) || request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess)
+            if (request.Command == FluxVaultIpcCommand.SaveConfiguration && request.PurgeRemovedSelections &&
+                request.ExpectedVaultRevision != vault.Revision - 1)
+                return Failure(FluxVaultIpcErrorCode.Denied, "The committed save revision could not be verified.");
+            if (!CanExecute(request) || request.Command == FluxVaultIpcCommand.SetVaultAccess ||
+                request.Command == FluxVaultIpcCommand.SaveConfiguration && !request.PurgeRemovedSelections)
                 return Failure(FluxVaultIpcErrorCode.Unavailable, "This command requires its catalogue or provisioning flow.");
             if (request.Command is FluxVaultIpcCommand.InspectVersion or FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview && string.IsNullOrWhiteSpace(request.VersionId) ||
                 request.Command is FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview && string.IsNullOrWhiteSpace(request.OutputPath))
@@ -85,6 +90,8 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
             if (metadata.Host != endpoint.Host || metadata.Port != endpoint.Port || metadata.DatabaseName != endpoint.Database || metadata.Username != endpoint.ServiceRole ||
                 configuration.RepositoryPath != binding.RepositoryPath || configuration.MetadataStore != metadata)
                 return Failure(FluxVaultIpcErrorCode.Unavailable, "The protected vault binding could not be verified.");
+            if (request.Command == FluxVaultIpcCommand.SaveConfiguration)
+                return await ApplyCommittedSaveAsync(caller, vault, request, cancellationToken);
             IDisposable pins;
             try { pins = storage.Open(vault, cancellationToken); }
             catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
@@ -125,6 +132,34 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
             }
         }
         finally { lock (lifetime) { active--; if (stopping && active == 0) drained.TrySetResult(); } }
+    }
+
+    private async Task<FluxVaultIpcResponse> ApplyCommittedSaveAsync(FluxVaultCallerContext caller, VaultCatalogueEntry vault,
+        FluxVaultIpcRequest request, CancellationToken cancellationToken)
+    {
+        // Catalogue CAS has already saved this exact revision and admitted the purge.
+        // Open storage inside the repository factory so post-commit failures retain
+        // the successful save, update runtime state and report a failed purge.
+        var configuration = vault.Configuration;
+        IDisposable? pins = null;
+        await using var store = new PostgreSqlRepositoryMetadataStore(vault.Binding, configuration.Sync.LocalDevice.DeviceId, sharedWindowsDataSource: source);
+        try
+        {
+            var operations = new FluxVaultOperations(new AdmittedConfiguration(configuration),
+                new WindowsCallerCaptureProvider(caller, []),
+                runtimeState: runtime.State, metadataStoreFactory: _ => store, repositoryFactory: _ =>
+                {
+                    try { pins = storage.Open(vault, cancellationToken); }
+                    catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
+                    { throw new IOException("Protected vault storage is unavailable. Purge was not started."); }
+                    return new FileSystemChunkRepository(vault.Binding, new FastCdcChunker(new()), new Blake3ContentHasher(),
+                        new ZstdChunkCodec(), configuration.MirrorSet, store);
+                });
+            var purge = await operations.ApplyCommittedConfigurationAsync(configuration, true,
+                request.RemovedSelections!, request.PreservedSelections!, cancellationToken);
+            return FluxVaultIpcResponse.WithPurge(purge);
+        }
+        finally { pins?.Dispose(); }
     }
 
     public ValueTask DisposeAsync()

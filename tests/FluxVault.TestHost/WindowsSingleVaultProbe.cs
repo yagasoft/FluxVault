@@ -41,7 +41,8 @@ internal static class WindowsSingleVaultProbe
             var commands = new[] { FluxVaultIpcCommand.GetRepositoryHealth, FluxVaultIpcCommand.PreviewRetention, FluxVaultIpcCommand.RunRetentionNow,
                 FluxVaultIpcCommand.RunRepositoryScrub, FluxVaultIpcCommand.RunRestoreRehearsal, FluxVaultIpcCommand.PreviewMirrorRepair,
                 FluxVaultIpcCommand.RunMirrorRepair, FluxVaultIpcCommand.PreviewMirrorRebalance, FluxVaultIpcCommand.RunMirrorRebalance,
-                FluxVaultIpcCommand.PreviewMirrorDrain, FluxVaultIpcCommand.RunMirrorDrain, FluxVaultIpcCommand.ExportDiagnostics };
+                FluxVaultIpcCommand.PreviewMirrorDrain, FluxVaultIpcCommand.RunMirrorDrain, FluxVaultIpcCommand.ExportDiagnostics,
+                FluxVaultIpcCommand.PreviewRestoreSelection, FluxVaultIpcCommand.RunRestoreSelection };
             foreach (var command in commands)
             {
                 var response = await client.SendAsync(new(command, null, null, null, Path.Combine(fixture.Root, "output-B"), MirrorNodeId: "first",
@@ -50,7 +51,7 @@ internal static class WindowsSingleVaultProbe
                     response.VaultId is { } disclosed && disclosed.Value != Guid.ParseExact(fixture.FixtureId, "N") ||
                     response.RepositoryHealth is not null || response.RepositoryScrub is not null || response.RestoreRehearsal is not null ||
                     response.MirrorRepair is not null || response.MirrorRebalance is not null || response.RetentionPreview is not null || response.RetentionResult is not null ||
-                    response.DiagnosticsExport is not null || response.OutputPath is not null)
+                    response.DiagnosticsExport is not null || response.OutputPath is not null || response.RestoreResult is not null || response.RestoreSelection is not null)
                     throw new InvalidOperationException("Ungrant user received maintenance data or admission.");
             }
             Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Denied = true, NoIdentityOrHistory = true, MaintenanceDenied = commands.Length }));
@@ -100,7 +101,13 @@ internal static class WindowsSingleVaultProbe
         var fileVersion = history.Versions!.Single(item => item.SourcePath == file && item.EntryKind == RepositoryEntryKind.File);
         var folderVersion = history.Versions!.Where(item => item.SourcePath == source && item.EntryKind == RepositoryEntryKind.Folder)
             .OrderByDescending(item => item.CapturedAtUtc).First();
-        Check(history.Versions!.Count(item => item.EntryKind == RepositoryEntryKind.File) == 3, "history contains both source folders' captured files");
+        Check(history.Versions!.Count(item => item.EntryKind == RepositoryEntryKind.File &&
+            (item.SourcePath.StartsWith(source + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) ||
+             item.SourcePath.StartsWith(cad + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))) == 3,
+            "history contains all three captured files from both source folders");
+        Check(history.Versions!.Count(item => item.EntryKind == RepositoryEntryKind.File &&
+            item.SourcePath.StartsWith(Path.Combine(output, "historical-fallback") + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) == 2,
+            "legacy fallback fixture retains exactly two independent file histories");
         var inspection = await Send(Bind(FluxVaultIpcRequest.InspectVersion(fileVersion.VersionId)));
         Check(inspection.Inspection is not null, "authorised history inspection succeeds");
         var previewCache = new WindowsUserPreviewCache(Path.Combine(output, "preview-cache"));
@@ -339,9 +346,10 @@ internal static class WindowsSingleVaultProbe
             VaultId: id, OperationId: deniedDiagnosticsRequest.OperationId), deadline.Token);
         Check(!deniedDiagnosticsReceipt.Success && deniedDiagnosticsReceipt.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown,
             "failed admitted diagnostics does not report a completed export or repeat its effect");
+        await WindowsSelectionRecoveryProbe.RunAsync(client, Bind, Send, output, checks, deadline.Token);
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Passed = checks.Count, Checks = checks, SingleVault = true, VaultId = id,
             CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true,
-            MaintenanceCommandsVerified = true, DrainCommandsVerified = true, DiagnosticsCommandsVerified = true }));
+            MaintenanceCommandsVerified = true, DrainCommandsVerified = true, DiagnosticsCommandsVerified = true, SelectionCommandsVerified = true }));
         return 0;
 
         FluxVaultIpcRequest Bind(FluxVaultIpcRequest request) => request with { VaultId = id,
@@ -393,6 +401,14 @@ internal static class WindowsSingleVaultProbe
             await store.ProvisionVaultAsync(deadline.Token);
             var repository = new FileSystemChunkRepository(binding, new FastCdcChunker(new()), new Blake3ContentHasher(), new ZstdChunkCodec(), configuration.MirrorSet, store);
             await repository.ProvisionVaultStorageAsync(deadline.Token);
+            foreach (var item in new[] { ("a.txt", WindowsSelectionRecoveryProbe.HistoricalFirst),
+                (Path.Combine("nested", "b.txt"), WindowsSelectionRecoveryProbe.HistoricalSecond) })
+            {
+                // Generated trusted fixture content; this is not a caller-file capture shortcut.
+                await using var bytes = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(item.Item2));
+                await repository.CommitAsync(new("historical-fixture", Path.Combine(fixture.Root, "output-A", "historical-fallback", item.Item1),
+                    DateTimeOffset.UtcNow, CaptureConsistency.BestEffort, CompressionPreference.Off, 1024, bytes), deadline.Token);
+            }
         }
         await using var handler = new ProvisionedFixtureHandler(fixture, endpoint, binding, configuration, catalogue);
         var server = new NamedPipeFluxVaultServer(handler, WindowsFluxVaultPipeServerFactory.ForPrivateFixture(pipe), new WindowsFluxVaultCallerContextProvider());
@@ -411,11 +427,12 @@ internal static class WindowsSingleVaultProbe
             throw new InvalidOperationException("Drained mirror still contains artefacts or the remaining mirror has no protected copy.");
         if (!handler.CreatorVerified || !handler.UngrantDenied || handler.Completed < 8) throw new InvalidOperationException("Native command pipeline evidence is incomplete.");
         if (Directory.EnumerateFileSystemEntries(Path.Combine(fixture.Root, "output-A"), ".FluxVault-recovery-*", SearchOption.AllDirectories).Any() ||
-            Directory.EnumerateFiles(statePath, "fluxvault-diagnostics-*", SearchOption.AllDirectories).Any())
+            Directory.EnumerateFiles(statePath, "fluxvault-diagnostics-*", SearchOption.AllDirectories).Any() ||
+            File.Exists(Path.Combine(statePath, "forbidden-selection.docx")))
             throw new InvalidOperationException("Diagnostics left staging output or wrote into a caller-denied directory.");
         Console.WriteLine(JsonSerializer.Serialize(new { Passed = handler.Completed, NativeCallerTokens = true, SingleVault = true, ProtectedProductComposition = true,
             ActualCatalogueAndExecutor = true, ProtectedRehearsalOutputCleaned = true, DrainEffectVerified = true,
-            DiagnosticsOutputCleaned = true, handler.CreatorVerified, handler.UngrantDenied, ExactInstalledBinding = binding.Id }));
+            DiagnosticsOutputCleaned = true, SelectionOutputCleaned = true, handler.CreatorVerified, handler.UngrantDenied, ExactInstalledBinding = binding.Id }));
         return 0;
     }
 

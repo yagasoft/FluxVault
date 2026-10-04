@@ -7,6 +7,17 @@ namespace FluxVault.Core.Tests;
 
 public sealed class VaultAuthorizationTests
 {
+    [Fact]
+    public void Selection_preview_is_read_only_but_still_requires_recovery_permission()
+    {
+        var request = FluxVaultIpcRequest.PreviewRestoreSelection(@"C:\work\file.txt", false,
+            RestoreSelectionDestinationMode.Elsewhere, @"C:\recovery\file.txt");
+        Assert.False(PostgreSqlVaultCatalogue.IsMutation(request.Command));
+        Assert.True(VaultCommandPolicy.TryGet(request, out var policy));
+        Assert.Equal(VaultPermission.Recover, policy.Permissions);
+        Assert.True(PostgreSqlVaultCatalogue.IsMutation(FluxVaultIpcCommand.RunRestoreSelection));
+    }
+
     private const string Owner = "S-1-5-21-1-2-3-1001";
     private const string Other = "S-1-5-21-1-2-3-1002";
     private const string Group = "S-1-5-21-1-2-3-2001";

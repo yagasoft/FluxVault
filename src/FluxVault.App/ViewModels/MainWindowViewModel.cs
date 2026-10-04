@@ -1703,68 +1703,90 @@ public sealed partial class MainWindowViewModel : ObservableObject
         await RestoreVersionAsync(selectedVersion).ConfigureAwait(true);
     }
 
-    [RelayCommand]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RestoreSelectedBrowserItemElsewhereCommand))]
+    [NotifyCanExecuteChangedFor(nameof(RestoreSelectedBrowserItemToOriginalCommand))]
+    private bool isSelectionRecoveryBusy;
+
+    public bool CanRecoverSelection => !IsSelectionRecoveryBusy;
+
+    [RelayCommand(CanExecute = nameof(CanRecoverSelection))]
     private async Task RestoreSelectedBrowserItemElsewhereAsync()
     {
-        var selection = GetSelectedBrowserRestoreSelection();
-        if (selection is null)
+        if (!CanRecoverSelection) return;
+        IsSelectionRecoveryBusy = true;
+        try
         {
-            SetServiceStatus("Service connection: select a file or folder in the browser before restoring.");
-            return;
-        }
+            var selection = GetSelectedBrowserRestoreSelection();
+            if (selection is null)
+            {
+                SetServiceStatus("Service connection: select a file or folder in the browser before restoring.");
+                return;
+            }
 
-        var destination = selection.Value.IsDirectory
-            ? restoreDestinationPicker.PickFolderDestination(selection.Value.Path)
-            : restoreDestinationPicker.PickDestination(new VersionRow(
-                "latest",
+            var destination = selection.Value.IsDirectory
+                ? restoreDestinationPicker.PickFolderDestination(selection.Value.Path)
+                : restoreDestinationPicker.PickDestination(new VersionRow(
+                    "latest",
+                    selection.Value.Path,
+                    string.Empty,
+                    CaptureConsistency.BestEffort,
+                    0));
+            if (string.IsNullOrWhiteSpace(destination))
+            {
+                SetServiceStatus("Service connection: restore cancelled.");
+                return;
+            }
+
+            if (selection.Value.IsDirectory && (File.Exists(destination) || Directory.Exists(destination)))
+            { SetServiceStatus("Choose a new recovery folder. Existing entries cannot be merged."); return; }
+            var overwriteConfirmed = !selection.Value.IsDirectory && File.Exists(destination);
+            if (overwriteConfirmed && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
+            {
+                SetServiceStatus("Service connection: restore overwrite denied.");
+                return;
+            }
+
+            await RestoreBrowserSelectionAsync(
                 selection.Value.Path,
-                string.Empty,
-                CaptureConsistency.BestEffort,
-                0));
-        if (string.IsNullOrWhiteSpace(destination))
-        {
-            SetServiceStatus("Service connection: restore cancelled.");
-            return;
+                selection.Value.IsDirectory,
+                RestoreSelectionDestinationMode.Elsewhere,
+                destination,
+                overwriteConfirmed).ConfigureAwait(true);
         }
-
-        if (!selection.Value.IsDirectory
-            && File.Exists(destination)
-            && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
-        {
-            SetServiceStatus("Service connection: restore overwrite denied.");
-            return;
-        }
-
-        await RestoreBrowserSelectionAsync(
-            selection.Value.Path,
-            selection.Value.IsDirectory,
-            RestoreSelectionDestinationMode.Elsewhere,
-            destination,
-            overwriteConfirmed: true).ConfigureAwait(true);
+        finally { IsSelectionRecoveryBusy = false; }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRecoverSelection))]
     private async Task RestoreSelectedBrowserItemToOriginalAsync()
     {
-        var selection = GetSelectedBrowserRestoreSelection();
-        if (selection is null)
+        if (!CanRecoverSelection) return;
+        IsSelectionRecoveryBusy = true;
+        try
         {
-            SetServiceStatus("Service connection: select a file or folder in the browser before restoring.");
-            return;
-        }
+            var selection = GetSelectedBrowserRestoreSelection();
+            if (selection is null)
+            {
+                SetServiceStatus("Service connection: select a file or folder in the browser before restoring.");
+                return;
+            }
 
-        if (!restoreOverwriteConfirmation.ConfirmOverwrite(selection.Value.Path))
-        {
-            SetServiceStatus("Service connection: restore overwrite denied.");
-            return;
-        }
+            if (selection.Value.IsDirectory && (File.Exists(selection.Value.Path) || Directory.Exists(selection.Value.Path)))
+            { SetServiceStatus("Choose a new recovery folder. Existing entries cannot be merged."); return; }
+            if (!selection.Value.IsDirectory && !restoreOverwriteConfirmation.ConfirmOverwrite(selection.Value.Path))
+            {
+                SetServiceStatus("Service connection: restore overwrite denied.");
+                return;
+            }
 
-        await RestoreBrowserSelectionAsync(
-            selection.Value.Path,
-            selection.Value.IsDirectory,
-            RestoreSelectionDestinationMode.Original,
-            selection.Value.Path,
-            overwriteConfirmed: true).ConfigureAwait(true);
+            await RestoreBrowserSelectionAsync(
+                selection.Value.Path,
+                selection.Value.IsDirectory,
+                RestoreSelectionDestinationMode.Original,
+                selection.Value.Path,
+                overwriteConfirmed: true).ConfigureAwait(true);
+        }
+        finally { IsSelectionRecoveryBusy = false; }
     }
 
     [RelayCommand]
@@ -1852,40 +1874,56 @@ public sealed partial class MainWindowViewModel : ObservableObject
         string? destinationPath,
         bool overwriteConfirmed)
     {
+        if (acceptedVaultId is not { IsValid: true } identity || acceptedConfigurationRevision is not > 0)
+        { SetServiceStatus("Refresh the vault's verified settings before recovery."); return; }
+        var operation = Guid.NewGuid();
+        var request = FluxVaultIpcRequest.RunRestoreSelection(sourcePath, isDirectory, destinationMode, destinationPath, overwriteConfirmed) with
+        { VaultId = identity, ExpectedVaultRevision = acceptedConfigurationRevision.Value, OperationId = operation };
         try
         {
-            var response = await SendBoundAsync(FluxVaultIpcRequest.RunRestoreSelection(
-                    sourcePath,
-                    isDirectory,
-                    destinationMode,
-                    destinationPath,
-                    overwriteConfirmed))
-                .ConfigureAwait(true);
+            var response = await SendBoundAsync(request).ConfigureAwait(true);
             if (!response.Success)
             {
-                SetServiceStatus($"Service connection: restore failed ({response.ErrorMessage})");
+                SetServiceStatus(response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown ? UnknownSelectionRecovery(operation) :
+                    $"Service connection: restore failed ({response.ErrorMessage})");
                 return;
             }
 
             var summary = response.RestoreSelection;
-            if (summary is null)
+            var destination = Path.GetFullPath(destinationMode == RestoreSelectionDestinationMode.Original ? sourcePath : destinationPath!);
+            if (summary is not { FailedPaths: not null, Warnings: not null } || response.RestoreResult is not { Warnings: not null } verified ||
+                !string.Equals(summary.SourcePath, sourcePath, StringComparison.OrdinalIgnoreCase) || summary.IsDirectory != isDirectory ||
+                summary.DestinationMode != destinationMode || !string.Equals(summary.DestinationPath, destination, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(response.OutputPath, destination, StringComparison.OrdinalIgnoreCase) || !string.Equals(verified.OutputPath, destination, StringComparison.OrdinalIgnoreCase) ||
+                summary.FileCount < 0 || !isDirectory && summary.FileCount != 1 || summary.ConflictCount < 0 ||
+                summary.RestoredCount != summary.FileCount || summary.FailedPaths.Count != 0 ||
+                verified.RestoredFileCount != summary.RestoredCount || verified.VerifiedLogicalBytes < 0)
             {
-                SetServiceStatus("The restore response did not include results. Check the destination before retrying.");
+                SetServiceStatus(UnknownSelectionRecovery(operation));
                 return;
             }
-            var message = $"Restored and verified {summary.RestoredCount} of {summary.FileCount} file(s).";
-            if (summary.FailedPaths.Count > 0) message += " Failed: " + string.Join("; ", summary.FailedPaths);
-            if (summary.Warnings is { Count: > 0 }) message += " " + string.Join(" ", summary.Warnings);
-            try { await RefreshAsync().ConfigureAwait(true); FileBrowser.RefreshBrowser(); }
+            var message = isDirectory && summary.FileCount == 0 ? $"Recovered and verified an empty folder to {destination}." :
+                $"Restored and verified {summary.RestoredCount} of {summary.FileCount} file(s) to {destination}.";
+            var warnings = verified.Warnings.Concat(summary.Warnings).Distinct(StringComparer.Ordinal).ToArray();
+            if (warnings.Length > 0) message += " " + string.Join(" ", warnings);
+            try
+            {
+                if (!await RefreshAsync(isAutomatic: false).ConfigureAwait(true))
+                    message += " Status refresh failed; the verified recovery result is retained.";
+                FileBrowser.RefreshBrowser();
+            }
             catch (Exception exception) when (exception is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
             { message += $" Status refresh failed: {exception.Message}"; }
             SetServiceStatus(message);
         }
-        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException)
         {
-            SetServiceStatus($"Service connection: restore failed ({ex.Message})");
+            SetServiceStatus(UnknownSelectionRecovery(operation));
         }
     }
+
+    private static string UnknownSelectionRecovery(Guid operation) =>
+        $"The recovery outcome could not be confirmed (operation {operation:D}). Keep your pending edits and inspect the destination before another recovery.";
 
     private (string Path, bool IsDirectory)? GetSelectedBrowserRestoreSelection()
     {

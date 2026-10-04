@@ -225,6 +225,26 @@ exported diagnostics can distinguish unable to open volume, unsupported volume,
 journal ID change, journal wrap, checkpoint seeding, file-id path resolution
 failures, and noisy-folder churn such as OneDrive/Office activity.
 
+Protected selection recovery uses the accepted single-repository binding and
+recovery permission. Preview is read-only: caller-owned native handles inspect
+the destination without creating output, permit blind traversal of ancestors,
+and distinguish confirmed absence from unavailable access. Execution rechecks
+through the pinned output target; a new-file request cannot replace a late entry,
+and an existing folder cannot be merged. Original recovery targets only the
+selected source path.
+
+Exact folder history remains preferred. Independent file history falls back to
+one bounded forest plan under one repository lease, with shared manifest,
+metadata, depth, entry and chunk budgets including synthetic directories.
+Latest history is grouped before tombstones are excluded; an explicitly selected
+deleted file can still recover its validated last-good target. All names and
+references are validated before staging, then all verified bytes publish as one
+folder. Failed publication records no lineage hints; post-publication permission
+or lineage warnings retain the output and verified result. Durable replay returns
+the recorded outcome without rewriting caller-edited or deleted output. The
+view-model retains pending settings and requires matching source, destination,
+operation/revision and actual verification before claiming success.
+
 ## Service diagnostics and performance telemetry
 
 Protected diagnostics export requires history-read authority and a bound

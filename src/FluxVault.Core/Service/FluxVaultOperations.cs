@@ -18,6 +18,7 @@ using FluxVault.Core.Storage;
 using FluxVault.Core.Storage.Metadata;
 using FluxVault.Core.Storage.Integrity;
 using FluxVault.Core.Sync;
+using FluxVault.Core.Security;
 
 namespace FluxVault.Core.Service;
 
@@ -350,6 +351,48 @@ public sealed class FluxVaultOperations(
                 execute: false,
                 cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    public async Task<FluxVaultIpcResponse> HandleRestoreSelectionAsync(FluxVaultIpcRequest request,
+        IRestoreSelectionOutputAccess outputAccess, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(outputAccess);
+        var (source, destination, mode) = RestoreSelectionRequestValidator.Validate(request);
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var repository = CreateRepository(configuration);
+        var versions = await repository.ListVersionsAsync(cancellationToken).ConfigureAwait(false);
+        var kind = request.IsDirectory ? RepositoryEntryKind.Folder : RepositoryEntryKind.File;
+        var exact = versions.Where(version => version.EntryKind == kind &&
+                string.Equals(TrimPath(version.SourcePath), TrimPath(source), StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(version => version.CapturedAtUtc).ThenByDescending(version => version.VersionId, StringComparer.Ordinal).FirstOrDefault();
+        var fallback = exact is null ? versions.Where(version => version.EntryKind == RepositoryEntryKind.File &&
+                SourcePathMatchesSelection(version.SourcePath, source, request.IsDirectory))
+            .GroupBy(version => Path.GetFullPath(version.SourcePath), StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.OrderByDescending(version => version.CapturedAtUtc).ThenByDescending(version => version.VersionId, StringComparer.Ordinal).First())
+            .Where(version => !version.IsDeleted).OrderBy(version => version.SourcePath, StringComparer.OrdinalIgnoreCase).ToArray() : [];
+        var fileCount = exact is null ? fallback.Length : CountRestorableFiles(exact, versions);
+        if (exact is null && fallback.Length == 0)
+            return Refused("No recoverable history exists for this selection.", 0);
+        // Counts are advisory; output is inspected only through caller authority, without creating anything.
+        var exists = await outputAccess.ExistsAsync(destination, kind, cancellationToken).ConfigureAwait(false);
+        var conflicts = exists ? Math.Max(1, fileCount) : 0;
+        if (request.Command == FluxVaultIpcCommand.PreviewRestoreSelection)
+            return FluxVaultIpcResponse.WithRestoreSelection(new(source, request.IsDirectory, mode, destination, fileCount, conflicts, 0, [], []));
+        if (exists && (request.IsDirectory || !request.OverwriteConfirmed))
+            return Refused(request.IsDirectory ? "Choose a new recovery folder. Existing entries cannot be merged." :
+                "The destination already exists. Confirm overwrite before recovery.", conflicts);
+        await using var target = await outputAccess.CreateAsync(destination, kind, request.OverwriteConfirmed, cancellationToken).ConfigureAwait(false);
+        var result = exact is not null
+            ? await repository.RestoreAsync(exact.VersionId, target, cancellationToken).ConfigureAwait(false)
+            : await repository.RestoreFilesAsync(fallback.Select(version => new RepositoryRestoreFileSelection(version.VersionId,
+                Path.GetRelativePath(source, Path.GetFullPath(version.SourcePath)))).ToArray(), target, cancellationToken).ConfigureAwait(false);
+        InvalidateRecentVersionStatusCache();
+        lastMessage = $"Restored and verified {result.RestoredFileCount} file(s) to {result.OutputPath}.";
+        return FluxVaultIpcResponse.WithRestoreSelection(new(source, request.IsDirectory, mode, result.OutputPath,
+            result.RestoredFileCount, conflicts, result.RestoredFileCount, [], result.Warnings)) with { OutputPath = result.OutputPath, RestoreResult = result };
+
+        FluxVaultIpcResponse Refused(string message, int conflictCount) => FluxVaultIpcResponse.Failure(message) with
+        { ErrorCode = FluxVaultIpcErrorCode.InvalidRequest, RestoreSelection = new(source, request.IsDirectory, mode, destination, fileCount, conflictCount, 0, [], []) };
     }
 
     public async Task<RestoreSelectionSummary> RunRestoreSelectionAsync(

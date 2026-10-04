@@ -479,6 +479,33 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     public Task<RepositoryRestoreResult> RestorePreviewAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
         => RestoreToTargetAsync(versionId, target, writeRestoreHint: false, cancellationToken);
 
+    public async Task<RepositoryRestoreResult> RestoreFilesAsync(IReadOnlyList<RepositoryRestoreFileSelection> files,
+        IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        await using (target.ConfigureAwait(false))
+        {
+            ArgumentNullException.ThrowIfNull(files);
+            if (files.Count == 0) throw new InvalidDataException("No file history was selected for recovery.");
+            if (files.Count > integrityLimits.MaxExpandedEntries)
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.LimitExceeded, "Restore selection exceeds supported limits.");
+            var outputPath = ValidateOwnedRestoreDestination(target);
+            await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+            var plan = await new RestoreGraphValidator(verifiedReader, integrityLimits, ReadManifestByVersionAsync)
+                .BuildFilesAsync(files, outputPath, cancellationToken).ConfigureAwait(false);
+            return await PublishOwnedRestorePlanAsync(plan, target, outputPath, writeRestoreHint: true, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    private string ValidateOwnedRestoreDestination(IRepositoryRestoreTarget target)
+    {
+        var outputPath = Path.GetFullPath(target.OutputPath);
+        // Native target validation owns user paths; repository code never reopens them.
+        if (new[] { rootPath }.Concat(configuredMirrorNodes.Select(node => node.Path)).Any(root => StorageOwnership.Contains(root, outputPath)))
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Restore destination must be outside repository storage.");
+        return outputPath;
+    }
+
     private async Task<RepositoryRestoreResult> RestoreToTargetAsync(string versionId, IRepositoryRestoreTarget target,
         bool writeRestoreHint, CancellationToken cancellationToken)
     {
@@ -486,51 +513,54 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         await using (target.ConfigureAwait(false))
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
-            var outputPath = Path.GetFullPath(target.OutputPath);
-            // The target owns native destination validation. Privileged repository code does not reopen user paths.
-            if (new[] { rootPath }.Concat(configuredMirrorNodes.Select(node => node.Path)).Any(root => StorageOwnership.Contains(root, outputPath)))
-                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Restore destination must be outside repository storage.");
+            var outputPath = ValidateOwnedRestoreDestination(target);
             await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
             var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
             var plan = await new RestoreGraphValidator(verifiedReader, integrityLimits, ReadManifestByVersionAsync)
                 .BuildAsync(manifest, outputPath, cancellationToken).ConfigureAwait(false);
             if (!writeRestoreHint && plan.Kind != RepositoryEntryKind.File)
                 throw new InvalidDataException("Only file versions can be opened as previews.");
-            await target.PrepareAsync(plan.Kind, cancellationToken).ConfigureAwait(false);
-            foreach (var directory in plan.Directories.Where(path => path.Length > 0))
-                await target.CreateDirectoryAsync(directory, cancellationToken).ConfigureAwait(false);
+            return await PublishOwnedRestorePlanAsync(plan, target, outputPath, writeRestoreHint, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    private async Task<RepositoryRestoreResult> PublishOwnedRestorePlanAsync(ValidatedRestorePlan plan,
+        IRepositoryRestoreTarget target, string outputPath, bool writeRestoreHint, CancellationToken cancellationToken)
+    {
+        await target.PrepareAsync(plan.Kind, cancellationToken).ConfigureAwait(false);
+        foreach (var directory in plan.Directories.Where(path => path.Length > 0))
+            await target.CreateDirectoryAsync(directory, cancellationToken).ConfigureAwait(false);
+        foreach (var file in plan.Files)
+        {
+            await using var output = await target.CreateFileAsync(file.RelativePath, cancellationToken).ConfigureAwait(false);
+            foreach (var chunk in file.Manifest.Chunks)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var bytes = await verifiedReader.ReadAsync(rootPath, ChunkDescriptor.FromChunk(chunk), cancellationToken).ConfigureAwait(false);
+                await output.WriteAsync(bytes, cancellationToken).ConfigureAwait(false);
+            }
+            if (output.Length != file.Manifest.LogicalLength)
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.CorruptObject, "Restored file length mismatch.");
+            await target.FlushFileAsync(output, cancellationToken).ConfigureAwait(false);
+        }
+        cancellationToken.ThrowIfCancellationRequested();
+        faults?.Hit(RepositoryFaultPoint.BeforeRestorePublication, outputPath);
+        cancellationToken.ThrowIfCancellationRequested();
+        var warnings = new List<string>(await target.PublishAsync(cancellationToken).ConfigureAwait(false));
+        if (writeRestoreHint)
             foreach (var file in plan.Files)
             {
-                await using var output = await target.CreateFileAsync(file.RelativePath, cancellationToken).ConfigureAwait(false);
-                foreach (var chunk in file.Manifest.Chunks)
+                var restoredPath = plan.Kind == RepositoryEntryKind.Folder ? Path.Combine(outputPath, file.RelativePath) : outputPath;
+                try
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    var bytes = await verifiedReader.ReadAsync(rootPath, ChunkDescriptor.FromChunk(chunk), cancellationToken).ConfigureAwait(false);
-                    await output.WriteAsync(bytes, cancellationToken).ConfigureAwait(false);
+                    faults?.Hit(RepositoryFaultPoint.AfterRestorePublication, restoredPath);
+                    faults?.Hit(RepositoryFaultPoint.BeforeRestoreHint, restoredPath);
+                    WriteRestoreHint(restoredPath, file.Manifest);
                 }
-                if (output.Length != file.Manifest.LogicalLength)
-                    throw new RepositoryIntegrityException(RepositoryIntegrityFailure.CorruptObject, "Restored file length mismatch.");
-                await target.FlushFileAsync(output, cancellationToken).ConfigureAwait(false);
+                catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or OperationCanceledException)
+                { warnings.Add($"Content was restored and verified, but lineage recording failed for '{restoredPath}': {exception.Message}"); }
             }
-            cancellationToken.ThrowIfCancellationRequested();
-            faults?.Hit(RepositoryFaultPoint.BeforeRestorePublication, outputPath);
-            cancellationToken.ThrowIfCancellationRequested();
-            var warnings = new List<string>(await target.PublishAsync(cancellationToken).ConfigureAwait(false));
-            if (writeRestoreHint)
-                foreach (var file in plan.Files)
-                {
-                    var restoredPath = plan.Kind == RepositoryEntryKind.Folder ? Path.Combine(outputPath, file.RelativePath) : outputPath;
-                    try
-                    {
-                        faults?.Hit(RepositoryFaultPoint.AfterRestorePublication, restoredPath);
-                        faults?.Hit(RepositoryFaultPoint.BeforeRestoreHint, restoredPath);
-                        WriteRestoreHint(restoredPath, file.Manifest);
-                    }
-                    catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or OperationCanceledException)
-                    { warnings.Add($"Content was restored and verified, but lineage recording failed for '{restoredPath}': {exception.Message}"); }
-                }
-            return new(outputPath, plan.LogicalBytes, plan.Files.Count, warnings);
-        }
+        return new(outputPath, plan.LogicalBytes, plan.Files.Count, warnings);
     }
 
     public async Task RestorePreviewAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)

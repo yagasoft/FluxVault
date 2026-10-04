@@ -59,6 +59,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
         FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.GetActivity or
         FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.InspectVersion or
         FluxVaultIpcCommand.RunBackupNow or FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview or
+        FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.RunRestoreSelection or
         FluxVaultIpcCommand.GetRepositoryHealth or FluxVaultIpcCommand.PreviewRetention or FluxVaultIpcCommand.RunRetentionNow or
         FluxVaultIpcCommand.RunRepositoryScrub or FluxVaultIpcCommand.RunRestoreRehearsal or
         FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair or
@@ -132,6 +133,9 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                         return FluxVaultIpcResponse.WithMirrorRebalance(await operations.RunMirrorDrainRepositoryEffectsAsync(
                             request.MirrorNodeId!, cancellationToken));
                     case FluxVaultIpcCommand.InspectVersion: return FluxVaultIpcResponse.WithInspection(await operations.InspectVersionAsync(request.VersionId!, cancellationToken));
+                    case FluxVaultIpcCommand.PreviewRestoreSelection:
+                    case FluxVaultIpcCommand.RunRestoreSelection:
+                        return await operations.HandleRestoreSelectionAsync(request, new WindowsRestoreSelectionOutputAccess(caller), cancellationToken);
                     case FluxVaultIpcCommand.RunBackupNow:
                         var backup = await operations.RunBackupNowAsync(cancellationToken);
                         return FluxVaultIpcResponse.WithBackup(backup) with { Success = backup.Success,

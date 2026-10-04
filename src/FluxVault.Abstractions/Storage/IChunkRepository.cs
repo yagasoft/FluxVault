@@ -21,6 +21,9 @@ public interface IChunkRepository
     Task<RepositoryRestoreResult> RestoreAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default) =>
         throw new NotSupportedException("This repository does not support an owned recovery target.");
 
+    Task<RepositoryRestoreResult> RestoreFilesAsync(IReadOnlyList<RepositoryRestoreFileSelection> files, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("This repository does not support an owned file selection recovery target.");
+
     Task RestorePreviewAsync(string versionId, string outputPath, CancellationToken cancellationToken = default);
 
     Task<RepositoryScrubReport> ScrubAsync(

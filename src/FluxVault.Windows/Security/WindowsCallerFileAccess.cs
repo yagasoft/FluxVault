@@ -275,8 +275,12 @@ public sealed class WindowsCallerFileAccess
             {
                 VerifyTraversal(pins[^1], expected);
                 var last = index == parts.Length - 1;
-                var next = OpenNative(pins[^1], parts[index], readSecurity ? 0x1200A0u : last ? 0x1000A0u : 0x100020u, true,
-                    disposition: createMissingParents ? 3u : 1u, dontReparse: true);
+                var access = readSecurity ? 0x1200A0u : last ? 0x1000A0u : 0x100020u;
+                // Only component opens below this verified anchor can prove absence.
+                // Volume-anchor and verification failures retain their original error.
+                var next = createMissingParents
+                    ? OpenNative(pins[^1], parts[index], access, true, disposition: 3, dontReparse: true)
+                    : OpenSourceComponent(pins[^1], parts[index], access, true, absenceCanBeProved: true, dontReparse: true);
                 pins.Add(next); expected += "\\" + parts[index];
                 if (last || readSecurity) VerifyHandle(next, expected, directory: true); else VerifyTraversal(next, expected);
             }

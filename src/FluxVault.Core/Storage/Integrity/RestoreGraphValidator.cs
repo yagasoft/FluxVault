@@ -18,6 +18,7 @@ internal sealed class RestoreGraphValidator(VerifiedChunkReader reader, Reposito
     private long metadataBytes;
     private long chunkReferences;
     private int expandedEntries;
+    private int syntheticDirectoryNodes;
 
     internal async Task<ValidatedRestorePlan> BuildAsync(FileVersionManifest root, string destination, CancellationToken cancellationToken)
     {
@@ -26,11 +27,50 @@ internal sealed class RestoreGraphValidator(VerifiedChunkReader reader, Reposito
         return new ValidatedRestorePlan(resolved.EntryKind, directories, files, resolved.LogicalLength);
     }
 
+    internal async Task<ValidatedRestorePlan> BuildFilesAsync(IReadOnlyList<RepositoryRestoreFileSelection> selections,
+        string destination, CancellationToken cancellationToken)
+    {
+        var paths = new Dictionary<string, RepositoryEntryKind>(StringComparer.OrdinalIgnoreCase);
+        AddDirectory(string.Empty);
+        long total = 0;
+        foreach (var selection in selections)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (selection is null || string.IsNullOrWhiteSpace(selection.RelativePath)) Invalid("A file selection needs a relative output path.");
+            var parts = selection.RelativePath.Split(['\\', '/']);
+            foreach (var part in parts) ValidateChildName(part);
+            if (parts.Length >= limits.MaxGraphDepth) Limit();
+            var parent = string.Empty;
+            foreach (var part in parts[..^1])
+            {
+                parent = Path.Combine(parent, part);
+                AddDirectory(parent);
+            }
+            var path = Path.Combine(parts);
+            if (!paths.TryAdd(path, RepositoryEntryKind.File)) Invalid("File selection output paths collide.");
+            var resolved = await VisitAsync(selection.VersionId, path, destination, parts.Length + 1, null, cancellationToken).ConfigureAwait(false);
+            if (resolved.EntryKind != RepositoryEntryKind.File) Invalid("A file selection refers to a folder.");
+            if (resolved.LogicalLength > long.MaxValue - total) Invalid("Selection length overflows.");
+            total += resolved.LogicalLength;
+        }
+        return new(RepositoryEntryKind.Folder, directories, files, total);
+
+        void AddDirectory(string path)
+        {
+            if (paths.TryGetValue(path, out var kind))
+            { if (kind != RepositoryEntryKind.Folder) Invalid("A file selection collides with an output directory."); return; }
+            if (cache.Count + syntheticDirectoryNodes >= limits.MaxGraphNodes || ++expandedEntries > limits.MaxExpandedEntries) Limit();
+            syntheticDirectoryNodes++;
+            Charge(2L * Path.Combine(destination, path).Length);
+            paths.Add(path, RepositoryEntryKind.Folder); directories.Add(path);
+        }
+    }
+
     private void Cache(FileVersionManifest manifest)
     {
         VerifiedChunkReader.ValidateHex(manifest.VersionId, 32, "version id");
         var bytes = RepositoryManifestSize.Measure(manifest);
-        if (bytes > limits.MaxManifestBytes || cache.Count >= limits.MaxGraphNodes) Limit();
+        if (bytes > limits.MaxManifestBytes || cache.Count + syntheticDirectoryNodes >= limits.MaxGraphNodes) Limit();
         cache.Add(manifest.VersionId, (manifest, bytes));
     }
 

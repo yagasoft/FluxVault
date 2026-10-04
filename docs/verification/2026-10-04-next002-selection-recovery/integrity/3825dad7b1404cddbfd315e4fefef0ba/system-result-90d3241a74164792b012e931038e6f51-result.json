@@ -1,0 +1,20 @@
+{
+  "Actor": "System",
+  "RunId": "90d3241a74164792b012e931038e6f51",
+  "Complete": true,
+  "WindowsSid": "S-1-5-18",
+  "Results": [
+    {
+      "Output": "VSTest version 18.6.0 (x64)\r\n\r\nStarting test execution, please wait...\r\nA total of 1 test files matched the specified pattern.\r\nResults File: C:\\ProgramData\\FluxVault.Tests\\NEXT002\\3825dad7b1404cddbfd315e4fefef0ba\\integrity\\results\\PostgreSql.trx\r\n\r\nPassed!  - Failed:     0, Passed:    40, Skipped:     0, Total:    40, Duration: 22 s - FluxVault.Integration.Tests.dll (net10.0)\r\n",
+      "Error": "",
+      "ExitCode": 0,
+      "Kind": "Integrity"
+    },
+    {
+      "ReadProtected": true,
+      "WindowsSid": "S-1-5-18",
+      "Kind": "ACL",
+      "WriteRuntime": true
+    }
+  ]
+}

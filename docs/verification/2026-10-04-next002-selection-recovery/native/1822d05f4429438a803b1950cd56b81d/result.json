@@ -1,0 +1,747 @@
+{
+  "Observations": [
+    {
+      "Complete": true,
+      "WindowsSid": "S-1-5-18",
+      "RunId": "0c7ac94a67ad425c8934cea2136a3bcf",
+      "Actor": "System",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "1822d05f4429438a803b1950cd56b81d",
+            "ProbeId": "64507957eb424435a66ea7e33c2a92ab",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "WriteRuntime": true,
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "ServerLogStart": 897,
+      "ServerLogEnd": 2307
+    },
+    {
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "ProbeId": "7f575f266a894b97b48a084c86da056e",
+          "Output": "",
+          "ExitCode": 2,
+          "Kind": "libpq",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 55300 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\""
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "Kind": "ACL"
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "RunId": "a11988189e5342c49781bbe69c3fecd8",
+      "Actor": "System",
+      "ServerLogStart": 2307,
+      "ServerLogEnd": 3012
+    },
+    {
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "1822d05f4429438a803b1950cd56b81d",
+            "ProbeId": "27948b6b276949b7985b145e8524897f",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "WriteRuntime": true,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true
+        }
+      ],
+      "RunId": "9ffe2454adb64fe0af90cf89d6d78eec",
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 3012,
+      "ServerLogEnd": 4395
+    },
+    {
+      "RunId": "7a04462999d74deba58eedc79784b4b0",
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "Results": [
+        {
+          "Kind": "libpq",
+          "Error": "psql: error: connection to server at \"::1\", port 55300 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Host": "::1",
+          "Output": "",
+          "ProbeId": "38c1382ce9ce4de19568f2ef82d601c5",
+          "ExitCode": 2
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "Kind": "ACL",
+          "ReadProtected": true
+        }
+      ],
+      "Complete": true,
+      "ServerLogStart": 4395,
+      "ServerLogEnd": 5089
+    },
+    {
+      "Complete": true,
+      "WindowsSid": "S-1-5-18",
+      "RunId": "f951b932fab34aa5a468c603e67585a6",
+      "Actor": "System",
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "1822d05f4429438a803b1950cd56b81d",
+            "ProbeId": "685dc16ed61d4ef8901ab0aedeb17e24",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 97,
+              "Checks": [
+                "creator and initial revision",
+                "initial authorised status resolves only the installed repository without mutation",
+                "ungranted initial status reveals no installed identity",
+                "installation already initialised refuses another repository identity",
+                "rejected replacement preserves installed binding",
+                "ungranted admission",
+                "omitted target",
+                "unknown target",
+                "generic admission cannot consume save identity",
+                "saved round trip and revision",
+                "full configuration round trip",
+                "exact committed save replay",
+                "operation fingerprint collision",
+                "stale revision CAS",
+                "metadata rebinding rejected",
+                "privileged log rebinding rejected",
+                "generic admission cannot consume access identity",
+                "owner cannot manage access",
+                "read grant admits history",
+                "read grant cannot restore",
+                "acknowledged revocation blocks new admission",
+                "revocation persists across store restart",
+                "installed binding and configuration persist across store restart",
+                "catalogue identity mismatch fails closed",
+                "durable admission before side effects",
+                "automatic retention authority is durable with backup admission",
+                "interrupted mutation cannot be replayed",
+                "receipt reconciliation after completion",
+                "other actor cannot inspect receipt",
+                "cross actor collision rejects malformed response before decoding",
+                "effective purge permissions are durable",
+                "partial revocation denies purge receipt",
+                "partial revocation denies purge replay",
+                "protection-only backup cannot prune enabled retention",
+                "protection-only save cannot change retention policy",
+                "real catalogue denial precedes repository executor",
+                "real catalogue dispatch retains installed binding and revision",
+                "lost save acknowledgement does not execute dependent repository command",
+                "durable save is reconciled after acknowledgement loss",
+                "same save returns committed receipt without repeating effect",
+                "retention-policy edit authority is durable",
+                "protection-only capture allowed when automatic retention is disabled",
+                "ordinary protection edit does not require destructive authority",
+                "protection-only caller cannot enable automatic pruning",
+                "denied retention edit preserves authoritative configuration and revision",
+                "PUBLIC has no control schema access",
+                "acknowledgement durability settings",
+                "invalid selection refused before receipt: PreviewRestoreSelection/47",
+                "invalid selection refused before receipt: PreviewRestoreSelection/48",
+                "invalid selection refused before receipt: PreviewRestoreSelection/49",
+                "invalid selection refused before receipt: PreviewRestoreSelection/50",
+                "invalid selection refused before receipt: PreviewRestoreSelection/51",
+                "invalid selection refused before receipt: PreviewRestoreSelection/52",
+                "invalid selection refused before receipt: RunRestoreSelection/53",
+                "invalid selection refused before receipt: RunRestoreSelection/54",
+                "invalid selection refused before receipt: RunRestoreSelection/55",
+                "invalid selection refused before receipt: RunRestoreSelection/56",
+                "invalid selection refused before receipt: RunRestoreSelection/57",
+                "invalid selection refused before receipt: RunRestoreSelection/58",
+                "selection preview is read-only without privileged filesystem inspection",
+                "real selection receipt retains verified result and warnings without re-execution",
+                "invalid diagnostics directory refused before receipt: relative",
+                "invalid diagnostics directory refused before receipt: C:relative",
+                "invalid diagnostics directory refused before receipt: \\\\server\\share",
+                "invalid diagnostics directory refused before receipt: C:\\work\\..\\elsewhere",
+                "invalid diagnostics directory refused before receipt: C:\\work\\CON.txt",
+                "invalid diagnostics directory refused before receipt: C:\\work\\trailing.",
+                "invalid diagnostics directory refused before receipt: C:\\work\\\\ambiguous",
+                "invalid diagnostics directory refused before receipt: ",
+                "syntactically valid diagnostics directory admits without privileged filesystem access",
+                "real diagnostics receipt round trip retains publication warning without re-execution",
+                "drain completion rejects a changed request fingerprint",
+                "drain completion rejects a different reported destination",
+                "drain completion rejects a changed durable permission receipt",
+                "ordinary completion cannot bypass drain configuration CAS",
+                "rejected drain completion retains the admitted receipt",
+                "cancelled drain completion keeps its receipt admitted and configuration enabled",
+                "remaining actions prevent disabling even with a healthy zero-count report",
+                "incomplete drain preserves every configuration field and revision",
+                "failed drain result is retained without a configuration revision",
+                "failed drain completion preserves enabled mirrors and untouched settings",
+                "drain completion CAS rejects newer configuration after repository effects",
+                "failed drain CAS preserves newer configuration and revision",
+                "failed drain CAS remains uncertain rather than falsely completed",
+                "failure before drain commit rolls back configuration and receipt together",
+                "rolled-back drain has no configuration effect",
+                "rolled-back drain keeps its original admitted revision",
+                "completed drain atomically increments revision and disables only its requested mirror",
+                "disabled destination drain replays its exact completed response before current selector validation",
+                "lost drain acknowledgement leaves a durable atomic result",
+                "lost drain acknowledgement reconciles exactly once without another configuration effect",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: null",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination:  ",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: missing",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: first",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: third",
+                "invalid and final-destination drain refusal preserves configuration and revision"
+              ],
+              "NativeActor": "SYSTEM",
+              "PolicyActorsAreDoubles": true,
+              "MirrorDrainCatalogueVerified": true,
+              "DiagnosticsCatalogueVerified": true,
+              "SelectionCatalogueVerified": true,
+              "StoreHost": "127.0.0.1",
+              "Metadata": {
+                "Passed": 18,
+                "Checks": [
+                  "bound manifest round trip",
+                  "bound descriptor lookup",
+                  "bound version inventory",
+                  "folder and lineage round trip",
+                  "current entry inventory",
+                  "mutation lock waiter cancels without partial mutation",
+                  "outbox refuses wrong repository root",
+                  "rejected export creates no storage",
+                  "bound outbox export",
+                  "version deletion removes requested history",
+                  "deleted history retires chunk references",
+                  "deleted history retires outbox entries",
+                  "wrong manifest identity is rejected",
+                  "unbound manifest cannot be adopted",
+                  "missing namespace does not auto-provision",
+                  "root binding mismatch fails before metadata access",
+                  "existing namespace is never silently adopted",
+                  "binding is rechecked after cached initialisation"
+                ]
+              },
+              "Repository": {
+                "Passed": 10,
+                "Checks": [
+                  "captured manifest carries installed repository identity",
+                  "file and folder manifests remain bound",
+                  "reopened repository returns verified file bytes",
+                  "reopened repository returns verified folder bytes",
+                  "metadata root mismatch rejects before storage access",
+                  "reprovisioning existing storage is rejected",
+                  "authorised history purge removes requested inventory",
+                  "repository remains usable after authorised purge",
+                  "changed metadata binding rejects before chunk publication",
+                  "failed binding capture preserves every existing storage byte"
+                ],
+                "NativeCallerFileAccess": false
+              }
+            }
+          },
+          "Kind": "Npgsql",
+          "Host": "127.0.0.1"
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "ServerLogStart": 5152,
+      "ServerLogEnd": 13117
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "RunId": "ed61e8e18fe841d6a281f54d0015970e",
+      "Results": [
+        {
+          "Error": "",
+          "ExitCode": 0,
+          "ProbeId": "9d754bed98a94d06b04fa2f435be4078",
+          "Host": "127.0.0.1",
+          "Output": "1822d05f4429438a803b1950cd56b81d|fv_gate_261003|fv_gate_service",
+          "Kind": "libpq"
+        },
+        {
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true
+        }
+      ],
+      "Actor": "System",
+      "Complete": true,
+      "ServerLogStart": 13117,
+      "ServerLogEnd": 13666
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "1822d05f4429438a803b1950cd56b81d",
+            "ProbeId": "2d2e9f3edead49fb9cac0de0c08ba8b9",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 97,
+              "Checks": [
+                "creator and initial revision",
+                "initial authorised status resolves only the installed repository without mutation",
+                "ungranted initial status reveals no installed identity",
+                "installation already initialised refuses another repository identity",
+                "rejected replacement preserves installed binding",
+                "ungranted admission",
+                "omitted target",
+                "unknown target",
+                "generic admission cannot consume save identity",
+                "saved round trip and revision",
+                "full configuration round trip",
+                "exact committed save replay",
+                "operation fingerprint collision",
+                "stale revision CAS",
+                "metadata rebinding rejected",
+                "privileged log rebinding rejected",
+                "generic admission cannot consume access identity",
+                "owner cannot manage access",
+                "read grant admits history",
+                "read grant cannot restore",
+                "acknowledged revocation blocks new admission",
+                "revocation persists across store restart",
+                "installed binding and configuration persist across store restart",
+                "catalogue identity mismatch fails closed",
+                "durable admission before side effects",
+                "automatic retention authority is durable with backup admission",
+                "interrupted mutation cannot be replayed",
+                "receipt reconciliation after completion",
+                "other actor cannot inspect receipt",
+                "cross actor collision rejects malformed response before decoding",
+                "effective purge permissions are durable",
+                "partial revocation denies purge receipt",
+                "partial revocation denies purge replay",
+                "protection-only backup cannot prune enabled retention",
+                "protection-only save cannot change retention policy",
+                "real catalogue denial precedes repository executor",
+                "real catalogue dispatch retains installed binding and revision",
+                "lost save acknowledgement does not execute dependent repository command",
+                "durable save is reconciled after acknowledgement loss",
+                "same save returns committed receipt without repeating effect",
+                "retention-policy edit authority is durable",
+                "protection-only capture allowed when automatic retention is disabled",
+                "ordinary protection edit does not require destructive authority",
+                "protection-only caller cannot enable automatic pruning",
+                "denied retention edit preserves authoritative configuration and revision",
+                "PUBLIC has no control schema access",
+                "acknowledgement durability settings",
+                "invalid selection refused before receipt: PreviewRestoreSelection/47",
+                "invalid selection refused before receipt: PreviewRestoreSelection/48",
+                "invalid selection refused before receipt: PreviewRestoreSelection/49",
+                "invalid selection refused before receipt: PreviewRestoreSelection/50",
+                "invalid selection refused before receipt: PreviewRestoreSelection/51",
+                "invalid selection refused before receipt: PreviewRestoreSelection/52",
+                "invalid selection refused before receipt: RunRestoreSelection/53",
+                "invalid selection refused before receipt: RunRestoreSelection/54",
+                "invalid selection refused before receipt: RunRestoreSelection/55",
+                "invalid selection refused before receipt: RunRestoreSelection/56",
+                "invalid selection refused before receipt: RunRestoreSelection/57",
+                "invalid selection refused before receipt: RunRestoreSelection/58",
+                "selection preview is read-only without privileged filesystem inspection",
+                "real selection receipt retains verified result and warnings without re-execution",
+                "invalid diagnostics directory refused before receipt: relative",
+                "invalid diagnostics directory refused before receipt: C:relative",
+                "invalid diagnostics directory refused before receipt: \\\\server\\share",
+                "invalid diagnostics directory refused before receipt: C:\\work\\..\\elsewhere",
+                "invalid diagnostics directory refused before receipt: C:\\work\\CON.txt",
+                "invalid diagnostics directory refused before receipt: C:\\work\\trailing.",
+                "invalid diagnostics directory refused before receipt: C:\\work\\\\ambiguous",
+                "invalid diagnostics directory refused before receipt: ",
+                "syntactically valid diagnostics directory admits without privileged filesystem access",
+                "real diagnostics receipt round trip retains publication warning without re-execution",
+                "drain completion rejects a changed request fingerprint",
+                "drain completion rejects a different reported destination",
+                "drain completion rejects a changed durable permission receipt",
+                "ordinary completion cannot bypass drain configuration CAS",
+                "rejected drain completion retains the admitted receipt",
+                "cancelled drain completion keeps its receipt admitted and configuration enabled",
+                "remaining actions prevent disabling even with a healthy zero-count report",
+                "incomplete drain preserves every configuration field and revision",
+                "failed drain result is retained without a configuration revision",
+                "failed drain completion preserves enabled mirrors and untouched settings",
+                "drain completion CAS rejects newer configuration after repository effects",
+                "failed drain CAS preserves newer configuration and revision",
+                "failed drain CAS remains uncertain rather than falsely completed",
+                "failure before drain commit rolls back configuration and receipt together",
+                "rolled-back drain has no configuration effect",
+                "rolled-back drain keeps its original admitted revision",
+                "completed drain atomically increments revision and disables only its requested mirror",
+                "disabled destination drain replays its exact completed response before current selector validation",
+                "lost drain acknowledgement leaves a durable atomic result",
+                "lost drain acknowledgement reconciles exactly once without another configuration effect",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: null",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination:  ",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: missing",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: first",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: third",
+                "invalid and final-destination drain refusal preserves configuration and revision"
+              ],
+              "NativeActor": "SYSTEM",
+              "PolicyActorsAreDoubles": true,
+              "MirrorDrainCatalogueVerified": true,
+              "DiagnosticsCatalogueVerified": true,
+              "SelectionCatalogueVerified": true,
+              "StoreHost": "::1",
+              "Metadata": {
+                "Passed": 18,
+                "Checks": [
+                  "bound manifest round trip",
+                  "bound descriptor lookup",
+                  "bound version inventory",
+                  "folder and lineage round trip",
+                  "current entry inventory",
+                  "mutation lock waiter cancels without partial mutation",
+                  "outbox refuses wrong repository root",
+                  "rejected export creates no storage",
+                  "bound outbox export",
+                  "version deletion removes requested history",
+                  "deleted history retires chunk references",
+                  "deleted history retires outbox entries",
+                  "wrong manifest identity is rejected",
+                  "unbound manifest cannot be adopted",
+                  "missing namespace does not auto-provision",
+                  "root binding mismatch fails before metadata access",
+                  "existing namespace is never silently adopted",
+                  "binding is rechecked after cached initialisation"
+                ]
+              },
+              "Repository": {
+                "Passed": 10,
+                "Checks": [
+                  "captured manifest carries installed repository identity",
+                  "file and folder manifests remain bound",
+                  "reopened repository returns verified file bytes",
+                  "reopened repository returns verified folder bytes",
+                  "metadata root mismatch rejects before storage access",
+                  "reprovisioning existing storage is rejected",
+                  "authorised history purge removes requested inventory",
+                  "repository remains usable after authorised purge",
+                  "changed metadata binding rejects before chunk publication",
+                  "failed binding capture preserves every existing storage byte"
+                ],
+                "NativeCallerFileAccess": false
+              }
+            }
+          }
+        },
+        {
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "RunId": "7d2e3777a5004127b8f51a8e9e740b36",
+      "Complete": true,
+      "Actor": "System",
+      "ServerLogStart": 13666,
+      "ServerLogEnd": 21525
+    },
+    {
+      "Complete": true,
+      "Results": [
+        {
+          "ExitCode": 0,
+          "Error": "",
+          "Output": "1822d05f4429438a803b1950cd56b81d|fv_gate_261003|fv_gate_service",
+          "ProbeId": "a25d167c8f4e4585a9a1c40485fb93e4",
+          "Kind": "libpq",
+          "Host": "::1"
+        },
+        {
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "WriteRuntime": true
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "RunId": "0e2440dfb12b4ed6b3ca5dd9a56ba5df",
+      "Actor": "System",
+      "ServerLogStart": 21525,
+      "ServerLogEnd": 22072
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1169",
+      "RunId": "5dd1ac1b73984902b95affd7ddbd6706",
+      "Actor": "A",
+      "Complete": true,
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "1822d05f4429438a803b1950cd56b81d",
+            "ProbeId": "f72c9d02e2bf49f68a1d028eeee349eb",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1169",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Kind": "Npgsql",
+          "Host": "127.0.0.1"
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1169",
+          "Kind": "ACL",
+          "WriteRuntime": false,
+          "ReadProtected": false
+        }
+      ],
+      "ServerLogStart": 22072,
+      "ServerLogEnd": 23506
+    },
+    {
+      "Complete": true,
+      "Actor": "A",
+      "RunId": "1e77c127176a4ba4ad089ca758eb4a10",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1169",
+      "Results": [
+        {
+          "Kind": "libpq",
+          "Output": "",
+          "ExitCode": 2,
+          "Host": "127.0.0.1",
+          "ProbeId": "c57ed52ed92444dba5c847dd5c153140",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 55300 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\""
+        },
+        {
+          "WriteRuntime": false,
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1169",
+          "Kind": "ACL"
+        }
+      ],
+      "ServerLogStart": 23506,
+      "ServerLogEnd": 24223
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1169",
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "1822d05f4429438a803b1950cd56b81d",
+            "ProbeId": "b9fb32489088470cad89a7ea101cb25e",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1169",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1169",
+          "WriteRuntime": false,
+          "Kind": "ACL",
+          "ReadProtected": false
+        }
+      ],
+      "RunId": "8f4b0b791e89435a8a26a2f45270877e",
+      "Complete": true,
+      "Actor": "A",
+      "ServerLogStart": 24223,
+      "ServerLogEnd": 25635
+    },
+    {
+      "Actor": "A",
+      "Complete": true,
+      "Results": [
+        {
+          "ProbeId": "278d8d16a04445c5bdc7cbae67647dab",
+          "Output": "",
+          "Error": "psql: error: connection to server at \"::1\", port 55300 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ExitCode": 2,
+          "Kind": "libpq",
+          "Host": "::1"
+        },
+        {
+          "Kind": "ACL",
+          "WriteRuntime": false,
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1169"
+        }
+      ],
+      "RunId": "b5075d63fd664e8b9456cd350980f6ed",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1169",
+      "ServerLogStart": 25635,
+      "ServerLogEnd": 26341
+    },
+    {
+      "Actor": "B",
+      "Complete": true,
+      "RunId": "6f8480ecbb86470ebd96baadbd751175",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "1822d05f4429438a803b1950cd56b81d",
+            "ProbeId": "a7e94fa2b5cd4e499d66efe9d5e553ad",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1170",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1"
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1170",
+          "ReadProtected": false,
+          "WriteRuntime": false
+        }
+      ],
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1170",
+      "ServerLogStart": 26341,
+      "ServerLogEnd": 27775
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1170",
+      "RunId": "4fc438ade159431b880464eb1fa0149f",
+      "Complete": true,
+      "Results": [
+        {
+          "ProbeId": "58e2187e80864a5da79c3fe8584c8ad5",
+          "ExitCode": 2,
+          "Host": "127.0.0.1",
+          "Kind": "libpq",
+          "Output": "",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 55300 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\""
+        },
+        {
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1170",
+          "Kind": "ACL",
+          "WriteRuntime": false
+        }
+      ],
+      "Actor": "B",
+      "ServerLogStart": 27775,
+      "ServerLogEnd": 28492
+    },
+    {
+      "RunId": "54971f03072d4a90938cd6fbe8abd479",
+      "Actor": "B",
+      "Complete": true,
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1170",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "1822d05f4429438a803b1950cd56b81d",
+            "ProbeId": "5e1ff0fc14dd4bfa9eca8af0cb676157",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1170",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1170",
+          "WriteRuntime": false
+        }
+      ],
+      "ServerLogStart": 28492,
+      "ServerLogEnd": 29904
+    },
+    {
+      "Results": [
+        {
+          "Kind": "libpq",
+          "ExitCode": 2,
+          "Output": "",
+          "ProbeId": "633b68fe2e154fd6880a15aefc1cf885",
+          "Error": "psql: error: connection to server at \"::1\", port 55300 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Host": "::1"
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1170",
+          "Kind": "ACL",
+          "ReadProtected": false,
+          "WriteRuntime": false
+        }
+      ],
+      "RunId": "0cfd46f03a63434ca5b712e6e29c6cc6",
+      "Complete": true,
+      "Actor": "B",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1170",
+      "ServerLogStart": 29904,
+      "ServerLogEnd": 30610
+    }
+  ],
+  "FailureLocation": "at Read-ActorResult, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 135\r\nat Invoke-UserActor, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 249\r\nat Invoke-SystemActor, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 190\r\nat <ScriptBlock>, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 606",
+  "Failure": "Actor probe incomplete: Native caller file proof failed: {\"error\":\"Selection recovery contract failed: folder selection preview creates no directory or staging\",\"code\":null,\"detail\":\"System.InvalidOperationException: Selection recovery contract failed: folder selection preview creates no directory or staging\\r\\n   at FluxVault.TestHost.WindowsSelectionRecoveryProbe.\\u003CRunAsync\\u003Eg__Check|2_0(Boolean value, String name, \\u003C\\u003Ec__DisplayClass2_0\\u0026) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\fluxvault-next002-plan\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsSelectionRecoveryProbe.cs:line 73\\r\\n   at FluxVault.TestHost.WindowsSelectionRecoveryProbe.RunAsync(NamedPipeFluxVaultClient client, Func\\u00602 bind, Func\\u00602 send, String output, List\\u00601 checks, CancellationToken token) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\fluxvault-next002-plan\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsSelectionRecoveryProbe.cs:line 42\\r\\n   at FluxVault.TestHost.WindowsSingleVaultProbe.RunAsync(String configurationPath, String actor) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\fluxvault-next002-plan\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsSingleVaultProbe.cs:line 349\\r\\n   at FluxVault.TestHost.Program.Main(String[] arguments) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\fluxvault-next002-plan\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\Program.cs:line 36\"}\r\n",
+  "FixtureId": "1822d05f4429438a803b1950cd56b81d"
+}

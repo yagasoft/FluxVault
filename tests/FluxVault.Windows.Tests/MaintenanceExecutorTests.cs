@@ -21,7 +21,8 @@ public sealed class MaintenanceExecutorTests
         FluxVaultIpcCommand.RunRepositoryScrub, FluxVaultIpcCommand.RunRestoreRehearsal,
         FluxVaultIpcCommand.PreviewMirrorRepair, FluxVaultIpcCommand.RunMirrorRepair,
         FluxVaultIpcCommand.PreviewMirrorRebalance, FluxVaultIpcCommand.RunMirrorRebalance, FluxVaultIpcCommand.PreviewMirrorDrain,
-        FluxVaultIpcCommand.RunMirrorDrain, FluxVaultIpcCommand.ExportDiagnostics
+        FluxVaultIpcCommand.RunMirrorDrain, FluxVaultIpcCommand.ExportDiagnostics,
+        FluxVaultIpcCommand.PreviewRestoreSelection, FluxVaultIpcCommand.RunRestoreSelection
     };
 
     [Theory]
@@ -49,6 +50,8 @@ public sealed class MaintenanceExecutorTests
     [InlineData(FluxVaultIpcCommand.RunMirrorDrain, VaultPermission.Maintain)]
     [InlineData(FluxVaultIpcCommand.GetRepositoryHealth, VaultPermission.Maintain)]
     [InlineData(FluxVaultIpcCommand.ExportDiagnostics, VaultPermission.Maintain)]
+    [InlineData(FluxVaultIpcCommand.PreviewRestoreSelection, VaultPermission.ReadHistory)]
+    [InlineData(FluxVaultIpcCommand.RunRestoreSelection, VaultPermission.ReadHistory)]
     public async Task Missing_required_permissions_are_refused_before_storage(FluxVaultIpcCommand command, VaultPermission granted)
     {
         var fixture = new Fixture(command);

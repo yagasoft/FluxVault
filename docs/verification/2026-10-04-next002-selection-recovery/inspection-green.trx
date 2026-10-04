@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="75a5ed13-1669-4e6b-991e-c07372633d84" name="os008@OS008-HOME 2026-10-04 19:35:08" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T19:35:08.8936224+03:00" queuing="2026-10-04T19:35:08.8936225+03:00" start="2026-10-04T19:35:08.2220822+03:00" finish="2026-10-04T19:35:08.8977425+03:00" />
+  <TestSettings name="default" id="9cc390f8-967f-4fe1-beb9-d9328ba228ef">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_19_35_08" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c21cb01a-4296-42cc-90a2-5da1a9ba7af1" testId="ad29babf-93c5-5527-1dfe-380099a6fa11" testName="FluxVault.Windows.Tests.SelectionOutputInspectionTests.Blind_ancestor_inspection_proves_present_and_missing_without_creation" computerName="OS008-HOME" duration="00:00:00.0117952" startTime="2026-10-04T19:35:08.7986936+03:00" endTime="2026-10-04T19:35:08.8070141+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c21cb01a-4296-42cc-90a2-5da1a9ba7af1" />
+    <UnitTestResult executionId="720455fd-2e64-42aa-ac9e-75a7ee780169" testId="700a60b7-791e-7169-eec0-39cefd4adc99" testName="FluxVault.Windows.Tests.SelectionOutputInspectionTests.Unavailable_leaf_or_required_parent_is_never_classified_as_missing(denyParent: False)" computerName="OS008-HOME" duration="00:00:00.0043585" startTime="2026-10-04T19:35:08.7974937+03:00" endTime="2026-10-04T19:35:08.7975544+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="720455fd-2e64-42aa-ac9e-75a7ee780169" />
+    <UnitTestResult executionId="e1be9a4c-3238-45f5-9570-f90d2e1a8331" testId="efc525d9-d39e-f809-0083-b6b453187b7a" testName="FluxVault.Windows.Tests.SelectionOutputInspectionTests.Unavailable_leaf_or_required_parent_is_never_classified_as_missing(denyParent: True)" computerName="OS008-HOME" duration="00:00:00.0325007" startTime="2026-10-04T19:35:08.7478245+03:00" endTime="2026-10-04T19:35:08.7887487+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1be9a4c-3238-45f5-9570-f90d2e1a8331" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.SelectionOutputInspectionTests.Blind_ancestor_inspection_proves_present_and_missing_without_creation" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\debug\net10.0\fluxvault.windows.tests.dll" id="ad29babf-93c5-5527-1dfe-380099a6fa11">
+      <Execution id="c21cb01a-4296-42cc-90a2-5da1a9ba7af1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Debug\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.SelectionOutputInspectionTests" name="Blind_ancestor_inspection_proves_present_and_missing_without_creation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.SelectionOutputInspectionTests.Unavailable_leaf_or_required_parent_is_never_classified_as_missing(denyParent: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\debug\net10.0\fluxvault.windows.tests.dll" id="efc525d9-d39e-f809-0083-b6b453187b7a">
+      <Execution id="e1be9a4c-3238-45f5-9570-f90d2e1a8331" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Debug\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.SelectionOutputInspectionTests" name="Unavailable_leaf_or_required_parent_is_never_classified_as_missing" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.SelectionOutputInspectionTests.Unavailable_leaf_or_required_parent_is_never_classified_as_missing(denyParent: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\debug\net10.0\fluxvault.windows.tests.dll" id="700a60b7-791e-7169-eec0-39cefd4adc99">
+      <Execution id="720455fd-2e64-42aa-ac9e-75a7ee780169" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Debug\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.SelectionOutputInspectionTests" name="Unavailable_leaf_or_required_parent_is_never_classified_as_missing" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ad29babf-93c5-5527-1dfe-380099a6fa11" executionId="c21cb01a-4296-42cc-90a2-5da1a9ba7af1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="700a60b7-791e-7169-eec0-39cefd4adc99" executionId="720455fd-2e64-42aa-ac9e-75a7ee780169" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="efc525d9-d39e-f809-0083-b6b453187b7a" executionId="e1be9a4c-3238-45f5-9570-f90d2e1a8331" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.15]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.24]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

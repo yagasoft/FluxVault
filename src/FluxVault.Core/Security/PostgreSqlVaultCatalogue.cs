@@ -205,6 +205,12 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         }
         if (request.ExpectedVaultRevision is not null && request.ExpectedVaultRevision != vault.Revision)
             throw new VaultCatalogueException(VaultCatalogueFailure.StaleRevision);
+        if (request.Command is FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.RunRestoreSelection)
+        {
+            try { _ = RestoreSelectionRequestValidator.Validate(request); }
+            catch (Exception exception) when (exception is UnauthorizedAccessException or ArgumentException or NotSupportedException)
+            { throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration, "Choose an unambiguous local selection and recovery destination."); }
+        }
         if (request.Command == FluxVaultIpcCommand.ExportDiagnostics)
         {
             try { _ = WindowsLocalPath.Validate(request.ExportPath ?? string.Empty); }
@@ -504,6 +510,6 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         FluxVaultIpcCommand.GetActivity or FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.GetSyncStatus or
         FluxVaultIpcCommand.GetRepositoryHealth or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.PreviewRetention or
         FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.PreviewMirrorDrain or
-        FluxVaultIpcCommand.GetOperationStatus);
+        FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.GetOperationStatus);
     public ValueTask DisposeAsync() => dataSource.DisposeAsync();
 }

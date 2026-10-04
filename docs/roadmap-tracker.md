@@ -84,6 +84,17 @@ ungranted-user denials and 1,118 ordinary tests. The zero-warning build and fres
 census confirm both fixtures and temporary workers are gone, with normal services
 and data unchanged. Remaining command/background,
 interruption, performance/accessibility, full G01 and rollout gates stay open.
+The [selection-recovery batch](verification/2026-10-04-next002-selection-recovery/README.md)
+adds caller-authorised no-write preview and verified file/folder publication,
+including one bounded tree from independent file history. Real-store admission
+and durable replay retain permissions, binding and warnings; the actual
+view-model preserves drafts and rejects unverified success. It passes 97
+catalogue checks per loopback, 91 creator checks, fourteen ungranted-user
+denials, all 1,168 ordinary tests and forty owned PostgreSQL integrity cases,
+without skips. The zero-warning builds and final census verify all four
+fixtures and 59 captured process identities are gone, with normal services/data
+unchanged. NEXT-002 remains in progress; its remaining commands, background,
+interruption, resource/performance/accessibility, G01 and rollout gates stay open.
 This updates progress without expanding the agreed roadmap.
 
 | ID | Priority | Capability | Status | Required verification |

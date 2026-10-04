@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8d2312b3-047a-45f6-b9a4-496d12201849" name="os008@OS008-HOME 2026-10-04 01:00:49" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T01:00:49.6746801+03:00" queuing="2026-10-04T01:00:49.6746803+03:00" start="2026-10-04T01:00:40.1021962+03:00" finish="2026-10-04T01:00:49.6783759+03:00" />
+  <TestSettings name="default" id="8cf86724-ccc2-461d-b8bc-96c1fbec6739">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_01_00_49" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1607a757-7860-4fe3-9678-d45b380fd28f" testId="e0c95fa2-a81a-b54d-06cc-5755225eef49" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Job_containment_joins_an_unpublished_child_after_its_launcher_exits" computerName="OS008-HOME" duration="00:00:08.8672529" startTime="2026-10-04T01:00:40.7137818+03:00" endTime="2026-10-04T01:00:49.5977800+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1607a757-7860-4fe3-9678-d45b380fd28f">
+      <Output>
+        <ErrorInfo>
+          <Message>ParentContainsErrorRecordException: E:\Temp\AppData\Local\Temp\FluxVault.WindowsFixtureTools.44f97b529c08442b9d2ac92be8d69d61\case-308676003bd847e387a5610abedfed02.ps1:29&#xD;
+Line |&#xD;
+  29 |      $job.StopAndJoin()&#xD;
+     |      ~~~~~~~~~~~~~~~~~~&#xD;
+     | Exception calling "StopAndJoin" with "0" argument(s): "Owned job processes remain after termination."&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 309&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 317&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Job_containment_joins_an_unpublished_child_after_its_launcher_exits() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 13&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Job_containment_joins_an_unpublished_child_after_its_launcher_exits" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="e0c95fa2-a81a-b54d-06cc-5755225eef49">
+      <Execution id="1607a757-7860-4fe3-9678-d45b380fd28f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Job_containment_joins_an_unpublished_child_after_its_launcher_exits" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e0c95fa2-a81a-b54d-06cc-5755225eef49" executionId="1607a757-7860-4fe3-9678-d45b380fd28f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:09.08]       ParentContainsErrorRecordException: E:\Temp\AppData\Local\Temp\FluxVault.WindowsFixtureTools.44f97b529c08442b9d2ac92be8d69d61\case-308676003bd847e387a5610abedfed02.ps1:29&#xD;
+[xUnit.net 00:00:09.08]       Line |&#xD;
+[xUnit.net 00:00:09.08]         29 |      $job.StopAndJoin()&#xD;
+[xUnit.net 00:00:09.08]            |      ~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:09.08]            | Exception calling "StopAndJoin" with "0" argument(s): "Owned job processes remain after termination."&#xD;
+[xUnit.net 00:00:09.08]       &#xD;
+[xUnit.net 00:00:09.08]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.08]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(309,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:09.08]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(317,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:09.08]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(13,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Job_containment_joins_an_unpublished_child_after_its_launcher_exits()&#xD;
+[xUnit.net 00:00:09.08]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.09]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T01:00:49.6006435+03:00">
+        <Text>[xUnit.net 00:00:09.08]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Job_containment_joins_an_unpublished_child_after_its_launcher_exits [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

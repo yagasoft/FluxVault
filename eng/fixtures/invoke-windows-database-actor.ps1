@@ -1,0 +1,104 @@
+#Requires -Version 7.2
+[CmdletBinding()]
+param([Parameter(Mandatory)][string]$Root, [Parameter(Mandatory)][ValidateSet('System','A','B')][string]$Actor,
+    [Parameter(Mandatory)][string]$RunId, [string]$HostAddress, [string]$ClientKind, [string]$ParentJob)
+trap {
+    # Preserve failures before the normal result writer. A/B diagnostics explain failure only; they are not authority.
+    $failure=$_
+    try {
+        $diagnosticId=[guid]::Empty
+        if([guid]::TryParseExact((Split-Path $Root -Leaf),'N',[ref]$diagnosticId) -and
+            [IO.Path]::GetFullPath($Root) -eq (Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $diagnosticId.ToString('N'))) {
+            $diagnosticPath=if($Actor -eq 'System'){Join-Path $Root 'system-actor-error.json'}else{
+                $diagnosticRun=[guid]::Empty
+                if(-not [guid]::TryParseExact($RunId,'N',[ref]$diagnosticRun)){throw 'Invalid early diagnostic identity.'}
+                Join-Path $Root ("output-$Actor/$RunId-error.json")
+            }
+            $message=$failure.Exception.Message
+            @{RunId=$RunId;WindowsSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;ErrorKind=$failure.Exception.GetType().FullName;
+                Message=$message.Substring(0,[Math]::Min(4096,$message.Length));Location=$failure.ScriptStackTrace} | ConvertTo-Json -Depth 3 |
+                Set-Content -LiteralPath $diagnosticPath
+        }
+    } catch { }
+    exit 1
+}
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+Import-Module (Join-Path $PSScriptRoot 'vault-windows-fixture.psm1') -Force
+Import-VaultFixtureJobType
+$parsed = [guid]::Empty
+if (-not [guid]::TryParseExact((Split-Path $Root -Leaf), 'N', [ref]$parsed) -or $parsed -eq [guid]::Empty -or
+    [IO.Path]::GetFullPath($Root) -ne (Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $parsed.ToString('N'))) { throw 'Actor fixture root mismatch.' }
+$configuration = Get-Content -LiteralPath (Join-Path $Root 'runtime/database-probe.json') -Raw | ConvertFrom-Json
+$runtime = Get-Content -LiteralPath (Join-Path $Root 'runtime/actor-runtime.json') -Raw | ConvertFrom-Json
+if ($Actor -eq 'System' -and $RunId -eq 'mission') {
+    $mission = Get-Content -LiteralPath (Join-Path $Root 'runtime/system-mission.json') -Raw | ConvertFrom-Json
+    $RunId = $mission.RunId; $HostAddress = $mission.HostAddress; $ClientKind = $mission.ClientKind
+}
+$actorJob=if($Actor -eq 'System'){$mission.Job}else{$ParentJob}
+try {
+    if($Actor -eq 'System'){[FluxVault.Fixtures.OwnedWindowsJob]::JoinCurrent($actorJob)}
+    else{[FluxVault.Fixtures.OwnedWindowsJob]::WaitForCurrentAdmission($actorJob)}
+}
+catch {
+    $admissionError=$_.Exception.Message
+    try { $admissionState=[FluxVault.Fixtures.OwnedWindowsJob]::CurrentContainment() } catch { $admissionState='Containment query failed: '+$_.Exception.Message }
+    throw ($admissionError+'; '+$admissionState)
+}
+if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq')) { throw 'Actor requires one explicit loopback/client probe.' }
+$sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+if ($sid -ne $configuration.Actors.$Actor -or -not [guid]::TryParseExact($RunId, 'N', [ref]$parsed) -or $parsed -eq [guid]::Empty) { throw 'Actor identity mismatch.' }
+$expectedRoot = Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $configuration.FixtureId
+if ([IO.Path]::GetFullPath($Root) -ne $expectedRoot) { throw 'Actor fixture root mismatch.' }
+$output = Join-Path $Root ("output-" + $Actor)
+$processJournal = Join-Path $output ($RunId + '-processes.jsonl')
+$results = [Collections.Generic.List[object]]::new()
+$self = Get-Process -Id $PID
+try { (Get-VaultFixtureProcessIdentity $self | ConvertTo-Json -Compress) | Add-Content -LiteralPath $processJournal } finally { $self.Dispose() }
+function Invoke-ActorTool {
+    param([string]$Executable, [string[]]$Arguments)
+    $start = [Diagnostics.ProcessStartInfo]::new($Executable)
+    $start.UseShellExecute = $false; $start.CreateNoWindow = $true
+    $start.WorkingDirectory=$runtime.WorkingDirectory
+    $start.RedirectStandardOutput = $true; $start.RedirectStandardError = $true
+    foreach ($argument in $Arguments) { $start.ArgumentList.Add($argument) }
+    foreach ($key in @($start.Environment.Keys | Where-Object { $_ -like 'PG*' -or $_ -like 'NPGSQL*' })) { $start.Environment.Remove($key) | Out-Null }
+    $start.Environment['PATH']=$runtime.SafePath
+    $child = [Diagnostics.Process]::Start($start)
+    try {
+        $stdout = $child.StandardOutput.ReadToEndAsync(); $stderr = $child.StandardError.ReadToEndAsync()
+        $childIdentity = Get-VaultFixtureLiveProcessIdentity $child
+        if ($null -ne $childIdentity) { ($childIdentity | ConvertTo-Json -Compress) | Add-Content -LiteralPath $processJournal }
+        if (-not $child.WaitForExit(20000)) { throw 'Actor tool exceeded its finite deadline.' }
+        return @{ ExitCode=$child.ExitCode; Output=$stdout.GetAwaiter().GetResult(); Error=$stderr.GetAwaiter().GetResult() }
+    } finally {
+        if (-not $child.HasExited) { Stop-VaultFixtureProcessTree (Get-VaultFixtureProcessIdentity $child) | Out-Null }
+        if (-not $child.WaitForExit(5000)) { throw 'Actor tool remains.' }
+        $child.Dispose()
+    }
+}
+try {
+    $probeId = [guid]::NewGuid().ToString('N')
+    if ($ClientKind -eq 'Npgsql') {
+        $result = Invoke-ActorTool -Executable $runtime.Dotnet -Arguments @((Join-Path $Root 'runtime/FluxVault.TestHost.dll'), '--mode','windows-db-probe',
+            '--configuration',(Join-Path $Root 'runtime/database-probe.json'), '--host',$HostAddress,'--actor',$Actor,'--probe-id',$probeId)
+        if ($result.ExitCode -ne 0) { throw "Npgsql probe failed before its result: $($result.Error)" }
+        $results.Add(@{ Kind='Npgsql'; Host=$HostAddress; Result=($result.Output | ConvertFrom-Json) })
+    } else {
+        $connection = "host=$HostAddress port=$($configuration.Port) dbname=fv_gate_261003 user=fv_gate_service connect_timeout=5 require_auth=sspi application_name=FVGate.$probeId.libpq"
+        $libpq = Invoke-ActorTool -Executable $runtime.Psql -Arguments @('-X','-w','-A','-t','-v','ON_ERROR_STOP=1','--dbname',$connection,'-c',"SELECT current_setting('fluxvault.test_instance'), current_database(), current_user")
+        $results.Add(@{ Kind='libpq'; Host=$HostAddress; ProbeId=$probeId; ExitCode=$libpq.ExitCode; Output=$libpq.Output.Trim(); Error=$libpq.Error.Trim() })
+    }
+    $readAllowed = $false; $writeAllowed = $false
+    try { $stream=[IO.File]::OpenRead((Join-Path $Root 'catalogue/private.bin')); $stream.Dispose(); $readAllowed=$true } catch [UnauthorizedAccessException] { }
+    try { $stream=[IO.File]::Open((Join-Path $Root 'runtime/database-probe.json'), 'Open', 'Write', 'None'); $stream.Dispose(); $writeAllowed=$true } catch [UnauthorizedAccessException] { }
+    $results.Add(@{ Kind='ACL'; ReadProtected=$readAllowed; WriteRuntime=$writeAllowed; WindowsSid=$sid })
+    $resultPath=Join-Path $output ($RunId+'-result.json')
+    @{ RunId=$RunId; Actor=$Actor; WindowsSid=$sid; Results=$results.ToArray(); Complete=$true } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath ($resultPath+'.tmp')
+    [IO.File]::Move($resultPath+'.tmp',$resultPath)
+} catch {
+    $resultPath=Join-Path $output ($RunId+'-result.json')
+    @{ RunId=$RunId; Actor=$Actor; WindowsSid=$sid; Complete=$false; Error=$_.Exception.Message } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath ($resultPath+'.tmp')
+    [IO.File]::Move($resultPath+'.tmp',$resultPath)
+    exit 1
+}

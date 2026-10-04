@@ -1,0 +1,114 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.TestHost -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\bin\Release\net10.0-windows\FluxVault.TestHost.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Cli -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Cli\bin\Release\net10.0\FluxVault.Cli.dll
+  FluxVault.Service -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Service\bin\Release\net10.0-windows\FluxVault.Service.dll
+  FluxVault.Integration.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.20]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(actor: "System", sid: "S-1-5-21-11-22-33-1001") [FAIL]
+[xUnit.net 00:00:00.21]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(actor: "A", sid: "S-1-5-18") [FAIL]
+[xUnit.net 00:00:00.21]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(actor: "B", sid: "invalid") [FAIL]
+[xUnit.net 00:00:00.21]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_accepts_the_explicit_fixture_endpoint_and_keeps_a_finite_timeout [FAIL]
+[xUnit.net 00:00:00.21]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(port: 65536) [FAIL]
+[xUnit.net 00:00:00.21]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(port: 5432) [FAIL]
+[xUnit.net 00:00:00.21]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(port: 0) [FAIL]
+[xUnit.net 00:00:00.22]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(database: "fluxvault_metadata", role: "fv_gate_service") [FAIL]
+[xUnit.net 00:00:00.22]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(database: "fv_gate_261003", role: "fluxvault") [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(actor: "System", sid: "S-1-5-21-11-22-33-1001") [6 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(String actor, String sid) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 35
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(actor: "A", sid: "S-1-5-18") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(String actor, String sid) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 35
+   at InvokeStub_WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(actor: "B", sid: "invalid") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(String actor, String sid) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 35
+   at InvokeStub_WindowsDatabaseProbeTests.Probe_refuses_an_actor_with_the_wrong_kind_of_SID(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_accepts_the_explicit_fixture_endpoint_and_keeps_a_finite_timeout [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_accepts_the_explicit_fixture_endpoint_and_keeps_a_finite_timeout() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 51
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(port: 65536) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(Int32 port) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 14
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(port: 5432) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(Int32 port) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 14
+   at InvokeStub_WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(port: 0) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(Int32 port) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 14
+   at InvokeStub_WindowsDatabaseProbeTests.Probe_refuses_normal_or_invalid_ports_before_connecting(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(database: "fluxvault_metadata", role: "fv_gate_service") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(String database, String role) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 24
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(database: "fv_gate_261003", role: "fluxvault") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(String database, String role) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 24
+   at InvokeStub_WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.24]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(database: "postgres", role: "postgres") [FAIL]
+[xUnit.net 00:00:00.24]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_root_rebinding_and_zero_identity [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(database: "postgres", role: "postgres") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(String database, String role) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 24
+   at InvokeStub_WindowsDatabaseProbeTests.Probe_refuses_unrelated_database_or_account(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_root_rebinding_and_zero_identity [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentException)
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Probe_refuses_root_rebinding_and_zero_identity() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 42
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-03-next002-windows-fixture\probe-red.trx
+
+Failed!  - Failed:    11, Passed:     0, Skipped:     0, Total:    11, Duration: 55 ms - FluxVault.Integration.Tests.dll (net10.0)

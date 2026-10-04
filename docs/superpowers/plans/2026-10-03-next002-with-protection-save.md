@@ -67,6 +67,8 @@ Visual selection does not block C or the independent security design gate.
 
 This batch is consequential. Read the recorded independent architecture/security review and the accepted access policy before coding after the user resumes implementation. Retain renewed review for material design changes and the final implementation gate. Split into bounded implementation steps if necessary, but do not ship an externally reachable partial bypass.
 
+The [disposable Windows prerequisite](../../verification/2026-10-03-next002-windows-fixture/README.md) passed independent review on 4 October: actual SYSTEM password-free SSPI admission, A/B database and protected-file denials on both loopbacks, complete teardown and unchanged installation. This clears the prerequisite investigation, not the unimplemented product security or normal-installation gates below.
+
 **Source map:**
 
 | Boundary | Existing files | New focused contracts/helpers proposed |
@@ -130,4 +132,4 @@ Do not rewrite or reorder the programme to accommodate this batch. If S1 remains
 
 The requested pause ended when the user approved implementation after the model switch. No model change is claimed or performed by this plan. Continue in this existing worktree using the spec, plan and retained evidence; do not repeat the completed audit, regenerate concepts or reopen the accepted access-default decision without new evidence.
 
-Batch C is complete in this worktree; preserve its red/green and native evidence. Continue S1 using the [prepared Windows fixture](../../verification/2026-10-03-next002-windows-fixture/README.md) and obtain the explicitly required authorisation before creating its named Windows/elevated resources. C can be delivered independently without weakening NEXT-002; S1 follows only with its security prerequisites and gates intact. A visual direction still needs selection before the broader UI implementation, but does not block C or security work. The user has not authorised a deployment or installed PostgreSQL change through this handoff.
+Batch C is complete in this worktree; preserve its red/green and native evidence. The user authorised the [named Windows fixture](../../verification/2026-10-03-next002-windows-fixture/README.md) on 4 October; its reviewed disposable rehearsal is underway. S1–S3 product security and their runtime gates remain incomplete. C can be delivered independently without weakening NEXT-002. A visual direction still needs selection before the broader UI implementation, but does not block C or security work. Normal deployment or installed PostgreSQL changes retain their separate concrete authorisation gate.

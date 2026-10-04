@@ -1,0 +1,19 @@
+{
+  "GroupPresent": 0,
+  "AccountsPresent": 0,
+  "OwnedProcesses": [],
+  "CheckedUtc": "2026-10-03T22:43:47.9505445+00:00",
+  "TaskPresent": 0,
+  "Ancestors": [
+    {
+      "Path": "C:\\ProgramData",
+      "Sddl": "O:SYG:SYD:PAI(A;OICIIO;GA;;;CO)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1200a9;;;BU)(A;CI;DCLCRPCR;;;BU)"
+    },
+    {
+      "Path": "C:\\ProgramData\\FluxVault.Tests",
+      "Sddl": "O:S-1-5-21-136112424-624261118-1239521417-1001G:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;;0x100020;;;BU)(A;OICI;FA;;;S-1-5-21-136112424-624261118-1239521417-1001)"
+    }
+  ],
+  "Failure": "Trusted-path preflight refuses the existing ProgramData Users Write permission before the GUID root or named actors are created.",
+  "RootPresent": false
+}

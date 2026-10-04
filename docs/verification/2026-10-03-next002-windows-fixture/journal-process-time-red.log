@@ -1,0 +1,15 @@
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.04]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Reopened_process_identity_can_be_verified_and_removed_without_losing_its_timestamp [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Reopened_process_identity_can_be_verified_and_removed_without_losing_its_timestamp [846 ms]
+  Error Message:
+   Exception: Process identity changed; refusing to stop it.
+
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 212
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 220
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Reopened_process_identity_can_be_verified_and_removed_without_losing_its_timestamp() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 126
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-03-next002-windows-fixture\journal-process-time-red.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 860 ms - FluxVault.Integration.Tests.dll (net10.0)

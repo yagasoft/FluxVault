@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b09e5bf1-c84b-4712-9ab8-1f31a04fe32c" name="os008@OS008-HOME 2026-10-03 23:55:15" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T23:55:15.7608800+03:00" queuing="2026-10-03T23:55:15.7608801+03:00" start="2026-10-03T23:55:13.9057666+03:00" finish="2026-10-03T23:55:17.3749421+03:00" />
+  <TestSettings name="default" id="9819872a-beba-4a59-947b-3f1245e1f786">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-03_23_55_15" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1783e037-4365-45ec-b45f-3d361cbedb01" testId="29803a25-7588-1b32-3ba6-3e42beac2969" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Interrupted_resource_intent_remains_durable_and_refuses_cleanup" computerName="OS008-HOME" duration="00:00:00.5265162" startTime="2026-10-03T23:55:15.1435832+03:00" endTime="2026-10-03T23:55:15.6586759+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1783e037-4365-45ec-b45f-3d361cbedb01">
+      <Output>
+        <ErrorInfo>
+          <Message>Exception: Fixture ownership journal is not implemented.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 148&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 156&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Interrupted_resource_intent_remains_durable_and_refuses_cleanup() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 32&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="095c0c2f-f3a7-46f4-a1be-f6c8efb1b12c" testId="a986ac75-f552-7578-56d3-ceb796487423" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Fixture_root_validation_refuses_a_sibling_or_a_different_identity" computerName="OS008-HOME" duration="00:00:00.5144156" startTime="2026-10-03T23:55:16.2234593+03:00" endTime="2026-10-03T23:55:16.7375050+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="095c0c2f-f3a7-46f4-a1be-f6c8efb1b12c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Fixture_root_validation_refuses_a_sibling_or_a_different_identity() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 24&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f85a6566-1042-412f-b38c-31362ff0685b" testId="e334e92b-cc80-84e4-4162-1e942aa673fb" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Journal_refuses_secret_or_unrecognised_resource_fields" computerName="OS008-HOME" duration="00:00:00.5632771" startTime="2026-10-03T23:55:15.6600885+03:00" endTime="2026-10-03T23:55:16.2225240+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f85a6566-1042-412f-b38c-31362ff0685b">
+      <Output>
+        <ErrorInfo>
+          <Message>Exception: Fixture ownership journal is not implemented.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 148&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 156&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Journal_refuses_secret_or_unrecognised_resource_fields() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 51&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1d2a5842-67ae-45ec-85c8-3b711a49c2bb" testId="128f6a6e-4f00-b042-fba9-9b26806def9c" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Fixture_cleanup_refuses_a_junction_and_preserves_its_external_target" computerName="OS008-HOME" duration="00:00:00.5852537" startTime="2026-10-03T23:55:16.7382775+03:00" endTime="2026-10-03T23:55:17.3232741+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d2a5842-67ae-45ec-85c8-3b711a49c2bb">
+      <Output>
+        <ErrorInfo>
+          <Message>Exception: Fixture ownership journal is not implemented.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 148&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 156&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Fixture_cleanup_refuses_a_junction_and_preserves_its_external_target() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 68&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e4ff34ca-dd63-4289-ac3e-99e584543fc4" testId="50b23f93-fa6e-ae19-4a2d-3acf699b9e95" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Process_cleanup_refuses_wrong_identity_then_stops_the_owned_process" computerName="OS008-HOME" duration="00:00:00.6809412" startTime="2026-10-03T23:55:14.4349583+03:00" endTime="2026-10-03T23:55:15.1298637+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e4ff34ca-dd63-4289-ac3e-99e584543fc4">
+      <Output>
+        <ErrorInfo>
+          <Message>Exception: Fixture process cleanup is not implemented.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 148&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 156&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Process_cleanup_refuses_wrong_identity_then_stops_the_owned_process() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 91&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Journal_refuses_secret_or_unrecognised_resource_fields" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="e334e92b-cc80-84e4-4162-1e942aa673fb">
+      <Execution id="f85a6566-1042-412f-b38c-31362ff0685b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Journal_refuses_secret_or_unrecognised_resource_fields" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Interrupted_resource_intent_remains_durable_and_refuses_cleanup" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="29803a25-7588-1b32-3ba6-3e42beac2969">
+      <Execution id="1783e037-4365-45ec-b45f-3d361cbedb01" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Interrupted_resource_intent_remains_durable_and_refuses_cleanup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Fixture_root_validation_refuses_a_sibling_or_a_different_identity" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="a986ac75-f552-7578-56d3-ceb796487423">
+      <Execution id="095c0c2f-f3a7-46f4-a1be-f6c8efb1b12c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Fixture_root_validation_refuses_a_sibling_or_a_different_identity" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Process_cleanup_refuses_wrong_identity_then_stops_the_owned_process" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="50b23f93-fa6e-ae19-4a2d-3acf699b9e95">
+      <Execution id="e4ff34ca-dd63-4289-ac3e-99e584543fc4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Process_cleanup_refuses_wrong_identity_then_stops_the_owned_process" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Fixture_cleanup_refuses_a_junction_and_preserves_its_external_target" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="128f6a6e-4f00-b042-fba9-9b26806def9c">
+      <Execution id="1d2a5842-67ae-45ec-85c8-3b711a49c2bb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Fixture_cleanup_refuses_a_junction_and_preserves_its_external_target" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="29803a25-7588-1b32-3ba6-3e42beac2969" executionId="1783e037-4365-45ec-b45f-3d361cbedb01" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a986ac75-f552-7578-56d3-ceb796487423" executionId="095c0c2f-f3a7-46f4-a1be-f6c8efb1b12c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e334e92b-cc80-84e4-4162-1e942aa673fb" executionId="f85a6566-1042-412f-b38c-31362ff0685b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="128f6a6e-4f00-b042-fba9-9b26806def9c" executionId="1d2a5842-67ae-45ec-85c8-3b711a49c2bb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50b23f93-fa6e-ae19-4a2d-3acf699b9e95" executionId="e4ff34ca-dd63-4289-ac3e-99e584543fc4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="0" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.15]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.87]       Exception: Fixture process cleanup is not implemented.&#xD;
+[xUnit.net 00:00:00.87]       &#xD;
+[xUnit.net 00:00:00.87]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(148,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:00.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(156,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:00.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(91,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Process_cleanup_refuses_wrong_identity_then_stops_the_owned_process()&#xD;
+[xUnit.net 00:00:00.87]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.40]       Exception: Fixture ownership journal is not implemented.&#xD;
+[xUnit.net 00:00:01.40]       &#xD;
+[xUnit.net 00:00:01.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.40]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(148,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:01.40]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(156,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:01.40]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(32,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Interrupted_resource_intent_remains_durable_and_refuses_cleanup()&#xD;
+[xUnit.net 00:00:01.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.96]       Exception: Fixture ownership journal is not implemented.&#xD;
+[xUnit.net 00:00:01.96]       &#xD;
+[xUnit.net 00:00:01.96]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.96]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(148,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:01.96]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(156,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:01.96]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(51,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Journal_refuses_secret_or_unrecognised_resource_fields()&#xD;
+[xUnit.net 00:00:01.96]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.47]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:02.47]       Expected: True&#xD;
+[xUnit.net 00:00:02.47]       Actual:   False&#xD;
+[xUnit.net 00:00:02.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(24,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Fixture_root_validation_refuses_a_sibling_or_a_different_identity()&#xD;
+[xUnit.net 00:00:02.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.06]       Exception: Fixture ownership journal is not implemented.&#xD;
+[xUnit.net 00:00:03.06]       &#xD;
+[xUnit.net 00:00:03.06]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.06]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(148,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:03.06]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(156,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:03.06]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(68,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Fixture_cleanup_refuses_a_junction_and_preserves_its_external_target()&#xD;
+[xUnit.net 00:00:03.06]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.07]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:55:15.1326604+03:00">
+        <Text>[xUnit.net 00:00:00.87]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Process_cleanup_refuses_wrong_identity_then_stops_the_owned_process [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:55:15.6591061+03:00">
+        <Text>[xUnit.net 00:00:01.40]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Interrupted_resource_intent_remains_durable_and_refuses_cleanup [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:55:16.2230297+03:00">
+        <Text>[xUnit.net 00:00:01.96]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Journal_refuses_secret_or_unrecognised_resource_fields [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:55:16.7378877+03:00">
+        <Text>[xUnit.net 00:00:02.47]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Fixture_root_validation_refuses_a_sibling_or_a_different_identity [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-03T23:55:17.3235413+03:00">
+        <Text>[xUnit.net 00:00:03.06]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Fixture_cleanup_refuses_a_junction_and_preserves_its_external_target [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

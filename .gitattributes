@@ -1,0 +1,4 @@
+# These retained evidence files require exact bytes: the manifest has a SHA-256 pin,
+# and PostgreSQL refusal correlation records byte offsets into the server logs.
+docs/verification/2026-10-03-next002-windows-fixture/live/4b7d6d4a3f6a46c3ad7fb15f3a2f3e66/postgresql-provenance.json -text -diff
+docs/verification/2026-10-03-next002-windows-fixture/live/*/postgres.log -text -diff

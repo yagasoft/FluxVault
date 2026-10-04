@@ -28,6 +28,9 @@ internal static class Program
         try
         {
             var options = Parse(arguments);
+            if (Require(options, "mode") == "windows-db-probe")
+                return WindowsDatabaseProbe.RunAsync(Require(options, "configuration"), Require(options, "host"),
+                    Require(options, "actor"), Guid.ParseExact(Require(options, "probe-id"), "N")).GetAwaiter().GetResult();
             var scratch = StorageOwnership.Canonical(Require(options, "scratch"));
             var allowedParent = Path.Combine(Path.GetTempPath(), "FluxVault.Integrity");
             if (!string.Equals(Path.GetDirectoryName(scratch), allowedParent, StringComparison.OrdinalIgnoreCase) ||

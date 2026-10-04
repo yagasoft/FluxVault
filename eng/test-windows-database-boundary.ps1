@@ -3,6 +3,7 @@
 param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [string]$FixtureId = '43a32654d27a4e8fb0b20012702300af',
     [switch]$FreshReference,
+    [switch]$RunCatalogueTests,
     [string]$EvidenceDirectory = (Join-Path $PSScriptRoot ("../docs/verification/2026-10-03-next002-windows-fixture/live/$FixtureId")))
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
@@ -436,7 +437,7 @@ try {
     }
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
-    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
+    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
     @{Dotnet=$fixtureDotnet;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot)} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     foreach($entry in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'runtime') -Recurse -Force){Assert-VaultFixtureTrustedPath $entry.FullName}
     $bootstrap=[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(48))
@@ -497,6 +498,7 @@ host all all ::1/128 reject
         $probe=@($attempt.Result.Results | Where-Object {$_.Kind -eq $clientKind})[0]
         if($clientKind -eq 'Npgsql'){
             if(-not $probe.Result.Authenticated -or -not $probe.Result.FixtureVerified){throw 'SYSTEM password-free Npgsql authentication failed.'}
+            if($RunCatalogueTests -and ($null -eq $probe.Result.Catalogue -or $probe.Result.Catalogue.Passed -lt 40 -or -not $probe.Result.Catalogue.PolicyActorsAreDoubles)){throw 'Required real catalogue contracts did not complete.'}
         }elseif($probe.ExitCode -ne 0 -or $probe.Output -ne "$FixtureId|fv_gate_261003|fv_gate_service"){throw 'SYSTEM password-free libpq authentication failed.'}
     }}
     foreach($actor in @('A','B')) {

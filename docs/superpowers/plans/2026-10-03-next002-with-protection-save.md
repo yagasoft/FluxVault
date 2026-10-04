@@ -71,6 +71,8 @@ The [disposable Windows prerequisite](../../verification/2026-10-03-next002-wind
 
 The [bounded pipe transport milestone](../../verification/2026-10-04-next002-pipe/README.md) is implemented and independently approved: connected-handle owner/DACL checks before data, owned effective caller tokens, retained served anchor, bounded framing/admission and joined shutdown. Native standard-user-to-SYSTEM, packaged/remote and vault policy/path/isolation cases remain required. This intermediate branch is not deployable until the authenticated vault dispatcher is composed and the full gates pass.
 
+The [catalogue/admission milestone](../../verification/2026-10-04-next002-authorisation/README.md) uses independently approved PostgreSQL persistence: fixed protected bootstrap, coherent transactional permissions/bindings/configuration, durable operation receipts and bounded summary discovery. Forty real-store contracts pass in the owned SYSTEM SSPI fixture; policy actors are doubles, and no native vault file-access or full S1 result is claimed. The dispatcher remains uncomposed until its protected runtime executor exists. Same-database metadata namespace and caller-authorised source/output work are the immediate blockers to the first safe round trip; the acceptance gates remain unchanged.
+
 **Source map:**
 
 | Boundary | Existing files | New focused contracts/helpers proposed |

@@ -7,7 +7,7 @@ using Npgsql;
 namespace FluxVault.Testing;
 
 internal sealed record WindowsDatabaseProbeConfiguration(string FixtureId, string Root, int Port,
-    string Database, string Role, int TimeoutSeconds, Dictionary<string, string> Actors)
+    string Database, string Role, int TimeoutSeconds, Dictionary<string, string> Actors, bool RunCatalogueTests = false)
 {
     internal static string AllowedParent => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "FluxVault.Tests", "NEXT002");
 
@@ -63,7 +63,8 @@ internal sealed record WindowsDatabaseProbeConfiguration(string FixtureId, strin
 
 internal static class WindowsDatabaseProbe
 {
-    internal static async Task<int> RunAsync(string configurationPath, string host, string actor, Guid probeId)
+    internal static async Task<int> RunAsync(string configurationPath, string host, string actor, Guid probeId,
+        Func<NpgsqlDataSource, WindowsDatabaseProbeConfiguration, Task<object>>? catalogueProbe = null)
     {
         if (host is not ("127.0.0.1" or "::1") || probeId == Guid.Empty)
             throw new ArgumentException("Probe requires an explicit loopback and operation identity.");
@@ -82,8 +83,10 @@ internal static class WindowsDatabaseProbe
                 reader.GetString(2) != configuration.Database || reader.GetString(3) != configuration.Role)
                 throw new InvalidOperationException("Probe server identity did not match the generated cluster.");
         });
+        var catalogue = result.Authenticated && result.FixtureVerified && actor == "System" && configuration.RunCatalogueTests && catalogueProbe is not null
+            ? await catalogueProbe(dataSource, configuration) : null;
         Console.WriteLine(JsonSerializer.Serialize(new { configuration.FixtureId, ProbeId = probeId.ToString("N"), Actor = actor,
-            WindowsSid = sid, Host = host, result.Authenticated, result.FixtureVerified, result.SqlState, result.ErrorKind }));
+            WindowsSid = sid, Host = host, result.Authenticated, result.FixtureVerified, result.SqlState, result.ErrorKind, Catalogue = catalogue }));
         return 0;
     }
 

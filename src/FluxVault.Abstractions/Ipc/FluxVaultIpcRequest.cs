@@ -1,6 +1,7 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Sync;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Abstractions.Security;
 
 namespace FluxVault.Abstractions.Ipc;
 
@@ -23,7 +24,13 @@ public sealed record FluxVaultIpcRequest(
     FluxVaultStatusDetailLevel StatusDetailLevel = FluxVaultStatusDetailLevel.Full,
     bool PurgeRemovedSelections = false,
     IReadOnlyList<RepositoryPurgeScope>? RemovedSelections = null,
-    IReadOnlyList<RepositoryPurgeScope>? PreservedSelections = null)
+    IReadOnlyList<RepositoryPurgeScope>? PreservedSelections = null,
+    VaultId? VaultId = null,
+    long? ExpectedVaultRevision = null,
+    Guid? OperationId = null,
+    IReadOnlyList<VaultAccessGrant>? AccessGrants = null,
+    VaultId? VaultsAfter = null,
+    int VaultPageSize = 128)
 {
     public string? DestinationPath => OutputPath;
 

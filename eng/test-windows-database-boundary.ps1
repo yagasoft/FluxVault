@@ -5,6 +5,7 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$FreshReference,
     [switch]$RunCatalogueTests,
     [switch]$RunMetadataTests,
+    [switch]$RunCallerFileTests,
     [string]$EvidenceDirectory = (Join-Path $PSScriptRoot ("../docs/verification/2026-10-03-next002-windows-fixture/live/$FixtureId")))
 $ErrorActionPreference = 'Stop'
 if($RunMetadataTests -and -not $RunCatalogueTests){throw 'Metadata proof requires the catalogue contracts.'}
@@ -159,6 +160,19 @@ function Invoke-SystemActor {
         $parsedInstance=[guid]::Empty
         if(-not [guid]::TryParse($instanceId,[ref]$parsedInstance) -or $parsedInstance -eq [guid]::Empty){throw 'SYSTEM dispatch did not return a task instance identity.'}
         Set-VaultFixtureTaskInstance $fixtureJournal $fixtureTask (Get-TaskHash) $instanceId
+        if ($ClientKind -eq 'CallerFiles') {
+            $ready=Join-Path $fixtureRoot 'runtime/caller-files-ready.json'
+            $deadline=[DateTime]::UtcNow.AddSeconds(15)
+            while (-not (Test-Path -LiteralPath $ready)) {
+                if ([DateTime]::UtcNow -gt $deadline) { throw 'Caller file server readiness exceeded its deadline.' }
+                Start-Sleep -Milliseconds 100
+            }
+            foreach ($actor in @('A','B')) {
+                $native=Invoke-UserActor $actor $HostAddress $ClientKind
+                $fixtureObservations.Add(@{NativeCallerFiles=$native})
+            }
+            'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/caller-files-stop')
+        }
         $result=Read-ActorResult System $runId
         Wait-SystemTaskIdle $registered
         Join-ActorProcesses System $runId
@@ -357,10 +371,15 @@ function Remove-OwnedFixture {
     } while([DateTime]::UtcNow -lt $deadline)
     if($left.Count){throw 'A process still references the fixture root; cleanup refused without terminating unproven ownership.'}
     foreach($resource in @($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Process' -and $_.State -eq 'Intent'})){Set-VaultFixtureIntentAbsent $fixtureJournal Process $resource.Name}
-    Complete-VaultFixtureJournal $fixtureJournal
+    if($fixtureJournal.State -ne 'Complete'){Complete-VaultFixtureJournal $fixtureJournal}
+    # Published output intentionally excludes the elevated test runner. After all probe
+    # accounts/jobs are gone, SYSTEM removes only allowlisted outputs without altering ACLs.
+    & (Join-Path $PSScriptRoot 'fixtures/cleanup-windows-fixture-outputs.ps1') -Root $fixtureRoot -FixtureId $FixtureId
     New-Item -ItemType Directory -Path $fixtureEvidence -Force | Out-Null
     Copy-Item -LiteralPath $fixtureJournal.Path -Destination (Join-Path $fixtureEvidence 'completed-owner.json')
-    foreach($path in @('postgres.log','before.json','result.json','postgresql-provenance.json')) { if(Test-Path -LiteralPath (Join-Path $fixtureRoot $path)){Copy-Item -LiteralPath (Join-Path $fixtureRoot $path) -Destination (Join-Path $fixtureEvidence $path)} }
+    foreach($path in @('postgres.log','before.json','result.json','postgresql-provenance.json','output-cleanup-owner.json','output-cleanup-result.json','output-cleanup-process.json')) { if(Test-Path -LiteralPath (Join-Path $fixtureRoot $path)){Copy-Item -LiteralPath (Join-Path $fixtureRoot $path) -Destination (Join-Path $fixtureEvidence $path)} }
+    $callerError=Join-Path $fixtureRoot 'runtime/caller-server-error.json'
+    if(Test-Path -LiteralPath $callerError){Assert-VaultFixtureTrustedPath $callerError;Copy-Item -LiteralPath $callerError -Destination (Join-Path $fixtureEvidence 'caller-server-error.json')}
     # Supervisors persist only redacted exit/output diagnostics, never child environment or passwords.
     foreach($toolResult in Get-ChildItem -LiteralPath $fixtureRoot -File | Where-Object {$_.Name -match '^(tool-[0-9a-f]{32}|system-scheduler-[0-9a-f]{32}|system-actor-error)\.json$'}) {
         Assert-VaultFixtureTrustedPath $toolResult.FullName
@@ -516,6 +535,12 @@ host all all ::1/128 reject
             $acl=@($attempt.Result.Results | Where-Object {$_.Kind -eq 'ACL'})
             if($acl.Count -ne 1 -or $acl[0].ReadProtected -or $acl[0].WriteRuntime){throw 'Ordinary user bypassed the fixture file boundary.'}
         }}
+    }
+    if ($RunCallerFileTests) {
+        $native = Invoke-SystemActor '127.0.0.1' 'CallerFiles'
+        $fixtureObservations.Add(@{NativeCallerFiles=$native})
+        $proof=@($native.Results | Where-Object {$_.Kind -eq 'CallerFiles'})
+        if($proof.Count -ne 1 -or $proof[0].Result.Passed -lt 8 -or -not $proof[0].Result.NativeCallerTokens){throw 'Native caller file contracts did not complete.'}
     }
 } catch { $fixtureFailure=$_.Exception.Message; $fixtureFailureLocation=$_.ScriptStackTrace }
 finally {

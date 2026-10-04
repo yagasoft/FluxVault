@@ -13,6 +13,101 @@ namespace FluxVault.Windows.Tests;
 public sealed class WindowsCallerSourceTests
 {
     [Fact]
+    public async Task Ordinary_case_variant_resolves_the_same_selected_root()
+    {
+        using var workspace = new Workspace(); using var caller = await Caller();
+        var selected = Path.Combine(workspace.Root, "Selected"); Directory.CreateDirectory(selected);
+        await File.WriteAllTextAsync(Path.Combine(selected, "document.txt"), "selected bytes");
+        await using var opened = await new WindowsCallerFileAccess().OpenSourceAsync(caller, selected,
+            Path.Combine(workspace.Root, "selected", "document.txt"));
+        using var reader = new StreamReader(opened); Assert.Equal("selected bytes", await reader.ReadToEndAsync());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Case_distinct_requested_root_is_denied_before_source_bytes(bool blindAncestor)
+    {
+        using var workspace = new Workspace(); using var caller = await Caller();
+        var parent = Path.Combine(workspace.Root, "case-parent"); Directory.CreateDirectory(parent);
+        using (var writable = CreateFile(parent, 0x100100, 7, IntPtr.Zero, 3, 0x02200000, IntPtr.Zero))
+        {
+            Assert.False(writable.IsInvalid);
+            uint enabled = 1;
+            Assert.True(SetFileInformationByHandle(writable, 23, ref enabled, sizeof(uint)),
+                "Native case-sensitive parent setup failed: " + Marshal.GetLastPInvokeError());
+        }
+        using (var parentHandle = WindowsCallerFileAccess.Open(null, "\\??\\" + parent, true))
+        {
+            using var first = CreateExactDirectory(parentHandle, "Root");
+            using var second = CreateExactDirectory(parentHandle, "root");
+            // Only the blind ancestor is case-sensitive; selected roots themselves remain supported.
+            uint disabled = 0;
+            Assert.True(SetFileInformationByHandle(first, 23, ref disabled, sizeof(uint)));
+            Assert.True(SetFileInformationByHandle(second, 23, ref disabled, sizeof(uint)));
+            await WriteChild(first, "selected bytes"); await WriteChild(second, "other bytes");
+            using var selectedRead = WindowsCallerFileAccess.Open(first, "document.txt", false);
+            using var otherRead = WindowsCallerFileAccess.Open(second, "document.txt", false);
+            using var selectedStream = new FileStream(selectedRead, FileAccess.Read, 4096, true);
+            using var otherStream = new FileStream(otherRead, FileAccess.Read, 4096, true);
+            using var selectedReader = new StreamReader(selectedStream); using var otherReader = new StreamReader(otherStream);
+            Assert.Equal("selected bytes", await selectedReader.ReadToEndAsync());
+            Assert.Equal("other bytes", await otherReader.ReadToEndAsync());
+        }
+        var original = new DirectoryInfo(parent).GetAccessControl();
+        if (blindAncestor)
+        {
+            var acl = new DirectoryInfo(parent).GetAccessControl();
+            acl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(caller.UserSid), FileSystemRights.ReadAttributes, AccessControlType.Deny));
+            new DirectoryInfo(parent).SetAccessControl(acl);
+        }
+        try
+        {
+            await Rejected<UnauthorizedAccessException>(() => new WindowsCallerFileAccess().OpenSourceAsync(caller,
+                Path.Combine(parent, "Root"), Path.Combine(parent, "root", "document.txt")));
+        }
+        finally { new DirectoryInfo(parent).SetAccessControl(original); }
+    }
+
+    private static async Task WriteChild(SafeFileHandle parent, string content)
+    {
+        using var file = WindowsCallerFileAccess.OpenNative(parent, "document.txt", 0x12019F, false, disposition: 2, asynchronous: true);
+        await using var stream = new FileStream(file, FileAccess.ReadWrite, 4096, true);
+        await stream.WriteAsync(Encoding.UTF8.GetBytes(content));
+    }
+
+    private static SafeFileHandle CreateExactDirectory(SafeFileHandle parent, string name)
+    {
+        var text = Marshal.StringToHGlobalUni(name); var pointer = Marshal.AllocHGlobal(Marshal.SizeOf<UnicodeString>());
+        try
+        {
+            Marshal.StructureToPtr(new UnicodeString { Length = (ushort)(name.Length * 2), MaximumLength = (ushort)(name.Length * 2), Buffer = text }, pointer, false);
+            var attributes = new ObjectAttributes { Length = Marshal.SizeOf<ObjectAttributes>(), Root = parent.DangerousGetHandle(), Name = pointer };
+            var status = NtCreateFile(out var handle, 0x1001A0, ref attributes, out _, IntPtr.Zero, 0, 7, 2, 0x200021, IntPtr.Zero, 0);
+            Assert.Equal(0, status); return handle;
+        }
+        finally { Marshal.FreeHGlobal(pointer); Marshal.FreeHGlobal(text); }
+    }
+    [Fact]
+    public async Task Traversal_only_ancestor_allows_root_bound_source_reads()
+    {
+        using var workspace = new Workspace();
+        using var caller = await Caller();
+        var parent = Path.Combine(workspace.Root, "blind-parent"); Directory.CreateDirectory(parent);
+        var selected = Path.Combine(parent, "selected"); Directory.CreateDirectory(selected);
+        var source = Path.Combine(selected, "document.txt"); await File.WriteAllTextAsync(source, "working bytes");
+        var original = new DirectoryInfo(parent).GetAccessControl();
+        var acl = new DirectoryInfo(parent).GetAccessControl();
+        acl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(caller.UserSid), FileSystemRights.ReadAttributes, AccessControlType.Deny));
+        new DirectoryInfo(parent).SetAccessControl(acl);
+        try
+        {
+            await using var opened = await new WindowsCallerFileAccess().OpenSourceAsync(caller, selected, source);
+            using var reader = new StreamReader(opened); Assert.Equal("working bytes", await reader.ReadToEndAsync());
+        }
+        finally { new DirectoryInfo(parent).SetAccessControl(original); }
+    }
+    [Fact]
     public async Task Parent_is_pinned_before_the_source_file_is_opened()
     {
         using var workspace = new Workspace();
@@ -234,4 +329,11 @@ public sealed class WindowsCallerSourceTests
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool DeviceIoControl(SafeFileHandle handle, uint code, byte[] input, int inputSize, IntPtr output, int outputSize, out int returned, IntPtr overlapped);
+    [DllImport("kernel32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SetFileInformationByHandle(SafeFileHandle handle, int kind, ref uint value, int size);
+    [StructLayout(LayoutKind.Sequential)] private struct UnicodeString { internal ushort Length, MaximumLength; internal IntPtr Buffer; }
+    [StructLayout(LayoutKind.Sequential)] private struct ObjectAttributes { internal int Length; internal IntPtr Root, Name; internal uint Attributes; internal IntPtr SecurityDescriptor, Quality; }
+    [StructLayout(LayoutKind.Sequential)] private struct IoStatus { internal IntPtr Status, Information; }
+    [DllImport("ntdll.dll")] private static extern int NtCreateFile(out SafeFileHandle handle, uint access, ref ObjectAttributes attributes, out IoStatus status,
+        IntPtr allocation, uint fileAttributes, uint sharing, uint disposition, uint options, IntPtr ea, uint eaLength);
 }

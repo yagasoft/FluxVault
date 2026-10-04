@@ -279,10 +279,16 @@ function Stop-VaultFixtureProcess {
 }
 
 function Assert-VaultFixtureTrustedPath {
-    param([string]$Path)
+    param([string]$Path, [string]$AdditionalTrustedOwnerSid)
     Assert-FixtureNoReparse $Path
     $trusted = @('S-1-5-18', 'S-1-5-32-544', [Security.Principal.WindowsIdentity]::GetCurrent().User.Value,
         'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464')
+    if($AdditionalTrustedOwnerSid) {
+        if($AdditionalTrustedOwnerSid -notin @(Get-LocalGroupMember -SID 'S-1-5-32-544' | ForEach-Object {$_.SID.Value})) {
+            throw 'Additional fixture owner is not a direct local administrator.'
+        }
+        $trusted += $AdditionalTrustedOwnerSid
+    }
     $target = [IO.Path]::GetFullPath($Path)
     $protectedNext = $null
     for ($current = $target; -not [string]::IsNullOrEmpty($current); $current = [IO.Path]::GetDirectoryName($current)) {

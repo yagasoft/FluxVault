@@ -45,7 +45,7 @@ catch {
     try { $admissionState=[FluxVault.Fixtures.OwnedWindowsJob]::CurrentContainment() } catch { $admissionState='Containment query failed: '+$_.Exception.Message }
     throw ($admissionError+'; '+$admissionState)
 }
-if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq')) { throw 'Actor requires one explicit loopback/client probe.' }
+if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles')) { throw 'Actor requires one explicit loopback/client probe.' }
 $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 if ($sid -ne $configuration.Actors.$Actor -or -not [guid]::TryParseExact($RunId, 'N', [ref]$parsed) -or $parsed -eq [guid]::Empty) { throw 'Actor identity mismatch.' }
 $expectedRoot = Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $configuration.FixtureId
@@ -69,7 +69,8 @@ function Invoke-ActorTool {
         $stdout = $child.StandardOutput.ReadToEndAsync(); $stderr = $child.StandardError.ReadToEndAsync()
         $childIdentity = Get-VaultFixtureLiveProcessIdentity $child
         if ($null -ne $childIdentity) { ($childIdentity | ConvertTo-Json -Compress) | Add-Content -LiteralPath $processJournal }
-        if (-not $child.WaitForExit(20000)) { throw 'Actor tool exceeded its finite deadline.' }
+        $limit=if($ClientKind -eq 'CallerFiles'){60000}else{20000}
+        if (-not $child.WaitForExit($limit)) { throw 'Actor tool exceeded its finite deadline.' }
         return @{ ExitCode=$child.ExitCode; Output=$stdout.GetAwaiter().GetResult(); Error=$stderr.GetAwaiter().GetResult() }
     } finally {
         if (-not $child.HasExited) { Stop-VaultFixtureProcessTree (Get-VaultFixtureProcessIdentity $child) | Out-Null }
@@ -79,7 +80,13 @@ function Invoke-ActorTool {
 }
 try {
     $probeId = [guid]::NewGuid().ToString('N')
-    if ($ClientKind -eq 'Npgsql') {
+    if ($ClientKind -eq 'CallerFiles') {
+        $mode=if($Actor -eq 'System'){'windows-file-server'}else{'windows-file-client'}
+        $result=Invoke-ActorTool -Executable $runtime.Dotnet -Arguments @((Join-Path $Root 'runtime/FluxVault.TestHost.dll'),'--mode',$mode,
+            '--configuration',(Join-Path $Root 'runtime/database-probe.json'),'--actor',$Actor)
+        if($result.ExitCode -ne 0){throw ('Native caller file proof failed: '+$result.Error)}
+        $results.Add(@{Kind='CallerFiles';Result=($result.Output | ConvertFrom-Json)})
+    } elseif ($ClientKind -eq 'Npgsql') {
         $result = Invoke-ActorTool -Executable $runtime.Dotnet -Arguments @((Join-Path $Root 'runtime/FluxVault.TestHost.dll'), '--mode','windows-db-probe',
             '--configuration',(Join-Path $Root 'runtime/database-probe.json'), '--host',$HostAddress,'--actor',$Actor,'--probe-id',$probeId)
         if ($result.ExitCode -ne 0) { throw "Npgsql probe failed before its result: $($result.Error)" }

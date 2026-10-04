@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d654c186-5762-435c-b2f8-a2354fc736de" name="os008@OS008-HOME 2026-10-04 08:29:38" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T08:29:38.2118678+03:00" queuing="2026-10-04T08:29:38.2118679+03:00" start="2026-10-04T08:29:37.5198451+03:00" finish="2026-10-04T08:29:38.2154459+03:00" />
+  <TestSettings name="default" id="a3ef22f7-5cbe-486b-a3dd-3f98dc009edc">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_08_29_38" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9e7b687a-3b48-4dce-9f4e-bc09809d34b3" testId="22c4ce63-7a12-b093-f52e-c3e26fca9203" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Case_distinct_requested_root_is_denied_before_source_bytes(blindAncestor: True)" computerName="OS008-HOME" duration="00:00:00.0054001" startTime="2026-10-04T08:29:38.1169452+03:00" endTime="2026-10-04T08:29:38.1220547+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9e7b687a-3b48-4dce-9f4e-bc09809d34b3" />
+    <UnitTestResult executionId="3172bccf-2a9c-4119-bd42-e66d14853341" testId="2a524a7f-d3d0-92e7-e5d3-5842da449d78" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Case_distinct_requested_root_is_denied_before_source_bytes(blindAncestor: False)" computerName="OS008-HOME" duration="00:00:00.0140150" startTime="2026-10-04T08:29:38.1099570+03:00" endTime="2026-10-04T08:29:38.1164362+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3172bccf-2a9c-4119-bd42-e66d14853341" />
+    <UnitTestResult executionId="a0053575-d307-4ec8-9ced-7717f8137e86" testId="c882a0e6-1992-e8d9-387a-f36d9f9cfabe" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Ordinary_case_variant_resolves_the_same_selected_root" computerName="OS008-HOME" duration="00:00:00.0407156" startTime="2026-10-04T08:29:38.0515796+03:00" endTime="2026-10-04T08:29:38.1006440+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a0053575-d307-4ec8-9ced-7717f8137e86" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Case_distinct_requested_root_is_denied_before_source_bytes(blindAncestor: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="2a524a7f-d3d0-92e7-e5d3-5842da449d78">
+      <Execution id="3172bccf-2a9c-4119-bd42-e66d14853341" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Case_distinct_requested_root_is_denied_before_source_bytes" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Case_distinct_requested_root_is_denied_before_source_bytes(blindAncestor: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="22c4ce63-7a12-b093-f52e-c3e26fca9203">
+      <Execution id="9e7b687a-3b48-4dce-9f4e-bc09809d34b3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Case_distinct_requested_root_is_denied_before_source_bytes" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Ordinary_case_variant_resolves_the_same_selected_root" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="c882a0e6-1992-e8d9-387a-f36d9f9cfabe">
+      <Execution id="a0053575-d307-4ec8-9ced-7717f8137e86" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Ordinary_case_variant_resolves_the_same_selected_root" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="22c4ce63-7a12-b093-f52e-c3e26fca9203" executionId="9e7b687a-3b48-4dce-9f4e-bc09809d34b3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a524a7f-d3d0-92e7-e5d3-5842da449d78" executionId="3172bccf-2a9c-4119-bd42-e66d14853341" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c882a0e6-1992-e8d9-387a-f36d9f9cfabe" executionId="a0053575-d307-4ec8-9ced-7717f8137e86" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.14]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.24]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

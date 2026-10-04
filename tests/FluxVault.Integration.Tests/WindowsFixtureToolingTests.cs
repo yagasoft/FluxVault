@@ -6,6 +6,21 @@ namespace FluxVault.Integration.Tests;
 // Current-user tooling checks. These do not claim the real A/B/SYSTEM acceptance gates.
 public sealed class WindowsFixtureToolingTests
 {
+    [Fact]
+    public async Task Additional_trusted_fixture_owner_requires_direct_administrator_membership()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $adminSid=@(Get-LocalGroupMember -SID 'S-1-5-32-544' | ForEach-Object {$_.SID.Value})[0]
+            Assert-VaultFixtureTrustedPath $root -AdditionalTrustedOwnerSid $adminSid
+            $denied=$false
+            try {Assert-VaultFixtureTrustedPath $root -AdditionalTrustedOwnerSid 'S-1-5-21-1-2-3-9199'}
+            catch {$denied=$_.Exception.Message -eq 'Additional fixture owner is not a direct local administrator.'}
+            @{AdministratorAccepted=$true;UnrelatedSidDenied=$denied} | ConvertTo-Json -Compress
+            """);
+        Assert.True(result.GetProperty("AdministratorAccepted").GetBoolean());
+        Assert.True(result.GetProperty("UnrelatedSidDenied").GetBoolean());
+    }
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

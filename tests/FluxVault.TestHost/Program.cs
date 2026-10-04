@@ -32,6 +32,8 @@ internal static class Program
         try
         {
             var options = Parse(arguments);
+            if (Require(options, "mode") is "windows-file-server" or "windows-file-client")
+                return WindowsCallerFileProbe.RunAsync(Require(options, "configuration"), Require(options, "actor")).GetAwaiter().GetResult();
             if (Require(options, "mode") == "windows-db-probe")
                 return WindowsDatabaseProbe.RunAsync(Require(options, "configuration"), Require(options, "host"),
                     Require(options, "actor"), Guid.ParseExact(Require(options, "probe-id"), "N"), VaultCatalogueProbe.RunAsync).GetAwaiter().GetResult();

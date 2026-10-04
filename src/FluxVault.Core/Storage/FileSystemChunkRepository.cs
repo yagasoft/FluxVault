@@ -469,6 +469,64 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         return await RestoreManifestAsync(manifest, outputPath, destinationExisted, writeRestoreHint: true, cancellationToken).ConfigureAwait(false);
     }
 
+    public Task<RepositoryRestoreResult> RestoreAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
+        => RestoreToTargetAsync(versionId, target, writeRestoreHint: true, cancellationToken);
+
+    public async Task RestorePreviewAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
+        => await RestoreToTargetAsync(versionId, target, writeRestoreHint: false, cancellationToken).ConfigureAwait(false);
+
+    private async Task<RepositoryRestoreResult> RestoreToTargetAsync(string versionId, IRepositoryRestoreTarget target,
+        bool writeRestoreHint, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        await using (target.ConfigureAwait(false))
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
+            var outputPath = Path.GetFullPath(target.OutputPath);
+            // The target owns native destination validation. Privileged repository code does not reopen user paths.
+            if (new[] { rootPath }.Concat(configuredMirrorNodes.Select(node => node.Path)).Any(root => StorageOwnership.Contains(root, outputPath)))
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Restore destination must be outside repository storage.");
+            await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+            var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
+            var plan = await new RestoreGraphValidator(verifiedReader, integrityLimits, ReadManifestByVersionAsync)
+                .BuildAsync(manifest, outputPath, cancellationToken).ConfigureAwait(false);
+            await target.PrepareAsync(plan.Kind, cancellationToken).ConfigureAwait(false);
+            foreach (var directory in plan.Directories.Where(path => path.Length > 0))
+                await target.CreateDirectoryAsync(directory, cancellationToken).ConfigureAwait(false);
+            foreach (var file in plan.Files)
+            {
+                await using var output = await target.CreateFileAsync(file.RelativePath, cancellationToken).ConfigureAwait(false);
+                foreach (var chunk in file.Manifest.Chunks)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var bytes = await verifiedReader.ReadAsync(rootPath, ChunkDescriptor.FromChunk(chunk), cancellationToken).ConfigureAwait(false);
+                    await output.WriteAsync(bytes, cancellationToken).ConfigureAwait(false);
+                }
+                if (output.Length != file.Manifest.LogicalLength)
+                    throw new RepositoryIntegrityException(RepositoryIntegrityFailure.CorruptObject, "Restored file length mismatch.");
+                await target.FlushFileAsync(output, cancellationToken).ConfigureAwait(false);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            faults?.Hit(RepositoryFaultPoint.BeforeRestorePublication, outputPath);
+            cancellationToken.ThrowIfCancellationRequested();
+            var warnings = new List<string>(await target.PublishAsync(cancellationToken).ConfigureAwait(false));
+            if (writeRestoreHint)
+                foreach (var file in plan.Files)
+                {
+                    var restoredPath = plan.Kind == RepositoryEntryKind.Folder ? Path.Combine(outputPath, file.RelativePath) : outputPath;
+                    try
+                    {
+                        faults?.Hit(RepositoryFaultPoint.AfterRestorePublication, restoredPath);
+                        faults?.Hit(RepositoryFaultPoint.BeforeRestoreHint, restoredPath);
+                        WriteRestoreHint(restoredPath, file.Manifest);
+                    }
+                    catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or OperationCanceledException)
+                    { warnings.Add($"Content was restored and verified, but lineage recording failed for '{restoredPath}': {exception.Message}"); }
+                }
+            return new(outputPath, plan.LogicalBytes, plan.Files.Count, warnings);
+        }
+    }
+
     public async Task RestorePreviewAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(versionId);

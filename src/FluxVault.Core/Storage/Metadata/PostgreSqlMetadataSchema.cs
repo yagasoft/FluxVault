@@ -4,6 +4,9 @@ public static class PostgreSqlMetadataSchema
 {
     public const int CurrentVersion = 1;
 
+    public static string ForVault(FluxVault.Abstractions.Security.VaultId vaultId) =>
+        CreateSchemaSql.Replace("fluxvault", '"' + vaultId.MetadataNamespace + '"', StringComparison.Ordinal);
+
     public const string CreateSchemaSql = """
         CREATE SCHEMA IF NOT EXISTS fluxvault;
 

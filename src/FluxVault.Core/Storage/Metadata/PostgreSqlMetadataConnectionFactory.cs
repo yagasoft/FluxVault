@@ -28,4 +28,13 @@ public static class PostgreSqlMetadataConnectionFactory
     {
         return new NpgsqlConnection(BuildConnectionString(configuration));
     }
+
+    public static NpgsqlDataSource CreateWindowsDataSource(MetadataStoreConfiguration configuration)
+    {
+        var builder = new NpgsqlConnectionStringBuilder(BuildConnectionString(configuration)) { RequireAuth = "SSPI", SearchPath = "pg_catalog" };
+        var source = new NpgsqlDataSourceBuilder(builder.ConnectionString);
+        source.UsePasswordProvider(_ => throw new NotSupportedException("Service-managed metadata requires Windows SSPI."),
+            (_, _) => ValueTask.FromException<string>(new NotSupportedException("Service-managed metadata requires Windows SSPI.")));
+        return source.Build();
+    }
 }

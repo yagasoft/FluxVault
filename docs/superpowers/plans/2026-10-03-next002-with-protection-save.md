@@ -75,6 +75,8 @@ The [catalogue/admission milestone](../../verification/2026-10-04-next002-author
 
 **Source map:**
 
+The [bound metadata namespace prerequisite](../../verification/2026-10-04-next002-metadata/README.md) now has independently reviewed source and live real-store evidence: 20 metadata contracts per loopback, including same-database collisions, scoped locks, deletion snapshots and binding refusals. Repository marker/manifest binding and caller-authorised source/output operations still block the first safe S1 round trip; no acceptance gate is closed by this prerequisite alone.
+
 | Boundary | Existing files | New focused contracts/helpers proposed |
 | --- | --- | --- |
 | Windows caller and framed IPC | `src/FluxVault.Core/Ipc/NamedPipeFluxVaultServer.cs`, `NamedPipeFluxVaultClient.cs`, `IFluxVaultRequestHandler.cs`; `src/FluxVault.Service/Program.cs` | `FluxVaultCallerContext`, `AuthenticatedFluxVaultRequestHandler`, `FluxVaultIpcLimits`; Windows token/path helpers under `src/FluxVault.Windows/Security/` |

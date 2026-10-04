@@ -22,7 +22,9 @@ internal static class VaultCatalogueProbe
             if (!await reader.ReadAsync() || reader.GetString(0) != fixture.FixtureId || reader.GetString(1) != fixture.Database || reader.GetString(2) != fixture.Role)
                 throw new InvalidOperationException("Catalogue test does not own this database.");
         var checks = new List<string>();
-        await using var store = new PostgreSqlVaultCatalogue(new(Guid.ParseExact(fixture.FixtureId, "N"), "127.0.0.1", fixture.Port, fixture.Database, fixture.Role));
+        var host = new NpgsqlConnectionStringBuilder(dataSource.ConnectionString).Host;
+        if (host is not ("127.0.0.1" or "::1")) throw new InvalidOperationException("Catalogue test requires an explicit loopback.");
+        await using var store = new PostgreSqlVaultCatalogue(new(Guid.ParseExact(fixture.FixtureId, "N"), host, fixture.Port, fixture.Database, fixture.Role));
         using var owner = new PolicyCaller(fixture.Actors["A"]);
         using var other = new PolicyCaller(fixture.Actors["B"]);
         using var administrator = new PolicyCaller("S-1-5-18");
@@ -120,7 +122,8 @@ internal static class VaultCatalogueProbe
             Check(await acl.ExecuteScalarAsync() is false, "PUBLIC has no control schema access");
             await using var durability = new NpgsqlCommand("SELECT current_setting('fsync') = 'on' AND current_setting('synchronous_commit') = 'on' AND current_setting('full_page_writes') = 'on'", connection);
             Check(await durability.ExecuteScalarAsync() is true, "acknowledgement durability settings");
-            return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true };
+            var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one, two) : null;
+            return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true, StoreHost = host, Metadata = metadata };
         }
         finally
         {
@@ -133,7 +136,7 @@ internal static class VaultCatalogueProbe
         {
             var id = VaultId.New();
             var state = Path.Combine(fixture.Root, "catalogue", id.ToString());
-            return new(id, Path.Combine(state, "repository"), Path.Combine(state, "state"), MetadataStoreConfiguration.CreateDefault(state) with { Host = "127.0.0.1", Port = fixture.Port, DatabaseName = fixture.Database, Username = fixture.Role });
+            return new(id, Path.Combine(state, "repository"), Path.Combine(state, "state"), MetadataStoreConfiguration.CreateDefault(state) with { Host = host, Port = fixture.Port, DatabaseName = fixture.Database, Username = fixture.Role });
         }
         FluxVaultConfiguration Configuration(VaultBinding binding) => FluxVaultConfiguration.CreateDefault(binding.StateRoot) with { RepositoryPath = binding.RepositoryPath, MetadataStore = binding.MetadataStore };
         void Check(bool result, string name) { if (!result) throw new InvalidOperationException("Catalogue contract failed: " + name); checks.Add(name); }

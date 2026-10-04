@@ -9,6 +9,7 @@ namespace FluxVault.App.ViewModels;
 public sealed partial class MainWindowViewModel
 {
     private (VaultId? RepositoryId, string RepositoryPath, MetadataStoreConfiguration MetadataStore)? lastAppliedCurrentInventoryIdentity;
+    private Guid? lastAppliedCurrentInventoryEpoch;
     private readonly Lock repositoryReadLifetime = new();
     private readonly CancellationTokenSource repositoryReadsCancellation = new();
     private readonly TaskCompletionSource repositoryReadsDrained = new(TaskCreationOptions.RunContinuationsAsynchronously);

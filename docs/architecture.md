@@ -61,6 +61,20 @@ bounded, but the dashboard still accumulates the complete current-file inventory
 in memory; large-inventory rendering and resource limits remain open gates. The
 preceding status/recent-history snapshot and current sweep are separate reads.
 
+Protected status supplies a nonempty runtime cache epoch. It is created once in
+the shared installation runtime and changes alongside cache invalidation. The
+dashboard compares it with the epoch of its last applied complete sweep, so
+another client's cache warming cannot hide new repository work. Failed sweeps
+and status-only save reconciliation do not advance the applied epoch. An
+unchanged warm status avoids another complete sweep; manual refresh and a full
+reload after unavailable fast status still fetch current pages. This epoch is an
+invalidation hint, separate from transactional metadata history generation.
+When a sweep is applied, the browser reconciles fresh physical children only
+for previously loaded folders and fresh files for its selected folder. Cached
+live rows cannot hide a newly missing file/folder, restored items become live,
+and changed recovery IDs replace old pointers. Unchanged nodes/rows, loaded
+descendants, expansion, selection, pending rules and typed address are retained.
+
 Fresh staging metadata uses schema version 4. Current entries have one row per
 canonical Windows path and entry kind, keyed by the existing path identity.
 Exact UTC ticks and ordinal version IDs select the winner, including tombstones;

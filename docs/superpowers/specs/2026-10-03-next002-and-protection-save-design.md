@@ -139,6 +139,21 @@ accessibility and the wider lifecycle/performance gates stay open. Status/recent
 history and the current sweep are separate snapshots, not one cross-command
 transaction. No schema upgrade or additional-vault abstraction is introduced.
 
+Automatic refresh also requires a nonempty protected runtime cache epoch. It is
+initialised once per shared runtime, rotated under the existing cache lock and
+captured alongside status generation. The client advances its applied epoch
+only with a complete validated current sweep; failed/stale/cancelled reads and
+status-only save reconciliation cannot consume an invalidation. Changed epochs
+trigger a sweep even when another request has already warmed recent history.
+Unchanged warm status avoids repetition; explicit Full and cold-fallback refresh
+still sweep. This adds no database query or browsing session and does not replace
+page generation, repository identity or revision checks.
+Applying a sweep reconciles fresh physical entries for already loaded folders
+and the selected folder's files. Missing/restored transitions and changed
+recovery IDs cannot be hidden by cached live rows. Preserve unchanged objects,
+loaded/expanded descendants, selected items, pending rules and an edited
+address; a selected-folder object replacement is not a navigation reload.
+
 ## Acceptance gates, unchanged in strength
 
 | ID | Required result and evidence | Owner batch |

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="38590256-c406-4e35-a940-67a964133192" name="os008@OS008-HOME 2026-10-05 01:22:55" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T01:22:55.6666734+03:00" queuing="2026-10-05T01:22:55.6666735+03:00" start="2026-10-05T01:22:54.7887450+03:00" finish="2026-10-05T01:22:55.6702292+03:00" />
+  <TestSettings name="default" id="feb007d2-f115-4806-992c-067d5ad6177b">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_01_22_55" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ee3f1927-d7e9-4890-80fc-55c88bfad498" testId="32057d76-d53b-d318-e641-bbbcb6df0bc7" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Replacing_a_parent_recovery_pointer_preserves_loaded_descendants_and_selected_child_file" computerName="OS008-HOME" duration="00:00:00.1978141" startTime="2026-10-05T01:22:55.3493291+03:00" endTime="2026-10-05T01:22:55.5630270+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ee3f1927-d7e9-4890-80fc-55c88bfad498">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Replacing_a_parent_recovery_pointer_preserves_loaded_descendants_and_selected_child_file() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs:line 34&#xD;
+   at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Replacing_a_parent_recovery_pointer_preserves_loaded_descendants_and_selected_child_file() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs:line 44&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Replacing_a_parent_recovery_pointer_preserves_loaded_descendants_and_selected_child_file" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="32057d76-d53b-d318-e641-bbbcb6df0bc7">
+      <Execution id="ee3f1927-d7e9-4890-80fc-55c88bfad498" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Replacing_a_parent_recovery_pointer_preserves_loaded_descendants_and_selected_child_file" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="32057d76-d53b-d318-e641-bbbcb6df0bc7" executionId="ee3f1927-d7e9-4890-80fc-55c88bfad498" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.42]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.42]       Expected: True&#xD;
+[xUnit.net 00:00:00.42]       Actual:   False&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs(34,0): at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Replacing_a_parent_recovery_pointer_preserves_loaded_descendants_and_selected_child_file()&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs(44,0): at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Replacing_a_parent_recovery_pointer_preserves_loaded_descendants_and_selected_child_file()&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.43]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:22:55.5658694+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.CurrentEntriesPagingContractTests.Replacing_a_parent_recovery_pointer_preserves_loaded_descendants_and_selected_child_file [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

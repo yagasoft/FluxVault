@@ -54,6 +54,7 @@ public sealed partial class FileBrowserViewModel(
     private bool isEditingAddressPath;
     private bool isNavigatingAddressPath;
     private bool isLoadingSelectedWorkloadPreset;
+    private bool isRebindingSelectedFolder;
 
     public ObservableCollection<FileBrowserFolderNode> Roots { get; } = [];
 
@@ -564,7 +565,7 @@ public sealed partial class FileBrowserViewModel(
 
     partial void OnSelectedFolderChanged(FileBrowserFolderNode? value)
     {
-        if (value is not null)
+        if (value is not null && !isRebindingSelectedFolder)
         {
             SelectedFile = null;
             UpdateAddressPathFromSelection(value.Path);
@@ -751,101 +752,120 @@ public sealed partial class FileBrowserViewModel(
 
     private void RefreshVisibleTrackedEntries()
     {
-        foreach (var folder in EnumerateFolders(Roots).ToArray())
+        var selectedFolderPath = SelectedFolder?.Path;
+        var loadedFolderPaths = EnumerateFolders(Roots)
+            .Where(folder => folder.HasLoadedChildren)
+            .Select(folder => folder.Path)
+            .OrderBy(PathDepth)
+            .ToArray();
+        foreach (var path in loadedFolderPaths)
         {
-            if (folder.HasLoadedChildren)
+            // A parent may have changed from live to phantom (or back). Resolve
+            // the current node instead of refreshing a detached cached child.
+            var folder = FindFolder(path);
+            if (folder is not null)
             {
-                RefreshVisiblePhantomFolders(folder);
+                RefreshVisibleFolders(folder);
             }
         }
 
+        if (selectedFolderPath is not null)
+        {
+            isRebindingSelectedFolder = true;
+            try { SelectedFolder = FindFolder(selectedFolderPath); }
+            finally { isRebindingSelectedFolder = false; }
+            if (SelectedFolder is null)
+            {
+                Files.Clear();
+                SelectedFile = null;
+            }
+        }
         if (SelectedFolder is not null)
         {
-            RefreshVisiblePhantomFiles(SelectedFolder);
+            RefreshVisibleFiles(SelectedFolder);
         }
 
         RefreshTreeIndicators(Roots);
     }
 
-    private void RefreshVisiblePhantomFolders(FileBrowserFolderNode folder)
+    private void RefreshVisibleFolders(FileBrowserFolderNode folder)
     {
-        if (!folder.IsAccessible || folder.IsPhantom)
+        if (!folder.IsAccessible)
         {
             return;
         }
 
-        var liveChildPaths = folder.Children
-            .Where(child => !child.IsPhantom)
-            .Select(child => child.Path)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        foreach (var child in GetPhantomChildFolders(folder.Path, liveChildPaths))
+        var liveChildren = folder.IsPhantom ? [] : fileSystem.GetChildFolders(folder.Path);
+        var liveChildPaths = liveChildren.Select(child => Path.GetFullPath(child.Path)).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var previous = folder.Children.ToDictionary(child => child.Path, StringComparer.OrdinalIgnoreCase);
+        var children = liveChildren.Select(ToNode).Concat(GetPhantomChildFolders(folder.Path, liveChildPaths));
+        var next = new List<FileBrowserFolderNode>();
+        foreach (var child in children)
         {
-            if (folder.Children.Any(existing => IsSamePath(existing.Path, child.Path)))
+            var node = child;
+            if (previous.TryGetValue(child.Path, out var existing))
             {
-                continue;
+                if (existing.IsPhantom == child.IsPhantom && existing.RestorableVersionId == child.RestorableVersionId &&
+                    existing.Name == child.Name && existing.IsAccessible == child.IsAccessible && existing.ErrorMessage == child.ErrorMessage)
+                {
+                    node = existing;
+                }
+                else
+                {
+                    node.IsExpanded = existing.IsExpanded;
+                    node.HasLoadedChildren = existing.HasLoadedChildren;
+                    node.Children.Clear();
+                    foreach (var descendant in existing.Children) node.Children.Add(descendant);
+                }
             }
-
-            ApplySelectionToNode(child);
-            folder.Children.Add(child);
+            ApplySelectionToNode(node);
+            next.Add(node);
         }
+        ReconcileVisibleCollection(folder.Children, next);
+    }
 
-        for (var index = folder.Children.Count - 1; index >= 0; index--)
+    private void RefreshVisibleFiles(FileBrowserFolderNode folder)
+    {
+        var selectedFilePath = SelectedFile?.Path;
+        var liveFiles = folder.IsPhantom || !folder.IsAccessible ? [] : fileSystem.GetFiles(folder.Path);
+        var liveFilePaths = liveFiles.Select(file => Path.GetFullPath(file.Path)).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var previous = Files.ToDictionary(file => file.Path, StringComparer.OrdinalIgnoreCase);
+        var next = new List<FileBrowserFileRow>();
+        foreach (var file in liveFiles)
         {
-            var child = folder.Children[index];
-            if (!child.IsPhantom)
+            AddRow(file.Path, file.Name, file.Length, false, null);
+        }
+        if (folder.IsAccessible)
+        {
+            foreach (var entry in GetPhantomChildFiles(folder.Path, liveFilePaths))
             {
-                continue;
+                AddRow(entry.SourcePath, Path.GetFileName(entry.SourcePath), entry.LogicalLength, true, entry.VersionId);
             }
+        }
+        ReconcileVisibleCollection(Files, next);
+        SelectedFile = selectedFilePath is null ? null : Files.FirstOrDefault(file => IsSamePath(file.Path, selectedFilePath));
 
-            var tracked = FindTrackedEntry(child.Path, RepositoryEntryKind.Folder);
-            if (tracked is null || !tracked.IsDeleted && Directory.Exists(child.Path))
+        void AddRow(string path, string name, long length, bool isPhantom, string? versionId)
+        {
+            if (previous.TryGetValue(Path.GetFullPath(path), out var existing) && existing.IsPhantom == isPhantom &&
+                existing.RestorableVersionId == versionId && existing.Name == name && existing.Length == length)
             {
-                folder.Children.RemoveAt(index);
+                next.Add(existing);
             }
+            else next.Add(CreateFileRow(path, name, length, isPhantom, versionId));
         }
     }
 
-    private void RefreshVisiblePhantomFiles(FileBrowserFolderNode folder)
+    private static void ReconcileVisibleCollection<T>(ObservableCollection<T> target, IReadOnlyList<T> next) where T : class
     {
-        var selectedFile = SelectedFile;
-        var liveFilePaths = Files
-            .Where(file => !file.IsPhantom)
-            .Select(file => file.Path)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        foreach (var entry in GetPhantomChildFiles(folder.Path, liveFilePaths))
+        for (var index = 0; index < next.Count; index++)
         {
-            if (Files.Any(existing => IsSamePath(existing.Path, entry.SourcePath)))
-            {
-                continue;
-            }
-
-            Files.Add(CreateFileRow(
-                entry.SourcePath,
-                Path.GetFileName(entry.SourcePath),
-                entry.LogicalLength,
-                isPhantom: true,
-                restorableVersionId: entry.VersionId));
+            if (index < target.Count && ReferenceEquals(target[index], next[index])) continue;
+            var previousIndex = target.IndexOf(next[index]);
+            if (previousIndex >= 0) target.Move(previousIndex, index);
+            else target.Insert(index, next[index]);
         }
-
-        for (var index = Files.Count - 1; index >= 0; index--)
-        {
-            var file = Files[index];
-            if (!file.IsPhantom)
-            {
-                continue;
-            }
-
-            var tracked = FindTrackedEntry(file.Path, RepositoryEntryKind.File);
-            if (tracked is null || !tracked.IsDeleted && File.Exists(file.Path))
-            {
-                Files.RemoveAt(index);
-            }
-        }
-
-        if (selectedFile is not null && Files.Contains(selectedFile))
-        {
-            SelectedFile = selectedFile;
-        }
+        while (target.Count > next.Count) target.RemoveAt(target.Count - 1);
     }
 
     private bool TryNavigateToFolder(string folderPath)

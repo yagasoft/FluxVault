@@ -13,6 +13,26 @@ namespace FluxVault.Core.Tests;
 public sealed class RecentVersionStatusTests
 {
     [Fact]
+    public async Task Protected_epoch_is_shared_by_request_operations_rotates_on_invalidation_and_changes_after_runtime_restart()
+    {
+        using var workspace=TemporaryWorkspace.Create();Directory.CreateDirectory(workspace.RepositoryPath);
+        var store=new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath,"config.json"),workspace.RootPath);
+        var configuration=FluxVaultConfiguration.CreateDefault(workspace.RootPath) with{RepositoryPath=workspace.RepositoryPath};
+        await store.SaveAsync(configuration);
+        var metadata=new RecentOnlyMetadata(workspace.RootPath){RefuseCurrentRead=true};var runtime=new FluxVaultOperationsRuntimeState();
+        FluxVaultOperations Request(FluxVaultOperationsRuntimeState state)=>new(store,new NoCapture(),metadataStoreFactory:_=>metadata,runtimeState:state,pageCurrentEntriesForStatus:true);
+        var first=await Request(runtime).GetStatusAsync();
+        Assert.NotNull(first.RepositoryInventoryEpoch);Assert.NotEqual(Guid.Empty,first.RepositoryInventoryEpoch);
+        Assert.Equal(first.RepositoryInventoryEpoch,(await Request(runtime).GetStatusAsync(FluxVault.Abstractions.Ipc.FluxVaultStatusDetailLevel.Fast)).RepositoryInventoryEpoch);
+        await Request(runtime).ApplyCommittedConfigurationAsync(configuration,false,[],[]);
+        var warmedByAnotherRequest=await Request(runtime).GetStatusAsync();
+        Assert.NotEqual(first.RepositoryInventoryEpoch,warmedByAnotherRequest.RepositoryInventoryEpoch);
+        Assert.Equal(warmedByAnotherRequest.RepositoryInventoryEpoch,(await Request(runtime).GetStatusAsync(FluxVault.Abstractions.Ipc.FluxVaultStatusDetailLevel.Fast)).RepositoryInventoryEpoch);
+        Assert.NotEqual(warmedByAnotherRequest.RepositoryInventoryEpoch,(await Request(new()).GetStatusAsync()).RepositoryInventoryEpoch);
+        Assert.Equal(0,metadata.FullHistoryReads);
+    }
+
+    [Fact]
     public async Task In_memory_recent_versions_preserve_exact_timestamp_and_ordinal_ties()
     {
         var store = new InMemoryRepositoryMetadataStore();

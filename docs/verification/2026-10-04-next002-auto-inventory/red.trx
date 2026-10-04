@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8d6a2752-5bac-40a6-a477-19fd431b191d" name="os008@OS008-HOME 2026-10-05 00:48:43" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T00:48:43.9970447+03:00" queuing="2026-10-05T00:48:43.9970448+03:00" start="2026-10-05T00:48:43.0726475+03:00" finish="2026-10-05T00:48:44.0008211+03:00" />
+  <TestSettings name="default" id="9cdcf1d8-458b-4ed0-8acd-b67a6969196c">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_00_48_43" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ffb46455-1cdd-473b-bda6-8cded3be3489" testId="b0781096-6586-7f4d-4d0f-770c256526e6" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits(edit: False)" computerName="OS008-HOME" duration="00:00:00.2218644" startTime="2026-10-05T00:48:43.6354296+03:00" endTime="2026-10-05T00:48:43.8713861+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ffb46455-1cdd-473b-bda6-8cded3be3489">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+                                                           ↓ (pos 0)&#xD;
+Expected: string[]                                        ["new.dwg"]&#xD;
+Actual:   IListSelectIterator&lt;FileBrowserFileRow, string&gt; ["next.dwg", "old.dwg"]&#xD;
+                                                           ↑ (pos 0)</Message>
+          <StackTrace>   at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits(Boolean edit) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs:line 31&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c1cbcfba-443b-46b3-a5a1-25b5497175a0" testId="60ec5068-b910-10d9-a818-9d251224b9de" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits(edit: True)" computerName="OS008-HOME" duration="00:00:00.0350364" startTime="2026-10-05T00:48:43.8825249+03:00" endTime="2026-10-05T00:48:43.9071932+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c1cbcfba-443b-46b3-a5a1-25b5497175a0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+                                                           ↓ (pos 0)&#xD;
+Expected: string[]                                        ["new.dwg"]&#xD;
+Actual:   IListSelectIterator&lt;FileBrowserFileRow, string&gt; ["next.dwg", "old.dwg"]&#xD;
+                                                           ↑ (pos 0)</Message>
+          <StackTrace>   at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits(Boolean edit) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs:line 31&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits(edit: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="b0781096-6586-7f4d-4d0f-770c256526e6">
+      <Execution id="ffb46455-1cdd-473b-bda6-8cded3be3489" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits(edit: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="60ec5068-b910-10d9-a818-9d251224b9de">
+      <Execution id="c1cbcfba-443b-46b3-a5a1-25b5497175a0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b0781096-6586-7f4d-4d0f-770c256526e6" executionId="ffb46455-1cdd-473b-bda6-8cded3be3489" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="60ec5068-b910-10d9-a818-9d251224b9de" executionId="c1cbcfba-443b-46b3-a5a1-25b5497175a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.44]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:00.44]                                                                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.44]       Expected: string[]                                        ["new.dwg"]&#xD;
+[xUnit.net 00:00:00.44]       Actual:   IListSelectIterator&lt;FileBrowserFileRow, string&gt; ["next.dwg", "old.dwg"]&#xD;
+[xUnit.net 00:00:00.44]                                                                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs(31,0): at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits(Boolean edit)&#xD;
+[xUnit.net 00:00:00.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.47]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:00.47]                                                                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.47]       Expected: string[]                                        ["new.dwg"]&#xD;
+[xUnit.net 00:00:00.47]       Actual:   IListSelectIterator&lt;FileBrowserFileRow, string&gt; ["next.dwg", "old.dwg"]&#xD;
+[xUnit.net 00:00:00.47]                                                                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs(31,0): at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits(Boolean edit)&#xD;
+[xUnit.net 00:00:00.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.48]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T00:48:43.8740481+03:00">
+        <Text>[xUnit.net 00:00:00.44]     FluxVault.App.Tests.CurrentEntriesPagingContractTests.Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits(edit: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T00:48:43.9073753+03:00">
+        <Text>[xUnit.net 00:00:00.47]     FluxVault.App.Tests.CurrentEntriesPagingContractTests.Automatic_full_reload_after_cache_invalidation_refreshes_current_entries_and_keeps_pending_edits(edit: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

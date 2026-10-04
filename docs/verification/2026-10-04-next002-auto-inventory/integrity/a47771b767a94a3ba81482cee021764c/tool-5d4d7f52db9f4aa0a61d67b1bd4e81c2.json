@@ -1,0 +1,5 @@
+{
+  "Error": "",
+  "Output": "CREATE ROLE\r\nCREATE DATABASE\r\nREVOKE\r\nCREATE ROLE\r\nCREATE DATABASE\r\nREVOKE\r\nGRANT\r\nYou are now connected to database \"fv_gate_trust_control\" as user \"fv_gate_bootstrap\".\r\nREVOKE\r\nYou are now connected to database \"postgres\" as user \"fv_gate_bootstrap\".\r\nALTER ROLE\r\nf|t\r\n",
+  "ExitCode": 0
+}

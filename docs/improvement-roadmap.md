@@ -48,7 +48,7 @@ Record the representative file sizes/counts, destinations, acceptable saved-work
 
 ### Phase 1 — Prove the first verified local round trip
 
-**Deliverable:** authorised selection → service-owned durable capture → visible version → verified restore (`NEXT-002`, `NEXT-003`, `NEXT-004`). Limit this first slice to one local vault and one file if needed, while proving denial of unauthorised and cross-vault operations separately.
+**Deliverable:** authorised selection → service-owned durable capture → visible version → verified restore (`NEXT-002`, `NEXT-003`, `NEXT-004`). Limit this first slice to one file if needed, while proving denial of unauthorised operations and wrong-repository bindings separately.
 
 Keep this slice on disposable data until the interruption, coordination and independent recovery gates in Phase 2 pass. One verified round trip is an early executable result, not release readiness.
 
@@ -56,10 +56,10 @@ Keep this slice on disposable data until the interruption, coordination and inde
 - Publish a validated chunk object whose bytes and metadata cannot disagree. Verify existing content before treating a dedup hit as valid; repair safely from the verified input when appropriate. Establish flush/publication ordering and recover orphaned/unpublished objects.
 - Share one bounded verified reader across restore, preview, rehearsal, repair and future sync. Validate digests, decoded lengths, offsets, total length and manifest structure. Stage a destination and publish only after verification; retain an existing destination on error or cancellation.
 - Preserve healthy copy counts through mirror copy, rebalance and drain, including corrupt existing targets, capacity exhaustion and interrupted copies. A file's existence is not evidence of health.
-- Bind the metadata namespace to `VaultId`; reject a mismatched chunk root. Profile duplication creates a settings draft with newly allocated resources, not a second runtime pointing at the original metadata.
+- Bind the metadata namespace to the installation's single repository identity; reject a mismatched chunk root. Additional-vault creation, duplication and switching are removed by the single-vault scope decision.
 - Save validated configuration patches/revisions, preserve untouched fields, and stop dependent work after a cancelled or failed save. Make pause/resume explicit state commands.
 
-**Gate:** a byte-flipped chunk is rejected; a missing dedup payload cannot produce false success; a healthy mirror can repair the corruption; draining it is refused if it is the last valid required copy; a failed restore leaves the destination byte-identical; a second vault cannot read/delete the first's metadata. Exercise these through real IPC and PostgreSQL, not only repository fakes. Obtain independent security/integrity review of the complete slice.
+**Gate:** a byte-flipped chunk is rejected; a missing dedup payload cannot produce false success; a healthy mirror can repair the corruption; draining it is refused if it is the last valid required copy; a failed restore leaves the destination byte-identical; a wrong repository binding cannot read/delete the installation's metadata. Exercise these through real IPC and PostgreSQL, not only repository fakes. Obtain independent security/integrity review of the complete slice.
 
 **Effort checkpoint:** after two coherent implementation batches, require this executable round trip. If it is still missing, narrow to one vault, one local destination and verified restore. Stop expanding UI scaffolding or general abstractions until the blocker is resolved.
 

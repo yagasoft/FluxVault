@@ -15,7 +15,8 @@ internal static class WindowsCurrentPagingProbe
         var status=await client.SendAsync(FluxVaultIpcRequest.GetStatus(),token);
         if(!status.Success || status.VaultId is not {IsValid:true} id || status.VaultRevision is not >0 || status.Status is null)
             throw new InvalidOperationException("Native current inventory status unavailable.");
-        Check(status.Status.UsesPagedCurrentEntries && status.Status.TrackedEntries is null && status.Status.HasVersionInventory,
+        Check(status.Status.UsesPagedCurrentEntries && status.Status.TrackedEntries is null && status.Status.HasVersionInventory &&
+            status.Status.RepositoryInventoryEpoch is { } epoch && epoch!=Guid.Empty,
             "native protected status omits current inventory with explicit paging capability");
         var query=new RepositoryCurrentEntriesQuery(id,2); var rows=new List<RepositoryCurrentEntry>(); long? generation=null; var reads=0;
         do
@@ -33,25 +34,62 @@ internal static class WindowsCurrentPagingProbe
             CurrentEntriesQuery:new(VaultId.New())),token);
         Check(!wrong.Success && wrong.ErrorCode==FluxVaultIpcErrorCode.InvalidRequest && wrong.CurrentEntriesPage is null,
             "native current query cannot override its admitted repository binding");
-        var model=new MainWindowViewModel(client,TimeSpan.FromHours(1),new FileBrowserViewModel(new Files(source)),new Controller(),new Destination(),new Overwrite());
+        var observedClient=new ObservedClient(client);
+        var model=new MainWindowViewModel(observedClient,TimeSpan.FromMilliseconds(50),new FileBrowserViewModel(new Files(source)),new Controller(),new Destination(),new Overwrite());
         var heldDocument=document+".current-paging-held-"+Guid.NewGuid().ToString("N");
         var documentHeld=false;
         try
         {
             await model.RefreshAsync();
             model.FileBrowser.SelectFolder(model.FileBrowser.Roots.Single());
-            var expected=rows.Single(r=>r.Version.EntryKind==RepositoryEntryKind.File && string.Equals(r.Version.SourcePath,document,StringComparison.OrdinalIgnoreCase)).Version;
             Check(model.FileBrowser.Files.Single(f=>string.Equals(f.Path,document,StringComparison.OrdinalIgnoreCase)) is { IsPhantom:false, RestorableVersionId:null },
                 "native current inventory retains the browser's live working-file contract");
-            // Only phantom rows expose a current recovery ID. Hold this generated,
-            // caller-owned file without changing repository history or its bytes/ACL.
+            var beforeAutomatic=observedClient.CurrentReads;
+            // Invalidate through real repository work while the generated source is
+            // still present. Catalogue-only saves need not invalidate content caches.
+            var backupRequest=FluxVaultIpcRequest.RunBackupNow() with
+                {VaultId=id,ExpectedVaultRevision=status.VaultRevision,OperationId=Guid.NewGuid()};
+            var backup=await client.SendAsync(backupRequest,token);
+            Check(backup.Success && backup.Backup is {Success:true} && backup.VaultId==id &&
+                backup.VaultRevision==status.VaultRevision && backup.OperationId==backupRequest.OperationId,
+                "native fixture backup invalidates the shared runtime cache through its durable receipt");
+            var warmed=await client.SendAsync(FluxVaultIpcRequest.GetStatus() with{VaultId=id},token);
+            Check(warmed.Success && warmed.Status is {HasVersionInventory:true} && warmed.Status.RepositoryInventoryEpoch!=status.Status.RepositoryInventoryEpoch,
+                "native separate full status request warms the new cache epoch before dashboard polling");
+            RepositoryVersionSummary? expected=null;
+            var verificationQuery=new RepositoryCurrentEntriesQuery(id,2);long? verificationGeneration=null;
+            for(var read=0;;read++)
+            {
+                if(read>=100)throw new InvalidOperationException("Native independent current verification did not finish.");
+                var verification=await client.SendAsync(new(FluxVaultIpcCommand.ListCurrentEntriesPage,null,null,null,null,
+                    VaultId:id,ExpectedVaultRevision:warmed.VaultRevision,CurrentEntriesQuery:verificationQuery),token);
+                if(!verification.Success || verification.CurrentEntriesPage is not {} page || verification.VaultId!=id ||
+                    verification.VaultRevision!=warmed.VaultRevision || page.Query!=verificationQuery ||
+                    verificationGeneration is {} prior && page.Generation!=prior)throw new InvalidOperationException("Native independent current verification failed.");
+                verificationGeneration ??=page.Generation;
+                foreach(var row in page.Entries)
+                    if(row.Version.EntryKind==RepositoryEntryKind.File && string.Equals(row.Version.SourcePath,document,StringComparison.OrdinalIgnoreCase))
+                        expected=row.Version;
+                if(page.NextCursor is null)break;
+                verificationQuery=verificationQuery with{Cursor=page.NextCursor};
+            }
+            if(expected is null)throw new InvalidOperationException("Native source has no verified current file entry.");
+            // Only phantom rows expose a recovery ID. Hold the generated source
+            // after backup; no capture occurs while it is held.
             File.Move(document,heldDocument); documentHeld=true;
-            await model.RefreshAsync();
-            Check(model.FileBrowser.Files.Single(f=>string.Equals(f.Path,document,StringComparison.OrdinalIgnoreCase)) is { IsPhantom:true } missing && missing.RestorableVersionId==expected.VersionId,
-                "native actual dashboard view-model publishes the verified current entry");
             model.RepositoryPath=Path.Combine(source,"pending-UI-edit");
-            await model.RefreshAsync();
-            Check(model.RepositoryPath==Path.Combine(source,"pending-UI-edit"),"native current inventory refresh retains pending dashboard edits");
+            var automaticApplied=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            model.FileBrowser.Files.CollectionChanged+=(_,_)=>
+            {
+                if(model.FileBrowser.Files.Any(f=>string.Equals(f.Path,document,StringComparison.OrdinalIgnoreCase) && f.IsPhantom))automaticApplied.TrySetResult();
+            };
+            model.StartAutoRefresh();
+            await automaticApplied.Task.WaitAsync(TimeSpan.FromSeconds(10),token);
+            await model.StopRepositoryReadsAsync();
+            Check(model.FileBrowser.Files.Single(f=>string.Equals(f.Path,document,StringComparison.OrdinalIgnoreCase)) is {IsPhantom:true} missing && missing.RestorableVersionId==expected.VersionId,
+                "native actual dashboard view-model publishes the verified current entry");
+            Check(observedClient.CurrentReads>beforeAutomatic && model.RepositoryPath==Path.Combine(source,"pending-UI-edit"),
+                "native automatic warmed-cache refresh pages current entries and retains pending edits before joined shutdown");
         }
         finally
         {
@@ -59,6 +97,16 @@ internal static class WindowsCurrentPagingProbe
             finally { if(documentHeld) File.Move(heldDocument,document); }
         }
         void Check(bool condition,string name){if(!condition)throw new InvalidOperationException(name);checks.Add(name);}
+    }
+    private sealed class ObservedClient(IFluxVaultServiceClient client):IFluxVaultServiceClient
+    {
+        private int currentReads;
+        internal int CurrentReads=>Volatile.Read(ref currentReads);
+        public Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request,CancellationToken cancellationToken=default)
+        {
+            if(request.Command==FluxVaultIpcCommand.ListCurrentEntriesPage)Interlocked.Increment(ref currentReads);
+            return client.SendAsync(request,cancellationToken);
+        }
     }
     private sealed class Files(string root):IFileBrowserFileSystem
     {

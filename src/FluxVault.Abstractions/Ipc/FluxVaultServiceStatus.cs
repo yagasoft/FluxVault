@@ -30,7 +30,9 @@ public sealed record FluxVaultServiceStatus(
     MetadataStoreRuntimeStatus? MetadataStore = null,
     // False means no authoritative snapshot was supplied, rather than an empty repository.
     bool HasVersionInventory = true,
-    bool UsesPagedCurrentEntries = false);
+    bool UsesPagedCurrentEntries = false,
+    // Invalidation hint for shared runtime caches; not a metadata transaction identity.
+    Guid? RepositoryInventoryEpoch = null);
 
 public sealed record MetadataStoreRuntimeStatus(
     MetadataStoreProvider Provider,

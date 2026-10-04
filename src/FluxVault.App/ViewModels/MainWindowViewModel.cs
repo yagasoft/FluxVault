@@ -614,8 +614,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
                                 : FluxVaultStatusDetailLevel.Full),
                         cancellationToken)
                     .ConfigureAwait(true);
+                var reloadCurrentInventory = !isAutomatic;
                 if (isAutomatic && response.Success && response.Status is { HasVersionInventory: false })
                 {
+                    reloadCurrentInventory = true;
                     response = await SendBoundAsync(
                             FluxVaultIpcRequest.GetStatus(
                                 statusDetailLevel: FluxVaultStatusDetailLevel.Full),
@@ -637,7 +639,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 }
 
                 var currentIdentity = (response.VaultId, response.Status.Configuration.RepositoryPath, response.Status.Configuration.MetadataStore);
-                if (response.Status.UsesPagedCurrentEntries && (!isAutomatic || lastAppliedCurrentInventoryIdentity != currentIdentity))
+                if (response.Status.UsesPagedCurrentEntries &&
+                    (response.Status.RepositoryInventoryEpoch is not { } epoch || epoch == Guid.Empty || response.Status.TrackedEntries is not null))
+                    throw new InvalidDataException("Current inventory status has no valid cache epoch or violates its paging contract. Previous entries and edits are kept.");
+                if (response.Status.UsesPagedCurrentEntries && (reloadCurrentInventory || lastAppliedCurrentInventoryIdentity != currentIdentity ||
+                    lastAppliedCurrentInventoryEpoch != response.Status.RepositoryInventoryEpoch))
                 {
                     var entries = await ReadCurrentInventoryAsync(response, cancellationToken).ConfigureAwait(true);
                     response = response with { Status = response.Status with { TrackedEntries = entries } };
@@ -2456,6 +2462,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             {
                 FileBrowser.LoadTrackedEntries(status.TrackedEntries);
                 lastAppliedCurrentInventoryIdentity = inventoryIdentity;
+                lastAppliedCurrentInventoryEpoch = status.UsesPagedCurrentEntries ? status.RepositoryInventoryEpoch : null;
             }
             else if (!sameInventoryIdentity)
             {

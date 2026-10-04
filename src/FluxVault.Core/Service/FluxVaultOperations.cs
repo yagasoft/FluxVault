@@ -1421,6 +1421,7 @@ public sealed class FluxVaultOperations(
         lock (runtimeGate)
         {
             repositoryStatusCacheGeneration++;
+            this.runtimeState.RepositoryInventoryEpoch = Guid.NewGuid();
             recentVersionStatusCache = null;
             recentVersionStatusCacheUtc = default;
             recentVersionStatusCacheIdentity = null;
@@ -1471,7 +1472,12 @@ public sealed class FluxVaultOperations(
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         var isFast = detailLevel == FluxVaultStatusDetailLevel.Fast;
         long inventoryGeneration;
-        lock (runtimeGate) inventoryGeneration = repositoryStatusCacheGeneration;
+        Guid inventoryEpoch;
+        lock (runtimeGate)
+        {
+            inventoryGeneration = repositoryStatusCacheGeneration;
+            inventoryEpoch = this.runtimeState.RepositoryInventoryEpoch;
+        }
         var versions = isFast
             ? GetCachedRecentVersionsForFastStatus(configuration)
             : await GetRecentVersionsForStatusAsync(configuration, cancellationToken).ConfigureAwait(false);
@@ -1523,7 +1529,8 @@ public sealed class FluxVaultOperations(
                 : await GetMetadataStoreStatusAsync(configuration, cancellationToken).ConfigureAwait(false),
             HasVersionInventory: IsRepositoryStatusGenerationCurrent(inventoryGeneration)
                 && versions is not null && (isFast || pageCurrentEntriesForStatus || trackedEntries is not null),
-            UsesPagedCurrentEntries: pageCurrentEntriesForStatus);
+            UsesPagedCurrentEntries: pageCurrentEntriesForStatus,
+            RepositoryInventoryEpoch: pageCurrentEntriesForStatus ? inventoryEpoch : null);
     }
 
     public async Task<PerformanceTelemetryStatus> GetPerformanceAsync(CancellationToken cancellationToken = default)

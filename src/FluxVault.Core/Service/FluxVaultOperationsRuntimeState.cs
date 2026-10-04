@@ -31,6 +31,7 @@ public sealed class FluxVaultOperationsRuntimeState
     internal DateTimeOffset TrackedEntryStatusCacheUtc;
     internal (string RepositoryPath, MetadataStoreConfiguration MetadataStore)? TrackedEntryStatusCacheIdentity;
     internal long RepositoryStatusCacheGeneration;
+    internal Guid RepositoryInventoryEpoch = Guid.NewGuid();
     internal BackupRuntimeStatus BackupRuntime = new(false, "Idle", null, null, null, 0, 0, 0, 0, 0, 0, 0);
     internal BackgroundWorkRuntimeStatus RepositoryMaintenanceRuntime = new("Repository maintenance", "Waiting", 0, 0, "No maintenance running");
 }

@@ -1,0 +1,27 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Windows.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.24]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent [FAIL]
+  Failed FluxVault.Windows.Tests.WindowsProtectionSourceTests.Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent [11 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.UnauthorizedAccessException)
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 64
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:00.74]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_metadata_is_unavailable_and_not_missing [FAIL]
+  Failed FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_metadata_is_unavailable_and_not_missing [3 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.UnauthorizedAccessException)
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_metadata_is_unavailable_and_not_missing() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 43
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-source-inventory\native-green\focused.trx
+
+Failed!  - Failed:     2, Passed:    21, Skipped:     0, Total:    23, Duration: 577 ms - FluxVault.Windows.Tests.dll (net10.0)

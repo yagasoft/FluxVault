@@ -1,0 +1,20 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Core.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.26]     FluxVault.Core.Tests.ProtectionSourceAccessTests.Direct_adapter_accepts_an_owned_file_under_its_actual_drive_root [FAIL]
+  Failed FluxVault.Core.Tests.ProtectionSourceAccessTests.Direct_adapter_accepts_an_owned_file_under_its_actual_drive_root [13 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Present
+Actual:   Unavailable
+  Stack Trace:
+     at FluxVault.Core.Tests.ProtectionSourceAccessTests.Direct_adapter_accepts_an_owned_file_under_its_actual_drive_root() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProtectionSourceAccessTests.cs:line 23
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-source-inventory\drive-root-red\baseline.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 31 ms - FluxVault.Core.Tests.dll (net10.0)

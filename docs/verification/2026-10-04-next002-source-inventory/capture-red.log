@@ -1,0 +1,40 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Windows.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.25]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Cancelled_capture_throws_and_acquires_no_handles [FAIL]
+[xUnit.net 00:00:00.26]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_capture_has_no_privileged_fallback_and_outside_selection_is_failed [FAIL]
+[xUnit.net 00:00:00.26]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Live_capture_uses_the_caller_handle_and_releases_pins_with_the_result [FAIL]
+  Failed FluxVault.Windows.Tests.WindowsProtectionSourceTests.Cancelled_capture_throws_and_acquires_no_handles [5 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.OperationCanceledException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Cancelled_capture_throws_and_acquires_no_handles() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 54
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at FluxVault.Windows.Capture.WindowsCallerCaptureProvider.CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Capture\WindowsCallerCaptureProvider.cs:line 11
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.<>c__DisplayClass2_0.<Cancelled_capture_throws_and_acquires_no_handles>b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 54
+  Failed FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_capture_has_no_privileged_fallback_and_outside_selection_is_failed [4 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at FluxVault.Windows.Capture.WindowsCallerCaptureProvider.CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Capture\WindowsCallerCaptureProvider.cs:line 11
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_capture_has_no_privileged_fallback_and_outside_selection_is_failed() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 40
+--- End of stack trace from previous location ---
+  Failed FluxVault.Windows.Tests.WindowsProtectionSourceTests.Live_capture_uses_the_caller_handle_and_releases_pins_with_the_result [3 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at FluxVault.Windows.Capture.WindowsCallerCaptureProvider.CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Capture\WindowsCallerCaptureProvider.cs:line 11
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Live_capture_uses_the_caller_handle_and_releases_pins_with_the_result() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 20
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-source-inventory\capture-red\focused.trx
+
+Failed!  - Failed:     3, Passed:    15, Skipped:     0, Total:    18, Duration: 583 ms - FluxVault.Windows.Tests.dll (net10.0)

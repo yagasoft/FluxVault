@@ -5,6 +5,7 @@ using FluxVault.Abstractions.Storage;
 using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
 using FluxVault.Core.Ipc;
+using FluxVault.Abstractions.Security;
 
 namespace FluxVault.App.Tests;
 
@@ -438,14 +439,16 @@ public sealed class OptionsViewModelTests
         RepositoryRetentionPreview? preview = null,
         RepositoryRetentionResult? result = null) : IFluxVaultServiceClient
     {
+        private readonly VaultId identity = VaultId.New();
+        private long revision = 1;
         public List<FluxVaultIpcCommand> Commands { get; } = [];
 
         public List<FluxVaultConfiguration> SavedConfigurations { get; } = [];
 
-        public Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
+        public async Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
         {
             Commands.Add(request.Command);
-            return request.Command switch
+            var response = await (request.Command switch
             {
                 FluxVaultIpcCommand.GetStatus => Task.FromResult(FluxVaultIpcResponse.WithStatus(status)),
                 FluxVaultIpcCommand.SaveConfiguration => SaveConfigurationAsync(request),
@@ -454,12 +457,14 @@ public sealed class OptionsViewModelTests
                 FluxVaultIpcCommand.RunRetentionNow => Task.FromResult(FluxVaultIpcResponse.WithRetentionResult(
                     result ?? new RepositoryRetentionResult([], 0, 0, 0, 0, 0, []))),
                 _ => Task.FromResult(FluxVaultIpcResponse.Failure($"Unexpected command {request.Command}"))
-            };
+            });
+            return response with { VaultId = identity, VaultRevision = revision, OperationId = request.OperationId };
         }
 
         private Task<FluxVaultIpcResponse> SaveConfigurationAsync(FluxVaultIpcRequest request)
         {
             SavedConfigurations.Add(request.Configuration ?? throw new InvalidOperationException("Missing configuration."));
+            revision++;
             return Task.FromResult(FluxVaultIpcResponse.Ok());
         }
     }

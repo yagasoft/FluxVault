@@ -1,6 +1,6 @@
 namespace FluxVault.Core.Chunking;
 
-public sealed record ChunkingOptions(int MinimumSize, int AverageSize, int MaximumSize)
+public sealed record ChunkingOptions(int MinimumSize = 64 * 1024, int AverageSize = 256 * 1024, int MaximumSize = 1024 * 1024)
 {
     public void Validate()
     {

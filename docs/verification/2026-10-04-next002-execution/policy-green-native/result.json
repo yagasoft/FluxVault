@@ -1,0 +1,569 @@
+{
+  "Failure": null,
+  "FixtureId": "72775647604246de9c755512d7de2e5b",
+  "Observations": [
+    {
+      "RunId": "f203da9434fb433789e273476c4eb6b5",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "72775647604246de9c755512d7de2e5b",
+            "ProbeId": "13f76154370945cebe0836b6a5bcdf56",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1"
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "WriteRuntime": true,
+          "ReadProtected": true
+        }
+      ],
+      "Complete": true,
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "ServerLogStart": 897,
+      "ServerLogEnd": 2307
+    },
+    {
+      "Complete": true,
+      "WindowsSid": "S-1-5-18",
+      "RunId": "021d0c4f78c74d508496de4b673ef84e",
+      "Results": [
+        {
+          "ProbeId": "68275c7e2975474696eb13b5cd498104",
+          "Host": "127.0.0.1",
+          "ExitCode": 2,
+          "Output": "",
+          "Kind": "libpq",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 64262 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\""
+        },
+        {
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "WriteRuntime": true
+        }
+      ],
+      "Actor": "System",
+      "ServerLogStart": 2307,
+      "ServerLogEnd": 3012
+    },
+    {
+      "Complete": true,
+      "RunId": "09dd2112eeb6487fa8e7e4e1a80f6183",
+      "Results": [
+        {
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "72775647604246de9c755512d7de2e5b",
+            "ProbeId": "df341be0557d4cff9b0d6f56e9438d81",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Kind": "Npgsql"
+        },
+        {
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "Kind": "ACL"
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "ServerLogStart": 3012,
+      "ServerLogEnd": 4400
+    },
+    {
+      "Results": [
+        {
+          "Error": "psql: error: connection to server at \"::1\", port 64262 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Host": "::1",
+          "ProbeId": "9770edd9a21449c8a378f320c97fee86",
+          "Output": "",
+          "ExitCode": 2,
+          "Kind": "libpq"
+        },
+        {
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true
+        }
+      ],
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "RunId": "34e7d37cfdcd4d41b4489bf5484d5364",
+      "Complete": true,
+      "ServerLogStart": 4400,
+      "ServerLogEnd": 5094
+    },
+    {
+      "Actor": "System",
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "72775647604246de9c755512d7de2e5b",
+            "ProbeId": "ef8dd76e41e14084969ed03083bebd29",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 48,
+              "Checks": [
+                "creator and initial revision",
+                "ungranted discovery is empty",
+                "two vaults in one database are discoverable",
+                "ungranted admission",
+                "omitted target",
+                "unknown target",
+                "generic admission cannot consume save identity",
+                "saved round trip and revision",
+                "full configuration round trip",
+                "exact committed save replay",
+                "operation fingerprint collision",
+                "stale revision CAS",
+                "metadata rebinding rejected",
+                "privileged log rebinding rejected",
+                "generic admission cannot consume access identity",
+                "owner cannot manage access",
+                "grant exposes only its vault",
+                "read grant admits history",
+                "read grant cannot restore",
+                "acknowledged revocation blocks new admission",
+                "revocation persists across store restart",
+                "other vault stays unchanged",
+                "paged discovery preserves complete authorised inventory",
+                "catalogue identity mismatch fails closed",
+                "durable admission before side effects",
+                "automatic retention authority is durable with backup admission",
+                "interrupted mutation cannot be replayed",
+                "receipt reconciliation after completion",
+                "other actor cannot inspect receipt",
+                "cross actor collision rejects malformed response before decoding",
+                "effective purge permissions are durable",
+                "partial revocation denies purge receipt",
+                "partial revocation denies purge replay",
+                "protection-only backup cannot prune enabled retention",
+                "protection-only save cannot change retention policy",
+                "real catalogue denial precedes repository executor",
+                "real catalogue dispatch retains authorised target and revision",
+                "discovery returns only authorised summary and permissions",
+                "lost save acknowledgement does not execute dependent repository command",
+                "durable save is reconciled after acknowledgement loss",
+                "same save returns committed receipt without repeating effect",
+                "retention-policy edit authority is durable",
+                "protection-only capture allowed when automatic retention is disabled",
+                "ordinary protection edit does not require destructive authority",
+                "protection-only caller cannot enable automatic pruning",
+                "denied retention edit preserves authoritative configuration and revision",
+                "PUBLIC has no control schema access",
+                "acknowledgement durability settings"
+              ],
+              "NativeActor": "SYSTEM",
+              "PolicyActorsAreDoubles": true,
+              "StoreHost": "127.0.0.1",
+              "Metadata": null,
+              "Repository": null
+            }
+          },
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql"
+        },
+        {
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "ReadProtected": true
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "RunId": "71acb869d32344e484682a6182506976",
+      "ServerLogStart": 5157,
+      "ServerLogEnd": 8083
+    },
+    {
+      "RunId": "6273acbb411c49bbb8a79cdf40568bd3",
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "Results": [
+        {
+          "ProbeId": "9311ea1a9ffa4610837d7e0de0fb67a9",
+          "Kind": "libpq",
+          "Error": "",
+          "Host": "127.0.0.1",
+          "ExitCode": 0,
+          "Output": "72775647604246de9c755512d7de2e5b|fv_gate_261003|fv_gate_service"
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true
+        }
+      ],
+      "ServerLogStart": 8083,
+      "ServerLogEnd": 8636
+    },
+    {
+      "Complete": true,
+      "RunId": "a0056ef38b014e73bd863fa4e160937d",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "72775647604246de9c755512d7de2e5b",
+            "ProbeId": "94ee837854194110b82fcad57a2f34ac",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 48,
+              "Checks": [
+                "creator and initial revision",
+                "ungranted discovery is empty",
+                "two vaults in one database are discoverable",
+                "ungranted admission",
+                "omitted target",
+                "unknown target",
+                "generic admission cannot consume save identity",
+                "saved round trip and revision",
+                "full configuration round trip",
+                "exact committed save replay",
+                "operation fingerprint collision",
+                "stale revision CAS",
+                "metadata rebinding rejected",
+                "privileged log rebinding rejected",
+                "generic admission cannot consume access identity",
+                "owner cannot manage access",
+                "grant exposes only its vault",
+                "read grant admits history",
+                "read grant cannot restore",
+                "acknowledged revocation blocks new admission",
+                "revocation persists across store restart",
+                "other vault stays unchanged",
+                "paged discovery preserves complete authorised inventory",
+                "catalogue identity mismatch fails closed",
+                "durable admission before side effects",
+                "automatic retention authority is durable with backup admission",
+                "interrupted mutation cannot be replayed",
+                "receipt reconciliation after completion",
+                "other actor cannot inspect receipt",
+                "cross actor collision rejects malformed response before decoding",
+                "effective purge permissions are durable",
+                "partial revocation denies purge receipt",
+                "partial revocation denies purge replay",
+                "protection-only backup cannot prune enabled retention",
+                "protection-only save cannot change retention policy",
+                "real catalogue denial precedes repository executor",
+                "real catalogue dispatch retains authorised target and revision",
+                "discovery returns only authorised summary and permissions",
+                "lost save acknowledgement does not execute dependent repository command",
+                "durable save is reconciled after acknowledgement loss",
+                "same save returns committed receipt without repeating effect",
+                "retention-policy edit authority is durable",
+                "protection-only capture allowed when automatic retention is disabled",
+                "ordinary protection edit does not require destructive authority",
+                "protection-only caller cannot enable automatic pruning",
+                "denied retention edit preserves authoritative configuration and revision",
+                "PUBLIC has no control schema access",
+                "acknowledgement durability settings"
+              ],
+              "NativeActor": "SYSTEM",
+              "PolicyActorsAreDoubles": true,
+              "StoreHost": "::1",
+              "Metadata": null,
+              "Repository": null
+            }
+          }
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "ServerLogStart": 8636,
+      "ServerLogEnd": 11526
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "Complete": true,
+      "Results": [
+        {
+          "Output": "72775647604246de9c755512d7de2e5b|fv_gate_261003|fv_gate_service",
+          "Kind": "libpq",
+          "ProbeId": "4d042b7d92774f439c70dbf422261795",
+          "Host": "::1",
+          "Error": "",
+          "ExitCode": 0
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "Kind": "ACL"
+        }
+      ],
+      "RunId": "aa9f427cc70b49ed99528d5c057ec259",
+      "ServerLogStart": 11526,
+      "ServerLogEnd": 12073
+    },
+    {
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "72775647604246de9c755512d7de2e5b",
+            "ProbeId": "ee9805e30f0e41ffbc3f138de75a703f",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1103",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1"
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1103",
+          "WriteRuntime": false,
+          "ReadProtected": false
+        }
+      ],
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1103",
+      "Actor": "A",
+      "RunId": "abd9df3c6441440fae132803cc8241d2",
+      "Complete": true,
+      "ServerLogStart": 12073,
+      "ServerLogEnd": 13507
+    },
+    {
+      "Actor": "A",
+      "Complete": true,
+      "RunId": "ef5660c3f89f48ffa59b5b3772b67f32",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1103",
+      "Results": [
+        {
+          "ExitCode": 2,
+          "Host": "127.0.0.1",
+          "ProbeId": "9e823e496796498c87100cd16986585c",
+          "Kind": "libpq",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 64262 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Output": ""
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": false,
+          "WriteRuntime": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1103"
+        }
+      ],
+      "ServerLogStart": 13507,
+      "ServerLogEnd": 14224
+    },
+    {
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "72775647604246de9c755512d7de2e5b",
+            "ProbeId": "d5a87d24d2004dc2aa129daade83ed27",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1103",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "::1",
+          "Kind": "Npgsql"
+        },
+        {
+          "ReadProtected": false,
+          "WriteRuntime": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1103",
+          "Kind": "ACL"
+        }
+      ],
+      "Actor": "A",
+      "RunId": "a0141b22303e4f7fb0e6ad0fc8da3753",
+      "Complete": true,
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1103",
+      "ServerLogStart": 14224,
+      "ServerLogEnd": 15636
+    },
+    {
+      "RunId": "e5d2a7ee3efd48d5bf5d413f04d2492b",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1103",
+      "Actor": "A",
+      "Complete": true,
+      "Results": [
+        {
+          "ProbeId": "e3de693bde404d4aa2ea12eb73d7b7a3",
+          "Output": "",
+          "Error": "psql: error: connection to server at \"::1\", port 64262 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ExitCode": 2,
+          "Host": "::1",
+          "Kind": "libpq"
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1103",
+          "ReadProtected": false,
+          "WriteRuntime": false,
+          "Kind": "ACL"
+        }
+      ],
+      "ServerLogStart": 15636,
+      "ServerLogEnd": 16342
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1104",
+      "Complete": true,
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "72775647604246de9c755512d7de2e5b",
+            "ProbeId": "7146705c4b2e4abba52355e0be7d0de6",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1104",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1"
+        },
+        {
+          "ReadProtected": false,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1104",
+          "WriteRuntime": false
+        }
+      ],
+      "Actor": "B",
+      "RunId": "825b978239c34003a73f2e064357c8ad",
+      "ServerLogStart": 16342,
+      "ServerLogEnd": 17776
+    },
+    {
+      "Complete": true,
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1104",
+      "Results": [
+        {
+          "ExitCode": 2,
+          "ProbeId": "dad9a84b287b4906ad6a0bfbf697e82a",
+          "Host": "127.0.0.1",
+          "Kind": "libpq",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 64262 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Output": ""
+        },
+        {
+          "Kind": "ACL",
+          "WriteRuntime": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1104",
+          "ReadProtected": false
+        }
+      ],
+      "Actor": "B",
+      "RunId": "ada23ca1976b479c962462d082a5cce1",
+      "ServerLogStart": 17776,
+      "ServerLogEnd": 18493
+    },
+    {
+      "Complete": true,
+      "RunId": "9336af24c4264fb5a5c807cae274986d",
+      "Actor": "B",
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "72775647604246de9c755512d7de2e5b",
+            "ProbeId": "1c578def879f422b9cdece130571e622",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1104",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "ReadProtected": false,
+          "WriteRuntime": false,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1104"
+        }
+      ],
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1104",
+      "ServerLogStart": 18493,
+      "ServerLogEnd": 19905
+    },
+    {
+      "Actor": "B",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1104",
+      "RunId": "2c382507644245c3bf34e2baea9abd49",
+      "Results": [
+        {
+          "Output": "",
+          "Error": "psql: error: connection to server at \"::1\", port 64262 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Kind": "libpq",
+          "Host": "::1",
+          "ExitCode": 2,
+          "ProbeId": "40b97100b6e745958504a0bca29f6813"
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1104",
+          "WriteRuntime": false,
+          "ReadProtected": false,
+          "Kind": "ACL"
+        }
+      ],
+      "Complete": true,
+      "ServerLogStart": 19905,
+      "ServerLogEnd": 20611
+    }
+  ],
+  "FailureLocation": null
+}

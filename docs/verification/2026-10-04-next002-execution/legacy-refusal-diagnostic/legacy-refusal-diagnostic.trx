@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d392f1eb-25bd-4073-a4b5-4d8fea59bf7d" name="os008@OS008-HOME 2026-10-04 12:16:01" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T12:16:01.4595042+03:00" queuing="2026-10-04T12:16:01.4595043+03:00" start="2026-10-04T12:16:00.6393072+03:00" finish="2026-10-04T12:16:01.4637618+03:00" />
+  <TestSettings name="default" id="4f4811cf-3370-48bb-9cd2-8947c9e02322">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_12_16_01" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="8358a2e8-ad7a-4d96-8652-8857276fa29d" testId="cb285889-ca4f-ffd6-155e-81e42d63f440" testName="FluxVault.Core.Tests.ConfigurationStoreTests.Legacy_configuration_with_multiple_records_is_refused_without_changing_existing_data" computerName="OS008-HOME" duration="00:00:00.1519613" startTime="2026-10-04T12:16:01.1918378+03:00" endTime="2026-10-04T12:16:01.3564938+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8358a2e8-ad7a-4d96-8652-8857276fa29d">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.InvalidDataException : Only a single legacy record is supported.</Message>
+          <StackTrace>   at ActiveProfileGetter(Object)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack&amp; state, Utf8JsonWriter writer)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T&amp; value, JsonSerializerOptions options, WriteStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T&amp; value, JsonSerializerOptions options, WriteStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Serialize(Utf8JsonWriter writer, T&amp; rootValue, Object rootValueBoxed)&#xD;
+   at System.Text.Json.JsonSerializer.WriteBytes[TValue](TValue&amp; value, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+   at System.Text.Json.JsonSerializer.SerializeToUtf8Bytes[TValue](TValue value, JsonSerializerOptions options)&#xD;
+   at FluxVault.Core.Tests.ConfigurationStoreTests.Legacy_configuration_with_multiple_records_is_refused_without_changing_existing_data() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationStoreTests.cs:line 115&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.ConfigurationStoreTests.Legacy_configuration_with_multiple_records_is_refused_without_changing_existing_data" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="cb285889-ca4f-ffd6-155e-81e42d63f440">
+      <Execution id="8358a2e8-ad7a-4d96-8652-8857276fa29d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ConfigurationStoreTests" name="Legacy_configuration_with_multiple_records_is_refused_without_changing_existing_data" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="cb285889-ca4f-ffd6-155e-81e42d63f440" executionId="8358a2e8-ad7a-4d96-8652-8857276fa29d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.37]       System.IO.InvalidDataException : Only a single legacy record is supported.&#xD;
+[xUnit.net 00:00:00.37]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.37]            at ActiveProfileGetter(Object)&#xD;
+[xUnit.net 00:00:00.37]            at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack&amp; state, Utf8JsonWriter writer)&#xD;
+[xUnit.net 00:00:00.37]            at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack&amp; state)&#xD;
+[xUnit.net 00:00:00.37]            at System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T&amp; value, JsonSerializerOptions options, WriteStack&amp; state)&#xD;
+[xUnit.net 00:00:00.37]            at System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T&amp; value, JsonSerializerOptions options, WriteStack&amp; state)&#xD;
+[xUnit.net 00:00:00.37]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Serialize(Utf8JsonWriter writer, T&amp; rootValue, Object rootValueBoxed)&#xD;
+[xUnit.net 00:00:00.37]            at System.Text.Json.JsonSerializer.WriteBytes[TValue](TValue&amp; value, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+[xUnit.net 00:00:00.37]            at System.Text.Json.JsonSerializer.SerializeToUtf8Bytes[TValue](TValue value, JsonSerializerOptions options)&#xD;
+[xUnit.net 00:00:00.37]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationStoreTests.cs(115,0): at FluxVault.Core.Tests.ConfigurationStoreTests.Legacy_configuration_with_multiple_records_is_refused_without_changing_existing_data()&#xD;
+[xUnit.net 00:00:00.37]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.38]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:16:01.3593223+03:00">
+        <Text>[xUnit.net 00:00:00.37]     FluxVault.Core.Tests.ConfigurationStoreTests.Legacy_configuration_with_multiple_records_is_refused_without_changing_existing_data [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

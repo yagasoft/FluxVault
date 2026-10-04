@@ -271,14 +271,16 @@ public sealed class WindowsCallerFileAccess
         return volumePath;
     }
 
-    internal static (List<SafeFileHandle> Pins, string PhysicalParent) PinParent(string path, bool createMissingParents = false, string? volumeIdentity = null)
+    internal static (List<SafeFileHandle> Pins, string PhysicalParent) PinParent(string path, bool createMissingParents = false, string? volumeIdentity = null,
+        bool readSecurity = false)
     {
         var mount = Path.GetPathRoot(path)!;
         var volumePath = volumeIdentity ?? ResolveVolume(path);
         var pins = new List<SafeFileHandle>();
         try
         {
-            pins.Add(Open(null, "\\??\\" + volumePath[4..], directory: true));
+            pins.Add(readSecurity ? OpenNative(null, "\\??\\" + volumePath[4..], 0x1200A0, directory: true)
+                : Open(null, "\\??\\" + volumePath[4..], directory: true));
             var fs = new StringBuilder(64);
             if (!GetVolumeInformationByHandle(pins[0], null, 0, out _, out _, out _, fs, (uint)fs.Capacity)) NativeError();
             if (!string.Equals(fs.ToString(), "NTFS", StringComparison.OrdinalIgnoreCase)) Denied("Caller file access requires a local NTFS volume.");
@@ -289,10 +291,10 @@ public sealed class WindowsCallerFileAccess
             {
                 VerifyTraversal(pins[^1], expected);
                 var last = index == parts.Length - 1;
-                var next = OpenNative(pins[^1], parts[index], last ? 0x1000A0u : 0x100020u, true,
+                var next = OpenNative(pins[^1], parts[index], readSecurity ? 0x1200A0u : last ? 0x1000A0u : 0x100020u, true,
                     disposition: createMissingParents ? 3u : 1u, dontReparse: true);
                 pins.Add(next); expected += "\\" + parts[index];
-                if (last) VerifyHandle(next, expected, directory: true); else VerifyTraversal(next, expected);
+                if (last || readSecurity) VerifyHandle(next, expected, directory: true); else VerifyTraversal(next, expected);
             }
             return (pins, expected);
         }

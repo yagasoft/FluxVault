@@ -6,9 +6,11 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$RunCatalogueTests,
     [switch]$RunMetadataTests,
     [switch]$RunCallerFileTests,
+    [switch]$RunSingleVaultTests,
     [string]$EvidenceDirectory = (Join-Path $PSScriptRoot ("../docs/verification/2026-10-03-next002-windows-fixture/live/$FixtureId")))
 $ErrorActionPreference = 'Stop'
 if($RunMetadataTests -and -not $RunCatalogueTests){throw 'Metadata proof requires the catalogue contracts.'}
+if($RunCallerFileTests -and $RunSingleVaultTests){throw 'Select one native file workflow per fresh fixture.'}
 Set-StrictMode -Version Latest
 Import-Module (Join-Path $PSScriptRoot 'fixtures/vault-windows-fixture.psm1') -Force
 Import-Module (Join-Path $PSScriptRoot 'fixtures/verified-postgresql-snapshot.psm1') -Force
@@ -164,6 +166,11 @@ function Invoke-SystemActor {
             $ready=Join-Path $fixtureRoot 'runtime/caller-files-ready.json'
             $deadline=[DateTime]::UtcNow.AddSeconds(15)
             while (-not (Test-Path -LiteralPath $ready)) {
+                if((Test-Path -LiteralPath (Join-Path $fixtureRoot ("output-System/$runId-result.json"))) -or
+                    (Test-Path -LiteralPath (Join-Path $fixtureRoot 'system-actor-error.json'))){
+                    $early=Read-ActorResult System $runId
+                    throw 'Native server finished before publishing readiness.'
+                }
                 if ([DateTime]::UtcNow -gt $deadline) { throw 'Caller file server readiness exceeded its deadline.' }
                 Start-Sleep -Milliseconds 100
             }
@@ -380,6 +387,11 @@ function Remove-OwnedFixture {
     foreach($path in @('postgres.log','before.json','result.json','postgresql-provenance.json','output-cleanup-owner.json','output-cleanup-result.json','output-cleanup-process.json')) { if(Test-Path -LiteralPath (Join-Path $fixtureRoot $path)){Copy-Item -LiteralPath (Join-Path $fixtureRoot $path) -Destination (Join-Path $fixtureEvidence $path)} }
     $callerError=Join-Path $fixtureRoot 'runtime/caller-server-error.json'
     if(Test-Path -LiteralPath $callerError){Assert-VaultFixtureTrustedPath $callerError;Copy-Item -LiteralPath $callerError -Destination (Join-Path $fixtureEvidence 'caller-server-error.json')}
+    foreach($diagnostic in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'output-System') -File -ErrorAction SilentlyContinue | Where-Object {$_.Name -match '^[0-9a-f]{32}-result\.json$'}){
+        Assert-VaultFixtureTrustedPath $diagnostic.FullName
+        if($diagnostic.Length -gt 1048576){throw 'SYSTEM diagnostic exceeds its evidence bound.'}
+        Copy-Item -LiteralPath $diagnostic.FullName -Destination (Join-Path $fixtureEvidence ('system-result-'+$diagnostic.Name))
+    }
     # Supervisors persist only redacted exit/output diagnostics, never child environment or passwords.
     foreach($toolResult in Get-ChildItem -LiteralPath $fixtureRoot -File | Where-Object {$_.Name -match '^(tool-[0-9a-f]{32}|system-scheduler-[0-9a-f]{32}|system-actor-error)\.json$'}) {
         Assert-VaultFixtureTrustedPath $toolResult.FullName
@@ -458,7 +470,7 @@ try {
     }
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
-    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
+    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
     @{Dotnet=$fixtureDotnet;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot)} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     foreach($entry in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'runtime') -Recurse -Force){Assert-VaultFixtureTrustedPath $entry.FullName}
     $bootstrap=[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(48))
@@ -520,8 +532,9 @@ host all all ::1/128 reject
         if($clientKind -eq 'Npgsql'){
             if(-not $probe.Result.Authenticated -or -not $probe.Result.FixtureVerified){throw 'SYSTEM password-free Npgsql authentication failed.'}
             if($RunCatalogueTests -and ($null -eq $probe.Result.Catalogue -or $probe.Result.Catalogue.Passed -lt 40 -or -not $probe.Result.Catalogue.PolicyActorsAreDoubles)){throw 'Required real catalogue contracts did not complete.'}
-            if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Metadata -or $probe.Result.Catalogue.Metadata.Passed -lt 20 -or $probe.Result.Catalogue.StoreHost -ne $hostAddress)){throw 'Required same-database namespace contracts did not complete on their loopback.'}
-            if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Repository -or $probe.Result.Catalogue.Repository.Passed -lt 13)){throw 'Required bound repository capture/recovery contracts did not complete.'}
+            # Multi-vault collision/coexistence cases are retired. Retain all single-repository binding/integrity contracts.
+            if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Metadata -or $probe.Result.Catalogue.Metadata.Passed -lt 18 -or $probe.Result.Catalogue.StoreHost -ne $hostAddress)){throw 'Required bound metadata contracts did not complete on their loopback.'}
+            if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Repository -or $probe.Result.Catalogue.Repository.Passed -lt 10)){throw 'Required bound repository capture/recovery contracts did not complete.'}
         }elseif($probe.ExitCode -ne 0 -or $probe.Output -ne "$FixtureId|fv_gate_261003|fv_gate_service"){throw 'SYSTEM password-free libpq authentication failed.'}
     }}
     foreach($actor in @('A','B')) {
@@ -536,11 +549,12 @@ host all all ::1/128 reject
             if($acl.Count -ne 1 -or $acl[0].ReadProtected -or $acl[0].WriteRuntime){throw 'Ordinary user bypassed the fixture file boundary.'}
         }}
     }
-    if ($RunCallerFileTests) {
+    if ($RunCallerFileTests -or $RunSingleVaultTests) {
         $native = Invoke-SystemActor '127.0.0.1' 'CallerFiles'
         $fixtureObservations.Add(@{NativeCallerFiles=$native})
         $proof=@($native.Results | Where-Object {$_.Kind -eq 'CallerFiles'})
         if($proof.Count -ne 1 -or $proof[0].Result.Passed -lt 8 -or -not $proof[0].Result.NativeCallerTokens){throw 'Native caller file contracts did not complete.'}
+        if($RunSingleVaultTests -and (-not $proof[0].Result.SingleVault -or -not $proof[0].Result.ActualCatalogueAndExecutor -or -not $proof[0].Result.CreatorVerified -or -not $proof[0].Result.UngrantDenied)){throw 'Required native single-vault command flow did not complete.'}
     }
 } catch { $fixtureFailure=$_.Exception.Message; $fixtureFailureLocation=$_.ScriptStackTrace }
 finally {

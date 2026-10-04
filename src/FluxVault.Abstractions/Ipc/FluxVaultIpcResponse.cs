@@ -27,9 +27,7 @@ public sealed record FluxVaultIpcResponse(
     VaultId? VaultId = null,
     long? VaultRevision = null,
     Guid? OperationId = null,
-    FluxVaultIpcErrorCode? ErrorCode = null,
-    IReadOnlyList<FluxVaultVaultSummary>? Vaults = null,
-    VaultId? NextVaultAfter = null)
+    FluxVaultIpcErrorCode? ErrorCode = null)
 {
     public static FluxVaultIpcResponse Ok()
     {
@@ -195,5 +193,3 @@ public sealed record FluxVaultIpcResponse(
 }
 
 public enum FluxVaultIpcErrorCode { Denied, StaleRevision, Unavailable, InvalidRequest, OperationConflict, OutcomeUnknown }
-
-public sealed record FluxVaultVaultSummary(VaultId VaultId, long Revision, string DisplayName, VaultPermission Permissions);

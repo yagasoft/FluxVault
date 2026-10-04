@@ -42,11 +42,9 @@ public sealed record VaultOperationReceipt(Guid OperationId, VaultId VaultId, st
     FluxVaultIpcResponse? Response, VaultPermission RequiredPermissions = VaultPermission.None);
 
 public sealed record VaultAdmission(VaultCatalogueEntry Vault, VaultOperationReceipt? Receipt, bool IsReplay);
-public sealed record VaultDiscoveryPage(IReadOnlyList<FluxVaultVaultSummary> Vaults, VaultId? NextAfter);
 
 public interface IVaultCatalogue
 {
-    Task<VaultDiscoveryPage> ListAccessibleAsync(FluxVaultCallerContext caller, VaultId? after = null, int pageSize = 128, CancellationToken cancellationToken = default);
     Task<VaultAdmission> AdmitAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default);
     Task<VaultAdmission> SaveConfigurationAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default);
     Task<VaultAdmission> SetAccessAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default);

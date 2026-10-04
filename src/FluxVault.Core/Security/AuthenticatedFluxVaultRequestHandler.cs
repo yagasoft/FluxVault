@@ -8,13 +8,18 @@ namespace FluxVault.Core.Security;
 /// <summary>The executor must retain this admitted binding/revision and use caller-authorised file handles.</summary>
 public interface IAuthorisedVaultCommandExecutor
 {
+    bool CanExecute(FluxVaultIpcRequest request) => true;
     Task<FluxVaultIpcResponse> ExecuteAsync(FluxVaultCallerContext caller, VaultAdmission admission,
         FluxVaultIpcRequest request, CancellationToken cancellationToken = default);
 }
 
 public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalogue, IAuthorisedVaultCommandExecutor executor,
-    ILogger<AuthenticatedFluxVaultRequestHandler>? logger = null) : IAuthenticatedFluxVaultRequestHandler
+    ILogger<AuthenticatedFluxVaultRequestHandler>? logger = null, FluxVaultIpcLimits? limits = null) : IAuthenticatedFluxVaultRequestHandler
 {
+    // One installation owns one vault. Admission remains inside its mutation gate
+    // so a queued command never carries an earlier configuration snapshot.
+    private readonly SemaphoreSlim mutationGate = CreateMutationGate(limits ?? new());
+
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -23,24 +28,26 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
         var mutation = PostgreSqlVaultCatalogue.IsMutation(request.Command);
         var executionStarted = false;
         var catalogueMutationStarted = false;
+        var admissionStarted = false;
+        SemaphoreSlim? heldGate = null;
         try
         {
-            if (request.Command == FluxVaultIpcCommand.ListVaults)
-            {
-                var page = await catalogue.ListAccessibleAsync(caller, request.VaultsAfter, request.VaultPageSize, cancellationToken);
-                return FluxVaultIpcResponse.Ok() with { Vaults = page.Vaults, NextVaultAfter = page.NextAfter };
-            }
-            if (request.VaultId is not { IsValid: true } id) return Denied();
+            if (request.VaultId is { IsValid: false } || request.VaultId is null && request.Command != FluxVaultIpcCommand.GetStatus) return Denied();
             if (request.Command == FluxVaultIpcCommand.GetOperationStatus)
             {
                 if (request.OperationId is null || request.OperationId == Guid.Empty) return Denied();
-                var receipt = await catalogue.GetReceiptAsync(caller, id, request.OperationId.Value, cancellationToken);
-                return ReceiptResponse(receipt, id, request.OperationId.Value);
+                var receipt = await catalogue.GetReceiptAsync(caller, request.VaultId!.Value, request.OperationId.Value, cancellationToken);
+                return ReceiptResponse(receipt, request.VaultId.Value, request.OperationId.Value);
             }
-            // Lifecycle provisioning must establish protected physical resources before it can become public.
-            // No legacy profile-manager fallback is permitted in this intermediate security implementation.
-            if (request.Command is FluxVaultIpcCommand.CreateProfile or FluxVaultIpcCommand.DuplicateProfile)
-                return Failure(FluxVaultIpcErrorCode.Unavailable, "Vault provisioning is not available in this build.", request);
+            if (!executor.CanExecute(request))
+                return Failure(FluxVaultIpcErrorCode.Unavailable, "This command is not available in this build.", request);
+            if (mutation)
+            {
+                await mutationGate.WaitAsync(cancellationToken);
+                heldGate = mutationGate;
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            admissionStarted = true;
             catalogueMutationStarted = request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess;
             var admission = request.Command switch
             {
@@ -48,15 +55,19 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
                 FluxVaultIpcCommand.SetVaultAccess => await catalogue.SetAccessAsync(caller, request, cancellationToken),
                 _ => await catalogue.AdmitAsync(caller, request, cancellationToken)
             };
+            var id = admission.Vault.Binding.Id;
+            var boundRequest = request with { VaultId = id };
             if (admission.IsReplay || admission.Receipt?.State == VaultOperationState.Completed)
                 return ReceiptResponse(admission.Receipt, id, request.OperationId ?? Guid.Empty);
-            if (request.Command == FluxVaultIpcCommand.SetActiveProfile)
-                return FluxVaultIpcResponse.Ok() with { VaultId = id, VaultRevision = admission.Vault.Revision };
             executionStarted = true;
-            var response = await executor.ExecuteAsync(caller, admission, request, cancellationToken);
+            var response = await executor.ExecuteAsync(caller, admission, boundRequest, cancellationToken);
             response = response with { VaultId = id, VaultRevision = admission.Vault.Revision, OperationId = request.OperationId };
             if (admission.Receipt is not null) await catalogue.CompleteAsync(admission.Receipt, response, cancellationToken);
             return response;
+        }
+        catch (OperationCanceledException) when (!admissionStarted)
+        {
+            return Failure(FluxVaultIpcErrorCode.Unavailable, "The request was cancelled before admission. No change was started.", request);
         }
         catch (VaultCatalogueException exception) when (!executionStarted)
         {
@@ -83,6 +94,13 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
                     executionStarted ? "The vault command could not be completed. Try again when the vault is available." :
                         "The vault catalogue is unavailable. No repository command was started; try again when it is available.", request);
         }
+        finally { heldGate?.Release(); }
+    }
+
+    private static SemaphoreSlim CreateMutationGate(FluxVaultIpcLimits limits)
+    {
+        limits.Validate();
+        return new(1, 1);
     }
 
     private static FluxVaultIpcResponse Denied() => FluxVaultIpcResponse.Failure("The vault is unavailable or you do not have permission for this command.") with { ErrorCode = FluxVaultIpcErrorCode.Denied };

@@ -8,6 +8,22 @@ namespace FluxVault.Core.Tests;
 public sealed class AuthenticatedVaultDispatcherTests
 {
     [Theory]
+    [InlineData((FluxVaultIpcCommand)26)]
+    [InlineData((FluxVaultIpcCommand)27)]
+    [InlineData((FluxVaultIpcCommand)28)]
+    [InlineData((FluxVaultIpcCommand)29)]
+    [InlineData((FluxVaultIpcCommand)30)]
+    [InlineData((FluxVaultIpcCommand)32)]
+    public async Task Retired_wire_values_touch_neither_installation_record_nor_executor(FluxVaultIpcCommand command)
+    {
+        var fixture = new Fixture();
+        var response = await fixture.Handler.HandleAsync(fixture.Caller, fixture.Request with { Command = command });
+        Assert.False(response.Success);
+        Assert.Equal(FluxVaultIpcErrorCode.Denied, response.ErrorCode);
+        Assert.Equal(0, fixture.Catalogue.Calls);
+        Assert.Equal(0, fixture.Executor.Calls);
+    }
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
     public async Task Omitted_or_unknown_target_is_denied_without_repository_materialisation(bool unknown)
@@ -17,6 +33,18 @@ public sealed class AuthenticatedVaultDispatcherTests
         Assert.False(response.Success);
         Assert.Equal(FluxVaultIpcErrorCode.Denied, response.ErrorCode);
         Assert.Equal(0, fixture.Executor.Calls);
+    }
+
+    [Fact]
+    public async Task Initial_status_resolves_only_the_authorised_installed_binding_and_returns_its_identity()
+    {
+        var fixture = new Fixture();
+        var response = await fixture.Handler.HandleAsync(fixture.Caller, FluxVaultIpcRequest.GetStatus());
+        Assert.True(response.Success);
+        Assert.Equal(fixture.Catalogue.Entry.Binding.Id, response.VaultId);
+        Assert.Equal(fixture.Catalogue.Entry.Revision, response.VaultRevision);
+        Assert.Equal(fixture.Catalogue.Entry.Binding.Id, fixture.Executor.Request!.VaultId);
+        Assert.Equal(1, fixture.Catalogue.Calls);
     }
 
     [Fact]
@@ -144,7 +172,8 @@ public sealed class AuthenticatedVaultDispatcherTests
         {
             Calls++;
             if (Error is not null) throw Error;
-            if (request.VaultId != Entry.Binding.Id) throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
+            if (request.VaultId != Entry.Binding.Id && !(request.VaultId is null && request.Command == FluxVaultIpcCommand.GetStatus))
+                throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
             return Task.FromResult(new VaultAdmission(Entry, Replay, Replay is not null));
         }
         public Task<VaultAdmission> SaveConfigurationAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
@@ -153,8 +182,6 @@ public sealed class AuthenticatedVaultDispatcherTests
             return Task.FromResult(new VaultAdmission(Entry, new(request.OperationId!.Value, Entry.Binding.Id, caller.UserSid, request.Command, "fingerprint", VaultOperationState.Completed, Entry.Revision,
                 FluxVaultIpcResponse.Ok() with { VaultId = Entry.Binding.Id, VaultRevision = Entry.Revision, OperationId = request.OperationId }), false));
         }
-        public Task<VaultDiscoveryPage> ListAccessibleAsync(FluxVaultCallerContext caller, VaultId? after = null, int pageSize = 128, CancellationToken cancellationToken = default) =>
-            Task.FromResult(new VaultDiscoveryPage([new(Entry.Binding.Id, Entry.Revision, Entry.DisplayName, VaultPermission.ReadHistory)], null));
         public Task<VaultAdmission> SetAccessAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<VaultOperationReceipt?> GetReceiptAsync(FluxVaultCallerContext caller, VaultId vaultId, Guid operationId, CancellationToken cancellationToken = default) => Task.FromResult(Replay);
         public Task CompleteAsync(VaultOperationReceipt receipt, FluxVaultIpcResponse response, CancellationToken cancellationToken = default) => Task.CompletedTask;

@@ -7,7 +7,8 @@ using Npgsql;
 namespace FluxVault.Testing;
 
 internal sealed record WindowsDatabaseProbeConfiguration(string FixtureId, string Root, int Port,
-    string Database, string Role, int TimeoutSeconds, Dictionary<string, string> Actors, bool RunCatalogueTests = false, bool RunMetadataTests = false)
+    string Database, string Role, int TimeoutSeconds, Dictionary<string, string> Actors, bool RunCatalogueTests = false, bool RunMetadataTests = false,
+    bool RunSingleVaultTests = false)
 {
     internal static string AllowedParent => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "FluxVault.Tests", "NEXT002");
 

@@ -81,7 +81,8 @@ function Invoke-ActorTool {
 try {
     $probeId = [guid]::NewGuid().ToString('N')
     if ($ClientKind -eq 'CallerFiles') {
-        $mode=if($Actor -eq 'System'){'windows-file-server'}else{'windows-file-client'}
+        $singleVault=($configuration.PSObject.Properties.Name -contains 'RunSingleVaultTests') -and $configuration.RunSingleVaultTests
+        $mode=if($singleVault){if($Actor -eq 'System'){'windows-single-server'}else{'windows-single-client'}}else{if($Actor -eq 'System'){'windows-file-server'}else{'windows-file-client'}}
         $result=Invoke-ActorTool -Executable $runtime.Dotnet -Arguments @((Join-Path $Root 'runtime/FluxVault.TestHost.dll'),'--mode',$mode,
             '--configuration',(Join-Path $Root 'runtime/database-probe.json'),'--actor',$Actor)
         if($result.ExitCode -ne 0){throw ('Native caller file proof failed: '+$result.Error)}

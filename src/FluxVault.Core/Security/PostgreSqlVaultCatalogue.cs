@@ -12,7 +12,16 @@ namespace FluxVault.Core.Security;
 
 /// <summary>Protected service bootstrap, independent of user-editable vault configuration.</summary>
 public sealed record VaultCatalogueEndpoint(Guid InstanceId, string Host, int Port, string Database, string ServiceRole,
-    int ConnectionTimeoutSeconds = 5, int CommandTimeoutSeconds = 15, int MaximumConnections = 24);
+    int ConnectionTimeoutSeconds = 5, int CommandTimeoutSeconds = 15, int MaximumConnections = 24)
+{
+    public void Validate()
+    {
+        if (InstanceId == Guid.Empty || string.IsNullOrWhiteSpace(Host) || Port is < 1 or > 65535 ||
+            string.IsNullOrWhiteSpace(Database) || string.IsNullOrWhiteSpace(ServiceRole) ||
+            ConnectionTimeoutSeconds is < 1 or > 60 || CommandTimeoutSeconds is < 1 or > 120 || MaximumConnections is < 1 or > 64)
+            throw new ArgumentException("The protected catalogue endpoint is invalid.");
+    }
+}
 
 public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
 {
@@ -30,10 +39,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
     public PostgreSqlVaultCatalogue(VaultCatalogueEndpoint endpoint, FluxVaultIpcLimits? limits = null)
     {
         ArgumentNullException.ThrowIfNull(endpoint);
-        if (endpoint.InstanceId == Guid.Empty || string.IsNullOrWhiteSpace(endpoint.Host) ||
-            endpoint.Port is < 1 or > 65535 || string.IsNullOrWhiteSpace(endpoint.Database) || string.IsNullOrWhiteSpace(endpoint.ServiceRole) ||
-            endpoint.ConnectionTimeoutSeconds is < 1 or > 60 || endpoint.CommandTimeoutSeconds is < 1 or > 120 || endpoint.MaximumConnections is < 1 or > 64)
-            throw new ArgumentException("The protected catalogue endpoint is invalid.", nameof(endpoint));
+        endpoint.Validate();
         Endpoint = endpoint;
         this.limits = limits ?? new();
         this.limits.Validate();
@@ -65,16 +71,16 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
             CREATE TABLE fv_control.identity (
                 singleton boolean PRIMARY KEY CHECK (singleton), instance_id uuid NOT NULL, schema_version integer NOT NULL CHECK (schema_version = 1)
             );
-            CREATE TABLE fv_control.vaults (
-                vault_id uuid PRIMARY KEY, revision bigint NOT NULL CHECK (revision > 0), display_name text NOT NULL CHECK (octet_length(display_name) BETWEEN 1 AND 1024),
+            CREATE TABLE fv_control.vault (
+                singleton boolean PRIMARY KEY CHECK (singleton), vault_id uuid UNIQUE NOT NULL,
+                revision bigint NOT NULL CHECK (revision > 0), display_name text NOT NULL CHECK (octet_length(display_name) BETWEEN 1 AND 1024),
                 owner_sid text NOT NULL CHECK (octet_length(owner_sid) BETWEEN 1 AND 256),
                 grants text NOT NULL CHECK (octet_length(grants) <= 16777216),
                 binding text NOT NULL CHECK (octet_length(binding) <= 16777216),
-                configuration text NOT NULL CHECK (octet_length(configuration) <= 16777216),
-                repository_key text UNIQUE NOT NULL, state_key text UNIQUE NOT NULL
+                configuration text NOT NULL CHECK (octet_length(configuration) <= 16777216)
             );
             CREATE TABLE fv_control.operations (
-                operation_id uuid PRIMARY KEY, vault_id uuid NOT NULL REFERENCES fv_control.vaults(vault_id), actor_sid text NOT NULL,
+                operation_id uuid PRIMARY KEY, vault_id uuid NOT NULL REFERENCES fv_control.vault(vault_id), actor_sid text NOT NULL,
                 command integer NOT NULL, fingerprint text NOT NULL CHECK (length(fingerprint) = 64),
                 required_permissions integer NOT NULL CHECK (required_permissions BETWEEN 1 AND 63),
                 state integer NOT NULL CHECK (state IN (0,1)), revision bigint NOT NULL CHECK (revision > 0),
@@ -91,7 +97,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
     }
 
     /// <summary>Binding/configuration come from trusted provisioning, never directly from an ordinary IPC payload.</summary>
-    public async Task<VaultCatalogueEntry> CreateAsync(FluxVaultCallerContext creator, VaultBinding binding, string displayName,
+    public async Task<VaultCatalogueEntry> InitializeAsync(FluxVaultCallerContext creator, VaultBinding binding, string displayName,
         FluxVaultConfiguration configuration, CancellationToken cancellationToken = default)
     {
         binding.Validate();
@@ -103,16 +109,13 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         await using var connection = await OpenVerifiedAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         await LockAsync(connection, transaction, cancellationToken);
-        // Serialised provisioning prevents overlap as well as exact-key collisions.
-        await using (var roots = new NpgsqlCommand("SELECT repository_key, state_key FROM fv_control.vaults", connection, transaction))
-        await using (var reader = await roots.ExecuteReaderAsync(cancellationToken))
-            while (await reader.ReadAsync(cancellationToken))
-                foreach (var proposed in new[] { RootKey(binding.RepositoryPath), RootKey(binding.StateRoot) })
-                    foreach (var existing in new[] { reader.GetString(0), reader.GetString(1) })
-                        if (Overlaps(proposed, existing)) throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);
+        // Initialisation is one-time and serialised. It never replaces an existing vault.
+        await using (var exists = new NpgsqlCommand("SELECT EXISTS (SELECT FROM fv_control.vault)", connection, transaction))
+            if (await exists.ExecuteScalarAsync(cancellationToken) is true)
+                throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);
         await using var command = new NpgsqlCommand("""
-            INSERT INTO fv_control.vaults(vault_id,revision,display_name,owner_sid,grants,binding,configuration,repository_key,state_key)
-            VALUES (@id,1,@name,@owner,@grants,@binding,@configuration,@repository,@state)
+            INSERT INTO fv_control.vault(singleton,vault_id,revision,display_name,owner_sid,grants,binding,configuration)
+            VALUES (true,@id,1,@name,@owner,@grants,@binding,@configuration)
             """, connection, transaction);
         command.Parameters.AddWithValue("id", binding.Id.Value);
         command.Parameters.AddWithValue("name", displayName);
@@ -120,47 +123,28 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         command.Parameters.AddWithValue("grants", Encode(policy.Grants));
         command.Parameters.AddWithValue("binding", Encode(binding));
         command.Parameters.AddWithValue("configuration", Encode(configuration));
-        command.Parameters.AddWithValue("repository", RootKey(binding.RepositoryPath));
-        command.Parameters.AddWithValue("state", RootKey(binding.StateRoot));
         await command.ExecuteNonQueryAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return new(binding, 1, displayName, policy, configuration);
     }
 
-    public async Task<VaultDiscoveryPage> ListAccessibleAsync(FluxVaultCallerContext caller, VaultId? after = null, int pageSize = 128, CancellationToken cancellationToken = default)
-    {
-        RequireCaller(caller);
-        if (pageSize < 1 || pageSize > limits.MaximumVaultPageSize || after is { IsValid: false }) throw new ArgumentException("A bounded discovery page is required.");
-        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        deadline.CancelAfter(TimeSpan.FromSeconds(Endpoint.CommandTimeoutSeconds));
-        cancellationToken = deadline.Token;
-        await using var connection = await OpenVerifiedAsync(cancellationToken);
-        await using var command = new NpgsqlCommand("""
-            SELECT vault_id,revision,display_name,owner_sid,grants FROM fv_control.vaults
-            WHERE (@after IS NULL OR vault_id > @after) AND
-                (owner_sid=@sid OR @administrator OR EXISTS(SELECT FROM jsonb_array_elements(grants::jsonb) g WHERE g->>'principalSid'=ANY(@principals)))
-            ORDER BY vault_id
-            """, connection);
-        command.Parameters.AddWithValue("after", NpgsqlTypes.NpgsqlDbType.Uuid, after is null ? DBNull.Value : after.Value.Value);
-        command.Parameters.AddWithValue("sid", caller.UserSid);
-        command.Parameters.AddWithValue("administrator", caller.UserSid == "S-1-5-18" || (caller.IsElevated && caller.EnabledGroupSids.Contains("S-1-5-32-544")));
-        command.Parameters.AddWithValue("principals", caller.EnabledGroupSids.Append(caller.UserSid).ToArray());
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        var result = new List<FluxVaultVaultSummary>();
-        while (await reader.ReadAsync(cancellationToken))
-        {
-            var access = ReadPolicy(reader);
-            var permissions = Enum.GetValues<VaultPermission>().Where(permission => permission is not (VaultPermission.None or VaultPermission.All) &&
-                VaultAuthorizer.IsAllowed(caller, access, permission)).Aggregate(VaultPermission.None, (all, permission) => all | permission);
-            if (permissions == VaultPermission.None) continue;
-            if (result.Count == pageSize) return new(result, result[^1].VaultId);
-            result.Add(new(new(reader.GetGuid(0)), reader.GetInt64(1), reader.GetString(2), permissions));
-        }
-        return new(result, null);
-    }
-
     public Task<VaultAdmission> AdmitAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default) =>
         MutateAsync(caller, request, Mutation.Admit, cancellationToken);
+
+    /// <summary>Service bootstrap integrity check; never exposed as an IPC authorisation route.</summary>
+    public async Task<VaultCatalogueEntry> VerifyInstallationAsync(FluxVaultInstallation installation, CancellationToken cancellationToken = default)
+    {
+        installation.Validate();
+        if (installation.Endpoint != Endpoint) throw new VaultCatalogueException(VaultCatalogueFailure.IdentityMismatch);
+        await using var connection = await OpenVerifiedAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await LockAsync(connection, transaction, cancellationToken);
+        var entry = await LoadAsync(connection, transaction, installation.Binding.Id, cancellationToken);
+        if (entry is null || entry.Binding != installation.Binding || entry.Access.OwnerSid != installation.CreatorSid)
+            throw new VaultCatalogueException(VaultCatalogueFailure.IdentityMismatch);
+        await transaction.CommitAsync(cancellationToken);
+        return entry;
+    }
 
     public Task<VaultAdmission> SaveConfigurationAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default) =>
         MutateAsync(caller, request, Mutation.Save, cancellationToken);
@@ -173,8 +157,8 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
     private async Task<VaultAdmission> MutateAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, Mutation mutation, CancellationToken ct)
     {
         RequireCaller(caller);
-        if (request.VaultId is not { IsValid: true } id || !VaultCommandPolicy.TryGet(request, out var requirement) ||
-            (request.ProfileId is not null && request.ProfileId != id.ToString()) || request.SourceProfileId is not null ||
+        if (request.VaultId is { IsValid: false } || request.VaultId is null && request.Command != FluxVaultIpcCommand.GetStatus ||
+            !VaultCommandPolicy.TryGet(request, out var requirement) || request.ProfileId is not null || request.SourceProfileId is not null ||
             (mutation == Mutation.Save && request.Command != FluxVaultIpcCommand.SaveConfiguration) ||
             (mutation == Mutation.Access && request.Command != FluxVaultIpcCommand.SetVaultAccess) ||
             (mutation == Mutation.Admit && request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess))
@@ -185,11 +169,13 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         var fingerprint = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(request, JsonOptions)));
         await using var connection = await OpenVerifiedAsync(ct);
         await using var transaction = await connection.BeginTransactionAsync(ct);
-        // Global control lock covers operation IDs across vaults. It is held only for bounded catalogue transactions.
+        // The installation lock is held only for bounded catalogue transactions.
         await LockAsync(connection, transaction, ct);
-        var vault = await LoadAsync(connection, transaction, id, ct);
-        if (vault is null || !VaultAuthorizer.IsAllowed(caller, vault.Access, requirement.Permissions))
+        var vault = await LoadAsync(connection, transaction, request.VaultId, ct);
+        if (vault is null || !VaultCommandPolicy.TryGet(request, vault.Configuration, out requirement) ||
+            !VaultAuthorizer.IsAllowed(caller, vault.Access, requirement.Permissions))
             throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
+        var id = vault.Binding.Id;
         if (modifying)
         {
             var receipt = await ReadReceiptAsync(connection, transaction, request.OperationId!.Value, ct);
@@ -222,7 +208,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         }
         if (mutation != Mutation.Admit)
         {
-            await using var update = new NpgsqlCommand("UPDATE fv_control.vaults SET revision=@revision, configuration=@configuration, grants=@grants WHERE vault_id=@id", connection, transaction);
+            await using var update = new NpgsqlCommand("UPDATE fv_control.vault SET revision=@revision, configuration=@configuration, grants=@grants WHERE singleton=true AND vault_id=@id", connection, transaction);
             update.Parameters.AddWithValue("revision", vault.Revision);
             update.Parameters.AddWithValue("configuration", Encode(vault.Configuration));
             update.Parameters.AddWithValue("grants", Encode(vault.Access.Grants));
@@ -277,12 +263,12 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         if (await command.ExecuteNonQueryAsync(cancellationToken) != 1) throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
     }
 
-    private const string SelectVault = "SELECT vault_id,revision,display_name,owner_sid,grants,binding,configuration FROM fv_control.vaults";
+    private const string SelectVault = "SELECT vault_id,revision,display_name,owner_sid,grants,binding,configuration FROM fv_control.vault";
 
-    private async Task<VaultCatalogueEntry?> LoadAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, VaultId id, CancellationToken ct)
+    private async Task<VaultCatalogueEntry?> LoadAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, VaultId? id, CancellationToken ct)
     {
-        await using var command = new NpgsqlCommand(SelectVault + " WHERE vault_id=@id FOR UPDATE", connection, transaction);
-        command.Parameters.AddWithValue("id", id.Value);
+        await using var command = new NpgsqlCommand(SelectVault + " WHERE singleton=true AND (@id IS NULL OR vault_id=@id) FOR UPDATE", connection, transaction);
+        command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Uuid, id is { } target ? target.Value : DBNull.Value);
         await using var reader = await command.ExecuteReaderAsync(ct);
         return await reader.ReadAsync(ct) ? ReadVault(reader, ReadPolicy(reader)) : null;
     }
@@ -355,7 +341,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
                 SELECT EXISTS (SELECT FROM pg_namespace n JOIN pg_roles r ON r.oid=n.nspowner WHERE n.nspname='fv_control' AND r.rolname=@role
                     AND NOT EXISTS (SELECT FROM aclexplode(coalesce(n.nspacl,acldefault('n',n.nspowner))) a WHERE a.grantee <> n.nspowner))
                     AND (SELECT count(*)=3 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace JOIN pg_roles r ON r.oid=c.relowner
-                        WHERE n.nspname='fv_control' AND c.relname IN ('identity','vaults','operations') AND c.relkind='r' AND c.relpersistence='p' AND r.rolname=@role
+                        WHERE n.nspname='fv_control' AND c.relname IN ('identity','vault','operations') AND c.relkind='r' AND c.relpersistence='p' AND r.rolname=@role
                         AND NOT EXISTS (SELECT FROM aclexplode(coalesce(c.relacl,acldefault('r',c.relowner))) a WHERE a.grantee <> c.relowner))
                 """, connection);
             security.Parameters.AddWithValue("role", Endpoint.ServiceRole);
@@ -406,7 +392,6 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
             after.PerformanceWorkspace, after.ShellIntegration, after.DirectCloud, after.SecurityPosture, after.Fleet,
             after.DiagnosticsPolicy.LogDirectory }, JsonOptions);
     private static string RootKey(string path) => Path.TrimEndingDirectorySeparator(Path.GetFullPath(path)).ToUpperInvariant();
-    private static bool Overlaps(string one, string two) => one == two || one.StartsWith(two + Path.DirectorySeparatorChar, StringComparison.Ordinal) || two.StartsWith(one + Path.DirectorySeparatorChar, StringComparison.Ordinal);
     private static void RequireCaller(FluxVaultCallerContext caller)
     {
         if (!caller.ImpersonationPermitted || string.IsNullOrWhiteSpace(caller.UserSid)) throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
@@ -416,6 +401,6 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         FluxVaultIpcCommand.GetActivity or FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.GetSyncStatus or
         FluxVaultIpcCommand.GetRepositoryHealth or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.PreviewRetention or
         FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.PreviewMirrorDrain or
-        FluxVaultIpcCommand.ListVaults or FluxVaultIpcCommand.GetOperationStatus or FluxVaultIpcCommand.SetActiveProfile);
+        FluxVaultIpcCommand.GetOperationStatus);
     public ValueTask DisposeAsync() => dataSource.DisposeAsync();
 }

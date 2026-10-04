@@ -73,7 +73,6 @@ public partial class App : System.Windows.Application
         menu.Items.Add("Open dashboard", null, (_, _) => ShowDashboard());
         menu.Items.Add("Activity", null, (_, _) => ShowActivityPane());
         menu.Items.Add("Blocked files", null, (_, _) => ShowActivityPane());
-        menu.Items.Add("Pause/resume protection", null, async (_, _) => await SetProtectionPausedAsync());
         menu.Items.Add("Options", null, (_, _) => ShowOptions());
         menu.Items.Add("Exit", null, (_, _) => ExitApplication());
         return menu;
@@ -154,7 +153,8 @@ public partial class App : System.Windows.Application
         {
             activityPaneWindow = new ActivityPaneWindow
             {
-                DataContext = new ActivityPaneViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient(FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService())),
+                DataContext = new ActivityPaneViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient(FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService()),
+                    mainWindow?.DataContext as MainWindowViewModel),
                 ShowInTaskbar = false
             };
             activityPaneWindow.Closed += (_, _) => activityPaneWindow = null;
@@ -187,7 +187,7 @@ public partial class App : System.Windows.Application
         }
     }
 
-    private void ShowOptions()
+    private async void ShowOptions()
     {
         var owner = mainWindow;
         if (owner is null)
@@ -196,21 +196,7 @@ public partial class App : System.Windows.Application
             owner = mainWindow;
         }
 
-        var window = new OptionsWindow(new OptionsViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient(FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService())))
-        {
-            Owner = owner
-        };
-        window.ShowDialog();
-        if (owner?.DataContext is MainWindowViewModel viewModel)
-        {
-            _ = viewModel.RefreshAsync();
-        }
-    }
-
-    private static async Task SetProtectionPausedAsync()
-    {
-        var client = new FluxVault.Core.Ipc.NamedPipeFluxVaultClient(FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService());
-        _ = await client.SendAsync(FluxVault.Abstractions.Ipc.FluxVaultIpcRequest.SetProtectionPaused());
+        if (owner is not null) await owner.OpenOptionsAsync().ConfigureAwait(true);
     }
 
     private static System.Drawing.Icon LoadFluxVaultIcon()

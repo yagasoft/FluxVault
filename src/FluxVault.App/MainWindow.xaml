@@ -48,26 +48,6 @@
 
             <StackPanel Grid.Column="0" MinWidth="0" Margin="0,0,16,0">
                 <TextBlock Text="FluxVault" FontSize="26" FontWeight="SemiBold" Foreground="#202124" />
-                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                    <ComboBox ItemsSource="{Binding Profiles}"
-                              SelectedItem="{Binding SelectedProfile}"
-                              DisplayMemberPath="DisplayName"
-                              Width="210"
-                              ToolTip="Active vault profile." />
-                    <Button Command="{Binding AddProfileCommand}" Padding="9,5" Margin="8,0,0,0" ToolTip="Add a vault profile.">
-                        <TextBlock Text="+" />
-                    </Button>
-                    <Button Command="{Binding DuplicateProfileCommand}" Padding="9,5" Margin="4,0,0,0" ToolTip="Duplicate the active vault profile.">
-                        <TextBlock Text="⧉" />
-                    </Button>
-                    <Button Command="{Binding RenameProfileCommand}" Padding="9,5" Margin="4,0,0,0" ToolTip="Rename the active vault profile.">
-                        <TextBlock Text="✎" />
-                    </Button>
-                    <Button Command="{Binding DeleteProfileCommand}" Padding="9,5" Margin="4,0,0,0" ToolTip="Delete the active vault profile.">
-                        <TextBlock Text="×" />
-                    </Button>
-                    <TextBlock Text="{Binding ActiveProfileName}" Visibility="Collapsed" />
-                </StackPanel>
                 <TextBlock Text="{Binding ServiceStatus}"
                            FontSize="13"
                            Foreground="#5F6368"
@@ -80,6 +60,10 @@
                         </ToolTip>
                     </TextBlock.ToolTip>
                 </TextBlock>
+                <Button Content="Check backup outcome" Command="{Binding CheckBackupOutcomeCommand}"
+                        HorizontalAlignment="Left" Margin="0,6,0,0"
+                        Visibility="{Binding HasUnconfirmedBackup, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        ToolTip="Check the retained operation receipt without requesting another backup." />
                 <Border Name="ServiceAvailabilityWarning"
                         Background="#FFF4CE"
                         BorderBrush="#F0B429"

@@ -28,13 +28,8 @@ public enum FluxVaultIpcCommand
     RestoreVersionPreview = 23,
     PreviewRestoreSelection = 24,
     RunRestoreSelection = 25,
-    CreateProfile = 26,
-    RenameProfile = 27,
-    DuplicateProfile = 28,
-    DeleteProfile = 29,
-    SetActiveProfile = 30,
+    // Wire values 26-30 and 32 are retired and must remain unassigned.
     GetPerformance = 31,
-    ListVaults = 32,
     GetOperationStatus = 33,
     SetVaultAccess = 34
 }

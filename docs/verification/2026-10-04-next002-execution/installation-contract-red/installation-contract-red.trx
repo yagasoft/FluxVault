@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a2eaabf1-9eb3-4e22-bb2c-5ae46ea64b07" name="os008@OS008-HOME 2026-10-04 12:01:33" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T12:01:33.2496579+03:00" queuing="2026-10-04T12:01:33.2496581+03:00" start="2026-10-04T12:01:32.4984977+03:00" finish="2026-10-04T12:01:33.2551086+03:00" />
+  <TestSettings name="default" id="425ac3ee-dbcf-445f-9fb3-eb4da4da1960">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_12_01_33" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="2892630d-8dbf-45d2-8310-132778bb7fb5" testId="231542cd-1614-14e6-1ab0-f964d931ad20" testName="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;unknown&quot;)" computerName="OS008-HOME" duration="00:00:00.0000919" startTime="2026-10-04T12:01:33.1584565+03:00" endTime="2026-10-04T12:01:33.1584839+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2892630d-8dbf-45d2-8310-132778bb7fb5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(String defect) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\InstallationConfigurationTests.cs:line 43&#xD;
+   at InvokeStub_InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="08ba20bd-565a-4a12-92b4-0cacaa313608" testId="9e021476-1dea-8f10-4969-c156001dd31c" testName="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;endpoint&quot;)" computerName="OS008-HOME" duration="00:00:00.0002784" startTime="2026-10-04T12:01:33.1576877+03:00" endTime="2026-10-04T12:01:33.1577197+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08ba20bd-565a-4a12-92b4-0cacaa313608">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(String defect) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\InstallationConfigurationTests.cs:line 43&#xD;
+   at InvokeStub_InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="87c8ef14-e74a-45f4-9ce1-1d7daa50eb64" testId="a90b07ff-fa7d-1044-407d-09b7dc6e6c2c" testName="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;oversized&quot;)" computerName="OS008-HOME" duration="00:00:00.0012495" startTime="2026-10-04T12:01:33.1588106+03:00" endTime="2026-10-04T12:01:33.1590531+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87c8ef14-e74a-45f4-9ce1-1d7daa50eb64" />
+    <UnitTestResult executionId="9f303d12-5f25-4190-be89-1ad616840d06" testId="77feac3b-088e-f3d2-2d77-3b54c97ac9c4" testName="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;creator&quot;)" computerName="OS008-HOME" duration="00:00:00.0001174" startTime="2026-10-04T12:01:33.1580703+03:00" endTime="2026-10-04T12:01:33.1580997+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f303d12-5f25-4190-be89-1ad616840d06">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(String defect) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\InstallationConfigurationTests.cs:line 43&#xD;
+   at InvokeStub_InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b5fe6acd-1178-48bc-af5f-5678973f68ee" testId="ea4cb846-4a87-cd88-64d4-b14c85b2490f" testName="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;duplicate&quot;)" computerName="OS008-HOME" duration="00:00:00.0003539" startTime="2026-10-04T12:01:33.1568179+03:00" endTime="2026-10-04T12:01:33.1568859+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5fe6acd-1178-48bc-af5f-5678973f68ee">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(String defect) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\InstallationConfigurationTests.cs:line 43&#xD;
+   at InvokeStub_InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f2234944-715c-482c-8b06-db2e09518a15" testId="fc252ad9-71ff-6567-3b2d-4fcaef5b8147" testName="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;schema&quot;)" computerName="OS008-HOME" duration="00:00:00.0555929" startTime="2026-10-04T12:01:33.0775393+03:00" endTime="2026-10-04T12:01:33.1442248+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f2234944-715c-482c-8b06-db2e09518a15">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(String defect) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\InstallationConfigurationTests.cs:line 43&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="09fe48d0-eb1e-4a96-9a13-b5f3abfa847d" testId="7bbb28b6-d486-9509-ea64-950633a1a0d4" testName="FluxVault.Core.Tests.InstallationConfigurationTests.Protected_installation_round_trip_retains_exact_binding_and_creator" computerName="OS008-HOME" duration="00:00:00.0048381" startTime="2026-10-04T12:01:33.1603362+03:00" endTime="2026-10-04T12:01:33.1603739+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="09fe48d0-eb1e-4a96-9a13-b5f3abfa847d" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;unknown&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="231542cd-1614-14e6-1ab0-f964d931ad20">
+      <Execution id="2892630d-8dbf-45d2-8310-132778bb7fb5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.InstallationConfigurationTests" name="Untrusted_or_ambiguous_bootstrap_is_rejected" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;endpoint&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="9e021476-1dea-8f10-4969-c156001dd31c">
+      <Execution id="08ba20bd-565a-4a12-92b4-0cacaa313608" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.InstallationConfigurationTests" name="Untrusted_or_ambiguous_bootstrap_is_rejected" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;schema&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="fc252ad9-71ff-6567-3b2d-4fcaef5b8147">
+      <Execution id="f2234944-715c-482c-8b06-db2e09518a15" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.InstallationConfigurationTests" name="Untrusted_or_ambiguous_bootstrap_is_rejected" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;duplicate&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ea4cb846-4a87-cd88-64d4-b14c85b2490f">
+      <Execution id="b5fe6acd-1178-48bc-af5f-5678973f68ee" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.InstallationConfigurationTests" name="Untrusted_or_ambiguous_bootstrap_is_rejected" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.InstallationConfigurationTests.Protected_installation_round_trip_retains_exact_binding_and_creator" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="7bbb28b6-d486-9509-ea64-950633a1a0d4">
+      <Execution id="09fe48d0-eb1e-4a96-9a13-b5f3abfa847d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.InstallationConfigurationTests" name="Protected_installation_round_trip_retains_exact_binding_and_creator" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;creator&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="77feac3b-088e-f3d2-2d77-3b54c97ac9c4">
+      <Execution id="9f303d12-5f25-4190-be89-1ad616840d06" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.InstallationConfigurationTests" name="Untrusted_or_ambiguous_bootstrap_is_rejected" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: &quot;oversized&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="a90b07ff-fa7d-1044-407d-09b7dc6e6c2c">
+      <Execution id="87c8ef14-e74a-45f4-9ce1-1d7daa50eb64" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.InstallationConfigurationTests" name="Untrusted_or_ambiguous_bootstrap_is_rejected" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="231542cd-1614-14e6-1ab0-f964d931ad20" executionId="2892630d-8dbf-45d2-8310-132778bb7fb5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9e021476-1dea-8f10-4969-c156001dd31c" executionId="08ba20bd-565a-4a12-92b4-0cacaa313608" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a90b07ff-fa7d-1044-407d-09b7dc6e6c2c" executionId="87c8ef14-e74a-45f4-9ce1-1d7daa50eb64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="77feac3b-088e-f3d2-2d77-3b54c97ac9c4" executionId="9f303d12-5f25-4190-be89-1ad616840d06" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ea4cb846-4a87-cd88-64d4-b14c85b2490f" executionId="b5fe6acd-1178-48bc-af5f-5678973f68ee" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc252ad9-71ff-6567-3b2d-4fcaef5b8147" executionId="f2234944-715c-482c-8b06-db2e09518a15" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7bbb28b6-d486-9509-ea64-950633a1a0d4" executionId="09fe48d0-eb1e-4a96-9a13-b5f3abfa847d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="2" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.28]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:00.28]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.28]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\InstallationConfigurationTests.cs(43,0): at FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(String defect)&#xD;
+[xUnit.net 00:00:00.28]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.28]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.29]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.29]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:00.29]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.29]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\InstallationConfigurationTests.cs(43,0): at FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(String defect)&#xD;
+[xUnit.net 00:00:00.29]            at InvokeStub_InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.29]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.29]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.29]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:00.29]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.29]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\InstallationConfigurationTests.cs(43,0): at FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(String defect)&#xD;
+[xUnit.net 00:00:00.29]            at InvokeStub_InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.29]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.29]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.29]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:00.29]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.29]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\InstallationConfigurationTests.cs(43,0): at FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(String defect)&#xD;
+[xUnit.net 00:00:00.29]            at InvokeStub_InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.29]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.29]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.29]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:00.29]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.29]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\InstallationConfigurationTests.cs(43,0): at FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(String defect)&#xD;
+[xUnit.net 00:00:00.29]            at InvokeStub_InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.29]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.29]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:01:33.1467771+03:00">
+        <Text>[xUnit.net 00:00:00.28]     FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: "schema") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:01:33.1571054+03:00">
+        <Text>[xUnit.net 00:00:00.29]     FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: "duplicate") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:01:33.1578818+03:00">
+        <Text>[xUnit.net 00:00:00.29]     FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: "endpoint") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:01:33.1582190+03:00">
+        <Text>[xUnit.net 00:00:00.29]     FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: "creator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:01:33.1586014+03:00">
+        <Text>[xUnit.net 00:00:00.29]     FluxVault.Core.Tests.InstallationConfigurationTests.Untrusted_or_ambiguous_bootstrap_is_rejected(defect: "unknown") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

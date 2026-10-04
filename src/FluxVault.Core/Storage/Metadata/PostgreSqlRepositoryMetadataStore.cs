@@ -26,6 +26,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
     private readonly RepositoryIntegrityLimits integrityLimits;
     private readonly VaultBinding? binding;
     private readonly NpgsqlDataSource? windowsDataSource;
+    private readonly bool ownsWindowsDataSource;
     private readonly long mutationLockKey = MetadataMutationLockKey;
     private string QuotedSchema => binding is null ? "fluxvault" : '"' + binding.MetadataNamespace + '"';
     public VaultBinding? Binding => binding;
@@ -42,14 +43,24 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         this.integrityLimits.Validate();
     }
 
-    public PostgreSqlRepositoryMetadataStore(VaultBinding binding, string? deviceId = null, RepositoryIntegrityLimits? integrityLimits = null)
+    public PostgreSqlRepositoryMetadataStore(VaultBinding binding, string? deviceId = null, RepositoryIntegrityLimits? integrityLimits = null,
+        NpgsqlDataSource? sharedWindowsDataSource = null)
         : this(binding.MetadataStore, deviceId, integrityLimits)
     {
         binding.Validate();
         if (this.configuration != binding.MetadataStore) throw new ArgumentException("A normalised metadata binding is required.", nameof(binding));
         this.binding = binding;
         mutationLockKey = System.Buffers.Binary.BinaryPrimitives.ReadInt64LittleEndian(System.Security.Cryptography.SHA256.HashData(binding.Id.Value.ToByteArray()));
-        windowsDataSource = PostgreSqlMetadataConnectionFactory.CreateWindowsDataSource(configuration);
+        if (sharedWindowsDataSource is not null)
+        {
+            var supplied = new NpgsqlConnectionStringBuilder(sharedWindowsDataSource.ConnectionString);
+            if (supplied.Host != configuration.Host || supplied.Port != configuration.Port || supplied.Database != configuration.DatabaseName ||
+                supplied.Username != configuration.Username || !string.Equals(supplied.RequireAuth, "SSPI", StringComparison.OrdinalIgnoreCase) ||
+                supplied.SearchPath != "pg_catalog")
+                throw new ArgumentException("The shared metadata source must require SSPI at the exact bound endpoint.", nameof(sharedWindowsDataSource));
+        }
+        ownsWindowsDataSource = sharedWindowsDataSource is null;
+        windowsDataSource = sharedWindowsDataSource ?? PostgreSqlMetadataConnectionFactory.CreateWindowsDataSource(configuration);
     }
 
     public async Task ProvisionVaultAsync(CancellationToken cancellationToken = default)
@@ -1060,7 +1071,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
 
     public async ValueTask DisposeAsync()
     {
-        if (windowsDataSource is not null) await windowsDataSource.DisposeAsync();
+        if (ownsWindowsDataSource && windowsDataSource is not null) await windowsDataSource.DisposeAsync();
         schemaGate.Dispose();
     }
 

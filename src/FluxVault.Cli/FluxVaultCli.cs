@@ -273,11 +273,8 @@ public static class FluxVaultCli
             : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "FluxVault");
         var profileSetStore = new FileFluxVaultProfileSetStore(Path.Combine(programDataPath, "config.json"), programDataPath);
         var profileSet = await profileSetStore.LoadAsync().ConfigureAwait(false);
-        var profile = options.TryGetValue("profile", out var profileId)
-            ? profileSet.Profiles.FirstOrDefault(value => string.Equals(value.Id, profileId, StringComparison.OrdinalIgnoreCase))
-                ?? throw new ArgumentException($"Profile not found: {profileId}.")
-            : profileSet.ActiveProfile;
-        var configuration = profile.Configuration;
+        if (options.ContainsKey("profile")) throw new ArgumentException("Vault/profile selection has been removed. One vault is supported per installation.");
+        var configuration = profileSet.ActiveProfile.Configuration;
         if (options.TryGetValue("repository", out var repositoryPath) && !string.IsNullOrWhiteSpace(repositoryPath))
         {
             configuration = configuration with { RepositoryPath = Path.GetFullPath(repositoryPath) };

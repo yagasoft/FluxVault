@@ -60,7 +60,7 @@ internal static class ProtectionSaveUiFixture
             {
                 case FluxVaultIpcCommand.GetStatus:
                     return FluxVaultIpcResponse.WithStatus(new(true, await store.LoadAsync(cancellationToken),
-                        "Disposable fixture idle", null, [], [], ActiveProfileId: "default"));
+                        "Disposable fixture idle", null, [], []));
                 case FluxVaultIpcCommand.SaveConfiguration:
                     if (++saves == 1)
                     {

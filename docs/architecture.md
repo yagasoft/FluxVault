@@ -1,5 +1,7 @@
 # Architecture
 
+Scope decision, 4 October 2026: FluxVault supports exactly one logical vault per Windows installation, with multiple protected folders, file types and mirrors. NEXT-002 removes product profile switching/lifecycle/discovery and multiple runtime management. Creator ownership and explicit grants remain; the vault is not automatically shared with all Windows users. Retain one repository identity, immutable physical/metadata binding, revision and receipts for correctness/recovery. The legacy profile behaviour described below records the staging implementation being replaced, not the future product contract. [Current implementation sequence and gates](superpowers/plans/2026-10-03-next002-with-protection-save.md).
+
 ## Overview
 
 FluxVault has five main runtime parts:

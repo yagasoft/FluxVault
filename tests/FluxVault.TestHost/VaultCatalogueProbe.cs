@@ -32,13 +32,18 @@ internal static class VaultCatalogueProbe
         {
             await store.ProvisionAsync();
             var one = CreateBinding();
-            var two = CreateBinding();
             var initial = Configuration(one);
-            var a = await store.CreateAsync(owner, one, "Alpha", initial);
-            var b = await store.CreateAsync(owner, two, "Beta", Configuration(two));
+            var a = await store.InitializeAsync(owner, one, "FluxVault", initial);
             Check(a.Access.OwnerSid == owner.UserSid && a.Access.Grants.Count == 0 && a.Revision == 1, "creator and initial revision");
-            Check((await store.ListAccessibleAsync(other)).Vaults.Count == 0, "ungranted discovery is empty");
-            Check((await store.ListAccessibleAsync(owner)).Vaults.Count == 2, "two vaults in one database are discoverable");
+            var initialStatus = await store.AdmitAsync(owner, FluxVaultIpcRequest.GetStatus());
+            Check(initialStatus.Vault.Binding == one && initialStatus.Vault.Revision == 1 && initialStatus.Receipt is null,
+                "initial authorised status resolves only the installed repository without mutation");
+            await Denied(() => store.AdmitAsync(other, FluxVaultIpcRequest.GetStatus()), "ungranted initial status reveals no installed identity");
+            var replacement = CreateBinding();
+            await Failure(() => store.InitializeAsync(owner, replacement, "Replacement", Configuration(replacement)),
+                VaultCatalogueFailure.InvalidConfiguration, "installation already initialised refuses another repository identity");
+            Check((await store.AdmitAsync(owner, FluxVaultIpcRequest.GetStatus())).Vault.Binding == one,
+                "rejected replacement preserves installed binding");
             await Denied(() => store.AdmitAsync(other, Request(a, FluxVaultIpcCommand.ListVersions)), "ungranted admission");
             await Denied(() => store.AdmitAsync(owner, Request(a, FluxVaultIpcCommand.ListVersions) with { VaultId = null }), "omitted target");
             await Denied(() => store.AdmitAsync(owner, Request(a, FluxVaultIpcCommand.ListVersions) with { VaultId = VaultId.New() }), "unknown target");
@@ -59,7 +64,6 @@ internal static class VaultCatalogueProbe
             await Denied(() => store.AdmitAsync(administrator, grant), "generic admission cannot consume access identity");
             await Denied(() => store.SetAccessAsync(owner, grant), "owner cannot manage access");
             var granted = await store.SetAccessAsync(administrator, grant);
-            Check((await store.ListAccessibleAsync(other)).Vaults.Single().VaultId == one.Id, "grant exposes only its vault");
             await store.AdmitAsync(other, Request(granted.Vault, FluxVaultIpcCommand.ListVersions));
             checks.Add("read grant admits history");
             await Denied(() => store.AdmitAsync(other, Request(granted.Vault, FluxVaultIpcCommand.RestoreVersion)), "read grant cannot restore");
@@ -67,18 +71,16 @@ internal static class VaultCatalogueProbe
             await Denied(() => store.AdmitAsync(other, Request(revoked.Vault, FluxVaultIpcCommand.ListVersions)), "acknowledged revocation blocks new admission");
             await using (var restarted = new PostgreSqlVaultCatalogue(store.Endpoint))
             {
-                Check((await restarted.ListAccessibleAsync(other)).Vaults.Count == 0, "revocation persists across store restart");
-                var record = (await restarted.AdmitAsync(owner, Request(b, FluxVaultIpcCommand.GetStatus))).Vault;
-                Check(record.Revision == b.Revision && JsonSerializer.Serialize(record.Configuration) == JsonSerializer.Serialize(b.Configuration), "other vault stays unchanged");
-                var firstPage = await restarted.ListAccessibleAsync(owner, pageSize: 1);
-                var secondPage = await restarted.ListAccessibleAsync(owner, firstPage.NextAfter, pageSize: 1);
-                Check(firstPage.NextAfter is not null && secondPage.NextAfter is null && firstPage.Vaults.Concat(secondPage.Vaults).Select(v => v.VaultId).ToHashSet().SetEquals([one.Id, two.Id]), "paged discovery preserves complete authorised inventory");
+                await Denied(() => restarted.AdmitAsync(other, Request(revoked.Vault, FluxVaultIpcCommand.GetStatus)), "revocation persists across store restart");
+                var record = (await restarted.AdmitAsync(owner, Request(revoked.Vault, FluxVaultIpcCommand.GetStatus))).Vault;
+                Check(record.Revision == revoked.Vault.Revision && JsonSerializer.Serialize(record.Configuration) == JsonSerializer.Serialize(revoked.Vault.Configuration), "installed binding and configuration persist across store restart");
             }
             await using (var mismatched = new PostgreSqlVaultCatalogue(store.Endpoint with { InstanceId = Guid.NewGuid() }))
-                await Failure(() => mismatched.ListAccessibleAsync(owner), VaultCatalogueFailure.IdentityMismatch, "catalogue identity mismatch fails closed");
+                await Failure(() => mismatched.AdmitAsync(owner, Request(revoked.Vault, FluxVaultIpcCommand.GetStatus)), VaultCatalogueFailure.IdentityMismatch, "catalogue identity mismatch fails closed");
             var mutation = Request(revoked.Vault, FluxVaultIpcCommand.RunBackupNow) with { OperationId = Guid.NewGuid() };
             var admitted = await store.AdmitAsync(owner, mutation);
             Check(admitted.Receipt?.State == VaultOperationState.Admitted && !admitted.IsReplay, "durable admission before side effects");
+            Check(admitted.Receipt?.RequiredPermissions == (VaultPermission.ManageProtection | VaultPermission.Maintain | VaultPermission.DeleteHistory), "automatic retention authority is durable with backup admission");
             var duplicate = await store.AdmitAsync(owner, mutation);
             Check(duplicate.IsReplay && duplicate.Receipt?.Response is null, "interrupted mutation cannot be replayed");
             await store.CompleteAsync(admitted.Receipt!, FluxVaultIpcResponse.Ok());
@@ -98,14 +100,26 @@ internal static class VaultCatalogueProbe
             var limited = await store.SetAccessAsync(administrator, Request(purgeSaved.Vault, FluxVaultIpcCommand.SetVaultAccess) with { OperationId = Guid.NewGuid(), AccessGrants = [new(other.UserSid, VaultPermission.ManageProtection)] });
             await Denied(() => store.GetReceiptAsync(other, one.Id, purge.OperationId!.Value), "partial revocation denies purge receipt");
             await Denied(() => store.SaveConfigurationAsync(other, purge), "partial revocation denies purge replay");
+            var retentionFailures = new List<string>();
+            foreach (var contract in new (string Name, Func<Task> Run)[]
+            {
+                ("protection-only backup cannot prune enabled retention", () => store.AdmitAsync(other,
+                    Request(limited.Vault, FluxVaultIpcCommand.RunBackupNow) with { OperationId = Guid.NewGuid() })),
+                ("protection-only save cannot change retention policy", () => store.SaveConfigurationAsync(other,
+                    Request(limited.Vault, FluxVaultIpcCommand.SaveConfiguration) with { OperationId = Guid.NewGuid(),
+                        Configuration = limited.Vault.Configuration with { RetentionPolicy = limited.Vault.Configuration.RetentionPolicy with { MinimumVersionsPerFile = 1 } } }))
+            })
+            {
+                try { await contract.Run(); retentionFailures.Add(contract.Name); }
+                catch (VaultCatalogueException exception) when (exception.Failure == VaultCatalogueFailure.Denied) { Check(true, contract.Name); }
+            }
+            if (retentionFailures.Count > 0) throw new InvalidOperationException("Retention authority regressions: " + string.Join("; ", retentionFailures));
             var executor = new CountingExecutor();
             var dispatcher = new AuthenticatedFluxVaultRequestHandler(store, executor);
-            var deniedResponse = await dispatcher.HandleAsync(other, Request(b, FluxVaultIpcCommand.ListVersions));
+            var deniedResponse = await dispatcher.HandleAsync(other, Request(limited.Vault, FluxVaultIpcCommand.ListVersions));
             Check(!deniedResponse.Success && deniedResponse.ErrorCode == FluxVaultIpcErrorCode.Denied && executor.Calls == 0, "real catalogue denial precedes repository executor");
-            var allowedResponse = await dispatcher.HandleAsync(owner, Request(b, FluxVaultIpcCommand.ListVersions));
-            Check(allowedResponse.Success && allowedResponse.VaultId == two.Id && allowedResponse.VaultRevision == b.Revision && executor.Calls == 1, "real catalogue dispatch retains authorised target and revision");
-            var discovery = await dispatcher.HandleAsync(other, new(FluxVaultIpcCommand.ListVaults, null, null, null, null));
-            Check(discovery.Vaults?.Single().VaultId == one.Id && discovery.Vaults.Single().Permissions == VaultPermission.ManageProtection && discovery.Status is null, "discovery returns only authorised summary and permissions");
+            var allowedResponse = await dispatcher.HandleAsync(owner, Request(limited.Vault, FluxVaultIpcCommand.ListVersions));
+            Check(allowedResponse.Success && allowedResponse.VaultId == one.Id && allowedResponse.VaultRevision == limited.Vault.Revision && executor.Calls == 1, "real catalogue dispatch retains installed binding and revision");
             var unknownSave = Request(limited.Vault, FluxVaultIpcCommand.SaveConfiguration) with { OperationId = Guid.NewGuid(), Configuration = limited.Vault.Configuration with { IsEnabled = true } };
             await using (var disconnected = new PostgreSqlVaultCatalogue(store.Endpoint)
                 { AfterMutationCommit = (_, _) => throw new IOException("fixture lost acknowledgement after WAL commit") })
@@ -119,10 +133,27 @@ internal static class VaultCatalogueProbe
                 Check(reconciled.Success && reconciled.VaultRevision == receipt!.Revision && executor.Calls == 1, "same save returns committed receipt without repeating effect");
             }
             await using var acl = new NpgsqlCommand("SELECT has_schema_privilege('public', 'fv_control', 'USAGE')", connection);
+            var current = (await store.AdmitAsync(owner, Request(limited.Vault, FluxVaultIpcCommand.GetStatus) with { ExpectedVaultRevision = null })).Vault;
+            var disabledRetention = await store.SaveConfigurationAsync(owner, Request(current, FluxVaultIpcCommand.SaveConfiguration) with
+            { OperationId = Guid.NewGuid(), Configuration = current.Configuration with { RetentionPolicy = current.Configuration.RetentionPolicy with { IsEnabled = false } } });
+            Check(disabledRetention.Receipt?.RequiredPermissions == (VaultPermission.ManageProtection | VaultPermission.Maintain | VaultPermission.DeleteHistory), "retention-policy edit authority is durable");
+            var captureOnly = Request(disabledRetention.Vault, FluxVaultIpcCommand.RunBackupNow) with { OperationId = Guid.NewGuid() };
+            var captureAdmission = await store.AdmitAsync(other, captureOnly);
+            Check(captureAdmission.Receipt?.RequiredPermissions == VaultPermission.ManageProtection, "protection-only capture allowed when automatic retention is disabled");
+            await store.CompleteAsync(captureAdmission.Receipt!, FluxVaultIpcResponse.Ok());
+            var ordinaryEdit = await store.SaveConfigurationAsync(other, Request(disabledRetention.Vault, FluxVaultIpcCommand.SaveConfiguration) with
+            { OperationId = Guid.NewGuid(), Configuration = disabledRetention.Vault.Configuration with { IsEnabled = false } });
+            Check(ordinaryEdit.Receipt?.RequiredPermissions == VaultPermission.ManageProtection && !ordinaryEdit.Vault.Configuration.IsEnabled,
+                "ordinary protection edit does not require destructive authority");
+            await Denied(() => store.SaveConfigurationAsync(other, Request(ordinaryEdit.Vault, FluxVaultIpcCommand.SaveConfiguration) with
+            { OperationId = Guid.NewGuid(), Configuration = ordinaryEdit.Vault.Configuration with { RetentionPolicy = ordinaryEdit.Vault.Configuration.RetentionPolicy with { IsEnabled = true } } }),
+                "protection-only caller cannot enable automatic pruning");
+            var fresh = (await store.AdmitAsync(owner, Request(ordinaryEdit.Vault, FluxVaultIpcCommand.GetStatus))).Vault;
+            Check(fresh.Revision == ordinaryEdit.Vault.Revision && !fresh.Configuration.RetentionPolicy.IsEnabled, "denied retention edit preserves authoritative configuration and revision");
             Check(await acl.ExecuteScalarAsync() is false, "PUBLIC has no control schema access");
             await using var durability = new NpgsqlCommand("SELECT current_setting('fsync') = 'on' AND current_setting('synchronous_commit') = 'on' AND current_setting('full_page_writes') = 'on'", connection);
             Check(await durability.ExecuteScalarAsync() is true, "acknowledgement durability settings");
-            var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one, two) : null;
+            var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one) : null;
             var repository = fixture.RunMetadataTests ? await VaultRepositoryProbe.RunAsync(dataSource, one) : null;
             return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true, StoreHost = host, Metadata = metadata, Repository = repository };
         }

@@ -9,6 +9,9 @@ using FluxVault.App.Services;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
 using FluxVault.Core.Policies;
+using FluxVault.Abstractions.Security;
+using FluxVault.Core.Security;
+using System.IO;
 
 namespace FluxVault.App.ViewModels;
 
@@ -17,6 +20,10 @@ public sealed partial class OptionsViewModel : ObservableObject
     private readonly IFluxVaultServiceClient client;
     private readonly IExplorerContextMenuService explorerContextMenuService;
     private FluxVaultConfiguration? currentConfiguration;
+    private VaultId? acceptedVaultId;
+    private long? acceptedRevision;
+    private Guid? unconfirmedSaveOperation;
+    private FluxVaultConfiguration? dispatchedConfiguration;
 
     public OptionsViewModel(IFluxVaultServiceClient client)
         : this(client, new WindowsExplorerContextMenuService())
@@ -217,14 +224,19 @@ public sealed partial class OptionsViewModel : ObservableObject
     public async Task InitialiseAsync(CancellationToken cancellationToken = default)
     {
         RefreshExplorerContextMenuStatus();
-        var response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true);
-        if (!response.Success || response.Status is null)
+        FluxVaultIpcResponse response;
+        try { response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true); }
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        { StatusText = "Could not load options; the service acknowledgement is unavailable. Your edits are kept."; return; }
+        if (!response.Success || response.Status is null || response.VaultId is not { IsValid: true } || response.VaultRevision is not > 0)
         {
             StatusText = $"Could not load options: {response.ErrorMessage ?? "no status returned"}";
             return;
         }
 
         currentConfiguration = response.Status.Configuration;
+        acceptedVaultId = response.VaultId;
+        acceptedRevision = response.VaultRevision;
         ApplyPolicy(currentConfiguration.RetentionPolicy);
         ApplyCadence(currentConfiguration.CaptureCadencePolicy);
         ApplyCodec(currentConfiguration.CodecPolicy);
@@ -239,13 +251,14 @@ public sealed partial class OptionsViewModel : ObservableObject
     [RelayCommand]
     public async Task SaveAsync(CancellationToken cancellationToken = default)
     {
-        if (currentConfiguration is null)
+        if (currentConfiguration is null || acceptedVaultId is null || acceptedRevision is not > 0)
         {
-            await InitialiseAsync(cancellationToken).ConfigureAwait(true);
+            StatusText = "Options save failed: load the verified configuration first. Your edits are kept.";
+            return;
         }
-
-        if (currentConfiguration is null)
+        if (unconfirmedSaveOperation is not null)
         {
+            StatusText = "Options save could not be confirmed. Check the previous save outcome before retrying; your edits are kept.";
             return;
         }
 
@@ -260,23 +273,78 @@ public sealed partial class OptionsViewModel : ObservableObject
             DiagnosticsPolicy = BuildDiagnostics(),
             ExclusionRules = []
         };
-        var response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(updated), cancellationToken)
-            .ConfigureAwait(true);
+        var operation = Guid.NewGuid();
+        dispatchedConfiguration = updated;
+        FluxVaultIpcResponse response;
+        try
+        {
+            response = await SendBoundAsync(FluxVaultIpcRequest.SaveConfiguration(updated) with { OperationId = operation }, cancellationToken)
+                .ConfigureAwait(true);
+        }
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        {
+            response = FluxVaultIpcResponse.Failure(exception.Message) with { ErrorCode = FluxVaultIpcErrorCode.OutcomeUnknown };
+        }
         if (response.Success)
         {
             currentConfiguration = updated;
+            acceptedRevision = response.VaultRevision;
             StatusText = "Options saved.";
         }
         else
         {
-            StatusText = $"Options save failed: {response.ErrorMessage}";
+            if (response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown) unconfirmedSaveOperation = operation;
+            StatusText = $"Options save failed: {response.ErrorMessage}. Your edits are kept.";
+            CheckSaveOutcomeCommand.NotifyCanExecuteChanged();
         }
+    }
+
+    public bool HasUnconfirmedSave => unconfirmedSaveOperation is not null;
+
+    [RelayCommand(CanExecute = nameof(HasUnconfirmedSave))]
+    public async Task CheckSaveOutcomeAsync(CancellationToken cancellationToken = default)
+    {
+        if (unconfirmedSaveOperation is not { } operation) return;
+        try
+        {
+            var response = await SendBoundAsync(new FluxVaultIpcRequest(FluxVaultIpcCommand.GetOperationStatus,
+                null, null, null, null, OperationId: operation), cancellationToken).ConfigureAwait(true);
+            if (response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown || response.VaultId != acceptedVaultId ||
+                response.OperationId != operation || response.VaultRevision is not > 0)
+            {
+                StatusText = "The Options save outcome could not be confirmed. Your edits are kept; check again later.";
+                return;
+            }
+            if (response.Success) { currentConfiguration = dispatchedConfiguration; acceptedRevision = response.VaultRevision; }
+            unconfirmedSaveOperation = null;
+            CheckSaveOutcomeCommand.NotifyCanExecuteChanged();
+            StatusText = response.Success ? "Previous Options save confirmed. Any newer edits are kept." : $"Previous Options save failed: {response.ErrorMessage}. Your edits are kept.";
+        }
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        { StatusText = "The Options save outcome could not be confirmed. Your edits are kept; check again later."; }
+    }
+
+    private async Task<FluxVaultIpcResponse> SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
+    {
+        if (acceptedVaultId is null) return FluxVaultIpcResponse.Failure("Load the verified configuration first.");
+        var mutation = PostgreSqlVaultCatalogue.IsMutation(request.Command);
+        request = request with { VaultId = acceptedVaultId, ExpectedVaultRevision = mutation ? acceptedRevision : null,
+            OperationId = request.OperationId ?? (mutation ? Guid.NewGuid() : null) };
+        var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(true);
+        if (!response.Success) return response;
+        var expectedRevision = request.ExpectedVaultRevision + (request.Command == FluxVaultIpcCommand.SaveConfiguration ? 1 : 0);
+        if (response.VaultId != acceptedVaultId || response.VaultRevision is not > 0 ||
+            mutation && (response.OperationId != request.OperationId || response.VaultRevision != expectedRevision))
+            return FluxVaultIpcResponse.Failure("The acknowledgement did not match this Options snapshot. Check the outcome before retrying.")
+                with { ErrorCode = mutation ? FluxVaultIpcErrorCode.OutcomeUnknown : FluxVaultIpcErrorCode.Unavailable };
+        return response;
     }
 
     [RelayCommand]
     public async Task PreviewRetentionAsync(CancellationToken cancellationToken = default)
     {
-        var response = await client.SendAsync(FluxVaultIpcRequest.PreviewRetention(), cancellationToken).ConfigureAwait(true);
+        if (acceptedVaultId is null) await InitialiseAsync(cancellationToken).ConfigureAwait(true);
+        var response = await SendBoundAsync(FluxVaultIpcRequest.PreviewRetention(), cancellationToken).ConfigureAwait(true);
         if (!response.Success || response.RetentionPreview is null)
         {
             PreviewText = $"Preview failed: {response.ErrorMessage ?? "no preview returned"}";
@@ -289,7 +357,8 @@ public sealed partial class OptionsViewModel : ObservableObject
     [RelayCommand]
     public async Task RunRetentionNowAsync(CancellationToken cancellationToken = default)
     {
-        var response = await client.SendAsync(FluxVaultIpcRequest.RunRetentionNow(), cancellationToken).ConfigureAwait(true);
+        if (acceptedVaultId is null) await InitialiseAsync(cancellationToken).ConfigureAwait(true);
+        var response = await SendBoundAsync(FluxVaultIpcRequest.RunRetentionNow(), cancellationToken).ConfigureAwait(true);
         if (!response.Success || response.RetentionResult is null)
         {
             StatusText = $"Retention failed: {response.ErrorMessage ?? "no retention result returned"}";

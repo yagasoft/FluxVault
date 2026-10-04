@@ -3,11 +3,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Core.Ipc;
+using FluxVault.Abstractions.Security;
+using System.IO;
 
 namespace FluxVault.App.ViewModels;
 
-public sealed partial class ActivityPaneViewModel(IFluxVaultServiceClient client) : ObservableObject
+public sealed partial class ActivityPaneViewModel(IFluxVaultServiceClient client, MainWindowViewModel? dashboard = null) : ObservableObject
 {
+    private VaultId? acceptedVaultId;
     [ObservableProperty]
     private string statusText = "Activity is loading...";
 
@@ -18,11 +21,19 @@ public sealed partial class ActivityPaneViewModel(IFluxVaultServiceClient client
     [RelayCommand]
     public async Task RefreshAsync(CancellationToken cancellationToken = default)
     {
-        var activity = await client.SendAsync(FluxVaultIpcRequest.GetActivity(), cancellationToken).ConfigureAwait(true);
-        var blocked = await client.SendAsync(FluxVaultIpcRequest.ListBlockedFiles(), cancellationToken).ConfigureAwait(true);
-
         Events.Clear();
-        if (activity.Success && activity.ActivityEvents is not null)
+        BlockedFiles.Clear();
+        try
+        {
+        var snapshot = await client.SendAsync(FluxVaultIpcRequest.GetStatus(statusDetailLevel: FluxVaultStatusDetailLevel.Fast) with { VaultId = acceptedVaultId }, cancellationToken).ConfigureAwait(true);
+        if (!snapshot.Success || snapshot.Status is null || snapshot.VaultId is not { IsValid: true } id || snapshot.VaultRevision is not > 0 ||
+            acceptedVaultId is { } accepted && accepted != id)
+        { StatusText = $"Activity unavailable ({snapshot.ErrorMessage ?? "vault binding not confirmed"})."; return; }
+        acceptedVaultId = id;
+        var activity = await client.SendAsync(FluxVaultIpcRequest.GetActivity() with { VaultId = id }, cancellationToken).ConfigureAwait(true);
+        var blocked = await client.SendAsync(FluxVaultIpcRequest.ListBlockedFiles() with { VaultId = id }, cancellationToken).ConfigureAwait(true);
+
+        if (activity.Success && activity.VaultId == id && activity.VaultRevision is > 0 && activity.ActivityEvents is not null)
         {
             foreach (var item in activity.ActivityEvents.OrderByDescending(value => value.TimestampUtc))
             {
@@ -35,8 +46,7 @@ public sealed partial class ActivityPaneViewModel(IFluxVaultServiceClient client
             }
         }
 
-        BlockedFiles.Clear();
-        if (blocked.Success && blocked.BlockedFiles is not null)
+        if (blocked.Success && blocked.VaultId == id && blocked.VaultRevision is > 0 && blocked.BlockedFiles is not null)
         {
             foreach (var item in blocked.BlockedFiles)
             {
@@ -44,24 +54,28 @@ public sealed partial class ActivityPaneViewModel(IFluxVaultServiceClient client
             }
         }
 
-        StatusText = blocked.Success
+        StatusText = blocked.Success && activity.Success && blocked.VaultId == id && activity.VaultId == id
             ? $"{Events.Count} event(s), {BlockedFiles.Count} blocked file(s)"
-            : $"Activity loaded; blocked files unavailable ({blocked.ErrorMessage})";
+            : $"Activity or blocked files unavailable ({blocked.ErrorMessage ?? activity.ErrorMessage}).";
+        }
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        { StatusText = "Activity unavailable; the service acknowledgement was not received."; }
     }
 
     [RelayCommand]
     public async Task RunBackupNowAsync(CancellationToken cancellationToken = default)
     {
-        var response = await client.SendAsync(FluxVaultIpcRequest.RunBackupNow(), cancellationToken).ConfigureAwait(true);
-        StatusText = response.Backup?.Message ?? response.ErrorMessage ?? "Backup request finished.";
+        if (dashboard is null) { StatusText = "Open the dashboard to save selections and request a backup."; return; }
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null).ConfigureAwait(true);
         await RefreshAsync(cancellationToken).ConfigureAwait(true);
+        StatusText = dashboard.ServiceStatus;
     }
 
     [RelayCommand]
-    public async Task PauseProtectionAsync(CancellationToken cancellationToken = default)
+    public Task PauseProtectionAsync(CancellationToken cancellationToken = default)
     {
-        var response = await client.SendAsync(FluxVaultIpcRequest.SetProtectionPaused(), cancellationToken).ConfigureAwait(true);
-        StatusText = response.Success ? "Protection pause state changed." : response.ErrorMessage ?? "Pause is not available.";
+        StatusText = "Automatic protection unavailable; manual backup available.";
+        return Task.CompletedTask;
     }
 }
 

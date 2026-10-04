@@ -1,5 +1,7 @@
 # Overview, protection and recovery exploration
 
+Scope revision, 4 October 2026: exactly one logical vault per Windows installation. These completed concepts are preserved as historical evidence; vault selectors, discovery, creation and duplication are superseded. Further multi-vault concept exploration is stopped. The retained single-vault journey must use the actual binding/revision/save/backup/recovery state contracts; creator ownership and explicit access grants remain.
+
 3 October 2026. Design exploration for the existing roadmap, grounded in the [actual 1 October screenshots and UX review](../../reviews/2026-10-01/ux-review.md). Windows/WPF, FluxVault/Yagasoft identity, local-first operation and multiple independent vaults stay fixed. Mock project names, dates and paths are illustrative, not user files or measured runtime evidence. These images are not an implemented UI.
 
 The [NEXT-002/C specification](../../superpowers/specs/2026-10-03-next002-and-protection-save-design.md) defines the command and state contract. All directions must satisfy it; visual selection cannot relax authorisation, vault isolation or verified recovery.

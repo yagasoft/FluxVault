@@ -2,16 +2,9 @@ using WinForms = System.Windows.Forms;
 
 namespace FluxVault.App.Services;
 
-public interface IProfileDialogService
+public sealed class NamePromptService
 {
-    string? PromptForProfileName(string title, string initialValue);
-
-    bool ConfirmDelete(string displayName);
-}
-
-public sealed class ProfileDialogService : IProfileDialogService
-{
-    public string? PromptForProfileName(string title, string initialValue)
+    public string? PromptForName(string title, string initialValue)
     {
         using var form = new WinForms.Form
         {
@@ -56,12 +49,4 @@ public sealed class ProfileDialogService : IProfileDialogService
             : null;
     }
 
-    public bool ConfirmDelete(string displayName)
-    {
-        return WinForms.MessageBox.Show(
-            $"Delete FluxVault profile '{displayName}'?",
-            "Delete profile",
-            WinForms.MessageBoxButtons.YesNo,
-            WinForms.MessageBoxIcon.Warning) == WinForms.DialogResult.Yes;
-    }
 }

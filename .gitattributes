@@ -7,3 +7,5 @@ docs/verification/2026-10-04-next002-metadata/*/postgres.log -text -diff
 docs/verification/2026-10-04-next002-repository/*/postgres.log -text -diff
 docs/verification/2026-10-04-next002-output/*/postgres.log -text -diff
 docs/verification/2026-10-04-next002-source-inventory/*/postgres.log -text -diff
+# Raw diagnostic output may end with intentional blank lines.
+docs/verification/2026-10-04-next002-source-inventory/**/*.log -whitespace

@@ -17,65 +17,13 @@ public sealed class MainWindowViewModelRefreshTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task Profile_command_unavailable_inventory_preserves_only_the_same_profile_without_retry(bool switchProfile)
-    {
-        using var workspace = TempFolder.Create();
-        var defaultProfile = new FluxVaultProfileRuntimeStatus("default", "Default", true, true, @"D:\Vault\repository", 0, 0);
-        var otherProfile = new FluxVaultProfileRuntimeStatus("other", "Other", true, false, @"D:\Vault\repository", 0, 0);
-        var initial = StatusWithVersions("v1") with
-        {
-            ActiveProfileId = "default", Profiles = [defaultProfile, otherProfile],
-            TrackedEntries = [new RepositoryVersionSummary("deleted-v1", Path.Combine(workspace.Path, "deleted.txt"),
-                DateTimeOffset.UtcNow, CaptureConsistency.BestEffort, 128, 1, IsDeleted: true)]
-        };
-        var changed = initial with
-        {
-            RecentVersions = [], TrackedEntries = null, HasVersionInventory = false,
-            ActiveProfileId = switchProfile ? "other" : "default",
-            Profiles = switchProfile
-                ? [defaultProfile with { IsActive = false }, otherProfile with { IsActive = true }]
-                : [defaultProfile with { DisplayName = "Renamed" }, otherProfile]
-        };
-        var client = new FakeFluxVaultServiceClient(initial, changed);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), new FakeProfileDialogService("Renamed"));
-        await viewModel.RefreshAsync();
-        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
-        viewModel.FileBrowser.SelectFolder(new FileBrowserFolderNode(workspace.Path, "Staging", true, null));
-        Assert.Equal("deleted-v1", Assert.Single(viewModel.FileBrowser.Files).RestorableVersionId);
-
-        if (switchProfile)
-        {
-            viewModel.SelectedProfile = viewModel.Profiles.Single(profile => profile.Id == "other");
-            await WaitUntilAsync(() => viewModel.ActiveProfileName == "Other");
-            Assert.Empty(viewModel.RecentVersions);
-            Assert.Null(viewModel.SelectedVersion);
-        }
-        else
-        {
-            await viewModel.RenameProfileCommand.ExecuteAsync(null);
-            Assert.Equal("Renamed", viewModel.ActiveProfileName);
-            Assert.Equal("v1", Assert.Single(viewModel.RecentVersions).VersionId);
-            Assert.Equal("v1", viewModel.SelectedVersion?.VersionId);
-        }
-        Assert.Contains("inventory unavailable", viewModel.ServiceStatus);
-        Assert.True(viewModel.IsServiceWarningVisible);
-        viewModel.FileBrowser.SelectFolder(new FileBrowserFolderNode(workspace.Path, "Staging", true, null));
-        if (switchProfile) Assert.Empty(viewModel.FileBrowser.Files);
-        else Assert.Equal("deleted-v1", Assert.Single(viewModel.FileBrowser.Files).RestorableVersionId);
-        Assert.Single(client.ProfileRequests);
-        Assert.Equal(1, client.GetStatusCount);
-    }
-
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
     public async Task Automatic_refresh_reloads_unavailable_inventory_and_preserves_selection(bool initiallyEmpty)
     {
         var client = new FakeFluxVaultServiceClient(
             initiallyEmpty ? StatusWithVersions() : StatusWithVersions("v1"),
             StatusWithVersions() with { HasVersionInventory = false },
             StatusWithVersions("v2", "v1"));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         if (!initiallyEmpty) viewModel.SelectedVersion = viewModel.RecentVersions.Single();
 
@@ -97,7 +45,7 @@ public sealed class MainWindowViewModelRefreshTests
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"),
             StatusWithVersions() with { HasVersionInventory = false }, StatusWithVersions());
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         viewModel.SelectedVersion = viewModel.RecentVersions.Single();
 
@@ -118,7 +66,7 @@ public sealed class MainWindowViewModelRefreshTests
     public async Task Automatic_refresh_failed_inventory_reload_preserves_visible_versions_and_selection(bool missingFullInventory)
     {
         var client = new UnavailableInventoryClient(StatusWithVersions("v1"), missingFullInventory);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         viewModel.SelectedVersion = viewModel.RecentVersions.Single();
 
@@ -138,38 +86,13 @@ public sealed class MainWindowViewModelRefreshTests
     public async Task Refresh_populates_versions_from_service_status()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
         var version = Assert.Single(viewModel.RecentVersions);
         Assert.Equal("v1", version.VersionId);
         Assert.Contains("Last refreshed", viewModel.ServiceStatus);
-    }
-
-    [Fact]
-    public async Task Profile_selector_loads_profiles_and_add_profile_sends_ipc_request()
-    {
-        var client = new FakeFluxVaultServiceClient(StatusWithProfiles(
-            new FluxVaultProfileRuntimeStatus(
-                "default",
-                "Default",
-                IsEnabled: true,
-                IsActive: true,
-                @"D:\Vault\repository",
-                WatchedFolderCount: 1,
-                EnabledMirrorCount: 0)));
-        var dialog = new FakeProfileDialogService("Archive");
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
-
-        await viewModel.RefreshAsync();
-        await viewModel.AddProfileCommand.ExecuteAsync(null);
-
-        Assert.Equal("Default", Assert.Single(viewModel.Profiles).DisplayName);
-        var request = Assert.Single(client.ProfileRequests);
-        Assert.Equal(FluxVaultIpcCommand.CreateProfile, request.Command);
-        Assert.Equal("archive", request.ProfileId);
-        Assert.Equal("Archive", request.ProfileDisplayName);
     }
 
     [Fact]
@@ -204,7 +127,7 @@ public sealed class MainWindowViewModelRefreshTests
                 InheritedFromVersionId: "source-version",
                 InheritedFromSourcePath: @"D:\Work\file.txt",
                 ContentSignature: "sig-v1")));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -218,7 +141,7 @@ public sealed class MainWindowViewModelRefreshTests
     public async Task Auto_refresh_repeats_status_requests_without_manual_backup()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         viewModel.StartAutoRefresh();
         await WaitUntilAsync(() => client.GetStatusCount >= 2);
@@ -235,7 +158,7 @@ public sealed class MainWindowViewModelRefreshTests
     public async Task Concurrent_refresh_requests_share_the_in_flight_request()
     {
         var client = new BlockingFluxVaultServiceClient(StatusWithVersions("v1"));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         var first = viewModel.RefreshAsync();
         var second = viewModel.RefreshAsync();
@@ -252,7 +175,7 @@ public sealed class MainWindowViewModelRefreshTests
         var client = new FakeFluxVaultServiceClient(
             StatusWithVersions("v1"),
             StatusWithVersions("v2", "v1"));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         viewModel.SelectedVersion = viewModel.RecentVersions.Single();
 
@@ -268,7 +191,7 @@ public sealed class MainWindowViewModelRefreshTests
         var client = new FakeFluxVaultServiceClient(
             StatusWithRepository(@"D:\Vault\Original"),
             StatusWithRepository(@"D:\Vault\FromService"));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
 
         viewModel.RepositoryPath = @"D:\Vault\UserTyping";
@@ -295,7 +218,7 @@ public sealed class MainWindowViewModelRefreshTests
             MirrorWarnings = ["Offline mirror D:\\Mirrors\\Cloud is unavailable."]
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
         viewModel.OpenMirrorsWorkspaceCommand.Execute(null);
@@ -319,7 +242,7 @@ public sealed class MainWindowViewModelRefreshTests
             new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true),
             new MirrorNodeConfiguration("usb", "USB shelf copy", @"E:\FluxVault", IsEnabled: true));
         var client = new FakeFluxVaultServiceClient(firstStatus, refreshedStatus);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         viewModel.SelectedMirrorNode = viewModel.MirrorNodes.Single(node => node.Id == "usb");
 
@@ -342,7 +265,7 @@ public sealed class MainWindowViewModelRefreshTests
                 Priority: 25)
         };
         var client = new FakeFluxVaultServiceClient(StatusWithVersions());
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20), dialog);
         await viewModel.RefreshAsync();
 
         viewModel.AddMirrorCommand.Execute(null);
@@ -364,7 +287,7 @@ public sealed class MainWindowViewModelRefreshTests
     {
         var dialog = new FakeMirrorNodeDialogService { AddResult = null };
         var client = new FakeFluxVaultServiceClient(StatusWithVersions());
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20), dialog);
         await viewModel.RefreshAsync();
 
         viewModel.AddMirrorCommand.Execute(null);
@@ -387,7 +310,7 @@ public sealed class MainWindowViewModelRefreshTests
         };
         var client = new FakeFluxVaultServiceClient(StatusWithMirrorNodes(
             new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true, CapacityBudgetBytes: 1_000, Priority: 50)));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20), dialog);
         await viewModel.RefreshAsync();
         viewModel.SelectedMirrorNode = Assert.Single(viewModel.MirrorNodes);
 
@@ -409,7 +332,7 @@ public sealed class MainWindowViewModelRefreshTests
         var client = new FakeFluxVaultServiceClient(StatusWithMirrorNodes(
             new MirrorNodeConfiguration("cloud", "Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true),
             new MirrorNodeConfiguration("usb", "USB shelf copy", @"E:\FluxVault", IsEnabled: false)));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         viewModel.SelectedMirrorNode = null;
 
@@ -450,7 +373,7 @@ public sealed class MainWindowViewModelRefreshTests
                 new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile.CapacityBalanced))
             }
         });
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -485,7 +408,7 @@ public sealed class MainWindowViewModelRefreshTests
                 ])
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -615,7 +538,7 @@ public sealed class MainWindowViewModelRefreshTests
                 ])
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -655,7 +578,7 @@ public sealed class MainWindowViewModelRefreshTests
                 mirrorRepair)
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -689,7 +612,7 @@ public sealed class MainWindowViewModelRefreshTests
                 mirrorRebalance: rebalance)
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -725,7 +648,7 @@ public sealed class MainWindowViewModelRefreshTests
                 healthState: RepositoryHealthState.Healthy,
                 repaired: 1))
         };
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         viewModel.SelectedMirrorNode = viewModel.MirrorNodes.Single(node => node.Id == "cloud");
 
@@ -759,7 +682,7 @@ public sealed class MainWindowViewModelRefreshTests
             MirrorRebalanceResponse = FluxVaultIpcResponse.WithMirrorRebalance(
                 MirrorRebalanceReport("cloud", "Cloud copy", @"D:\Mirrors\Cloud", MirrorRebalanceActionKind.CopyToMirror))
         };
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
 
         await viewModel.PreviewMirrorRebalanceCommand.ExecuteAsync(null);
@@ -787,7 +710,7 @@ public sealed class MainWindowViewModelRefreshTests
         {
             MirrorRebalanceResponse = MirrorRebalanceHealthyResponse("cloud", "Cloud copy", @"D:\Mirrors\Cloud")
         };
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
 
         await viewModel.RunMirrorRebalanceCommand.ExecuteAsync(null);
@@ -824,7 +747,7 @@ public sealed class MainWindowViewModelRefreshTests
                     isPreview: false,
                     requestedMirrorNodeId: "cloud"))
         };
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         viewModel.SelectedMirrorNode = viewModel.MirrorNodes.Single(node => node.Id == "cloud");
 
@@ -846,7 +769,7 @@ public sealed class MainWindowViewModelRefreshTests
         {
             AddResult = new MirrorNodeDraft("Cloud copy", @"D:\Mirrors\Cloud", IsEnabled: true)
         };
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20), dialog);
         await viewModel.RefreshAsync();
 
         viewModel.AddMirrorCommand.Execute(null);
@@ -876,7 +799,7 @@ public sealed class MainWindowViewModelRefreshTests
                 CapacityBudgetBytes: 1_000_000_000,
                 Priority: 250)
         };
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20), dialog);
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20), dialog);
         await viewModel.RefreshAsync();
 
         viewModel.MirrorPlacementProfile = MirrorPlacementProfile.Redundant;
@@ -972,7 +895,7 @@ public sealed class MainWindowViewModelRefreshTests
             }
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
 
         await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
@@ -991,7 +914,7 @@ public sealed class MainWindowViewModelRefreshTests
         var client = new FakeFluxVaultServiceClient(
             StatusWithSelectionRules([]),
             StatusWithSelectionRules([]));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
 
         viewModel.FileBrowser.ReplaceSelectionRule(new ProtectionSelectionRule(
@@ -1022,7 +945,7 @@ public sealed class MainWindowViewModelRefreshTests
                         ResourceProfile.Balanced,
                         IsEnabled: true)
                 ]));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         viewModel.FileBrowser.ReplaceSelectionRule(new ProtectionSelectionRule(
             "local",
@@ -1043,7 +966,7 @@ public sealed class MainWindowViewModelRefreshTests
     public async Task Service_unavailable_keeps_existing_versions_visible()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         client.ThrowOnNextRequest(new IOException("pipe unavailable"));
 
@@ -1082,7 +1005,7 @@ public sealed class MainWindowViewModelRefreshTests
         };
         var status = StatusWithVersions() with { Configuration = configuration };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -1097,7 +1020,7 @@ public sealed class MainWindowViewModelRefreshTests
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
         var serviceController = new FakeWindowsServiceController(ServiceStatus(FluxVaultWindowsServiceState.Stopped, "FluxVault service is stopped."));
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FileBrowserViewModel(new EmptyFileBrowserFileSystem()),
             serviceController);
@@ -1118,7 +1041,7 @@ public sealed class MainWindowViewModelRefreshTests
         client.ThrowOnNextRequest(new InvalidOperationException("pipe startup failed"));
         var serviceController = new FakeWindowsServiceController(ServiceStatus(FluxVaultWindowsServiceState.Running, "FluxVault service is running."));
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FileBrowserViewModel(new EmptyFileBrowserFileSystem()),
             serviceController);
@@ -1140,7 +1063,7 @@ public sealed class MainWindowViewModelRefreshTests
             StartResult = ActionResult(FluxVaultWindowsServiceState.Running, "FluxVault service started.")
         };
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FileBrowserViewModel(new EmptyFileBrowserFileSystem()),
             serviceController);
@@ -1165,7 +1088,7 @@ public sealed class MainWindowViewModelRefreshTests
                 Message: "Starting FluxVaultService requires elevated permissions.")
         };
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FileBrowserViewModel(new EmptyFileBrowserFileSystem()),
             serviceController);
@@ -1192,7 +1115,7 @@ public sealed class MainWindowViewModelRefreshTests
                 [new UsnJournalCheckpoint("docs", @"D:\", 42, 200, 1, checkedAt)])
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -1212,7 +1135,7 @@ public sealed class MainWindowViewModelRefreshTests
         {
             PerformanceResponse = FluxVaultIpcResponse.WithPerformance(PerformanceStatus(capturedAt))
         };
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromSeconds(5));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromSeconds(5));
         viewModel.SelectedWorkspaceIndex = 5;
 
         await viewModel.RefreshAsync();
@@ -1250,7 +1173,7 @@ public sealed class MainWindowViewModelRefreshTests
             }
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -1285,7 +1208,7 @@ public sealed class MainWindowViewModelRefreshTests
             }
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -1317,7 +1240,7 @@ public sealed class MainWindowViewModelRefreshTests
             ]
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -1338,7 +1261,7 @@ public sealed class MainWindowViewModelRefreshTests
                 RehearsalReport(RepositoryHealthState.Healthy, failed: 0))
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -1354,8 +1277,9 @@ public sealed class MainWindowViewModelRefreshTests
         {
             RepositoryScrubResponse = FluxVaultIpcResponse.WithRepositoryScrub(ScrubReport(RepositoryHealthState.Healthy, repaired: 1))
         };
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
+        await viewModel.RefreshAsync();
         await viewModel.RunRepositoryScrubCommand.ExecuteAsync(null);
 
         Assert.Contains(FluxVaultIpcCommand.RunRepositoryScrub, client.Commands);
@@ -1370,8 +1294,9 @@ public sealed class MainWindowViewModelRefreshTests
         {
             RestoreRehearsalResponse = FluxVaultIpcResponse.WithRestoreRehearsal(RehearsalReport(RepositoryHealthState.Healthy, failed: 0))
         };
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
+        await viewModel.RefreshAsync();
         await viewModel.RunRestoreRehearsalCommand.ExecuteAsync(null);
 
         Assert.Contains(FluxVaultIpcCommand.RunRestoreRehearsal, client.Commands);
@@ -1401,7 +1326,7 @@ public sealed class MainWindowViewModelRefreshTests
             ]
         };
         var client = new FakeFluxVaultServiceClient(status);
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
 
         await viewModel.RefreshAsync();
 
@@ -1419,7 +1344,7 @@ public sealed class MainWindowViewModelRefreshTests
         var picker = new FakeRestoreDestinationPicker(destination);
         var confirmation = new FakeRestoreOverwriteConfirmation(confirmOverwrite: true);
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             picker,
             confirmation);
@@ -1446,7 +1371,7 @@ public sealed class MainWindowViewModelRefreshTests
             RestoreResponse = FluxVaultIpcResponse.WithRestore(new RepositoryRestoreResult(destination, 128, 1,
                 ["Lineage recording failed; content is verified."]))
         };
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20),
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20),
             new FakeRestoreDestinationPicker(destination), new FakeRestoreOverwriteConfirmation(true));
         await viewModel.RefreshAsync();
         viewModel.SelectedVersion = viewModel.RecentVersions.Single();
@@ -1460,7 +1385,7 @@ public sealed class MainWindowViewModelRefreshTests
     {
         var client = new FakeFluxVaultServiceClient(StatusWithVersions());
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FakeRestoreDestinationPicker(),
             new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
@@ -1481,7 +1406,7 @@ public sealed class MainWindowViewModelRefreshTests
         var sourcePath = Path.GetFullPath(@"D:\Work\brief.docx");
         var client = new FakeFluxVaultServiceClient(StatusWithVersionSources(("v1", sourcePath)));
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FakeRestoreDestinationPicker(destination),
             new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
@@ -1504,7 +1429,7 @@ public sealed class MainWindowViewModelRefreshTests
         var siblingPath = Path.GetFullPath(@"D:\Work\Docs\notes.txt");
         var client = new FakeFluxVaultServiceClient(StatusWithVersionSources(("v1", hintedPath), ("v2", siblingPath)));
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FakeRestoreDestinationPicker((string?)null),
             new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
@@ -1530,7 +1455,7 @@ public sealed class MainWindowViewModelRefreshTests
         };
         var launcher = new FakeVersionPreviewLauncher();
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FakeRestoreDestinationPicker(),
             new FakeRestoreOverwriteConfirmation(confirmOverwrite: true),
@@ -1550,7 +1475,7 @@ public sealed class MainWindowViewModelRefreshTests
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
         var picker = new FakeRestoreDestinationPicker((string?)null);
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             picker,
             new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
@@ -1573,7 +1498,7 @@ public sealed class MainWindowViewModelRefreshTests
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
         var confirmation = new FakeRestoreOverwriteConfirmation(confirmOverwrite: true);
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FakeRestoreDestinationPicker(destination),
             confirmation);
@@ -1595,7 +1520,7 @@ public sealed class MainWindowViewModelRefreshTests
         await File.WriteAllTextAsync(destination, "existing");
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FakeRestoreDestinationPicker(destination),
             new FakeRestoreOverwriteConfirmation(confirmOverwrite: false));
@@ -1622,7 +1547,7 @@ public sealed class MainWindowViewModelRefreshTests
             RestoreResponse = FluxVaultIpcResponse.Failure(errorMessage)
         };
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FakeRestoreDestinationPicker(destination),
             new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
@@ -1646,7 +1571,7 @@ public sealed class MainWindowViewModelRefreshTests
         var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
         client.ThrowOnNextRestore(new IOException("Named pipe closed."));
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FakeRestoreDestinationPicker(destination),
             new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
@@ -1667,7 +1592,7 @@ public sealed class MainWindowViewModelRefreshTests
         var otherPath = Path.GetFullPath(@"D:\Work\other.txt");
         var client = new FakeFluxVaultServiceClient(StatusWithVersionSources(("v1", otherPath), ("v2", hintedPath)));
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FakeRestoreDestinationPicker((string?)null),
             new FakeRestoreOverwriteConfirmation(confirmOverwrite: true));
@@ -1685,7 +1610,7 @@ public sealed class MainWindowViewModelRefreshTests
     public async Task Explorer_add_path_request_saves_configuration_immediately()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithSelectionRules([]));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
 
         await viewModel.ApplyStartupRequestAsync(
@@ -1709,7 +1634,7 @@ public sealed class MainWindowViewModelRefreshTests
             ResourceProfile.Balanced,
             IsEnabled: true);
         var client = new FakeFluxVaultServiceClient(StatusWithSelectionRules([inherited]));
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
 
         await viewModel.ApplyStartupRequestAsync(
@@ -1756,15 +1681,6 @@ public sealed class MainWindowViewModelRefreshTests
             LastCaptureUtc: DateTimeOffset.UtcNow,
             WatchedFolders: [],
             RecentVersions: versions);
-    }
-
-    private static FluxVaultServiceStatus StatusWithProfiles(params FluxVaultProfileRuntimeStatus[] profiles)
-    {
-        return StatusWithVersions() with
-        {
-            ActiveProfileId = profiles.FirstOrDefault(profile => profile.IsActive)?.Id ?? profiles.First().Id,
-            Profiles = profiles
-        };
     }
 
     private static FluxVaultServiceStatus StatusWithVersionSources(params (string VersionId, string SourcePath)[] versions)
@@ -2032,7 +1948,6 @@ public sealed class MainWindowViewModelRefreshTests
 
         public List<FluxVaultIpcRequest> RestoreSelectionRequests { get; } = [];
 
-        public List<FluxVaultIpcRequest> ProfileRequests { get; } = [];
 
         public List<FluxVaultConfiguration> SavedConfigurations { get; } = [];
 
@@ -2108,17 +2023,6 @@ public sealed class MainWindowViewModelRefreshTests
                 return Task.FromResult(FluxVaultIpcResponse.Ok());
             }
 
-            if (request.Command is FluxVaultIpcCommand.CreateProfile
-                or FluxVaultIpcCommand.RenameProfile
-                or FluxVaultIpcCommand.DuplicateProfile
-                or FluxVaultIpcCommand.DeleteProfile
-                or FluxVaultIpcCommand.SetActiveProfile)
-            {
-                ProfileRequests.Add(request);
-                var profileStatus = statuses.Count > 0 ? statuses.Peek() : StatusWithVersions();
-                return Task.FromResult(FluxVaultIpcResponse.WithStatus(profileStatus));
-            }
-
             if (request.Command == FluxVaultIpcCommand.ListVersions)
             {
                 var inventoryStatus = statuses.Count > 0 ? statuses.Peek() : StatusWithVersions();
@@ -2191,19 +2095,6 @@ public sealed class MainWindowViewModelRefreshTests
         public string BrowseMirrorPath(string currentPath)
         {
             return BrowseResult ?? currentPath;
-        }
-    }
-
-    private sealed class FakeProfileDialogService(string? profileName, bool confirmDelete = true) : IProfileDialogService
-    {
-        public string? PromptForProfileName(string title, string initialValue)
-        {
-            return profileName;
-        }
-
-        public bool ConfirmDelete(string displayName)
-        {
-            return confirmDelete;
         }
     }
 

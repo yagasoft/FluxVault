@@ -97,7 +97,7 @@ public sealed class ConfigurationStoreTests
     }
 
     [Fact]
-    public async Task Profile_configuration_store_saves_only_selected_profile()
+    public async Task Legacy_configuration_with_multiple_records_is_refused_without_changing_existing_data()
     {
         using var workspace = TemporaryWorkspace.Create();
         var configPath = Path.Combine(workspace.RootPath, "config.json");
@@ -111,15 +111,11 @@ public sealed class ConfigurationStoreTests
             {
                 RepositoryPath = Path.Combine(workspace.RootPath, "archive-repository")
             });
-        await profileSetStore.SaveAsync(new FluxVaultProfileSetConfiguration(first.Id, [first, second]));
-        var selectedStore = new FluxVaultProfileConfigurationStore(profileSetStore, "archive");
-        var updated = second.Configuration with { RepositoryPath = Path.Combine(workspace.RootPath, "archive-repository-2") };
-
-        await selectedStore.SaveAsync(updated);
-
-        var loaded = await profileSetStore.LoadAsync();
-        Assert.Equal(first.Configuration.RepositoryPath, loaded.Profiles.Single(profile => profile.Id == first.Id).Configuration.RepositoryPath);
-        Assert.Equal(updated.RepositoryPath, loaded.Profiles.Single(profile => profile.Id == "archive").Configuration.RepositoryPath);
+        Directory.CreateDirectory(workspace.RootPath);
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(new { ActiveProfileId = first.Id, Profiles = new[] { first, second } }, JsonOptions);
+        await File.WriteAllBytesAsync(configPath, bytes);
+        await Assert.ThrowsAsync<InvalidDataException>(() => profileSetStore.LoadAsync());
+        Assert.Equal(bytes, await File.ReadAllBytesAsync(configPath));
     }
 
     [Fact]

@@ -32,6 +32,8 @@ internal static class Program
         try
         {
             var options = Parse(arguments);
+            if (Require(options, "mode") is "windows-single-server" or "windows-single-client")
+                return WindowsSingleVaultProbe.RunAsync(Require(options, "configuration"), Require(options, "actor")).GetAwaiter().GetResult();
             if (Require(options, "mode") is "windows-file-server" or "windows-file-client")
                 return WindowsCallerFileProbe.RunAsync(Require(options, "configuration"), Require(options, "actor")).GetAwaiter().GetResult();
             if (Require(options, "mode") == "windows-db-probe")

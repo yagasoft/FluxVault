@@ -31,8 +31,10 @@ public sealed class FluxVaultOperations(
     ProtectionRuntimeCoordinator? runtimeCoordinator = null,
     TelemetryCollector? telemetryCollector = null,
     Func<LogRuntimeStatus>? logStatusFactory = null,
-    IProtectionSourceAccess? sourceAccess = null) : IFluxVaultRequestHandler
+    IProtectionSourceAccess? sourceAccess = null,
+    FluxVaultOperationsRuntimeState? runtimeState = null) : IFluxVaultRequestHandler
 {
+    private readonly FluxVaultOperationsRuntimeState runtimeState = runtimeState ?? new();
     private readonly IProtectionSourceAccess sourceAccess = sourceAccess ?? new FileSystemProtectionSourceAccess();
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
     private readonly IRepositoryMaintenanceStateStore repositoryMaintenanceStateStore =
@@ -41,8 +43,10 @@ public sealed class FluxVaultOperations(
         metadataStoreFactory ?? CreateMetadataStore;
     private readonly Func<FluxVaultConfiguration, IChunkRepository> repositoryFactory =
         repositoryFactory ?? (configuration => CreateRepository(configuration, (metadataStoreFactory ?? CreateMetadataStore)(configuration)));
-    private readonly ProtectionRuntimeCoordinator protectionRuntimeCoordinator = runtimeCoordinator ?? new ProtectionRuntimeCoordinator();
-    private readonly TelemetryCollector telemetryCollector = telemetryCollector ?? new TelemetryCollector(TimeProvider.System);
+    private readonly ProtectionRuntimeCoordinator? suppliedRuntimeCoordinator = runtimeCoordinator;
+    private readonly TelemetryCollector? suppliedTelemetryCollector = telemetryCollector;
+    private ProtectionRuntimeCoordinator protectionRuntimeCoordinator => suppliedRuntimeCoordinator ?? this.runtimeState.Coordinator;
+    private TelemetryCollector telemetryCollector => suppliedTelemetryCollector ?? this.runtimeState.Telemetry;
     private readonly Func<LogRuntimeStatus>? logStatusFactory = logStatusFactory;
     private readonly string restoreRehearsalRoot = Path.Combine(
         maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
@@ -51,47 +55,30 @@ public sealed class FluxVaultOperations(
         maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
         "version-preview");
     private bool versionPreviewCleanupQueued;
-    private DateTimeOffset? lastCaptureUtc;
-    private string lastMessage = "Ready";
-    private IReadOnlyList<string> lastMirrorWarnings = [];
-    private DurableChangeRuntimeStatus? durableChange;
-    private RepositoryRetentionResult? lastRetention;
-    private readonly Lock runtimeGate = new();
-    private readonly Lock activeCaptureGate = new();
-    private readonly Dictionary<string, CaptureRuntimeStatus> captureStatuses = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, WatcherRuntimeStatus> watcherStatuses = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, CancellationTokenSource> activeCaptureTokens = new(StringComparer.OrdinalIgnoreCase);
-    private readonly HashSet<string> removedCapturePaths = new(StringComparer.OrdinalIgnoreCase);
-    private readonly SemaphoreSlim mutatingOperationGate = new(1, 1);
-    private readonly SemaphoreSlim backupOperationGate = new(1, 1);
+    private DateTimeOffset? lastCaptureUtc { get { lock (runtimeGate) return this.runtimeState.LastCaptureUtc; } set { lock (runtimeGate) this.runtimeState.LastCaptureUtc = value; } }
+    private string lastMessage { get => this.runtimeState.LastMessage; set => this.runtimeState.LastMessage = value; }
+    private IReadOnlyList<string> lastMirrorWarnings { get => this.runtimeState.LastMirrorWarnings; set => this.runtimeState.LastMirrorWarnings = value; }
+    private DurableChangeRuntimeStatus? durableChange { get => this.runtimeState.DurableChange; set => this.runtimeState.DurableChange = value; }
+    private RepositoryRetentionResult? lastRetention { get => this.runtimeState.LastRetention; set => this.runtimeState.LastRetention = value; }
+    private Lock runtimeGate => this.runtimeState.RuntimeGate;
+    private Lock activeCaptureGate => this.runtimeState.ActiveCaptureGate;
+    private Dictionary<string, CaptureRuntimeStatus> captureStatuses => this.runtimeState.CaptureStatuses;
+    private Dictionary<string, WatcherRuntimeStatus> watcherStatuses => this.runtimeState.WatcherStatuses;
+    private Dictionary<string, CancellationTokenSource> activeCaptureTokens => this.runtimeState.ActiveCaptureTokens;
+    private HashSet<string> removedCapturePaths => this.runtimeState.RemovedCapturePaths;
+    private SemaphoreSlim mutatingOperationGate => this.runtimeState.MutatingOperationGate;
+    private SemaphoreSlim backupOperationGate => this.runtimeState.BackupOperationGate;
     private readonly TimeSpan recentVersionStatusCacheDuration = TimeSpan.FromSeconds(15);
-    private IReadOnlyList<RepositoryVersionSummary>? recentVersionStatusCache;
-    private DateTimeOffset recentVersionStatusCacheUtc;
-    private (string RepositoryPath, MetadataStoreConfiguration MetadataStore)? recentVersionStatusCacheIdentity;
-    private IReadOnlyList<RepositoryVersionSummary>? trackedEntryStatusCache;
-    private DateTimeOffset trackedEntryStatusCacheUtc;
-    private (string RepositoryPath, MetadataStoreConfiguration MetadataStore)? trackedEntryStatusCacheIdentity;
-    private long repositoryStatusCacheGeneration;
+    private IReadOnlyList<RepositoryVersionSummary>? recentVersionStatusCache { get => this.runtimeState.RecentVersionStatusCache; set => this.runtimeState.RecentVersionStatusCache = value; }
+    private DateTimeOffset recentVersionStatusCacheUtc { get => this.runtimeState.RecentVersionStatusCacheUtc; set => this.runtimeState.RecentVersionStatusCacheUtc = value; }
+    private (string RepositoryPath, MetadataStoreConfiguration MetadataStore)? recentVersionStatusCacheIdentity { get => this.runtimeState.RecentVersionStatusCacheIdentity; set => this.runtimeState.RecentVersionStatusCacheIdentity = value; }
+    private IReadOnlyList<RepositoryVersionSummary>? trackedEntryStatusCache { get => this.runtimeState.TrackedEntryStatusCache; set => this.runtimeState.TrackedEntryStatusCache = value; }
+    private DateTimeOffset trackedEntryStatusCacheUtc { get => this.runtimeState.TrackedEntryStatusCacheUtc; set => this.runtimeState.TrackedEntryStatusCacheUtc = value; }
+    private (string RepositoryPath, MetadataStoreConfiguration MetadataStore)? trackedEntryStatusCacheIdentity { get => this.runtimeState.TrackedEntryStatusCacheIdentity; set => this.runtimeState.TrackedEntryStatusCacheIdentity = value; }
+    private long repositoryStatusCacheGeneration { get => this.runtimeState.RepositoryStatusCacheGeneration; set => this.runtimeState.RepositoryStatusCacheGeneration = value; }
     private FluxVaultConfiguration? currentConfiguration;
-    private BackupRuntimeStatus backupRuntime = new(
-        IsRunning: false,
-        Phase: "Idle",
-        Trigger: null,
-        StartedAtUtc: null,
-        CompletedAtUtc: null,
-        EnumeratedFileCount: 0,
-        CapturedFileCount: 0,
-        SkippedUnchangedFileCount: 0,
-        FailedFileCount: 0,
-        RecordedDeletionCount: 0,
-        ActiveWorkers: 0,
-        EffectiveWorkerCount: 0);
-    private BackgroundWorkRuntimeStatus repositoryMaintenanceRuntime = new(
-        "Repository maintenance",
-        "Waiting",
-        0,
-        0,
-        "No maintenance running");
+    private BackupRuntimeStatus backupRuntime { get => this.runtimeState.BackupRuntime; set => this.runtimeState.BackupRuntime = value; }
+    private BackgroundWorkRuntimeStatus repositoryMaintenanceRuntime { get => this.runtimeState.RepositoryMaintenanceRuntime; set => this.runtimeState.RepositoryMaintenanceRuntime = value; }
 
     public async Task<RepositoryPurgeResult?> SaveConfigurationAsync(
         FluxVaultConfiguration configuration,
@@ -315,6 +302,15 @@ public sealed class FluxVaultOperations(
     {
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         var result = await CreateRepository(configuration).RestoreAsync(versionId, outputPath, cancellationToken).ConfigureAwait(false);
+        InvalidateRecentVersionStatusCache();
+        lastMessage = $"Restored and verified {result.RestoredFileCount} file(s) to {result.OutputPath}. {string.Join(" ", result.Warnings)}".TrimEnd();
+        return result;
+    }
+
+    public async Task<RepositoryRestoreResult> RestoreVersionAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
+    {
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var result = await CreateRepository(configuration).RestoreAsync(versionId, target, cancellationToken).ConfigureAwait(false);
         InvalidateRecentVersionStatusCache();
         lastMessage = $"Restored and verified {result.RestoredFileCount} file(s) to {result.OutputPath}. {string.Join(" ", result.Warnings)}".TrimEnd();
         return result;
@@ -2741,7 +2737,7 @@ public sealed class FluxVaultOperations(
     {
         return new FileSystemChunkRepository(
             configuration.RepositoryPath,
-            new FastCdcChunker(new ChunkingOptions(64 * 1024, 256 * 1024, 1024 * 1024)),
+            new FastCdcChunker(new ChunkingOptions()),
             new Blake3ContentHasher(),
             new ZstdChunkCodec(),
             configuration.MirrorSet,

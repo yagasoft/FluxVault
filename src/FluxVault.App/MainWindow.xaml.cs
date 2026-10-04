@@ -32,6 +32,9 @@ public partial class MainWindow : Window
     }
 
     private async void Options_Click(object sender, RoutedEventArgs e)
+    { await OpenOptionsAsync().ConfigureAwait(true); }
+
+    internal async Task OpenOptionsAsync()
     {
         if (DataContext is not MainWindowViewModel viewModel || !viewModel.TryBeginOptionsEditing())
         {

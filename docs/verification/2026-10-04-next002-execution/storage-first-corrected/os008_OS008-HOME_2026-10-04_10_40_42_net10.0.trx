@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="261457ff-345e-4afd-9f09-343f9410d073" name="os008@OS008-HOME 2026-10-04 10:40:42" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T10:40:42.2043780+03:00" queuing="2026-10-04T10:40:42.2043783+03:00" start="2026-10-04T10:40:41.5253614+03:00" finish="2026-10-04T10:40:42.2358703+03:00" />
+  <TestSettings name="default" id="8a0c7cf6-3738-4910-8f53-48231135f8cf">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_10_40_42" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="7b7aeebc-c33d-4d98-992c-d6b4903630ab" testId="6651f00f-9057-06a0-dbdc-7cd0e72f5610" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: False, rights: 65536)" computerName="OS008-HOME" duration="00:00:00.0000162" startTime="2026-10-04T10:40:42.1518652+03:00" endTime="2026-10-04T10:40:42.1519097+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7b7aeebc-c33d-4d98-992c-d6b4903630ab" />
+    <UnitTestResult executionId="fe79e36a-8fcf-4b47-84de-62c89fecbabb" testId="7f6b3eec-7a7b-af17-317f-66b0fc6c87ed" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: True, rights: 1073741824)" computerName="OS008-HOME" duration="00:00:00.0000090" startTime="2026-10-04T10:40:42.1521903+03:00" endTime="2026-10-04T10:40:42.1522230+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fe79e36a-8fcf-4b47-84de-62c89fecbabb" />
+    <UnitTestResult executionId="6ab14eeb-d75c-4029-9ddf-31e006298adb" testId="5cc838c1-071d-bd64-48ba-ffcb41913589" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: False, rights: 262144)" computerName="OS008-HOME" duration="00:00:00.0000120" startTime="2026-10-04T10:40:42.1522817+03:00" endTime="2026-10-04T10:40:42.1523138+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6ab14eeb-d75c-4029-9ddf-31e006298adb" />
+    <UnitTestResult executionId="3728da99-605f-4774-bee0-370d24082615" testId="4bf96c30-3028-4af9-7a6a-0c138ef9d56e" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Physical_untrusted_read_grant_and_reparse_component_are_denied" computerName="OS008-HOME" duration="00:00:00.0178783" startTime="2026-10-04T10:40:42.1785739+03:00" endTime="2026-10-04T10:40:42.1786092+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3728da99-605f-4774-bee0-370d24082615" />
+    <UnitTestResult executionId="6602a9e2-4ce3-4241-9fbc-c15cf10ceb51" testId="f327e022-d980-612b-1e44-946123269507" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Ancestors_allow_sibling_creation_but_private_roots_only_allow_traversal" computerName="OS008-HOME" duration="00:00:00.0003817" startTime="2026-10-04T10:40:42.1787162+03:00" endTime="2026-10-04T10:40:42.1787522+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6602a9e2-4ce3-4241-9fbc-c15cf10ceb51" />
+    <UnitTestResult executionId="92d85b7d-2c37-4900-9e55-a2e1b24858f1" testId="82894574-3752-8a44-672b-1a9c964bf674" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: False, rights: 524288)" computerName="OS008-HOME" duration="00:00:00.0012066" startTime="2026-10-04T10:40:42.1502764+03:00" endTime="2026-10-04T10:40:42.1505570+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="92d85b7d-2c37-4900-9e55-a2e1b24858f1" />
+    <UnitTestResult executionId="841d7ff5-a41d-4ce2-b838-137dd705fe98" testId="8e424901-4aa9-9ecf-2520-672427bfcdb8" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: False, rights: 64)" computerName="OS008-HOME" duration="00:00:00.0002434" startTime="2026-10-04T10:40:42.1515987+03:00" endTime="2026-10-04T10:40:42.1516470+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="841d7ff5-a41d-4ce2-b838-137dd705fe98" />
+    <UnitTestResult executionId="806d57b1-e783-4a28-b076-fe21e8125989" testId="d091cda8-3269-0e36-defc-47b54a51f5ba" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: True, rights: 1)" computerName="OS008-HOME" duration="00:00:00.0000085" startTime="2026-10-04T10:40:42.1523754+03:00" endTime="2026-10-04T10:40:42.1524098+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="806d57b1-e783-4a28-b076-fe21e8125989" />
+    <UnitTestResult executionId="56819e44-a6b9-469b-9ba8-1c32f5314f71" testId="c36ca7f8-38d2-0c58-ea9e-ed6362e8b99c" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Null_acl_and_conditional_unknown_policies_are_denied" computerName="OS008-HOME" duration="00:00:00.0052318" startTime="2026-10-04T10:40:42.1201108+03:00" endTime="2026-10-04T10:40:42.1358555+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56819e44-a6b9-469b-9ba8-1c32f5314f71">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentOutOfRangeException : The length of the array must be a multiple of 4. (Parameter 'opaque')</Message>
+          <StackTrace>   at System.Security.AccessControl.QualifiedAce.SetOpaque(Byte[] opaque)&#xD;
+   at FluxVault.Windows.Tests.WindowsVaultStorageTests.Null_acl_and_conditional_unknown_policies_are_denied() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsVaultStorageTests.cs:line 46&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="76eea966-492d-429d-a237-1bdd41f50546" testId="84d0d967-8c61-d3cf-c813-02ff5ef08be2" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: True, rights: 2)" computerName="OS008-HOME" duration="00:00:00.0000085" startTime="2026-10-04T10:40:42.1783855+03:00" endTime="2026-10-04T10:40:42.1784289+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76eea966-492d-429d-a237-1bdd41f50546" />
+    <UnitTestResult executionId="1caa5523-e43d-400c-843e-553be9219214" testId="46542ce5-a8e5-c771-b152-41a47391edb2" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: True, rights: 4)" computerName="OS008-HOME" duration="00:00:00.0000150" startTime="2026-10-04T10:40:42.1519858+03:00" endTime="2026-10-04T10:40:42.1520184+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1caa5523-e43d-400c-843e-553be9219214" />
+    <UnitTestResult executionId="77ff7f02-5e9b-448a-a7b6-bf17ec2ebf52" testId="314652ef-f873-596e-8077-56223e16a52e" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Physical_directory_chain_stays_pinned_until_scope_disposal" computerName="OS008-HOME" duration="00:00:00.0022826" startTime="2026-10-04T10:40:42.1788430+03:00" endTime="2026-10-04T10:40:42.1789142+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="77ff7f02-5e9b-448a-a7b6-bf17ec2ebf52">
+      <Output>
+        <ErrorInfo>
+          <Message>System.UnauthorizedAccessException : The caller cannot access this source.&#xD;
+---- System.ComponentModel.Win32Exception : The object manager encountered a reparse point while retrieving an object.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsCallerFileAccess.OpenNative(SafeFileHandle parent, String name, UInt32 access, Boolean directory, UInt32 disposition, UInt32 sharing, IntPtr securityDescriptor, Boolean asynchronous, Boolean dontReparse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 200&#xD;
+   at FluxVault.Windows.Security.WindowsVaultStorageGuard.PinRoot(String root, String expectedOwner, IReadOnlySet`1 trusted, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsVaultStorageGuard.cs:line 48&#xD;
+   at FluxVault.Windows.Tests.WindowsVaultStorageTests.Physical_directory_chain_stays_pinned_until_scope_disposal() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsVaultStorageTests.cs:line 59&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+----- Inner Stack Trace -----&#xD;
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fda53d85-4bd5-4bd0-a82b-d3696588fc40" testId="95f03782-f057-85aa-a1c6-db47cb8d944b" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: False, rights: 268435456)" computerName="OS008-HOME" duration="00:00:00.0000105" startTime="2026-10-04T10:40:42.1520933+03:00" endTime="2026-10-04T10:40:42.1521261+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fda53d85-4bd5-4bd0-a82b-d3696588fc40" />
+    <UnitTestResult executionId="9379a550-18fe-4d16-a7d8-17f0e16d9963" testId="dd718ebb-f1a9-f24c-3feb-3185d1106a0b" testName="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: True, rights: -2147483648)" computerName="OS008-HOME" duration="00:00:00.0000089" startTime="2026-10-04T10:40:42.1779860+03:00" endTime="2026-10-04T10:40:42.1781057+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9379a550-18fe-4d16-a7d8-17f0e16d9963" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: False, rights: 262144)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="5cc838c1-071d-bd64-48ba-ffcb41913589">
+      <Execution id="6ab14eeb-d75c-4029-9ddf-31e006298adb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Untrusted_access_that_exposes_or_replaces_storage_is_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Ancestors_allow_sibling_creation_but_private_roots_only_allow_traversal" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="f327e022-d980-612b-1e44-946123269507">
+      <Execution id="6602a9e2-4ce3-4241-9fbc-c15cf10ceb51" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Ancestors_allow_sibling_creation_but_private_roots_only_allow_traversal" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: True, rights: 1)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="d091cda8-3269-0e36-defc-47b54a51f5ba">
+      <Execution id="806d57b1-e783-4a28-b076-fe21e8125989" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Untrusted_access_that_exposes_or_replaces_storage_is_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: False, rights: 64)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="8e424901-4aa9-9ecf-2520-672427bfcdb8">
+      <Execution id="841d7ff5-a41d-4ce2-b838-137dd705fe98" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Untrusted_access_that_exposes_or_replaces_storage_is_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: False, rights: 65536)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="6651f00f-9057-06a0-dbdc-7cd0e72f5610">
+      <Execution id="7b7aeebc-c33d-4d98-992c-d6b4903630ab" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Untrusted_access_that_exposes_or_replaces_storage_is_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: True, rights: -2147483648)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="dd718ebb-f1a9-f24c-3feb-3185d1106a0b">
+      <Execution id="9379a550-18fe-4d16-a7d8-17f0e16d9963" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Untrusted_access_that_exposes_or_replaces_storage_is_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: False, rights: 268435456)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="95f03782-f057-85aa-a1c6-db47cb8d944b">
+      <Execution id="fda53d85-4bd5-4bd0-a82b-d3696588fc40" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Untrusted_access_that_exposes_or_replaces_storage_is_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: True, rights: 2)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="84d0d967-8c61-d3cf-c813-02ff5ef08be2">
+      <Execution id="76eea966-492d-429d-a237-1bdd41f50546" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Untrusted_access_that_exposes_or_replaces_storage_is_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: True, rights: 4)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="46542ce5-a8e5-c771-b152-41a47391edb2">
+      <Execution id="1caa5523-e43d-400c-843e-553be9219214" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Untrusted_access_that_exposes_or_replaces_storage_is_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: True, rights: 1073741824)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="7f6b3eec-7a7b-af17-317f-66b0fc6c87ed">
+      <Execution id="fe79e36a-8fcf-4b47-84de-62c89fecbabb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Untrusted_access_that_exposes_or_replaces_storage_is_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Physical_directory_chain_stays_pinned_until_scope_disposal" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="314652ef-f873-596e-8077-56223e16a52e">
+      <Execution id="77ff7f02-5e9b-448a-a7b6-bf17ec2ebf52" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Physical_directory_chain_stays_pinned_until_scope_disposal" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Null_acl_and_conditional_unknown_policies_are_denied" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="c36ca7f8-38d2-0c58-ea9e-ed6362e8b99c">
+      <Execution id="56819e44-a6b9-469b-9ba8-1c32f5314f71" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Null_acl_and_conditional_unknown_policies_are_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Physical_untrusted_read_grant_and_reparse_component_are_denied" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="4bf96c30-3028-4af9-7a6a-0c138ef9d56e">
+      <Execution id="3728da99-605f-4774-bee0-370d24082615" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Physical_untrusted_read_grant_and_reparse_component_are_denied" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsVaultStorageTests.Untrusted_access_that_exposes_or_replaces_storage_is_denied(root: False, rights: 524288)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="82894574-3752-8a44-672b-1a9c964bf674">
+      <Execution id="92d85b7d-2c37-4900-9e55-a2e1b24858f1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsVaultStorageTests" name="Untrusted_access_that_exposes_or_replaces_storage_is_denied" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6651f00f-9057-06a0-dbdc-7cd0e72f5610" executionId="7b7aeebc-c33d-4d98-992c-d6b4903630ab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f6b3eec-7a7b-af17-317f-66b0fc6c87ed" executionId="fe79e36a-8fcf-4b47-84de-62c89fecbabb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5cc838c1-071d-bd64-48ba-ffcb41913589" executionId="6ab14eeb-d75c-4029-9ddf-31e006298adb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4bf96c30-3028-4af9-7a6a-0c138ef9d56e" executionId="3728da99-605f-4774-bee0-370d24082615" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f327e022-d980-612b-1e44-946123269507" executionId="6602a9e2-4ce3-4241-9fbc-c15cf10ceb51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82894574-3752-8a44-672b-1a9c964bf674" executionId="92d85b7d-2c37-4900-9e55-a2e1b24858f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8e424901-4aa9-9ecf-2520-672427bfcdb8" executionId="841d7ff5-a41d-4ce2-b838-137dd705fe98" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d091cda8-3269-0e36-defc-47b54a51f5ba" executionId="806d57b1-e783-4a28-b076-fe21e8125989" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c36ca7f8-38d2-0c58-ea9e-ed6362e8b99c" executionId="56819e44-a6b9-469b-9ba8-1c32f5314f71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84d0d967-8c61-d3cf-c813-02ff5ef08be2" executionId="76eea966-492d-429d-a237-1bdd41f50546" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="46542ce5-a8e5-c771-b152-41a47391edb2" executionId="1caa5523-e43d-400c-843e-553be9219214" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="314652ef-f873-596e-8077-56223e16a52e" executionId="77ff7f02-5e9b-448a-a7b6-bf17ec2ebf52" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95f03782-f057-85aa-a1c6-db47cb8d944b" executionId="fda53d85-4bd5-4bd0-a82b-d3696588fc40" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dd718ebb-f1a9-f24c-3feb-3185d1106a0b" executionId="9379a550-18fe-4d16-a7d8-17f0e16d9963" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="14" executed="14" passed="12" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.20]       System.ArgumentOutOfRangeException : The length of the array must be a multiple of 4. (Parameter 'opaque')&#xD;
+[xUnit.net 00:00:00.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.21]            at System.Security.AccessControl.QualifiedAce.SetOpaque(Byte[] opaque)&#xD;
+[xUnit.net 00:00:00.21]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsVaultStorageTests.cs(46,0): at FluxVault.Windows.Tests.WindowsVaultStorageTests.Null_acl_and_conditional_unknown_policies_are_denied()&#xD;
+[xUnit.net 00:00:00.21]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.21]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.25]       System.UnauthorizedAccessException : The caller cannot access this source.&#xD;
+[xUnit.net 00:00:00.25]       ---- System.ComponentModel.Win32Exception : The object manager encountered a reparse point while retrieving an object.&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs(200,0): at FluxVault.Windows.Security.WindowsCallerFileAccess.OpenNative(SafeFileHandle parent, String name, UInt32 access, Boolean directory, UInt32 disposition, UInt32 sharing, IntPtr securityDescriptor, Boolean asynchronous, Boolean dontReparse)&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsVaultStorageGuard.cs(48,0): at FluxVault.Windows.Security.WindowsVaultStorageGuard.PinRoot(String root, String expectedOwner, IReadOnlySet`1 trusted, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsVaultStorageTests.cs(59,0): at FluxVault.Windows.Tests.WindowsVaultStorageTests.Physical_directory_chain_stays_pinned_until_scope_disposal()&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.25]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.25]         &#xD;
+[xUnit.net 00:00:00.25]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T10:40:42.1386993+03:00">
+        <Text>[xUnit.net 00:00:00.20]     FluxVault.Windows.Tests.WindowsVaultStorageTests.Null_acl_and_conditional_unknown_policies_are_denied [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T10:40:42.2095688+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Windows.Tests.WindowsVaultStorageTests.Physical_directory_chain_stays_pinned_until_scope_disposal [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

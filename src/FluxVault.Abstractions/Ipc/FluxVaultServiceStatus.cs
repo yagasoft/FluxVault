@@ -25,8 +25,6 @@ public sealed record FluxVaultServiceStatus(
     SecurityPostureRuntimeStatus? SecurityPosture = null,
     FleetRuntimeStatus? Fleet = null,
     IReadOnlyList<WatcherRuntimeStatus>? Watchers = null,
-    string? ActiveProfileId = null,
-    IReadOnlyList<FluxVaultProfileRuntimeStatus>? Profiles = null,
     IReadOnlyList<RepositoryVersionSummary>? TrackedEntries = null,
     BackupRuntimeStatus? BackupRuntime = null,
     MetadataStoreRuntimeStatus? MetadataStore = null,
@@ -59,15 +57,6 @@ public sealed record WatcherRuntimeStatus(
     DateTimeOffset? LastEventUtc,
     string LastCatchUpSource,
     bool IsBacklogOverflowed);
-
-public sealed record FluxVaultProfileRuntimeStatus(
-    string Id,
-    string DisplayName,
-    bool IsEnabled,
-    bool IsActive,
-    string RepositoryPath,
-    int WatchedFolderCount,
-    int EnabledMirrorCount);
 
 public sealed record BackupRuntimeStatus(
     bool IsRunning,

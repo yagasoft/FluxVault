@@ -29,7 +29,8 @@ public sealed record FluxVaultServiceStatus(
     BackupRuntimeStatus? BackupRuntime = null,
     MetadataStoreRuntimeStatus? MetadataStore = null,
     // False means no authoritative snapshot was supplied, rather than an empty repository.
-    bool HasVersionInventory = true);
+    bool HasVersionInventory = true,
+    bool UsesPagedCurrentEntries = false);
 
 public sealed record MetadataStoreRuntimeStatus(
     MetadataStoreProvider Provider,

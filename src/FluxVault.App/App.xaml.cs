@@ -123,9 +123,15 @@ public partial class App : System.Windows.Application
         });
     }
 
-    private void ExitApplication()
+    private async void ExitApplication()
     {
         dashboardWindowLifetime.BeginExit();
+        try
+        {
+            if (mainWindow?.DataContext is MainWindowViewModel viewModel)
+                await viewModel.StopRepositoryReadsAsync();
+        }
+        catch (Exception exception) { System.Diagnostics.Trace.TraceError("Repository read shutdown: {0}", exception); }
         Shutdown();
     }
 

@@ -60,6 +60,20 @@ public sealed class RecentVersionStatusTests
         Assert.Equal(0, metadata.FullHistoryReads);
     }
 
+    [Fact]
+    public async Task Protected_status_omits_current_inventory_without_reading_it_and_keeps_recent_availability_separate()
+    {
+        using var workspace = TemporaryWorkspace.Create(); Directory.CreateDirectory(workspace.RepositoryPath);
+        var store = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath,"config.json"),workspace.RootPath);
+        await store.SaveAsync(FluxVaultConfiguration.CreateDefault(workspace.RootPath) with {RepositoryPath=workspace.RepositoryPath});
+        var metadata=new RecentOnlyMetadata(workspace.RootPath){RefuseCurrentRead=true};
+        var operations=new FluxVaultOperations(store,new NoCapture(),metadataStoreFactory:_=>metadata,pageCurrentEntriesForStatus:true);
+        var full=await operations.GetStatusAsync(); var fast=await operations.GetStatusAsync(FluxVault.Abstractions.Ipc.FluxVaultStatusDetailLevel.Fast);
+        Assert.True(full.UsesPagedCurrentEntries); Assert.True(full.HasVersionInventory); Assert.Null(full.TrackedEntries);
+        Assert.True(fast.UsesPagedCurrentEntries); Assert.True(fast.HasVersionInventory); Assert.Null(fast.TrackedEntries);
+        Assert.Equal(50,full.RecentVersions.Count); Assert.Equal(0,metadata.FullHistoryReads);
+    }
+
     private sealed class RecentOnlyMetadata(string root) : IRepositoryMetadataStore
     {
         internal IReadOnlyList<RepositoryVersionSummary> Versions { get; } = Enumerable.Range(1, 80).Reverse().Select(index =>
@@ -67,12 +81,13 @@ public sealed class RecentVersionStatusTests
                 new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero).AddMinutes(index), CaptureConsistency.BestEffort, 0, 0)).ToArray();
         internal List<int> RecentRequests { get; } = [];
         internal int FullHistoryReads;
+        internal bool RefuseCurrentRead;
         public Task<IReadOnlyList<RepositoryVersionSummary>> ListRecentVersionsAsync(int maximumCount, CancellationToken cancellationToken = default)
         { RecentRequests.Add(maximumCount); return Task.FromResult<IReadOnlyList<RepositoryVersionSummary>>(Versions.Take(maximumCount).ToArray()); }
         public Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default)
         { FullHistoryReads++; throw new InvalidOperationException("Overview must not load complete historical manifests."); }
         public Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult<IReadOnlyList<RepositoryVersionSummary>>([]);
+            RefuseCurrentRead ? throw new InvalidOperationException("Protected status must not materialise current inventory.") : Task.FromResult<IReadOnlyList<RepositoryVersionSummary>>([]);
         public Task<ChunkDescriptor?> FindChunkDescriptorAsync(string digest, CancellationToken cancellationToken = default) => Task.FromResult<ChunkDescriptor?>(null);
         public Task RecordVersionAsync(FileVersionManifest manifest, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     }

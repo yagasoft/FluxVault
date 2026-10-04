@@ -72,7 +72,7 @@ public static class RepositoryHistoryPaging
     public static FluxVaultIpcResponse BoundResponse(FluxVaultIpcResponse response, int maximumBytes = MaximumResponseBytes)
     {
         // Measure exactly the wire serializer, including the already populated authenticated envelope.
-        while ((response.HistoryPage is not null || response.SnapshotPage is not null) &&
+        while ((response.HistoryPage is not null || response.SnapshotPage is not null || response.CurrentEntriesPage is not null) &&
             !Fits(response, maximumBytes))
         {
             if (response.HistoryPage is { } history && history.Versions.Count > 1)
@@ -88,7 +88,12 @@ public static class RepositoryHistoryPaging
                 var rows = snapshot.Entries.Take(Math.Max(1, snapshot.Entries.Count / 2)).ToArray();
                 response = response with { SnapshotPage = snapshot with { Entries = rows, NextOffset = snapshot.Query.Offset + rows.Length } };
             }
-            else return FluxVaultIpcResponse.Failure("This history item exceeds the supported page size. No partial item was returned.") with
+            else if (response.CurrentEntriesPage is { } current && current.Entries.Count > 1)
+            {
+                var rows = current.Entries.Take(Math.Max(1, current.Entries.Count / 2)).ToArray();
+                response = response with { CurrentEntriesPage = RepositoryCurrentEntriesPaging.Page(current.Query, current.Generation, rows, true) };
+            }
+            else return FluxVaultIpcResponse.Failure("This repository item exceeds the supported page size. No partial item was returned.") with
             { VaultId = response.VaultId, VaultRevision = response.VaultRevision, ErrorCode = FluxVaultIpcErrorCode.Unavailable };
         }
         return response;

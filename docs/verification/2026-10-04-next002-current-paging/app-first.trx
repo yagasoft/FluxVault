@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="41e91d79-d353-4933-a9c9-a17f4a799864" name="os008@OS008-HOME 2026-10-05 00:03:38" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T00:03:38.5961751+03:00" queuing="2026-10-05T00:03:38.5961754+03:00" start="2026-10-05T00:03:37.7423829+03:00" finish="2026-10-05T00:03:38.6294465+03:00" />
+  <TestSettings name="default" id="763b5c99-5f52-4fd0-a787-bd24b1dedbe6">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_00_03_38" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f1e0e5d7-9bd6-4de3-adf3-4ebe19f6b0e1" testId="00b4c8dc-365a-f2aa-e0de-4bc5617c16a7" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;identity&quot;)" computerName="OS008-HOME" duration="00:00:00.0002494" startTime="2026-10-05T00:03:38.5724010+03:00" endTime="2026-10-05T00:03:38.5724315+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f1e0e5d7-9bd6-4de3-adf3-4ebe19f6b0e1" />
+    <UnitTestResult executionId="5c8f2662-b8b7-4b5a-945e-ea4ec57ea993" testId="4d0bd3e0-fde3-0465-0720-6b5f88aebbe5" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;denied&quot;)" computerName="OS008-HOME" duration="00:00:00.0003560" startTime="2026-10-05T00:03:38.5446502+03:00" endTime="2026-10-05T00:03:38.5446749+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5c8f2662-b8b7-4b5a-945e-ea4ec57ea993" />
+    <UnitTestResult executionId="d8e37b34-0b7f-4c9a-8467-395cb6dd557d" testId="9df3ce76-92ae-7854-7da9-ec6574874bbf" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;null&quot;)" computerName="OS008-HOME" duration="00:00:00.0004225" startTime="2026-10-05T00:03:38.5321701+03:00" endTime="2026-10-05T00:03:38.5322096+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d8e37b34-0b7f-4c9a-8467-395cb6dd557d" />
+    <UnitTestResult executionId="27de5107-2b9a-47d5-b804-8bd8ce963e96" testId="83775cdd-195e-b024-a572-a013553f1c0b" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Complete_pages_publish_once_and_preserve_deleted_files_and_pending_edits" computerName="OS008-HOME" duration="00:00:00.0127670" startTime="2026-10-05T00:03:38.5730030+03:00" endTime="2026-10-05T00:03:38.5730304+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="27de5107-2b9a-47d5-b804-8bd8ce963e96" />
+    <UnitTestResult executionId="69d09ec8-e81c-450a-902f-224b091f7d9a" testId="b4cef68f-5ee8-8674-599a-d12350ac3f6e" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;changed&quot;)" computerName="OS008-HOME" duration="00:00:00.0001916" startTime="2026-10-05T00:03:38.5447216+03:00" endTime="2026-10-05T00:03:38.5447475+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="69d09ec8-e81c-450a-902f-224b091f7d9a" />
+    <UnitTestResult executionId="3e51f14e-95c0-41db-b104-ede17ccce84a" testId="01d02270-9392-1dbd-a888-37b1a870ced0" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;revision&quot;)" computerName="OS008-HOME" duration="00:00:00.0115493" startTime="2026-10-05T00:03:38.5289520+03:00" endTime="2026-10-05T00:03:38.5314940+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e51f14e-95c0-41db-b104-ede17ccce84a" />
+    <UnitTestResult executionId="b3e97c03-8ba0-4bbf-93b9-8e3a5b4bdeff" testId="09e49c93-472d-ebc3-fe79-aae86c9e1f5f" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Authoritative_empty_page_clears_prior_browser_only_after_successful_completion" computerName="OS008-HOME" duration="00:00:00.1918071" startTime="2026-10-05T00:03:38.3221751+03:00" endTime="2026-10-05T00:03:38.5196176+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b3e97c03-8ba0-4bbf-93b9-8e3a5b4bdeff" />
+    <UnitTestResult executionId="184e548c-1605-45e0-82d3-d723fe4a3956" testId="af7025d0-5bf8-13cd-559a-178f74162bf6" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;duplicate_path&quot;)" computerName="OS008-HOME" duration="00:00:00.0003729" startTime="2026-10-05T00:03:38.5725017+03:00" endTime="2026-10-05T00:03:38.5725300+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="184e548c-1605-45e0-82d3-d723fe4a3956">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.InvalidDataException : Current inventory repeated a canonical path and entry kind.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.MainWindowViewModel.ReadCurrentInventoryAsync(FluxVaultIpcResponse status, CancellationToken token) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowCurrentEntries.cs:line 85&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 641&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 493&#xD;
+   at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs:line 51&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4ffc20d1-b464-4ccc-ab75-bda594f4f9e4" testId="7f518e88-97e4-0905-aa71-148a4e9f9c0b" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;cursor&quot;)" computerName="OS008-HOME" duration="00:00:00.0003595" startTime="2026-10-05T00:03:38.5322756+03:00" endTime="2026-10-05T00:03:38.5393118+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4ffc20d1-b464-4ccc-ab75-bda594f4f9e4">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.InvalidDataException : Current inventory returned a continuation that does not match its final entry.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.MainWindowViewModel.ReadCurrentInventoryAsync(FluxVaultIpcResponse status, CancellationToken token) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowCurrentEntries.cs:line 91&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 641&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 493&#xD;
+   at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs:line 51&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f32a2825-69e5-40ac-b677-00e5c9aa9487" testId="81ec7b39-3bf9-a8ff-5308-9054e21acca9" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;echo&quot;)" computerName="OS008-HOME" duration="00:00:00.0007138" startTime="2026-10-05T00:03:38.5441305+03:00" endTime="2026-10-05T00:03:38.5441600+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f32a2825-69e5-40ac-b677-00e5c9aa9487">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.InvalidDataException : Current inventory returned an invalid or changed page. Refresh to try again.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.MainWindowViewModel.ReadCurrentInventoryAsync(FluxVaultIpcResponse status, CancellationToken token) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowCurrentEntries.cs:line 76&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 641&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 493&#xD;
+   at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs:line 51&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8516c648-6fdb-4934-9f83-92793ed22fa7" testId="51254f0a-bf2d-0af8-c471-427d04738201" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;cancelled&quot;)" computerName="OS008-HOME" duration="00:00:00.0002247" startTime="2026-10-05T00:03:38.5445685+03:00" endTime="2026-10-05T00:03:38.5445973+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8516c648-6fdb-4934-9f83-92793ed22fa7" />
+    <UnitTestResult executionId="60f2ddb0-4c12-4450-ac1f-748c1ddfbd66" testId="e8e03a13-7b59-35ae-b402-9575ce021ba6" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;generation&quot;)" computerName="OS008-HOME" duration="00:00:00.0002218" startTime="2026-10-05T00:03:38.5435852+03:00" endTime="2026-10-05T00:03:38.5436377+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60f2ddb0-4c12-4450-ac1f-748c1ddfbd66">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.InvalidDataException : Current inventory returned an invalid or changed page. Refresh to try again.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.MainWindowViewModel.ReadCurrentInventoryAsync(FluxVaultIpcResponse status, CancellationToken token) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowCurrentEntries.cs:line 76&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 641&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 493&#xD;
+   at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs:line 51&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b9ba9050-ae9d-4c20-b2f2-1923614aab78" testId="d3b0b457-eb2c-f586-ae72-f146ca368960" testName="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;duplicate_id&quot;)" computerName="OS008-HOME" duration="00:00:00.0003064" startTime="2026-10-05T00:03:38.5716120+03:00" endTime="2026-10-05T00:03:38.5716587+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b9ba9050-ae9d-4c20-b2f2-1923614aab78">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.InvalidDataException : Current inventory returned an invalid entry or non-increasing path identity.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.MainWindowViewModel.ReadCurrentInventoryAsync(FluxVaultIpcResponse status, CancellationToken token) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowCurrentEntries.cs:line 83&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 641&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 493&#xD;
+   at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs:line 51&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;denied&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="4d0bd3e0-fde3-0465-0720-6b5f88aebbe5">
+      <Execution id="5c8f2662-b8b7-4b5a-945e-ea4ec57ea993" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;duplicate_id&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="d3b0b457-eb2c-f586-ae72-f146ca368960">
+      <Execution id="b9ba9050-ae9d-4c20-b2f2-1923614aab78" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;echo&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="81ec7b39-3bf9-a8ff-5308-9054e21acca9">
+      <Execution id="f32a2825-69e5-40ac-b677-00e5c9aa9487" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;null&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="9df3ce76-92ae-7854-7da9-ec6574874bbf">
+      <Execution id="d8e37b34-0b7f-4c9a-8467-395cb6dd557d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Complete_pages_publish_once_and_preserve_deleted_files_and_pending_edits" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="83775cdd-195e-b024-a572-a013553f1c0b">
+      <Execution id="27de5107-2b9a-47d5-b804-8bd8ce963e96" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Complete_pages_publish_once_and_preserve_deleted_files_and_pending_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;generation&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="e8e03a13-7b59-35ae-b402-9575ce021ba6">
+      <Execution id="60f2ddb0-4c12-4450-ac1f-748c1ddfbd66" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;cursor&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7f518e88-97e4-0905-aa71-148a4e9f9c0b">
+      <Execution id="4ffc20d1-b464-4ccc-ab75-bda594f4f9e4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;identity&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="00b4c8dc-365a-f2aa-e0de-4bc5617c16a7">
+      <Execution id="f1e0e5d7-9bd6-4de3-adf3-4ebe19f6b0e1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;revision&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="01d02270-9392-1dbd-a888-37b1a870ced0">
+      <Execution id="3e51f14e-95c0-41db-b104-ede17ccce84a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Authoritative_empty_page_clears_prior_browser_only_after_successful_completion" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="09e49c93-472d-ebc3-fe79-aae86c9e1f5f">
+      <Execution id="b3e97c03-8ba0-4bbf-93b9-8e3a5b4bdeff" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Authoritative_empty_page_clears_prior_browser_only_after_successful_completion" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;duplicate_path&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="af7025d0-5bf8-13cd-559a-178f74162bf6">
+      <Execution id="184e548c-1605-45e0-82d3-d723fe4a3956" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;changed&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="b4cef68f-5ee8-8674-599a-d12350ac3f6e">
+      <Execution id="69d09ec8-e81c-450a-902f-224b091f7d9a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: &quot;cancelled&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="51254f0a-bf2d-0af8-c471-427d04738201">
+      <Execution id="8516c648-6fdb-4934-9f83-92793ed22fa7" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.CurrentEntriesPagingContractTests" name="Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="00b4c8dc-365a-f2aa-e0de-4bc5617c16a7" executionId="f1e0e5d7-9bd6-4de3-adf3-4ebe19f6b0e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d0bd3e0-fde3-0465-0720-6b5f88aebbe5" executionId="5c8f2662-b8b7-4b5a-945e-ea4ec57ea993" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9df3ce76-92ae-7854-7da9-ec6574874bbf" executionId="d8e37b34-0b7f-4c9a-8467-395cb6dd557d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="83775cdd-195e-b024-a572-a013553f1c0b" executionId="27de5107-2b9a-47d5-b804-8bd8ce963e96" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b4cef68f-5ee8-8674-599a-d12350ac3f6e" executionId="69d09ec8-e81c-450a-902f-224b091f7d9a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="01d02270-9392-1dbd-a888-37b1a870ced0" executionId="3e51f14e-95c0-41db-b104-ede17ccce84a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09e49c93-472d-ebc3-fe79-aae86c9e1f5f" executionId="b3e97c03-8ba0-4bbf-93b9-8e3a5b4bdeff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="af7025d0-5bf8-13cd-559a-178f74162bf6" executionId="184e548c-1605-45e0-82d3-d723fe4a3956" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f518e88-97e4-0905-aa71-148a4e9f9c0b" executionId="4ffc20d1-b464-4ccc-ab75-bda594f4f9e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="81ec7b39-3bf9-a8ff-5308-9054e21acca9" executionId="f32a2825-69e5-40ac-b677-00e5c9aa9487" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51254f0a-bf2d-0af8-c471-427d04738201" executionId="8516c648-6fdb-4934-9f83-92793ed22fa7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8e03a13-7b59-35ae-b402-9575ce021ba6" executionId="60f2ddb0-4c12-4450-ac1f-748c1ddfbd66" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d3b0b457-eb2c-f586-ae72-f146ca368960" executionId="b9ba9050-ae9d-4c20-b2f2-1923614aab78" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="8" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.43]       System.IO.InvalidDataException : Current inventory returned a continuation that does not match its final entry.&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowCurrentEntries.cs(91,0): at FluxVault.App.ViewModels.MainWindowViewModel.ReadCurrentInventoryAsync(FluxVaultIpcResponse status, CancellationToken token)&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(641,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview)&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(493,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync()&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs(51,0): at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(String failure)&#xD;
+[xUnit.net 00:00:00.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.44]       System.IO.InvalidDataException : Current inventory returned an invalid or changed page. Refresh to try again.&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowCurrentEntries.cs(76,0): at FluxVault.App.ViewModels.MainWindowViewModel.ReadCurrentInventoryAsync(FluxVaultIpcResponse status, CancellationToken token)&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(641,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview)&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(493,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync()&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs(51,0): at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(String failure)&#xD;
+[xUnit.net 00:00:00.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.44]       System.IO.InvalidDataException : Current inventory returned an invalid or changed page. Refresh to try again.&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowCurrentEntries.cs(76,0): at FluxVault.App.ViewModels.MainWindowViewModel.ReadCurrentInventoryAsync(FluxVaultIpcResponse status, CancellationToken token)&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(641,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview)&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(493,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync()&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs(51,0): at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(String failure)&#xD;
+[xUnit.net 00:00:00.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.46]       System.IO.InvalidDataException : Current inventory returned an invalid entry or non-increasing path identity.&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowCurrentEntries.cs(83,0): at FluxVault.App.ViewModels.MainWindowViewModel.ReadCurrentInventoryAsync(FluxVaultIpcResponse status, CancellationToken token)&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(641,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview)&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(493,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync()&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs(51,0): at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(String failure)&#xD;
+[xUnit.net 00:00:00.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.47]       System.IO.InvalidDataException : Current inventory repeated a canonical path and entry kind.&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowCurrentEntries.cs(85,0): at FluxVault.App.ViewModels.MainWindowViewModel.ReadCurrentInventoryAsync(FluxVaultIpcResponse status, CancellationToken token)&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(641,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview)&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(493,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync()&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\CurrentEntriesPagingContractTests.cs(51,0): at FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(String failure)&#xD;
+[xUnit.net 00:00:00.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.47]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T00:03:38.5416188+03:00">
+        <Text>[xUnit.net 00:00:00.43]     FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: "cursor") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T00:03:38.5438020+03:00">
+        <Text>[xUnit.net 00:00:00.44]     FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: "generation") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T00:03:38.5443778+03:00">
+        <Text>[xUnit.net 00:00:00.44]     FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: "echo") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T00:03:38.6016744+03:00">
+        <Text>[xUnit.net 00:00:00.46]     FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: "duplicate_id") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T00:03:38.6017304+03:00">
+        <Text>[xUnit.net 00:00:00.47]     FluxVault.App.Tests.CurrentEntriesPagingContractTests.Incomplete_or_invalid_refresh_retains_the_previous_complete_browser_and_draft(failure: "duplicate_path") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

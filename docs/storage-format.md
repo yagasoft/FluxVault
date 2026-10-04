@@ -34,6 +34,11 @@ Current entries use the existing canonical path/kind identity as their primary
 key. The winning version supplies display casing and deletion state; pruning
 rebuilds affected pointers from retained history, including tombstones, within
 the deletion transaction. Reads refuse mismatched pointers, paths and ticks.
+Current-file transport uses ascending path-identity keysets with the same
+transactional generation guard. Headers omit chunks, recorded folder children
+and parent IDs. SQL limits header transfer before decoding; the authenticated
+wire envelope has the same 2 MiB budget as history pages. A shortened page
+continues from its last emitted path identity, so byte limits do not skip entries.
 Existing unsupported schemas are refused without automatic upgrade or adoption.
 Retain the v1.0.4 installation and its original database/storage assets for
 existing-data recovery; do not point old binaries at new staging metadata.

@@ -59,7 +59,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
         FluxVaultIpcCommand.SaveConfiguration => true,
         FluxVaultIpcCommand.SetVaultAccess or FluxVaultIpcCommand.SetProtectionPaused or FluxVaultIpcCommand.GetSyncStatus or
         FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.GetActivity or
-        FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.ListHistoryPage or FluxVaultIpcCommand.GetSnapshotPage or FluxVaultIpcCommand.InspectVersion or
+        FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.ListHistoryPage or FluxVaultIpcCommand.GetSnapshotPage or FluxVaultIpcCommand.ListCurrentEntriesPage or FluxVaultIpcCommand.InspectVersion or
         FluxVaultIpcCommand.RunBackupNow or FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview or
         FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.RunRestoreSelection or
         FluxVaultIpcCommand.GetRepositoryHealth or FluxVaultIpcCommand.PreviewRetention or FluxVaultIpcCommand.RunRetentionNow or
@@ -112,7 +112,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                 var operations = new FluxVaultOperations(new AdmittedConfiguration(configuration),
                     new WindowsCallerCaptureProvider(caller, configuration.WatchedFolders.Where(folder => folder.IsEnabled).Select(folder => folder.Path).ToArray()),
                     new FileRepositoryMaintenanceStateStore(Path.Combine(binding.StateRoot, "repository-maintenance.json")), binding.StateRoot,
-                    _ => store, _ => repository, sourceAccess: new WindowsProtectionSourceAccess(caller), runtimeState: runtime.State);
+                    _ => store, _ => repository, sourceAccess: new WindowsProtectionSourceAccess(caller), runtimeState: runtime.State, pageCurrentEntriesForStatus: true);
                 switch (request.Command)
                 {
                     case FluxVaultIpcCommand.GetStatus: return FluxVaultIpcResponse.WithStatus(await operations.GetStatusAsync(request.StatusDetailLevel, cancellationToken));
@@ -122,6 +122,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                     case FluxVaultIpcCommand.ListBlockedFiles: return FluxVaultIpcResponse.WithBlockedFiles(operations.ListBlockedFiles());
                     case FluxVaultIpcCommand.ListVersions:
                     case FluxVaultIpcCommand.ListHistoryPage:
+                    case FluxVaultIpcCommand.ListCurrentEntriesPage:
                     case FluxVaultIpcCommand.GetSnapshotPage: return await operations.HandleAsync(request, cancellationToken);
                     case FluxVaultIpcCommand.GetRepositoryHealth:
                     case FluxVaultIpcCommand.PreviewRetention:

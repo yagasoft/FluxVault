@@ -33,7 +33,8 @@ public sealed class FluxVaultOperations(
     TelemetryCollector? telemetryCollector = null,
     Func<LogRuntimeStatus>? logStatusFactory = null,
     IProtectionSourceAccess? sourceAccess = null,
-    FluxVaultOperationsRuntimeState? runtimeState = null) : IFluxVaultRequestHandler
+    FluxVaultOperationsRuntimeState? runtimeState = null,
+    bool pageCurrentEntriesForStatus = false) : IFluxVaultRequestHandler
 {
     private readonly FluxVaultOperationsRuntimeState runtimeState = runtimeState ?? new();
     private readonly IProtectionSourceAccess sourceAccess = sourceAccess ?? new FileSystemProtectionSourceAccess();
@@ -1474,7 +1475,7 @@ public sealed class FluxVaultOperations(
         var versions = isFast
             ? GetCachedRecentVersionsForFastStatus(configuration)
             : await GetRecentVersionsForStatusAsync(configuration, cancellationToken).ConfigureAwait(false);
-        var trackedEntries = isFast
+        var trackedEntries = isFast || pageCurrentEntriesForStatus
             ? null
             : await GetTrackedEntriesForStatusAsync(configuration, cancellationToken).ConfigureAwait(false);
 
@@ -1521,7 +1522,8 @@ public sealed class FluxVaultOperations(
                 ? null
                 : await GetMetadataStoreStatusAsync(configuration, cancellationToken).ConfigureAwait(false),
             HasVersionInventory: IsRepositoryStatusGenerationCurrent(inventoryGeneration)
-                && versions is not null && (isFast || trackedEntries is not null));
+                && versions is not null && (isFast || pageCurrentEntriesForStatus || trackedEntries is not null),
+            UsesPagedCurrentEntries: pageCurrentEntriesForStatus);
     }
 
     public async Task<PerformanceTelemetryStatus> GetPerformanceAsync(CancellationToken cancellationToken = default)
@@ -1563,6 +1565,7 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.ListVersions => FluxVaultIpcResponse.WithVersions(await ListRepositoryHistoryAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.ListHistoryPage => await HistoryPageResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.GetSnapshotPage => await SnapshotPageResponseAsync(request, cancellationToken).ConfigureAwait(false),
+            FluxVaultIpcCommand.ListCurrentEntriesPage => await CurrentEntriesPageResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.InspectVersion => FluxVaultIpcResponse.WithInspection(await InspectVersionAsync(Require(request.VersionId, "version id"), cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RestoreVersion => await RestoreVersionResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.RestoreVersionPreview => await RestoreVersionPreviewResponseAsync(request, cancellationToken).ConfigureAwait(false),
@@ -1599,6 +1602,7 @@ public sealed class FluxVaultOperations(
             or FluxVaultIpcCommand.ListVersions
             or FluxVaultIpcCommand.ListHistoryPage
             or FluxVaultIpcCommand.GetSnapshotPage
+            or FluxVaultIpcCommand.ListCurrentEntriesPage
             or FluxVaultIpcCommand.InspectVersion
             or FluxVaultIpcCommand.GetRepositoryHealth
             or FluxVaultIpcCommand.PreviewRestoreSelection;
@@ -1619,6 +1623,13 @@ public sealed class FluxVaultOperations(
                 cancellationToken)
             .ConfigureAwait(false);
         return purge is null ? FluxVaultIpcResponse.Ok() : FluxVaultIpcResponse.WithPurge(purge);
+    }
+
+    private async Task<FluxVaultIpcResponse> CurrentEntriesPageResponseAsync(FluxVaultIpcRequest request, CancellationToken token)
+    {
+        var configuration = await configurationStore.LoadAsync(token).ConfigureAwait(false);
+        var page = await CreateRepository(configuration).ListCurrentEntriesPageAsync(request.CurrentEntriesQuery ?? throw new ArgumentException("Missing current-entry query."), token).ConfigureAwait(false);
+        return FluxVaultIpcResponse.Ok() with { CurrentEntriesPage = page };
     }
 
     private async Task<FluxVaultIpcResponse> HistoryPageResponseAsync(FluxVaultIpcRequest request, CancellationToken token)

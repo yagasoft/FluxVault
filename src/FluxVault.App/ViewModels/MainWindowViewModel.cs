@@ -495,11 +495,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public void StartAutoRefresh()
     {
+        if (repositoryReadsStopping) return;
         if (autoRefreshTask is { IsCompleted: false })
         {
             return;
         }
 
+        autoRefreshCancellation?.Dispose();
         autoRefreshCancellation = new CancellationTokenSource();
         autoRefreshTask = AutoRefreshAsync(autoRefreshCancellation.Token);
     }
@@ -507,9 +509,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public void StopAutoRefresh()
     {
         autoRefreshCancellation?.Cancel();
-        autoRefreshCancellation?.Dispose();
-        autoRefreshCancellation = null;
-        autoRefreshTask = null;
     }
 
     public void ApplyRestorePathRequest(string restorePath)
@@ -586,6 +585,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
         PendingConfigurationSave? discardReview = null)
     {
         var reconcileOptions = requiresOptionsReconciliation;
+        var refresh = BeginRepositoryRefresh(cancellationToken);
+        if (refresh is null) return false;
+        cancellationToken = refresh.Token;
         try
         {
             if (!await refreshGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
@@ -634,6 +636,15 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     return false;
                 }
 
+                var currentIdentity = (response.VaultId, response.Status.Configuration.RepositoryPath, response.Status.Configuration.MetadataStore);
+                if (response.Status.UsesPagedCurrentEntries && (!isAutomatic || lastAppliedCurrentInventoryIdentity != currentIdentity))
+                {
+                    var entries = await ReadCurrentInventoryAsync(response, cancellationToken).ConfigureAwait(true);
+                    response = response with { Status = response.Status with { TrackedEntries = entries } };
+                }
+                cancellationToken.ThrowIfCancellationRequested();
+                if (acceptedVaultId == response.VaultId && acceptedConfigurationRevision is { } acceptedRevision && response.VaultRevision < acceptedRevision)
+                    throw new InvalidDataException("Current inventory belongs to an older configuration revision. Previous entries and edits are kept.");
                 var discardGenerationMatches = expectedEditGeneration is null || expectedEditGeneration == configurationEditGeneration;
                 if (validateDiscardReview && !ValidateDiscardReview(discardReview)) return false;
                 var preservedOptionsDraft = reconcileOptions && hasLocalConfigurationChanges && !forceConfigurationReload &&
@@ -664,9 +675,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 refreshGate.Release();
             }
         }
-        catch (OperationCanceledException ex) when (!cancellationToken.IsCancellationRequested)
+        catch (OperationCanceledException ex)
         {
-            SetServiceUnavailable(ex);
+            if (!repositoryReadsStopping) SetServiceUnavailable(new IOException("Current inventory refresh was cancelled; previous entries and edits are kept.", ex));
             return false;
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException)
@@ -679,6 +690,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
             SetServiceUnavailable(ex);
             return false;
         }
+        catch (Exception ex) when (ex is InvalidDataException or ArgumentException or JsonException)
+        {
+            SetServiceUnavailable(new IOException("Current inventory could not be completed; previous entries and edits are kept. " + ex.Message, ex));
+            return false;
+        }
+        finally { refresh.Dispose(); EndRepositoryRefresh(); }
     }
 
     private async Task RefreshPerformanceAsync(CancellationToken cancellationToken = default)
@@ -1998,6 +2015,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     internal async Task<VersionInventoryViewModel> CreateVersionInventoryForPathAsync(string path)
     {
         if (acceptedVaultId is null) await RefreshAsync().ConfigureAwait(true);
+        if (repositoryReadsStopping) throw new InvalidOperationException("FluxVault is closing; history was not opened.");
         if (acceptedVaultId is not { } id) throw new InvalidOperationException("Load the vault's verified configuration before browsing history.");
         var query = new RepositoryHistoryQuery(id, Path.GetFullPath(path), IncludeDescendants: true,
             PageSize: (acceptedConfiguration?.RepositoryBrowse ?? new()).Normalise().ItemsPerPage);
@@ -2437,6 +2455,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             if (status.HasVersionInventory && status.TrackedEntries is not null)
             {
                 FileBrowser.LoadTrackedEntries(status.TrackedEntries);
+                lastAppliedCurrentInventoryIdentity = inventoryIdentity;
             }
             else if (!sameInventoryIdentity)
             {

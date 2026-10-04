@@ -389,9 +389,9 @@
                                  ToolTip="Each Windows user keeps private preview copies for 1–365 days (default 2). Expired copies are cleaned up when opening another preview; files still open remain until a later attempt." />
 
                         <StackPanel Grid.Row="27" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,12,0,18">
-                            <TextBlock Text="Items per recovery page" />
+                            <TextBlock Text="Items per repository page" />
                             <TextBox Text="{Binding RecoveryItemsPerPage, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,4,0,0"
-                                     AutomationProperties.Name="Items per recovery page"
+                                     AutomationProperties.Name="Items per repository page"
                                      ToolTip="History and folder browsing load 1–256 items per page (default 100). A page may be shorter to keep the response within the supported size." />
                         </StackPanel>
                         <TextBlock Grid.Row="22" Grid.ColumnSpan="2" Text="Explorer context menu" FontWeight="SemiBold" Margin="0,0,0,12" />

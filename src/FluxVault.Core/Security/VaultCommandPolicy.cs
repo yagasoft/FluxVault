@@ -32,7 +32,7 @@ public static class VaultCommandPolicy
     {
         policy = command switch
         {
-            FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.ListHistoryPage or FluxVaultIpcCommand.GetSnapshotPage or FluxVaultIpcCommand.InspectVersion or
+            FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.ListHistoryPage or FluxVaultIpcCommand.GetSnapshotPage or FluxVaultIpcCommand.ListCurrentEntriesPage or FluxVaultIpcCommand.InspectVersion or
             FluxVaultIpcCommand.GetActivity or FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.GetSyncStatus or
             FluxVaultIpcCommand.GetRepositoryHealth or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.ExportDiagnostics or
             FluxVaultIpcCommand.PreviewRetention or FluxVaultIpcCommand.GetOperationStatus => new(VaultPermission.ReadHistory),

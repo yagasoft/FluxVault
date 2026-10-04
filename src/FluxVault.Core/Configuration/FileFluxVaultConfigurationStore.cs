@@ -24,7 +24,8 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             return FluxVaultConfiguration.CreateDefault(programDataPath);
         }
 
-        await using var stream = File.OpenRead(configPath);
+        // Readers keep their immutable file snapshot while an atomic save publishes a replacement.
+        await using var stream = File.Open(configPath, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete);
         var configuration = await JsonSerializer.DeserializeAsync<FluxVaultConfiguration>(stream, JsonOptions, cancellationToken)
             .ConfigureAwait(false)
             ?? throw new InvalidDataException($"FluxVault configuration could not be read: {configPath}");
@@ -39,11 +40,25 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
         var directory = Path.GetDirectoryName(configPath) ?? throw new InvalidOperationException("Configuration path has no directory.");
         Directory.CreateDirectory(directory);
         var tempPath = $"{configPath}.{Guid.NewGuid():N}.tmp";
-        await File.WriteAllBytesAsync(
-            tempPath,
-            JsonSerializer.SerializeToUtf8Bytes(configuration, JsonOptions),
-            cancellationToken).ConfigureAwait(false);
-        File.Move(tempPath, configPath, overwrite: true);
+        var ownsTemporary = false;
+        try
+        {
+            await using (var stream = new FileStream(tempPath, FileMode.CreateNew, FileAccess.Write,
+                FileShare.None, 4096, FileOptions.Asynchronous))
+            {
+                ownsTemporary = true;
+                await JsonSerializer.SerializeAsync(stream, configuration, JsonOptions, cancellationToken).ConfigureAwait(false);
+                await stream.FlushAsync(cancellationToken).ConfigureAwait(false);
+                stream.Flush(flushToDisk: true);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            if (File.Exists(configPath)) File.Replace(tempPath, configPath, destinationBackupFileName: null);
+            else File.Move(tempPath, configPath);
+        }
+        finally
+        {
+            if (ownsTemporary) File.Delete(tempPath);
+        }
     }
 
     internal static void Validate(FluxVaultConfiguration configuration)

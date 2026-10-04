@@ -30,7 +30,8 @@ public sealed record FluxVaultIpcResponse(
     FluxVaultIpcErrorCode? ErrorCode = null,
     DiagnosticsExportResult? DiagnosticsExport = null,
     RepositoryHistoryPage? HistoryPage = null,
-    RepositorySnapshotPage? SnapshotPage = null)
+    RepositorySnapshotPage? SnapshotPage = null,
+    RepositoryCurrentEntriesPage? CurrentEntriesPage = null)
 {
     public static FluxVaultIpcResponse Ok()
     {

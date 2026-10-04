@@ -47,9 +47,19 @@ bidirectional history pages and lazy recorded-folder contents through authorised
 service reads. Exact recorded child identities remain recoverable outside the
 visible history page; stale generation or unavailable binding is explained
 without presenting authoritative empty history. Reads are cancelled and joined
-before window closure. Current-file inventory still needs bounded paging.
+before window closure. The protected dashboard also reads current-file inventory
+through forward keyset pages under ReadHistory authority. Status explicitly
+advertises this capability and omits the complete tracked-entry payload; it does
+not build and discard that payload. Recent-history availability remains separate.
+Every page uses the initial status repository/revision and one history generation.
+Only a complete validated sweep replaces browser entries; failures, cancellation
+and concurrent edits retain the previous entries and pending settings. Dashboard
+reads are cancelled and joined before application shutdown.
 Legacy filesystem/developer recent-history repositories retain their fallback;
-the new recovery paging route has no complete-history fallback.
+the new protected paging routes have no complete-history fallback. Transport is
+bounded, but the dashboard still accumulates the complete current-file inventory
+in memory; large-inventory rendering and resource limits remain open gates. The
+preceding status/recent-history snapshot and current sweep are separate reads.
 
 Fresh staging metadata uses schema version 4. Current entries have one row per
 canonical Windows path and entry kind, keyed by the existing path identity.

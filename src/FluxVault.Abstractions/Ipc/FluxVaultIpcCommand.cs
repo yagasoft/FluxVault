@@ -33,5 +33,6 @@ public enum FluxVaultIpcCommand
     GetOperationStatus = 33,
     SetVaultAccess = 34,
     ListHistoryPage = 35,
-    GetSnapshotPage = 36
+    GetSnapshotPage = 36,
+    ListCurrentEntriesPage = 37
 }

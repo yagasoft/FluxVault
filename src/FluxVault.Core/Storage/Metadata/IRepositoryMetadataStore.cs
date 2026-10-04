@@ -62,6 +62,9 @@ public interface IRepositoryMetadataStore
 
     Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default);
 
+    Task<RepositoryCurrentEntriesPage> ListCurrentEntriesPageAsync(RepositoryCurrentEntriesQuery query, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("This metadata store cannot page current entries.");
+
     Task<RepositoryHistoryPage> ListHistoryPageAsync(RepositoryHistoryQuery query, CancellationToken cancellationToken = default) =>
         throw new NotSupportedException("This metadata store cannot page history.");
 

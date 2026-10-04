@@ -300,6 +300,14 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             .ToArray();
     }
 
+    public async Task<RepositoryCurrentEntriesPage> ListCurrentEntriesPageAsync(RepositoryCurrentEntriesQuery query, CancellationToken cancellationToken = default)
+    {
+        RepositoryCurrentEntriesPaging.Validate(query, binding?.Id);
+        if (metadataStore is null) throw new NotSupportedException("Paged current entries require the authoritative metadata store.");
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+        return await metadataStore.ListCurrentEntriesPageAsync(query, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<RepositoryHistoryPage> ListHistoryPageAsync(RepositoryHistoryQuery query, CancellationToken cancellationToken = default)
     {
         RepositoryHistoryPaging.Validate(query, binding?.Id);

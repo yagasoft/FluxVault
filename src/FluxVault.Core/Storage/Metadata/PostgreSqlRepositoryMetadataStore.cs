@@ -369,6 +369,70 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         if (await command.ExecuteNonQueryAsync(token).ConfigureAwait(false) != 1) throw new InvalidDataException("History generation is missing.");
     }
 
+    public async Task<RepositoryCurrentEntriesPage> ListCurrentEntriesPageAsync(RepositoryCurrentEntriesQuery query, CancellationToken cancellationToken = default)
+    {
+        RepositoryCurrentEntriesPaging.Validate(query, binding?.Id);
+        cancellationToken.ThrowIfCancellationRequested();
+        await InitializeAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken).ConfigureAwait(false);
+        long generation;
+        await using (var state = CreateCommand("SELECT generation FROM fluxvault.history_state WHERE singleton=true", connection, transaction))
+            generation = (long)(await state.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) ?? throw new InvalidDataException("History generation is missing."));
+        if (query.Cursor is { } cursor && cursor.Generation != generation) throw new RepositoryHistoryChangedException();
+        await using var command = CreateCommand($"""
+            WITH selected AS MATERIALIZED (
+                SELECT c.*,v.manifest_json,p.normalised_key,
+                    c.path_id=v.path_id AND c.source_path=v.source_path AND c.entry_kind=v.entry_kind
+                    AND c.captured_at_ticks=v.captured_at_ticks AND c.is_deleted=v.is_deleted AS pointer_valid
+                FROM fluxvault.current_entries c LEFT JOIN fluxvault.versions v ON v.version_id=c.version_id
+                LEFT JOIN fluxvault.paths p ON p.path_id=c.path_id
+                WHERE c.path_id>@after ORDER BY c.path_id LIMIT @count
+            ), headers AS MATERIALIZED (
+                SELECT *,manifest_json->>'vaultId' AS repository_id,
+                    CASE WHEN octet_length(manifest_json::text)<={integrityLimits.MaxManifestBytes} AND jsonb_typeof(manifest_json->'chunks')='array' THEN
+                        (manifest_json - 'chunks' - 'folderEntries' - 'parentVersionIds' ||
+                        jsonb_build_object('chunkCount',jsonb_array_length(manifest_json->'chunks')))::text ELSE NULL END AS header_json
+                FROM selected
+            ), sized AS (
+                SELECT *,sum(octet_length(header_json)) OVER (ORDER BY path_id ROWS UNBOUNDED PRECEDING) AS cumulative_bytes FROM headers
+            )
+            SELECT CASE WHEN cumulative_bytes<={RepositoryHistoryPaging.MaximumResponseBytes} THEN header_json ELSE NULL END,
+                path_id,version_id,captured_at_ticks,repository_id,source_path,entry_kind,is_deleted,normalised_key,pointer_valid,header_json IS NULL
+            FROM sized ORDER BY path_id
+            """, connection, transaction);
+        command.Parameters.AddWithValue("after", query.Cursor?.PathId ?? 0L);
+        command.Parameters.AddWithValue("count", query.PageSize + 1);
+        var rows = new List<RepositoryCurrentEntry>();
+        var more = false;
+        await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
+        {
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                if (rows.Count == query.PageSize) { more = true; break; }
+                if (reader.IsDBNull(0))
+                {
+                    if (rows.Count > 0 && !reader.GetBoolean(10)) { more = true; break; }
+                    throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Selected current entry is invalid or exceeds the supported bound.");
+                }
+                RepositoryVersionSummary row;
+                try { row = JsonSerializer.Deserialize<RepositoryVersionSummary>(reader.GetString(0), JsonOptions) ?? throw new JsonException(); }
+                catch (JsonException) { throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Selected current header could not be decoded."); }
+                if (reader.GetInt64(1) <= (query.Cursor?.PathId ?? 0) || reader.IsDBNull(9) || !reader.GetBoolean(9) || reader.IsDBNull(8) ||
+                    row.VersionId != reader.GetString(2) || row.CapturedAtUtc.UtcTicks != reader.GetInt64(3) ||
+                    row.SourcePath != reader.GetString(5) || row.EntryKind.ToString() != reader.GetString(6) || row.IsDeleted != reader.GetBoolean(7) ||
+                    reader.GetString(8) != RepositoryMetadataStoreHelpers.ToEntryKey(row.SourcePath, row.EntryKind) ||
+                    binding is not null && (reader.IsDBNull(4) || reader.GetString(4) != binding.Id.ToString()) ||
+                    row.ChunkCount < 0 || row.LogicalLength < 0 || !Enum.IsDefined(row.EntryKind))
+                    throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Selected current keys disagree with the immutable version or repository binding.");
+                RepositoryHistoryPaging.ValidateVersionId(row.VersionId);
+                rows.Add(new(reader.GetInt64(1), row));
+            }
+        }
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return RepositoryCurrentEntriesPaging.Page(query, generation, rows, more);
+    }
+
     public async Task<RepositoryHistoryPage> ListHistoryPageAsync(RepositoryHistoryQuery query, CancellationToken cancellationToken = default)
     {
         query = RepositoryHistoryPaging.Validate(query, binding?.Id);

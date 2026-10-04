@@ -43,18 +43,19 @@ internal static class WindowsSingleVaultProbe
                 FluxVaultIpcCommand.RunMirrorRepair, FluxVaultIpcCommand.PreviewMirrorRebalance, FluxVaultIpcCommand.RunMirrorRebalance,
                 FluxVaultIpcCommand.PreviewMirrorDrain, FluxVaultIpcCommand.RunMirrorDrain, FluxVaultIpcCommand.ExportDiagnostics,
                 FluxVaultIpcCommand.PreviewRestoreSelection, FluxVaultIpcCommand.RunRestoreSelection,
-                FluxVaultIpcCommand.SetProtectionPaused, FluxVaultIpcCommand.GetSyncStatus, FluxVaultIpcCommand.ListHistoryPage, FluxVaultIpcCommand.GetSnapshotPage };
+                FluxVaultIpcCommand.SetProtectionPaused, FluxVaultIpcCommand.GetSyncStatus, FluxVaultIpcCommand.ListHistoryPage, FluxVaultIpcCommand.GetSnapshotPage, FluxVaultIpcCommand.ListCurrentEntriesPage };
             foreach (var command in commands)
             {
                 var response = await client.SendAsync(new(command, null, null, null, Path.Combine(fixture.Root, "output-B"), MirrorNodeId: "first",
                     VaultId: new(Guid.ParseExact(fixture.FixtureId, "N")), ExpectedVaultRevision: 1, OperationId: Guid.NewGuid(),
                     HistoryQuery: command == FluxVaultIpcCommand.ListHistoryPage ? new(new(Guid.ParseExact(fixture.FixtureId, "N"))) : null,
-                    SnapshotQuery: command == FluxVaultIpcCommand.GetSnapshotPage ? new(new(Guid.ParseExact(fixture.FixtureId, "N")), new string('1', 32)) : null), deadline.Token);
+                    SnapshotQuery: command == FluxVaultIpcCommand.GetSnapshotPage ? new(new(Guid.ParseExact(fixture.FixtureId, "N")), new string('1', 32)) : null,
+                    CurrentEntriesQuery: command == FluxVaultIpcCommand.ListCurrentEntriesPage ? new(new(Guid.ParseExact(fixture.FixtureId, "N"))) : null), deadline.Token);
                 if (response.Success || response.ErrorCode != FluxVaultIpcErrorCode.Denied ||
                     response.VaultId is { } disclosed && disclosed.Value != Guid.ParseExact(fixture.FixtureId, "N") ||
                     response.RepositoryHealth is not null || response.RepositoryScrub is not null || response.RestoreRehearsal is not null ||
                     response.MirrorRepair is not null || response.MirrorRebalance is not null || response.RetentionPreview is not null || response.RetentionResult is not null ||
-                    response.DiagnosticsExport is not null || response.OutputPath is not null || response.RestoreResult is not null || response.RestoreSelection is not null || response.Status is not null || response.HistoryPage is not null || response.SnapshotPage is not null)
+                    response.DiagnosticsExport is not null || response.OutputPath is not null || response.RestoreResult is not null || response.RestoreSelection is not null || response.Status is not null || response.HistoryPage is not null || response.SnapshotPage is not null || response.CurrentEntriesPage is not null)
                     throw new InvalidOperationException("Ungrant user received maintenance data or admission.");
             }
             Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Denied = true, NoIdentityOrHistory = true, MaintenanceDenied = commands.Length }));
@@ -352,10 +353,11 @@ internal static class WindowsSingleVaultProbe
             "failed admitted diagnostics does not report a completed export or repeat its effect");
         await WindowsSelectionRecoveryProbe.RunAsync(client, Bind, Send, output, checks, deadline.Token);
         revision = await WindowsProtectionStateProbe.RunAsync(client, Bind, Send, file, destination, checks, deadline.Token);
+        await WindowsCurrentPagingProbe.RunAsync(client,source,file,checks,deadline.Token);
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Passed = checks.Count, Checks = checks, SingleVault = true, VaultId = id,
             CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true,
             MaintenanceCommandsVerified = true, DrainCommandsVerified = true, DiagnosticsCommandsVerified = true, SelectionCommandsVerified = true,
-            ProtectionStateCommandsVerified = true, HistoryPagingVerified = true }));
+            ProtectionStateCommandsVerified = true, HistoryPagingVerified = true, CurrentPagingVerified = true }));
         return 0;
 
         FluxVaultIpcRequest Bind(FluxVaultIpcRequest request) => request with { VaultId = id,

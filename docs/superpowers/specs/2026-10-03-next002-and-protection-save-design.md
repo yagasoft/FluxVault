@@ -109,10 +109,35 @@ handled as unavailable without dispatch or authoritative-empty presentation.
 Outstanding reads are cancelled and joined before the window closes; stale
 selection responses cannot replace current contents. The typed optional
 RepositoryBrowse policy defaults to 100 items, normalises to 1–256 and is exposed
-in Options as Items per recovery page. Both real-store Options round trips and
+in Options as Items per repository page. Both real-store Options round trips and
 the original full-record protection-save regressions cover its preservation.
-Current-file paging and full scale/accessibility/lifecycle gates remain open.
+Full scale/accessibility/lifecycle gates remain open.
 See [bounded evidence](../../verification/2026-10-04-next002-history-paging/README.md).
+
+### Current-file inventory transport contract
+
+The protected status route advertises UsesPagedCurrentEntries and omits its
+complete tracked-entry payload. HasVersionInventory still describes the separate
+recent-history snapshot. ListCurrentEntriesPage is a ReadHistory operation using
+the status response's exact repository identity/revision, including cold initial
+loads; subsequent pages retain one transactional history generation. Ascending
+path-identity keysets validate canonical path/kind, winner pointer, exact ticks
+and immutable binding. SQL and authenticated wire bounds share the history-page
+budget; continuation anchors the final emitted identity, including short pages.
+
+The actual dashboard accumulates entries privately and validates every query
+echo, binding/revision, generation, header, monotone identity and continuation.
+Only an absent continuation completes the sweep. Empty non-terminal, duplicate,
+stale, failed, cancelled or malformed pages cannot publish a partial browser or
+discard pending edits. Edit/discard reviews are rechecked after all page awaits.
+Save reconciliation retains previously loaded browser entries when status omits
+them. Manual, startup and automatic refresh reads share a cancellation/join gate
+that application shutdown awaits without blocking the dispatcher synchronously.
+
+This bounds transport only. Client accumulation remains O(n); scale, rendering,
+accessibility and the wider lifecycle/performance gates stay open. Status/recent
+history and the current sweep are separate snapshots, not one cross-command
+transaction. No schema upgrade or additional-vault abstraction is introduced.
 
 ## Acceptance gates, unchanged in strength
 

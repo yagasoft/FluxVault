@@ -21,6 +21,9 @@ public sealed class WindowsCallerSourceTests
         await using var opened = await new WindowsCallerFileAccess().OpenSourceAsync(caller, selected,
             Path.Combine(workspace.Root, "selected", "document.txt"));
         using var reader = new StreamReader(opened); Assert.Equal("selected bytes", await reader.ReadToEndAsync());
+        Assert.Equal(FluxVault.Abstractions.Capture.ProtectionSourceAvailability.Missing,
+            new WindowsProtectionSourceAccess(caller).Inspect(selected, Path.Combine(workspace.Root, "selected", "absent.txt"),
+                FluxVault.Abstractions.Storage.RepositoryEntryKind.File).Availability);
     }
 
     [Theory]
@@ -65,6 +68,9 @@ public sealed class WindowsCallerSourceTests
         {
             await Rejected<UnauthorizedAccessException>(() => new WindowsCallerFileAccess().OpenSourceAsync(caller,
                 Path.Combine(parent, "Root"), Path.Combine(parent, "root", "document.txt")));
+            Assert.Equal(FluxVault.Abstractions.Capture.ProtectionSourceAvailability.Unavailable,
+                new WindowsProtectionSourceAccess(caller).Inspect(Path.Combine(parent, "Root"),
+                    Path.Combine(parent, "root", "document.txt"), FluxVault.Abstractions.Storage.RepositoryEntryKind.File).Availability);
         }
         finally { new DirectoryInfo(parent).SetAccessControl(original); }
     }
@@ -265,7 +271,7 @@ public sealed class WindowsCallerSourceTests
         await Rejected<UnauthorizedAccessException>(() => new WindowsCallerFileAccess().OpenSourceAsync(caller, workspace.Root, Path.Combine(workspace.Root, relative)));
     }
 
-    private static async Task<FluxVaultCallerContext> Caller()
+    internal static async Task<FluxVaultCallerContext> Caller()
     {
         using var identity = WindowsIdentity.GetCurrent();
         var name = "FluxVault.Tests." + Guid.NewGuid().ToString("N");

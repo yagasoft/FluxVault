@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6a6b61a1-dbae-4677-87c1-7a4d8a935ff6" name="os008@OS008-HOME 2026-10-04 09:33:43" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T09:33:43.8595026+03:00" queuing="2026-10-04T09:33:43.8595029+03:00" start="2026-10-04T09:33:43.2074553+03:00" finish="2026-10-04T09:33:44.4068136+03:00" />
+  <TestSettings name="default" id="9feb69c7-0501-42f3-8f69-2731796ccc5e">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_09_33_43" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c541adef-4f5d-424c-ae04-9fad6661ec04" testId="828c9442-07c4-e380-3ba9-ee497ddb319e" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Metadata_is_read_from_a_caller_opened_handle_and_has_no_data_read_requirement" computerName="OS008-HOME" duration="00:00:00.0108932" startTime="2026-10-04T09:33:44.3262722+03:00" endTime="2026-10-04T09:33:44.3372455+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c541adef-4f5d-424c-ae04-9fad6661ec04" />
+    <UnitTestResult executionId="eb045911-4544-4ca5-ad4f-c4af42f8ed13" testId="1bef19cf-b192-895c-3188-136d4f100c33" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Multiple_native_batches_preserve_every_unicode_candidate_and_child_kind" computerName="OS008-HOME" duration="00:00:00.4735283" startTime="2026-10-04T09:33:43.8525211+03:00" endTime="2026-10-04T09:33:44.3260192+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eb045911-4544-4ca5-ad4f-c4af42f8ed13" />
+    <UnitTestResult executionId="81b135a9-b0b7-4023-bf56-e5dabdd7692c" testId="80ce8882-3e12-ad13-020d-20feafa40a83" testName="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;component&quot;)" computerName="OS008-HOME" duration="00:00:00.0000235" startTime="2026-10-04T09:33:43.7848408+03:00" endTime="2026-10-04T09:33:43.7855622+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="81b135a9-b0b7-4023-bf56-e5dabdd7692c" />
+    <UnitTestResult executionId="d7678d68-88d9-43d6-899e-813b7d3a179e" testId="998ec45a-5907-ea1d-9d4a-2c29d7b5edd1" testName="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;odd-name&quot;)" computerName="OS008-HOME" duration="00:00:00.0041628" startTime="2026-10-04T09:33:43.7656537+03:00" endTime="2026-10-04T09:33:43.7748051+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7678d68-88d9-43d6-899e-813b7d3a179e" />
+    <UnitTestResult executionId="559c256e-ed2b-41ab-890c-08c7a62ff115" testId="ecb6ec27-6914-aee7-5899-18905500d175" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_metadata_is_unavailable_and_not_missing" computerName="OS008-HOME" duration="00:00:00.0047330" startTime="2026-10-04T09:33:44.3425892+03:00" endTime="2026-10-04T09:33:44.3474159+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="559c256e-ed2b-41ab-890c-08c7a62ff115" />
+    <UnitTestResult executionId="454101cf-2b65-4c04-b937-a73f95b30be7" testId="aa2f2692-7502-7a1c-f5d9-26ec903614e4" testName="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Complete_batch_preserves_names_and_skips_only_dot_entries" computerName="OS008-HOME" duration="00:00:00.0060146" startTime="2026-10-04T09:33:43.7865773+03:00" endTime="2026-10-04T09:33:43.7866150+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="454101cf-2b65-4c04-b937-a73f95b30be7" />
+    <UnitTestResult executionId="489564b4-c1ed-4933-87e9-cfdb59cb91af" testId="7bb29203-22d9-49d9-7c67-c734370e1442" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_directory_listing_throws_instead_of_returning_an_empty_scan" computerName="OS008-HOME" duration="00:00:00.0048704" startTime="2026-10-04T09:33:44.3374401+03:00" endTime="2026-10-04T09:33:44.3423877+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="489564b4-c1ed-4933-87e9-cfdb59cb91af" />
+    <UnitTestResult executionId="6db3f017-a684-4267-a716-3539abc9f0af" testId="620bdb48-b707-f60a-a140-cb1184bf3d72" testName="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;alignment&quot;)" computerName="OS008-HOME" duration="00:00:00.0000102" startTime="2026-10-04T09:33:43.7845973+03:00" endTime="2026-10-04T09:33:43.7846638+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6db3f017-a684-4267-a716-3539abc9f0af" />
+    <UnitTestResult executionId="ca3b308c-eea0-49d8-a2fe-7e21508d2977" testId="448b9fa2-82e9-6a5f-2b53-c005fb2e5465" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Reparse_and_outside_roots_are_unavailable_even_if_the_leaf_is_missing" computerName="OS008-HOME" duration="00:00:00.0042990" startTime="2026-10-04T09:33:43.8432383+03:00" endTime="2026-10-04T09:33:43.8432779+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca3b308c-eea0-49d8-a2fe-7e21508d2977" />
+    <UnitTestResult executionId="2d038862-24f8-4805-9fef-40b0f21e2e81" testId="c37e6e6a-03d5-89ca-dc9e-d222c6fc49f9" testName="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;name&quot;)" computerName="OS008-HOME" duration="00:00:00.0000058" startTime="2026-10-04T09:33:43.7847398+03:00" endTime="2026-10-04T09:33:43.7847763+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d038862-24f8-4805-9fef-40b0f21e2e81" />
+    <UnitTestResult executionId="528e9f33-3ebe-4409-92a2-9291ae54115d" testId="11d5a462-c6c2-e385-da0c-d11a649beb76" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Lazy_scan_pins_the_directory_until_disposal_and_releases_it_after_cancellation" computerName="OS008-HOME" duration="00:00:00.0402881" startTime="2026-10-04T09:33:43.7641363+03:00" endTime="2026-10-04T09:33:43.8113046+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="528e9f33-3ebe-4409-92a2-9291ae54115d" />
+    <UnitTestResult executionId="9bed7ef8-5ce6-47be-a0da-bdfba4a1d240" testId="22a38260-3163-91d8-b119-9eb7b4f6a492" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent" computerName="OS008-HOME" duration="00:00:00.0121389" startTime="2026-10-04T09:33:43.8354754+03:00" endTime="2026-10-04T09:33:43.8355324+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9bed7ef8-5ce6-47be-a0da-bdfba4a1d240" />
+    <UnitTestResult executionId="d88f31cc-c87c-499e-9788-819581e87ecc" testId="c1a7e40e-ebb0-4e21-e455-19590e14bdfa" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Live_capture_uses_the_caller_handle_and_releases_pins_with_the_result" computerName="OS008-HOME" duration="00:00:00.0032915" startTime="2026-10-04T09:33:43.8489224+03:00" endTime="2026-10-04T09:33:43.8520839+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d88f31cc-c87c-499e-9788-819581e87ecc">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Capture.WindowsCallerCaptureProvider.CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Capture\WindowsCallerCaptureProvider.cs:line 11&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Live_capture_uses_the_caller_handle_and_releases_pins_with_the_result() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b45a566f-c8f3-4546-b544-480cfb83264b" testId="0b68dd6e-4ae7-db0c-d159-1539d983c909" testName="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;offset&quot;)" computerName="OS008-HOME" duration="00:00:00.0000056" startTime="2026-10-04T09:33:43.7857405+03:00" endTime="2026-10-04T09:33:43.7857717+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b45a566f-c8f3-4546-b544-480cfb83264b" />
+    <UnitTestResult executionId="ebce9104-90bf-4a7a-a03d-eb3c26e5faea" testId="8b7f3dcc-5429-ace1-eeed-444152b14c35" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_capture_has_no_privileged_fallback_and_outside_selection_is_failed" computerName="OS008-HOME" duration="00:00:00.0047027" startTime="2026-10-04T09:33:43.8433757+03:00" endTime="2026-10-04T09:33:43.8483290+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ebce9104-90bf-4a7a-a03d-eb3c26e5faea">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Capture.WindowsCallerCaptureProvider.CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Capture\WindowsCallerCaptureProvider.cs:line 11&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_capture_has_no_privileged_fallback_and_outside_selection_is_failed() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="19511533-eb8d-40ba-9e8d-7448d3d73821" testId="368a3780-2403-00cc-26b9-da2885c1e51d" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Cancelled_capture_throws_and_acquires_no_handles" computerName="OS008-HOME" duration="00:00:00.0051907" startTime="2026-10-04T09:33:43.8358096+03:00" endTime="2026-10-04T09:33:43.8389427+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19511533-eb8d-40ba-9e8d-7448d3d73821">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.OperationCanceledException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Cancelled_capture_throws_and_acquires_no_handles() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 54&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Windows.Capture.WindowsCallerCaptureProvider.CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Capture\WindowsCallerCaptureProvider.cs:line 11&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.&lt;&gt;c__DisplayClass2_0.&lt;Cancelled_capture_throws_and_acquires_no_handles&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 54</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d6c5ccef-85d2-4ff2-9803-f39112ae96dc" testId="4a20d084-f9d9-f8eb-0bf0-2e5141e8cc2c" testName="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;header&quot;)" computerName="OS008-HOME" duration="00:00:00.0000137" startTime="2026-10-04T09:33:43.7856389+03:00" endTime="2026-10-04T09:33:43.7856747+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d6c5ccef-85d2-4ff2-9803-f39112ae96dc" />
+    <UnitTestResult executionId="68cbe315-5029-4c2b-a8d5-843b4b329d02" testId="3198cb07-25e1-85d7-4c20-39fc0dbb4602" testName="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;trailing-header&quot;)" computerName="OS008-HOME" duration="00:00:00.0003936" startTime="2026-10-04T09:33:43.7839746+03:00" endTime="2026-10-04T09:33:43.7840308+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68cbe315-5029-4c2b-a8d5-843b4b329d02" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;trailing-header&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="3198cb07-25e1-85d7-4c20-39fc0dbb4602">
+      <Execution id="68cbe315-5029-4c2b-a8d5-843b4b329d02" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsDirectoryBatchTests" name="Truncated_or_invalid_record_is_a_failed_scan" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_directory_listing_throws_instead_of_returning_an_empty_scan" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="7bb29203-22d9-49d9-7c67-c734370e1442">
+      <Execution id="489564b4-c1ed-4933-87e9-cfdb59cb91af" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Denied_directory_listing_throws_instead_of_returning_an_empty_scan" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_capture_has_no_privileged_fallback_and_outside_selection_is_failed" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="8b7f3dcc-5429-ace1-eeed-444152b14c35">
+      <Execution id="ebce9104-90bf-4a7a-a03d-eb3c26e5faea" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Denied_capture_has_no_privileged_fallback_and_outside_selection_is_failed" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;offset&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="0b68dd6e-4ae7-db0c-d159-1539d983c909">
+      <Execution id="b45a566f-c8f3-4546-b544-480cfb83264b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsDirectoryBatchTests" name="Truncated_or_invalid_record_is_a_failed_scan" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;header&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="4a20d084-f9d9-f8eb-0bf0-2e5141e8cc2c">
+      <Execution id="d6c5ccef-85d2-4ff2-9803-f39112ae96dc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsDirectoryBatchTests" name="Truncated_or_invalid_record_is_a_failed_scan" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;component&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="80ce8882-3e12-ad13-020d-20feafa40a83">
+      <Execution id="81b135a9-b0b7-4023-bf56-e5dabdd7692c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsDirectoryBatchTests" name="Truncated_or_invalid_record_is_a_failed_scan" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Lazy_scan_pins_the_directory_until_disposal_and_releases_it_after_cancellation" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="11d5a462-c6c2-e385-da0c-d11a649beb76">
+      <Execution id="528e9f33-3ebe-4409-92a2-9291ae54115d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Lazy_scan_pins_the_directory_until_disposal_and_releases_it_after_cancellation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_metadata_is_unavailable_and_not_missing" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="ecb6ec27-6914-aee7-5899-18905500d175">
+      <Execution id="559c256e-ed2b-41ab-890c-08c7a62ff115" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Denied_metadata_is_unavailable_and_not_missing" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Metadata_is_read_from_a_caller_opened_handle_and_has_no_data_read_requirement" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="828c9442-07c4-e380-3ba9-ee497ddb319e">
+      <Execution id="c541adef-4f5d-424c-ae04-9fad6661ec04" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Metadata_is_read_from_a_caller_opened_handle_and_has_no_data_read_requirement" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Reparse_and_outside_roots_are_unavailable_even_if_the_leaf_is_missing" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="448b9fa2-82e9-6a5f-2b53-c005fb2e5465">
+      <Execution id="ca3b308c-eea0-49d8-a2fe-7e21508d2977" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Reparse_and_outside_roots_are_unavailable_even_if_the_leaf_is_missing" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;name&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="c37e6e6a-03d5-89ca-dc9e-d222c6fc49f9">
+      <Execution id="2d038862-24f8-4805-9fef-40b0f21e2e81" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsDirectoryBatchTests" name="Truncated_or_invalid_record_is_a_failed_scan" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Multiple_native_batches_preserve_every_unicode_candidate_and_child_kind" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="1bef19cf-b192-895c-3188-136d4f100c33">
+      <Execution id="eb045911-4544-4ca5-ad4f-c4af42f8ed13" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Multiple_native_batches_preserve_every_unicode_candidate_and_child_kind" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Live_capture_uses_the_caller_handle_and_releases_pins_with_the_result" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="c1a7e40e-ebb0-4e21-e455-19590e14bdfa">
+      <Execution id="d88f31cc-c87c-499e-9788-819581e87ecc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Live_capture_uses_the_caller_handle_and_releases_pins_with_the_result" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Complete_batch_preserves_names_and_skips_only_dot_entries" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="aa2f2692-7502-7a1c-f5d9-26ec903614e4">
+      <Execution id="454101cf-2b65-4c04-b937-a73f95b30be7" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsDirectoryBatchTests" name="Complete_batch_preserves_names_and_skips_only_dot_entries" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Cancelled_capture_throws_and_acquires_no_handles" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="368a3780-2403-00cc-26b9-da2885c1e51d">
+      <Execution id="19511533-eb8d-40ba-9e8d-7448d3d73821" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Cancelled_capture_throws_and_acquires_no_handles" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="22a38260-3163-91d8-b119-9eb7b4f6a492">
+      <Execution id="9bed7ef8-5ce6-47be-a0da-bdfba4a1d240" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;odd-name&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="998ec45a-5907-ea1d-9d4a-2c29d7b5edd1">
+      <Execution id="d7678d68-88d9-43d6-899e-813b7d3a179e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsDirectoryBatchTests" name="Truncated_or_invalid_record_is_a_failed_scan" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsDirectoryBatchTests.Truncated_or_invalid_record_is_a_failed_scan(defect: &quot;alignment&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="620bdb48-b707-f60a-a140-cb1184bf3d72">
+      <Execution id="6db3f017-a684-4267-a716-3539abc9f0af" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsDirectoryBatchTests" name="Truncated_or_invalid_record_is_a_failed_scan" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="828c9442-07c4-e380-3ba9-ee497ddb319e" executionId="c541adef-4f5d-424c-ae04-9fad6661ec04" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1bef19cf-b192-895c-3188-136d4f100c33" executionId="eb045911-4544-4ca5-ad4f-c4af42f8ed13" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="80ce8882-3e12-ad13-020d-20feafa40a83" executionId="81b135a9-b0b7-4023-bf56-e5dabdd7692c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="998ec45a-5907-ea1d-9d4a-2c29d7b5edd1" executionId="d7678d68-88d9-43d6-899e-813b7d3a179e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ecb6ec27-6914-aee7-5899-18905500d175" executionId="559c256e-ed2b-41ab-890c-08c7a62ff115" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aa2f2692-7502-7a1c-f5d9-26ec903614e4" executionId="454101cf-2b65-4c04-b937-a73f95b30be7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7bb29203-22d9-49d9-7c67-c734370e1442" executionId="489564b4-c1ed-4933-87e9-cfdb59cb91af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="620bdb48-b707-f60a-a140-cb1184bf3d72" executionId="6db3f017-a684-4267-a716-3539abc9f0af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="448b9fa2-82e9-6a5f-2b53-c005fb2e5465" executionId="ca3b308c-eea0-49d8-a2fe-7e21508d2977" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c37e6e6a-03d5-89ca-dc9e-d222c6fc49f9" executionId="2d038862-24f8-4805-9fef-40b0f21e2e81" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11d5a462-c6c2-e385-da0c-d11a649beb76" executionId="528e9f33-3ebe-4409-92a2-9291ae54115d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22a38260-3163-91d8-b119-9eb7b4f6a492" executionId="9bed7ef8-5ce6-47be-a0da-bdfba4a1d240" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c1a7e40e-ebb0-4e21-e455-19590e14bdfa" executionId="d88f31cc-c87c-499e-9788-819581e87ecc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b68dd6e-4ae7-db0c-d159-1539d983c909" executionId="b45a566f-c8f3-4546-b544-480cfb83264b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b7f3dcc-5429-ace1-eeed-444152b14c35" executionId="ebce9104-90bf-4a7a-a03d-eb3c26e5faea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="368a3780-2403-00cc-26b9-da2885c1e51d" executionId="19511533-eb8d-40ba-9e8d-7448d3d73821" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4a20d084-f9d9-f8eb-0bf0-2e5141e8cc2c" executionId="d6c5ccef-85d2-4ff2-9803-f39112ae96dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3198cb07-25e1-85d7-4c20-39fc0dbb4602" executionId="68cbe315-5029-4c2b-a8d5-843b4b329d02" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="18" executed="18" passed="15" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.25]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.25]       Expected: typeof(System.OperationCanceledException)&#xD;
+[xUnit.net 00:00:00.25]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.25]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(54,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Cancelled_capture_throws_and_acquires_no_handles()&#xD;
+[xUnit.net 00:00:00.25]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.25]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Capture\WindowsCallerCaptureProvider.cs(11,0): at FluxVault.Windows.Capture.WindowsCallerCaptureProvider.CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(54,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.&lt;&gt;c__DisplayClass2_0.&lt;Cancelled_capture_throws_and_acquires_no_handles&gt;b__0()&#xD;
+[xUnit.net 00:00:00.26]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Capture\WindowsCallerCaptureProvider.cs(11,0): at FluxVault.Windows.Capture.WindowsCallerCaptureProvider.CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(40,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_capture_has_no_privileged_fallback_and_outside_selection_is_failed()&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.26]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Capture\WindowsCallerCaptureProvider.cs(11,0): at FluxVault.Windows.Capture.WindowsCallerCaptureProvider.CaptureAsync(FileCaptureRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(20,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Live_capture_uses_the_caller_handle_and_releases_pins_with_the_result()&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.76]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:33:43.8637770+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Cancelled_capture_throws_and_acquires_no_handles [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:33:43.8640002+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_capture_has_no_privileged_fallback_and_outside_selection_is_failed [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:33:43.8640304+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Live_capture_uses_the_caller_handle_and_releases_pins_with_the_result [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

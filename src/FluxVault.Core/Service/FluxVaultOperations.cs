@@ -7,6 +7,7 @@ using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
+using FluxVault.Core.Capture;
 using FluxVault.Core.Cloud;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Content;
@@ -29,8 +30,10 @@ public sealed class FluxVaultOperations(
     Func<FluxVaultConfiguration, IChunkRepository>? repositoryFactory = null,
     ProtectionRuntimeCoordinator? runtimeCoordinator = null,
     TelemetryCollector? telemetryCollector = null,
-    Func<LogRuntimeStatus>? logStatusFactory = null) : IFluxVaultRequestHandler
+    Func<LogRuntimeStatus>? logStatusFactory = null,
+    IProtectionSourceAccess? sourceAccess = null) : IFluxVaultRequestHandler
 {
+    private readonly IProtectionSourceAccess sourceAccess = sourceAccess ?? new FileSystemProtectionSourceAccess();
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
     private readonly IRepositoryMaintenanceStateStore repositoryMaintenanceStateStore =
         repositoryMaintenanceStateStore ?? new InMemoryRepositoryMaintenanceStateStore();
@@ -177,7 +180,7 @@ public sealed class FluxVaultOperations(
         var latestByPath = BuildLatestFileLookup(latestEntries);
         var (captured, captureFailed, enumerated, skipped, captureMessages, mirrorWarnings) = await CaptureTargetsAsync(
                 repository,
-                EnumerateBackupTargets(configuration, messages, () => failed++),
+                EnumerateBackupTargets(configuration, messages, () => failed++, cancellationToken),
                 effectiveWorkers,
                 latestByPath,
                 configuration.CaptureCadencePolicy.SourceDeepVerificationInterval,
@@ -245,15 +248,19 @@ public sealed class FluxVaultOperations(
         BeginBackup("Targeted backup", "Enumerating", started, effectiveWorkers);
         var latestEntries = await GetTrackedEntriesForBackupAsync(repository, cancellationToken).ConfigureAwait(false);
         var latestByPath = BuildLatestFileLookup(latestEntries);
+        var sourceMessages = new List<string>();
+        var sourceFailures = 0;
         var (captured, failed, enumerated, skipped, messages, mirrorWarnings) = await CaptureTargetsAsync(
                 repository,
-                EnumerateBackupTargets(configuration, requestedPaths, cancellationToken),
+                EnumerateBackupTargets(configuration, requestedPaths, sourceMessages, () => sourceFailures++, cancellationToken),
                 effectiveWorkers,
                 latestByPath,
                 configuration.CaptureCadencePolicy.SourceDeepVerificationInterval,
                 allowUnchangedSkip: true,
                 cancellationToken)
             .ConfigureAwait(false);
+        failed += sourceFailures;
+        messages = messages.Concat(sourceMessages).ToArray();
         var deletionSummary = await RecordTargetedDeletionsAsync(repository, configuration, requestedPaths, latestEntries, cancellationToken)
             .ConfigureAwait(false);
         failed += deletionSummary.Failed;
@@ -962,7 +969,6 @@ public sealed class FluxVaultOperations(
         }
 
         return configuration.IsEnabled
-               && File.Exists(target.Path)
                && TryFindIncludedFolder(configuration, target.Path, out _);
     }
 
@@ -1383,13 +1389,22 @@ public sealed class FluxVaultOperations(
             LastMessage: lastMessage,
             LastCaptureUtc: lastCaptureUtc,
             WatchedFolders: configuration.WatchedFolders
-                .Select(folder => new WatchedFolderRuntimeStatus(
+                .Select(folder =>
+                {
+                    var source = sourceAccess.Inspect(folder.Path, folder.Path, RepositoryEntryKind.Folder, cancellationToken);
+                    return new WatchedFolderRuntimeStatus(
                     folder.Id,
                     folder.Path,
-                    Directory.Exists(folder.Path),
+                    source.Availability == ProtectionSourceAvailability.Present,
                     folder.IsEnabled,
-                    Directory.Exists(folder.Path) ? "Ready" : "Folder missing",
-                    durableChange?.Status ?? "Using reconciliation scan"))
+                    source.Availability switch
+                    {
+                        ProtectionSourceAvailability.Present => "Ready",
+                        ProtectionSourceAvailability.Missing => "Folder missing",
+                        _ => $"Source unavailable: {source.FailureReason ?? "Source inspection failed."}"
+                    },
+                    durableChange?.Status ?? "Using reconciliation scan");
+                })
                 .ToArray(),
             RecentVersions: versions?.Take(50).ToArray() ?? [],
             LastRetention: lastRetention,
@@ -2085,6 +2100,7 @@ public sealed class FluxVaultOperations(
             .ThenByDescending(entry => entry.EntryKind)
             .ToArray();
         var deletedFolders = new List<string>();
+        var roots = new Dictionary<string, ProtectionSourceInspection>(StringComparer.OrdinalIgnoreCase);
         var recorded = 0;
         var failed = 0;
         var messages = new List<string>();
@@ -2103,10 +2119,24 @@ public sealed class FluxVaultOperations(
                 continue;
             }
 
-            var missing = entry.EntryKind == RepositoryEntryKind.Folder
-                ? !Directory.Exists(entry.SourcePath)
-                : !File.Exists(entry.SourcePath);
-            if (!missing)
+            if (!roots.TryGetValue(folder.Path, out var root))
+            {
+                root = sourceAccess.Inspect(folder.Path, folder.Path, RepositoryEntryKind.Folder, cancellationToken);
+                roots.Add(folder.Path, root);
+                if (root.Availability != ProtectionSourceAvailability.Present)
+                { failed++; messages.Add($"{folder.Path}: Protection root is unavailable; history was retained. {root.FailureReason}"); }
+            }
+            if (root.Availability != ProtectionSourceAvailability.Present) continue;
+            var observation = sourceAccess.Inspect(folder.Path, entry.SourcePath, entry.EntryKind, cancellationToken);
+            if (observation.Availability == ProtectionSourceAvailability.Missing &&
+                string.Equals(TrimPath(entry.SourcePath), TrimPath(folder.Path), StringComparison.OrdinalIgnoreCase))
+            { failed++; messages.Add($"{folder.Path}: Protection root disappeared; history was retained."); continue; }
+            if (observation.Availability == ProtectionSourceAvailability.Unavailable)
+            {
+                failed++; messages.Add($"{entry.SourcePath}: {observation.FailureReason ?? "Source inspection is unavailable."}");
+                continue;
+            }
+            if (observation.Availability != ProtectionSourceAvailability.Missing)
             {
                 continue;
             }
@@ -2132,10 +2162,8 @@ public sealed class FluxVaultOperations(
         IReadOnlyList<RepositoryVersionSummary> latestEntries,
         CancellationToken cancellationToken)
     {
-        var missingPaths = requestedPaths
-            .Where(path => !File.Exists(path) && !Directory.Exists(path))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+        var missingPaths = requestedPaths.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        var roots = new Dictionary<string, ProtectionSourceInspection>(StringComparer.OrdinalIgnoreCase);
         if (missingPaths.Length == 0)
         {
             return DeletionRecordSummary.Empty;
@@ -2160,6 +2188,25 @@ public sealed class FluxVaultOperations(
             {
                 continue;
             }
+
+            if (!roots.TryGetValue(folder.Path, out var root))
+            {
+                root = sourceAccess.Inspect(folder.Path, folder.Path, RepositoryEntryKind.Folder, cancellationToken);
+                roots.Add(folder.Path, root);
+                if (root.Availability != ProtectionSourceAvailability.Present)
+                { failed++; messages.Add($"{folder.Path}: Protection root is unavailable; history was retained. {root.FailureReason}"); }
+            }
+            if (root.Availability != ProtectionSourceAvailability.Present) continue;
+            var observation = sourceAccess.Inspect(folder.Path, path, entry.EntryKind, cancellationToken);
+            if (observation.Availability == ProtectionSourceAvailability.Missing &&
+                string.Equals(TrimPath(path), TrimPath(folder.Path), StringComparison.OrdinalIgnoreCase))
+            { failed++; messages.Add($"{folder.Path}: Protection root disappeared; history was retained."); continue; }
+            if (observation.Availability == ProtectionSourceAvailability.Unavailable)
+            {
+                failed++; messages.Add($"{path}: {observation.FailureReason ?? "Source inspection is unavailable."}");
+                continue;
+            }
+            if (observation.Availability != ProtectionSourceAvailability.Missing) continue;
 
             var result = await RecordDeletionAsync(repository, folder, entry, cancellationToken).ConfigureAwait(false);
             recorded += result.Recorded;
@@ -2205,7 +2252,7 @@ public sealed class FluxVaultOperations(
         RepositoryVersionSummary entry,
         out WatchedFolderConfiguration folder)
     {
-        foreach (var candidate in configuration.WatchedFolders.Where(folder => folder.IsEnabled && Directory.Exists(folder.Path)))
+        foreach (var candidate in configuration.WatchedFolders.Where(folder => folder.IsEnabled))
         {
             if (!PathEqualsOrUnder(entry.SourcePath, candidate.Path))
             {
@@ -2321,33 +2368,45 @@ public sealed class FluxVaultOperations(
         return Math.Clamp(configuredMaximum, 1, 64);
     }
 
-    private static IEnumerable<FileBackupTarget> EnumerateBackupTargets(
+    private IEnumerable<FileBackupTarget> EnumerateBackupTargets(
         FluxVaultConfiguration configuration,
         List<string> messages,
-        Action addFailure)
+        Action addFailure,
+        CancellationToken cancellationToken)
     {
         foreach (var folder in configuration.WatchedFolders.Where(folder => folder.IsEnabled))
         {
-            if (!Directory.Exists(folder.Path))
+            cancellationToken.ThrowIfCancellationRequested();
+            var root = sourceAccess.Inspect(folder.Path, folder.Path, RepositoryEntryKind.Folder, cancellationToken);
+            if (root.Availability != ProtectionSourceAvailability.Present)
             {
                 addFailure();
-                messages.Add($"Watched folder does not exist: {folder.Path}");
+                messages.Add(root.Availability == ProtectionSourceAvailability.Missing ? $"Watched folder does not exist: {folder.Path}" :
+                    $"Watched folder is unavailable: {folder.Path}: {root.FailureReason ?? "Source inspection failed."}");
                 continue;
             }
 
-            foreach (var file in EnumerateIncludedFiles(folder, configuration))
+            using var enumerator = EnumerateIncludedFiles(folder, configuration, cancellationToken).GetEnumerator();
+            while (true)
             {
-                if (TryCreateTarget(configuration, folder, file, out var target))
+                string file;
+                try { if (!enumerator.MoveNext()) break; file = enumerator.Current; }
+                catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+                { addFailure(); messages.Add($"{folder.Path}: Source enumeration is unavailable: {exception.Message}"); break; }
+                if (TryCreateTarget(configuration, folder, file, out var target, out var failure, cancellationToken))
                 {
                     yield return target;
                 }
+                else if (failure is not null) { addFailure(); messages.Add($"{file}: {failure}"); }
             }
         }
     }
 
-    private static IEnumerable<FileBackupTarget> EnumerateBackupTargets(
+    private IEnumerable<FileBackupTarget> EnumerateBackupTargets(
         FluxVaultConfiguration configuration,
         IEnumerable<string> filePaths,
+        List<string> messages,
+        Action addFailure,
         CancellationToken cancellationToken)
     {
         foreach (var path in filePaths
@@ -2356,16 +2415,12 @@ public sealed class FluxVaultOperations(
                      .Distinct(StringComparer.OrdinalIgnoreCase))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!File.Exists(path))
-            {
-                continue;
-            }
-
-            if (TryFindIncludedFolder(configuration, path, out var folder)
-                && TryCreateTarget(configuration, folder, path, out var target))
+            if (!TryFindIncludedFolder(configuration, path, out var folder)) continue;
+            if (TryCreateTarget(configuration, folder, path, out var target, out var failure, cancellationToken))
             {
                 yield return target;
             }
+            else if (failure is not null) { addFailure(); messages.Add($"{path}: {failure}"); }
         }
     }
 
@@ -2568,11 +2623,12 @@ public sealed class FluxVaultOperations(
         }
     }
 
-    private static IEnumerable<string> EnumerateIncludedFiles(
+    private IEnumerable<string> EnumerateIncludedFiles(
         WatchedFolderConfiguration folder,
-        FluxVaultConfiguration configuration)
+        FluxVaultConfiguration configuration,
+        CancellationToken cancellationToken)
     {
-        foreach (var file in EnumerateCandidateFiles(folder.Path, folder.Recursive, configuration))
+        foreach (var file in EnumerateCandidateFiles(folder.Path, folder.Path, folder.Recursive, configuration, cancellationToken))
         {
             var name = Path.GetFileName(file);
             var included = folder.IncludePatterns.Count == 0
@@ -2593,7 +2649,7 @@ public sealed class FluxVaultOperations(
         string filePath,
         out WatchedFolderConfiguration folder)
     {
-        foreach (var candidate in configuration.WatchedFolders.Where(folder => folder.IsEnabled && Directory.Exists(folder.Path)))
+        foreach (var candidate in configuration.WatchedFolders.Where(folder => folder.IsEnabled))
         {
             if (IsUnderWatchedFolder(candidate, filePath)
                 && MatchesPatterns(candidate, filePath)
@@ -2636,30 +2692,26 @@ public sealed class FluxVaultOperations(
         return included && !excluded;
     }
 
-    private static IEnumerable<string> EnumerateCandidateFiles(
+    private IEnumerable<string> EnumerateCandidateFiles(
+        string protectionRoot,
         string folderPath,
         bool recursive,
-        FluxVaultConfiguration configuration)
+        FluxVaultConfiguration configuration,
+        CancellationToken cancellationToken)
     {
-        foreach (var file in Directory.EnumerateFiles(folderPath, "*", SearchOption.TopDirectoryOnly))
+        foreach (var candidate in sourceAccess.EnumerateDirectory(protectionRoot, folderPath, cancellationToken))
         {
-            yield return file;
-        }
-
-        if (!recursive)
-        {
-            yield break;
-        }
-
-        foreach (var childFolder in Directory.EnumerateDirectories(folderPath))
-        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (candidate.Kind == RepositoryEntryKind.File) { yield return candidate.Path; continue; }
+            if (!recursive) continue;
+            var childFolder = candidate.Path;
             if (ProtectionExclusionMatcher.IsFolderExcluded(childFolder, configuration.ExclusionRules)
                 || ProtectionSelectionRegexMatcher.IsFolderExcluded(childFolder, configuration.SelectionRules))
             {
                 continue;
             }
 
-            foreach (var file in EnumerateCandidateFiles(childFolder, recursive: true, configuration: configuration))
+            foreach (var file in EnumerateCandidateFiles(protectionRoot, childFolder, recursive: true, configuration, cancellationToken))
             {
                 yield return file;
             }
@@ -2703,28 +2755,30 @@ public sealed class FluxVaultOperations(
             : value;
     }
 
-    private static bool TryCreateTarget(
+    private bool TryCreateTarget(
         FluxVaultConfiguration configuration,
         WatchedFolderConfiguration folder,
         string path,
-        out FileBackupTarget target)
+        out FileBackupTarget target,
+        out string? failure,
+        CancellationToken cancellationToken)
     {
-        FileInfo fileInfo;
-        try
+        target = null!; failure = null;
+        var source = sourceAccess.Inspect(folder.Path, path, RepositoryEntryKind.File, cancellationToken);
+        if (source.Availability != ProtectionSourceAvailability.Present)
         {
-            fileInfo = new FileInfo(path);
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            target = null!;
+            if (source.Availability == ProtectionSourceAvailability.Unavailable)
+                failure = source.FailureReason ?? "Source metadata is unavailable.";
             return false;
         }
+        if (source.Kind != RepositoryEntryKind.File || source.Length is null or < 0 || source.LastWriteUtc is null)
+        { failure = "Source metadata could not be validated."; return false; }
 
         var resolved = WorkloadPolicyResolver.Resolve(
             configuration,
             folder,
             path,
-            fileInfo.Length,
+            source.Length.Value,
             isHotFile: false);
         if (resolved.IsExcluded)
         {
@@ -2735,8 +2789,8 @@ public sealed class FluxVaultOperations(
         target = new FileBackupTarget(
             folder,
             Path.GetFullPath(path),
-            fileInfo.Length,
-            new DateTimeOffset(fileInfo.LastWriteTimeUtc, TimeSpan.Zero),
+            source.Length.Value,
+            source.LastWriteUtc.Value,
             resolved.Compression,
             resolved.MinimumCompressionBytes);
         return true;

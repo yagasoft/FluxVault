@@ -16,21 +16,29 @@ public sealed class WindowsCallerFileAccess
     // Native test barrier only; not supplied by requests or configuration.
     internal WindowsCallerFileAccess(Action<string> beforeFileOpen) => this.beforeFileOpen = beforeFileOpen;
 
-    public Task<Stream> OpenSourceAsync(FluxVaultCallerContext caller, string allowedRoot, string sourcePath,
+    public async Task<Stream> OpenSourceAsync(FluxVaultCallerContext caller, string allowedRoot, string sourcePath,
         CancellationToken cancellationToken = default)
+    {
+        using var opened = await OpenValidatedSourceAsync(caller, allowedRoot, sourcePath, false, 0x120089,
+            asynchronous: true, beforeFileOpen, cancellationToken).ConfigureAwait(false);
+        return opened.TakeStream();
+    }
+
+    internal static Task<OpenedSource> OpenValidatedSourceAsync(FluxVaultCallerContext caller, string allowedRoot, string sourcePath,
+        bool directory, uint access, bool asynchronous, Action<string>? beforeOpen, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(caller);
         if (!caller.ImpersonationPermitted || string.IsNullOrWhiteSpace(caller.UserSid)) Denied("No effective caller is available.");
         cancellationToken.ThrowIfCancellationRequested();
         var root = ValidatePath(allowedRoot);
         var path = ValidatePath(sourcePath);
-        if (!path.StartsWith(root.TrimEnd('\\') + "\\", StringComparison.OrdinalIgnoreCase)) Denied("The source is outside the protection selection.");
+        if (!(directory && string.Equals(path, root, StringComparison.OrdinalIgnoreCase)) &&
+            !path.StartsWith(root.TrimEnd('\\') + "\\", StringComparison.OrdinalIgnoreCase)) Denied("The source is outside the protection selection.");
         var mount = Path.GetPathRoot(path)!;
-        var volume = new StringBuilder(128);
-        if (!GetVolumeNameForVolumeMountPoint(mount, volume, (uint)volume.Capacity)) NativeError();
-        var volumePath = volume.ToString();
-        if (!volumePath.StartsWith("\\\\?\\Volume{", StringComparison.Ordinal) || !volumePath.EndsWith("}\\", StringComparison.Ordinal))
-            Denied("A local volume identity is required.");
+        var volumePath = ResolveVolume(path);
+        var requestedPrefix = path[..root.TrimEnd('\\').Length];
+        var exactPrefix = string.Equals(requestedPrefix, root.TrimEnd('\\'), StringComparison.Ordinal);
+        var rootSelfInspection = directory && path.Length == root.Length && exactPrefix;
         return caller.RunAsCallerAsync(() =>
         {
             var pins = new List<SafeFileHandle>();
@@ -52,15 +60,14 @@ public sealed class WindowsCallerFileAccess
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     expected += "\\" + component;
-                    var parent = OpenNative(pins[^1], component, 0x100020, true, dontReparse: true);
+                    var parent = OpenSourceComponent(pins[^1], component, 0x100020, true, rootSelfInspection, dontReparse: true);
                     pins.Add(parent);
                     VerifyTraversal(parent, expected);
                 }
                 var selectedRoot = Open(pins[^1], "", directory: true);
                 pins.Add(selectedRoot);
                 VerifyHandle(selectedRoot, expected, directory: true);
-                var requestedPrefix = path[..root.TrimEnd('\\').Length];
-                if (!string.Equals(requestedPrefix, root.TrimEnd('\\'), StringComparison.Ordinal))
+                if (!exactPrefix)
                 {
                     // A blind ancestor can contain case-distinct roots. Resolve the request's
                     // prefix against the same fixed volume, retain both roots, and compare identity.
@@ -76,25 +83,27 @@ public sealed class WindowsCallerFileAccess
                     if (FileIdentity(requestedRoot) != FileIdentity(selectedRoot))
                         Denied("The requested source root is not the selected physical directory.");
                 }
-                var components = path[(root.TrimEnd('\\').Length + 1)..].Split('\\');
+                var relative = path.Length == root.Length ? "" : path[(root.TrimEnd('\\').Length + 1)..];
+                var components = relative.Length == 0 ? Array.Empty<string>() : relative.Split('\\');
                 var sourceParent = selectedRoot;
-                foreach (var component in components[..^1])
+                foreach (var component in components.Take(Math.Max(0, components.Length - 1)))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     expected += "\\" + component;
-                    var parent = Open(sourceParent, component, directory: true);
+                    var parent = OpenSourceComponent(sourceParent, component, 0x1000A0, true, absenceCanBeProved: true);
                     pins.Add(parent); VerifyHandle(parent, expected, directory: true);
                     sourceParent = parent;
                 }
-                beforeFileOpen?.Invoke(path);
+                beforeOpen?.Invoke(path);
                 cancellationToken.ThrowIfCancellationRequested();
                 VerifyHandle(sourceParent, expected, directory: true);
-                file = Open(sourceParent, components[^1], directory: false);
-                VerifyHandle(file, expected + "\\" + components[^1], directory: false);
+                var leafName = components.Length == 0 ? "" : components[^1];
+                file = OpenSourceComponent(sourceParent, leafName, access, directory, leafName.Length != 0, asynchronous: asynchronous);
+                var physical = leafName.Length == 0 ? expected : expected + "\\" + leafName;
+                VerifyHandle(file, physical, directory);
                 cancellationToken.ThrowIfCancellationRequested();
-                var input = new FileStream(file, FileAccess.Read, 128 * 1024, isAsync: true);
+                var owned = new OpenedSource(file, pins, physical);
                 file = null;
-                Stream owned = new PinnedSourceStream(input, pins);
                 pins = [];
                 return Task.FromResult(owned);
             }
@@ -104,6 +113,43 @@ public sealed class WindowsCallerFileAccess
                 for (var index = pins.Count - 1; index >= 0; index--) pins[index].Dispose();
             }
         });
+    }
+
+    private static SafeFileHandle OpenSourceComponent(SafeFileHandle parent, string name, uint access, bool directory,
+        bool absenceCanBeProved, bool asynchronous = false, bool dontReparse = false)
+    {
+        try { return OpenNative(parent, name, access, directory, asynchronous: asynchronous, dontReparse: dontReparse); }
+        catch (IOException exception) when (IsConfirmedMissingOpen(exception, absenceCanBeProved))
+        {
+            // The component open is relative to a validated, retained chain. Errors from
+            // verification, querying or resolving the volume never establish absence.
+            throw new ConfirmedSourceMissingException(exception);
+        }
+    }
+
+    internal sealed class ConfirmedSourceMissingException(Exception inner) : IOException("The authorised source is missing.", inner);
+    internal sealed class NativeOpenException(int status, uint code) : IOException("The caller source could not be opened.", new Win32Exception((int)code))
+    { internal int NtStatus { get; } = status; }
+    internal static bool IsConfirmedMissingOpen(IOException exception, bool validatedChain) =>
+        validatedChain && exception is NativeOpenException native && unchecked((uint)native.NtStatus) is 0xC0000034 or 0xC000003A;
+
+    internal sealed class OpenedSource(SafeFileHandle handle, List<SafeFileHandle> pins, string physicalPath) : IDisposable
+    {
+        internal SafeFileHandle Handle { get; } = handle;
+        internal string PhysicalPath { get; } = physicalPath;
+        private bool transferred;
+        internal Stream TakeStream()
+        {
+            var input = new FileStream(Handle, FileAccess.Read, 128 * 1024, isAsync: true);
+            transferred = true;
+            return new PinnedSourceStream(input, pins);
+        }
+        public void Dispose()
+        {
+            if (transferred) return;
+            try { Handle.Dispose(); }
+            finally { for (var index = pins.Count - 1; index >= 0; index--) pins[index].Dispose(); pins.Clear(); }
+        }
     }
 
     internal static string ValidatePath(string value)
@@ -152,7 +198,7 @@ public sealed class WindowsCallerFileAccess
                 handle.Dispose();
                 var code = RtlNtStatusToDosError(status);
                 if (code is 5 or 1314 || unchecked((uint)status) is 0xC000050B or 0x8000002D) throw new UnauthorizedAccessException("The caller cannot access this source.", new Win32Exception((int)code));
-                throw new IOException("The caller source could not be opened.", new Win32Exception((int)code));
+                throw new NativeOpenException(status, code);
             }
             return handle;
         }

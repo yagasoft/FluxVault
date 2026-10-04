@@ -297,6 +297,32 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         return RepositoryMetadataStoreHelpers.ToVersionSummaries(manifests);
     }
 
+    public async Task<IReadOnlyList<RepositoryVersionSummary>> ListRecentVersionsAsync(int maximumCount, CancellationToken cancellationToken = default)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumCount);
+        cancellationToken.ThrowIfCancellationRequested();
+        await InitializeAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = CreateCommand($"""
+            SELECT {BoundedManifestSql()}, version_id, captured_at_ticks
+            FROM fluxvault.versions
+            ORDER BY captured_at_ticks DESC, version_id COLLATE "C" DESC
+            LIMIT @maximum_count;
+            """, connection);
+        command.Parameters.AddWithValue("maximum_count", maximumCount);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        var manifests = new List<FileVersionManifest>();
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var versionId = reader.GetString(1);
+            var manifest = ReadBoundedManifest(reader, versionId);
+            if (!string.Equals(manifest.VersionId, versionId, StringComparison.Ordinal) || manifest.CapturedAtUtc.UtcTicks != reader.GetInt64(2))
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Stored version ordering keys disagree with its manifest identity or timestamp.");
+            manifests.Add(manifest);
+        }
+        return RepositoryMetadataStoreHelpers.ToVersionSummaries(manifests);
+    }
+
     public async Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default)
     {
         await InitializeAsync(cancellationToken).ConfigureAwait(false);
@@ -640,13 +666,13 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         await using var command = CreateCommand(
             """
             INSERT INTO fluxvault.versions (
-                version_id, path_id, source_path, entry_kind, watched_folder_id, captured_at_utc,
+                version_id, path_id, source_path, entry_kind, watched_folder_id, captured_at_utc, captured_at_ticks,
                 consistency, logical_length, operation_type, is_deleted, content_signature,
                 restored_from_version_id, fork_origin_version_id, inherited_from_version_id,
                 inherited_from_source_path, deleted_from_version_id, source_last_write_utc,
                 manifest_json)
             VALUES (
-                @version_id, @path_id, @source_path, @entry_kind, @watched_folder_id, @captured_at_utc,
+                @version_id, @path_id, @source_path, @entry_kind, @watched_folder_id, @captured_at_utc, @captured_at_ticks,
                 @consistency, @logical_length, @operation_type, @is_deleted, @content_signature,
                 @restored_from_version_id, @fork_origin_version_id, @inherited_from_version_id,
                 @inherited_from_source_path, @deleted_from_version_id, @source_last_write_utc,
@@ -658,6 +684,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
                 entry_kind = EXCLUDED.entry_kind,
                 watched_folder_id = EXCLUDED.watched_folder_id,
                 captured_at_utc = EXCLUDED.captured_at_utc,
+                captured_at_ticks = EXCLUDED.captured_at_ticks,
                 consistency = EXCLUDED.consistency,
                 logical_length = EXCLUDED.logical_length,
                 operation_type = EXCLUDED.operation_type,
@@ -681,6 +708,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         command.Parameters.AddWithValue("entry_kind", row.EntryKind.ToString());
         command.Parameters.AddWithValue("watched_folder_id", row.WatchedFolderId);
         command.Parameters.AddWithValue("captured_at_utc", row.CapturedAtUtc);
+        command.Parameters.AddWithValue("captured_at_ticks", row.CapturedAtUtc.UtcTicks);
         command.Parameters.AddWithValue("consistency", row.Consistency.ToString());
         command.Parameters.AddWithValue("logical_length", row.LogicalLength);
         command.Parameters.AddWithValue("operation_type", row.OperationType.ToString());
@@ -1040,13 +1068,17 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         try
         {
             await using var command = new NpgsqlCommand($"""
-                SELECT vault_id, primary_root, endpoint_key, (SELECT max(version) FROM {QuotedSchema}.schema_version)
+                SELECT vault_id, primary_root, endpoint_key, (SELECT max(version) FROM {QuotedSchema}.schema_version),
+                    EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass(@versions)
+                        AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+                        AND attnotnull AND NOT attisdropped)
                 FROM {QuotedSchema}.vault_binding WHERE singleton=true
                 """, connection);
+            command.Parameters.AddWithValue("versions", QuotedSchema + ".versions");
             await using var reader = await command.ExecuteReaderAsync(cancellationToken);
             if (!await reader.ReadAsync(cancellationToken) || reader.GetGuid(0) != binding!.Id.Value ||
                 reader.GetString(1) != CanonicalRoot(binding.RepositoryPath) || reader.GetString(2) != EndpointKey() ||
-                reader.IsDBNull(3) || reader.GetInt32(3) != PostgreSqlMetadataSchema.CurrentVersion)
+                reader.IsDBNull(3) || reader.GetInt32(3) != PostgreSqlMetadataSchema.CurrentVersion || !reader.GetBoolean(4))
                 throw new RepositoryIntegrityException(RepositoryIntegrityFailure.OwnershipMismatch, "Metadata identity, root, endpoint or schema version does not match the vault binding.");
         }
         catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.UndefinedTable)

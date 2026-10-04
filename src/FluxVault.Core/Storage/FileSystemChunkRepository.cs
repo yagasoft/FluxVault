@@ -268,6 +268,17 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             .ToArray();
     }
 
+    public async Task<IReadOnlyList<RepositoryVersionSummary>> ListRecentVersionsAsync(int maximumCount, CancellationToken cancellationToken = default)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumCount);
+        cancellationToken.ThrowIfCancellationRequested();
+        if (metadataStore is null)
+            return (await ListVersionsAsync(cancellationToken).ConfigureAwait(false)).Take(maximumCount).ToArray();
+
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+        return await metadataStore.ListRecentVersionsAsync(maximumCount, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default)
     {
         await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);

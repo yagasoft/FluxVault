@@ -113,6 +113,19 @@ public sealed class InMemoryRepositoryMetadataStore : IRepositoryMetadataStore
         }
     }
 
+    public Task<IReadOnlyList<RepositoryVersionSummary>> ListRecentVersionsAsync(int maximumCount, CancellationToken cancellationToken = default)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumCount);
+        cancellationToken.ThrowIfCancellationRequested();
+        lock (gate)
+        {
+            return Task.FromResult(RepositoryMetadataStoreHelpers.ToVersionSummaries(manifests.Values
+                .OrderByDescending(manifest => manifest.CapturedAtUtc)
+                .ThenByDescending(manifest => manifest.VersionId, StringComparer.Ordinal)
+                .Take(maximumCount)));
+        }
+    }
+
     public Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default)
     {
         lock (gate)

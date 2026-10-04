@@ -32,6 +32,7 @@ internal static class VaultMetadataProbe
         await store.RecordVersionAsync(folder);
         Check((await store.ReadManifestAsync(parentId)).FolderEntries!.Single().LogicalLength == 10, "folder and lineage round trip");
         Check((await store.ListLatestEntriesAsync()).Count == 2, "current entry inventory");
+        checks.AddRange(await VaultRecentVersionsProbe.RunAsync(source, binding, store, manifest));
         await using (var barrier = await source.OpenConnectionAsync())
         await using (var transaction = await barrier.BeginTransactionAsync())
         {
@@ -59,10 +60,21 @@ internal static class VaultMetadataProbe
         await Rejected(() => mismatched.InitializeAsync(), RepositoryIntegrityFailure.OwnershipMismatch, "root binding mismatch fails before metadata access");
         await Rejected(() => store.ProvisionVaultAsync(), RepositoryIntegrityFailure.OwnershipMismatch, "existing namespace is never silently adopted");
         await using var connection = await source.OpenConnectionAsync();
+        await using (var shape = new NpgsqlCommand($"ALTER TABLE \"{binding.MetadataNamespace}\".versions ALTER COLUMN captured_at_ticks DROP NOT NULL", connection))
+        {
+            await shape.ExecuteNonQueryAsync();
+            try { await Rejected(() => store.ListRecentVersionsAsync(1), RepositoryIntegrityFailure.OwnershipMismatch,
+                "bound recent read rechecks required ordering-column shape after cached initialisation"); }
+            finally
+            {
+                shape.CommandText = $"ALTER TABLE \"{binding.MetadataNamespace}\".versions ALTER COLUMN captured_at_ticks SET NOT NULL";
+                await shape.ExecuteNonQueryAsync();
+            }
+        }
         await using var poison = new NpgsqlCommand($"UPDATE \"{binding.MetadataNamespace}\".vault_binding SET primary_root = 'changed'", connection);
         await poison.ExecuteNonQueryAsync();
         await Rejected(() => store.ReadManifestAsync(versionId), RepositoryIntegrityFailure.OwnershipMismatch, "binding is rechecked after cached initialisation");
-        return new { Passed = checks.Count, Checks = checks };
+        return new { Passed = checks.Count, Checks = checks, RecentVersionsVerified = true };
 
         void Check(bool result, string name) { if (!result) throw new InvalidOperationException("Metadata binding contract failed: " + name); checks.Add(name); }
         async Task Rejected(Func<Task> action, RepositoryIntegrityFailure failure, string name)

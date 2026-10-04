@@ -1356,8 +1356,7 @@ public sealed class FluxVaultOperations(
             }
         }
 
-        var versions = (await CreateRepository(configuration).ListVersionsAsync(cancellationToken).ConfigureAwait(false))
-            .Take(50)
+        var versions = (await CreateRepository(configuration).ListRecentVersionsAsync(50, cancellationToken).ConfigureAwait(false))
             .ToArray();
         lock (runtimeGate)
         {

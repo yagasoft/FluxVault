@@ -1,0 +1,93 @@
+[
+  {
+    "Name": "VBCSCompiler.exe",
+    "ProcessId": 1484,
+    "ParentProcessId": 60760,
+    "StartedUtc": "2026-10-04T18:21:16.6893340Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\sdk\\10.0.300\\Roslyn\\bincore\\VBCSCompiler.exe\" \"-pipename:uBEl9mLPrDGZsj9PLrUR0T9CiTvhIhh5QoD4LJbtBCk\""
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 45096,
+    "ParentProcessId": 31108,
+    "StartedUtc": "2026-10-04T18:31:31.5925750Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" test tests/FluxKnowledge.Integration.Tests/FluxKnowledge.Integration.Tests.csproj --no-restore --filter FullyQualifiedName~RepositoryCoverageIntegrationTests|FullyQualifiedName~RepositoryRecoveryAuthorityMigrationTests|FullyQualifiedName~EmbeddingGpuRequestTests|FullyQualifiedName~EmbeddingCheckpointTests|FullyQualifiedName~SqlToUsearchRebuildTests --logger console;verbosity=normal"
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 56752,
+    "ParentProcessId": 45096,
+    "StartedUtc": "2026-10-04T18:31:32.1443440Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" \"C:\\Program Files\\dotnet\\sdk\\10.0.300\\MSBuild.dll\" /noautoresponse /nologo /nodemode:1 /nodeReuse:false /low:false"
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 35272,
+    "ParentProcessId": 45096,
+    "StartedUtc": "2026-10-04T18:31:32.1443840Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" \"C:\\Program Files\\dotnet\\sdk\\10.0.300\\MSBuild.dll\" /noautoresponse /nologo /nodemode:1 /nodeReuse:false /low:false"
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 60624,
+    "ParentProcessId": 45096,
+    "StartedUtc": "2026-10-04T18:31:32.1444020Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" \"C:\\Program Files\\dotnet\\sdk\\10.0.300\\MSBuild.dll\" /noautoresponse /nologo /nodemode:1 /nodeReuse:false /low:false"
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 34676,
+    "ParentProcessId": 45096,
+    "StartedUtc": "2026-10-04T18:31:32.1444260Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" \"C:\\Program Files\\dotnet\\sdk\\10.0.300\\MSBuild.dll\" /noautoresponse /nologo /nodemode:1 /nodeReuse:false /low:false"
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 46428,
+    "ParentProcessId": 45096,
+    "StartedUtc": "2026-10-04T18:31:32.1445120Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" \"C:\\Program Files\\dotnet\\sdk\\10.0.300\\MSBuild.dll\" /noautoresponse /nologo /nodemode:1 /nodeReuse:false /low:false"
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 51764,
+    "ParentProcessId": 45096,
+    "StartedUtc": "2026-10-04T18:31:32.1445320Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" \"C:\\Program Files\\dotnet\\sdk\\10.0.300\\MSBuild.dll\" /noautoresponse /nologo /nodemode:1 /nodeReuse:false /low:false"
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 56872,
+    "ParentProcessId": 45096,
+    "StartedUtc": "2026-10-04T18:31:32.1445420Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" \"C:\\Program Files\\dotnet\\sdk\\10.0.300\\MSBuild.dll\" /noautoresponse /nologo /nodemode:1 /nodeReuse:false /low:false"
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 1132,
+    "ParentProcessId": 45096,
+    "StartedUtc": "2026-10-04T18:31:32.1445870Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" \"C:\\Program Files\\dotnet\\sdk\\10.0.300\\MSBuild.dll\" /noautoresponse /nologo /nodemode:1 /nodeReuse:false /low:false"
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 40860,
+    "ParentProcessId": 45096,
+    "StartedUtc": "2026-10-04T18:31:32.1446270Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" \"C:\\Program Files\\dotnet\\sdk\\10.0.300\\MSBuild.dll\" /noautoresponse /nologo /nodemode:1 /nodeReuse:false /low:false"
+  },
+  {
+    "Name": "dotnet.exe",
+    "ProcessId": 37692,
+    "ParentProcessId": 45096,
+    "StartedUtc": "2026-10-04T18:31:39.4804290Z",
+    "CommandLine": "\"C:\\Program Files\\dotnet\\dotnet.exe\" exec \"C:\\Program Files\\dotnet\\sdk\\10.0.300\\vstest.console.dll\" --framework:\".NETCoreApp,Version=v10.0\" --testCaseFilter:\"FullyQualifiedName~RepositoryCoverageIntegrationTests|FullyQualifiedName~RepositoryRecoveryAuthorityMigrationTests|FullyQualifiedName~EmbeddingGpuRequestTests|FullyQualifiedName~EmbeddingCheckpointTests|FullyQualifiedName~SqlToUsearchRebuildTests\" --logger:\"console;verbosity=normal\" \"C:\\Users\\os008\\.codex\\worktrees\\workspace-brief-coverage\\LLM KB\\artifacts\\bin\\FluxKnowledge.Integration.Tests\\debug\\FluxKnowledge.Integration.Tests.dll\" --nologo --artifactsProcessingMode-collect --testSessionCorrelationId:45096_00ab1c82-795d-4240-b678-3046ed2123a4"
+  },
+  {
+    "Name": "testhost.exe",
+    "ProcessId": 52872,
+    "ParentProcessId": 37692,
+    "StartedUtc": "2026-10-04T18:31:39.6509330Z",
+    "CommandLine": "\"C:\\Users\\os008\\.codex\\worktrees\\workspace-brief-coverage\\LLM KB\\artifacts\\bin\\FluxKnowledge.Integration.Tests\\debug\\testhost.exe\"  --runtimeconfig \"C:\\Users\\os008\\.codex\\worktrees\\workspace-brief-coverage\\LLM KB\\artifacts\\bin\\FluxKnowledge.Integration.Tests\\debug\\FluxKnowledge.Integration.Tests.runtimeconfig.json\" --depsfile \"C:\\Users\\os008\\.codex\\worktrees\\workspace-brief-coverage\\LLM KB\\artifacts\\bin\\FluxKnowledge.Integration.Tests\\debug\\FluxKnowledge.Integration.Tests.deps.json\" --port 58260 --endpoint 127.0.0.1:058260 --role client --parentprocessid 37692 --telemetryoptedin false"
+  }
+]

@@ -38,6 +38,20 @@ diagnostics without rebuilding the full tracked repository inventory every few
 seconds. Manual refreshes and views that need repository file-browser detail
 request full status.
 
+Overview keeps its existing fifty-version history window. The protected
+PostgreSQL route applies that limit before loading or decoding manifests,
+using an index on exact UTC ticks and ordinal hexadecimal version IDs. Selected
+rows must match both ordering keys in their immutable manifests; size and
+repository-binding checks remain in force. Full history and the current-file
+inventory retain their existing semantics and still need bounded paging.
+Legacy filesystem/developer repositories use a complete-history fallback.
+
+Fresh staging metadata uses schema version 2 with a non-null bigint UTC-tick
+key written in the same version transaction. Existing unsupported schemas are
+refused before schema changes; no backfill or automatic upgrade occurs. Retain
+the previous installation and its database/storage assets for recovery. Normal
+installation rollout and any migration remain separate reviewed operations.
+
 `HasVersionInventory` distinguishes an authoritative empty repository from a cold,
 invalidated or unavailable inventory snapshot. Fast status reads only a cache
 matching the current repository and metadata configuration. Generation checks

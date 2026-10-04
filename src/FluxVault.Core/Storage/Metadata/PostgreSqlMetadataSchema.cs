@@ -2,12 +2,30 @@ namespace FluxVault.Core.Storage.Metadata;
 
 public static class PostgreSqlMetadataSchema
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
 
     public static string ForVault(FluxVault.Abstractions.Security.VaultId vaultId) =>
         CreateSchemaSql.Replace("fluxvault", '"' + vaultId.MetadataNamespace + '"', StringComparison.Ordinal);
 
     public const string CreateSchemaSql = """
+        -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+        DO $fv_schema_guard$
+        BEGIN
+            IF to_regnamespace('fluxvault') IS NOT NULL THEN
+                IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+                    RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+                END IF;
+                IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 2 OR NOT EXISTS (
+                    SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+                      AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+                      AND attnotnull AND NOT attisdropped
+                ) THEN
+                    RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+                END IF;
+            END IF;
+        END
+        $fv_schema_guard$;
+
         CREATE SCHEMA IF NOT EXISTS fluxvault;
 
         CREATE TABLE IF NOT EXISTS fluxvault.schema_version (
@@ -16,7 +34,7 @@ public static class PostgreSqlMetadataSchema
         );
 
         INSERT INTO fluxvault.schema_version (version)
-        VALUES (1)
+        VALUES (2)
         ON CONFLICT (version) DO NOTHING;
 
         CREATE TABLE IF NOT EXISTS fluxvault.paths (
@@ -44,6 +62,7 @@ public static class PostgreSqlMetadataSchema
             entry_kind text NOT NULL,
             watched_folder_id text NOT NULL,
             captured_at_utc timestamptz NOT NULL,
+            captured_at_ticks bigint NOT NULL,
             consistency text NOT NULL,
             logical_length bigint NOT NULL,
             operation_type text NOT NULL,
@@ -67,6 +86,9 @@ public static class PostgreSqlMetadataSchema
 
         CREATE INDEX IF NOT EXISTS ix_versions_source_path_captured
             ON fluxvault.versions (source_path, entry_kind, captured_at_utc DESC, version_id DESC);
+
+        CREATE INDEX IF NOT EXISTS ix_versions_recent_ticks
+            ON fluxvault.versions (captured_at_ticks DESC, version_id COLLATE "C" DESC);
 
         CREATE INDEX IF NOT EXISTS ix_versions_content_signature
             ON fluxvault.versions (content_signature)

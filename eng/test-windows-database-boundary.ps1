@@ -604,6 +604,19 @@ host all all ::1/128 reject
         $proof=@($native.Results | Where-Object {$_.Kind -eq 'CallerFiles'})
         if($proof.Count -ne 1 -or $proof[0].Result.Passed -lt 8 -or -not $proof[0].Result.NativeCallerTokens){throw 'Native caller file contracts did not complete.'}
         if($RunSingleVaultTests -and (-not $proof[0].Result.SingleVault -or -not $proof[0].Result.ActualCatalogueAndExecutor -or -not $proof[0].Result.CreatorVerified -or -not $proof[0].Result.UngrantDenied)){throw 'Required native single-vault command flow did not complete.'}
+        if($RunSingleVaultTests) {
+            $creatorProof=@($fixtureObservations | Where-Object { ($_ -is [Collections.IDictionary] -and $_.Contains('NativeCallerFiles') -or
+                    $null -ne $_.PSObject.Properties['NativeCallerFiles']) -and $_.NativeCallerFiles.Actor -eq 'A' } |
+                ForEach-Object { $_.NativeCallerFiles.Results | Where-Object Kind -eq 'CallerFiles' })
+            $deniedProof=@($fixtureObservations | Where-Object { ($_ -is [Collections.IDictionary] -and $_.Contains('NativeCallerFiles') -or
+                    $null -ne $_.PSObject.Properties['NativeCallerFiles']) -and $_.NativeCallerFiles.Actor -eq 'B' } |
+                ForEach-Object { $_.NativeCallerFiles.Results | Where-Object Kind -eq 'CallerFiles' })
+            if($creatorProof.Count -ne 1 -or -not $creatorProof[0].Result.MaintenanceCommandsVerified -or
+                $deniedProof.Count -ne 1 -or $deniedProof[0].Result.MaintenanceDenied -ne 10 -or
+                -not $proof[0].Result.ProtectedRehearsalOutputCleaned) {
+                throw 'Required current maintenance proof is missing; rebuild the Release test host before running.'
+            }
+        }
     }
     if($RunIntegrityTests) {
         $suite=Invoke-SystemActor '127.0.0.1' 'Integrity'

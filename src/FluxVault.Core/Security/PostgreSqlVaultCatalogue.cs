@@ -204,6 +204,12 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         }
         if (request.ExpectedVaultRevision is not null && request.ExpectedVaultRevision != vault.Revision)
             throw new VaultCatalogueException(VaultCatalogueFailure.StaleRevision);
+        if (request.Command is FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair or FluxVaultIpcCommand.PreviewMirrorDrain &&
+            (request.MirrorNodeId is null ? request.Command == FluxVaultIpcCommand.PreviewMirrorDrain :
+                string.IsNullOrWhiteSpace(request.MirrorNodeId) || !vault.Configuration.MirrorSet.EnabledNodes.Any(node =>
+                    string.Equals(node.Id, request.MirrorNodeId, StringComparison.OrdinalIgnoreCase))))
+            throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration,
+                "Choose an enabled mirror destination. Only repair supports no selection to target all mirrors.");
         if (mutation == Mutation.Save)
         {
             if (request.Configuration is null) throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);

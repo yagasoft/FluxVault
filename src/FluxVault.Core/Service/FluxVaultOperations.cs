@@ -642,13 +642,17 @@ public sealed class FluxVaultOperations(
     public async Task<RepositoryRetentionResult> RunRetentionNowAsync(CancellationToken cancellationToken = default)
     {
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
-        var result = await CreateRepository(configuration)
-            .ApplyRetentionAsync(configuration.RetentionPolicy, DateTimeOffset.UtcNow, cancellationToken)
-            .ConfigureAwait(false);
         InvalidateRecentVersionStatusCache();
-        lastRetention = result;
-        lastMessage = FormatRetentionSummary(result);
-        return result;
+        try
+        {
+            var result = await CreateRepository(configuration)
+                .ApplyRetentionAsync(configuration.RetentionPolicy, DateTimeOffset.UtcNow, cancellationToken)
+                .ConfigureAwait(false);
+            lastRetention = result;
+            lastMessage = FormatRetentionSummary(result);
+            return result;
+        }
+        finally { InvalidateRecentVersionStatusCache(); }
     }
 
     public async Task<RepositoryHealthSnapshot> GetRepositoryHealthAsync(CancellationToken cancellationToken = default)

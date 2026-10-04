@@ -23,6 +23,8 @@ public interface IRepositoryMaintenanceStateStore
 
 public sealed class FileRepositoryMaintenanceStateStore(string statePath) : IRepositoryMaintenanceStateStore
 {
+    internal Func<CancellationToken, Task>? AfterReadOpened { get; init; }
+    internal Func<CancellationToken, Task>? BeforePublish { get; init; }
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         WriteIndented = true
@@ -35,7 +37,10 @@ public sealed class FileRepositoryMaintenanceStateStore(string statePath) : IRep
             return RepositoryMaintenanceState.Empty;
         }
 
-        await using var stream = File.OpenRead(statePath);
+        // An open reader owns the old snapshot while a writer publishes its replacement.
+        await using var stream = new FileStream(statePath, FileMode.Open, FileAccess.Read,
+            FileShare.Read | FileShare.Delete, 4096, FileOptions.Asynchronous);
+        if (AfterReadOpened is not null) await AfterReadOpened(cancellationToken).ConfigureAwait(false);
         return await JsonSerializer.DeserializeAsync<RepositoryMaintenanceState>(stream, JsonOptions, cancellationToken)
             .ConfigureAwait(false)
             ?? RepositoryMaintenanceState.Empty;
@@ -46,8 +51,25 @@ public sealed class FileRepositoryMaintenanceStateStore(string statePath) : IRep
         var directory = Path.GetDirectoryName(statePath) ?? throw new InvalidOperationException("Maintenance state path has no directory.");
         Directory.CreateDirectory(directory);
         var tempPath = $"{statePath}.{Guid.NewGuid():N}.tmp";
-        await File.WriteAllBytesAsync(tempPath, JsonSerializer.SerializeToUtf8Bytes(state, JsonOptions), cancellationToken)
-            .ConfigureAwait(false);
-        File.Move(tempPath, statePath, overwrite: true);
+        var ownsTemporary = false;
+        try
+        {
+            await using (var stream = new FileStream(tempPath, FileMode.CreateNew, FileAccess.Write,
+                FileShare.None, 4096, FileOptions.Asynchronous))
+            {
+                ownsTemporary = true;
+                await JsonSerializer.SerializeAsync(stream, state, JsonOptions, cancellationToken).ConfigureAwait(false);
+                await stream.FlushAsync(cancellationToken).ConfigureAwait(false);
+                stream.Flush(flushToDisk: true);
+            }
+            if (BeforePublish is not null) await BeforePublish(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (File.Exists(statePath)) File.Replace(tempPath, statePath, destinationBackupFileName: null);
+            else File.Move(tempPath, statePath);
+        }
+        finally
+        {
+            if (ownsTemporary) File.Delete(tempPath);
+        }
     }
 }

@@ -38,7 +38,21 @@ internal static class WindowsSingleVaultProbe
             var denied = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), deadline.Token);
             if (denied.Success || denied.ErrorCode != FluxVaultIpcErrorCode.Denied || denied.VaultId is not null || denied.Status is not null)
                 throw new InvalidOperationException("Ungrant user received installed identity or data.");
-            Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Denied = true, NoIdentityOrHistory = true }));
+            var commands = new[] { FluxVaultIpcCommand.GetRepositoryHealth, FluxVaultIpcCommand.PreviewRetention, FluxVaultIpcCommand.RunRetentionNow,
+                FluxVaultIpcCommand.RunRepositoryScrub, FluxVaultIpcCommand.RunRestoreRehearsal, FluxVaultIpcCommand.PreviewMirrorRepair,
+                FluxVaultIpcCommand.RunMirrorRepair, FluxVaultIpcCommand.PreviewMirrorRebalance, FluxVaultIpcCommand.RunMirrorRebalance,
+                FluxVaultIpcCommand.PreviewMirrorDrain };
+            foreach (var command in commands)
+            {
+                var response = await client.SendAsync(new(command, null, null, null, null, MirrorNodeId: "first",
+                    VaultId: new(Guid.ParseExact(fixture.FixtureId, "N")), ExpectedVaultRevision: 1, OperationId: Guid.NewGuid()), deadline.Token);
+                if (response.Success || response.ErrorCode != FluxVaultIpcErrorCode.Denied ||
+                    response.VaultId is { } disclosed && disclosed.Value != Guid.ParseExact(fixture.FixtureId, "N") ||
+                    response.RepositoryHealth is not null || response.RepositoryScrub is not null || response.RestoreRehearsal is not null ||
+                    response.MirrorRepair is not null || response.MirrorRebalance is not null || response.RetentionPreview is not null || response.RetentionResult is not null)
+                    throw new InvalidOperationException("Ungrant user received maintenance data or admission.");
+            }
+            Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Denied = true, NoIdentityOrHistory = true, MaintenanceDenied = commands.Length }));
             return 0;
         }
         var checks = new List<string>();
@@ -188,8 +202,80 @@ internal static class WindowsSingleVaultProbe
         var copyRecovery = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(copyVersion.VersionId, copyRecovered)));
         Check(copyRecovery.RestoreResult?.VerifiedLogicalBytes == new FileInfo(drawing).Length && Hash(drawing) == Hash(copyRecovered),
             "preserved inherited working bytes remain independently recoverable after refusal");
+
+        var beforeMaintenance = await Send(Bind(FluxVaultIpcRequest.GetStatus()));
+        foreach (var malformed in new[]
+        {
+            FluxVaultIpcRequest.PreviewMirrorRepair("unknown"), FluxVaultIpcRequest.RunMirrorRepair("unknown"),
+            FluxVaultIpcRequest.PreviewMirrorRepair(" "), FluxVaultIpcRequest.RunMirrorRepair(" "),
+            FluxVaultIpcRequest.PreviewMirrorDrain("unknown"), FluxVaultIpcRequest.PreviewMirrorDrain("first") with { MirrorNodeId = null }
+        })
+        {
+            var invalid = Bind(malformed);
+            var refusal = await client.SendAsync(invalid, deadline.Token);
+            var unchanged = await Send(Bind(FluxVaultIpcRequest.GetStatus()));
+            var unchangedHistory = await Send(Bind(FluxVaultIpcRequest.ListVersions()));
+            var noReceipt = invalid.OperationId is { } operation ? await client.SendAsync(new(FluxVaultIpcCommand.GetOperationStatus,
+                null, null, null, null, VaultId: id, OperationId: operation), deadline.Token) : null;
+            Check(!refusal.Success && refusal.ErrorCode == FluxVaultIpcErrorCode.InvalidRequest &&
+                refusal.ErrorMessage!.Contains("Choose an enabled mirror", StringComparison.Ordinal) && unchanged.VaultRevision == revision &&
+                JsonSerializer.Serialize(unchanged.Status!.Configuration) == JsonSerializer.Serialize(beforeMaintenance.Status!.Configuration) &&
+                afterRefusal.Versions!.Select(version => version.VersionId).Order().SequenceEqual(unchangedHistory.Versions!.Select(version => version.VersionId).Order()) &&
+                (noReceipt is null || noReceipt.ErrorCode == FluxVaultIpcErrorCode.Denied),
+                "invalid mirror selections are refused before receipt admission without changing configuration or history");
+        }
+        var healthBefore = await Send(Bind(FluxVaultIpcRequest.GetRepositoryHealth()));
+        Check(healthBefore.RepositoryHealth is not null, "authorised repository health loads its protected state");
+        var scrub = await Maintenance(FluxVaultIpcRequest.RunRepositoryScrub());
+        Check(scrub.RepositoryScrub is { HealthState: RepositoryHealthState.Healthy, IssueCount: 0, CheckedChunkCount: > 0 },
+            "native scrub verifies real PostgreSQL repository chunks");
+        var rehearsal = await Maintenance(FluxVaultIpcRequest.RunRestoreRehearsal());
+        Check(rehearsal.RestoreRehearsal is { HealthState: RepositoryHealthState.Healthy, RehearsedVersionCount: > 0, FailedVersionCount: 0 },
+            "native rehearsal verifies recovery in protected temporary storage");
+        var repairPreview = await Send(Bind(FluxVaultIpcRequest.PreviewMirrorRepair("FIRST")));
+        Check(repairPreview.MirrorRepair is { IsPreview: true, HealthState: RepositoryHealthState.Healthy, RequestedMirrorNodeId: "FIRST" } &&
+            repairPreview.MirrorRepair.Nodes.Select(node => node.NodeId).Order().SequenceEqual(new[] { "first", "second" }),
+            "repair preview accepts the configured selector case-insensitively and reports both mirrors");
+        var repair = await Maintenance(FluxVaultIpcRequest.RunMirrorRepair());
+        Check(repair.MirrorRepair is { IsPreview: false, HealthState: RepositoryHealthState.Healthy } && repair.MirrorRepair.Nodes.Count == 2,
+            "explicit all-mirror repair completes through the authorised service");
+        var rebalancePreview = await Send(Bind(new(FluxVaultIpcCommand.PreviewMirrorRebalance, null, null, null, null)));
+        Check(rebalancePreview.MirrorRebalance is { IsPreview: true, HealthState: RepositoryHealthState.Healthy }, "mirror placement preview remains available");
+        var rebalance = await Maintenance(new(FluxVaultIpcCommand.RunMirrorRebalance, null, null, null, null));
+        Check(rebalance.MirrorRebalance is { IsPreview: false, HealthState: RepositoryHealthState.Healthy }, "mirror placement executes through its durable receipt");
+        var drainPreview = await Send(Bind(FluxVaultIpcRequest.PreviewMirrorDrain("first")));
+        Check(drainPreview.MirrorRebalance is { IsPreview: true, Operation: MirrorRebalanceOperation.Drain, RequestedMirrorNodeId: "first" },
+            "mirror drain preview reports the selected destination without disabling it");
+        var retainedHealth = await Send(Bind(FluxVaultIpcRequest.GetRepositoryHealth()));
+        Check(retainedHealth.RepositoryHealth is { LastScrub: not null, LastRestoreRehearsal: not null, LastMirrorRepair: not null, LastMirrorRebalance: not null },
+            "health retains each report after concurrent-capable snapshot publication");
+
+        // Only disposable fixture history is pruned. A new working version makes
+        // retention's real effect observable; the final recovery uses independent SHA-256.
+        await File.WriteAllBytesAsync(file, Enumerable.Range(0, 256 * 1024).Select(index => (byte)((index * 7 + 19) % 253)).ToArray(), deadline.Token);
+        await Send(Bind(FluxVaultIpcRequest.RunBackupNow()));
+        var beforeRetention = await Send(Bind(FluxVaultIpcRequest.ListVersions()));
+        var latest = beforeRetention.Versions!.Where(version => version.SourcePath == file).OrderByDescending(version => version.CapturedAtUtc).First();
+        var retentionConfiguration = beforeMaintenance.Status!.Configuration with
+            { RetentionPolicy = new(true, TimeSpan.Zero, TimeSpan.Zero, TimeSpan.Zero, 1) };
+        var retentionSave = await Send(Bind(FluxVaultIpcRequest.SaveConfiguration(retentionConfiguration))); revision = retentionSave.VaultRevision!.Value;
+        var retentionPreview = await Send(Bind(FluxVaultIpcRequest.PreviewRetention()));
+        Check(retentionPreview.RetentionPreview is { PrunableVersionCount: > 0 }, "retention preview identifies disposable superseded versions");
+        await Send(Bind(FluxVaultIpcRequest.GetStatus())); // Populate the actual runtime history cache before deletion.
+        var retained = await Maintenance(FluxVaultIpcRequest.RunRetentionNow());
+        Check(retained.RetentionResult is { PrunedVersionCount: > 0 }, "retention actually prunes only owned fixture history");
+        var retainedHistory = await Send(Bind(FluxVaultIpcRequest.ListVersions()));
+        var retainedStatus = await Send(Bind(FluxVaultIpcRequest.GetStatus()));
+        Check(retainedHistory.Versions!.Any(version => version.VersionId == latest.VersionId) &&
+            retainedHistory.Versions!.Count < beforeRetention.Versions!.Count &&
+            retainedStatus.Status!.RecentVersions.All(version => retainedHistory.Versions.Any(kept => kept.VersionId == version.VersionId)),
+            "history and cached status reflect retention while retaining the latest working version");
+        var recoveredAfterRetention = Path.Combine(destination, "after-retention.docx");
+        var verifiedAfterRetention = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(latest.VersionId, recoveredAfterRetention)));
+        Check(verifiedAfterRetention.RestoreResult?.VerifiedLogicalBytes == new FileInfo(file).Length && Hash(file) == Hash(recoveredAfterRetention),
+            "latest working bytes remain independently recoverable after maintenance and retention");
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Passed = checks.Count, Checks = checks, SingleVault = true, VaultId = id,
-            CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true }));
+            CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true, MaintenanceCommandsVerified = true }));
         return 0;
 
         FluxVaultIpcRequest Bind(FluxVaultIpcRequest request) => request with { VaultId = id,
@@ -200,6 +286,16 @@ internal static class WindowsSingleVaultProbe
             var response = await client.SendAsync(request, deadline.Token);
             if (!response.Success) throw new InvalidOperationException($"{request.Command} failed: {response.ErrorCode}: {response.ErrorMessage}");
             return response;
+        }
+        async Task<FluxVaultIpcResponse> Maintenance(FluxVaultIpcRequest command)
+        {
+            var request = Bind(command);
+            var result = await Send(request);
+            var replay = await Send(request);
+            var receipt = await Send(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null, VaultId: id, OperationId: request.OperationId));
+            Check(JsonSerializer.Serialize(result) == JsonSerializer.Serialize(replay) && JsonSerializer.Serialize(result) == JsonSerializer.Serialize(receipt),
+                $"{request.Command} replay and status return its exact durable outcome");
+            return result;
         }
         void Check(bool result, string name) { if (!result) throw new InvalidOperationException("Single-vault contract failed: " + name); checks.Add(name); }
         static string Hash(string path) { using var stream = File.OpenRead(path); return Convert.ToHexString(SHA256.HashData(stream)); }
@@ -241,9 +337,12 @@ internal static class WindowsSingleVaultProbe
             while (!File.Exists(Path.Combine(fixture.Root, "runtime", "caller-files-stop"))) await Task.Delay(50, deadline.Token);
         }
         finally { await deadline.CancelAsync(); await serving; }
+        var rehearsalRoot = Path.Combine(statePath, "restore-rehearsal");
+        if (Directory.Exists(rehearsalRoot) && Directory.EnumerateFileSystemEntries(rehearsalRoot).Any())
+            throw new InvalidOperationException("Protected rehearsal output was not cleaned before service exit.");
         if (!handler.CreatorVerified || !handler.UngrantDenied || handler.Completed < 8) throw new InvalidOperationException("Native command pipeline evidence is incomplete.");
         Console.WriteLine(JsonSerializer.Serialize(new { Passed = handler.Completed, NativeCallerTokens = true, SingleVault = true, ProtectedProductComposition = true,
-            ActualCatalogueAndExecutor = true, handler.CreatorVerified, handler.UngrantDenied, ExactInstalledBinding = binding.Id }));
+            ActualCatalogueAndExecutor = true, ProtectedRehearsalOutputCleaned = true, handler.CreatorVerified, handler.UngrantDenied, ExactInstalledBinding = binding.Id }));
         return 0;
     }
 

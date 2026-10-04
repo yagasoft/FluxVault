@@ -63,6 +63,17 @@ regressions, native failure/retry states, independent review and 722 passing
 tests. It is not installed or merged; revision conflict handling, pause/resume,
 separate history deletion and every NEXT-002 security gate remain open.
 
+The bounded [authorised maintenance batch](verification/2026-10-04-next002-maintenance/README.md)
+continues NEXT-002 in the isolated branch: health, retention, scrub, protected
+rehearsal, repair/placement and drain preview now use the installed single-vault
+binding and permission/receipt flow. Native creator A passed 56 checks, ungranted
+B was denied ten maintenance commands, all 1,077 ordinary tests passed and the
+Release build has no warnings/errors. Independent review accepted runtime and
+complete cleanup with the normal installation unchanged. Drain execution still
+needs its coherent catalogue revision/receipt flow; remaining background,
+interruption, performance/accessibility, full G01 and rollout gates stay open.
+This updates progress without expanding the agreed roadmap.
+
 | ID | Priority | Capability | Status | Required verification |
 | --- | --- | --- | --- | --- |
 | NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |

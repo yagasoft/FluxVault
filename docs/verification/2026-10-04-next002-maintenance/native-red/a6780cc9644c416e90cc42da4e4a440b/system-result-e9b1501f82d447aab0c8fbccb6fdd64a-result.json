@@ -1,0 +1,30 @@
+{
+  "Actor": "System",
+  "WindowsSid": "S-1-5-18",
+  "RunId": "e9b1501f82d447aab0c8fbccb6fdd64a",
+  "Results": [
+    {
+      "Result": {
+        "FixtureId": "a6780cc9644c416e90cc42da4e4a440b",
+        "ProbeId": "72339a1fa8f44ecbbad18d02abee49ca",
+        "Actor": "System",
+        "WindowsSid": "S-1-5-18",
+        "Host": "::1",
+        "Authenticated": true,
+        "FixtureVerified": true,
+        "SqlState": null,
+        "ErrorKind": null,
+        "Catalogue": null
+      },
+      "Kind": "Npgsql",
+      "Host": "::1"
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Kind": "ACL",
+      "ReadProtected": true,
+      "WriteRuntime": true
+    }
+  ],
+  "Complete": true
+}

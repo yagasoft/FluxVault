@@ -23,14 +23,14 @@ public sealed record VaultCatalogueEntry(VaultBinding Binding, long Revision, st
 
 public enum VaultCatalogueFailure { Denied, StaleRevision, IdentityMismatch, InvalidConfiguration, OperationConflict }
 
-public sealed class VaultCatalogueException(VaultCatalogueFailure failure) : Exception(failure switch
+public sealed class VaultCatalogueException(VaultCatalogueFailure failure, string? message = null) : Exception(message ?? (failure switch
 {
     VaultCatalogueFailure.Denied => "The vault is unavailable or you do not have permission for this command.",
     VaultCatalogueFailure.StaleRevision => "The vault changed. Refresh before saving; your pending edits are retained.",
     VaultCatalogueFailure.OperationConflict => "This operation identity has already been used for a different request.",
     VaultCatalogueFailure.InvalidConfiguration => "This change would alter protected vault infrastructure.",
     _ => "The trusted vault catalogue could not be verified."
-})
+}))
 {
     public VaultCatalogueFailure Failure { get; } = failure;
 }

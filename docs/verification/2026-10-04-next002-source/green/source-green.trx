@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8a965291-f842-42c3-b2b4-ac526fe656f5" name="os008@OS008-HOME 2026-10-04 07:16:16" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T07:16:16.2760601+03:00" queuing="2026-10-04T07:16:16.2760604+03:00" start="2026-10-04T07:16:15.6039243+03:00" finish="2026-10-04T07:16:16.3041679+03:00" />
+  <TestSettings name="default" id="a3de230b-8d5f-4932-838d-d597b069e5b4">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_07_16_16" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c3917c45-4235-4027-bfd1-a57941568d42" testId="9340eb76-917f-9d51-7352-c35530c6bfa6" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Cancelled_open_does_not_acquire_handles" computerName="OS008-HOME" duration="00:00:00.0067237" startTime="2026-10-04T07:16:16.1783629+03:00" endTime="2026-10-04T07:16:16.1784265+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c3917c45-4235-4027-bfd1-a57941568d42" />
+    <UnitTestResult executionId="5583e96d-19b0-43e8-886f-fd7ed788a0ad" testId="16235f98-8543-1d46-dc4d-4cbf550b8068" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Leaf_or_parent_reparse_point_is_rejected(parent: True)" computerName="OS008-HOME" duration="00:00:00.0062826" startTime="2026-10-04T07:16:16.1831728+03:00" endTime="2026-10-04T07:16:16.1896782+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5583e96d-19b0-43e8-886f-fd7ed788a0ad" />
+    <UnitTestResult executionId="134fe74a-2f2a-4949-87de-e611e308dcaa" testId="9aab339d-5d25-98d1-412e-ad23392a96e0" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Outside_selection_is_rejected_before_reading_bytes" computerName="OS008-HOME" duration="00:00:00.0046870" startTime="2026-10-04T07:16:16.2512671+03:00" endTime="2026-10-04T07:16:16.2513584+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="134fe74a-2f2a-4949-87de-e611e308dcaa" />
+    <UnitTestResult executionId="175eede6-c759-4ee7-83ec-e5dc3d130605" testId="8f20478f-59c0-459a-6542-4629b29f63cc" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.A_child_restricted_after_parent_admission_is_denied_by_native_open" computerName="OS008-HOME" duration="00:00:00.0056776" startTime="2026-10-04T07:16:16.1789434+03:00" endTime="2026-10-04T07:16:16.1830256+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="175eede6-c759-4ee7-83ec-e5dc3d130605" />
+    <UnitTestResult executionId="a65afa37-89f4-40cb-8d5a-4b743a974fed" testId="9b4e830e-becc-d56b-8505-d32a42a741bc" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Replaced_leaf_is_opened_without_following_its_new_reparse_target" computerName="OS008-HOME" duration="00:00:00.0093432" startTime="2026-10-04T07:16:16.2227536+03:00" endTime="2026-10-04T07:16:16.2266410+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a65afa37-89f4-40cb-8d5a-4b743a974fed" />
+    <UnitTestResult executionId="30cf0371-e226-4f2d-b09e-e9a57281b831" testId="a51865f6-52a9-ae56-b04f-01f8cd4ab03d" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Ambiguous_path_forms_are_rejected(relative: &quot;document.txt:stream&quot;)" computerName="OS008-HOME" duration="00:00:00.0032798" startTime="2026-10-04T07:16:16.1996140+03:00" endTime="2026-10-04T07:16:16.2030840+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30cf0371-e226-4f2d-b09e-e9a57281b831" />
+    <UnitTestResult executionId="bf9d963e-fa58-4a3c-adc9-2724ef30fead" testId="fe792ecf-f403-bc97-d1fe-bc6b062dad22" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Hard_linked_source_is_rejected" computerName="OS008-HOME" duration="00:00:00.0392959" startTime="2026-10-04T07:16:16.1210180+03:00" endTime="2026-10-04T07:16:16.1684661+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf9d963e-fa58-4a3c-adc9-2724ef30fead" />
+    <UnitTestResult executionId="047a9ef7-d70a-440b-8808-5071ee6af3a1" testId="f2366844-9ccc-0211-9d33-2de08034b71a" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Source_handle_retains_parent_identity_until_disposed" computerName="OS008-HOME" duration="00:00:00.0058418" startTime="2026-10-04T07:16:16.2032457+03:00" endTime="2026-10-04T07:16:16.2176656+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="047a9ef7-d70a-440b-8808-5071ee6af3a1">
+      <Output>
+        <ErrorInfo>
+          <Message>System.UnauthorizedAccessException : The opened object does not match the selected physical path.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsCallerFileAccess.Denied(String reason) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 160&#xD;
+   at FluxVault.Windows.Security.WindowsCallerFileAccess.VerifyHandle(SafeFileHandle handle, String expected, Boolean directory) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 156&#xD;
+   at FluxVault.Windows.Security.WindowsCallerFileAccess.&lt;&gt;c__DisplayClass3_0.&lt;OpenSourceAsync&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 55&#xD;
+   at System.Security.Principal.WindowsIdentity.&lt;&gt;c__DisplayClass68_0`1.&lt;RunImpersonated&gt;b__0()&#xD;
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+   at System.Security.Principal.WindowsIdentity.RunImpersonatedInternal(SafeAccessTokenHandle token, Action action)&#xD;
+   at System.Security.Principal.WindowsIdentity.RunImpersonated[T](SafeAccessTokenHandle safeAccessTokenHandle, Func`1 func)&#xD;
+   at FluxVault.Windows.Security.WindowsFluxVaultCallerContextProvider.OwnedWindowsCallerContext.RunAsCallerAsync[T](Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsFluxVaultCallerContextProvider.cs:line 68&#xD;
+   at FluxVault.Windows.Tests.WindowsCallerSourceTests.Source_handle_retains_parent_identity_until_disposed() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 22&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9f36da89-ba88-4632-834d-2be62940c60e" testId="ca09fe18-0357-d215-ef37-7b0896a54ee7" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Ambiguous_path_forms_are_rejected(relative: &quot;sub\\..\\document.txt&quot;)" computerName="OS008-HOME" duration="00:00:00.0041153" startTime="2026-10-04T07:16:16.1952375+03:00" endTime="2026-10-04T07:16:16.1994921+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f36da89-ba88-4632-834d-2be62940c60e" />
+    <UnitTestResult executionId="e2211681-b5fc-405c-93a0-e8b9bda54eb2" testId="017d0956-2ceb-83ee-88cc-4f873f3e6769" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Leaf_or_parent_reparse_point_is_rejected(parent: False)" computerName="OS008-HOME" duration="00:00:00.0050674" startTime="2026-10-04T07:16:16.1898275+03:00" endTime="2026-10-04T07:16:16.1950359+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e2211681-b5fc-405c-93a0-e8b9bda54eb2" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Source_handle_retains_parent_identity_until_disposed" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="f2366844-9ccc-0211-9d33-2de08034b71a">
+      <Execution id="047a9ef7-d70a-440b-8808-5071ee6af3a1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Source_handle_retains_parent_identity_until_disposed" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Hard_linked_source_is_rejected" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="fe792ecf-f403-bc97-d1fe-bc6b062dad22">
+      <Execution id="bf9d963e-fa58-4a3c-adc9-2724ef30fead" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Hard_linked_source_is_rejected" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Replaced_leaf_is_opened_without_following_its_new_reparse_target" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="9b4e830e-becc-d56b-8505-d32a42a741bc">
+      <Execution id="a65afa37-89f4-40cb-8d5a-4b743a974fed" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Replaced_leaf_is_opened_without_following_its_new_reparse_target" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Leaf_or_parent_reparse_point_is_rejected(parent: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="16235f98-8543-1d46-dc4d-4cbf550b8068">
+      <Execution id="5583e96d-19b0-43e8-886f-fd7ed788a0ad" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Leaf_or_parent_reparse_point_is_rejected" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Ambiguous_path_forms_are_rejected(relative: &quot;sub\\..\\document.txt&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="ca09fe18-0357-d215-ef37-7b0896a54ee7">
+      <Execution id="9f36da89-ba88-4632-834d-2be62940c60e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Ambiguous_path_forms_are_rejected" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Leaf_or_parent_reparse_point_is_rejected(parent: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="017d0956-2ceb-83ee-88cc-4f873f3e6769">
+      <Execution id="e2211681-b5fc-405c-93a0-e8b9bda54eb2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Leaf_or_parent_reparse_point_is_rejected" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Outside_selection_is_rejected_before_reading_bytes" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="9aab339d-5d25-98d1-412e-ad23392a96e0">
+      <Execution id="134fe74a-2f2a-4949-87de-e611e308dcaa" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Outside_selection_is_rejected_before_reading_bytes" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Ambiguous_path_forms_are_rejected(relative: &quot;document.txt:stream&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="a51865f6-52a9-ae56-b04f-01f8cd4ab03d">
+      <Execution id="30cf0371-e226-4f2d-b09e-e9a57281b831" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Ambiguous_path_forms_are_rejected" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Cancelled_open_does_not_acquire_handles" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="9340eb76-917f-9d51-7352-c35530c6bfa6">
+      <Execution id="c3917c45-4235-4027-bfd1-a57941568d42" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Cancelled_open_does_not_acquire_handles" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.A_child_restricted_after_parent_admission_is_denied_by_native_open" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="8f20478f-59c0-459a-6542-4629b29f63cc">
+      <Execution id="175eede6-c759-4ee7-83ec-e5dc3d130605" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="A_child_restricted_after_parent_admission_is_denied_by_native_open" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9340eb76-917f-9d51-7352-c35530c6bfa6" executionId="c3917c45-4235-4027-bfd1-a57941568d42" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16235f98-8543-1d46-dc4d-4cbf550b8068" executionId="5583e96d-19b0-43e8-886f-fd7ed788a0ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9aab339d-5d25-98d1-412e-ad23392a96e0" executionId="134fe74a-2f2a-4949-87de-e611e308dcaa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8f20478f-59c0-459a-6542-4629b29f63cc" executionId="175eede6-c759-4ee7-83ec-e5dc3d130605" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9b4e830e-becc-d56b-8505-d32a42a741bc" executionId="a65afa37-89f4-40cb-8d5a-4b743a974fed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a51865f6-52a9-ae56-b04f-01f8cd4ab03d" executionId="30cf0371-e226-4f2d-b09e-e9a57281b831" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe792ecf-f403-bc97-d1fe-bc6b062dad22" executionId="bf9d963e-fa58-4a3c-adc9-2724ef30fead" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f2366844-9ccc-0211-9d33-2de08034b71a" executionId="047a9ef7-d70a-440b-8808-5071ee6af3a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca09fe18-0357-d215-ef37-7b0896a54ee7" executionId="9f36da89-ba88-4632-834d-2be62940c60e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="017d0956-2ceb-83ee-88cc-4f873f3e6769" executionId="e2211681-b5fc-405c-93a0-e8b9bda54eb2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="10" executed="10" passed="9" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.14]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.26]       System.UnauthorizedAccessException : The opened object does not match the selected physical path.&#xD;
+[xUnit.net 00:00:00.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs(160,0): at FluxVault.Windows.Security.WindowsCallerFileAccess.Denied(String reason)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs(156,0): at FluxVault.Windows.Security.WindowsCallerFileAccess.VerifyHandle(SafeFileHandle handle, String expected, Boolean directory)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs(55,0): at FluxVault.Windows.Security.WindowsCallerFileAccess.&lt;&gt;c__DisplayClass3_0.&lt;OpenSourceAsync&gt;b__0()&#xD;
+[xUnit.net 00:00:00.26]            at System.Security.Principal.WindowsIdentity.&lt;&gt;c__DisplayClass68_0`1.&lt;RunImpersonated&gt;b__0()&#xD;
+[xUnit.net 00:00:00.26]            at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.26]            at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+[xUnit.net 00:00:00.26]            at System.Security.Principal.WindowsIdentity.RunImpersonatedInternal(SafeAccessTokenHandle token, Action action)&#xD;
+[xUnit.net 00:00:00.26]            at System.Security.Principal.WindowsIdentity.RunImpersonated[T](SafeAccessTokenHandle safeAccessTokenHandle, Func`1 func)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsFluxVaultCallerContextProvider.cs(68,0): at FluxVault.Windows.Security.WindowsFluxVaultCallerContextProvider.OwnedWindowsCallerContext.RunAsCallerAsync[T](Func`1 action)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs(22,0): at FluxVault.Windows.Tests.WindowsCallerSourceTests.Source_handle_retains_parent_identity_until_disposed()&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.29]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T07:16:16.2200415+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Source_handle_retains_parent_identity_until_disposed [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

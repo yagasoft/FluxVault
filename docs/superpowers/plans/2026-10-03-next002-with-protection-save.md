@@ -79,6 +79,8 @@ The [bound metadata namespace prerequisite](../../verification/2026-10-04-next00
 
 The [repository binding prerequisite](../../verification/2026-10-04-next002-repository/README.md) now links protected content markers and generated manifests to the same immutable binding. Its 13 real-store contracts per loopback cover capture, reopen, verified file/folder recovery and cross-vault purge snapshots; independent source review approved the bounded change. These generated-stream SYSTEM operations do not prove actual caller source/output access. That native boundary and service/client composition remain blockers to S1.
 
+The [caller-bound source reader](../../verification/2026-10-04-next002-source/README.md) passes twelve physical Windows regressions and independent source review, with 813 applicable combined tests and a zero-warning Release build. It captures a native same-user pipe token and pins non-following component handles through stream disposal. A/B-to-SYSTEM access, scheduled/VSS capture, recovery publication and runtime composition remain open; this prerequisite closes no S1 acceptance gate by itself.
+
 | Boundary | Existing files | New focused contracts/helpers proposed |
 | --- | --- | --- |
 | Windows caller and framed IPC | `src/FluxVault.Core/Ipc/NamedPipeFluxVaultServer.cs`, `NamedPipeFluxVaultClient.cs`, `IFluxVaultRequestHandler.cs`; `src/FluxVault.Service/Program.cs` | `FluxVaultCallerContext`, `AuthenticatedFluxVaultRequestHandler`, `FluxVaultIpcLimits`; Windows token/path helpers under `src/FluxVault.Windows/Security/` |

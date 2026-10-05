@@ -1,0 +1,122 @@
+{
+  "Version": 1,
+  "Authentication": "Valid Windows Authenticode trust, pinned Microsoft signer and signed tool identity on protected copied bytes; fixed generated SxS metadata",
+  "Files": [
+    {
+      "Sha256": "3F3A8AF8B2D8551E6725D570A38AB16396F5D7506A5C28FE91AAD1061D20D79C",
+      "OriginalFilename": "AppxPackaging.dll",
+      "Bytes": 2435528,
+      "Status": "Valid",
+      "Name": "appxpackaging.dll",
+      "SignerThumbprint": "6ACE61BAE3F09F4DD2697806D73E022CBFE70EB4"
+    },
+    {
+      "Sha256": "B6DCDF2F5995FEAAEF42168C5B6DE3FA9CB8CF26CD5E4F3F6E01D0E63830FD7C",
+      "OriginalFilename": "AppxSip.dll",
+      "Bytes": 461256,
+      "Status": "Valid",
+      "Name": "appxsip.dll",
+      "SignerThumbprint": "6ACE61BAE3F09F4DD2697806D73E022CBFE70EB4"
+    },
+    {
+      "Sha256": "5C920001EE52C4349A20D759EDB4A5B0E84996DB80279E16B3D3C15BFB0F22CF",
+      "OriginalFilename": "MakeAppx.exe",
+      "Bytes": 588232,
+      "Status": "Valid",
+      "Name": "makeappx.exe",
+      "SignerThumbprint": "6ACE61BAE3F09F4DD2697806D73E022CBFE70EB4"
+    },
+    {
+      "Sha256": "C06571732668590E9B5B8EDE0454FAC8B452AD0445A61541817B645C47F0C760",
+      "OriginalFilename": "MidlrtMd.dll",
+      "Bytes": 467952,
+      "Status": "Valid",
+      "Name": "midlrtmd.dll",
+      "SignerThumbprint": "F6EECCC7FF116889C2D5466AE7243D7AA7698689"
+    },
+    {
+      "Sha256": "B1A6C63C704121B5EE01759759F4BB08936E406EA8C19E980077B837DF5FB27F",
+      "OriginalFilename": "MrmSupport.dll",
+      "Bytes": 920048,
+      "Status": "Valid",
+      "Name": "mrmsupport.dll",
+      "SignerThumbprint": "F6EECCC7FF116889C2D5466AE7243D7AA7698689"
+    },
+    {
+      "Sha256": "2E08CA267F7D91CD8E921CFC857FF202688FA1251CF4DAFA5A5C5AD5351D3E47",
+      "OriginalFilename": "MSSIGN32.DLL",
+      "Bytes": 149960,
+      "Status": "Valid",
+      "Name": "mssign32.dll",
+      "SignerThumbprint": "6ACE61BAE3F09F4DD2697806D73E022CBFE70EB4"
+    },
+    {
+      "Sha256": "6716D46CC20097005C9AC5FB07F605C2FBE8E38B900A95AEFBB2620823ABF5A4",
+      "OriginalFilename": "mt2.exe",
+      "Bytes": 1767880,
+      "Status": "Valid",
+      "Name": "mt.exe",
+      "SignerThumbprint": "6ACE61BAE3F09F4DD2697806D73E022CBFE70EB4"
+    },
+    {
+      "Sha256": "B0EBD06D7783D35C1970E00E7409C23FBFBB8CB570C6FB8FDF0FB2225C8162F7",
+      "OriginalFilename": "OpcServices.dll",
+      "Bytes": 1743304,
+      "Status": "Valid",
+      "Name": "opcservices.dll",
+      "SignerThumbprint": "6ACE61BAE3F09F4DD2697806D73E022CBFE70EB4"
+    },
+    {
+      "Sha256": "825F3267F97E8B5B773E3F773611DDDB5C819DE1C0CB9D694A3A0EB73F787569",
+      "OriginalFilename": "SIGNTOOL.EXE",
+      "Bytes": 551368,
+      "Status": "Valid",
+      "Name": "signtool.exe",
+      "SignerThumbprint": "6ACE61BAE3F09F4DD2697806D73E022CBFE70EB4"
+    },
+    {
+      "Sha256": "044821C8F33FD30B8B2B7D6CE1B891F9C52FF0EDF2BF1428D7BB5CD242F86181",
+      "OriginalFilename": "WINTRUST.DLL",
+      "Bytes": 453104,
+      "Status": "Valid",
+      "Name": "wintrust.dll",
+      "SignerThumbprint": "F6EECCC7FF116889C2D5466AE7243D7AA7698689"
+    },
+    {
+      "Sha256": "FC5C176144C145063C5D99716E7F79AF3EA0B5EF467D6829840C1CDAA7D8FFDA",
+      "Origin": "Fixed reviewed SxS manifest; authenticated same-directory DLLs only",
+      "Name": "Microsoft.Windows.Build.Appx.AppxPackaging.dll.manifest",
+      "Bytes": 1097
+    },
+    {
+      "Sha256": "B6543A9D1E95400CEA867EFDFD5FC599915086E31330B8FD3014FEE71078E40D",
+      "Origin": "Fixed reviewed SxS manifest; authenticated same-directory DLLs only",
+      "Name": "Microsoft.Windows.Build.Appx.AppxSip.dll.manifest",
+      "Bytes": 358
+    },
+    {
+      "Sha256": "3626A2E04A470602F0C6E3CF1A25554DFCB4A3DF9F4E4AD78ED0997F1E77AC9B",
+      "Origin": "Fixed reviewed SxS manifest; authenticated same-directory DLLs only",
+      "Name": "Microsoft.Windows.Build.Appx.OpcServices.dll.manifest",
+      "Bytes": 291
+    },
+    {
+      "Sha256": "8392C2FD721914D06590A7352D6390131A0CFC978D377DB385F3B23FAD209F45",
+      "Origin": "Fixed reviewed SxS manifest; authenticated same-directory DLLs only",
+      "Name": "Microsoft.Windows.Build.Signing.mssign32.dll.manifest",
+      "Bytes": 207
+    },
+    {
+      "Sha256": "AA911A4ECC84304F184B3269662A2DE4B0E01D8A344204D0141180E4F9FC3081",
+      "Origin": "Fixed reviewed SxS manifest; authenticated same-directory DLLs only",
+      "Name": "Microsoft.Windows.Build.Signing.wintrust.dll.manifest",
+      "Bytes": 207
+    },
+    {
+      "Sha256": "F869DB2D38A3546CF6E8692B44FFDA0A19511DDD0026551DEC705BC00560F02B",
+      "Origin": "Fixed reviewed SxS manifest; authenticated same-directory DLLs only",
+      "Name": "signtool.exe.manifest",
+      "Bytes": 614
+    }
+  ]
+}

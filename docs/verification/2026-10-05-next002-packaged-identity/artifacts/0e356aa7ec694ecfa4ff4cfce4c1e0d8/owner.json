@@ -1,0 +1,65 @@
+{
+  "FixtureId": "0e356aa7ec694ecfa4ff4cfce4c1e0d8",
+  "Version": 1,
+  "Path": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\0e356aa7ec694ecfa4ff4cfce4c1e0d8\\owner.json",
+  "Resources": [
+    {
+      "Identity": {
+        "OwnerSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+        "KernelName": "Global\\FluxVault.NEXT002.b8ac10621a7f44ee9ba937f165b4266c"
+      },
+      "State": "Removed",
+      "Kind": "Job",
+      "Name": "Cluster"
+    },
+    {
+      "Identity": {
+        "ProcessId": 61352,
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "StartedUtc": "2026-10-05T01:42:21.3105228Z"
+      },
+      "State": "Removed",
+      "Kind": "Process",
+      "Name": "tool-47a75c4ed1d74df98118838c13c63c6f"
+    },
+    {
+      "Identity": {
+        "ProcessId": 44056,
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "StartedUtc": "2026-10-05T01:42:22.6142393Z"
+      },
+      "State": "Removed",
+      "Kind": "Process",
+      "Name": "tool-bfadcf97d39d473cbe58e8b5d6b1da4d"
+    },
+    {
+      "Identity": {
+        "ProcessId": 65280,
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "StartedUtc": "2026-10-05T01:42:23.7349134Z"
+      },
+      "State": "Removed",
+      "Kind": "Process",
+      "Name": "tool-e9ea73da28bc449f8065f969459418fc"
+    },
+    {
+      "Identity": {
+        "ProcessId": 43204,
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "StartedUtc": "2026-10-05T01:42:25.1158354Z"
+      },
+      "State": "Removed",
+      "Kind": "Process",
+      "Name": "tool-32f80de1a33b41aa8fca0110469b23b7"
+    }
+  ],
+  "Root": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\0e356aa7ec694ecfa4ff4cfce4c1e0d8",
+  "Parent": "C:\\ProgramData\\FluxVault.Tests\\NEXT002",
+  "CreatedUtc": "2026-10-05T01:42:17.4479203Z",
+  "RunnerIdentity": {
+    "ProcessId": 41960,
+    "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "StartedUtc": "2026-10-05T01:42:16.3911667Z"
+  },
+  "State": "Complete"
+}

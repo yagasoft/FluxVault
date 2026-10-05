@@ -1,0 +1,65 @@
+{
+  "FixtureId": "02c4a688f1354b6ca4ad5a342e957db9",
+  "Resources": [
+    {
+      "State": "Removed",
+      "Identity": {
+        "OwnerSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+        "KernelName": "Global\\FluxVault.NEXT002.74593615ca0c492bac436cd5ea04d8c0"
+      },
+      "Kind": "Job",
+      "Name": "Cluster"
+    },
+    {
+      "State": "Removed",
+      "Identity": {
+        "StartedUtc": "2026-10-05T01:08:16.6530411Z",
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "ProcessId": 39640
+      },
+      "Kind": "Process",
+      "Name": "tool-69e963ac22064de780cd1937ae1724f8"
+    },
+    {
+      "State": "Removed",
+      "Identity": {
+        "StartedUtc": "2026-10-05T01:08:18.0009546Z",
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "ProcessId": 3360
+      },
+      "Kind": "Process",
+      "Name": "tool-499145fa110345aa87fb5fde4255f6de"
+    },
+    {
+      "State": "Removed",
+      "Identity": {
+        "StartedUtc": "2026-10-05T01:08:18.9886128Z",
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "ProcessId": 36348
+      },
+      "Kind": "Process",
+      "Name": "tool-b2fb7668ccdd4ec7a2ed212d90cb0a71"
+    },
+    {
+      "State": "Removed",
+      "Identity": {
+        "StartedUtc": "2026-10-05T01:08:20.1399451Z",
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "ProcessId": 6584
+      },
+      "Kind": "Process",
+      "Name": "tool-09f68d5505044dbeb0f654523a2d03dc"
+    }
+  ],
+  "CreatedUtc": "2026-10-05T01:08:12.8480757Z",
+  "Parent": "C:\\ProgramData\\FluxVault.Tests\\NEXT002",
+  "Version": 1,
+  "State": "Complete",
+  "RunnerIdentity": {
+    "StartedUtc": "2026-10-05T01:08:11.7729062Z",
+    "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "ProcessId": 49348
+  },
+  "Root": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\02c4a688f1354b6ca4ad5a342e957db9",
+  "Path": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\02c4a688f1354b6ca4ad5a342e957db9\\owner.json"
+}

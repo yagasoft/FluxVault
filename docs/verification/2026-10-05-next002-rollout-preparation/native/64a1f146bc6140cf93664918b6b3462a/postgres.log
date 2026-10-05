@@ -1,0 +1,70 @@
+[62528]  LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+[62528]  LOG:  listening on IPv4 address "127.0.0.1", port 60076
+[62528]  LOG:  listening on IPv6 address "::1", port 60076
+[42148]  LOG:  database system was shut down at 2026-10-05 13:54:41 EEST
+[62528]  LOG:  database system is ready to accept connections
+[59028] [unknown] LOG:  connection received: host=127.0.0.1 port=60081
+[59028] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:126)
+[59028] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[59028] psql LOG:  connection ready: setup total=42.139 ms, fork=18.546 ms, authentication=10.262 ms
+[26508] [unknown] LOG:  connection received: host=127.0.0.1 port=60083
+[26508] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:134)
+[26508] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[26508] psql LOG:  connection ready: setup total=37.230 ms, fork=18.112 ms, authentication=10.924 ms
+[66780] [unknown] LOG:  connection received: host=127.0.0.1 port=60085
+[66780] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:134)
+[66780] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[66780] psql LOG:  connection ready: setup total=34.806 ms, fork=17.121 ms, authentication=9.913 ms
+[56760] [unknown] LOG:  connection received: host=127.0.0.1 port=60086
+[56760] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:1)
+[56760] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[56760] psql LOG:  connection ready: setup total=35.751 ms, fork=17.998 ms, authentication=10.068 ms
+[19452] [unknown] LOG:  connection received: host=127.0.0.1 port=60093
+[19452] [unknown] LOG:  connection authenticated: user="fv_gate_monitor" method=trust (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:1)
+[19452] [unknown] LOG:  connection authorized: user=fv_gate_monitor database=postgres application_name=FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a.check
+[19452] FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a.check LOG:  connection ready: setup total=27.579 ms, fork=19.341 ms, authentication=0.216 ms
+[62528]  LOG:  received SIGHUP, reloading configuration files
+[61596] [unknown] LOG:  connection received: host=127.0.0.1 port=60094
+[61596] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:4)
+[61596] [unknown] LOG:  no match in usermap "fv_bootstrap_7871ff7f8d1b404db20771f2e742364f" for user "postgres" authenticated as "SYSTEM@NT AUTHORITY"
+[61596] [unknown] FATAL:  SSPI authentication failed for user "postgres"
+[61596] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf" line 4: "host postgres postgres 127.0.0.1/32 sspi map=fv_bootstrap_7871ff7f8d1b404db20771f2e742364f include_realm=1"
+[62528]  LOG:  received SIGHUP, reloading configuration files
+[61308] [unknown] LOG:  connection received: host=127.0.0.1 port=60095
+[61308] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:4)
+[61308] [unknown] LOG:  connection authorized: user=postgres database=postgres application_name=FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a
+[61308] FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a LOG:  connection ready: setup total=33.728 ms, fork=20.648 ms, authentication=4.729 ms
+[68176] [unknown] LOG:  connection received: host=127.0.0.1 port=60096
+[68176] [unknown] LOG:  connection authenticated: user="fv_gate_monitor" method=trust (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:1)
+[68176] [unknown] LOG:  connection authorized: user=fv_gate_monitor database=postgres application_name=FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a.check
+[68176] FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a.check LOG:  connection ready: setup total=28.478 ms, fork=20.406 ms, authentication=0.200 ms
+[62528]  LOG:  received SIGHUP, reloading configuration files
+[68576] [unknown] LOG:  connection received: host=127.0.0.1 port=60097
+[6772] [unknown] LOG:  connection received: host=127.0.0.1 port=60098
+[6772] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:2)
+[6772] [unknown] LOG:  connection authorized: user=fluxvault_service database=fluxvault_single application_name=FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a.check
+[6772] FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a.check LOG:  connection ready: setup total=33.852 ms, fork=17.750 ms, authentication=4.860 ms
+[18664] [unknown] LOG:  connection received: host=127.0.0.1 port=60100
+[18664] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:2)
+[18664] [unknown] LOG:  connection authorized: user=fluxvault_service database=fluxvault_single application_name=FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a.check
+[18664] FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a.check LOG:  connection ready: setup total=31.145 ms, fork=18.526 ms, authentication=4.808 ms
+[45360] [unknown] LOG:  connection received: host=127.0.0.1 port=60101
+[67948] [unknown] LOG:  connection received: host=127.0.0.1 port=60107
+[67948] [unknown] LOG:  connection authenticated: user="fv_gate_monitor" method=trust (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:1)
+[67948] [unknown] LOG:  connection authorized: user=fv_gate_monitor database=postgres application_name=FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a.check
+[67948] FluxVault.PreparedSql.64a1f146bc6140cf93664918b6b3462a.check LOG:  connection ready: setup total=25.808 ms, fork=17.975 ms, authentication=0.199 ms
+[62528]  LOG:  received SIGHUP, reloading configuration files
+[60220] [unknown] LOG:  connection received: host=127.0.0.1 port=60108
+[60220] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf:4)
+[60220] [unknown] LOG:  no match in usermap "fv_bootstrap_7871ff7f8d1b404db20771f2e742364f" for user "postgres" authenticated as "SYSTEM@NT AUTHORITY"
+[60220] [unknown] FATAL:  SSPI authentication failed for user "postgres"
+[60220] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/64a1f146bc6140cf93664918b6b3462a/data/pg_hba.conf" line 4: "host postgres postgres 127.0.0.1/32 sspi map=fv_bootstrap_7871ff7f8d1b404db20771f2e742364f include_realm=1"
+[62528]  LOG:  received SIGHUP, reloading configuration files
+[62528]  LOG:  received SIGHUP, reloading configuration files
+[62528]  LOG:  received fast shutdown request
+[62528]  LOG:  aborting any active transactions
+[62528]  LOG:  background worker "logical replication launcher" (PID 25416) exited with exit code 1
+[52484]  LOG:  shutting down
+[52484]  LOG:  checkpoint starting: shutdown immediate
+[52484]  LOG:  checkpoint complete: wrote 996 buffers (24.3%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.027 s, sync=0.281 s, total=0.315 s; sync files=312, longest=0.005 s, average=0.001 s; distance=4679 kB, estimate=4679 kB; lsn=0/1C85318, redo lsn=0/1C85318
+[62528]  LOG:  database system is shut down

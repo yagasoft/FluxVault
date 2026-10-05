@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9c69cc92-ed07-46f4-bf44-d2a2926af064" name="os008@OS008-HOME 2026-10-05 13:12:32" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T13:12:32.7350351+03:00" queuing="2026-10-05T13:12:32.7350353+03:00" start="2026-10-05T13:12:29.3960546+03:00" finish="2026-10-05T13:12:42.9806809+03:00" />
+  <TestSettings name="default" id="18d80afd-cec2-4ec8-bb30-5d282217ee26">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_13_12_32" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="655039c5-d9fd-47ac-bd98-4746bb1d6814" testId="79f76824-365e-c0fb-229c-c49d5e58a806" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled&quot;)" computerName="OS008-HOME" duration="00:00:00.6521851" startTime="2026-10-05T13:12:37.8313093+03:00" endTime="2026-10-05T13:12:38.4836517+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="655039c5-d9fd-47ac-bd98-4746bb1d6814" />
+    <UnitTestResult executionId="8c55397a-70b3-49b3-9532-41aad83cb58d" testId="59d4d14d-95ab-f865-deca-e043f49db8fc" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled-after-effect&quot;)" computerName="OS008-HOME" duration="00:00:01.9475487" startTime="2026-10-05T13:12:29.9422218+03:00" endTime="2026-10-05T13:12:31.8976984+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c55397a-70b3-49b3-9532-41aad83cb58d" />
+    <UnitTestResult executionId="6118ba96-8924-433a-8097-c723d6699a13" testId="7f97e196-6596-0d46-b3d5-d5363b344592" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;success&quot;)" computerName="OS008-HOME" duration="00:00:01.5097293" startTime="2026-10-05T13:12:34.7239829+03:00" endTime="2026-10-05T13:12:36.2339491+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6118ba96-8924-433a-8097-c723d6699a13" />
+    <UnitTestResult executionId="995deb8f-4ddd-466d-bc49-bf947781bd7b" testId="6a71e3d0-0332-6b68-cab2-e1fd6addf1e1" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;publication-failure&quot;)" computerName="OS008-HOME" duration="00:00:01.4325006" startTime="2026-10-05T13:12:33.2918253+03:00" endTime="2026-10-05T13:12:34.7237858+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="995deb8f-4ddd-466d-bc49-bf947781bd7b" />
+    <UnitTestResult executionId="ee930246-2b7b-4cf3-9f0b-23cd3396fd3d" testId="93dac4d0-7b03-c71a-a296-84a523a9ffa1" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;wrong-binding&quot;)" computerName="OS008-HOME" duration="00:00:01.3922547" startTime="2026-10-05T13:12:31.9060053+03:00" endTime="2026-10-05T13:12:33.2909473+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ee930246-2b7b-4cf3-9f0b-23cd3396fd3d" />
+    <UnitTestResult executionId="adad0c28-e5b8-4419-a67d-549d2b79d98d" testId="b26b202c-baa3-7026-e3b7-7ad830c4a1ff" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;sql-failure&quot;)" computerName="OS008-HOME" duration="00:00:01.4884119" startTime="2026-10-05T13:12:41.4367171+03:00" endTime="2026-10-05T13:12:42.9249658+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="adad0c28-e5b8-4419-a67d-549d2b79d98d" />
+    <UnitTestResult executionId="192ea8e8-ee8c-4995-a3ee-fc1243b65bc3" testId="8ee94c8e-66da-b3a2-81ec-c6cfe2bcb070" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;missing-backend&quot;)" computerName="OS008-HOME" duration="00:00:02.9520453" startTime="2026-10-05T13:12:38.4839537+03:00" endTime="2026-10-05T13:12:41.4361994+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="192ea8e8-ee8c-4995-a3ee-fc1243b65bc3" />
+    <UnitTestResult executionId="2596b6b0-4e28-406b-bdf1-0fd727551186" testId="0d3c1c63-22fd-00d0-b999-df957aff11df" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled-after-open&quot;)" computerName="OS008-HOME" duration="00:00:01.5967906" startTime="2026-10-05T13:12:36.2341603+03:00" endTime="2026-10-05T13:12:37.8310899+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2596b6b0-4e28-406b-bdf1-0fd727551186" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;success&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="7f97e196-6596-0d46-b3d5-d5363b344592">
+      <Execution id="6118ba96-8924-433a-8097-c723d6699a13" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="79f76824-365e-c0fb-229c-c49d5e58a806">
+      <Execution id="655039c5-d9fd-47ac-bd98-4746bb1d6814" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;publication-failure&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="6a71e3d0-0332-6b68-cab2-e1fd6addf1e1">
+      <Execution id="995deb8f-4ddd-466d-bc49-bf947781bd7b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;missing-backend&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="8ee94c8e-66da-b3a2-81ec-c6cfe2bcb070">
+      <Execution id="192ea8e8-ee8c-4995-a3ee-fc1243b65bc3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled-after-effect&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="59d4d14d-95ab-f865-deca-e043f49db8fc">
+      <Execution id="8c55397a-70b3-49b3-9532-41aad83cb58d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled-after-open&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="0d3c1c63-22fd-00d0-b999-df957aff11df">
+      <Execution id="2596b6b0-4e28-406b-bdf1-0fd727551186" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;wrong-binding&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="93dac4d0-7b03-c71a-a296-84a523a9ffa1">
+      <Execution id="ee930246-2b7b-4cf3-9f0b-23cd3396fd3d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;sql-failure&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="b26b202c-baa3-7026-e3b7-7ad830c4a1ff">
+      <Execution id="adad0c28-e5b8-4419-a67d-549d2b79d98d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="79f76824-365e-c0fb-229c-c49d5e58a806" executionId="655039c5-d9fd-47ac-bd98-4746bb1d6814" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="59d4d14d-95ab-f865-deca-e043f49db8fc" executionId="8c55397a-70b3-49b3-9532-41aad83cb58d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f97e196-6596-0d46-b3d5-d5363b344592" executionId="6118ba96-8924-433a-8097-c723d6699a13" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6a71e3d0-0332-6b68-cab2-e1fd6addf1e1" executionId="995deb8f-4ddd-466d-bc49-bf947781bd7b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="93dac4d0-7b03-c71a-a296-84a523a9ffa1" executionId="ee930246-2b7b-4cf3-9f0b-23cd3396fd3d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b26b202c-baa3-7026-e3b7-7ad830c4a1ff" executionId="adad0c28-e5b8-4419-a67d-549d2b79d98d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ee94c8e-66da-b3a2-81ec-c6cfe2bcb070" executionId="192ea8e8-ee8c-4995-a3ee-fc1243b65bc3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d3c1c63-22fd-00d0-b999-df957aff11df" executionId="2596b6b0-4e28-406b-bdf1-0fd727551186" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:13.19]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

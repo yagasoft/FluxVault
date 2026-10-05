@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="11177176-10c9-475e-8598-35ec660fc8fc" name="os008@OS008-HOME 2026-10-05 13:01:31" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T13:01:31.2974208+03:00" queuing="2026-10-05T13:01:31.2974211+03:00" start="2026-10-05T13:01:27.9251160+03:00" finish="2026-10-05T13:01:37.3382438+03:00" />
+  <TestSettings name="default" id="a229a2f4-12ac-470f-8599-c4eb49d7dab8">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_13_01_31" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="4f762f1f-7c80-4ae8-9f6c-77871265e3da" testId="c74bc422-6190-5f94-2c81-6a98c19dbe3a" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;daemon-executable&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.1832305" startTime="2026-10-05T13:01:32.5064656+03:00" endTime="2026-10-05T13:01:33.6896700+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f762f1f-7c80-4ae8-9f6c-77871265e3da" />
+    <UnitTestResult executionId="763aad5c-9fe5-4b33-a7e7-0788f4778b5c" testId="5cbe48a2-1782-1684-0540-0e474c35bbad" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;unprotected-template&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.2357084" startTime="2026-10-05T13:01:30.0413578+03:00" endTime="2026-10-05T13:01:31.2662234+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="763aad5c-9fe5-4b33-a7e7-0788f4778b5c" />
+    <UnitTestResult executionId="5fd0bc45-7489-4b29-b444-87ab2e4877df" testId="d40814be-089b-6b6a-cbad-55a044ef5bf0" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;protected-template&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:01.5042521" startTime="2026-10-05T13:01:28.5087173+03:00" endTime="2026-10-05T13:01:30.0291232+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5fd0bc45-7489-4b29-b444-87ab2e4877df">
+      <Output>
+        <ErrorInfo>
+          <Message>{"Failure":"The term 'Assert-CommissionPostgresqlPath' is not recognized as a name of a cmdlet, function, script file, or executable program.\r\nCheck the spelling of the name, or if a path was included, verify that the path is correct and try again.","Accepted":false}</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 74&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="65747777-9902-44e6-b9a1-6da3509f0cba" testId="fd1a5b2f-da13-1af1-8793-9d4bec8b8c81" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;volume-delete&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:01.1958349" startTime="2026-10-05T13:01:36.0790663+03:00" endTime="2026-10-05T13:01:37.2746348+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="65747777-9902-44e6-b9a1-6da3509f0cba">
+      <Output>
+        <ErrorInfo>
+          <Message>{"Accepted":false,"Failure":"The term 'Assert-CommissionPostgresqlPath' is not recognized as a name of a cmdlet, function, script file, or executable program.\r\nCheck the spelling of the name, or if a path was included, verify that the path is correct and try again."}</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 74&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="90dcd209-4f72-4d7a-9250-8693084305e5" testId="947883d5-69d4-47b1-696b-866f69947ef4" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;ancestor-delete&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.1948292" startTime="2026-10-05T13:01:33.6899087+03:00" endTime="2026-10-05T13:01:34.8849307+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90dcd209-4f72-4d7a-9250-8693084305e5" />
+    <UnitTestResult executionId="4759ae56-f322-45d1-a18f-303947589e4d" testId="5d15d3d4-331b-b909-d05a-c6190bc44836" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;creator-owner&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:01.1925062" startTime="2026-10-05T13:01:34.8851642+03:00" endTime="2026-10-05T13:01:36.0781949+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4759ae56-f322-45d1-a18f-303947589e4d">
+      <Output>
+        <ErrorInfo>
+          <Message>{"Failure":"The term 'Assert-CommissionPostgresqlPath' is not recognized as a name of a cmdlet, function, script file, or executable program.\r\nCheck the spelling of the name, or if a path was included, verify that the path is correct and try again.","Accepted":false}</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 74&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fcd6f7ab-d446-4292-af3c-7f0c68ba184c" testId="d5af7b71-ef36-516f-9bc8-01f1721be810" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;ancestor-delete-child&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.2397850" startTime="2026-10-05T13:01:31.2678203+03:00" endTime="2026-10-05T13:01:32.5061234+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fcd6f7ab-d446-4292-af3c-7f0c68ba184c" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;ancestor-delete-child&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="d5af7b71-ef36-516f-9bc8-01f1721be810">
+      <Execution id="fcd6f7ab-d446-4292-af3c-7f0c68ba184c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;unprotected-template&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5cbe48a2-1782-1684-0540-0e474c35bbad">
+      <Execution id="763aad5c-9fe5-4b33-a7e7-0788f4778b5c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;creator-owner&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5d15d3d4-331b-b909-d05a-c6190bc44836">
+      <Execution id="4759ae56-f322-45d1-a18f-303947589e4d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;ancestor-delete&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="947883d5-69d4-47b1-696b-866f69947ef4">
+      <Execution id="90dcd209-4f72-4d7a-9250-8693084305e5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;protected-template&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="d40814be-089b-6b6a-cbad-55a044ef5bf0">
+      <Execution id="5fd0bc45-7489-4b29-b444-87ab2e4877df" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;volume-delete&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="fd1a5b2f-da13-1af1-8793-9d4bec8b8c81">
+      <Execution id="65747777-9902-44e6-b9a1-6da3509f0cba" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;daemon-executable&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="c74bc422-6190-5f94-2c81-6a98c19dbe3a">
+      <Execution id="4f762f1f-7c80-4ae8-9f6c-77871265e3da" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c74bc422-6190-5f94-2c81-6a98c19dbe3a" executionId="4f762f1f-7c80-4ae8-9f6c-77871265e3da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5cbe48a2-1782-1684-0540-0e474c35bbad" executionId="763aad5c-9fe5-4b33-a7e7-0788f4778b5c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d40814be-089b-6b6a-cbad-55a044ef5bf0" executionId="5fd0bc45-7489-4b29-b444-87ab2e4877df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd1a5b2f-da13-1af1-8793-9d4bec8b8c81" executionId="65747777-9902-44e6-b9a1-6da3509f0cba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="947883d5-69d4-47b1-696b-866f69947ef4" executionId="90dcd209-4f72-4d7a-9250-8693084305e5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d15d3d4-331b-b909-d05a-c6190bc44836" executionId="4759ae56-f322-45d1-a18f-303947589e4d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5af7b71-ef36-516f-9bc8-01f1721be810" executionId="fcd6f7ab-d446-4292-af3c-7f0c68ba184c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="4" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.73]       {"Failure":"The term 'Assert-CommissionPostgresqlPath' is not recognized as a name of a cmdlet, function, script file, or executable program.\r\nCheck the spelling of the name, or if a path was included, verify that the path is correct and try again.","Accepted":false}&#xD;
+[xUnit.net 00:00:01.73]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.73]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(74,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:01.73]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.77]       {"Failure":"The term 'Assert-CommissionPostgresqlPath' is not recognized as a name of a cmdlet, function, script file, or executable program.\r\nCheck the spelling of the name, or if a path was included, verify that the path is correct and try again.","Accepted":false}&#xD;
+[xUnit.net 00:00:07.77]       Stack Trace:&#xD;
+[xUnit.net 00:00:07.77]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(74,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:07.77]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.97]       {"Accepted":false,"Failure":"The term 'Assert-CommissionPostgresqlPath' is not recognized as a name of a cmdlet, function, script file, or executable program.\r\nCheck the spelling of the name, or if a path was included, verify that the path is correct and try again."}&#xD;
+[xUnit.net 00:00:08.97]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.97]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(74,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:08.97]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.98]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T13:01:30.0317787+03:00">
+        <Text>[xUnit.net 00:00:01.73]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: "protected-template", accepted: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T13:01:36.0786376+03:00">
+        <Text>[xUnit.net 00:00:07.77]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: "creator-owner", accepted: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T13:01:37.2750622+03:00">
+        <Text>[xUnit.net 00:00:08.97]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: "volume-delete", accepted: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

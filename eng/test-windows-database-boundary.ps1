@@ -4,6 +4,7 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [string]$FixtureId = '43a32654d27a4e8fb0b20012702300af',
     [switch]$FreshReference,
     [switch]$ValidatePreparedAuthentication,
+    [ValidateSet('Admission','MidWrite','BeforeTruncate')][string]$AuthenticationInterruption='Admission',
     [switch]$RunCatalogueTests,
     [switch]$RunMetadataTests,
     [switch]$RunCallerFileTests,
@@ -127,6 +128,93 @@ function Invoke-OwnedTool {
     }
 }
 
+function Invoke-PreparedAuthenticationTasks {
+    param([hashtable]$Context,[switch]$InterruptOperator)
+    $phase=if($InterruptOperator){'interrupted-'+$AuthenticationInterruption}else{'success'}
+    $references=[Collections.Generic.List[object]]::new();$tasks=[Collections.Generic.List[object]]::new()
+    $operator=$null;$operatorJobName=$null
+    $jobName='authentication-'+$phase
+    $jobIdentity=@{KernelName=('Global\FluxVault.NEXT002.'+[guid]::NewGuid().ToString('N'));OwnerSid=$Context.OperatorSid}
+    Add-VaultFixtureIntent $fixtureJournal Job $jobName $jobIdentity
+    $fixtureJobs[$jobName]=[FluxVault.Fixtures.OwnedWindowsJob]::Create($jobIdentity.KernelName,$actors.System)
+    Set-VaultFixtureResourceState $fixtureJournal Job $jobName Created $jobIdentity
+    $Context.WorkerJob=$jobIdentity;$Context.CleanupRequired=$true
+    try {
+        if($InterruptOperator) {
+            $operatorJobName='authentication-operator';$operatorJobIdentity=@{KernelName=('Global\FluxVault.NEXT002.'+[guid]::NewGuid().ToString('N'));OwnerSid=$Context.OperatorSid}
+            Add-VaultFixtureIntent $fixtureJournal Job $operatorJobName $operatorJobIdentity
+            $fixtureJobs[$operatorJobName]=[FluxVault.Fixtures.OwnedWindowsJob]::Create($operatorJobIdentity.KernelName,$Context.OperatorSid)
+            Set-VaultFixtureResourceState $fixtureJournal Job $operatorJobName Created $operatorJobIdentity
+            Add-VaultFixtureIntent $fixtureJournal Process 'authentication-operator'
+            $start=[Diagnostics.ProcessStartInfo]::new($fixturePwsh);$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.WorkingDirectory=$Context.WorkRoot
+            foreach($arg in @('-NoProfile','-NonInteractive','-Command','Start-Sleep -Seconds 120')){$start.ArgumentList.Add($arg)}
+            $operator=[Diagnostics.Process]::Start($start);$fixtureJobs[$operatorJobName].Assign($operator)
+            $Context.OperatorIdentity=Get-VaultFixtureProcessIdentity $operator
+            Set-VaultFixtureResourceState $fixtureJournal Process 'authentication-operator' Created $Context.OperatorIdentity
+        } else {$Context.OperatorIdentity=$fixtureJournal.RunnerIdentity}
+        $contextPath=Join-Path $Context.WorkRoot 'context.json'
+        $Context | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $contextPath
+        $contextHash=(Get-FileHash -LiteralPath $contextPath).Hash
+        $scheduler=New-Object -ComObject 'Schedule.Service';$references.Add($scheduler);$scheduler.Connect()
+        $folder=$scheduler.GetFolder('\');$references.Add($folder)
+        foreach($kind in @('cleanup','worker')) {
+            $taskName='FV-NEXT002-'+$FixtureId+'-'+$phase+'-'+$kind
+            if(Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue){throw 'Authentication task collision.'}
+            $arguments='-NoProfile -NonInteractive -File "'+(Join-Path $Context.WorkRoot ('commission-authentication-'+$kind+'.ps1'))+'" -ContextPath "'+$contextPath+'" -ContextSha256 '+$contextHash
+            $action=New-ScheduledTaskAction -Execute $fixturePwsh -Argument $arguments
+            $settings=New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Seconds 180) -MultipleInstances IgnoreNew
+            Add-VaultFixtureIntent $fixtureJournal Task $taskName
+            Register-ScheduledTask -TaskName $taskName -Action $action -Settings $settings -User SYSTEM -RunLevel Highest -Description $fixtureDescription | Out-Null
+            Set-VaultFixtureResourceState $fixtureJournal Task $taskName Created @{DefinitionSha256=(Get-TaskHash $taskName);InstanceId=''}
+            $registered=$folder.GetTask($taskName);$references.Add($registered)
+            $instance=$registered.Run($null);$references.Add($instance)
+            Set-VaultFixtureTaskInstance $fixtureJournal $taskName (Get-TaskHash $taskName) $instance.InstanceGuid
+            $tasks.Add(@{Name=$taskName;Registered=$registered})
+            $ready=Join-Path $Context.WorkRoot $(if($kind -eq 'cleanup'){'cleanup-ready.json'}elseif($InterruptOperator){'interruption-ready'}else{'authentication-worker.json'})
+            $deadline=[DateTime]::UtcNow.AddSeconds(25)
+            while(-not(Test-Path -LiteralPath $ready)) {
+                $early=Join-Path $Context.WorkRoot ($kind+'-error.json')
+                if(Test-Path -LiteralPath $early){throw ('Authentication '+$kind+' task failed before readiness: '+(Get-Content -LiteralPath $early -Raw))}
+                if([DateTime]::UtcNow -gt $deadline){throw ('Authentication '+$kind+' readiness deadline exceeded.')}
+                Start-Sleep -Milliseconds 100
+            }
+            if($kind -eq 'worker' -and $InterruptOperator) {
+                $observedName=if($AuthenticationInterruption -eq 'Admission'){'pg_ident.conf'}else{'pg_hba.conf'}
+                $observation=[IO.FileStream]::new((Join-Path $Context.DataDirectory $observedName),'Open','Read','ReadWrite')
+                try{if($observation.Length -gt 1048576){throw 'Interrupted authentication observation exceeds its bound.'};$observedBytes=[byte[]]::new([int]$observation.Length);$observation.ReadExactly($observedBytes);$observedHash=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($observedBytes))}finally{$observation.Dispose()}
+                if($AuthenticationInterruption -eq 'Admission' -and $observedHash -cne $Context.Prepared.TemporaryIdent.Sha256){throw 'Forced exit did not occur while the temporary administrator map was active.'}
+                if($AuthenticationInterruption -ne 'Admission' -and $observedHash -cin @($Context.Prepared.TemporaryHba.Sha256,$Context.Prepared.FinalHba.Sha256)){throw 'Write interruption did not leave the intended torn transition.'}
+                Stop-VaultFixtureProcessTree $Context.OperatorIdentity | Out-Null
+                if(-not $operator.WaitForExit(5000)){throw 'Forced operator remains.'}
+                Set-VaultFixtureResourceState $fixtureJournal Process 'authentication-operator' Removed $Context.OperatorIdentity
+            }
+        }
+        $resultPath=Join-Path $Context.WorkRoot 'cleanup-completed.json';$deadline=[DateTime]::UtcNow.AddSeconds(35)
+        while(-not(Test-Path -LiteralPath $resultPath)) {
+            $failed=Join-Path $Context.WorkRoot 'cleanup-failed.json'
+            if(Test-Path -LiteralPath $failed){throw ('Independent cleanup failed: '+(Get-Content -LiteralPath $failed -Raw))}
+            if([DateTime]::UtcNow -gt $deadline){throw 'Independent authentication cleanup exceeded its deadline.'}
+            Start-Sleep -Milliseconds 100
+        }
+        $result=Get-Content -LiteralPath $resultPath -Raw | ConvertFrom-Json -AsHashtable -Depth 8
+        if($result.ContextSha256 -cne $contextHash -or -not $result.AdmissionRetired -or -not $result.OwnedJobJoined -or $result.CanActivate -eq [bool]$InterruptOperator){throw 'Independent cleanup did not establish the expected activation/retirement contract.'}
+        foreach($task in $tasks){Wait-SystemTaskIdle $task.Registered;if((Get-ScheduledTaskInfo -TaskName $task.Name).LastTaskResult -ne 0 -and $task.Name -like '*cleanup'){throw 'Independent cleanup task failed after publishing its receipt.'}}
+        if($fixtureJobs[$jobName].ProcessIds().Count){throw 'Authentication job retains processes after independent cleanup.'}
+        foreach($file in Get-ChildItem -LiteralPath $Context.WorkRoot -File | Where-Object {$_.Name -match '^(authentication|cleanup|administrator|commission-processes|interrupted-pg_|write-[0-9a-f]+-(Old|New)\.bin)'}) {
+            Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $fixtureEvidence ($phase+'-'+$file.Name))
+        }
+        return $result
+    } finally {
+        Stop-OwnedJob (@($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Job' -and $_.Name -eq $jobName})[0])
+        if($null -ne $operatorJobName){Stop-OwnedJob (@($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Job' -and $_.Name -eq $operatorJobName})[0])}
+        if($null -ne $operator){try{if(-not $operator.WaitForExit(5000)){throw 'Owned operator remains after containment cleanup.'}}finally{$operator.Dispose()}}
+        foreach($task in $tasks){if((Get-TaskHash $task.Name) -cne (@($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Task' -and $_.Name -eq $task.Name})[0]).Identity.DefinitionSha256){throw 'Owned authentication task changed.'};Stop-ScheduledTask -TaskName $task.Name;Wait-SystemTaskIdle $task.Registered;Unregister-ScheduledTask -TaskName $task.Name -Confirm:$false;if(Get-ScheduledTask -TaskName $task.Name -ErrorAction SilentlyContinue){throw 'Owned authentication task remains.'};Set-VaultFixtureResourceState $fixtureJournal Task $task.Name Removed (@($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Task' -and $_.Name -eq $task.Name})[0]).Identity}
+        $processLog=Join-Path $Context.WorkRoot 'commission-processes.jsonl'
+        if(Test-Path -LiteralPath $processLog){foreach($line in Get-Content -LiteralPath $processLog){Stop-VaultFixtureProcessTree ($line|ConvertFrom-Json -AsHashtable)|Out-Null}}
+        foreach($reference in $references){if([Runtime.InteropServices.Marshal]::IsComObject($reference)){$null=[Runtime.InteropServices.Marshal]::FinalReleaseComObject($reference)}}
+    }
+}
+
 function Test-PreparedAuthentication {
     param([string]$Connection,[string]$Password)
     # Parse exact proposed files only in this owned cluster, before any actors
@@ -214,6 +302,8 @@ SELECT json_build_object(
     Assert-VaultFixtureTrustedPath $administratorHelper
     Copy-Item -LiteralPath $administratorHelper -Destination (Join-Path $administratorRoot 'commission-administrator.psm1')
     Copy-Item -LiteralPath (Join-Path (Split-Path $administratorHelper) 'commission-authentication.psm1') -Destination (Join-Path $administratorRoot 'commission-authentication.psm1')
+    foreach($name in @('commission-authentication-worker.ps1','commission-authentication-cleanup.ps1')){Copy-Item -LiteralPath (Join-Path (Split-Path $administratorHelper) $name) -Destination (Join-Path $administratorRoot $name)}
+    foreach($name in @('vault-windows-fixture.psm1','owned-windows-job.cs')){Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('fixtures/'+$name)) -Destination (Join-Path $administratorRoot $name)}
     Copy-Item -LiteralPath $sourceSql -Destination (Join-Path $administratorRoot 'create.sql')
     [IO.File]::WriteAllText((Join-Path $administratorRoot 'empty.pgpass'),'')
     $privateRoles=Invoke-OwnedTool (Join-Path $fixtureBin 'psql.exe') @('-X','-w','-A','-t','-v','ON_ERROR_STOP=1','--dbname',$Connection) `
@@ -230,7 +320,7 @@ SELECT json_build_object(
         }
         $privatePrepared[$pair[0]]=@{Path=$path;Sha256=(Get-FileHash -LiteralPath $path).Hash}
     }
-    @{WorkRoot=$administratorRoot;NormalInstallation=$false;OperatorSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;
+    $authenticationContext=@{WorkRoot=$administratorRoot;NormalInstallation=$false;OperatorSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;
         PsqlPath=(Join-Path $fixtureBin 'psql.exe');PgCtlPath=(Join-Path $fixtureBin 'pg_ctl.exe');SqlPath=(Join-Path $administratorRoot 'create.sql');
         SqlSha256=(Get-FileHash -LiteralPath $sourceSql).Hash;ApplicationName=('FluxVault.PreparedSql.'+$FixtureId);
         EmptyPasswordFile=(Join-Path $administratorRoot 'empty.pgpass');
@@ -239,16 +329,37 @@ SELECT json_build_object(
         ServiceConnection="host=127.0.0.1 port=$fixturePort dbname=fluxvault_single user=fluxvault_service connect_timeout=3 require_auth=sspi";
         DataDirectory=$fixtureData;Role='postgres';Database='postgres';Port=$fixturePort;Postmaster=$before;
         LegacyRole='fv_gate_monitor';ServiceRole='fluxvault_service';ServiceDatabase='fluxvault_single';AdminMap=$adminMap;
-        LogPath=(Join-Path $fixtureRoot 'postgres.log');OriginalHashes=@{'pg_hba.conf'=(Get-FileHash -LiteralPath $hba).Hash;'pg_ident.conf'=(Get-FileHash -LiteralPath $ident).Hash};Prepared=$privatePrepared} |
-        ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $administratorRoot 'context.json')
+        LogPath=(Join-Path $fixtureRoot 'postgres.log');OriginalHashes=@{'pg_hba.conf'=(Get-FileHash -LiteralPath $hba).Hash;'pg_ident.conf'=(Get-FileHash -LiteralPath $ident).Hash};Prepared=$privatePrepared}
     try {
-        $create=Invoke-SystemActor '127.0.0.1' 'CommissionAuthentication'
-        $proof=@($create.Results | Where-Object Kind -eq 'CommissionAuthentication')
-        if($proof.Count -ne 1 -or -not $proof[0].Receipt.Accepted){throw 'Owned SYSTEM authentication procedure did not complete.'}
-        $administrator=$proof[0].Receipt.Administrator
+        $cleanup=Invoke-PreparedAuthenticationTasks $authenticationContext
+        $proof=Get-Content -LiteralPath (Join-Path $administratorRoot 'authentication-completed.json') -Raw | ConvertFrom-Json -AsHashtable -Depth 8
+        if(-not $cleanup.FinalRetained -or -not $cleanup.CanActivate -or -not $proof.Accepted){throw 'Owned SYSTEM authentication/independent cleanup did not preserve successful final access.'}
+        $administrator=$proof.Administrator
         Copy-Item -LiteralPath (Join-Path $administratorRoot 'authentication-completed.json') -Destination (Join-Path $fixtureEvidence 'authentication-completed.json')
         Copy-Item -LiteralPath (Join-Path $administratorRoot 'commission-processes.jsonl') -Destination (Join-Path $fixtureEvidence 'commission-processes.jsonl')
         Copy-Item -LiteralPath (Join-Path $administratorRoot 'administrator-baseline.json') -Destination (Join-Path $fixtureEvidence 'administrator-baseline.json')
+        $interruptedRoot=Join-Path $fixtureRoot 'administrator-interrupted';New-VaultFixtureProtectedDirectory $interruptedRoot
+        foreach($file in Get-ChildItem -LiteralPath $administratorRoot -File | Where-Object {($_.Name -match '\.(psm1|ps1|cs|conf)$' -and $_.Name -notlike 'original-*') -or $_.Name -in @('create.sql','empty.pgpass')}){Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $interruptedRoot $file.Name)}
+        $faultWorker=Join-Path $interruptedRoot 'commission-authentication-worker.ps1'
+        $faultCode=[IO.File]::ReadAllText($faultWorker)
+        if($AuthenticationInterruption -eq 'Admission') {
+            $faultCode=$faultCode.Replace('Invoke-CommissionAuthentication $context |', '& $auth {param($context) function Invoke-CommissionAdministrator {param($Context) [IO.File]::WriteAllText((Join-Path $Context.WorkRoot ''interruption-ready''),''temporary admission reached'');Start-Sleep -Seconds 120;throw ''Unreachable owned interruption''};Invoke-CommissionAuthentication $context} $context |')
+        } else {
+            $administrator|ConvertTo-Json -Depth 8|Set-Content -LiteralPath (Join-Path $interruptedRoot 'proof-administrator.json')
+            $faultCode=$faultCode.Replace('Invoke-CommissionAuthentication $context |', '& $auth {param($context) function Invoke-CommissionAdministrator {param($Context) Get-Content -LiteralPath (Join-Path $Context.WorkRoot ''proof-administrator.json'') -Raw|ConvertFrom-Json -AsHashtable -Depth 8};Invoke-CommissionAuthentication $context} $context |')
+            $faultAuth=Join-Path $interruptedRoot 'commission-authentication.psm1';$faultAuthCode=[IO.File]::ReadAllText($faultAuth)
+            $pause='if($Name -eq ''pg_hba.conf'' -and [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($Bytes)) -ceq $Context.Prepared.FinalHba.Sha256){$Stream.Flush($true);[IO.File]::WriteAllText((Join-Path $Context.WorkRoot ''interruption-ready''),''owned interrupted write'');Start-Sleep -Seconds 120;throw ''Unreachable owned write interruption''};'
+            if($AuthenticationInterruption -eq 'MidWrite'){$faultAuthCode=$faultAuthCode.Replace('$Stream.Write($Bytes,$offset,$count)',('$Stream.Write($Bytes,$offset,$count);'+$pause))}
+            else{$faultAuthCode=$faultAuthCode.Replace('$Stream.SetLength($Bytes.Length)',($pause+'$Stream.SetLength($Bytes.Length)'))}
+            [IO.File]::WriteAllText($faultAuth,$faultAuthCode)
+        }
+        [IO.File]::WriteAllText($faultWorker,$faultCode)
+        [IO.File]::WriteAllBytes($ident,$originalIdent);[IO.File]::WriteAllBytes($hba,[Text.UTF8Encoding]::new($false).GetBytes($monitor+[Text.UTF8Encoding]::new($false).GetString($originalHba)))
+        $interruptedContext=$authenticationContext.Clone();$interruptedContext.WorkRoot=$interruptedRoot
+        foreach($key in @('SqlPath','EmptyPasswordFile')){$interruptedContext[$key]=Join-Path $interruptedRoot (Split-Path $authenticationContext[$key] -Leaf)}
+        $interruptedContext.Prepared=@{};foreach($entry in $privatePrepared.GetEnumerator()){$interruptedContext.Prepared[$entry.Key]=@{Path=(Join-Path $interruptedRoot (Split-Path $entry.Value.Path -Leaf));Sha256=$entry.Value.Sha256}}
+        $interrupted=Invoke-PreparedAuthenticationTasks $interruptedContext -InterruptOperator
+        if($interrupted.FinalRetained -or $interrupted.CanActivate -or (Get-FileHash -LiteralPath $hba).Hash -cne $authenticationContext.OriginalHashes['pg_hba.conf'] -or (Get-FileHash -LiteralPath $ident).Hash -cne $authenticationContext.OriginalHashes['pg_ident.conf']){throw 'Forced operator exit failed exact original restoration/activation refusal.'}
     } finally {
         # Restore only the same owned cluster for the existing remaining proof.
         [IO.File]::WriteAllBytes($ident,$originalIdent);[IO.File]::WriteAllBytes($hba,$originalHba)
@@ -745,7 +856,8 @@ function Invoke-CorrelatedActor {
 }
 
 function Get-TaskHash {
-    $bytes=[Text.Encoding]::UTF8.GetBytes((Export-ScheduledTask -TaskName $fixtureTask))
+    param([string]$TaskName=$fixtureTask)
+    $bytes=[Text.Encoding]::UTF8.GetBytes((Export-ScheduledTask -TaskName $TaskName))
     return [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($bytes))
 }
 
@@ -818,7 +930,7 @@ function Remove-OwnedFixture {
         switch($resource.Kind) {
             Account { $item=Get-LocalUser -Name $resource.Name -ErrorAction SilentlyContinue; if($null -ne $item){if($item.Description -ne $fixtureDescription){throw 'Account intent collision.'};$identity=@{Sid=$item.SID.Value}} }
             Group { $item=Get-LocalGroup -Name $resource.Name -ErrorAction SilentlyContinue; if($null -ne $item){if($item.Description -ne $fixtureDescription){throw 'Group intent collision.'};$identity=@{Sid=$item.SID.Value}} }
-            Task { $item=Get-ScheduledTask -TaskName $fixtureTask -ErrorAction SilentlyContinue; if($null -ne $item){if($item.Description -ne $fixtureDescription -or $item.Actions.Execute -ne $fixturePwsh -or -not $item.Actions.Arguments.Contains($fixtureRoot)){throw 'Task intent collision.'};$identity=@{DefinitionSha256=(Get-TaskHash);InstanceId=''}} }
+            Task { $item=Get-ScheduledTask -TaskName $resource.Name -ErrorAction SilentlyContinue; if($null -ne $item){if($item.Description -ne $fixtureDescription -or $item.Actions.Execute -ne $fixturePwsh -or -not $item.Actions.Arguments.Contains($fixtureRoot)){throw 'Task intent collision.'};$identity=@{DefinitionSha256=(Get-TaskHash $resource.Name);InstanceId=''}} }
             Postmaster { $script:fixturePort=[int]$resource.Identity.Port; $identity=Get-OwnedPostmaster }
             Job {
                 $job=[FluxVault.Fixtures.OwnedWindowsJob]::Open($resource.Identity.KernelName,$resource.Identity.OwnerSid)
@@ -852,13 +964,13 @@ function Remove-OwnedFixture {
     foreach($resource in @($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Job' -and $_.Name -ne 'Cluster' -and $_.State -eq 'Created'})){Stop-OwnedJob $resource}
     $tasks=@($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Task' -and $_.State -eq 'Created'})
     foreach($resource in $tasks) {
-        $registered=Get-ScheduledTask -TaskName $fixtureTask -ErrorAction SilentlyContinue
-        if($null -ne $registered){if((Get-TaskHash) -ne $resource.Identity.DefinitionSha256){throw 'Task definition changed before cleanup.'};Stop-ScheduledTask -TaskName $fixtureTask}
+        $registered=Get-ScheduledTask -TaskName $resource.Name -ErrorAction SilentlyContinue
+        if($null -ne $registered){if((Get-TaskHash $resource.Name) -ne $resource.Identity.DefinitionSha256){throw 'Task definition changed before cleanup.'};Stop-ScheduledTask -TaskName $resource.Name}
         foreach($log in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'output-System') -Filter '*-processes.jsonl') {
             Join-ActorProcesses System ($log.BaseName.Replace('-processes',''))
         }
-        if($null -ne $registered){Unregister-ScheduledTask -TaskName $fixtureTask -Confirm:$false}
-        if(Get-ScheduledTask -TaskName $fixtureTask -ErrorAction SilentlyContinue){throw 'Task remains.'}
+        if($null -ne $registered){Unregister-ScheduledTask -TaskName $resource.Name -Confirm:$false}
+        if(Get-ScheduledTask -TaskName $resource.Name -ErrorAction SilentlyContinue){throw 'Task remains.'}
         Set-VaultFixtureResourceState $fixtureJournal Task $resource.Name Removed $resource.Identity
     }
     foreach($resource in @($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Process' -and $_.State -eq 'Created'})) {

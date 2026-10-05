@@ -1,0 +1,6 @@
+{
+  "Failure": "Authentication worker task failed before readiness: {\"Error\":\"Exception calling \\\".ctor\\\" with \\\"4\\\" argument(s): \\\"The file 'C:\\\\ProgramData\\\\FluxVault.Tests\\\\NEXT002\\\\b0130cdd28604cfb97a9a6669bb2d1d4\\\\administrator-interrupted\\\\original-pg_hba.conf' already exists.\\\"\"}",
+  "FailureLocation": "at Invoke-PreparedAuthenticationTasks, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 177\r\nat Test-PreparedAuthentication, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 359\r\nat <ScriptBlock>, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 1200\r\nat <ScriptBlock>, <No file>: line 2",
+  "FixtureId": "b0130cdd28604cfb97a9a6669bb2d1d4",
+  "Observations": []
+}

@@ -14,6 +14,15 @@ namespace FluxVault.Commissioning;
 // No service, database, file content, owner or child descriptor is changed.
 public static class PostgreSqlAncestorAcl
 {
+    public static bool IsVolumeRoot(string path)
+    {
+        var canonical=Path.GetFullPath(path);var root=Path.GetPathRoot(canonical);
+        if(!string.Equals(canonical,root,StringComparison.OrdinalIgnoreCase))return false;
+        var name=new StringBuilder(64);
+        if(!GetVolumeNameForVolumeMountPoint(root,name,(uint)name.Capacity))return false;
+        using var handle=Open(null,"\\??\\"+root,0x120081);Verify(handle,root);
+        return name.ToString().StartsWith("\\\\?\\Volume{",StringComparison.OrdinalIgnoreCase);
+    }
     public static void Replace(string[] paths, string[] expected, string[] desired)
     {
         if(paths.Length!=2 || expected.Length!=2 || desired.Length!=2)
@@ -134,6 +143,7 @@ public static class PostgreSqlAncestorAcl
     [DllImport("kernel32",SetLastError=true)]private static extern bool GetFileInformationByHandleEx(SafeFileHandle file,int kind,out AttributeTag value,int size);
     [DllImport("kernel32",EntryPoint="GetVolumeInformationByHandleW",CharSet=CharSet.Unicode,SetLastError=true)]private static extern bool GetVolumeInformationByHandle(SafeFileHandle file,IntPtr name,uint size,out uint serial,out uint maximum,out uint flags,StringBuilder fs,uint fsSize);
     [DllImport("kernel32",EntryPoint="GetFinalPathNameByHandleW",CharSet=CharSet.Unicode,SetLastError=true)]private static extern uint GetFinalPathNameByHandle(SafeFileHandle file,StringBuilder name,uint size,uint flags);
+    [DllImport("kernel32",EntryPoint="GetVolumeNameForVolumeMountPointW",CharSet=CharSet.Unicode,SetLastError=true)]private static extern bool GetVolumeNameForVolumeMountPoint(string root,StringBuilder name,uint size);
     [DllImport("advapi32",EntryPoint="SetFileSecurityW",CharSet=CharSet.Unicode,SetLastError=true)]private static extern bool SetFileSecurity(string path,uint information,byte[] descriptor);
     [DllImport("advapi32")]private static extern uint GetSecurityInfo(SafeFileHandle file,int kind,uint information,out IntPtr owner,out IntPtr group,out IntPtr dacl,out IntPtr sacl,out IntPtr descriptor);
     [DllImport("advapi32")]private static extern uint GetSecurityDescriptorLength(IntPtr descriptor);

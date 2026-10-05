@@ -9,7 +9,7 @@ function Assert-CommissionPreservationPaths {
     $id=[guid]::Empty
     if(-not [guid]::TryParseExact($Context.InstallationId,'N',[ref]$id) -or $id -eq [guid]::Empty){throw 'Exact preservation identity is required.'}
     if($Context.NormalInstallation -and ($parent -ine 'C:\ProgramData' -or $Context.InstallationId -cne '7871ff7f8d1b404db20771f2e742364f')){throw 'Normal preservation target changed.'}
-    Assert-VaultFixtureTrustedPath $parent
+    if(-not $Context.NormalInstallation){Assert-VaultFixtureTrustedPath $parent}
     foreach($entry in @(@('ActiveRoot','FluxVault'),@('RollbackRoot',('FluxVault.Rollback.'+$Context.InstallationId)),@('FailedRoot',('FluxVault.Failed.'+$Context.InstallationId)))) {
         if([IO.Path]::GetFullPath($Context[$entry[0]]) -ine (Join-Path $parent $entry[1])){throw 'Preservation path escapes the exact approved parent/name.'}
         if(Test-Path -LiteralPath $Context[$entry[0]]) {
@@ -26,6 +26,10 @@ function Move-CommissionLegacyState {
     $destination=if($Phase -eq 'Preserve'){$Context.RollbackRoot}else{$Context.ActiveRoot}
     if(-not(Test-Path -LiteralPath $source)){throw 'Retained legacy root is missing; no move is allowed.'}
     $config=Join-Path $source 'config.json'
+    # ProgramData permits creating ordinary siblings. The retained configuration
+    # anchors this exact legacy directory; its existing guard checks the entire
+    # ancestor chain for replacement/control without adopting legacy contents.
+    if($Context.NormalInstallation){Assert-VaultFixtureTrustedPath $config}
     if((Get-FileHash -LiteralPath $config).Hash -cne $Context.LegacyConfigSha256){throw 'Retained legacy configuration changed; preserve it and reconcile.'}
     $sddl=(Get-Acl -LiteralPath $source).Sddl
     if($Phase -eq 'Preserve') {

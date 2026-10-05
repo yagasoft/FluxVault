@@ -20,7 +20,8 @@ function Invoke-CommissionAdministrator {
     $root=[IO.Path]::TrimEndingDirectorySeparator([IO.Path]::GetFullPath($Context.WorkRoot))
     $operatorSid=if($Context.ContainsKey('OperatorSid')){$Context.OperatorSid}else{$null}
     Assert-VaultFixtureTrustedPath $root -AdditionalTrustedOwnerSid $operatorSid
-    Assert-VaultFixtureTrustedPath $Context.PsqlPath -AdditionalTrustedOwnerSid $operatorSid
+    if($Context.ContainsKey('NormalInstallation') -and $Context.NormalInstallation){Assert-CommissionPostgresqlPath $Context $Context.PsqlPath}
+    else{Assert-VaultFixtureTrustedPath $Context.PsqlPath -AdditionalTrustedOwnerSid $operatorSid}
     Assert-VaultFixtureTrustedPath $Context.SqlPath -AdditionalTrustedOwnerSid $operatorSid
     if((Get-FileHash -LiteralPath $Context.SqlPath).Hash -cne $Context.SqlSha256){throw 'Reviewed commissioning SQL changed; no administrator was opened.'}
     $handshake=Join-Path $root 'administrator-backend.json'
@@ -35,6 +36,8 @@ function Invoke-CommissionAdministrator {
     $start.Environment['PGOPTIONS']='-c statement_timeout=10000 -c lock_timeout=3000'
     $start.Environment['PGAPPNAME']=$Context.ApplicationName
     $start.Environment['PGPASSFILE']=$Context.EmptyPasswordFile
+    $windows=[Environment]::GetFolderPath([Environment+SpecialFolder]::Windows)
+    $start.Environment['PATH']=[string]::Join(';',@([IO.Path]::GetDirectoryName($Context.PsqlPath),(Join-Path $windows 'System32'),$windows))
     # Private fixture credentials stay in memory. The normal supervisor supplies
     # no password environment and uses only the reviewed SYSTEM SSPI mapping.
     if($Context.ContainsKey('Environment')){foreach($key in $Context.Environment.Keys){$start.Environment[$key]=$Context.Environment[$key]}}

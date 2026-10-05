@@ -6,6 +6,183 @@ namespace FluxVault.Integration.Tests;
 // Current-user tooling checks. These do not claim the real A/B/SYSTEM acceptance gates.
 public sealed class WindowsFixtureToolingTests
 {
+    [Theory]
+    [InlineData("temporary", false)]
+    [InlineData("final", true)]
+    [InlineData("final-unconfirmed", false)]
+    [InlineData("unknown-bytes", false)]
+    [InlineData("administrator-survives", false)]
+    [InlineData("torn-write", false)]
+    [InlineData("before-truncate", false)]
+    [InlineData("monitoring-error", false)]
+    public async Task Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(string scenario, bool canActivate)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $helper=Join-Path (Split-Path (Split-Path (Split-Path $module))) 'docs/verification/2026-10-05-next002-rollout-preparation/commission-authentication.psm1'
+            $auth=Import-Module $helper -Force -PassThru;Import-VaultFixtureJobType
+            $scenario='SCENARIO_VALUE';$data=Join-Path $root 'data';New-VaultFixtureProtectedDirectory $data
+            $context=@{NormalInstallation=$false;WorkRoot=$root;DataDirectory=$data;OperatorSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;
+                IdentitySha256='A'*64;Role='postgres';LegacyRole='legacy';Port=54321;ServiceDatabase='single';ServiceRole='service';
+                ApplicationName='owned-cleanup';LegacyConnection='legacy';ServiceConnection='service';Connection='admin';
+                PgCtlPath='owned-reload-tool';
+                Postmaster=@{ProcessId=123;Executable='owned-postmaster';StartedUtc='2026-10-01T00:00:00Z'};OriginalHashes=@{};Prepared=@{}}
+            foreach($name in @('pg_hba.conf','pg_ident.conf')) {
+                [IO.File]::WriteAllText((Join-Path $root ('original-'+$name)),('original-'+$name))
+                $context.OriginalHashes[$name]=(Get-FileHash -LiteralPath (Join-Path $root ('original-'+$name))).Hash
+                [IO.File]::WriteAllText((Join-Path $data $name),$(if($scenario -like 'final*'){'final-'+$name}elseif($scenario -eq 'unknown-bytes'){'external-'+$name}else{'temporary-'+$name}))
+            }
+            foreach($entry in @(@('FinalHba','pg_hba.conf'),@('FinalIdent','pg_ident.conf'),@('TemporaryHba','pg_hba.conf'),@('TemporaryIdent','pg_ident.conf'),@('ProbeIdent','pg_ident.conf'))) {
+                $path=Join-Path $root $entry[0];$prefix=if($entry[0] -like 'Final*'){'final-'}elseif($entry[0] -eq 'ProbeIdent'){'probe-'}else{'temporary-'}
+                [IO.File]::WriteAllText($path,($prefix+$entry[1]));$context.Prepared[$entry[0]]=@{Path=$path;Sha256=(Get-FileHash -LiteralPath $path).Hash}
+            }
+            if($scenario -in @('torn-write','before-truncate')) {
+                $old=[IO.File]::ReadAllBytes($context.Prepared.TemporaryIdent.Path);$new=[IO.File]::ReadAllBytes($context.Prepared.FinalIdent.Path)
+                $prefix=if($scenario -eq 'torn-write'){8}else{$new.Length}
+                $observed=[byte[]]$old.Clone();[Array]::Copy($new,$observed,$prefix)
+                [IO.File]::WriteAllBytes((Join-Path $data 'pg_ident.conf'),$observed)
+                [IO.File]::WriteAllBytes((Join-Path $root 'write-old.bin'),$old);[IO.File]::WriteAllBytes((Join-Path $root 'write-new.bin'),$new)
+                @{ContextSha256=$context.IdentitySha256;File='pg_ident.conf';OldFile='write-old.bin';NewFile='write-new.bin';
+                    OldSha256=$context.Prepared.TemporaryIdent.Sha256;NewSha256=$context.Prepared.FinalIdent.Sha256;OldLength=$old.Length;NewLength=$new.Length}|
+                    ConvertTo-Json|Set-Content (Join-Path $root 'authentication-write-intent.json')
+            }
+            @{Role='postgres';BackendPids=@();Postmaster=$context.Postmaster}|ConvertTo-Json -Depth 5|Set-Content (Join-Path $root 'administrator-baseline.json')
+            if($scenario -eq 'final'){@{Accepted=$true;Postmaster=$context.Postmaster;Administrator=@{Backend=@{backend_pid=42}}}|ConvertTo-Json -Depth 6|Set-Content (Join-Path $root 'authentication-completed.json')}
+            [IO.File]::WriteAllText((Join-Path $root 'partial-database-state'),'retain SQL effects')
+            $jobName='Global\FluxVault.NEXT002.'+[Guid]::NewGuid().ToString('N');$job=[FluxVault.Fixtures.OwnedWindowsJob]::Create($jobName,$context.OperatorSid)
+            $context.WorkerJob=@{KernelName=$jobName;OwnerSid=$context.OperatorSid}
+            $child=[Diagnostics.Process]::Start([Diagnostics.ProcessStartInfo]@{FileName='pwsh';Arguments='-NoProfile -NonInteractive -Command "Start-Sleep -Seconds 30"';UseShellExecute=$false;CreateNoWindow=$true})
+            $failure=$null;$reply=$null
+            try {
+                $job.Assign($child)
+                $reply=& $auth {
+                    param($context,$scenario)
+                    function Assert-CommissionSystemWorker {}
+                    function Assert-CommissionPostmaster {}
+                    function Invoke-CommissionTool {param($Context,$Executable,$Arguments,$InputText) @{ExitCode=0;Joined=$true}}
+                    function Invoke-CommissionQuery {
+                        param($Context,$Connection,$Sql,[switch]$AllowRefusal)
+                        if($Connection -eq 'admin'){return @{ExitCode=2;Output='';Error='denied'}}
+                        $pids=if($script:cleanupScenario -eq 'administrator-survives'){@(777)}else{@()}
+                        @{ExitCode=0;Output=(@{administrator_absent=$true;admin_pids=@($pids);legacy_pids=@();database='single';role='service';port=54321}|ConvertTo-Json -Compress)}
+                    }
+                    $script:cleanupScenario=$scenario
+                    if($scenario -eq 'monitoring-error') {
+                        $Context.OperatorIdentity=@{ProcessId=1};$script:observations=0
+                        function Test-CommissionExactProcess {param($Identity) $script:observations++;if($script:observations -gt 1){throw 'Injected process observation failure'};return $true}
+                        return Invoke-CommissionAuthenticationCleanupWatch $context -TimeoutSeconds 15
+                    }
+                    Complete-CommissionAuthenticationCleanup $context
+                } $context $scenario
+            } catch {$failure=$_.Exception.Message}
+            finally {$joinedBeforeFallback=$child.HasExited;try{if(-not $child.HasExited){$child.Kill($true)};$child.WaitForExit(5000)|Out-Null}finally{$job.Dispose();$child.Dispose()}}
+            $hba=[IO.File]::ReadAllText((Join-Path $data 'pg_hba.conf'));$ident=[IO.File]::ReadAllText((Join-Path $data 'pg_ident.conf'))
+            @{Reply=$reply;Failure=$failure;Completed=(Test-Path -LiteralPath (Join-Path $root 'cleanup-completed.json'));
+                Hba=$hba;Ident=$ident;JoinedBeforeFallback=$joinedBeforeFallback;
+                PartialStateRetained=[IO.File]::ReadAllText((Join-Path $root 'partial-database-state')) -ceq 'retain SQL effects'}|ConvertTo-Json -Compress -Depth 7
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.True(result.GetProperty("PartialStateRetained").GetBoolean());
+        Assert.True(result.GetProperty("JoinedBeforeFallback").GetBoolean(), result.ToString());
+        var shouldComplete = scenario is "temporary" or "final" or "final-unconfirmed" or "torn-write" or "before-truncate" or "monitoring-error";
+        Assert.True(shouldComplete == result.GetProperty("Completed").GetBoolean(), result.ToString());
+        if (shouldComplete)
+        {
+            if (scenario == "monitoring-error")
+            {
+                Assert.Contains("Injected process observation failure", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+            }
+            else
+            {
+                var reply = result.GetProperty("Reply");
+                Assert.True(reply.GetProperty("OwnedJobJoined").GetBoolean());
+                Assert.True(reply.GetProperty("AdmissionRetired").GetBoolean());
+                Assert.Equal(canActivate, reply.GetProperty("CanActivate").GetBoolean());
+            }
+        }
+        else
+        {
+            var failure = result.GetProperty("Failure").GetString();
+            Assert.Contains(scenario == "unknown-bytes" ? "unaccounted bytes" : "unaccounted administrator", failure, StringComparison.OrdinalIgnoreCase);
+        }
+        var prefix = scenario.StartsWith("final", StringComparison.Ordinal) ? "final-" : scenario == "unknown-bytes" ? "external-" : "original-";
+        Assert.Equal(prefix + "pg_hba.conf", result.GetProperty("Hba").GetString());
+        Assert.Equal(prefix + "pg_ident.conf", result.GetProperty("Ident").GetString());
+    }
+
+    [Theory]
+    [InlineData("protected-template", true)]
+    [InlineData("volume-delete", true)]
+    [InlineData("creator-owner", true)]
+    [InlineData("ancestor-delete", false)]
+    [InlineData("ancestor-delete-child", false)]
+    [InlineData("unprotected-template", false)]
+    [InlineData("daemon-executable", false)]
+    public async Task Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(string scenario, bool accepted)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $preparation=Join-Path (Split-Path (Split-Path (Split-Path $module))) 'docs/verification/2026-10-05-next002-rollout-preparation'
+            Add-Type -Path (Join-Path $preparation 'postgresql-ancestor-acl.cs')
+            $auth=Import-Module (Join-Path $preparation 'commission-authentication.psm1') -Force -PassThru
+            $scenario='SCENARIO_VALUE';$owner=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+            $data=Join-Path $root 'data';$bin=Join-Path $root 'bin'
+            foreach($path in @($data,$bin)){New-VaultFixtureProtectedDirectory $path}
+            $hba=Join-Path $data 'pg_hba.conf';$exe=Join-Path $bin 'psql.exe'
+            [IO.File]::WriteAllText($hba,'owned fixture');[IO.File]::WriteAllText($exe,'owned fixture')
+            $map=@{}
+            foreach($virtual in @('D:\','D:\Program Files','D:\Program Files\PostgreSQL','D:\Program Files\PostgreSQL\18')) {
+                $path=Join-Path $root ([Guid]::NewGuid().ToString('N'));New-VaultFixtureProtectedDirectory $path;$map[$virtual]=$path
+            }
+            $map['D:\Program Files\PostgreSQL\18\data']=$data;$map['D:\Program Files\PostgreSQL\18\bin']=$bin
+            $map['D:\Program Files\PostgreSQL\18\data\pg_hba.conf']=$hba;$map['D:\Program Files\PostgreSQL\18\bin\psql.exe']=$exe
+            $higher=$map['D:\Program Files'];$acl=Get-Acl -LiteralPath $higher
+            $rights=if($scenario -eq 'ancestor-delete'){'Modify'}elseif($scenario -eq 'ancestor-delete-child'){'DeleteSubdirectoriesAndFiles'}else{'Write'}
+            $propagation=if($scenario -in @('ancestor-delete','ancestor-delete-child')){'None'}else{'InheritOnly'}
+            $inherit=if($propagation -eq 'None'){'None'}else{'ContainerInherit,ObjectInherit'}
+            $sid=if($scenario -eq 'creator-owner'){'S-1-3-0'}else{'S-1-5-11'}
+            $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new($sid),$rights,$inherit,$propagation,'Allow'))
+            Set-Acl -LiteralPath $higher -AclObject $acl
+            if($scenario -in @('unprotected-template','creator-owner')) {
+                foreach($path in $map.Values | Select-Object -Unique){$acl=Get-Acl -LiteralPath $path;$acl.SetAccessRuleProtection($false,$true);Set-Acl -LiteralPath $path -AclObject $acl}
+            }
+            if($scenario -eq 'volume-delete') {
+                $acl=Get-Acl -LiteralPath $map['D:\'];$acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new('S-1-5-11'),'Modify','None','None','Allow'))
+                Set-Acl -LiteralPath $map['D:\'] -AclObject $acl
+            }
+            if($scenario -eq 'daemon-executable') {
+                $acl=Get-Acl -LiteralPath $exe;$acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new('S-1-5-20'),'Write','Allow'))
+                Set-Acl -LiteralPath $exe -AclObject $acl
+            } else {
+                $acl=Get-Acl -LiteralPath $hba;$acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new('S-1-5-20'),'FullControl','Allow'))
+                Set-Acl -LiteralPath $hba -AclObject $acl
+            }
+            $reply=& $auth {
+                param($map,$owner,$scenario)
+                $script:pgGuardMap=$map;$script:pgGuardOwner=$owner
+                function Get-Item {param($LiteralPath,[switch]$Force) Microsoft.PowerShell.Management\Get-Item -LiteralPath $script:pgGuardMap[$LiteralPath] -Force}
+                function Get-Acl {param($LiteralPath) Microsoft.PowerShell.Security\Get-Acl -LiteralPath $script:pgGuardMap[$LiteralPath]}
+                function Test-Path {param($LiteralPath) $script:pgGuardMap.ContainsKey($LiteralPath)}
+                function Get-CimInstance {param($ClassName,$Filter) @{State='Running';StartName='NT AUTHORITY\NetworkService'}}
+                function Get-LocalGroupMember {param($SID) [pscustomobject]@{SID=[Security.Principal.SecurityIdentifier]::new($script:pgGuardOwner)}}
+                $context=@{NormalInstallation=$true;DataDirectory='D:\Program Files\PostgreSQL\18\data';OperatorSid=$owner}
+                $failure=$null
+                try {
+                    if($scenario -eq 'daemon-executable'){Assert-CommissionPostgresqlPath $context 'D:\Program Files\PostgreSQL\18\bin\psql.exe'}
+                    else{Assert-CommissionPostgresqlPath $context 'D:\Program Files\PostgreSQL\18\data\pg_hba.conf' -Authentication}
+                }catch{$failure=$_.Exception.Message}
+                @{Accepted=$null -eq $failure;Failure=$failure}
+            } $map $owner $scenario
+            $reply | ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.True(accepted == result.GetProperty("Accepted").GetBoolean(), result.ToString());
+        if (!accepted)
+        {
+            var failure = result.GetProperty("Failure").GetString();
+            Assert.False(string.IsNullOrWhiteSpace(failure));
+            Assert.DoesNotContain("not recognized", failure, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
     [Fact]
     public async Task PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly()
     {

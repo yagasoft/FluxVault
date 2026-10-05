@@ -93,3 +93,45 @@ the fresh census of 499 identities/390 resources across fifteen retired runs.
 Normal state remains unchanged. The scoped normal guard/supervisor, installer/SCM
 rollback, S01, D01 and final G01 remain open. This assessment authorises no normal
 ACL/authentication change or rollout.
+
+## Normal commissioning interruption requirement
+
+The independent Astra reviewer requires an independently running, finite SYSTEM
+cleanup task before temporary administrator admission. Forced operator termination
+can kill the contained authentication worker without running its `finally`; manual
+recovery alone cannot establish finite admission. Bind cleanup to the exact attempt,
+original/prepared hashes, postmaster and operator/worker identities, arm and verify
+readiness before changes, coordinate one writer, then terminate/join only the owned
+job and separately prove backend retirement. Keep verified successful final bytes
+final; never restore legacy trust after success. Setup/SCM activation requires the
+completed cleanup proof. Uncertainty keeps runtime blocked with retained recovery
+inputs. If cleanup holds a job handle it must explicitly terminate/join that job
+on operator death. One disposable forced-exit proof during temporary admission and
+successful-completion non-reversion cover this bounded correction. No broader crash
+framework or roadmap expansion is required. Implementation/proof remain pending.
+
+## Independent interruption checkpoint acceptance
+
+The same independent Astra reviewer accepts the completed bounded checkpoint,
+with no remaining blocking finding. It covers the scoped normal PostgreSQL guard,
+safe tool environment, legacy configuration anchor/rollback inputs, independent
+finite cleanup/readiness, exact successful-final retention, owned-write intents
+and constrained interrupted-byte recovery. Monitoring errors cannot bypass the
+one cleanup attempt; the watchdog verifies that its own PID is outside worker
+containment before admitting temporary access. Activation must reject a watchdog
+failure even when fallback cleanup publishes a retirement receipt.
+
+Native `7fa3d78cc3b9492c899d51c1d3b8263e` proves successful-final preservation and
+forced operator death while the temporary map is active. Native
+`4517c7aacd80410eb9b63c14b6fd79c2` and
+`a2754a051b6b4bf9a865c13bd6cf0b81` prove HBA mid-write/before-truncation recovery;
+the pinned-file regressions separately cover torn `pg_ident` writes. Actual
+interrupted bytes remain available. All cases retire admission and block failed
+activation without restarting PostgreSQL. The combined checks pass 101/101 with
+no skips, and the refreshed census confirms 22 retired runs, 867 absent captured
+process identities and 628 retired resources. Normal installation, authentication,
+ancestor ACLs, candidate hashes and unrelated primary edits are unchanged.
+
+This is technical checkpoint acceptance only. Exact normal setup/activation and
+rollback execution preparation, S01 resource permission/proof, D01, whole-branch
+G01 and separately approved normal rollout/live validation remain open.

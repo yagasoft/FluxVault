@@ -1,0 +1,47 @@
+{
+  "PrincipalObservation": "no match in usermap \"fv_bootstrap_7871ff7f8d1b404db20771f2e742364f\" for user \"postgres\" authenticated as \"SYSTEM@NT AUTHORITY\"",
+  "ObservedUtc": "2026-10-05T10:52:44.2734936Z",
+  "Postmaster": {
+    "DataDirectory": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\b0130cdd28604cfb97a9a6669bb2d1d4\\data",
+    "Port": 62265,
+    "ProcessId": 49268,
+    "StartedUtc": "2026-10-05T10:52:34.0509979Z",
+    "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\b0130cdd28604cfb97a9a6669bb2d1d4\\postgresql\\bin\\postgres.exe"
+  },
+  "FreshAdministratorDenied": true,
+  "BeforeRetirement": {
+    "administrator_absent": true,
+    "admin_pids": [],
+    "legacy_pids": [],
+    "database": "postgres",
+    "role": "fv_gate_monitor",
+    "port": 62265
+  },
+  "Accepted": true,
+  "Administrator": {
+    "WorkerJoined": true,
+    "Process": {
+      "StartedUtc": "2026-10-05T10:52:43.7359891Z",
+      "ProcessId": 68984,
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\b0130cdd28604cfb97a9a6669bb2d1d4\\postgresql\\bin\\psql.exe"
+    },
+    "Backend": {
+      "backend_pid": 13504,
+      "role": "postgres",
+      "database": "postgres",
+      "data_directory": "C:/ProgramData/FluxVault.Tests/NEXT002/b0130cdd28604cfb97a9a6669bb2d1d4/data",
+      "port": "62265"
+    },
+    "ReceiptPath": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\b0130cdd28604cfb97a9a6669bb2d1d4\\administrator-proof\\administrator-session.json",
+    "ExitCode": 0
+  },
+  "Version": 1,
+  "AfterRetirement": {
+    "administrator_absent": true,
+    "admin_pids": [],
+    "legacy_pids": [],
+    "database": "fluxvault_single",
+    "role": "fluxvault_service",
+    "port": 62265
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "RepeatedCreateRejected": true,
+  "Administrator": {
+    "Backend": {
+      "backend_pid": 48908,
+      "role": "postgres",
+      "database": "postgres",
+      "data_directory": "C:/ProgramData/FluxVault.Tests/NEXT002/a2754a051b6b4bf9a865c13bd6cf0b81/data",
+      "port": "58032"
+    },
+    "ReceiptPath": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\a2754a051b6b4bf9a865c13bd6cf0b81\\administrator-proof\\administrator-session.json",
+    "WorkerJoined": true,
+    "ExitCode": 0,
+    "Process": {
+      "ProcessId": 63552,
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\a2754a051b6b4bf9a865c13bd6cf0b81\\postgresql\\bin\\psql.exe",
+      "StartedUtc": "2026-10-05T11:08:29.0923481Z"
+    }
+  },
+  "Accepted": true,
+  "TargetUnchanged": true,
+  "BackendPid": 48908,
+  "PostmasterUnchanged": true,
+  "SqlSha256": "DA258197F8308B476084A212BFAC7656BC8049C27383F0B5AB0505565BA743B7",
+  "State": {
+    "role": {
+      "rolname": "fluxvault_service",
+      "rolcanlogin": true,
+      "rolinherit": false,
+      "rolsuper": false,
+      "rolcreatedb": false,
+      "rolcreaterole": false,
+      "rolreplication": false,
+      "rolbypassrls": false,
+      "password_free": true,
+      "ownership": "FluxVault installation 7871ff7f8d1b404db20771f2e742364f"
+    },
+    "database": {
+      "datname": "fluxvault_single",
+      "owner": "fluxvault_service",
+      "ownership": "FluxVault installation 7871ff7f8d1b404db20771f2e742364f",
+      "public_denied": true
+    },
+    "backend_retired": true
+  }
+}

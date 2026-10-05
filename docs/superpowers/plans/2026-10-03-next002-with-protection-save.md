@@ -158,3 +158,16 @@ while relevant code/dependencies/environment remain unchanged. S03 is retired.
 Normal-instance setup/fixed-path execution must still be proven after approved
 rollout. Packaged resource approval is pending; commissioning implementation
 and remaining observations are unfinished work, not reasons to restart the audit.
+
+Completion update: the scoped normal PostgreSQL guard and independent finite
+SYSTEM authentication cleanup now have functional/native evidence in the existing
+[preparation record](../../verification/2026-10-05-next002-rollout-preparation/README.md).
+Forced operator exit, mid-write and before-truncation interruption recover exact
+original authentication and block activation; successful final state stays final.
+The combined commissioning checks pass 101/101. Retained v1.0.4 MSI tables match
+the captured rollback service policy, so use that installer and verify its result.
+S01 permission, complete D01 observations/scale, exact normal setup/activation
+and rollback execution preparation, final G01 and separately approved rollout/live
+validation remain. The required native Computer Use `node_repl` surface is absent
+in the current session. Preserve existing gates and evidence; do not substitute
+logical WPF renders for those outstanding desktop observations.

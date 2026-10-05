@@ -1,0 +1,24 @@
+{
+  "FinalRetained": false,
+  "ContextSha256": "87EAC17FE505EB15FF30CA3BDBCD9704EE408055D8414005AB058DFDE142E6CA",
+  "AdmissionRetired": true,
+  "Version": 1,
+  "Postmaster": {
+    "DataDirectory": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\a2754a051b6b4bf9a865c13bd6cf0b81\\data",
+    "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\a2754a051b6b4bf9a865c13bd6cf0b81\\postgresql\\bin\\postgres.exe",
+    "Port": 58032,
+    "ProcessId": 31012,
+    "StartedUtc": "2026-10-05T11:08:19.7207222Z"
+  },
+  "ObservedUtc": "2026-10-05T11:08:37.3153850Z",
+  "CanActivate": false,
+  "OwnedJobJoined": true,
+  "State": {
+    "administrator_absent": true,
+    "admin_pids": [],
+    "legacy_pids": [],
+    "database": "postgres",
+    "role": "fv_gate_monitor",
+    "port": 58032
+  }
+}

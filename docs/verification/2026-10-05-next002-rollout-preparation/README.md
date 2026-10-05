@@ -275,3 +275,62 @@ The remaining critical path is the scoped normal PostgreSQL guard/supervisor,
 checked installer/SCM rollback, pending S01 packaged rehearsal, remaining D01
 desktop observations/scale, and consolidated final G01 before separately approved
 normal rollout and live validation. The C01–G01 matrix and roadmap are unchanged.
+
+The scoped normal PostgreSQL guard is now implemented. Seven functional ACL
+cases prove the required protected-template, native-volume and trusted-owner
+exceptions without admitting ancestor deletion, child deletion, propagating
+writers or NetworkService executable writes. A read-only check against the
+actual machine still refuses the two unsafe ancestors; their proposed correction
+remains unapplied. Administrator helpers use a restricted tool/Windows PATH.
+The retained legacy configuration file passes the existing replacement guard;
+four real filesystem rollback cases remain green.
+
+An independent finite SYSTEM cleanup task must be alive and outside the
+authentication job before temporary admission. It binds the frozen context,
+operator, worker job and postmaster, joins that job on forced operator exit,
+retires admission and separately proves backend retirement. Exact final bytes
+remain final; unconfirmed final state cannot activate runtime. Monitoring failure
+also attempts retirement once, records failure and prevents activation.
+Closed per-file write intents bind verified old/new bytes before sequential
+writes. Cleanup recognises only that interrupted prefix/suffix transition,
+preserves the observed bytes and restores originals; arbitrary external edits
+remain refused. These controls address the concrete forced-exit and torn-write
+failure modes, not a general future lifecycle framework.
+
+Real SYSTEM/private PostgreSQL proofs now pass for
+[forced operator exit during admission](native/7fa3d78cc3b9492c899d51c1d3b8263e/result.json),
+[mid-write interruption](native/4517c7aacd80410eb9b63c14b6fd79c2/result.json)
+and [interruption before truncation](native/a2754a051b6b4bf9a865c13bd6cf0b81/result.json).
+Each also proves successful-final non-reversion. Interrupted attempts retain SQL
+effects, restore exact originals, deny a fresh administrator login and block
+activation. Both write proofs retain actual interrupted HBA bytes and transition
+byte records. PostgreSQL is not restarted. The failed rehearsal attempts record
+fixture-copy, observation-sharing, unchanged-prefix and resource-name diagnostics;
+none is acceptance evidence. Their owned resources are retired as well.
+`commissioning-interruption-combined.trx` passes 101/101 without skips or build
+warnings. Earlier unchanged product, creator and installer evidence is reused.
+
+The [actual cached v1.0.4 MSI tables](rollback-cached-msi-tables.json) match the
+captured LocalSystem, delayed automatic start and 60-second restart policy.
+Rollback therefore uses the retained, hash-checked v1.0.4 installer and verifies
+the resulting payload/policy; an additional SCM restoration abstraction is
+unnecessary. After joining commissioning/cleanup and stopping any new runtime,
+uninstall the exact new bundle before attempting the older installer. Preserve
+fresh state at the declared Failed path, restore legacy configuration/root and
+original authentication before the older installer can start its service, then
+verify all 204 retained payload hashes, exact policy/configuration and unchanged
+PostgreSQL identity. Restore only the two reviewed ancestor descriptors after
+authentication recovery. Never drop the retained/fresh databases, adopt partial
+state or retry SQL automatically. A failed rollback keeps runtime stopped and
+retains its inputs. No installer, normal ACL or authentication operation is run
+by this preparation.
+
+Remaining C01–G01 critical path: pending S01 packaged resource permission; D01
+keyboard/Narrator/monitor DPI/high contrast/responsiveness and the unresolved
+native capture observation; exact normal setup/activation and rollback execution
+preparation; consolidated whole-branch G01; then separately approved installation
+and live save → backup → history → independently verified recovery. Native
+Computer Use's required `node_repl` interface is not callable in this session;
+logical renders and automation names do not close those desktop observations.
+The candidate and normal installation remain unchanged. This is not slice
+completion or a rollout request.

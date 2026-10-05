@@ -12,3 +12,5 @@ docs/verification/2026-10-04-next002-source-inventory/**/*.log -whitespace
 # Preserve the native creator checkpoint journal/log/ticket bytes for hash and offset verification.
 docs/verification/2026-10-05-next002-rollout-preparation/native/a773b350b6a74cb6a4977a478cc0c1db/** -text
 docs/verification/2026-10-05-next002-rollout-preparation/**/*.log -whitespace
+# Proposed normal authentication replacements are approval inputs pinned by exact SHA-256.
+docs/verification/2026-10-05-next002-rollout-preparation/authentication/*.conf -text -whitespace

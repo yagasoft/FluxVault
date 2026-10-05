@@ -209,7 +209,10 @@ The shipping creator confirmation command now passes the native private-pipe
 workflow: setup36/A143/B19, with one correlated CLI request, and all 44 captured
 identities/43 resources retired. Seventy-five combined CLI/registration/compiled
 MSI checks pass. Installer tables now leave runtime stopped/demand-start and
-create no provisioning-owned state. Exact candidate/authentication delta/rollback,
+create no provisioning-owned state. One frozen unsigned v1.0.5 candidate now has
+208 verified payload hashes, checked actual MSI tables and joined build processes.
+Exact authentication replacements/creation SQL and fresh rollback inputs are
+prepared without normal mutation. Supervised commissioning and checked restore,
 fixed-path live setup and separately approved rollout remain next;
 packaged identity, D01/scale and final G01 remain applicable. This adds no roadmap
 scope, migration/adoption or additional-vault capability.

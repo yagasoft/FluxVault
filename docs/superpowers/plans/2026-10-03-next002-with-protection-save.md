@@ -136,3 +136,25 @@ The completed [Overview → Protect → Recover concepts](../../ui-concepts/2026
 Use `MSBUILDDISABLENODEREUSE=1`, `DOTNET_CLI_USE_MSBUILD_SERVER=0`, `--disable-build-servers -p:UseSharedCompilation=false -nodeReuse:false`. Run the narrowest affected test family before the combined solution build/tests. Keep raw failure/green/native evidence and verify every launched process has exited. A successful helper test is not full S1 or rollout proof.
 
 The user's earlier model-switch planning pause ended with implementation approval. This scope change needs no routine planning approval. Continue authorised work; ask only for a material unresolved decision or the separately gated installation rollout.
+
+## Completion critical path
+
+Use the existing C01–G01 acceptance matrix as the checklist. The creator/installer
+checkpoint `9815673` and its accepted native evidence remain valid; `02d0485`
+only normalises Git text staging and pins native bytes. Candidate preparation
+`2ce19df` produces one frozen unsigned v1.0.5 package with 208 payload files.
+Its actual MSI tables pass stopped/demand-start/no state creation checks.
+
+Complete the pending S01 packaged A/B rehearsal within its existing profile/trust
+approval; finish D01 implemented-screen keyboard/Narrator/DPI/high-contrast/scale
+and resolve stale capture; complete S05 exact authentication, supervised setup,
+activation/join and checked legacy rollback; then consolidate final combined
+checks and whole-branch independent G01 review. Present the concrete candidate,
+exact changes, rollback and live probes for separate rollout approval only after
+preparation is complete. No second plan or verification programme is needed.
+
+C01–C03, S02, manual-only S04, S06, S07 and S08 retain their existing evidence
+while relevant code/dependencies/environment remain unchanged. S03 is retired.
+Normal-instance setup/fixed-path execution must still be proven after approved
+rollout. Packaged resource approval is pending; commissioning implementation
+and remaining observations are unfinished work, not reasons to restart the audit.

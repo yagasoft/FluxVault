@@ -1,4 +1,5 @@
 # Read-only installation/rollback observations. This script does not provision, stop, reload or move anything.
+param([string]$OutputPath=(Join-Path $PSScriptRoot 'staging-preflight.json'))
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $worktree=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
@@ -49,13 +50,22 @@ if($paths.Count -ne 2 -or @($paths | Where-Object {$_.Path -notmatch '^C:\\Progr
 $identity=[Security.Principal.WindowsIdentity]::GetCurrent()
 try{$creator=$identity.User.Value}finally{$identity.Dispose()}
 if($creator -ne 'S-1-5-21-136112424-624261118-1239521417-1001'){throw 'The intended native operator changed.'}
+$serviceRegistry=Get-Item -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\FluxVaultService'
+try{
+    $servicePolicy=@(foreach($valueName in @('ImagePath','ObjectName','Start','Type','ErrorControl','DelayedAutoStart','FailureActions',
+        'FailureActionsOnNonCrashFailures','ServiceSidType','RequiredPrivileges','DependOnService','PreshutdownTimeout')){
+        if($serviceRegistry.GetValueNames() -contains $valueName){
+            @{Name=$valueName;Kind=$serviceRegistry.GetValueKind($valueName).ToString();Value=$serviceRegistry.GetValue($valueName)}
+        }
+    })
+}finally{$serviceRegistry.Dispose()}
 @{ObservedUtc=[DateTime]::UtcNow.ToString('o');ReadOnly=$true;TargetId=$targetId;NativeIntendedCreatorSid=$creator;
-    ExistingServices=$services;ExistingFiles=$files;InstalledV104Payload=$payload;MatchedPayloadFiles=$payload.Count;
+    ExistingServices=$services;ExistingServicePolicy=$servicePolicy;ExistingFiles=$files;InstalledV104Payload=$payload;MatchedPayloadFiles=$payload.Count;
     RollbackSetup=@{Path=$setup;Sha256=$setupHash};LegacyRoot=@{Path=$legacyRoot;Owner=$acl.Owner;Sddl=$acl.Sddl;
         Protected=$acl.AreAccessRulesProtected;RepositoryPath=$active.repositoryPath;MetadataHost=$active.metadataStore.host;
         MetadataDatabase=$active.metadataStore.databaseName;MetadataRole=$active.metadataStore.username};
     LiveInstalledClients=$clients;ProposedPreservationPaths=$paths;
     ProposedFreshEndpoint=@{Host='localhost';Port=5432;Database='fluxvault_single';Role='fluxvault_service';NameCollisionsChecked=$false};
-    OperationalApproval='pending';ProvisioningImplemented=$false} |
-    ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $PSScriptRoot 'staging-preflight.json')
+    OperationalApproval='pending';ProvisioningImplemented=$true} |
+    ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $OutputPath
 'Retained installed payload and setup match; read-only staging/rollback inputs recorded. No system change performed.'

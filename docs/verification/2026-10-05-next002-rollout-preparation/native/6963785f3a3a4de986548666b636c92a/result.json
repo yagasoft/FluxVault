@@ -1,0 +1,762 @@
+{
+  "Observations": [
+    {
+      "RunId": "5bd0945bc2d8499285f3a2ac2da38aad",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "6963785f3a3a4de986548666b636c92a",
+            "ProbeId": "93d957fb5d2f4e29b1e9b9dd18c8ed76",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1"
+        },
+        {
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "ReadProtected": true
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "Complete": true,
+      "ServerLogStart": 897,
+      "ServerLogEnd": 2307
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "RunId": "f5c610edb6074d299a613a57921a1672",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "libpq",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 63884 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Output": "",
+          "ExitCode": 2,
+          "ProbeId": "fad027565e824ebc9893f3218842859f"
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "WriteRuntime": true
+        }
+      ],
+      "Complete": true,
+      "ServerLogStart": 2307,
+      "ServerLogEnd": 3012
+    },
+    {
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "6963785f3a3a4de986548666b636c92a",
+            "ProbeId": "6d4573502fd24e65b6ebbfdcb79da300",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "::1",
+          "Kind": "Npgsql"
+        },
+        {
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "WriteRuntime": true
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "RunId": "55302172b43442379bf2431af706050c",
+      "Complete": true,
+      "ServerLogStart": 3012,
+      "ServerLogEnd": 4400
+    },
+    {
+      "RunId": "930c734c43484b44b2e9b71161d623a2",
+      "Complete": true,
+      "Results": [
+        {
+          "Kind": "libpq",
+          "Host": "::1",
+          "Error": "psql: error: connection to server at \"::1\", port 63884 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Output": "",
+          "ExitCode": 2,
+          "ProbeId": "a9f91e5b34144ddfa06cb5d0ab755ec8"
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "ServerLogStart": 4400,
+      "ServerLogEnd": 5094
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "RunId": "6041922889ef47c994a4e26f2a8b7f39",
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "6963785f3a3a4de986548666b636c92a",
+            "ProbeId": "d1c37c75b8d24da6866c57a23b6f750e",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": null
+          }
+        },
+        {
+          "WriteRuntime": true,
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "Actor": "System",
+      "ServerLogStart": 5157,
+      "ServerLogEnd": 5712
+    },
+    {
+      "RunId": "0d21755a10ed4682b2206640957b34dc",
+      "Actor": "System",
+      "Complete": true,
+      "Results": [
+        {
+          "Error": "",
+          "Kind": "libpq",
+          "ProbeId": "2a4b3821c0fa4e8ea7fd9b2e37d09e02",
+          "Host": "127.0.0.1",
+          "ExitCode": 0,
+          "Output": "6963785f3a3a4de986548666b636c92a|fv_gate_261003|fv_gate_service"
+        },
+        {
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 5712,
+      "ServerLogEnd": 6261
+    },
+    {
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "6963785f3a3a4de986548666b636c92a",
+            "ProbeId": "4d4ff403aafd43e2a3291716bddcbcc5",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": null
+          }
+        },
+        {
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "Kind": "ACL"
+        }
+      ],
+      "RunId": "5b776021f7d9443e8e047462414962bd",
+      "Actor": "System",
+      "Complete": true,
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 6261,
+      "ServerLogEnd": 6810
+    },
+    {
+      "Complete": true,
+      "WindowsSid": "S-1-5-18",
+      "RunId": "4cb77de747c040d7981902136740dbaf",
+      "Actor": "System",
+      "Results": [
+        {
+          "Output": "6963785f3a3a4de986548666b636c92a|fv_gate_261003|fv_gate_service",
+          "ExitCode": 0,
+          "ProbeId": "68f1a2688a374334b7518b4aa5a969c5",
+          "Error": "",
+          "Kind": "libpq",
+          "Host": "::1"
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true
+        }
+      ],
+      "ServerLogStart": 6810,
+      "ServerLogEnd": 7357
+    },
+    {
+      "Complete": true,
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "6963785f3a3a4de986548666b636c92a",
+            "ProbeId": "97c55cf5bae64bda9b4a2dac1ea72692",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": false,
+          "WriteRuntime": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367"
+        }
+      ],
+      "RunId": "6e513d1ba9ff4c0980c8031fda79d18e",
+      "Actor": "A",
+      "ServerLogStart": 7357,
+      "ServerLogEnd": 8791
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+      "Actor": "A",
+      "Results": [
+        {
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 63884 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Kind": "libpq",
+          "ExitCode": 2,
+          "Host": "127.0.0.1",
+          "Output": "",
+          "ProbeId": "2a7eefeab6f7495a90add08df11ade8c"
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+          "ReadProtected": false,
+          "Kind": "ACL",
+          "WriteRuntime": false
+        }
+      ],
+      "RunId": "787fbc6cb2ef47d7a6a0ae03ee9d7db6",
+      "Complete": true,
+      "ServerLogStart": 8791,
+      "ServerLogEnd": 9508
+    },
+    {
+      "Complete": true,
+      "Actor": "A",
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "6963785f3a3a4de986548666b636c92a",
+            "ProbeId": "280c5b5730ec48cd992c631f4ccee58c",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Kind": "Npgsql",
+          "Host": "::1"
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+          "WriteRuntime": false
+        }
+      ],
+      "RunId": "aa0af0eba82a491e88777ece92778ba7",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+      "ServerLogStart": 9508,
+      "ServerLogEnd": 10920
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+      "RunId": "f3e7a3759fb94de6b8a1d690b4be6dfa",
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "libpq",
+          "Output": "",
+          "ExitCode": 2,
+          "Error": "psql: error: connection to server at \"::1\", port 63884 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ProbeId": "a28266e1612344078043ffffcef392b9"
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+          "WriteRuntime": false,
+          "ReadProtected": false
+        }
+      ],
+      "Actor": "A",
+      "ServerLogStart": 10920,
+      "ServerLogEnd": 11626
+    },
+    {
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "127.0.0.1",
+          "Result": {
+            "FixtureId": "6963785f3a3a4de986548666b636c92a",
+            "ProbeId": "5ae15523df8f42698b9faf9da20bb2e6",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "ReadProtected": false,
+          "WriteRuntime": false,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368"
+        }
+      ],
+      "Actor": "B",
+      "RunId": "ccc256ccec4941b198c310b86063910f",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+      "Complete": true,
+      "ServerLogStart": 11626,
+      "ServerLogEnd": 13055
+    },
+    {
+      "Actor": "B",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+      "Results": [
+        {
+          "Kind": "libpq",
+          "Host": "127.0.0.1",
+          "ExitCode": 2,
+          "Output": "",
+          "ProbeId": "dc15a68d325440f0b9118fcd91fd2d11",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 63884 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\""
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+          "ReadProtected": false,
+          "WriteRuntime": false
+        }
+      ],
+      "Complete": true,
+      "RunId": "c50b4a37b56a41c7a395ee4188b95ff4",
+      "ServerLogStart": 13055,
+      "ServerLogEnd": 13772
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+      "Results": [
+        {
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "6963785f3a3a4de986548666b636c92a",
+            "ProbeId": "af13a76b437e40e6ae5dac3d8e9e4d8f",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Kind": "Npgsql"
+        },
+        {
+          "WriteRuntime": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+          "ReadProtected": false,
+          "Kind": "ACL"
+        }
+      ],
+      "Actor": "B",
+      "Complete": true,
+      "RunId": "645a7c3ce2e1487ab30fd62d0bb803e3",
+      "ServerLogStart": 13772,
+      "ServerLogEnd": 15184
+    },
+    {
+      "Complete": true,
+      "Actor": "B",
+      "Results": [
+        {
+          "Error": "psql: error: connection to server at \"::1\", port 63884 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ProbeId": "16e925dfc212498bbfe7cc12d8c92f02",
+          "Host": "::1",
+          "Kind": "libpq",
+          "Output": "",
+          "ExitCode": 2
+        },
+        {
+          "ReadProtected": false,
+          "WriteRuntime": false,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368"
+        }
+      ],
+      "RunId": "33dfe319f9e44227836f65f36110ef41",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+      "ServerLogStart": 15184,
+      "ServerLogEnd": 15890
+    },
+    {
+      "NativeSetupDenied": {
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+        "Complete": true,
+        "RunId": "01d833c4dedb473a8591cb2c6bb0a868",
+        "Results": [
+          {
+            "Kind": "CallerFiles",
+            "Result": {
+              "Actor": "B",
+              "SetupWrongActorDenied": true,
+              "NoIdentityOrData": true
+            }
+          },
+          {
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+            "WriteRuntime": false,
+            "ReadProtected": false,
+            "Kind": "ACL"
+          }
+        ],
+        "Actor": "B"
+      }
+    },
+    {
+      "NativeCallerFiles": {
+        "RunId": "c2726665a5c149e5ad7d8ccd0646c14a",
+        "Complete": true,
+        "Results": [
+          {
+            "Result": {
+              "Actor": "A",
+              "Passed": 143,
+              "Checks": [
+                "native creator with wrong setup correlation is refused without ending setup",
+                "setup host joins before ordinary product runtime accepts the owner workflow",
+                "product composition truthfully reports blocked automatic protection",
+                "native creator receives the installed identity and configuration",
+                "real PostgreSQL save preserves every untouched configuration property",
+                "multiple protected folders and file types persist in the single vault",
+                "stale save cannot replace accepted configuration",
+                "wrong repository identity cannot read history",
+                "native caller files are captured through the authenticated executor",
+                "duplicate backup returns its durable receipt without repeated execution",
+                "history contains all three captured files from both source folders",
+                "legacy fallback fixture retains exactly two independent file histories",
+                "native actual recovery view-model receives a bounded authoritative first page",
+                "actual older command returns a bounded page",
+                "actual older command returns a bounded page",
+                "actual native page flow preserves complete scoped history without duplicates",
+                "actual native folder navigation opens its recorded child snapshot",
+                "actual paged view-model restores the recorded child with independently verified bytes",
+                "native page command refuses query/envelope binding mismatch",
+                "native stale-page proof obtains a continuation",
+                "native authenticated command returns HistoryChanged without page data",
+                "authorised history inspection succeeds",
+                "preview uses caller-authorised publication and independently verified bytes",
+                "the ordinary caller prepares a read-only preview copy",
+                "preview replay returns the original durable result",
+                "preview refuses an existing destination without replacing it",
+                "folder preview is refused before output preparation",
+                "standalone recovery publishes independently verified bytes to the caller",
+                "nested folder recovery preserves independently verified bytes",
+                "new status requests retain completed backup state",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "combined save commits once and removes only confirmed CAD history",
+                "save-purge replay and receipt lookup return the original retained result",
+                "CAD history is gone and preserved Office history remains",
+                "preserved Office bytes remain independently recoverable after purge",
+                "caller working copy is captured after its CAD parent",
+                "preservation conflict reports saved configuration and failed purge",
+                "preservation refusal leaves all PostgreSQL history unchanged",
+                "failed purge replay never executes the destructive effect again",
+                "preserved inherited working bytes remain independently recoverable after refusal",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "authorised repository health loads its protected state",
+                "RunRepositoryScrub replay and status return its exact durable outcome",
+                "native scrub verifies real PostgreSQL repository chunks",
+                "RunRestoreRehearsal replay and status return its exact durable outcome",
+                "native rehearsal verifies recovery in protected temporary storage",
+                "repair preview accepts the configured selector case-insensitively and reports both mirrors",
+                "RunMirrorRepair replay and status return its exact durable outcome",
+                "explicit all-mirror repair completes through the authorised service",
+                "mirror placement preview remains available",
+                "RunMirrorRebalance replay and status return its exact durable outcome",
+                "mirror placement executes through its durable receipt",
+                "mirror drain preview reports the selected destination without disabling it",
+                "health retains each report after concurrent-capable snapshot publication",
+                "retention preview identifies disposable superseded versions",
+                "RunRetentionNow replay and status return its exact durable outcome",
+                "retention actually prunes only owned fixture history",
+                "history and cached status reflect retention while retaining the latest working version",
+                "latest working bytes remain independently recoverable after maintenance and retention",
+                "RunMirrorDrain replay and status return its exact durable outcome",
+                "native mirror drain publishes its completed result and incremented configuration revision",
+                "native drain changes only the selected mirror enablement and preserves every untouched setting",
+                "an old save cannot re-enable the drained mirror",
+                "the final enabled mirror is refused before new receipt admission",
+                "backup uses the remaining enabled mirror after the drain revision",
+                "save and drain revisions still permit backup, history and independent verified recovery",
+                "native diagnostics returns its exact operation-specific destination",
+                "diagnostics JSON retains its admitted repository identity and revision",
+                "diagnostics truthfully explains unavailable automatic protection",
+                "diagnostics contains actual repository status and inventory",
+                "caller can edit published report and exact replay/status does not overwrite it",
+                "exact replay does not recreate a deleted diagnostics report",
+                "distinct diagnostics operations create separate reports",
+                "SYSTEM service cannot export into a directory denied to the native caller",
+                "failed admitted diagnostics does not report a completed export or repeat its effect",
+                "selection preview traverses blind fixture ancestors without creating output",
+                "selection file recovery returns independently verified caller output",
+                "selection replay/status preserve caller edits and exact verification receipt",
+                "selection refuses unconfirmed overwrite before publication",
+                "definite selection refusal has a durable outcome",
+                "explicit file overwrite uses caller-authorised publication",
+                "selection replay never recreates a deleted published file",
+                "folder selection preview includes the earlier inherited CAD copy without creating output",
+                "exact folder selection publishes all three files as one independently verified tree",
+                "existing recovery folder is never merged despite overwrite flag",
+                "wrong-kind existing destination is a conflict rather than missing",
+                "preview never treats an unavailable caller destination as missing",
+                "SYSTEM cannot recover into its private directory for an unauthorised caller",
+                "legacy independent-file history previews as one folder without output",
+                "real PostgreSQL fallback history publishes one independently verified caller tree",
+                "missing history cannot publish an empty success",
+                "explicit tombstoned file restores verified last-good bytes to its original caller path",
+                "all selection recovery staging is gone before caller exit",
+                "native pause returns its atomic incremented revision",
+                "native sync snapshot is an authorised read and pause preserves every untouched setting",
+                "paused status truthfully distinguishes disabled manual capture from unavailable automatic capture",
+                "paused backup does not enumerate or capture changed caller files",
+                "paused backup creates no history and performs no retention or deletion reconciliation",
+                "paused diagnostics reports the same truthful capture state",
+                "native resume publishes its own atomic revision",
+                "replaying old pause after resume returns its historical receipt without toggling the current configuration",
+                "resume and old replay retain the complete enabled baseline and blocked automatic-protection notice",
+                "resumed manual backup captures the file changed while paused",
+                "pause-resume revisions preserve backup-history-verified-recovery through the real pipe",
+                "native protected status omits current inventory with explicit paging capability",
+                "native current pages retain exact binding revision and generation",
+                "native current pages retain exact binding revision and generation",
+                "native current pages retain exact binding revision and generation",
+                "native current pages retain exact binding revision and generation",
+                "native current pages retain exact binding revision and generation",
+                "native current keysets advance without duplicates",
+                "native current query cannot override its admitted repository binding",
+                "native current inventory retains the browser's live working-file contract",
+                "native fixture backup invalidates the shared runtime cache through its durable receipt",
+                "native separate full status request warms the new cache epoch before dashboard polling",
+                "native actual dashboard view-model publishes the verified current entry",
+                "native automatic warmed-cache refresh pages current entries and retains pending edits before joined shutdown",
+                "native unsent Protect edit force-flushes and joins before exit",
+                "native local draft retention sends no save or backup through the authenticated pipe",
+                "native unsent draft leaves real PostgreSQL configuration and revision unchanged",
+                "native actual view-model restart restores editable draft without replay",
+                "native save association is durable before dispatch and confirmed save permits exactly one dependent backup",
+                "native explicit save publishes recovered selection edit at the exact successor revision",
+                "native recovered draft flows through save backup history and independently verified recovery",
+                "native final draft writer is joined with no outstanding local changes",
+                "native locked-source proof starts with enabled protection",
+                "native pending locked source differs from its recorded length",
+                "native locked-source backup reports terminal failure without capture or deletion",
+                "native locked-source failure preserves every durable history identity",
+                "native unlocked original-operation replay and receipt retain the exact terminal failure",
+                "native failed backup replay cannot capture after its source obstruction is removed",
+                "native explicitly new manual backup captures the released working file",
+                "native released-source backup records a distinct history version",
+                "native released-source recovery independently matches the pending bytes and preserves the working file"
+              ],
+              "SingleVault": true,
+              "VaultId": "6963785f-3a3a-4de9-8654-8666b636c92a",
+              "CallerCanEditPublished": true,
+              "IndependentSha256": true,
+              "ActualCatalogueAndExecutor": true,
+              "MaintenanceCommandsVerified": true,
+              "DrainCommandsVerified": true,
+              "DiagnosticsCommandsVerified": true,
+              "SelectionCommandsVerified": true,
+              "ProtectionStateCommandsVerified": true,
+              "HistoryPagingVerified": true,
+              "CurrentPagingVerified": true,
+              "LocalProtectionDraftVerified": true,
+              "LockedSourceBoundaryVerified": true,
+              "ProvisioningSetupVerified": true,
+              "CreatorCliConfirmed": true
+            },
+            "Kind": "CallerFiles"
+          },
+          {
+            "WriteRuntime": false,
+            "ReadProtected": false,
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+            "Kind": "ACL"
+          }
+        ],
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1367",
+        "Actor": "A"
+      }
+    },
+    {
+      "NativeCallerFiles": {
+        "Actor": "B",
+        "Results": [
+          {
+            "Kind": "CallerFiles",
+            "Result": {
+              "Actor": "B",
+              "Denied": true,
+              "NoIdentityOrHistory": true,
+              "MaintenanceDenied": 19
+            }
+          },
+          {
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+            "Kind": "ACL",
+            "ReadProtected": false,
+            "WriteRuntime": false
+          }
+        ],
+        "RunId": "d28a3edc2c8746c9aeb14754dd6f3253",
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1368",
+        "Complete": true
+      }
+    },
+    {
+      "NativeCallerFiles": {
+        "Complete": true,
+        "Actor": "System",
+        "Results": [
+          {
+            "Result": {
+              "Passed": 163,
+              "NativeCallerTokens": true,
+              "SingleVault": true,
+              "ProtectedProductComposition": true,
+              "ActualCatalogueAndExecutor": true,
+              "ProtectedRehearsalOutputCleaned": true,
+              "DrainEffectVerified": true,
+              "DiagnosticsOutputCleaned": true,
+              "SelectionOutputCleaned": true,
+              "CreatorVerified": true,
+              "UngrantDenied": true,
+              "ExactInstalledBinding": "6963785f-3a3a-4de9-8654-8666b636c92a",
+              "ProvisioningProductVerified": true,
+              "SetupRequestsJoined": true,
+              "SetupRegressionCount": 36,
+              "SetupChecks": [
+                "wrong native actor/correlation causes no storage effect and does not end setup",
+                "wrong native actor/correlation causes no storage effect and does not end setup",
+                "actual native B refusal precedes actual native A provisioning",
+                "existing-empty produces a terminal, explained unavailable result",
+                "existing-empty is refused before any other root or namespace is created",
+                "existing-file produces a terminal, explained unavailable result",
+                "existing-file is refused before any other root or namespace is created",
+                "pre-existing file bytes are untouched",
+                "metadata-namespace produces a terminal, explained unavailable result",
+                "metadata-namespace is refused before any other root or namespace is created",
+                "control-namespace produces a terminal, explained unavailable result",
+                "control-namespace is refused before any other root or namespace is created",
+                "creation-race produces a terminal, explained unavailable result",
+                "creation-race cannot publish a partial installation",
+                "exclusive native creation refuses a race target without adopting or hardening it",
+                "cancel-publication produces a terminal, explained unavailable result",
+                "cancel-publication cannot publish a partial installation",
+                "cancel-publication preserves attributable partial storage and both real namespaces",
+                "cancel-publication cannot restart partial provisioning in the same lifetime",
+                "cancel-publication cannot adopt partial state in a reopened setup lifetime",
+                "cancel-publication keeps normal product startup closed",
+                "failed-publication produces a terminal, explained unavailable result",
+                "failed-publication cannot publish a partial installation",
+                "failed-publication preserves attributable partial storage and both real namespaces",
+                "failed-publication cannot restart partial provisioning in the same lifetime",
+                "failed-publication cannot adopt partial state in a reopened setup lifetime",
+                "failed-publication keeps normal product startup closed",
+                "activation-collision produces a terminal, explained unavailable result",
+                "require-new publication cannot replace an existing activation file",
+                "activation-collision preserves attributable partial storage and both real namespaces",
+                "activation-collision cannot restart partial provisioning in the same lifetime",
+                "activation-collision cannot adopt partial state in a reopened setup lifetime",
+                "activation-collision keeps normal product startup closed",
+                "real setup publishes the exact bootstrap only after bound catalogue metadata and repository creation",
+                "same-lifetime replay returns the recorded setup result without another effect",
+                "reopened setup refuses the installed target and preserves its activation bytes"
+              ]
+            },
+            "Kind": "CallerFiles"
+          },
+          {
+            "WriteRuntime": true,
+            "ReadProtected": true,
+            "Kind": "ACL",
+            "WindowsSid": "S-1-5-18"
+          }
+        ],
+        "WindowsSid": "S-1-5-18",
+        "RunId": "656580e5499a4605924efd59202fb994"
+      }
+    }
+  ],
+  "Failure": null,
+  "FailureLocation": null,
+  "FixtureId": "6963785f3a3a4de986548666b636c92a"
+}

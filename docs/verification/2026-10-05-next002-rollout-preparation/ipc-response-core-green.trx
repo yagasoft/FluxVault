@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6ef0da10-73b8-4908-bea2-fb9600f0c61f" name="os008@OS008-HOME 2026-10-05 15:46:58" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T15:46:58.2512816+03:00" queuing="2026-10-05T15:46:58.2512818+03:00" start="2026-10-05T15:46:57.1618585+03:00" finish="2026-10-05T15:46:58.2803535+03:00" />
+  <TestSettings name="default" id="b033cdbc-9902-4170-9b4f-92da5395c78e">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_15_46_58" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9598d399-130c-4bab-a512-2b745c0d7329" testId="11a75631-d33d-b384-4b86-d0b9e63442b4" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;cancelled&quot;)" computerName="OS008-HOME" duration="00:00:00.0001648" startTime="2026-10-05T15:46:58.1678810+03:00" endTime="2026-10-05T15:46:58.1680559+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9598d399-130c-4bab-a512-2b745c0d7329" />
+    <UnitTestResult executionId="0e559c05-0908-4904-a74a-d68f25772f13" testId="0a0f1ac0-b748-4138-25d3-655870c9eac7" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;closed&quot;)" computerName="OS008-HOME" duration="00:00:00.3345015" startTime="2026-10-05T15:46:57.7635854+03:00" endTime="2026-10-05T15:46:58.1041938+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0e559c05-0908-4904-a74a-d68f25772f13" />
+    <UnitTestResult executionId="fec3fa12-5967-471c-a038-fabeb7dde8b4" testId="e5579b67-ef67-75c4-6f45-528919881e8b" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;utf8&quot;)" computerName="OS008-HOME" duration="00:00:00.0001912" startTime="2026-10-05T15:46:58.2267184+03:00" endTime="2026-10-05T15:46:58.2267562+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fec3fa12-5967-471c-a038-fabeb7dde8b4" />
+    <UnitTestResult executionId="eac1cc42-821c-4fdb-bc1a-73afeb1ddcfc" testId="7cbb6217-c88f-2262-ef5d-b8616113a8dc" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;depth&quot;)" computerName="OS008-HOME" duration="00:00:00.0006951" startTime="2026-10-05T15:46:58.2052418+03:00" endTime="2026-10-05T15:46:58.2058615+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eac1cc42-821c-4fdb-bc1a-73afeb1ddcfc" />
+    <UnitTestResult executionId="ed5c4b3b-3538-4d3f-9d7a-80690f459571" testId="370f96df-cdc6-f357-02c8-2909297fc612" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;null&quot;)" computerName="OS008-HOME" duration="00:00:00.0173871" startTime="2026-10-05T15:46:58.1878207+03:00" endTime="2026-10-05T15:46:58.2051525+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed5c4b3b-3538-4d3f-9d7a-80690f459571" />
+    <UnitTestResult executionId="0e835a76-914a-4561-b9c1-4347bd646b67" testId="c1b8cefb-63c9-8cab-f263-ac3ffc7f3110" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;truncated&quot;)" computerName="OS008-HOME" duration="00:00:00.0187606" startTime="2026-10-05T15:46:58.1695057+03:00" endTime="2026-10-05T15:46:58.1877292+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0e835a76-914a-4561-b9c1-4347bd646b67" />
+    <UnitTestResult executionId="78165e8c-b93d-41c5-9a13-b502899e9eaf" testId="2ff0df06-acb0-497d-82d6-0cac00f9198d" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;empty&quot;)" computerName="OS008-HOME" duration="00:00:00.0000480" startTime="2026-10-05T15:46:58.2059333+03:00" endTime="2026-10-05T15:46:58.2059664+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78165e8c-b93d-41c5-9a13-b502899e9eaf" />
+    <UnitTestResult executionId="12fc375b-6604-461a-9ea7-990b23219ad2" testId="b8efe0ed-c023-a0ad-444c-ec6d4b1d18fc" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;malformed&quot;)" computerName="OS008-HOME" duration="00:00:00.0000893" startTime="2026-10-05T15:46:58.2060262+03:00" endTime="2026-10-05T15:46:58.2060579+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="12fc375b-6604-461a-9ea7-990b23219ad2" />
+    <UnitTestResult executionId="d50699f0-68f7-4bd1-9317-6f35ed98c074" testId="c49585be-ca6f-2532-1363-174cca81b3ab" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;stalled&quot;)" computerName="OS008-HOME" duration="00:00:00.0604003" startTime="2026-10-05T15:46:58.1126618+03:00" endTime="2026-10-05T15:46:58.1672571+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d50699f0-68f7-4bd1-9317-6f35ed98c074" />
+    <UnitTestResult executionId="ae031120-1b26-4640-b012-f8eae6dff404" testId="8d2aeb8d-c411-5a6d-7d65-eec5ec9bb887" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;oversized&quot;)" computerName="OS008-HOME" duration="00:00:00.0000454" startTime="2026-10-05T15:46:58.2061155+03:00" endTime="2026-10-05T15:46:58.2061473+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae031120-1b26-4640-b012-f8eae6dff404" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;null&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="370f96df-cdc6-f357-02c8-2909297fc612">
+      <Execution id="ed5c4b3b-3538-4d3f-9d7a-80690f459571" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;empty&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="2ff0df06-acb0-497d-82d6-0cac00f9198d">
+      <Execution id="78165e8c-b93d-41c5-9a13-b502899e9eaf" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;closed&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="0a0f1ac0-b748-4138-25d3-655870c9eac7">
+      <Execution id="0e559c05-0908-4904-a74a-d68f25772f13" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Confirmed_response_survives_a_failed_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;cancelled&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="11a75631-d33d-b384-4b86-d0b9e63442b4">
+      <Execution id="9598d399-130c-4bab-a512-2b745c0d7329" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Confirmed_response_survives_a_failed_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;truncated&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="c1b8cefb-63c9-8cab-f263-ac3ffc7f3110">
+      <Execution id="0e835a76-914a-4561-b9c1-4347bd646b67" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;malformed&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="b8efe0ed-c023-a0ad-444c-ec6d4b1d18fc">
+      <Execution id="12fc375b-6604-461a-9ea7-990b23219ad2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;depth&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="7cbb6217-c88f-2262-ef5d-b8616113a8dc">
+      <Execution id="eac1cc42-821c-4fdb-bc1a-73afeb1ddcfc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;stalled&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="c49585be-ca6f-2532-1363-174cca81b3ab">
+      <Execution id="d50699f0-68f7-4bd1-9317-6f35ed98c074" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Confirmed_response_survives_a_failed_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;oversized&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="8d2aeb8d-c411-5a6d-7d65-eec5ec9bb887">
+      <Execution id="ae031120-1b26-4640-b012-f8eae6dff404" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;utf8&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="e5579b67-ef67-75c4-6f45-528919881e8b">
+      <Execution id="fec3fa12-5967-471c-a038-fabeb7dde8b4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="11a75631-d33d-b384-4b86-d0b9e63442b4" executionId="9598d399-130c-4bab-a512-2b745c0d7329" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a0f1ac0-b748-4138-25d3-655870c9eac7" executionId="0e559c05-0908-4904-a74a-d68f25772f13" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5579b67-ef67-75c4-6f45-528919881e8b" executionId="fec3fa12-5967-471c-a038-fabeb7dde8b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7cbb6217-c88f-2262-ef5d-b8616113a8dc" executionId="eac1cc42-821c-4fdb-bc1a-73afeb1ddcfc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="370f96df-cdc6-f357-02c8-2909297fc612" executionId="ed5c4b3b-3538-4d3f-9d7a-80690f459571" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c1b8cefb-63c9-8cab-f263-ac3ffc7f3110" executionId="0e835a76-914a-4561-b9c1-4347bd646b67" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2ff0df06-acb0-497d-82d6-0cac00f9198d" executionId="78165e8c-b93d-41c5-9a13-b502899e9eaf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b8efe0ed-c023-a0ad-444c-ec6d4b1d18fc" executionId="12fc375b-6604-461a-9ea7-990b23219ad2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c49585be-ca6f-2532-1363-174cca81b3ab" executionId="d50699f0-68f7-4bd1-9317-6f35ed98c074" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d2aeb8d-c411-5a6d-7d65-eec5ec9bb887" executionId="ae031120-1b26-4640-b012-f8eae6dff404" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="10" executed="10" passed="10" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.70]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

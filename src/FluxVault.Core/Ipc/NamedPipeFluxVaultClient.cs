@@ -1,3 +1,5 @@
+using System.Text;
+using System.Text.Json;
 using FluxVault.Abstractions.Ipc;
 
 namespace FluxVault.Core.Ipc;
@@ -19,8 +21,18 @@ public sealed class NamedPipeFluxVaultClient : IFluxVaultServiceClient
         await using var pipe = await pipeFactory.ConnectAsync(cancellationToken).ConfigureAwait(false);
         await FluxVaultIpcFrame.WriteAsync(pipe, request, limits.MaximumRequestBytes, limits.MaximumJsonDepth,
             limits.FrameWriteTimeout, cancellationToken).ConfigureAwait(false);
-        var response = await FluxVaultIpcFrame.ReadAsync<FluxVaultIpcResponse>(pipe, limits.MaximumResponseBytes,
-            limits.MaximumJsonDepth, limits.FrameReadTimeout, cancellationToken, waitForResponse: true).ConfigureAwait(false);
+        FluxVaultIpcResponse response;
+        try
+        {
+            response = await FluxVaultIpcFrame.ReadAsync<FluxVaultIpcResponse>(pipe, limits.MaximumResponseBytes,
+                limits.MaximumJsonDepth, limits.FrameReadTimeout, cancellationToken, waitForResponse: true).ConfigureAwait(false);
+        }
+        catch (Exception exception) when (exception is InvalidDataException or JsonException or DecoderFallbackException)
+        {
+            // The request was sent, but an invalid response cannot establish its outcome.
+            // Use the same transport uncertainty contract as a disconnected service.
+            throw new IOException("The service response was incomplete or invalid. Check the operation outcome before retrying.", exception);
+        }
         // DisconnectNamedPipe discards unread bytes. A bounded receipt lets the served anchor be reused safely.
         using var receiptDeadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         receiptDeadline.CancelAfter(limits.FrameWriteTimeout);

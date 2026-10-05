@@ -414,3 +414,40 @@ authentication/path `5d5ba09` and interruption `ad6087a` remain valid.
 This is a candidate procedure and checked preparation, not an installed rollback
 drill, full matrix acceptance or NEXT-002 completion. No normal installation,
 authentication, ancestor ACL, service or data move has been performed.
+
+## Full-branch review response correction
+
+The independent whole-branch review found one C02/S07 blocker: a response cut off
+after its first byte throws `InvalidDataException`; malformed JSON and invalid
+UTF-8 also escape some actual WPF save/backup/receipt handlers. The durable
+records survive, but the usable unknown-outcome flow fails. Test-first client
+and real-store/view-model regressions reproduce this without extending a native
+fixture. The smallest correction is confined to the production client's response
+read: classify framing/JSON/UTF-8 failures as `IOException`, retain the inner
+exception, and use the existing uncertainty/reconciliation flow. Outgoing request
+validation, caller cancellation and authoritative complete-response receipt
+behaviour remain unchanged. The independent reviewer accepts this approach.
+
+The seven client failure cases and nine actual Main/Options command cases fail
+before correction. They pass afterwards: records retain the original operation,
+newer edits survive failed receipt checks, no dependent backup or blind retry is
+sent, and a valid original receipt permits reconciliation. Actual reopened stores
+prove the committed configuration. The final combined ordinary result is Core
+563, App 487, Windows 154 and integration 279, all passed with zero skips and no
+build warnings. `ipc-response-core-final.trx` includes the added caller-cancellation
+proof; the other three `ipc-response-combined_*.trx` files are the combined run.
+
+The correction invalidates the frozen product candidate `289c596...`; retain it
+as superseded evidence and build one replacement candidate. The accepted
+commissioning/authentication/ancestor/rollback implementation and unaffected
+checkpoints `9815673`, `5d5ba09` and `ad6087a` remain reusable. A fresh existing
+native single-vault run `6963785f3a3a4de986548666b636c92a` passes the actual
+authenticated workflow (creator A143, SYSTEM163 and 36 setup checks, ungranted B
+refused). It verifies independent recovery hashes and caller edit access.
+All owned jobs are joined, the fixture root is removed, and the normal installation
+is unchanged. No package/profile/trust operation is included. Replacement hashes,
+actual MSI/preflight checks and consolidated
+independent delta acceptance remain pending. S01 permission/proof, D01 actual
+desktop/scale observation, separately approved normal commissioning/live workflow
+and final matrix acceptance remain open. This is not rollout approval or slice
+completion.

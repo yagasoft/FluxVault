@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Windows;
@@ -21,6 +22,113 @@ namespace FluxVault.App.Tests;
 // Exercises public view-model commands through the production configuration stores.
 public sealed class ProtectionSaveContractTests
 {
+    [Theory]
+    [InlineData("truncated", false)]
+    [InlineData("malformed", false)]
+    [InlineData("utf8", false)]
+    [InlineData("truncated", true)]
+    [InlineData("malformed", true)]
+    [InlineData("utf8", true)]
+    public async Task Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(string fault, bool optionsFlow)
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { UseFramedTransport = true, ResponseFault = fault,
+            ResponseFaultCommand = FluxVaultIpcCommand.SaveConfiguration, RequireBoundRequests = true };
+        var store = new FileConfigurationSaveOperationStore(Path.Combine(fixture.Root, "pending-save.json"));
+        if (optionsFlow)
+        {
+            var options = new OptionsViewModel(client, store);
+            await options.InitialiseAsync(); options.MinimumVersionsPerFile = 31;
+            await options.SaveCommand.ExecuteAsync(null);
+            var pending = Assert.IsType<PendingConfigurationSave>(store.Read());
+            Assert.True(options.HasUnconfirmedSave);
+            Assert.Contains("kept", options.StatusText);
+            Assert.Equal(31, (await fixture.Reopen().LoadAsync()).RetentionPolicy.MinimumVersionsPerFile);
+            options.MinimumVersionsPerFile = 40;
+            client.ResponseFaultCommand = FluxVaultIpcCommand.GetOperationStatus;
+            await options.CheckSaveOutcomeCommand.ExecuteAsync(null);
+            Assert.Equal(pending.OperationId, store.Read()!.OperationId);
+            Assert.Equal(40, options.MinimumVersionsPerFile);
+            Assert.Contains("could not be confirmed", options.StatusText);
+            await options.SaveCommand.ExecuteAsync(null);
+            Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
+            client.ResponseFaultCommand = null;
+            await options.CheckSaveOutcomeCommand.ExecuteAsync(null);
+            Assert.Null(store.Read());
+            Assert.Equal(40, options.MinimumVersionsPerFile);
+            Assert.All(client.Requests.Where(request => request.Command == FluxVaultIpcCommand.GetOperationStatus),
+                request => Assert.Equal(pending.OperationId, request.OperationId));
+        }
+        else
+        {
+            var dashboard = CreateViewModel(client, saveStore: store);
+            await dashboard.RefreshAsync();
+            dashboard.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "pending-project"));
+            await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+            var pending = Assert.IsType<PendingConfigurationSave>(store.Read());
+            Assert.Equal(ProtectionSaveState.Unknown, dashboard.ProtectionSaveState);
+            Assert.NotEmpty(dashboard.FileBrowser.PendingChanges);
+            Assert.Single((await fixture.Reopen().LoadAsync()).SelectionRules);
+            var newer = Selection(fixture.Root, "newer-edit");
+            dashboard.FileBrowser.ReplaceSelectionRule(newer);
+            client.ResponseFaultCommand = FluxVaultIpcCommand.GetOperationStatus;
+            await dashboard.CheckProtectionSaveOutcomeCommand.ExecuteAsync(null);
+            Assert.Equal(pending.OperationId, store.Read()!.OperationId);
+            Assert.Equal(ProtectionSaveState.Unknown, dashboard.ProtectionSaveState);
+            Assert.Contains(dashboard.FileBrowser.GetSelectionRules(), rule => rule.Path == newer.Path);
+            await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+            Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
+            client.ResponseFaultCommand = null;
+            await dashboard.CheckProtectionSaveOutcomeCommand.ExecuteAsync(null);
+            Assert.Null(store.Read());
+            Assert.Contains(dashboard.FileBrowser.GetSelectionRules(), rule => rule.Path == newer.Path);
+            Assert.NotEmpty(dashboard.FileBrowser.PendingChanges);
+            Assert.All(client.Requests.Where(request => request.Command == FluxVaultIpcCommand.GetOperationStatus),
+                request => Assert.Equal(pending.OperationId, request.OperationId));
+        }
+        Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+        Assert.True(client.TransportsCreated > 0);
+        Assert.Equal(client.TransportsCreated, client.TransportsDisposed);
+    }
+
+    [Theory]
+    [InlineData("truncated")]
+    [InlineData("malformed")]
+    [InlineData("utf8")]
+    public async Task Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(string fault)
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store) { UseFramedTransport = true, ResponseFault = fault,
+            ResponseFaultCommand = FluxVaultIpcCommand.RunBackupNow, RequireBoundRequests = true };
+        var path = Path.Combine(fixture.Root, "pending-backup.json");
+        var store = new FileBackupOperationStore(path);
+        var dashboard = CreateViewModel(client, backupStore: store);
+        await dashboard.RefreshAsync();
+        dashboard.FileBrowser.ReplaceSelectionRule(Selection(fixture.Root, "backup-project"));
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        var pending = Assert.IsType<PendingBackupOperation>(store.Read());
+        Assert.True(dashboard.HasUnconfirmedBackup);
+        Assert.Contains("could not be confirmed", dashboard.BackupOutcomeMessage);
+        client.ResponseFaultCommand = FluxVaultIpcCommand.GetOperationStatus;
+        dashboard = CreateViewModel(client, backupStore: new FileBackupOperationStore(path));
+        await dashboard.RefreshAsync();
+        await dashboard.CheckBackupOutcomeCommand.ExecuteAsync(null);
+        Assert.Equal(pending, store.Read());
+        Assert.Equal(pending.OperationId, dashboard.UnconfirmedBackupOperationId);
+        Assert.Contains("could not be confirmed", dashboard.BackupOutcomeMessage);
+        await dashboard.RunBackupNowCommand.ExecuteAsync(null);
+        Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.RunBackupNow);
+        client.ResponseFaultCommand = null;
+        await dashboard.CheckBackupOutcomeCommand.ExecuteAsync(null);
+        Assert.Null(store.Read());
+        Assert.False(dashboard.HasUnconfirmedBackup);
+        Assert.All(client.Requests.Where(request => request.Command == FluxVaultIpcCommand.GetOperationStatus),
+            request => Assert.Equal(pending.OperationId, request.OperationId));
+        Assert.Equal(client.TransportsCreated, client.TransportsDisposed);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -2203,6 +2311,11 @@ public sealed class ProtectionSaveContractTests
 
     private sealed class StoreClient(IFluxVaultConfigurationStore store) : IFluxVaultServiceClient
     {
+        public bool UseFramedTransport { get; init; }
+        public string? ResponseFault { get; init; }
+        public FluxVaultIpcCommand? ResponseFaultCommand { get; set; }
+        public int TransportsCreated { get; private set; }
+        public int TransportsDisposed { get; private set; }
         internal VaultId Identity { get; } = VaultId.New();
         private long revision = 1;
         internal EnvelopeFault SaveEnvelopeFault { get; init; }
@@ -2236,6 +2349,53 @@ public sealed class ProtectionSaveContractTests
         public FluxVaultConfiguration? ConfigurationAtBackup { get; private set; }
 
         public async Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
+        {
+            if (!UseFramedTransport) return await HandleAsync(request, cancellationToken);
+            TransportsCreated++;
+            var transport = new FramedStoreTransport(this);
+            return await new NamedPipeFluxVaultClient(transport).SendAsync(request, cancellationToken);
+        }
+
+        private sealed class FramedStoreTransport(StoreClient owner) : Stream, IFluxVaultPipeClientFactory
+        {
+            private readonly MemoryStream request = new();
+            private MemoryStream? response;
+            public Task<Stream> ConnectAsync(CancellationToken cancellationToken) => Task.FromResult<Stream>(this);
+            public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+            {
+                if (response is null)
+                {
+                    var decoded = FluxVaultIpcSerializer.DeserializeRequest(Encoding.UTF8.GetString(request.ToArray()).TrimEnd('\n'));
+                    var result = await owner.HandleAsync(decoded, cancellationToken);
+                    var bytes = owner.ResponseFaultCommand == decoded.Command ? owner.ResponseFault switch
+                    {
+                        "truncated" => Encoding.UTF8.GetBytes("{\"success\":true"),
+                        "malformed" => Encoding.UTF8.GetBytes("{]\n"),
+                        _ => new byte[] { 255, 10 }
+                    } : Encoding.UTF8.GetBytes(FluxVaultIpcSerializer.SerializeResponse(result) + "\n");
+                    response = new(bytes);
+                }
+                return await response.ReadAsync(buffer, cancellationToken);
+            }
+            public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default) => request.WriteAsync(buffer, cancellationToken);
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) { request.Dispose(); response?.Dispose(); owner.TransportsDisposed++; }
+                base.Dispose(disposing);
+            }
+            public override bool CanRead => true;
+            public override bool CanSeek => false;
+            public override bool CanWrite => true;
+            public override long Length => throw new NotSupportedException();
+            public override long Position { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+            public override void Flush() { }
+            public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+            public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+            public override void SetLength(long value) => throw new NotSupportedException();
+        }
+
+        private async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
         {
             Commands.Add(request.Command);
             Requests.Add(request);

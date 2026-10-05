@@ -1,0 +1,372 @@
+[13504]  LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+[13504]  LOG:  listening on IPv4 address "127.0.0.1", port 63884
+[13504]  LOG:  listening on IPv6 address "::1", port 63884
+[59188]  LOG:  database system was shut down at 2026-10-05 15:52:21 EEST
+[13504]  LOG:  database system is ready to accept connections
+[18968] [unknown] LOG:  connection received: host=127.0.0.1 port=63893
+[18968] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[18968] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[18968] psql LOG:  connection ready: setup total=41.164 ms, fork=17.937 ms, authentication=10.167 ms
+[13504]  LOG:  received SIGHUP, reloading configuration files
+[68720] [unknown] LOG:  connection received: host=127.0.0.1 port=63896
+[68720] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[68720] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[68720] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[68720] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[58712] [unknown] LOG:  connection received: host=127.0.0.1 port=63897
+[58712] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[58712] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[58712] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[58712] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[62096] [unknown] LOG:  connection received: host=127.0.0.1 port=63900
+[62096] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[62096] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[62096] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[62096] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[68552] [unknown] LOG:  connection received: host=::1 port=63905
+[68552] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[68552] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[68552] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[68552] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[50028] [unknown] LOG:  connection received: host=::1 port=63906
+[50028] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[50028] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[50028] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[50028] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[21244] [unknown] LOG:  connection received: host=::1 port=63907
+[21244] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[21244] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[21244] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[21244] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[13504]  LOG:  received SIGHUP, reloading configuration files
+[64468] [unknown] LOG:  connection received: host=127.0.0.1 port=63910
+[64468] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[64468] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.d1c37c75b8d24da6866c57a23b6f750e.System
+[64468] FVGate.d1c37c75b8d24da6866c57a23b6f750e.System LOG:  connection ready: setup total=40.596 ms, fork=18.758 ms, authentication=7.233 ms
+[4392] [unknown] LOG:  connection received: host=127.0.0.1 port=63913
+[4392] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[4392] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.2a4b3821c0fa4e8ea7fd9b2e37d09e02.libpq
+[4392] FVGate.2a4b3821c0fa4e8ea7fd9b2e37d09e02.libpq LOG:  connection ready: setup total=29.276 ms, fork=16.849 ms, authentication=4.651 ms
+[59936] [unknown] LOG:  connection received: host=::1 port=63916
+[59936] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[59936] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.4d4ff403aafd43e2a3291716bddcbcc5.System
+[59936] FVGate.4d4ff403aafd43e2a3291716bddcbcc5.System LOG:  connection ready: setup total=37.355 ms, fork=18.732 ms, authentication=7.351 ms
+[51288] [unknown] LOG:  connection received: host=::1 port=63917
+[51288] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[51288] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.68f1a2688a374334b7518b4aa5a969c5.libpq
+[51288] FVGate.68f1a2688a374334b7518b4aa5a969c5.libpq LOG:  connection ready: setup total=29.232 ms, fork=17.125 ms, authentication=4.675 ms
+[59404] [unknown] LOG:  connection received: host=127.0.0.1 port=63921
+[59404] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[59404] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[59404] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[59404] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[37652] [unknown] LOG:  connection received: host=127.0.0.1 port=63922
+[37652] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[37652] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[37652] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[37652] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[54396] [unknown] LOG:  connection received: host=127.0.0.1 port=63925
+[54396] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[54396] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[54396] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[54396] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[27808] [unknown] LOG:  connection received: host=::1 port=63926
+[27808] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[27808] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[27808] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[27808] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[36704] [unknown] LOG:  connection received: host=::1 port=63927
+[36704] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[36704] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[36704] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[36704] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[53600] [unknown] LOG:  connection received: host=::1 port=63930
+[53600] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[53600] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[53600] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[53600] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[53404] [unknown] LOG:  connection received: host=127.0.0.1 port=58451
+[53404] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[53404] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[53404] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[53404] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[1272] [unknown] LOG:  connection received: host=127.0.0.1 port=58452
+[1272] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[1272] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[1272] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[1272] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[10760] [unknown] LOG:  connection received: host=127.0.0.1 port=58455
+[10760] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[10760] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[10760] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[10760] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[67672] [unknown] LOG:  connection received: host=::1 port=58456
+[67672] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[67672] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[67672] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[67672] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[69004] [unknown] LOG:  connection received: host=::1 port=58457
+[69004] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[69004] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[69004] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[69004] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[64652] [unknown] LOG:  connection received: host=::1 port=58460
+[64652] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:2)
+[64652] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[64652] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[64652] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[57648] [unknown] LOG:  connection received: host=127.0.0.1 port=58461
+[57648] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[57648] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.ff2753c9dff04ec4aad88cf518d0abed.System
+[57648] FVGate.ff2753c9dff04ec4aad88cf518d0abed.System LOG:  connection ready: setup total=36.701 ms, fork=18.062 ms, authentication=7.336 ms
+[54548] [unknown] LOG:  connection received: host=127.0.0.1 port=58465
+[54548] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[54548] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.94512fc2199b4808897c5a851dba7207.System
+[54548] FVGate.94512fc2199b4808897c5a851dba7207.System LOG:  connection ready: setup total=29.162 ms, fork=17.830 ms, authentication=3.466 ms
+[53204] [unknown] LOG:  connection received: host=127.0.0.1 port=58466
+[53204] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[53204] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.25d0118055304ff69be9e8ab4430ada9.System
+[53204] FVGate.25d0118055304ff69be9e8ab4430ada9.System LOG:  connection ready: setup total=27.947 ms, fork=17.109 ms, authentication=3.307 ms
+[44376] [unknown] LOG:  connection received: host=127.0.0.1 port=58467
+[44376] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[44376] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.61d28a0eb6b84adc8299a3e6bfd96968.System
+[44376] FVGate.61d28a0eb6b84adc8299a3e6bfd96968.System LOG:  connection ready: setup total=28.235 ms, fork=17.284 ms, authentication=3.337 ms
+[58308] [unknown] LOG:  connection received: host=127.0.0.1 port=58468
+[58308] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[58308] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.06f30846bf82441187f8d1390cf3f44f.System
+[58308] FVGate.06f30846bf82441187f8d1390cf3f44f.System LOG:  connection ready: setup total=28.356 ms, fork=17.085 ms, authentication=3.482 ms
+[36896] [unknown] LOG:  connection received: host=127.0.0.1 port=58469
+[36896] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[36896] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.5eb9f2ce676d461484f2cf6f76d667a0.System
+[36896] FVGate.5eb9f2ce676d461484f2cf6f76d667a0.System LOG:  connection ready: setup total=28.368 ms, fork=17.200 ms, authentication=3.330 ms
+[57564] [unknown] LOG:  connection received: host=127.0.0.1 port=58470
+[57564] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[57564] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.fcacff91e6514bd1b86032a4eff968ff.System
+[57564] FVGate.fcacff91e6514bd1b86032a4eff968ff.System LOG:  connection ready: setup total=27.639 ms, fork=16.862 ms, authentication=3.300 ms
+[66104] [unknown] LOG:  connection received: host=127.0.0.1 port=58472
+[66104] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[66104] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.57c46027df5e4ff18c048fd7f25286e7.System
+[66104] FVGate.57c46027df5e4ff18c048fd7f25286e7.System LOG:  connection ready: setup total=28.412 ms, fork=17.066 ms, authentication=3.489 ms
+[35252] [unknown] LOG:  connection received: host=127.0.0.1 port=58473
+[35252] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[35252] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[35252] [unknown] LOG:  connection ready: setup total=29.428 ms, fork=18.208 ms, authentication=3.413 ms
+[47280] [unknown] LOG:  connection received: host=127.0.0.1 port=58474
+[47280] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[47280] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.f7801804ec69404e8435898efe760f35.System
+[47280] FVGate.f7801804ec69404e8435898efe760f35.System LOG:  connection ready: setup total=27.923 ms, fork=17.076 ms, authentication=3.298 ms
+[67912] [unknown] LOG:  connection received: host=127.0.0.1 port=58475
+[67912] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[67912] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.795b2e3ecd2b4f4da351b1c24d607ac2.System
+[67912] FVGate.795b2e3ecd2b4f4da351b1c24d607ac2.System LOG:  connection ready: setup total=28.749 ms, fork=17.847 ms, authentication=3.241 ms
+[9536] [unknown] LOG:  connection received: host=127.0.0.1 port=58476
+[9536] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[9536] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.25ca466bc9ea4eb5a97628579decb937.System
+[9536] FVGate.25ca466bc9ea4eb5a97628579decb937.System LOG:  connection ready: setup total=27.867 ms, fork=17.037 ms, authentication=3.344 ms
+[53152] [unknown] LOG:  connection received: host=127.0.0.1 port=58477
+[53152] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[53152] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e40d51c874124b95ab2379f5eba1b6c5.System
+[53152] FVGate.e40d51c874124b95ab2379f5eba1b6c5.System LOG:  connection ready: setup total=28.194 ms, fork=17.326 ms, authentication=3.391 ms
+[37824] [unknown] LOG:  connection received: host=127.0.0.1 port=58478
+[37824] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[37824] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.8963e576b28441db80f42d6c302d74f7.System
+[37824] FVGate.8963e576b28441db80f42d6c302d74f7.System LOG:  connection ready: setup total=28.024 ms, fork=16.779 ms, authentication=3.382 ms
+[37404] [unknown] LOG:  connection received: host=127.0.0.1 port=58479
+[37404] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[37404] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[37404] [unknown] LOG:  connection ready: setup total=27.451 ms, fork=16.643 ms, authentication=3.257 ms
+[23640] [unknown] LOG:  connection received: host=127.0.0.1 port=58480
+[23640] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[23640] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.a2e6a354587a4f2084b802ce562bc408.System
+[23640] FVGate.a2e6a354587a4f2084b802ce562bc408.System LOG:  connection ready: setup total=27.617 ms, fork=16.634 ms, authentication=3.199 ms
+[65356] [unknown] LOG:  connection received: host=127.0.0.1 port=58481
+[65356] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[65356] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.69b012bdd0ec4ab39da9db42891d817c.System
+[65356] FVGate.69b012bdd0ec4ab39da9db42891d817c.System LOG:  connection ready: setup total=28.035 ms, fork=17.306 ms, authentication=3.334 ms
+[33520] [unknown] LOG:  connection received: host=127.0.0.1 port=58482
+[33520] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[33520] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.3ac854b6b93145459d6d4edb6f93e4dd.System
+[33520] FVGate.3ac854b6b93145459d6d4edb6f93e4dd.System LOG:  connection ready: setup total=28.115 ms, fork=17.005 ms, authentication=3.302 ms
+[7504] [unknown] LOG:  connection received: host=127.0.0.1 port=58483
+[7504] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[7504] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.cc01029f79574d08af9ee7b02f1d3390.System
+[7504] FVGate.cc01029f79574d08af9ee7b02f1d3390.System LOG:  connection ready: setup total=27.977 ms, fork=17.290 ms, authentication=3.243 ms
+[65572] [unknown] LOG:  connection received: host=127.0.0.1 port=58484
+[65572] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[65572] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[65572] [unknown] LOG:  connection ready: setup total=28.507 ms, fork=17.319 ms, authentication=3.458 ms
+[18612] [unknown] LOG:  connection received: host=127.0.0.1 port=58485
+[18612] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[18612] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.451df2369dc845ebbf3af15d6efee76d.System
+[18612] FVGate.451df2369dc845ebbf3af15d6efee76d.System LOG:  connection ready: setup total=27.704 ms, fork=17.030 ms, authentication=3.259 ms
+[64920] [unknown] LOG:  connection received: host=127.0.0.1 port=58486
+[64920] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[64920] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.a565e192063d4c63aa2f831b8ae1882d.System
+[64920] FVGate.a565e192063d4c63aa2f831b8ae1882d.System LOG:  connection ready: setup total=29.094 ms, fork=17.593 ms, authentication=3.486 ms
+[58388] [unknown] LOG:  connection received: host=127.0.0.1 port=58487
+[58388] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[58388] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[58388] [unknown] LOG:  connection ready: setup total=32.251 ms, fork=20.812 ms, authentication=3.432 ms
+[61756] [unknown] LOG:  connection received: host=127.0.0.1 port=58488
+[61756] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[61756] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[61756] [unknown] LOG:  connection ready: setup total=28.808 ms, fork=17.684 ms, authentication=3.413 ms
+[8824] [unknown] LOG:  connection received: host=127.0.0.1 port=58489
+[8824] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[8824] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.3e74fd30701144a1a3a2e265ef4c78e4.System
+[8824] FVGate.3e74fd30701144a1a3a2e265ef4c78e4.System LOG:  connection ready: setup total=28.348 ms, fork=17.211 ms, authentication=3.401 ms
+[56708] [unknown] LOG:  connection received: host=127.0.0.1 port=58490
+[56708] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[56708] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.f0dd6e1ee07c4f9baaf7f4bce951a3eb.System
+[56708] FVGate.f0dd6e1ee07c4f9baaf7f4bce951a3eb.System LOG:  connection ready: setup total=28.276 ms, fork=17.172 ms, authentication=3.314 ms
+[19236] [unknown] LOG:  connection received: host=127.0.0.1 port=58491
+[19236] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[19236] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.a079e7c945bd48e1bfb40d8433720aed.System
+[19236] FVGate.a079e7c945bd48e1bfb40d8433720aed.System LOG:  connection ready: setup total=28.065 ms, fork=17.377 ms, authentication=3.107 ms
+[47424] [unknown] LOG:  connection received: host=127.0.0.1 port=58492
+[47424] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[47424] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.f42abc6e4883442ba5cbcee020f40020.System
+[47424] FVGate.f42abc6e4883442ba5cbcee020f40020.System LOG:  connection ready: setup total=27.707 ms, fork=16.825 ms, authentication=3.398 ms
+[48928] [unknown] LOG:  connection received: host=127.0.0.1 port=58493
+[48928] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[48928] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.7c165ddaec374d2d831eeabb52577c1b.System
+[48928] FVGate.7c165ddaec374d2d831eeabb52577c1b.System LOG:  connection ready: setup total=27.920 ms, fork=17.055 ms, authentication=3.369 ms
+[60580] [unknown] LOG:  connection received: host=127.0.0.1 port=58494
+[60580] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[60580] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.4643c5cbddb54687b1feb48edb1c1383.System
+[60580] FVGate.4643c5cbddb54687b1feb48edb1c1383.System LOG:  connection ready: setup total=27.705 ms, fork=16.815 ms, authentication=3.254 ms
+[19536] [unknown] LOG:  connection received: host=127.0.0.1 port=58495
+[19536] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[19536] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.b605885fa185497391dfdf464812b076.System
+[19536] FVGate.b605885fa185497391dfdf464812b076.System LOG:  connection ready: setup total=28.002 ms, fork=17.123 ms, authentication=3.354 ms
+[65876] [unknown] LOG:  connection received: host=127.0.0.1 port=58496
+[65876] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[65876] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.5721eaa175804644965bf7402fb1502f.System
+[65876] FVGate.5721eaa175804644965bf7402fb1502f.System LOG:  connection ready: setup total=29.340 ms, fork=18.075 ms, authentication=3.425 ms
+[7340] [unknown] LOG:  connection received: host=127.0.0.1 port=58497
+[7340] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[7340] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.0991af2f515a437fb8a435cba0a6ed68.System
+[7340] FVGate.0991af2f515a437fb8a435cba0a6ed68.System LOG:  connection ready: setup total=28.753 ms, fork=17.859 ms, authentication=3.340 ms
+[28692] [unknown] LOG:  connection received: host=127.0.0.1 port=58498
+[28692] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[28692] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[28692] [unknown] LOG:  connection ready: setup total=27.625 ms, fork=16.610 ms, authentication=3.331 ms
+[36848] [unknown] LOG:  connection received: host=127.0.0.1 port=58499
+[36848] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[36848] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[36848] [unknown] LOG:  connection ready: setup total=27.924 ms, fork=16.961 ms, authentication=3.343 ms
+[26140] [unknown] LOG:  connection received: host=127.0.0.1 port=58500
+[26140] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[26140] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.b4b2430318a246a6b8915425dd0f7877.System
+[26140] FVGate.b4b2430318a246a6b8915425dd0f7877.System LOG:  connection ready: setup total=27.904 ms, fork=16.826 ms, authentication=3.396 ms
+[23104] [unknown] LOG:  connection received: host=127.0.0.1 port=58501
+[23104] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[23104] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.6558fd789ee2400a93b87b0e411e8d16.System
+[23104] FVGate.6558fd789ee2400a93b87b0e411e8d16.System LOG:  connection ready: setup total=29.470 ms, fork=18.080 ms, authentication=3.834 ms
+[36948] [unknown] LOG:  connection received: host=127.0.0.1 port=58502
+[36948] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[36948] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.10a0b211d31b431abc028688eb150964.System
+[36948] FVGate.10a0b211d31b431abc028688eb150964.System LOG:  connection ready: setup total=30.039 ms, fork=18.779 ms, authentication=3.663 ms
+[62016] [unknown] LOG:  connection received: host=127.0.0.1 port=58503
+[62016] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[62016] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.ba48b30d56d44e81849fce0c05aba62d.System
+[62016] FVGate.ba48b30d56d44e81849fce0c05aba62d.System LOG:  connection ready: setup total=27.663 ms, fork=16.894 ms, authentication=3.240 ms
+[59688] [unknown] LOG:  connection received: host=127.0.0.1 port=58504
+[59688] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[59688] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.64643c5b8e1d42edb7af65d0376a3db4.System
+[59688] FVGate.64643c5b8e1d42edb7af65d0376a3db4.System LOG:  connection ready: setup total=28.528 ms, fork=17.241 ms, authentication=3.404 ms
+[46992] [unknown] LOG:  connection received: host=127.0.0.1 port=58505
+[46992] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[46992] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.c54e98c4f3104ed19be061f842f238c9.System
+[46992] FVGate.c54e98c4f3104ed19be061f842f238c9.System LOG:  connection ready: setup total=28.346 ms, fork=17.107 ms, authentication=3.468 ms
+[24072] [unknown] LOG:  connection received: host=127.0.0.1 port=58506
+[24072] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[24072] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.7879045e5b7d415297f648ca3c0e1b7d.System
+[24072] FVGate.7879045e5b7d415297f648ca3c0e1b7d.System LOG:  connection ready: setup total=28.052 ms, fork=16.848 ms, authentication=3.350 ms
+[40132] [unknown] LOG:  connection received: host=127.0.0.1 port=58507
+[40132] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[40132] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.37f492b0a717474ba78cdeeeacb029ad.System
+[40132] FVGate.37f492b0a717474ba78cdeeeacb029ad.System LOG:  connection ready: setup total=28.711 ms, fork=17.688 ms, authentication=3.332 ms
+[57504] [unknown] LOG:  connection received: host=127.0.0.1 port=58508
+[57504] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[57504] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.64c3dbc9d6554815921a7c091c1b9be3.System
+[57504] FVGate.64c3dbc9d6554815921a7c091c1b9be3.System LOG:  connection ready: setup total=27.768 ms, fork=16.870 ms, authentication=3.366 ms
+[26612] [unknown] LOG:  connection received: host=127.0.0.1 port=58509
+[26612] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[26612] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[26612] [unknown] LOG:  connection ready: setup total=27.448 ms, fork=16.458 ms, authentication=3.507 ms
+[54680] [unknown] LOG:  connection received: host=127.0.0.1 port=58510
+[54680] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[54680] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[54680] [unknown] LOG:  connection ready: setup total=28.070 ms, fork=17.154 ms, authentication=3.338 ms
+[59880] [unknown] LOG:  connection received: host=127.0.0.1 port=58511
+[59880] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[59880] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.70c819868398401ba41700965c6da39d.System
+[59880] FVGate.70c819868398401ba41700965c6da39d.System LOG:  connection ready: setup total=28.507 ms, fork=17.479 ms, authentication=3.316 ms
+[55908] [unknown] LOG:  connection received: host=127.0.0.1 port=58512
+[55908] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[55908] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.42653b7a3dea4258a1117789c190b8a2.System
+[55908] FVGate.42653b7a3dea4258a1117789c190b8a2.System LOG:  connection ready: setup total=31.197 ms, fork=20.102 ms, authentication=3.328 ms
+[57592] [unknown] LOG:  connection received: host=127.0.0.1 port=58513
+[57592] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[57592] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.dcd5ac86a0bd4019ad6912edc6014e3d.System
+[57592] FVGate.dcd5ac86a0bd4019ad6912edc6014e3d.System LOG:  connection ready: setup total=28.352 ms, fork=17.392 ms, authentication=3.418 ms
+[23980] [unknown] LOG:  connection received: host=127.0.0.1 port=58514
+[23980] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[23980] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.0d5ff9ba71684a0c95e728f511953fb9.System
+[23980] FVGate.0d5ff9ba71684a0c95e728f511953fb9.System LOG:  connection ready: setup total=28.245 ms, fork=16.901 ms, authentication=3.184 ms
+[67884] [unknown] LOG:  connection received: host=127.0.0.1 port=58515
+[67884] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[67884] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.c06858d77adb4241aa7cbf970128f2d0.System
+[67884] FVGate.c06858d77adb4241aa7cbf970128f2d0.System LOG:  connection ready: setup total=28.173 ms, fork=17.155 ms, authentication=3.552 ms
+[69480] [unknown] LOG:  connection received: host=127.0.0.1 port=58516
+[69480] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[69480] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.768dc2afc4d747ffb09486a9262864c4.System
+[69480] FVGate.768dc2afc4d747ffb09486a9262864c4.System LOG:  connection ready: setup total=28.207 ms, fork=17.319 ms, authentication=3.356 ms
+[46764] [unknown] LOG:  connection received: host=127.0.0.1 port=58517
+[46764] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[46764] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.5c076bf81b6744dba21efdda154d9e86.System
+[46764] FVGate.5c076bf81b6744dba21efdda154d9e86.System LOG:  connection ready: setup total=28.525 ms, fork=17.357 ms, authentication=3.448 ms
+[36832] [unknown] LOG:  connection received: host=127.0.0.1 port=58518
+[36832] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[36832] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.9cf61049f5254d6686091a79275c02a3.System
+[36832] FVGate.9cf61049f5254d6686091a79275c02a3.System LOG:  connection ready: setup total=28.900 ms, fork=17.341 ms, authentication=3.544 ms
+[62652] [unknown] LOG:  connection received: host=127.0.0.1 port=58519
+[62652] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[62652] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.22e33a660e934405b1a1783fa26ba13a.System
+[62652] FVGate.22e33a660e934405b1a1783fa26ba13a.System LOG:  connection ready: setup total=30.976 ms, fork=19.661 ms, authentication=3.531 ms
+[68676] [unknown] LOG:  connection received: host=127.0.0.1 port=58520
+[68676] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[68676] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[68676] [unknown] LOG:  connection ready: setup total=28.254 ms, fork=17.075 ms, authentication=3.461 ms
+[51020] [unknown] LOG:  connection received: host=127.0.0.1 port=58521
+[51020] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[51020] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[51020] [unknown] LOG:  connection ready: setup total=28.241 ms, fork=17.246 ms, authentication=3.359 ms
+[19748] [unknown] LOG:  connection received: host=127.0.0.1 port=58522
+[19748] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[19748] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[19748] [unknown] LOG:  connection ready: setup total=28.587 ms, fork=17.159 ms, authentication=3.429 ms
+[30680] [unknown] LOG:  connection received: host=127.0.0.1 port=58523
+[30680] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[30680] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[30680] [unknown] LOG:  connection ready: setup total=28.553 ms, fork=17.547 ms, authentication=3.435 ms
+[38304] [unknown] LOG:  connection received: host=127.0.0.1 port=58525
+[38304] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[38304] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[38304] [unknown] LOG:  connection ready: setup total=29.430 ms, fork=18.324 ms, authentication=3.360 ms
+[58876] [unknown] LOG:  connection received: host=127.0.0.1 port=58526
+[58876] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[58876] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[58876] [unknown] LOG:  connection ready: setup total=29.641 ms, fork=18.372 ms, authentication=3.472 ms
+[58932] [unknown] LOG:  connection received: host=127.0.0.1 port=58528
+[58932] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/6963785f3a3a4de986548666b636c92a/data/pg_hba.conf:1)
+[58932] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[58932] [unknown] LOG:  connection ready: setup total=30.649 ms, fork=19.620 ms, authentication=3.317 ms
+[13504]  LOG:  received fast shutdown request
+[13504]  LOG:  aborting any active transactions
+[13504]  LOG:  background worker "logical replication launcher" (PID 59744) exited with exit code 1
+[58856]  LOG:  shutting down
+[58856]  LOG:  checkpoint starting: shutdown immediate
+[58856]  LOG:  checkpoint complete: wrote 1256 buffers (30.7%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.049 s, sync=0.370 s, total=0.454 s; sync files=741, longest=0.003 s, average=0.001 s; distance=8073 kB, estimate=8073 kB; lsn=0/1FD59D8, redo lsn=0/1FD59D8
+[13504]  LOG:  database system is shut down

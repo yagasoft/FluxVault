@@ -138,11 +138,11 @@ function Invoke-Bundle {
     } finally { $process.Dispose() }
 }
 
-function Assert-ServiceDelayedAutoStart {
+function Assert-ServiceDemandStart {
     $serviceKey = "HKLM:\SYSTEM\CurrentControlSet\Services\$serviceName"
-    $delayed = (Get-ItemProperty -LiteralPath $serviceKey -Name DelayedAutoStart -ErrorAction Stop).DelayedAutoStart
-    if ($delayed -ne 1) {
-        throw "$serviceName DelayedAutoStart registry value should be 1 but was $delayed."
+    $configuration = Get-ItemProperty -LiteralPath $serviceKey -ErrorAction Stop
+    if ($configuration.Start -ne 3 -or ($configuration.PSObject.Properties['DelayedAutoStart'] -and $configuration.DelayedAutoStart -ne 0)) {
+        throw "$serviceName must remain demand-start without delayed automatic start until commissioning."
     }
 }
 
@@ -232,7 +232,8 @@ if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
     throw "FluxVaultService already exists. Aborting smoke install to avoid damaging an existing FluxVault installation."
 }
 
-if ((Test-Path -LiteralPath $programDataPath -PathType Container) -and -not $AllowExistingProgramData) {
+$programDataExisted = Test-Path -LiteralPath $programDataPath
+if ($programDataExisted -and -not $AllowExistingProgramData) {
     throw "ProgramData already exists at $programDataPath. Aborting clean release smoke validation. Move or back up this folder first, or rerun with -AllowExistingProgramData to perform a non-clean smoke that preserves existing ProgramData."
 }
 
@@ -246,8 +247,8 @@ try {
     Invoke-Bundle -Arguments @("-quiet", "-norestart") -LogPath $installLog
     $installedBySmoke = $true
 
-    Wait-ServiceStatus -Status ([System.ServiceProcess.ServiceControllerStatus]::Running)
-    Assert-ServiceDelayedAutoStart
+    Wait-ServiceStatus -Status ([System.ServiceProcess.ServiceControllerStatus]::Stopped)
+    Assert-ServiceDemandStart
 
     $programFilesRoot = if ($env:ProgramW6432) { $env:ProgramW6432 } else { $env:ProgramFiles }
     $installRoot = Join-Path $programFilesRoot "FluxVault"
@@ -263,8 +264,8 @@ try {
         throw "Application Event Log source $serviceName was not registered."
     }
 
-    if (-not (Test-Path -LiteralPath $programDataPath -PathType Container)) {
-        throw "$programDataPath was not created."
+    if ((Test-Path -LiteralPath $programDataPath) -ne $programDataExisted) {
+        throw 'Installer changed the existence of provisioning-owned ProgramData before commissioning.'
     }
 
     Invoke-CliSmoke -CliPath $cliPath
@@ -275,11 +276,11 @@ try {
         Invoke-Bundle -Arguments @("-uninstall", "-quiet", "-norestart") -LogPath $uninstallLog
         Wait-ServiceDeleted
 
-        if (-not (Test-Path -LiteralPath $programDataPath -PathType Container)) {
-            throw "ProgramData was not preserved after uninstall: $programDataPath."
+        if ((Test-Path -LiteralPath $programDataPath) -ne $programDataExisted) {
+            throw 'Uninstaller changed the existence of provisioning-owned ProgramData.'
         }
 
-        Write-Host "ProgramData preserved at $programDataPath."
+        Write-Host "ProgramData existence preserved at $programDataPath."
         Write-Host "FluxVault release uninstall smoke checks passed."
         $installedBySmoke = $false
     }

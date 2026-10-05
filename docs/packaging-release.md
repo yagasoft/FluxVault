@@ -38,8 +38,11 @@ Developer packaging prerequisites:
 
 The developer service installs as `FluxVaultService` with display name
 `FluxVault Service`. The developer install script registers the
-`FluxVaultService` Windows Event Log source, configures delayed automatic start,
-and sets SCM recovery actions to restart after internal service failure. The
+`FluxVaultService` Windows Event Log source after successful fresh service
+registration. It requires the protected Program Files payload/dependency tree,
+refuses an existing service before mutation and leaves a LocalSystem service
+stopped with demand start. It creates no data directory or sample configuration.
+Authenticated commissioning must complete before enabling ordinary runtime. The
 uninstall script preserves ProgramData and the Event Log source by default; it
 removes them only when `-RemoveProgramData` or `-RemoveEventLogSource` are
 provided.
@@ -58,11 +61,24 @@ The script defaults to `-ReleaseVersion v1.0.1` and derives WiX product version
 later release without editing the script.
 
 The MSI installs the full published app, service, and CLI payloads under
-Program Files, creates the ProgramData folder as permanent/never-overwrite
-state, installs `FluxVaultService`, starts it on install, sets delayed
-automatic start, configures SCM restart recovery, and registers the Application
-Event Log source. The stable `MajorUpgrade` metadata gives future releases a
-single upgrade path while preserving `C:\ProgramData\FluxVault`.
+Program Files, registers a stopped, demand-start `FluxVaultService` and the
+Application Event Log source. It does not create ProgramData vault state or
+configure automatic start/restart before commissioning. The stable `MajorUpgrade`
+metadata remains; existing installation cutover requires an explicitly checked
+legacy preservation and rollback procedure. Current NEXT-002 staging preparation
+is not a completed consumer first-run commissioning experience.
+
+The creator runs `FluxVault.Cli.exe setup-confirm --instance <canonical UUID N>`
+against the fixed authenticated SYSTEM setup pipe. `--timeout-seconds` defaults
+to 120 and is bounded to 1–600. The command accepts no owner, repository, profile,
+configuration or endpoint selectors and never retries. Exit 0 requires a complete
+correlated reply with a valid vault identity and initial revision. Failure,
+cancellation, peer rejection, malformed/lost response or deadline returns an
+unconfirmed outcome requiring protected-bootstrap and ordinary authorised-status
+reconciliation. Confirmation does not establish setup-process exit or runtime
+startup: the commissioning supervisor must join setup and verify activation
+before enabling delayed automatic start and restart policy. See the
+[once-only contract](verification/2026-10-05-next002-rollout-preparation/provisioning-contract.md).
 
 The unsigned consumer Burn bundle chains only the MSI. It does not run
 `Add-AppxPackage`, it does not include `FluxVault.SparsePackage.msix`, and it
@@ -108,10 +124,10 @@ because it installs and uninstalls the per-machine bundle.
 The harness verifies the setup checksum, refuses to overwrite an existing
 `FluxVaultService` or existing `C:\ProgramData\FluxVault` by default, installs
 the Burn bundle silently with logs under `artifacts\release-smoke`, verifies
-service startup, delayed automatic start, full Program Files payloads,
-ProgramData creation, Event Log source registration, and an installed CLI
-backup/list/restore round trip, then uninstalls and checks that ProgramData
-remains. Use `-AllowExistingProgramData` only when deliberately collecting
+stopped/demand-start service registration, full Program Files payloads,
+unchanged ProgramData existence, Event Log source registration and an installed
+diagnostic CLI backup/list/restore round trip, then uninstalls and checks that
+ProgramData existence is unchanged. Use `-AllowExistingProgramData` only when deliberately collecting
 non-clean evidence against preserved existing machine state.
 
 This smoke check proves installer mechanics for the current unsigned package.
@@ -119,7 +135,7 @@ It does not prove SmartScreen reputation, Authenticode signing, Windows 11
 compact-menu package identity, first-run product guidance, or third-party VSS
 writer certification.
 
-Current local evidence: the corrected release package built on 2026-04-30,
+Historical pre-single-vault evidence: the corrected release package built on 2026-04-30,
 the MSI administrative extraction contained the full app/service/CLI payloads,
 and an elevated `eng\smoke-release-install.ps1 -UninstallAfter` run passed
 install, service startup, installed CLI backup/list/restore, uninstall, service

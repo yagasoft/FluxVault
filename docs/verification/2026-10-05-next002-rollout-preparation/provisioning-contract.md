@@ -152,3 +152,27 @@ database/role/authentication delta, preserved legacy locations, service stop/
 start sequence, verified rollback and native owner/ungranted-user/live recovery
 probes. Independent final G01/deployment review and the user's separate rollout
 approval remain required. This document authorises no normal-machine change.
+
+## Creator command and installation ordering
+
+`setup-confirm --instance <canonical nonempty UUID N> [--timeout-seconds 120]`
+uses only the fixed SYSTEM-authenticated setup pipe. Its strict parser runs
+before legacy CLI options, refuses duplicate/unknown flags and accepts no owner,
+storage, profile, configuration or pipe selector. The one linked deadline is
+bounded to 1–600 seconds. Dispatch sends only GetStatus plus that operation ID;
+there is no retry. Cancellation awaits the transport and its disposal. A complete
+response remains authoritative if cancellation arrives after publication.
+Success requires no contradictory error, exact operation correlation, a valid
+vault identity and revision one. Any failure or unconfirmed reply explains that
+owned state may exist and requires activation/status reconciliation. It does
+not assert that activation failed or that the setup process has already exited.
+
+The MSI registers LocalSystem stopped/demand-start, does not create ProgramData
+state, and defers delayed automatic start/restart policy to successful explicit
+commissioning. Standalone developer registration is fresh-only, requires the
+protected fixed Program Files payload/dependency tree, refuses existing services
+before mutation and checks native registration failure. It cannot replace or
+start a service. Compiled-MSI table verification and the actual script function
+flow with intercepted native mutations cover these ordering contracts. Existing
+legacy data and normal authentication remain separate preservation/rollback
+inputs, never setup adoption targets.

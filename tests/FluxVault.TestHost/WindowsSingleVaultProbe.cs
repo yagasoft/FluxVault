@@ -8,6 +8,7 @@ using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Security;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Cli;
 using FluxVault.Core.Chunking;
 using FluxVault.Core.Content;
 using FluxVault.Core.Ipc;
@@ -75,9 +76,13 @@ internal static class WindowsSingleVaultProbe
         if (wrongSetup.Success || wrongSetup.ErrorCode != FluxVaultIpcErrorCode.Denied)
             throw new InvalidOperationException("Wrong setup correlation was admitted.");
         checks.Add("native creator with wrong setup correlation is refused without ending setup");
-        var setupResponse = await client.SendAsync(FluxVaultIpcRequest.GetStatus() with { OperationId = Guid.ParseExact(fixture.FixtureId, "N") }, deadline.Token);
-        if (!setupResponse.Success || setupResponse.VaultId?.Value != Guid.ParseExact(fixture.FixtureId, "N") || setupResponse.VaultRevision != 1)
-            throw new InvalidOperationException("Native authenticated product setup did not complete: " + setupResponse.ErrorMessage);
+        using var setupOutput = new StringWriter();
+        using var setupError = new StringWriter();
+        var setupExit = await FluxVaultCli.RunAsync(["setup-confirm", "--instance", fixture.FixtureId], setupOutput, setupError,
+            () => client, deadline.Token);
+        if (setupExit != 0 || setupError.ToString().Length != 0 ||
+            !setupOutput.ToString().Contains(new VaultId(Guid.ParseExact(fixture.FixtureId, "N")).ToString(), StringComparison.Ordinal))
+            throw new InvalidOperationException("Native creator CLI did not confirm product setup: " + setupError);
         while (!File.Exists(productReady)) await Task.Delay(20, deadline.Token);
         checks.Add("setup host joins before ordinary product runtime accepts the owner workflow");
         var output = Path.Combine(fixture.Root, "output-A");
@@ -378,7 +383,7 @@ internal static class WindowsSingleVaultProbe
             CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true,
             MaintenanceCommandsVerified = true, DrainCommandsVerified = true, DiagnosticsCommandsVerified = true, SelectionCommandsVerified = true,
             ProtectionStateCommandsVerified = true, HistoryPagingVerified = true, CurrentPagingVerified = true, LocalProtectionDraftVerified = true,
-            LockedSourceBoundaryVerified = true, ProvisioningSetupVerified = true }));
+            LockedSourceBoundaryVerified = true, ProvisioningSetupVerified = true, CreatorCliConfirmed = true }));
         return 0;
 
         FluxVaultIpcRequest Bind(FluxVaultIpcRequest request) => request with { VaultId = id,

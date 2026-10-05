@@ -21,15 +21,7 @@
       </Directory>
     </StandardDirectory>
 
-    <StandardDirectory Id="CommonAppDataFolder">
-      <Directory Id="PROGRAMDATAFOLDER" Name="FluxVault" />
-    </StandardDirectory>
-
     <ComponentGroup Id="FluxVaultComponents">
-      <Component Id="ProgramDataComponent" Directory="PROGRAMDATAFOLDER" Guid="B1179843-6358-4D18-9D9A-3C07BFA838DA" Permanent="yes" NeverOverwrite="yes">
-        <CreateFolder />
-      </Component>
-
       <Component Id="AppComponent" Directory="APPFOLDER" Guid="D7B2375D-C7B7-4D9F-B517-E93FF9EF473F">
         <File Id="FluxVaultAppExe" Source="$(var.PublishRoot)\app\FluxVault.App.exe" KeyPath="yes" />
       </Component>
@@ -52,28 +44,15 @@
             Name="FluxVaultService"
             DisplayName="FluxVault Service"
             Description="FluxVault local backup and repository service"
-            Start="auto"
+            Start="demand"
             Account="LocalSystem"
             ErrorControl="normal" />
         <ServiceControl
             Id="FluxVaultServiceControl"
             Name="FluxVaultService"
-            Start="install"
             Stop="both"
             Remove="uninstall"
             Wait="yes" />
-        <ServiceConfig
-            ServiceName="FluxVaultService"
-            DelayedAutoStart="yes"
-            OnInstall="yes"
-            OnReinstall="yes" />
-        <util:ServiceConfig
-            ServiceName="FluxVaultService"
-            FirstFailureActionType="restart"
-            SecondFailureActionType="restart"
-            ThirdFailureActionType="none"
-            RestartServiceDelayInSeconds="60"
-            ResetPeriodInDays="1" />
         <util:EventSource
             Name="FluxVaultService"
             Log="Application"

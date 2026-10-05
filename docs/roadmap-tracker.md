@@ -205,8 +205,12 @@ save/backup/history/hash-verified recovery over the private fixture pipe. Native
 setup36/A143/B19 and Core105/Windows154/tooling63 pass; Release has zero
 warnings/errors and independent review accepts the bounded result. Both attempts
 retire 85 captured identities/80 resources with the normal installation unchanged.
-The bounded creator launcher, installer ordering, exact candidate/authentication
-delta/rollback, fixed-path live setup and separately approved rollout remain next;
+The shipping creator confirmation command now passes the native private-pipe
+workflow: setup36/A143/B19, with one correlated CLI request, and all 44 captured
+identities/43 resources retired. Seventy-five combined CLI/registration/compiled
+MSI checks pass. Installer tables now leave runtime stopped/demand-start and
+create no provisioning-owned state. Exact candidate/authentication delta/rollback,
+fixed-path live setup and separately approved rollout remain next;
 packaged identity, D01/scale and final G01 remain applicable. This adds no roadmap
 scope, migration/adoption or additional-vault capability.
 

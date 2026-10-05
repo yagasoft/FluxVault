@@ -8,8 +8,10 @@ namespace FluxVault.Core.Security;
 
 /// <summary>Protected, once-only installation intent; never supplied by an ordinary client.</summary>
 public sealed record FluxVaultProvisioningTicket(FluxVaultInstallation Installation, string BootstrapPath,
-    FluxVaultConfiguration Configuration, int TimeoutSeconds = 120, int SchemaVersion = 1)
+    FluxVaultConfiguration Configuration, int TimeoutSeconds = FluxVaultProvisioningTicket.DefaultTimeoutSeconds, int SchemaVersion = 1)
 {
+    public const int DefaultTimeoutSeconds = 120;
+    public const int MaximumTimeoutSeconds = 600;
     public const int MaximumBytes = 1024 * 1024;
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -31,7 +33,7 @@ public sealed record FluxVaultProvisioningTicket(FluxVaultInstallation Installat
 
     public FluxVaultConfiguration Validate()
     {
-        if (SchemaVersion != 1 || Installation is null || Configuration is null || TimeoutSeconds is < 1 or > 600)
+        if (SchemaVersion != 1 || Installation is null || Configuration is null || TimeoutSeconds is < 1 or > MaximumTimeoutSeconds)
             throw new InvalidDataException("Provisioning ticket schema or deadline is invalid.");
         Installation.Validate();
         // The activation artefact has a tighter bound than its surrounding ticket.

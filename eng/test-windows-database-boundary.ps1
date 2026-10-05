@@ -1009,7 +1009,7 @@ host all all ::1/128 reject
                 -not $creatorProof[0].Result.DrainCommandsVerified -or -not $creatorProof[0].Result.DiagnosticsCommandsVerified -or
                 -not $creatorProof[0].Result.SelectionCommandsVerified -or -not $proof[0].Result.SelectionOutputCleaned -or
                 -not $creatorProof[0].Result.ProtectionStateCommandsVerified -or -not $creatorProof[0].Result.HistoryPagingVerified -or -not $creatorProof[0].Result.CurrentPagingVerified -or
-                -not $creatorProof[0].Result.LocalProtectionDraftVerified -or -not $creatorProof[0].Result.LockedSourceBoundaryVerified -or -not $creatorProof[0].Result.ProvisioningSetupVerified -or
+                -not $creatorProof[0].Result.LocalProtectionDraftVerified -or -not $creatorProof[0].Result.LockedSourceBoundaryVerified -or -not $creatorProof[0].Result.ProvisioningSetupVerified -or -not $creatorProof[0].Result.CreatorCliConfirmed -or
                 $deniedProof.Count -ne 1 -or $deniedProof[0].Result.MaintenanceDenied -ne 19 -or -not $proof[0].Result.DiagnosticsOutputCleaned -or
                 -not $proof[0].Result.ProtectedRehearsalOutputCleaned -or -not $proof[0].Result.DrainEffectVerified) {
                 throw 'Required current maintenance proof is missing; rebuild the Release test host before running.'

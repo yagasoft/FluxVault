@@ -19,29 +19,29 @@ public sealed class PackagingTests
     }
 
     [Fact]
-    public void Install_script_configures_recovery_delayed_start_event_log_and_waits_for_transitions()
+    public void Install_script_registers_fresh_stopped_service_for_authenticated_commissioning()
     {
         var root = FindRepositoryRoot();
         var script = File.ReadAllText(Path.Combine(root, "eng", "install-service.ps1"));
 
-        Assert.Contains("function Wait-ServiceStatus", script);
-        Assert.Contains("function Wait-ServiceDeleted", script);
+        Assert.Contains("function Register-FluxVaultService", script);
+        Assert.Contains("function Assert-ProtectedServicePayload", script);
         Assert.Contains("New-EventLog", script);
         Assert.Contains("FluxVaultService", script);
-        Assert.Contains("start= delayed-auto", script);
-        Assert.Contains("failureflag", script);
-        Assert.Contains("restart/60000/restart/60000", script);
+        Assert.Contains("start= demand", script);
+        Assert.DoesNotContain("start= delayed-auto", script);
+        Assert.DoesNotContain("sc.exe start", script);
     }
 
     [Fact]
-    public void Install_script_resolves_publish_root_from_source_or_copied_package_location()
+    public void Install_script_requires_program_files_payload()
     {
         var root = FindRepositoryRoot();
         var script = File.ReadAllText(Path.Combine(root, "eng", "install-service.ps1"));
 
         Assert.Contains("function Resolve-PublishRoot", script);
-        Assert.Contains("Join-Path $PSScriptRoot \"service\\FluxVault.Service.exe\"", script);
-        Assert.Contains("Join-Path $PSScriptRoot \"..\\artifacts\\publish\\service\\FluxVault.Service.exe\"", script);
+        Assert.Contains("$env:ProgramW6432", script);
+        Assert.Contains("Assert-ProtectedServicePayload -ServiceDirectory", script);
     }
 
     [Fact]
@@ -193,7 +193,7 @@ public sealed class PackagingTests
     }
 
     [Fact]
-    public void Production_wix_installer_declares_service_recovery_upgrade_and_state_preservation()
+    public void Production_wix_installer_declares_stopped_service_upgrade_and_external_state_ownership()
     {
         var root = FindRepositoryRoot();
         var projectPath = Path.Combine(root, "installer", "wix", "FluxVault.Installer", "FluxVault.Installer.wixproj");
@@ -203,7 +203,6 @@ public sealed class PackagingTests
         Assert.True(File.Exists(packagePath));
         var project = File.ReadAllText(projectPath);
         var package = File.ReadAllText(packagePath);
-        var normalizedPackage = package.Replace("\r\n", "\n", StringComparison.Ordinal);
 
         Assert.Contains("WixToolset.Sdk/7.0.0", project);
         Assert.Contains("WixToolset.Util.wixext", project);
@@ -218,17 +217,15 @@ public sealed class PackagingTests
         Assert.Contains("FluxVaultService", package);
         Assert.Contains("<ServiceInstall", package);
         Assert.Contains("<ServiceControl", package);
-        Assert.Contains("<ServiceConfig", package);
-        Assert.Contains("DelayedAutoStart=\"yes\"", package);
-        Assert.Contains("util:ServiceConfig", package);
-        Assert.DoesNotContain("util:ServiceConfig\n            ServiceName=\"FluxVaultService\"\n            DelayedAutoStart=\"yes\"", normalizedPackage);
+        Assert.Contains("Start=\"demand\"", package);
+        Assert.DoesNotContain("Start=\"install\"", package);
+        Assert.DoesNotContain("ServiceConfig", package);
         Assert.Contains("util:EventSource", package);
         Assert.Contains("Name=\"FluxVaultService\"", package);
         Assert.Contains("Log=\"Application\"", package);
         Assert.DoesNotContain("SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\FluxVaultService", package);
-        Assert.Contains("CommonAppDataFolder", package);
-        Assert.Contains("Permanent=\"yes\"", package);
-        Assert.Contains("NeverOverwrite=\"yes\"", package);
+        Assert.DoesNotContain("CommonAppDataFolder", package);
+        Assert.DoesNotContain("<CreateFolder", package);
         Assert.DoesNotContain("SHELLEXTFOLDER", package);
         Assert.DoesNotContain("FluxVaultExplorerCommandDll", package);
     }
@@ -355,7 +352,7 @@ public sealed class PackagingTests
         Assert.Contains("restore --repository", script);
         Assert.Contains("[switch]$UninstallAfter", script);
         Assert.Contains("-uninstall", script);
-        Assert.Contains("ProgramData preserved", script);
+        Assert.Contains("ProgramData existence preserved", script);
     }
 
     [Fact]

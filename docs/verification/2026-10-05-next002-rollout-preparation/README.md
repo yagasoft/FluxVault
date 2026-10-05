@@ -53,9 +53,41 @@ resources retired. Both roots/accounts/group/tasks are gone; normal services,
 authentication/configuration and unrelated primary edits remain unchanged.
 
 This runs real provisioning components over the private fixture pipe. The
-installed fixed-path Service.exe setup entry has not been executed. Next prepare
-the bounded creator handshake launcher, installer/service ordering, exact
-candidate/hash, database/authentication delta and checked legacy rollback before
+installed fixed-path Service.exe setup entry has not been executed. The bounded
+creator command and installer ordering are now implemented and verified below.
+Next prepare the exact candidate/hash, database/authentication delta and checked legacy rollback before
 requesting the separately required installation approval. Scope, architecture,
 creator policy and the overall roadmap remain unchanged. Packaged identity,
 complete desktop/scale, final G01/deployment review and live rollout remain open.
+
+The fresh [creator CLI run](native/a773b350b6a74cb6a4977a478cc0c1db/result.json)
+confirms actual CLI dispatch as native A through the existing SYSTEM-verified
+private fixture pipe, then the same product provisioning and full workflow.
+Setup36/A143/B19/SYSTEM163 pass, including creator ownership and both real-store
+and actual view-model configuration/command contracts. Parent acceptance requires
+`CreatorCliConfirmed`; the setup host is joined before ordinary product open.
+The [fresh census](creator-cli-native-census.json) verifies all 44 captured
+identities and 43 journal resources retired, root/accounts/group/task absent,
+normal services/authentication/configuration and unrelated edits unchanged.
+
+`commissioning-combined.trx` passes 75 checks: strict CLI parsing/correlation,
+contradictory reply rejection, cancellation/deadline join and no automatic retry;
+existing diagnostic CLI file round trips; actual developer script function flow
+with native/event mutations intercepted; and real compiled-MSI table inspection.
+The MSI test first reproduced every premature start/data/recovery defect
+(`installer-order-all-red.trx`), then passed stopped/demand-start/no state creation.
+Its inert cab files are never executed and the MSI is opened read-only, never
+installed. Registration tests also reject actual untrusted temporary ACLs and
+explicit/inherit-only writer descriptors before effects. Read-only inspection of
+the normal installed dependency tree/ancestors passes the protected-payload guard;
+no registration is attempted. `creator-cli-tooling.trx` passes 63 checks.
+
+Retained test-construction diagnostics include the initial inert harvest lacking
+a dependency file, raw-string/analyser corrections and an empty ticket filter;
+none supplies acceptance evidence. `creator-cli-ticket.trx` passes all nineteen
+ticket cases. `commissioning-release-final.log` reports zero warnings/errors.
+The [independent completed review](creator-installation-acceptance-review.md)
+accepts this bounded checkpoint; its obsolete VSS quickstart statement is corrected
+to the implemented manual-only/unavailable-VSS contract. No signed package/profile/trust,
+normal SQL/authentication, installed setup, service transition or data move is
+performed by this checkpoint.

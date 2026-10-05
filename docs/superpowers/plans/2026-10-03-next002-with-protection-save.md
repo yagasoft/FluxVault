@@ -97,7 +97,11 @@ attempts remain latched and require-new bootstrap publication activates the vaul
 Native setup36/A143/B19, Core105/Windows154/tooling63 and the zero-warning Release
 build pass; independent review accepts the checkpoint. Both owned attempts retire
 85 captured identities/80 resources, preserving normal services/data and unrelated
-edits. Next prepare the bounded creator launcher, installer/service ordering,
+edits. The shipping creator confirmation command and installer ordering now pass
+75 combined CLI/registration/compiled-MSI checks and the real native
+CLI → setup → joined host → ordinary save/backup/history/hash-recovery workflow.
+The fresh CLI run retires all 44 identities/43 resources, preserving normal
+services/authentication/configuration and unrelated edits. Next prepare the
 exact candidate/authentication delta/rollback and separately approved rollout.
 Fixed-path Service.exe execution, packaged identity, D01/scale and final G01 stay
 open. The overall roadmap and architecture are unchanged.

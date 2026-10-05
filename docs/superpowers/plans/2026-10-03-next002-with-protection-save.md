@@ -76,6 +76,18 @@ Completed, bounded prerequisites remain evidence rather than a claim of full ser
   The [packaged desktop identity preparation](../../verification/2026-10-05-next002-packaged-identity/README.md) passes 56 focused checks and a zero-warning Release build. A reproduced SignTool key-persistence leak is corrected with flushed private import intent, silent native enumeration and same-object deletion only for new matching RSA fingerprints. Actual signing and interrupted import prove fixture-key removal and preservation of unrelated keys; all six fixture signing keys, seven roots and 59 captured processes are absent. The separately approved integrity refresh passes all forty cases. Independent review accepts the bounded preparation and correction. Native A/B registration, temporary per-user public-certificate trust and Windows profile creation await their bounded resource approval. S01 packaged behaviour and full G01 remain open; no normal rollout or PostgreSQL restart is authorised by this preparation.
 - Prepare exact normal installation target, preserved data/rollback and live probes. Request the separately gated rollout approval only after preparation and technical review; no PostgreSQL restart.
 
+The [manual source/startup continuation](../../verification/2026-10-05-next002-manual-source/README.md)
+closes bounded S04: actual locked-source backup fails without capture/deletion
+or history loss, original replay remains failed after unlocking, and a new
+operation recovers independently matching bytes. Native service replacement
+with enabled protection and no owner request leaves durable state unchanged;
+explicit manual backup then captures the pending note. Existing denied-source
+evidence and reviewed scheduler-free composition remain applicable. Native
+A141/B19 and restart A9/A19 pass, all 148 Windows/63 focused tests pass, and
+Release has zero warnings/errors. All 55 captured identities/56 resources are
+retired; normal installation is unchanged. No scheduling, VSS, reboot capability,
+rollout authority or wider roadmap scope is added. Final G01 remains separate.
+
 ## UI scope
 
 The [Protection failure visibility correction](../../verification/2026-10-05-next002-desktop-observation/README.md)
@@ -95,8 +107,8 @@ through the real file store and actual view-model command. All 475 App checks
 pass, the complete Release build has zero warnings/errors, and independent
 review accepts the bounded correction and rendering. Owned test/build processes
 are absent and the normal installation is unchanged. This keeps the current
-slice manual-only; remaining source-denial/no-background, interrupted-effect,
-packaged identity, implemented-screen accessibility/scale, final G01 and rollout
+slice manual-only; the source/startup and interrupted-effect continuations above
+now supply their bounded proofs. Packaged identity, implemented-screen accessibility/scale, final G01 and rollout
 gates remain applicable. It does not add a scheduler or broaden NEXT-004.
 
 The completed [Overview → Protect → Recover concepts](../../ui-concepts/2026-10-03-next002/README.md) remain historical evidence. Their vault selectors and multi-vault concepts are superseded. Stop further multi-vault exploration. The existing UI should expose one vault, saved/draft configuration, busy/blocked/error/unknown outcomes and verified recovery results tied to the actual command contracts. Existing keyboard, Narrator, DPI, high-contrast and responsiveness gates remain for implemented UI; the broader redesign retains its roadmap position.

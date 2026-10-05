@@ -189,6 +189,16 @@ the bounded correction; normal installation is unchanged and owned workers
 are absent. Remaining NEXT-002 security, interruption, accessibility/scale,
 final G01 and separately approved rollout gates stay open.
 
+The [manual source/startup continuation](verification/2026-10-05-next002-manual-source/README.md)
+supplies the bounded manual-only S04 proof: locked-source failure preserves
+history and cannot execute on replay after unlocking; a new operation captures
+and recovers verified bytes. Enabled service startup without owner requests
+leaves durable state unchanged until explicit manual backup. Native A141/B19,
+restart A9/A19, 148 Windows tests and 63 focused tests pass; Release has zero
+warnings/errors. All 55 captured identities and 56 resources are retired with
+the normal installation unchanged. Scheduling/VSS/reboot are not delivered;
+packaged identity, D01/scale, final G01 and approved rollout remain open.
+
 | ID | Priority | Capability | Status | Required verification |
 | --- | --- | --- | --- | --- |
 | NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |

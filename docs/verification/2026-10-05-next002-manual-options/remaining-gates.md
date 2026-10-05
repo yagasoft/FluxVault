@@ -7,11 +7,11 @@ final G01 approval or a roadmap revision.
 - S01: execute the prepared native packaged A/B test only after its separate
   account-profile/public-certificate-trust approval. Package preparation and
   ordinary native identities cannot substitute for this result.
-- S04: prove caller-denied/locked source failure without privileged fallback,
-  and no background capture when the existing installation opens without an
-  owner session. The current service composes no scheduler or VSS path; keep
-  these unavailable and truthfully explained rather than adding those features
-  to this manual workflow. Existing path/ACL/race gates remain.
+- S04: the [manual-source continuation](../2026-10-05-next002-manual-source/README.md)
+  closes the bounded caller-denied/locked-source and no-owner startup proof.
+  The current service composes no scheduler or VSS path; these stay unavailable
+  and truthfully explained. Existing path/ACL/race evidence remains for final
+  composition review; no logged-off scheduling or reboot capability is claimed.
 - S07: one controlled owned process termination after durable admission and
   an observable effect, before receipt completion; reopen and verify truthful
   original-ID reconciliation without automatic duplicate execution. Reuse

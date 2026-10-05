@@ -275,7 +275,7 @@ function Invoke-SystemActor {
                 $replacementIdentity.StartedUtc -eq $fixtureOriginalServer.StartedUtc){throw 'Server process was not replaced.'}
             $fixtureObservations.Add(@{NativeRestartIdentity=@{Original=$fixtureOriginalServer;Replacement=$replacementIdentity;OriginalJoinedBeforeReplacement=$true}})
             $creator=Invoke-UserActor 'A' '127.0.0.1' 'RestartAfter'
-            Assert-RestartCreator $creator 'after' 17
+            Assert-RestartCreator $creator 'after' 19
             $fixtureObservations.Add(@{NativeRestart=$creator})
             Invoke-RestartGrant 'revoke'
             'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/restart-stop')
@@ -406,7 +406,7 @@ function Invoke-RestartGrant {
         Add-LocalGroupMember -SID $group.SID -Member $user
         Assert-RestartAccessActor (Invoke-UserActor 'B' '127.0.0.1' 'AccessGroup') 9
         $creator=Invoke-UserActor 'A' '127.0.0.1' 'RestartBefore'
-        Assert-RestartCreator $creator 'before' 8
+        Assert-RestartCreator $creator 'before' 9
         $fixtureObservations.Add(@{NativeRestart=$creator})
     }
 }
@@ -993,7 +993,7 @@ host all all ::1/128 reject
                 -not $creatorProof[0].Result.DrainCommandsVerified -or -not $creatorProof[0].Result.DiagnosticsCommandsVerified -or
                 -not $creatorProof[0].Result.SelectionCommandsVerified -or -not $proof[0].Result.SelectionOutputCleaned -or
                 -not $creatorProof[0].Result.ProtectionStateCommandsVerified -or -not $creatorProof[0].Result.HistoryPagingVerified -or -not $creatorProof[0].Result.CurrentPagingVerified -or
-                -not $creatorProof[0].Result.LocalProtectionDraftVerified -or
+                -not $creatorProof[0].Result.LocalProtectionDraftVerified -or -not $creatorProof[0].Result.LockedSourceBoundaryVerified -or
                 $deniedProof.Count -ne 1 -or $deniedProof[0].Result.MaintenanceDenied -ne 19 -or -not $proof[0].Result.DiagnosticsOutputCleaned -or
                 -not $proof[0].Result.ProtectedRehearsalOutputCleaned -or -not $proof[0].Result.DrainEffectVerified) {
                 throw 'Required current maintenance proof is missing; rebuild the Release test host before running.'
@@ -1005,7 +1005,11 @@ host all all ::1/128 reject
             $replacement=Invoke-SystemActor '127.0.0.1' 'RestartServer'
             $restartProof=@($replacement.Results | Where-Object Kind -eq 'Restart')
             if($restartProof.Count -ne 1 -or -not $restartProof[0].Result.NativeRestartServer -or
-                -not $restartProof[0].Result.ExistingBootstrapOpened -or -not $restartProof[0].Result.RequestsJoined){throw 'Actual replacement server proof is incomplete.'}
+                -not $restartProof[0].Result.ExistingBootstrapOpened -or -not $restartProof[0].Result.RequestsJoined -or
+                -not $restartProof[0].Result.NoOwnerWindowVerified -or -not $restartProof[0].Result.ProtectionEnabled -or
+                $restartProof[0].Result.NoOwnerWindowMilliseconds -lt 500 -or $restartProof[0].Result.DurableStateSha256 -notmatch '^[A-F0-9]{64}$'){
+                throw 'Actual replacement server/no-owner proof is incomplete.'
+            }
             $newIdentity=Read-SystemServerIdentity $replacement.RunId
             Assert-ProcessAbsent $newIdentity
             $livePostmaster=Get-OwnedPostmaster

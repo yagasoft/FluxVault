@@ -56,6 +56,30 @@ public sealed class WindowsProtectionSourceTests
     }
 
     [Fact]
+    public async Task Exclusive_working_file_lock_preserves_present_metadata_but_fails_data_capture_and_releases_pins()
+    {
+        using var workspace = new Workspace(); using var caller = await WindowsCallerSourceTests.Caller();
+        var folder = Path.Combine(workspace.Root, "selected"); Directory.CreateDirectory(folder);
+        var file = Path.Combine(folder, "document.docx"); await File.WriteAllTextAsync(file, "pending working bytes");
+        await using (var held = new FileStream(file, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+        {
+            var inspected = new WindowsProtectionSourceAccess(caller).Inspect(folder, file, RepositoryEntryKind.File);
+            // Windows permits the attribute-only handle despite an exclusive data lock. Presence must not become a deletion.
+            Assert.Equal(ProtectionSourceAvailability.Present, inspected.Availability);
+            Assert.Equal(21, inspected.Length);
+            await using var capture = await new WindowsCallerCaptureProvider(caller, [folder]).CaptureAsync(new(file));
+            Assert.False(capture.Success); Assert.Null(capture.Content); Assert.NotEmpty(capture.Message);
+        }
+        await using (var capture = await new WindowsCallerCaptureProvider(caller, [folder]).CaptureAsync(new(file)))
+        {
+            Assert.True(capture.Success);
+            using var reader = new StreamReader(capture.Content!, leaveOpen: true);
+            Assert.Equal("pending working bytes", await reader.ReadToEndAsync());
+        }
+        Directory.Move(folder, folder + "-joined");
+    }
+
+    [Fact]
     public async Task Cancelled_capture_throws_and_acquires_no_handles()
     {
         using var workspace = new Workspace(); using var caller = await WindowsCallerSourceTests.Caller();

@@ -9,8 +9,10 @@ using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Security;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Ipc;
+using FluxVault.Core.Security;
 using FluxVault.Testing;
 using FluxVault.Windows.Security;
+using Npgsql;
 
 namespace FluxVault.TestHost;
 
@@ -88,6 +90,9 @@ internal static class WindowsServiceRestartProbe
                 output.Flush(flushToDisk: true);
             }
             checks.Add("creator retains bounded original requests and receipt envelopes before process replacement");
+            await File.WriteAllTextAsync(Path.Combine(fixture.Root, "output-A", "office", "nested", "notes.docx"),
+                "pending protected change without an owner session " + fixture.FixtureId, deadline.Token);
+            checks.Add("native creator leaves a changed protected working file before its process is joined");
         }
         else
         {
@@ -102,7 +107,13 @@ internal static class WindowsServiceRestartProbe
             ValidateCheckpoint(baseline, fixture, id);
             Check(revision == baseline.Revision && Same(status.Status!.Configuration, baseline.Configuration),
                 "process replacement retains exact revision and complete configuration");
+            Check(status.Status!.Configuration.IsEnabled && status.Status.LastCaptureUtc is null &&
+                status.Status.LastMessage.Contains("Automatic protection unavailable; manual backup available", StringComparison.Ordinal),
+                "owner returns to enabled manual-only protection with no background backup activity");
             var before = await Send(Bind(FluxVaultIpcRequest.ListVersions()));
+            var pendingNotes = Path.Combine(fixture.Root, "output-A", "office", "nested", "notes.docx");
+            var oldNotes = LatestFile(before.Versions!, pendingNotes);
+            var pendingNotesHash = Hash(pendingNotes);
             var originalHash = Hash(sourcePath);
             Check(originalHash == baseline.SourceHash, "pre-replay source still matches the checkpoint");
             await File.WriteAllTextAsync(sourcePath, "changed native source after service process replacement " + fixture.FixtureId, deadline.Token);
@@ -145,6 +156,12 @@ internal static class WindowsServiceRestartProbe
                 Path.Combine(fixture.Root, "output-A", "restart-changed.docx"))));
             Check(freshRecovery.RestoreResult?.VerifiedLogicalBytes == new FileInfo(sourcePath).Length && Hash(freshRecovery.OutputPath!) == changedHash,
                 "fresh post-restart recovery independently matches the new source hash");
+            var newNotes = LatestFile(fresh.Versions!, pendingNotes);
+            var notesRecovery = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(newNotes.VersionId,
+                Path.Combine(fixture.Root, "output-A", "restart-pending-notes.docx"))));
+            Check(newNotes.VersionId != oldNotes.VersionId && notesRecovery.RestoreResult?.VerifiedLogicalBytes == new FileInfo(pendingNotes).Length &&
+                Hash(notesRecovery.OutputPath!) == pendingNotesHash,
+                "only an explicit owner backup captures and verifies the change left before the owner session ended");
         }
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Phase = phase, WindowsSid = identity.User!.Value,
             Passed = checks.Count, Checks = checks, NativeRestartVerified = true,
@@ -174,18 +191,36 @@ internal static class WindowsServiceRestartProbe
             endpoint.Host != "127.0.0.1" || endpoint.Port != fixture.Port || endpoint.Database != fixture.Database ||
             endpoint.ServiceRole != fixture.Role || installation.Configuration.CreatorSid != fixture.Actors["A"])
             throw new InvalidDataException("Restart bootstrap does not belong to this fixture.");
+        await using var catalogue = new PostgreSqlVaultCatalogue(endpoint);
+        var installed = await catalogue.VerifyInstallationAsync(installation.Configuration, deadline.Token);
+        if (!installed.Configuration.IsEnabled) throw new InvalidOperationException("No-owner observation requires enabled protection.");
+        await using var observer = WindowsDatabaseProbe.CreateDataSource(
+            WindowsDatabaseProbe.CreateConnectionSettings(fixture, "127.0.0.1", "System", Guid.NewGuid()));
+        var before = await DurableSnapshot(observer, binding.MetadataNamespace, deadline.Token);
         // Ordinary product open verifies existing storage/catalogue; no provisioning or adoption.
         await using var service = await WindowsSingleVaultService.OpenAsync(bootstrap, deadline.Token);
         var server = new NamedPipeFluxVaultServer(service, WindowsFluxVaultPipeServerFactory.ForPrivateFixture(
             "FluxVault.Tests." + fixture.FixtureId), new WindowsFluxVaultCallerContextProvider());
         var serving = server.RunAsync(deadline.Token);
+        string? observedHash = null;
+        long observedMilliseconds = 0;
         try
         {
+            // The runner does not start A until this server publishes readiness. The original A and SYSTEM instances
+            // have already been joined. This active pipe window therefore has no owner requests or retained caller token.
+            var window = Stopwatch.StartNew();
+            await Task.Delay(TimeSpan.FromMilliseconds(500), deadline.Token);
+            if (serving.IsCompleted) { await serving; throw new IOException("No-owner service exited during observation."); }
+            var after = await DurableSnapshot(observer, binding.MetadataNamespace, deadline.Token);
+            observedMilliseconds = window.ElapsedMilliseconds;
+            if (before != after) throw new InvalidOperationException("Opening the enabled service without an owner mutated durable state.");
+            observedHash = Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(before)));
             using var process = Process.GetCurrentProcess();
             var ready = Path.Combine(fixture.Root, "runtime", "restart-ready.json");
             var bytes = JsonSerializer.SerializeToUtf8Bytes(new { ProcessId = process.Id,
                 StartedUtc = process.StartTime.ToUniversalTime().ToString("O"), Executable = process.MainModule!.FileName,
-                FixtureId = fixture.FixtureId, NativeRestartServer = true });
+                FixtureId = fixture.FixtureId, NativeRestartServer = true, NoOwnerWindowVerified = true,
+                ProtectionEnabled = true, NoOwnerWindowMilliseconds = observedMilliseconds, DurableStateSha256 = observedHash });
             var temporary = ready + ".tmp." + Guid.NewGuid().ToString("N");
             try
             {
@@ -202,8 +237,26 @@ internal static class WindowsServiceRestartProbe
         }
         finally { await deadline.CancelAsync(); await serving; }
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = "System", NativeRestartServer = true,
-            ExistingBootstrapOpened = true, RepositoryId = binding.Id, RequestsJoined = true }));
+            ExistingBootstrapOpened = true, RepositoryId = binding.Id, RequestsJoined = true, NoOwnerWindowVerified = true,
+            ProtectionEnabled = true, NoOwnerWindowMilliseconds = observedMilliseconds, DurableStateSha256 = observedHash }));
         return 0;
+    }
+
+    private static async Task<string> DurableSnapshot(NpgsqlDataSource source, string metadataNamespace, CancellationToken token)
+    {
+        var schema = new NpgsqlCommandBuilder().QuoteIdentifier(metadataNamespace);
+        await using var connection = await source.OpenConnectionAsync(token);
+        // One statement gives a coherent MVCC view of the complete fixture state, including every receipt and manifest.
+        await using var command = new NpgsqlCommand($"""
+            SELECT jsonb_build_object(
+                'vault', (SELECT to_jsonb(v) FROM fv_control.vault v),
+                'operations', COALESCE((SELECT jsonb_agg(to_jsonb(o) ORDER BY operation_id) FROM fv_control.operations o), '[]'::jsonb),
+                'history', (SELECT to_jsonb(h) FROM {schema}.history_state h),
+                'versions', COALESCE((SELECT jsonb_agg(to_jsonb(v) ORDER BY version_id) FROM {schema}.versions v), '[]'::jsonb),
+                'current', COALESCE((SELECT jsonb_agg(to_jsonb(c) ORDER BY path_id) FROM {schema}.current_entries c), '[]'::jsonb)
+            )::text
+            """, connection);
+        return (string)(await command.ExecuteScalarAsync(token) ?? throw new InvalidDataException("Owned durable state is missing."));
     }
 
     private static bool PostgreSqlMutation(FluxVaultIpcCommand command) =>

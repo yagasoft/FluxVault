@@ -355,10 +355,12 @@ internal static class WindowsSingleVaultProbe
         revision = await WindowsProtectionStateProbe.RunAsync(client, Bind, Send, file, destination, checks, deadline.Token);
         await WindowsCurrentPagingProbe.RunAsync(client,source,file,checks,deadline.Token);
         await WindowsProtectionDraftProbe.RunAsync(client,output,file,checks,deadline.Token);
+        await WindowsManualSourceBoundaryProbe.RunAsync(client,file,destination,checks,deadline.Token);
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Passed = checks.Count, Checks = checks, SingleVault = true, VaultId = id,
             CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true,
             MaintenanceCommandsVerified = true, DrainCommandsVerified = true, DiagnosticsCommandsVerified = true, SelectionCommandsVerified = true,
-            ProtectionStateCommandsVerified = true, HistoryPagingVerified = true, CurrentPagingVerified = true, LocalProtectionDraftVerified = true }));
+            ProtectionStateCommandsVerified = true, HistoryPagingVerified = true, CurrentPagingVerified = true, LocalProtectionDraftVerified = true,
+            LockedSourceBoundaryVerified = true }));
         return 0;
 
         FluxVaultIpcRequest Bind(FluxVaultIpcRequest request) => request with { VaultId = id,

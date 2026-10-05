@@ -345,7 +345,8 @@ native creator CLI, joined setup/verified bootstrap, and service activation.
 Its default `Prepare` mode is read-only. [Observed preflight](installation-procedure-preflight.json)
 matches all 208 candidate and 204 legacy payload hashes, exact ticket/SQL/auth
 inputs, current service policy and original preservation/ancestor state. Product
-source has not changed since the frozen `2ce19df` candidate.
+source originally matched `2ce19df`; the response correction and replacement
+candidate recorded below supersede that candidate.
 
 Targets remain `C:\Program Files\FluxVault` and the new creator-owned single-vault
 bootstrap/repository/state under `C:\ProgramData\FluxVault`. The protected
@@ -409,7 +410,7 @@ authentication/path `5d5ba09` and interruption `ad6087a` remain valid.
 | S01 | Prepared native packaged A/B rehearsal is awaiting explicit approval for the two new profiles, scoped per-user certificate trust and one package registration; then run it and verify teardown. |
 | D01 | Guided actual-desktop keyboard/Narrator/DPI/high-contrast/rendering/responsiveness observations remain; native tool binding is inconsistent. Logical renders cannot satisfy them. |
 | S05 | Execute the fixed installed SYSTEM setup and verify normal SSPI/database/filesystem boundary, unchanged unrelated PG state/postmaster and checked legacy recovery during the separately approved rollout. Disposable native worker/component proofs and exact preparation are retained. |
-| G01 | Consolidated independent whole-branch security/integrity acceptance, required combined/named checks and final cleanup; then separate rollout approval and live save → backup → history → independently hash-verified recovery. |
+| G01 | Whole-branch source and executable preparation are independently accepted, including the response correction below. Combined/affected checks and cleanup pass. S01/D01 proofs and separately approved normal commissioning/live acceptance remain before full gate completion. |
 
 This is a candidate procedure and checked preparation, not an installed rollback
 drill, full matrix acceptance or NEXT-002 completion. No normal installation,
@@ -445,9 +446,32 @@ native single-vault run `6963785f3a3a4de986548666b636c92a` passes the actual
 authenticated workflow (creator A143, SYSTEM163 and 36 setup checks, ungranted B
 refused). It verifies independent recovery hashes and caller edit access.
 All owned jobs are joined, the fixture root is removed, and the normal installation
-is unchanged. No package/profile/trust operation is included. Replacement hashes,
-actual MSI/preflight checks and consolidated
-independent delta acceptance remain pending. S01 permission/proof, D01 actual
+is unchanged. No package/profile/trust operation is included. S01 permission/proof, D01 actual
 desktop/scale observation, separately approved normal commissioning/live workflow
 and final matrix acceptance remain open. This is not rollout approval or slice
 completion.
+
+The sole current candidate is `51b103b3c75645dfaa36600e2cbe07a5`, built from
+`e4736366cd6c47598523e62ffcbb6f71810f61a2`, unsigned v1.0.5.0. Its
+[manifest](candidate.json) pins all 208 files and the exact installers:
+
+- MSI SHA-256: `A419E369B86D6AB841410179B50EB015D0221F23097AC20BFE3B46A0D29B7DAD`.
+- Setup SHA-256: `8615CD5DFBF7B0B66A2318E21306C35D29729B61741547095140944F4033D38F`.
+
+Both remain under `artifacts/staging-single-vault/51b103b3c75645dfaa36600e2cbe07a5/installer`.
+All five zero-warning build processes exit and join. The frozen assemblies validate
+the same typed ticket and creator/installation/vault identities. The actual
+compiled MSI contract and refreshed read-only operator preflight pass. Only the
+candidate/source pins change in the accepted operator procedure; normal targets,
+proposed SQL/authentication/ACL bytes and rollback ordering remain unchanged.
+The superseded manifest is retained as `candidate-superseded-289c596...json` and
+its ignored artifact directory remains intact. The fresh existing census verifies
+26 runs, 1,103 captured identities absent and 796 resources retired, plus all five
+replacement build processes absent. Normal authentication, ancestor ACLs,
+installed payload and unrelated primary changes remain unchanged. Independent
+Astra review accepts the complete source assessment and code/preparation delta,
+closing the C02/S07 blocker. The existing installation/recovery procedure is
+executable for this exact candidate. S01/D01 and approved normal fixed-path
+installation/live validation remain required before complete matrix acceptance;
+the installed rollback drill remains unexecuted. No rollout approval is requested
+until the remaining predeployment technical gates close.

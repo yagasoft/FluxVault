@@ -92,7 +92,7 @@ function Assert-CommissionCandidate {
         Assert-CommissionServicePolicy $Context -Legacy
         return
     }
-    if($Context.Candidate.CandidateId -cne '289c59630be846cb90f9a623c4ab0d1c' -or $Context.Candidate.SourceCommit -cne '2ce19dfdd97f3169d37001f9db15c3d5610e8f12' -or $payload.Count -ne 208){throw 'Candidate identity changed.'}
+    if($Context.Candidate.CandidateId -cne '51b103b3c75645dfaa36600e2cbe07a5' -or $Context.Candidate.SourceCommit -cne 'e4736366cd6c47598523e62ffcbb6f71810f61a2' -or $payload.Count -ne 208){throw 'Candidate identity changed.'}
     foreach($entry in $Context.Candidate.Installer){Assert-CommissionHash $entry.Path $entry.Sha256}
     Assert-CommissionHash $Context.Baseline.RollbackSetup.Path 'DD4C47DC6B20C0B348691289481965002466ACDF373CEA26E5D823AB9AF84F61'
     Assert-CommissionHash (Join-Path $script:commissionSource 'installation-ticket.template.json') $Context.Setup.TicketSha256

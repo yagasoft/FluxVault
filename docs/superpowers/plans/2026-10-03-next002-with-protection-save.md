@@ -188,3 +188,16 @@ whole-branch G01 and separate normal rollout/live acceptance remain. This closes
 coherent executable preparation, subject to its consolidated technical review;
 fixed installed entry/SCM effects and legacy reinstall still need the approved
 normal rollout. No new plan, gate or roadmap scope is introduced.
+
+Full-branch review found a C02/S07 response interruption defect. The production
+client now classifies incomplete/invalid response frames as transport uncertainty;
+actual-client/real-store Main/Options save, backup and original-receipt regressions
+retain records and newer edits without dependent backup or blind retry. The
+replacement unsigned candidate is `51b103b3c75645dfaa36600e2cbe07a5`, source
+`e473636`, with exact hashes and read-only installation preflight in the existing
+preparation record. Combined ordinary checks and the existing native workflow
+pass. Independent Astra review accepts the code/preparation portion of G01 and
+closes the C02/S07 blocker. Unaffected creator/installer, authentication/path and
+interruption checkpoints stay valid. S01 permission/proof, D01 actual-desktop/scale
+observations and separately approved normal installation/live workflow remain
+the critical path; the matrix and scope are unchanged.

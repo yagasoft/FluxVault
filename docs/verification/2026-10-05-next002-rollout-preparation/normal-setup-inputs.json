@@ -8,7 +8,7 @@
     "C:\\ProgramData\\FluxVault\\state"
   ],
   "TicketSha256": "8DEAAA406C027C361E20C32C90F4C9AFD7ADDA76A72528E4D5E1E2936CA2DDE4",
-  "SourceCommit": "2ce19dfdd97f3169d37001f9db15c3d5610e8f12",
+  "SourceCommit": "e4736366cd6c47598523e62ffcbb6f71810f61a2",
   "ObservedUtc": "2026-10-05T11:23:32.7200041Z",
   "ValidatedByFrozenProduct": true,
   "InitialMirrors": 0,
@@ -25,7 +25,7 @@
     "--timeout-seconds",
     "120"
   ],
-  "CandidateId": "289c59630be846cb90f9a623c4ab0d1c",
+  "CandidateId": "51b103b3c75645dfaa36600e2cbe07a5",
   "PreparedOnly": true,
   "NativeSetupCommand": [
     "C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe",
@@ -37,7 +37,7 @@
   "PendingBootstrapPath": "C:\\ProgramData\\FluxVault\\installation.json.provisioning",
   "ProcedureFiles": [
     {
-      "Sha256": "F655D02B70514B10F9BD41D03AF643CEA416248FC9090A4FC62836356030F2AA",
+      "Sha256": "21A6C5DDB4269A3AE3619AD3E75DC456D908B72C9CC4987E453AA29908B37E5B",
       "Name": "commission-installation.ps1"
     },
     {
@@ -82,7 +82,12 @@
     }
   ],
   "ProcedureReadOnlyPreflight": "installation-procedure-preflight.json",
-  "CombinedChecks": "installation-procedure-final-combined.trx",
+  "CombinedChecks": [
+    "ipc-response-core-final.trx",
+    "ipc-response-combined_net10.0_20261005154809.trx",
+    "ipc-response-combined_net10.0_20261005154814.trx",
+    "ipc-response-combined_net10.0_20261005155028.trx"
+  ],
   "NativeRollbackProof": "native/3423b5b4d7b3447eadc358951f3c5ec7/rollback-authentication.json",
   "RollbackInstallerProtectedCopy": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\legacy-setup.exe",
   "RollbackInstallerSha256": "DD4C47DC6B20C0B348691289481965002466ACDF373CEA26E5D823AB9AF84F61",
@@ -90,8 +95,14 @@
   "RemainingGates": [
     "S01 scoped packaged rehearsal approval/proof",
     "D01 actual desktop/accessibility/scale observation",
-    "G01 whole-branch review and final named checks",
+    "G01 final named proofs and acceptance once remaining gates close",
     "separate normal rollout approval and installed/live workflow"
   ],
-  "TechnicalReview": "Accepted bounded executable installation/rollback preparation; full G01 remains incomplete"
+  "TechnicalReview": "Independent Astra accepted whole-source and code/preparation delta; full G01/S01/D01/normal live acceptance remain incomplete",
+  "SupersededCandidateId": "289c59630be846cb90f9a623c4ab0d1c",
+  "ResponseCorrectionVerified": true,
+  "ReplacementPreparedUtc": "2026-10-05T15:57:24.3735775+03:00",
+  "ReplacementTicketValidatedUtc": "2026-10-05T15:58:43.7612146+03:00",
+  "ProcedureCombinedChecks": "installation-procedure-final-combined.trx",
+  "ActualReplacementMsiCheck": "actual-replacement-candidate-msi.trx"
 }

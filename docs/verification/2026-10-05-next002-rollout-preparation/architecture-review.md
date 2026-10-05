@@ -162,3 +162,32 @@ This is acceptance of executable preparation, not normal installed execution,
 an installed legacy reinstall drill, S01/D01, complete G01 or rollout authority.
 Full-branch independent implementation assessment is proceeding while the
 specific S01 resource approval and D01 manual-observation responses are pending.
+
+## Consolidated code and replacement candidate acceptance
+
+Independent Astra review completed the whole-branch implementation assessment
+and identified one C02/S07 defect: incomplete or invalid service response frames
+could fault WPF commands instead of preserving usable uncertainty. The bounded
+client response-read correction is accepted, with no remaining blocking finding
+in the code/preparation delta. It retains the original cause as an inner exception,
+outgoing validation, caller cancellation and authoritative complete responses.
+Actual-client/real-store Main/Options save, backup and original-receipt regressions
+prove retained records/operation IDs/newer edits without dependent backup or blind
+retry. This corrects the review finding without another orchestration abstraction
+or native fixture extension.
+
+The reviewer independently verifies both installer hashes and all 208 payload
+hashes for replacement candidate `51b103b3c75645dfaa36600e2cbe07a5`, source
+`e4736366cd6c47598523e62ffcbb6f71810f61a2`. Its five builds join without warnings;
+the actual replacement MSI contract, frozen typed ticket and read-only preflight
+pass. Final ordinary suites pass 1,483 cases with zero skips. Native `696378...`
+passes the existing actual single-vault save/backup/history/verified recovery
+workflow and cleanup. The fresh census verifies 26 runs, 1,103 captured process
+identities absent and 796 resources retired, plus five replacement builders
+absent, with normal installation and unrelated files unchanged.
+
+The previous full-source and executable-procedure assessments remain applicable.
+This accepts the code and preparation portion of G01, not full G01 or rollout.
+S01 packaged runtime permission/proof, D01 actual desktop/scale observations and
+separately authorised normal commissioning/live acceptance remain open. The
+normal fixed entry/SCM effects and retained-installer rollback drill have not run.

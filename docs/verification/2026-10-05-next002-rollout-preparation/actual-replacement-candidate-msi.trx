@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="75836453-933e-48cd-8b6d-05798b461f00" name="os008@OS008-HOME 2026-10-05 15:58:46" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T15:58:46.1903837+03:00" queuing="2026-10-05T15:58:46.1903838+03:00" start="2026-10-05T15:58:44.1484592+03:00" finish="2026-10-05T15:58:46.1937303+03:00" />
+  <TestSettings name="default" id="c699adc1-10d8-43ee-a496-60406706db88">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_15_58_46" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="34bdbfc7-cef7-4bb3-95d6-7bd6c236457f" testId="3a0dea06-f5b2-058e-585d-7a68b0d8ce45" testName="FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning" computerName="OS008-HOME" duration="00:00:01.4181071" startTime="2026-10-05T15:58:44.6954453+03:00" endTime="2026-10-05T15:58:46.1207045+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="34bdbfc7-cef7-4bb3-95d6-7bd6c236457f" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="3a0dea06-f5b2-058e-585d-7a68b0d8ce45">
+      <Execution id="34bdbfc7-cef7-4bb3-95d6-7bd6c236457f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.InstallerCommissioningContractTests" name="Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3a0dea06-f5b2-058e-585d-7a68b0d8ce45" executionId="34bdbfc7-cef7-4bb3-95d6-7bd6c236457f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.63]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

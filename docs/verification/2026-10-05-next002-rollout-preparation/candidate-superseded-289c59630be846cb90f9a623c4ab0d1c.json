@@ -1,1103 +1,1103 @@
 {
-  "CandidateId": "51b103b3c75645dfaa36600e2cbe07a5",
-  "Installer": [
+  "Root": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\artifacts\\staging-single-vault\\289c59630be846cb90f9a623c4ab0d1c",
+  "SourceCommit": "2ce19dfdd97f3169d37001f9db15c3d5610e8f12",
+  "Version": "1.0.5.0",
+  "Launches": [
     {
-      "Length": 14422016,
-      "Sha256": "A419E369B86D6AB841410179B50EB015D0221F23097AC20BFE3B46A0D29B7DAD",
-      "Path": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\artifacts\\staging-single-vault\\51b103b3c75645dfaa36600e2cbe07a5\\installer\\FluxVault.Installer.msi"
+      "ExitCode": 0,
+      "ProcessId": 42212,
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "Exited": true,
+      "Step": "publish-service",
+      "StartedUtc": "2026-10-05T06:37:44.0463274Z"
     },
     {
-      "Length": 15066415,
-      "Sha256": "8615CD5DFBF7B0B66A2318E21306C35D29729B61741547095140944F4033D38F",
-      "Path": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\artifacts\\staging-single-vault\\51b103b3c75645dfaa36600e2cbe07a5\\installer\\FluxVault.Setup.exe"
+      "ExitCode": 0,
+      "ProcessId": 64064,
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "Exited": true,
+      "Step": "publish-app",
+      "StartedUtc": "2026-10-05T06:37:54.6502122Z"
+    },
+    {
+      "ExitCode": 0,
+      "ProcessId": 46296,
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "Exited": true,
+      "Step": "publish-cli",
+      "StartedUtc": "2026-10-05T06:38:04.0925474Z"
+    },
+    {
+      "ExitCode": 0,
+      "ProcessId": 54920,
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "Exited": true,
+      "Step": "build-installer",
+      "StartedUtc": "2026-10-05T06:38:08.3675640Z"
+    },
+    {
+      "ExitCode": 0,
+      "ProcessId": 49644,
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "Exited": true,
+      "Step": "build-bundle",
+      "StartedUtc": "2026-10-05T06:38:21.4331017Z"
     }
   ],
-  "Failure": null,
   "Payload": [
     {
-      "Length": 21867,
       "Sha256": "797CA737C5E8CE904B7A69DE88E1E1C33F54C55BF23485A9AEB22F9B1C1E48DF",
+      "Length": 21867,
       "RelativePath": "app\\Assets\\FluxVault.ico"
     },
     {
-      "Length": 5256,
       "Sha256": "C9D8E56B33CCF3D7D339223C0D1CE045D2F4CAB6FA11AA003B796219FAAEB675",
+      "Length": 5256,
       "RelativePath": "app\\Assets\\YagasoftLogo.png"
     },
     {
-      "Length": 983208,
       "Sha256": "52A3559388AC86174D8E27D45C30ABFCA1D96C9F0ECFFD05623F6CE1B19500AC",
+      "Length": 983208,
       "RelativePath": "app\\AWSSDK.Core.dll"
     },
     {
-      "Length": 926376,
       "Sha256": "8CBF88E7E945E30FAEC71F20DAA07B50118A1F487F9A89DA1C5E03C3D3B8E41B",
+      "Length": 926376,
       "RelativePath": "app\\AWSSDK.S3.dll"
     },
     {
-      "Length": 438856,
       "Sha256": "F87221287BDE26EAC8B932DA37DB8A9ED2998E1E0559408585A48339A625D938",
+      "Length": 438856,
       "RelativePath": "app\\Azure.Core.dll"
     },
     {
-      "Length": 1363016,
       "Sha256": "B94E678E1485D8D2D3DFE5B5DD9CB6957C3E22C5EAD76F2AC82C0888AA5C1260",
+      "Length": 1363016,
       "RelativePath": "app\\Azure.Storage.Blobs.dll"
     },
     {
-      "Length": 245832,
       "Sha256": "2DACB6B33477E4FB071318CD24F6A7F0268DF90A3A0C59689F34183021888592",
+      "Length": 245832,
       "RelativePath": "app\\Azure.Storage.Common.dll"
     },
     {
-      "Length": 379904,
       "Sha256": "ED515032FC106D5F07E113FCC6B1524E8B3F7FC1C90F817BD58290A81136CA53",
+      "Length": 379904,
       "RelativePath": "app\\blake3_dotnet.dll"
     },
     {
-      "Length": 18944,
       "Sha256": "5487A86AB58FB7B0242D5A608D0B8FAB45A9CDAC0F34FCF12B8757DF7E850EA8",
+      "Length": 18944,
       "RelativePath": "app\\Blake3.dll"
     },
     {
-      "Length": 146760,
       "Sha256": "19B2144FED9600D58A742A5A4A5FD7B10D4D0D2C2E79F5D8019307CF5657044F",
+      "Length": 146760,
       "RelativePath": "app\\CommunityToolkit.Mvvm.dll"
     },
     {
-      "Length": 4769280,
       "Sha256": "702E0EB7BAAFC737F523A62850E6B98DD61371E42A12DF119E56AC5853C3466D",
+      "Length": 4769280,
       "RelativePath": "app\\Dropbox.Api.dll"
     },
     {
+      "Sha256": "CD5E2E04A7537E1842DEAE93513ED6214D09D84E504EE58DD9F590D030A6A65C",
       "Length": 412160,
-      "Sha256": "325CE11D3F70031C732265E652D01C622EB817A47EC8FE8402F496C740D49CE4",
       "RelativePath": "app\\FluxVault.Abstractions.dll"
     },
     {
+      "Sha256": "2CC250283E1C43598EAA6C91D216FAA6D2F1CAD1EFBF4B8F11A019980C40B24B",
       "Length": 78924,
-      "Sha256": "8EBE4077DFC36C61ABE97F30E2F249F676FD0C49B2B7A0A094BF5B4933052311",
       "RelativePath": "app\\FluxVault.Abstractions.pdb"
     },
     {
-      "Length": 35277,
       "Sha256": "0E6EA5A57EFC3464FF13DB56EF8E096DB0D1EB88C1D7E3CED2721BCC76110CCC",
+      "Length": 35277,
       "RelativePath": "app\\FluxVault.App.deps.json"
     },
     {
+      "Sha256": "1D0FDD33F2009B3BD56A0F9915F8E3A454A5F41DC8DB458527CC5DB5030F9BF5",
       "Length": 612352,
-      "Sha256": "29B4516647D1F094A2AF6DA34D67A66D4976B654EEFC071380C54FAFBB17E1CF",
       "RelativePath": "app\\FluxVault.App.dll"
     },
     {
+      "Sha256": "11B9134C6C6092AF1BA281BDD923D7D0EC1F7A3F422EF976E712182EFEB98DAA",
       "Length": 184832,
-      "Sha256": "D995F4E453827E1F8C29CCEB4D49A39EDECCB539B2DE0ECA8D91811C2868920C",
       "RelativePath": "app\\FluxVault.App.exe"
     },
     {
+      "Sha256": "85C9D7637756B11917C67BA9CDCD21320B538EBC61BB2069D8795857918B28C2",
       "Length": 227188,
-      "Sha256": "E6CC11B824109C6154F8DDD254DEA1E95A6C745341C5029D8439BB7C265FFC10",
       "RelativePath": "app\\FluxVault.App.pdb"
     },
     {
-      "Length": 586,
       "Sha256": "42BDF3FF1BC458718481097CB192E129BABE98117BFDCB7DA9CE75BB0AF4FBB8",
+      "Length": 586,
       "RelativePath": "app\\FluxVault.App.runtimeconfig.json"
     },
     {
+      "Sha256": "1BE358771880121A6A0DF45EBDF321927E3B479F5D4AAD2113BC49DB6F9C77A5",
       "Length": 976384,
-      "Sha256": "4EEE1036BB4014AD9B753C60BA3A1FBEC4BE0953D5F36C5CA1FE3974D21CE010",
       "RelativePath": "app\\FluxVault.Core.dll"
     },
     {
-      "Length": 173736,
-      "Sha256": "CA01E05164D07D8F046CB49421628CCAF6A85DA3028DEF5DA720DB1D93D4D0FF",
+      "Sha256": "D2CFA01C9FDA14195F91755EF95C3D01A5CA53EC843D5F3F4C5E2F8FEB7F1A87",
+      "Length": 173608,
       "RelativePath": "app\\FluxVault.Core.pdb"
     },
     {
+      "Sha256": "F9CC5EA451469585BE2549425C2052A6041AB5E860B959D582EC1213B9338AC4",
       "Length": 164352,
-      "Sha256": "5813510F0D7CB662563BAC8E085452D9BC4D78A7B8CE384B29D463960B0B02D4",
       "RelativePath": "app\\FluxVault.Windows.dll"
     },
     {
+      "Sha256": "9CBD5C15CF616C560DA3945B3148133F5AC33A11D26D487B87716F933724FDB2",
       "Length": 48108,
-      "Sha256": "CAD1EADE8B21D6B98CA7D684E3F497174A215698AED96FC64CEFF877E22D43FA",
       "RelativePath": "app\\FluxVault.Windows.pdb"
     },
     {
-      "Length": 244224,
       "Sha256": "A83EC6D1C80A0FCC818FAE12EA93A7C425435CB55CF7E5328275432556471A80",
+      "Length": 244224,
       "RelativePath": "app\\Google.Apis.Auth.dll"
     },
     {
-      "Length": 86528,
       "Sha256": "138A800B3DBF78E7D70A031516EFB9F75E0A1AF198301721ECFBEFD0E9A0EA4B",
+      "Length": 86528,
       "RelativePath": "app\\Google.Apis.Core.dll"
     },
     {
-      "Length": 84480,
       "Sha256": "F26773F2C697CF381393183C141A1A6529D7C1E269C28A18B05D450CCCF7A393",
+      "Length": 84480,
       "RelativePath": "app\\Google.Apis.dll"
     },
     {
-      "Length": 183296,
       "Sha256": "635505EBD0F19B1CE6A61320006D220657F77C16F2593FE1A2E29A06106BE5D1",
+      "Length": 183296,
       "RelativePath": "app\\Google.Apis.Drive.v3.dll"
     },
     {
-      "Length": 15872,
       "Sha256": "062F717DA727DBD18E1EFC180918BD3913E34A80AF693AEBC140E33B9F10EC40",
+      "Length": 15872,
       "RelativePath": "app\\H.GeneratedIcons.System.Drawing.dll"
     },
     {
-      "Length": 398848,
       "Sha256": "0027E443A6121AF8FB616C0200D3C63BF4ABB72E3C548E119FEE1EAE321A8368",
+      "Length": 398848,
       "RelativePath": "app\\H.NotifyIcon.dll"
     },
     {
-      "Length": 194048,
       "Sha256": "1A9BAAF2F4F385B1FE3FD59A35D42FC26341A900E55E8A26F8F10D33410EF360",
+      "Length": 194048,
       "RelativePath": "app\\H.NotifyIcon.Wpf.dll"
     },
     {
-      "Length": 70656,
       "Sha256": "E282AADC2353B864FE95CD5FB525A1A093D99A30A5BF2530B7AB831D56179816",
+      "Length": 70656,
       "RelativePath": "app\\K4os.Compression.LZ4.dll"
     },
     {
-      "Length": 84992,
       "Sha256": "B146CF3C769000CD5E4458CFED5DA3C0E838B7B2DA6DBE6DAD458CD5A0E3CE41",
+      "Length": 84992,
       "RelativePath": "app\\K4os.Compression.LZ4.Streams.dll"
     },
     {
-      "Length": 13312,
       "Sha256": "19D73FA58C1F6C12C61F30EAAD91881BD06F50CAF4B462B061BC1B45D0A577CD",
+      "Length": 13312,
       "RelativePath": "app\\K4os.Hash.xxHash.dll"
     },
     {
-      "Length": 19104,
       "Sha256": "136D5965CF4768E8420B547A8BDDEA882921F426C371833D558A858A2F0C235A",
+      "Length": 19104,
       "RelativePath": "app\\Microsoft.Bcl.AsyncInterfaces.dll"
     },
     {
-      "Length": 66320,
       "Sha256": "1CFFAB3D20722BF5C3C93E2E7D1C24EFD8A2FDEC356A93546502C9327DF845D0",
+      "Length": 66320,
       "RelativePath": "app\\Microsoft.Extensions.DependencyInjection.Abstractions.dll"
     },
     {
-      "Length": 67336,
       "Sha256": "E25C6CAEC7F5FF58900B88902ED2528B7E791A7BFA74D849B6B8E3C6D9B89FD9",
+      "Length": 67336,
       "RelativePath": "app\\Microsoft.Extensions.Logging.Abstractions.dll"
     },
     {
-      "Length": 140640,
       "Sha256": "3382DAE3402FAFB81C51E37958413E51E7F63ABC989E84F5D5C6FD879BDCDA20",
+      "Length": 140640,
       "RelativePath": "app\\Microsoft.Graph.Core.dll"
     },
     {
-      "Length": 43249696,
       "Sha256": "C3E6469BBA7AB3F843077270471B361C0AA86FBFBA1A9895C8BC091E4A3252E2",
+      "Length": 43249696,
       "RelativePath": "app\\Microsoft.Graph.dll"
     },
     {
-      "Length": 19528,
       "Sha256": "613FD94FF39CE6FF90666E062E93D5D5EA7FDEAE93AAAB2BF2CB6F5C87CEA39D",
+      "Length": 19528,
       "RelativePath": "app\\Microsoft.IdentityModel.Abstractions.dll"
     },
     {
-      "Length": 173088,
       "Sha256": "D1AF130B42EAA6E8B5B45B0A48D286E7A282F2B67F5809AEB828AAA909D94891",
+      "Length": 173088,
       "RelativePath": "app\\Microsoft.IdentityModel.JsonWebTokens.dll"
     },
     {
-      "Length": 38432,
       "Sha256": "B2B89896DA6F307FE4C7FBA033F4F629CE43B92CC6D28C7DAA024A4E5CD68DBD",
+      "Length": 38432,
       "RelativePath": "app\\Microsoft.IdentityModel.Logging.dll"
     },
     {
-      "Length": 53280,
       "Sha256": "647F131D0FD0A66802A80ADC9CC38FE02AA2CAF78D6F58796E758829541B16DE",
+      "Length": 53280,
       "RelativePath": "app\\Microsoft.IdentityModel.Protocols.dll"
     },
     {
-      "Length": 137248,
       "Sha256": "F19F659E8533AD2B0D4650779231EFD0E25247DF72C127B57CFDBF186BE8D256",
+      "Length": 137248,
       "RelativePath": "app\\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll"
     },
     {
-      "Length": 391200,
       "Sha256": "21C943EC715D8771C3A711AD78FC109ADCEAC0E002F67A76F3BCA33D195D0F5F",
+      "Length": 391200,
       "RelativePath": "app\\Microsoft.IdentityModel.Tokens.dll"
     },
     {
-      "Length": 45080,
       "Sha256": "69E36C1A544FC2F98CA8ED330B8026C04DF5479B436A7B3FFED52522D0E14D99",
+      "Length": 45080,
       "RelativePath": "app\\Microsoft.IdentityModel.Validators.dll"
     },
     {
-      "Length": 65968,
       "Sha256": "631A5FC41DF9498D032C0655EBD0E1209430CCFFBEC55667D89C2566B338CCC0",
+      "Length": 65968,
       "RelativePath": "app\\Microsoft.IO.RecyclableMemoryStream.dll"
     },
     {
-      "Length": 102472,
       "Sha256": "945BEA10D1B6AFFCCE668F8752B10496D0D86EA53B58DA1C0627D30E59DA3D35",
+      "Length": 102472,
       "RelativePath": "app\\Microsoft.Kiota.Abstractions.dll"
     },
     {
-      "Length": 22048,
       "Sha256": "8F46F37A40B17A22424AA10E0DA775E47CBB921027D0CC9BF61CBE619C64C4A6",
+      "Length": 22048,
       "RelativePath": "app\\Microsoft.Kiota.Authentication.Azure.dll"
     },
     {
-      "Length": 109640,
       "Sha256": "24F032C048BB839A0BAFED0377C0FF1805CDDED378E5E0BDE10C8E9C736DC339",
+      "Length": 109640,
       "RelativePath": "app\\Microsoft.Kiota.Http.HttpClientLibrary.dll"
     },
     {
-      "Length": 36424,
       "Sha256": "B108D8E5E48781A76E8BAD77B739B26830871E14A961C70F706C97132159C526",
+      "Length": 36424,
       "RelativePath": "app\\Microsoft.Kiota.Serialization.Form.dll"
     },
     {
-      "Length": 70688,
       "Sha256": "B4118C20F780AA9F24219D779F076C07B586DDB223E47B52DF36EF2D6D58DA07",
+      "Length": 70688,
       "RelativePath": "app\\Microsoft.Kiota.Serialization.Json.dll"
     },
     {
-      "Length": 20504,
       "Sha256": "3D9A4615932DB2E85239324C6D6F1E375E9E564D1A74B8B6EC08CF6957333F5E",
+      "Length": 20504,
       "RelativePath": "app\\Microsoft.Kiota.Serialization.Multipart.dll"
     },
     {
-      "Length": 27168,
       "Sha256": "E4D713A5F94956AEA7EDCDFC9B8F8C8005DBC603D701636C21AF8FBFD7700949",
+      "Length": 27168,
       "RelativePath": "app\\Microsoft.Kiota.Serialization.Text.dll"
     },
     {
-      "Length": 723368,
       "Sha256": "A28C251DFE36D881E9E2462E171441B8B0EC156FE3F452602C9149B1B9EFE05B",
+      "Length": 723368,
       "RelativePath": "app\\Newtonsoft.Json.dll"
     },
     {
-      "Length": 1478144,
       "Sha256": "6C74F02211D3C2323DB73C7C3C88BF610E9EE95E3F84DD6EA5D630EEF9895C1B",
+      "Length": 1478144,
       "RelativePath": "app\\Npgsql.dll"
     },
     {
-      "Length": 2281472,
       "Sha256": "DB4D49F11B30F2ABABC6ED98551DE818D8B6F15DA88FADA8BCCD360EA3E12D73",
+      "Length": 2281472,
       "RelativePath": "app\\SharpCompress.dll"
     },
     {
-      "Length": 23968,
       "Sha256": "305D9797B64E1C478AEBB01C6EC9FAAA419D8BDDBB9AE7D3D98EC42CD275A7AC",
+      "Length": 23968,
       "RelativePath": "app\\Std.UriTemplate.dll"
     },
     {
-      "Length": 232520,
       "Sha256": "3C4062071D51B56D7B64E12E98F195692FE58CBC907F0252D1BA5D90A366B965",
+      "Length": 232520,
       "RelativePath": "app\\System.ClientModel.dll"
     },
     {
-      "Length": 92232,
       "Sha256": "D6026966EB5304C2E3BDB3BC091A94D204DCB27696A61CDC89D1ABF5259E24CA",
+      "Length": 92232,
       "RelativePath": "app\\System.IdentityModel.Tokens.Jwt.dll"
     },
     {
-      "Length": 56584,
       "Sha256": "2679A6164163C1F4B7B5FADA83A55EB48B0A85840E04F00E8921B8D495A66B84",
+      "Length": 56584,
       "RelativePath": "app\\System.IO.Hashing.dll"
     },
     {
-      "Length": 295600,
       "Sha256": "979FEE559E30CC0FC4AF6F34548A225B6F08CAE0A6C61D24A3E389B3F22DC9D1",
+      "Length": 295600,
       "RelativePath": "app\\System.Management.dll"
     },
     {
-      "Length": 30472,
       "Sha256": "BAE79A4FF6E8FCFB65A3D88EB53D281898E699E5471EBD780843E5616753F0C3",
+      "Length": 30472,
       "RelativePath": "app\\System.Memory.Data.dll"
     },
     {
-      "Length": 92472,
       "Sha256": "8A1FA55A76D81375C81DE0CD11613861F364294BDD24BFDCE4B47B36B472331D",
+      "Length": 92472,
       "RelativePath": "app\\System.ServiceProcess.ServiceController.dll"
     },
     {
-      "Length": 397312,
       "Sha256": "177F541B9BBA3CFE89D3FE9565EA9F78285EF8499D689DCFD5DE0018B6FA43E5",
+      "Length": 397312,
       "RelativePath": "app\\ZstdSharp.dll"
     },
     {
-      "Length": 983208,
       "Sha256": "52A3559388AC86174D8E27D45C30ABFCA1D96C9F0ECFFD05623F6CE1B19500AC",
+      "Length": 983208,
       "RelativePath": "cli\\AWSSDK.Core.dll"
     },
     {
-      "Length": 926376,
       "Sha256": "8CBF88E7E945E30FAEC71F20DAA07B50118A1F487F9A89DA1C5E03C3D3B8E41B",
+      "Length": 926376,
       "RelativePath": "cli\\AWSSDK.S3.dll"
     },
     {
-      "Length": 438856,
       "Sha256": "F87221287BDE26EAC8B932DA37DB8A9ED2998E1E0559408585A48339A625D938",
+      "Length": 438856,
       "RelativePath": "cli\\Azure.Core.dll"
     },
     {
-      "Length": 1363016,
       "Sha256": "B94E678E1485D8D2D3DFE5B5DD9CB6957C3E22C5EAD76F2AC82C0888AA5C1260",
+      "Length": 1363016,
       "RelativePath": "cli\\Azure.Storage.Blobs.dll"
     },
     {
-      "Length": 245832,
       "Sha256": "2DACB6B33477E4FB071318CD24F6A7F0268DF90A3A0C59689F34183021888592",
+      "Length": 245832,
       "RelativePath": "cli\\Azure.Storage.Common.dll"
     },
     {
-      "Length": 379904,
       "Sha256": "ED515032FC106D5F07E113FCC6B1524E8B3F7FC1C90F817BD58290A81136CA53",
+      "Length": 379904,
       "RelativePath": "cli\\blake3_dotnet.dll"
     },
     {
-      "Length": 18944,
       "Sha256": "5487A86AB58FB7B0242D5A608D0B8FAB45A9CDAC0F34FCF12B8757DF7E850EA8",
+      "Length": 18944,
       "RelativePath": "cli\\Blake3.dll"
     },
     {
-      "Length": 4769280,
       "Sha256": "702E0EB7BAAFC737F523A62850E6B98DD61371E42A12DF119E56AC5853C3466D",
+      "Length": 4769280,
       "RelativePath": "cli\\Dropbox.Api.dll"
     },
     {
+      "Sha256": "CD5E2E04A7537E1842DEAE93513ED6214D09D84E504EE58DD9F590D030A6A65C",
       "Length": 412160,
-      "Sha256": "325CE11D3F70031C732265E652D01C622EB817A47EC8FE8402F496C740D49CE4",
       "RelativePath": "cli\\FluxVault.Abstractions.dll"
     },
     {
+      "Sha256": "2CC250283E1C43598EAA6C91D216FAA6D2F1CAD1EFBF4B8F11A019980C40B24B",
       "Length": 78924,
-      "Sha256": "8EBE4077DFC36C61ABE97F30E2F249F676FD0C49B2B7A0A094BF5B4933052311",
       "RelativePath": "cli\\FluxVault.Abstractions.pdb"
     },
     {
-      "Length": 32713,
       "Sha256": "7C7E62768D1B0189C75E62EAB9FB4E4484E9F9C1D19D391660DD7F487528D54B",
+      "Length": 32713,
       "RelativePath": "cli\\FluxVault.Cli.deps.json"
     },
     {
+      "Sha256": "DB4CD2FFB49E46346882D37CA34E5933C92B69CBBB8C4CF434505476D2DBE22D",
       "Length": 39424,
-      "Sha256": "9ECF30DD0FB765BE8BAB6086818445FC3F6299A97BD3BFEAA44029F7AAFE3F66",
       "RelativePath": "cli\\FluxVault.Cli.dll"
     },
     {
+      "Sha256": "23FF391C10AE31C56DA3918134A97F17078C8DF6298320AD92CDAEE19E8DCF3A",
       "Length": 162304,
-      "Sha256": "C1A787BD4D51AC89A161F46C6E81A1C169B6E1C6FE2DDA510BFAD0202F36CFFD",
       "RelativePath": "cli\\FluxVault.Cli.exe"
     },
     {
+      "Sha256": "CEEB964381530185539869945BC4311568470F023B0F67B0A9D92C18EB8A6AEF",
       "Length": 19776,
-      "Sha256": "044B4C582DD6E2755FC8AD7B3BD9F15E57A31F8CEC4AA831A0A30059DBE06620",
       "RelativePath": "cli\\FluxVault.Cli.pdb"
     },
     {
-      "Length": 342,
       "Sha256": "C230A317A54DD960BCBEB5F347F52E18DC665A26F7EFDA2159FCED9A5AC7E097",
+      "Length": 342,
       "RelativePath": "cli\\FluxVault.Cli.runtimeconfig.json"
     },
     {
+      "Sha256": "1BE358771880121A6A0DF45EBDF321927E3B479F5D4AAD2113BC49DB6F9C77A5",
       "Length": 976384,
-      "Sha256": "4EEE1036BB4014AD9B753C60BA3A1FBEC4BE0953D5F36C5CA1FE3974D21CE010",
       "RelativePath": "cli\\FluxVault.Core.dll"
     },
     {
-      "Length": 173736,
-      "Sha256": "CA01E05164D07D8F046CB49421628CCAF6A85DA3028DEF5DA720DB1D93D4D0FF",
+      "Sha256": "D2CFA01C9FDA14195F91755EF95C3D01A5CA53EC843D5F3F4C5E2F8FEB7F1A87",
+      "Length": 173608,
       "RelativePath": "cli\\FluxVault.Core.pdb"
     },
     {
+      "Sha256": "F9CC5EA451469585BE2549425C2052A6041AB5E860B959D582EC1213B9338AC4",
       "Length": 164352,
-      "Sha256": "5813510F0D7CB662563BAC8E085452D9BC4D78A7B8CE384B29D463960B0B02D4",
       "RelativePath": "cli\\FluxVault.Windows.dll"
     },
     {
+      "Sha256": "9CBD5C15CF616C560DA3945B3148133F5AC33A11D26D487B87716F933724FDB2",
       "Length": 48108,
-      "Sha256": "CAD1EADE8B21D6B98CA7D684E3F497174A215698AED96FC64CEFF877E22D43FA",
       "RelativePath": "cli\\FluxVault.Windows.pdb"
     },
     {
-      "Length": 244224,
       "Sha256": "A83EC6D1C80A0FCC818FAE12EA93A7C425435CB55CF7E5328275432556471A80",
+      "Length": 244224,
       "RelativePath": "cli\\Google.Apis.Auth.dll"
     },
     {
-      "Length": 86528,
       "Sha256": "138A800B3DBF78E7D70A031516EFB9F75E0A1AF198301721ECFBEFD0E9A0EA4B",
+      "Length": 86528,
       "RelativePath": "cli\\Google.Apis.Core.dll"
     },
     {
-      "Length": 84480,
       "Sha256": "F26773F2C697CF381393183C141A1A6529D7C1E269C28A18B05D450CCCF7A393",
+      "Length": 84480,
       "RelativePath": "cli\\Google.Apis.dll"
     },
     {
-      "Length": 183296,
       "Sha256": "635505EBD0F19B1CE6A61320006D220657F77C16F2593FE1A2E29A06106BE5D1",
+      "Length": 183296,
       "RelativePath": "cli\\Google.Apis.Drive.v3.dll"
     },
     {
-      "Length": 70656,
       "Sha256": "E282AADC2353B864FE95CD5FB525A1A093D99A30A5BF2530B7AB831D56179816",
+      "Length": 70656,
       "RelativePath": "cli\\K4os.Compression.LZ4.dll"
     },
     {
-      "Length": 84992,
       "Sha256": "B146CF3C769000CD5E4458CFED5DA3C0E838B7B2DA6DBE6DAD458CD5A0E3CE41",
+      "Length": 84992,
       "RelativePath": "cli\\K4os.Compression.LZ4.Streams.dll"
     },
     {
-      "Length": 13312,
       "Sha256": "19D73FA58C1F6C12C61F30EAAD91881BD06F50CAF4B462B061BC1B45D0A577CD",
+      "Length": 13312,
       "RelativePath": "cli\\K4os.Hash.xxHash.dll"
     },
     {
-      "Length": 19104,
       "Sha256": "136D5965CF4768E8420B547A8BDDEA882921F426C371833D558A858A2F0C235A",
+      "Length": 19104,
       "RelativePath": "cli\\Microsoft.Bcl.AsyncInterfaces.dll"
     },
     {
-      "Length": 66320,
       "Sha256": "1CFFAB3D20722BF5C3C93E2E7D1C24EFD8A2FDEC356A93546502C9327DF845D0",
+      "Length": 66320,
       "RelativePath": "cli\\Microsoft.Extensions.DependencyInjection.Abstractions.dll"
     },
     {
-      "Length": 67336,
       "Sha256": "E25C6CAEC7F5FF58900B88902ED2528B7E791A7BFA74D849B6B8E3C6D9B89FD9",
+      "Length": 67336,
       "RelativePath": "cli\\Microsoft.Extensions.Logging.Abstractions.dll"
     },
     {
-      "Length": 140640,
       "Sha256": "3382DAE3402FAFB81C51E37958413E51E7F63ABC989E84F5D5C6FD879BDCDA20",
+      "Length": 140640,
       "RelativePath": "cli\\Microsoft.Graph.Core.dll"
     },
     {
-      "Length": 43249696,
       "Sha256": "C3E6469BBA7AB3F843077270471B361C0AA86FBFBA1A9895C8BC091E4A3252E2",
+      "Length": 43249696,
       "RelativePath": "cli\\Microsoft.Graph.dll"
     },
     {
-      "Length": 19528,
       "Sha256": "613FD94FF39CE6FF90666E062E93D5D5EA7FDEAE93AAAB2BF2CB6F5C87CEA39D",
+      "Length": 19528,
       "RelativePath": "cli\\Microsoft.IdentityModel.Abstractions.dll"
     },
     {
-      "Length": 173088,
       "Sha256": "D1AF130B42EAA6E8B5B45B0A48D286E7A282F2B67F5809AEB828AAA909D94891",
+      "Length": 173088,
       "RelativePath": "cli\\Microsoft.IdentityModel.JsonWebTokens.dll"
     },
     {
-      "Length": 38432,
       "Sha256": "B2B89896DA6F307FE4C7FBA033F4F629CE43B92CC6D28C7DAA024A4E5CD68DBD",
+      "Length": 38432,
       "RelativePath": "cli\\Microsoft.IdentityModel.Logging.dll"
     },
     {
-      "Length": 53280,
       "Sha256": "647F131D0FD0A66802A80ADC9CC38FE02AA2CAF78D6F58796E758829541B16DE",
+      "Length": 53280,
       "RelativePath": "cli\\Microsoft.IdentityModel.Protocols.dll"
     },
     {
-      "Length": 137248,
       "Sha256": "F19F659E8533AD2B0D4650779231EFD0E25247DF72C127B57CFDBF186BE8D256",
+      "Length": 137248,
       "RelativePath": "cli\\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll"
     },
     {
-      "Length": 391200,
       "Sha256": "21C943EC715D8771C3A711AD78FC109ADCEAC0E002F67A76F3BCA33D195D0F5F",
+      "Length": 391200,
       "RelativePath": "cli\\Microsoft.IdentityModel.Tokens.dll"
     },
     {
-      "Length": 45080,
       "Sha256": "69E36C1A544FC2F98CA8ED330B8026C04DF5479B436A7B3FFED52522D0E14D99",
+      "Length": 45080,
       "RelativePath": "cli\\Microsoft.IdentityModel.Validators.dll"
     },
     {
-      "Length": 65968,
       "Sha256": "631A5FC41DF9498D032C0655EBD0E1209430CCFFBEC55667D89C2566B338CCC0",
+      "Length": 65968,
       "RelativePath": "cli\\Microsoft.IO.RecyclableMemoryStream.dll"
     },
     {
-      "Length": 102472,
       "Sha256": "945BEA10D1B6AFFCCE668F8752B10496D0D86EA53B58DA1C0627D30E59DA3D35",
+      "Length": 102472,
       "RelativePath": "cli\\Microsoft.Kiota.Abstractions.dll"
     },
     {
-      "Length": 22048,
       "Sha256": "8F46F37A40B17A22424AA10E0DA775E47CBB921027D0CC9BF61CBE619C64C4A6",
+      "Length": 22048,
       "RelativePath": "cli\\Microsoft.Kiota.Authentication.Azure.dll"
     },
     {
-      "Length": 109640,
       "Sha256": "24F032C048BB839A0BAFED0377C0FF1805CDDED378E5E0BDE10C8E9C736DC339",
+      "Length": 109640,
       "RelativePath": "cli\\Microsoft.Kiota.Http.HttpClientLibrary.dll"
     },
     {
-      "Length": 36424,
       "Sha256": "B108D8E5E48781A76E8BAD77B739B26830871E14A961C70F706C97132159C526",
+      "Length": 36424,
       "RelativePath": "cli\\Microsoft.Kiota.Serialization.Form.dll"
     },
     {
-      "Length": 70688,
       "Sha256": "B4118C20F780AA9F24219D779F076C07B586DDB223E47B52DF36EF2D6D58DA07",
+      "Length": 70688,
       "RelativePath": "cli\\Microsoft.Kiota.Serialization.Json.dll"
     },
     {
-      "Length": 20504,
       "Sha256": "3D9A4615932DB2E85239324C6D6F1E375E9E564D1A74B8B6EC08CF6957333F5E",
+      "Length": 20504,
       "RelativePath": "cli\\Microsoft.Kiota.Serialization.Multipart.dll"
     },
     {
-      "Length": 27168,
       "Sha256": "E4D713A5F94956AEA7EDCDFC9B8F8C8005DBC603D701636C21AF8FBFD7700949",
+      "Length": 27168,
       "RelativePath": "cli\\Microsoft.Kiota.Serialization.Text.dll"
     },
     {
-      "Length": 723368,
       "Sha256": "A28C251DFE36D881E9E2462E171441B8B0EC156FE3F452602C9149B1B9EFE05B",
+      "Length": 723368,
       "RelativePath": "cli\\Newtonsoft.Json.dll"
     },
     {
-      "Length": 1478144,
       "Sha256": "6C74F02211D3C2323DB73C7C3C88BF610E9EE95E3F84DD6EA5D630EEF9895C1B",
+      "Length": 1478144,
       "RelativePath": "cli\\Npgsql.dll"
     },
     {
-      "Length": 2281472,
       "Sha256": "DB4D49F11B30F2ABABC6ED98551DE818D8B6F15DA88FADA8BCCD360EA3E12D73",
+      "Length": 2281472,
       "RelativePath": "cli\\SharpCompress.dll"
     },
     {
-      "Length": 23968,
       "Sha256": "305D9797B64E1C478AEBB01C6EC9FAAA419D8BDDBB9AE7D3D98EC42CD275A7AC",
+      "Length": 23968,
       "RelativePath": "cli\\Std.UriTemplate.dll"
     },
     {
-      "Length": 232520,
       "Sha256": "3C4062071D51B56D7B64E12E98F195692FE58CBC907F0252D1BA5D90A366B965",
+      "Length": 232520,
       "RelativePath": "cli\\System.ClientModel.dll"
     },
     {
-      "Length": 186496,
       "Sha256": "4D33E2986A84D4460853E2B98D3A1BA9F8AA2950F7FA12FF6AD2E15A4BCCFD18",
+      "Length": 186496,
       "RelativePath": "cli\\System.CodeDom.dll"
     },
     {
-      "Length": 92232,
       "Sha256": "D6026966EB5304C2E3BDB3BC091A94D204DCB27696A61CDC89D1ABF5259E24CA",
+      "Length": 92232,
       "RelativePath": "cli\\System.IdentityModel.Tokens.Jwt.dll"
     },
     {
-      "Length": 56584,
       "Sha256": "2679A6164163C1F4B7B5FADA83A55EB48B0A85840E04F00E8921B8D495A66B84",
+      "Length": 56584,
       "RelativePath": "cli\\System.IO.Hashing.dll"
     },
     {
-      "Length": 295600,
       "Sha256": "979FEE559E30CC0FC4AF6F34548A225B6F08CAE0A6C61D24A3E389B3F22DC9D1",
+      "Length": 295600,
       "RelativePath": "cli\\System.Management.dll"
     },
     {
-      "Length": 30472,
       "Sha256": "BAE79A4FF6E8FCFB65A3D88EB53D281898E699E5471EBD780843E5616753F0C3",
+      "Length": 30472,
       "RelativePath": "cli\\System.Memory.Data.dll"
     },
     {
-      "Length": 397312,
       "Sha256": "177F541B9BBA3CFE89D3FE9565EA9F78285EF8499D689DCFD5DE0018B6FA43E5",
+      "Length": 397312,
       "RelativePath": "cli\\ZstdSharp.dll"
     },
     {
-      "Length": 137,
       "Sha256": "AB16B7B75D012475E615A41C21000C9215C6E02CD70B9C2618D25D885AA6FF33",
+      "Length": 137,
       "RelativePath": "service\\appsettings.Development.json"
     },
     {
-      "Length": 137,
       "Sha256": "AB16B7B75D012475E615A41C21000C9215C6E02CD70B9C2618D25D885AA6FF33",
+      "Length": 137,
       "RelativePath": "service\\appsettings.json"
     },
     {
-      "Length": 983208,
       "Sha256": "52A3559388AC86174D8E27D45C30ABFCA1D96C9F0ECFFD05623F6CE1B19500AC",
+      "Length": 983208,
       "RelativePath": "service\\AWSSDK.Core.dll"
     },
     {
-      "Length": 926376,
       "Sha256": "8CBF88E7E945E30FAEC71F20DAA07B50118A1F487F9A89DA1C5E03C3D3B8E41B",
+      "Length": 926376,
       "RelativePath": "service\\AWSSDK.S3.dll"
     },
     {
-      "Length": 438856,
       "Sha256": "F87221287BDE26EAC8B932DA37DB8A9ED2998E1E0559408585A48339A625D938",
+      "Length": 438856,
       "RelativePath": "service\\Azure.Core.dll"
     },
     {
-      "Length": 1363016,
       "Sha256": "B94E678E1485D8D2D3DFE5B5DD9CB6957C3E22C5EAD76F2AC82C0888AA5C1260",
+      "Length": 1363016,
       "RelativePath": "service\\Azure.Storage.Blobs.dll"
     },
     {
-      "Length": 245832,
       "Sha256": "2DACB6B33477E4FB071318CD24F6A7F0268DF90A3A0C59689F34183021888592",
+      "Length": 245832,
       "RelativePath": "service\\Azure.Storage.Common.dll"
     },
     {
-      "Length": 379904,
       "Sha256": "ED515032FC106D5F07E113FCC6B1524E8B3F7FC1C90F817BD58290A81136CA53",
+      "Length": 379904,
       "RelativePath": "service\\blake3_dotnet.dll"
     },
     {
-      "Length": 18944,
       "Sha256": "5487A86AB58FB7B0242D5A608D0B8FAB45A9CDAC0F34FCF12B8757DF7E850EA8",
+      "Length": 18944,
       "RelativePath": "service\\Blake3.dll"
     },
     {
-      "Length": 4769280,
       "Sha256": "702E0EB7BAAFC737F523A62850E6B98DD61371E42A12DF119E56AC5853C3466D",
+      "Length": 4769280,
       "RelativePath": "service\\Dropbox.Api.dll"
     },
     {
+      "Sha256": "CD5E2E04A7537E1842DEAE93513ED6214D09D84E504EE58DD9F590D030A6A65C",
       "Length": 412160,
-      "Sha256": "325CE11D3F70031C732265E652D01C622EB817A47EC8FE8402F496C740D49CE4",
       "RelativePath": "service\\FluxVault.Abstractions.dll"
     },
     {
+      "Sha256": "2CC250283E1C43598EAA6C91D216FAA6D2F1CAD1EFBF4B8F11A019980C40B24B",
       "Length": 78924,
-      "Sha256": "8EBE4077DFC36C61ABE97F30E2F249F676FD0C49B2B7A0A094BF5B4933052311",
       "RelativePath": "service\\FluxVault.Abstractions.pdb"
     },
     {
+      "Sha256": "1BE358771880121A6A0DF45EBDF321927E3B479F5D4AAD2113BC49DB6F9C77A5",
       "Length": 976384,
-      "Sha256": "4EEE1036BB4014AD9B753C60BA3A1FBEC4BE0953D5F36C5CA1FE3974D21CE010",
       "RelativePath": "service\\FluxVault.Core.dll"
     },
     {
-      "Length": 173736,
-      "Sha256": "CA01E05164D07D8F046CB49421628CCAF6A85DA3028DEF5DA720DB1D93D4D0FF",
+      "Sha256": "D2CFA01C9FDA14195F91755EF95C3D01A5CA53EC843D5F3F4C5E2F8FEB7F1A87",
+      "Length": 173608,
       "RelativePath": "service\\FluxVault.Core.pdb"
     },
     {
-      "Length": 58963,
       "Sha256": "CF4660C9DABB04826B52833FC4020A0645C17661F822AF8E3634E309DBE47D11",
+      "Length": 58963,
       "RelativePath": "service\\FluxVault.Service.deps.json"
     },
     {
+      "Sha256": "D59CE6A47E3385B7DC421A8CFD9D9F51BFBAE54BBBACB560E6EF7569319E10B7",
       "Length": 15360,
-      "Sha256": "476753C8B60143DADF97ACCF38F25B7F069ABAA12318BD60C2A16D834A7BC66E",
       "RelativePath": "service\\FluxVault.Service.dll"
     },
     {
+      "Sha256": "8E8E92AB80C98278B5DAC03C51FFF461119BA7EF84CF5A8CC513C7E77539F6CB",
       "Length": 162304,
-      "Sha256": "3FC0B64674A58D6ED3D814D89C5DCBD12B240D270F9461265A535DB4482379AA",
       "RelativePath": "service\\FluxVault.Service.exe"
     },
     {
+      "Sha256": "606FADD55C4E19104BF26B0FF348B4C98BE2355256D1925ABAA6BBF4860DEA36",
       "Length": 18220,
-      "Sha256": "6772315148FB82AF4CED9606C56E11CBA12103F86625BEE4CA2B21BA3EB6914E",
       "RelativePath": "service\\FluxVault.Service.pdb"
     },
     {
-      "Length": 399,
       "Sha256": "3E965CD7CFD553C2FF4E842D8D8019AAAE2DA0A21D92FF85A87573DD8D1B95C6",
+      "Length": 399,
       "RelativePath": "service\\FluxVault.Service.runtimeconfig.json"
     },
     {
+      "Sha256": "F9CC5EA451469585BE2549425C2052A6041AB5E860B959D582EC1213B9338AC4",
       "Length": 164352,
-      "Sha256": "5813510F0D7CB662563BAC8E085452D9BC4D78A7B8CE384B29D463960B0B02D4",
       "RelativePath": "service\\FluxVault.Windows.dll"
     },
     {
+      "Sha256": "9CBD5C15CF616C560DA3945B3148133F5AC33A11D26D487B87716F933724FDB2",
       "Length": 48108,
-      "Sha256": "CAD1EADE8B21D6B98CA7D684E3F497174A215698AED96FC64CEFF877E22D43FA",
       "RelativePath": "service\\FluxVault.Windows.pdb"
     },
     {
-      "Length": 244224,
       "Sha256": "A83EC6D1C80A0FCC818FAE12EA93A7C425435CB55CF7E5328275432556471A80",
+      "Length": 244224,
       "RelativePath": "service\\Google.Apis.Auth.dll"
     },
     {
-      "Length": 86528,
       "Sha256": "138A800B3DBF78E7D70A031516EFB9F75E0A1AF198301721ECFBEFD0E9A0EA4B",
+      "Length": 86528,
       "RelativePath": "service\\Google.Apis.Core.dll"
     },
     {
-      "Length": 84480,
       "Sha256": "F26773F2C697CF381393183C141A1A6529D7C1E269C28A18B05D450CCCF7A393",
+      "Length": 84480,
       "RelativePath": "service\\Google.Apis.dll"
     },
     {
-      "Length": 183296,
       "Sha256": "635505EBD0F19B1CE6A61320006D220657F77C16F2593FE1A2E29A06106BE5D1",
+      "Length": 183296,
       "RelativePath": "service\\Google.Apis.Drive.v3.dll"
     },
     {
-      "Length": 70656,
       "Sha256": "E282AADC2353B864FE95CD5FB525A1A093D99A30A5BF2530B7AB831D56179816",
+      "Length": 70656,
       "RelativePath": "service\\K4os.Compression.LZ4.dll"
     },
     {
-      "Length": 84992,
       "Sha256": "B146CF3C769000CD5E4458CFED5DA3C0E838B7B2DA6DBE6DAD458CD5A0E3CE41",
+      "Length": 84992,
       "RelativePath": "service\\K4os.Compression.LZ4.Streams.dll"
     },
     {
-      "Length": 13312,
       "Sha256": "19D73FA58C1F6C12C61F30EAAD91881BD06F50CAF4B462B061BC1B45D0A577CD",
+      "Length": 13312,
       "RelativePath": "service\\K4os.Hash.xxHash.dll"
     },
     {
-      "Length": 19104,
       "Sha256": "136D5965CF4768E8420B547A8BDDEA882921F426C371833D558A858A2F0C235A",
+      "Length": 19104,
       "RelativePath": "service\\Microsoft.Bcl.AsyncInterfaces.dll"
     },
     {
-      "Length": 28944,
       "Sha256": "D0C98B14CC1E0A1D2FB4A1AE83E53BC04AA95663EE13B7E4C1C8EC644013283F",
+      "Length": 28944,
       "RelativePath": "service\\Microsoft.Extensions.Configuration.Abstractions.dll"
     },
     {
-      "Length": 43792,
       "Sha256": "9CCD7952A83B33804208EEDE56E9A45D7481FCAFAA7ACA0866853F698231F5A7",
+      "Length": 43792,
       "RelativePath": "service\\Microsoft.Extensions.Configuration.Binder.dll"
     },
     {
-      "Length": 25904,
       "Sha256": "664AB2C37D851990E98118CD5A28FB8FC6163097F47ACA7C1F5B3CF998C02D19",
+      "Length": 25904,
       "RelativePath": "service\\Microsoft.Extensions.Configuration.CommandLine.dll"
     },
     {
-      "Length": 45328,
       "Sha256": "F82E36D5709D24DA05E923347E720648BD8D2B3E7797D24561278F76704965BD",
+      "Length": 45328,
       "RelativePath": "service\\Microsoft.Extensions.Configuration.dll"
     },
     {
-      "Length": 22288,
       "Sha256": "49724AB43DA6448CBE1F3E65963472F43489CA98DFA07483A5A102CF8EDE10A5",
+      "Length": 22288,
       "RelativePath": "service\\Microsoft.Extensions.Configuration.EnvironmentVariables.dll"
     },
     {
-      "Length": 28976,
       "Sha256": "E4F605DE56C6246AD8E9A434E52C23FDD5069078AFD2BD29EBFE934180CE1FE8",
+      "Length": 28976,
       "RelativePath": "service\\Microsoft.Extensions.Configuration.FileExtensions.dll"
     },
     {
-      "Length": 28432,
       "Sha256": "1802F587B6EE4BC0CF6D2364F6F2633FB78FEEA59085CFF37FD7552879B584E2",
+      "Length": 28432,
       "RelativePath": "service\\Microsoft.Extensions.Configuration.Json.dll"
     },
     {
-      "Length": 26896,
       "Sha256": "4A4ABA0B7CB07FF4C8FDC4C14B03A9958B6DA8E2825FA5F7C3575323D6FD7C6F",
+      "Length": 26896,
       "RelativePath": "service\\Microsoft.Extensions.Configuration.UserSecrets.dll"
     },
     {
-      "Length": 66320,
       "Sha256": "1CFFAB3D20722BF5C3C93E2E7D1C24EFD8A2FDEC356A93546502C9327DF845D0",
+      "Length": 66320,
       "RelativePath": "service\\Microsoft.Extensions.DependencyInjection.Abstractions.dll"
     },
     {
-      "Length": 96016,
       "Sha256": "5E083A5860C8884C15D72B28C841E1C4BF33D245D762FC1C5109159F7DF04316",
+      "Length": 96016,
       "RelativePath": "service\\Microsoft.Extensions.DependencyInjection.dll"
     },
     {
-      "Length": 31504,
       "Sha256": "7E4774695DE73E7AB539511BDB58D59497B501BC81FBB056A7B176DC30E5D972",
+      "Length": 31504,
       "RelativePath": "service\\Microsoft.Extensions.Diagnostics.Abstractions.dll"
     },
     {
-      "Length": 36664,
       "Sha256": "8FB1D5540C9BE08C452B8EAC0D4D61E512939CFB45B8A9FCEE8DC32A22E0B848",
+      "Length": 36664,
       "RelativePath": "service\\Microsoft.Extensions.Diagnostics.dll"
     },
     {
-      "Length": 23816,
       "Sha256": "19326AD573D9BD0FB80308386D39EDF560A5ABAD64DFDA63B3694B41E08D4199",
+      "Length": 23816,
       "RelativePath": "service\\Microsoft.Extensions.FileProviders.Abstractions.dll"
     },
     {
-      "Length": 45840,
       "Sha256": "AB02840090AD3D0F455712D2DAB91C714C06E2EF16E9DBF1BFEFB75BC4AC20DE",
+      "Length": 45840,
       "RelativePath": "service\\Microsoft.Extensions.FileProviders.Physical.dll"
     },
     {
-      "Length": 48392,
       "Sha256": "607D1A106C102730A3547827EA96D4BAFABE4683391247912A23049FD7F8D505",
+      "Length": 48392,
       "RelativePath": "service\\Microsoft.Extensions.FileSystemGlobbing.dll"
     },
     {
-      "Length": 54544,
       "Sha256": "FAE784E821EA5A00DDCA043516760CBECF51793AC8D4178CD781EFF8FA4761BF",
+      "Length": 54544,
       "RelativePath": "service\\Microsoft.Extensions.Hosting.Abstractions.dll"
     },
     {
-      "Length": 72464,
       "Sha256": "15A7BF912505AA9A3AB5EC213535E9EEC2A526E66938FB3675FC694BC8A7E7F2",
+      "Length": 72464,
       "RelativePath": "service\\Microsoft.Extensions.Hosting.dll"
     },
     {
-      "Length": 29456,
       "Sha256": "5D205DFE187612F937E12E9FD22C651B5A2A9D3EE53967D9A6CD57F1029903AB",
+      "Length": 29456,
       "RelativePath": "service\\Microsoft.Extensions.Hosting.WindowsServices.dll"
     },
     {
-      "Length": 67336,
       "Sha256": "E25C6CAEC7F5FF58900B88902ED2528B7E791A7BFA74D849B6B8E3C6D9B89FD9",
+      "Length": 67336,
       "RelativePath": "service\\Microsoft.Extensions.Logging.Abstractions.dll"
     },
     {
-      "Length": 28936,
       "Sha256": "8C84ADDBBB419FCF81AD26CEE46059A3B2737B7443DE7A04F7CB54AF3A5709E3",
+      "Length": 28936,
       "RelativePath": "service\\Microsoft.Extensions.Logging.Configuration.dll"
     },
     {
-      "Length": 76560,
       "Sha256": "E3A05F62E7399C4F4C27A0C2787E488D5C9B595A516139FA2797140FAFD170AE",
+      "Length": 76560,
       "RelativePath": "service\\Microsoft.Extensions.Logging.Console.dll"
     },
     {
-      "Length": 20280,
       "Sha256": "04E6A27D0DA711DA86E5D290CCCCA3D7FAB82FF987E240D506CF55C59344D0D8",
+      "Length": 20280,
       "RelativePath": "service\\Microsoft.Extensions.Logging.Debug.dll"
     },
     {
-      "Length": 51984,
       "Sha256": "87EE86FA7034D6A3FD05B71709B6BBBA4FAA81F571BA6D8020031B28B955CF23",
+      "Length": 51984,
       "RelativePath": "service\\Microsoft.Extensions.Logging.dll"
     },
     {
-      "Length": 25400,
       "Sha256": "9B8C45061829211639EE7D0E00E3E44A0D0B7788263DCDAEE08BC04544EDFF19",
+      "Length": 25400,
       "RelativePath": "service\\Microsoft.Extensions.Logging.EventLog.dll"
     },
     {
-      "Length": 35088,
       "Sha256": "91F140CBE11A64659FDC6143A47B3B4B38D257151F151005C562F0AFDB234C8D",
+      "Length": 35088,
       "RelativePath": "service\\Microsoft.Extensions.Logging.EventSource.dll"
     },
     {
-      "Length": 22288,
       "Sha256": "13119B6294B125341351C5D6BA5EE18FFDDE586F26510CCA4C363EA40D45B9D1",
+      "Length": 22288,
       "RelativePath": "service\\Microsoft.Extensions.Options.ConfigurationExtensions.dll"
     },
     {
-      "Length": 65848,
       "Sha256": "E4B9A63E489A8F9349750FB77390D4AD0F72964E10F7AF9AD62321230DA19A24",
+      "Length": 65848,
       "RelativePath": "service\\Microsoft.Extensions.Options.dll"
     },
     {
-      "Length": 45328,
       "Sha256": "85517DC8A5E145DE860484D04EEFC643B4852145DF3EA15929EAAF3C4F0C3D07",
+      "Length": 45328,
       "RelativePath": "service\\Microsoft.Extensions.Primitives.dll"
     },
     {
-      "Length": 140640,
       "Sha256": "3382DAE3402FAFB81C51E37958413E51E7F63ABC989E84F5D5C6FD879BDCDA20",
+      "Length": 140640,
       "RelativePath": "service\\Microsoft.Graph.Core.dll"
     },
     {
-      "Length": 43249696,
       "Sha256": "C3E6469BBA7AB3F843077270471B361C0AA86FBFBA1A9895C8BC091E4A3252E2",
+      "Length": 43249696,
       "RelativePath": "service\\Microsoft.Graph.dll"
     },
     {
-      "Length": 19528,
       "Sha256": "613FD94FF39CE6FF90666E062E93D5D5EA7FDEAE93AAAB2BF2CB6F5C87CEA39D",
+      "Length": 19528,
       "RelativePath": "service\\Microsoft.IdentityModel.Abstractions.dll"
     },
     {
-      "Length": 173088,
       "Sha256": "D1AF130B42EAA6E8B5B45B0A48D286E7A282F2B67F5809AEB828AAA909D94891",
+      "Length": 173088,
       "RelativePath": "service\\Microsoft.IdentityModel.JsonWebTokens.dll"
     },
     {
-      "Length": 38432,
       "Sha256": "B2B89896DA6F307FE4C7FBA033F4F629CE43B92CC6D28C7DAA024A4E5CD68DBD",
+      "Length": 38432,
       "RelativePath": "service\\Microsoft.IdentityModel.Logging.dll"
     },
     {
-      "Length": 53280,
       "Sha256": "647F131D0FD0A66802A80ADC9CC38FE02AA2CAF78D6F58796E758829541B16DE",
+      "Length": 53280,
       "RelativePath": "service\\Microsoft.IdentityModel.Protocols.dll"
     },
     {
-      "Length": 137248,
       "Sha256": "F19F659E8533AD2B0D4650779231EFD0E25247DF72C127B57CFDBF186BE8D256",
+      "Length": 137248,
       "RelativePath": "service\\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll"
     },
     {
-      "Length": 391200,
       "Sha256": "21C943EC715D8771C3A711AD78FC109ADCEAC0E002F67A76F3BCA33D195D0F5F",
+      "Length": 391200,
       "RelativePath": "service\\Microsoft.IdentityModel.Tokens.dll"
     },
     {
-      "Length": 45080,
       "Sha256": "69E36C1A544FC2F98CA8ED330B8026C04DF5479B436A7B3FFED52522D0E14D99",
+      "Length": 45080,
       "RelativePath": "service\\Microsoft.IdentityModel.Validators.dll"
     },
     {
-      "Length": 65968,
       "Sha256": "631A5FC41DF9498D032C0655EBD0E1209430CCFFBEC55667D89C2566B338CCC0",
+      "Length": 65968,
       "RelativePath": "service\\Microsoft.IO.RecyclableMemoryStream.dll"
     },
     {
-      "Length": 102472,
       "Sha256": "945BEA10D1B6AFFCCE668F8752B10496D0D86EA53B58DA1C0627D30E59DA3D35",
+      "Length": 102472,
       "RelativePath": "service\\Microsoft.Kiota.Abstractions.dll"
     },
     {
-      "Length": 22048,
       "Sha256": "8F46F37A40B17A22424AA10E0DA775E47CBB921027D0CC9BF61CBE619C64C4A6",
+      "Length": 22048,
       "RelativePath": "service\\Microsoft.Kiota.Authentication.Azure.dll"
     },
     {
-      "Length": 109640,
       "Sha256": "24F032C048BB839A0BAFED0377C0FF1805CDDED378E5E0BDE10C8E9C736DC339",
+      "Length": 109640,
       "RelativePath": "service\\Microsoft.Kiota.Http.HttpClientLibrary.dll"
     },
     {
-      "Length": 36424,
       "Sha256": "B108D8E5E48781A76E8BAD77B739B26830871E14A961C70F706C97132159C526",
+      "Length": 36424,
       "RelativePath": "service\\Microsoft.Kiota.Serialization.Form.dll"
     },
     {
-      "Length": 70688,
       "Sha256": "B4118C20F780AA9F24219D779F076C07B586DDB223E47B52DF36EF2D6D58DA07",
+      "Length": 70688,
       "RelativePath": "service\\Microsoft.Kiota.Serialization.Json.dll"
     },
     {
-      "Length": 20504,
       "Sha256": "3D9A4615932DB2E85239324C6D6F1E375E9E564D1A74B8B6EC08CF6957333F5E",
+      "Length": 20504,
       "RelativePath": "service\\Microsoft.Kiota.Serialization.Multipart.dll"
     },
     {
-      "Length": 27168,
       "Sha256": "E4D713A5F94956AEA7EDCDFC9B8F8C8005DBC603D701636C21AF8FBFD7700949",
+      "Length": 27168,
       "RelativePath": "service\\Microsoft.Kiota.Serialization.Text.dll"
     },
     {
-      "Length": 723368,
       "Sha256": "A28C251DFE36D881E9E2462E171441B8B0EC156FE3F452602C9149B1B9EFE05B",
+      "Length": 723368,
       "RelativePath": "service\\Newtonsoft.Json.dll"
     },
     {
-      "Length": 1478144,
       "Sha256": "6C74F02211D3C2323DB73C7C3C88BF610E9EE95E3F84DD6EA5D630EEF9895C1B",
+      "Length": 1478144,
       "RelativePath": "service\\Npgsql.dll"
     },
     {
-      "Length": 2281472,
       "Sha256": "DB4D49F11B30F2ABABC6ED98551DE818D8B6F15DA88FADA8BCCD360EA3E12D73",
+      "Length": 2281472,
       "RelativePath": "service\\SharpCompress.dll"
     },
     {
-      "Length": 23968,
       "Sha256": "305D9797B64E1C478AEBB01C6EC9FAAA419D8BDDBB9AE7D3D98EC42CD275A7AC",
+      "Length": 23968,
       "RelativePath": "service\\Std.UriTemplate.dll"
     },
     {
-      "Length": 232520,
       "Sha256": "3C4062071D51B56D7B64E12E98F195692FE58CBC907F0252D1BA5D90A366B965",
+      "Length": 232520,
       "RelativePath": "service\\System.ClientModel.dll"
     },
     {
-      "Length": 186496,
       "Sha256": "4D33E2986A84D4460853E2B98D3A1BA9F8AA2950F7FA12FF6AD2E15A4BCCFD18",
+      "Length": 186496,
       "RelativePath": "service\\System.CodeDom.dll"
     },
     {
-      "Length": 176912,
       "Sha256": "6096DC8A79B912886FEF78E824A86CAB2383BC88C61A764A70EA79785318774F",
+      "Length": 176912,
       "RelativePath": "service\\System.Diagnostics.EventLog.dll"
     },
     {
-      "Length": 801032,
       "Sha256": "1B2C625D8574836D35C950B7829B5767E92E14C389AB050EDB569E9430558FB4",
+      "Length": 801032,
       "RelativePath": "service\\System.Diagnostics.EventLog.Messages.dll"
     },
     {
-      "Length": 92232,
       "Sha256": "D6026966EB5304C2E3BDB3BC091A94D204DCB27696A61CDC89D1ABF5259E24CA",
+      "Length": 92232,
       "RelativePath": "service\\System.IdentityModel.Tokens.Jwt.dll"
     },
     {
-      "Length": 56584,
       "Sha256": "2679A6164163C1F4B7B5FADA83A55EB48B0A85840E04F00E8921B8D495A66B84",
+      "Length": 56584,
       "RelativePath": "service\\System.IO.Hashing.dll"
     },
     {
-      "Length": 295600,
       "Sha256": "979FEE559E30CC0FC4AF6F34548A225B6F08CAE0A6C61D24A3E389B3F22DC9D1",
+      "Length": 295600,
       "RelativePath": "service\\System.Management.dll"
     },
     {
-      "Length": 30472,
       "Sha256": "BAE79A4FF6E8FCFB65A3D88EB53D281898E699E5471EBD780843E5616753F0C3",
+      "Length": 30472,
       "RelativePath": "service\\System.Memory.Data.dll"
     },
     {
-      "Length": 92472,
       "Sha256": "8A1FA55A76D81375C81DE0CD11613861F364294BDD24BFDCE4B47B36B472331D",
+      "Length": 92472,
       "RelativePath": "service\\System.ServiceProcess.ServiceController.dll"
     },
     {
-      "Length": 397312,
       "Sha256": "177F541B9BBA3CFE89D3FE9565EA9F78285EF8499D689DCFD5DE0018B6FA43E5",
+      "Length": 397312,
       "RelativePath": "service\\ZstdSharp.dll"
     }
   ],
-  "Root": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\artifacts\\staging-single-vault\\51b103b3c75645dfaa36600e2cbe07a5",
-  "Version": "1.0.5.0",
-  "SourceCommit": "e4736366cd6c47598523e62ffcbb6f71810f61a2",
-  "Launches": [
+  "Failure": null,
+  "Installer": [
     {
-      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
-      "Exited": true,
-      "ProcessId": 66660,
-      "StartedUtc": "2026-10-05T12:55:18.3860113Z",
-      "Step": "publish-service",
-      "ExitCode": 0
+      "Sha256": "01D7ED37854852B1728BF2B3426C28C41014B059088816D5197FCF05D3BDD8EF",
+      "Length": 14422016,
+      "Path": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\artifacts\\staging-single-vault\\289c59630be846cb90f9a623c4ab0d1c\\installer\\FluxVault.Installer.msi"
     },
     {
-      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
-      "Exited": true,
-      "ProcessId": 11560,
-      "StartedUtc": "2026-10-05T12:55:28.1955337Z",
-      "Step": "publish-app",
-      "ExitCode": 0
-    },
-    {
-      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
-      "Exited": true,
-      "ProcessId": 30916,
-      "StartedUtc": "2026-10-05T12:55:37.0771524Z",
-      "Step": "publish-cli",
-      "ExitCode": 0
-    },
-    {
-      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
-      "Exited": true,
-      "ProcessId": 42008,
-      "StartedUtc": "2026-10-05T12:55:40.9947730Z",
-      "Step": "build-installer",
-      "ExitCode": 0
-    },
-    {
-      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
-      "Exited": true,
-      "ProcessId": 57592,
-      "StartedUtc": "2026-10-05T12:55:54.4164119Z",
-      "Step": "build-bundle",
-      "ExitCode": 0
+      "Sha256": "01C842290227EBDC68118BC6BFC72E7364B027CC6DE75B8898B0322BB50725EC",
+      "Length": 15065299,
+      "Path": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\artifacts\\staging-single-vault\\289c59630be846cb90f9a623c4ab0d1c\\installer\\FluxVault.Setup.exe"
     }
-  ]
+  ],
+  "CandidateId": "289c59630be846cb90f9a623c4ab0d1c"
 }

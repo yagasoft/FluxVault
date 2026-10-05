@@ -45,7 +45,7 @@ catch {
     try { $admissionState=[FluxVault.Fixtures.OwnedWindowsJob]::CurrentContainment() } catch { $admissionState='Containment query failed: '+$_.Exception.Message }
     throw ($admissionError+'; '+$admissionState)
 }
-if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles','Integrity','AccessUser','AccessGroup','AccessReopened','AccessDenied','PackagedClient','PackagedCleanup')) { throw 'Actor requires one explicit loopback/client probe.' }
+if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles','Integrity','AccessUser','AccessGroup','AccessReopened','AccessDenied','RestartBefore','RestartAfter','RestartServer','PackagedClient','PackagedCleanup')) { throw 'Actor requires one explicit loopback/client probe.' }
 $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 if ($sid -ne $configuration.Actors.$Actor -or -not [guid]::TryParseExact($RunId, 'N', [ref]$parsed) -or $parsed -eq [guid]::Empty) { throw 'Actor identity mismatch.' }
 $expectedRoot = Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $configuration.FixtureId
@@ -81,8 +81,9 @@ function Invoke-ActorTool {
         $childIdentity = Get-VaultFixtureLiveProcessIdentity $child
         if ($null -ne $childIdentity) { ($childIdentity | ConvertTo-Json -Compress) | Add-Content -LiteralPath $processJournal }
         $limit=if($ClientKind -eq 'Integrity'){[int]$runtime.IntegrityTimeoutSeconds*1000}elseif($ClientKind -eq 'CallerFiles'){
-            if(($configuration.PSObject.Properties.Name -contains 'RunPackagedIdentityTests') -and $configuration.RunPackagedIdentityTests){120000}else{60000}
-        }elseif($ClientKind -like 'Packaged*'){60000}else{20000}
+            if(($configuration.PSObject.Properties.Name -contains 'RunPackagedIdentityTests') -and $configuration.RunPackagedIdentityTests){120000}
+            elseif(($configuration.PSObject.Properties.Name -contains 'RunRestartTests') -and $configuration.RunRestartTests){90000}else{60000}
+        }elseif($ClientKind -eq 'RestartServer'){70000}elseif($ClientKind -like 'Packaged*'){60000}else{25000}
         if (-not $child.WaitForExit($limit)) { throw 'Actor tool exceeded its finite deadline.' }
         return @{ ExitCode=$child.ExitCode; Output=$stdout.GetAwaiter().GetResult(); Error=$stderr.GetAwaiter().GetResult() }
     } finally {
@@ -105,6 +106,15 @@ try {
         $suite=Invoke-ActorTool $runtime.Dotnet @('exec',$runtime.Vstest,(Join-Path $Root 'runtime/integration/FluxVault.Integration.Tests.dll'),
             '/TestCaseFilter:Category=RequiresPostgreSql','/Logger:trx;LogFileName=PostgreSql.trx',('/ResultsDirectory:'+(Join-Path $Root 'integrity/results')))
         $results.Add(@{Kind='Integrity';ExitCode=$suite.ExitCode;Output=$suite.Output;Error=$suite.Error})
+    } elseif ($ClientKind -like 'Restart*') {
+        if(-not $configuration.RunRestartTests -or -not $configuration.RunSingleVaultTests -or
+            ($ClientKind -eq 'RestartServer' -and $Actor -ne 'System') -or
+            ($ClientKind -ne 'RestartServer' -and $Actor -ne 'A')){throw 'Restart proof requires its exact owned native actor.'}
+        $phase=switch($ClientKind){RestartBefore{'before'} RestartAfter{'after'} RestartServer{'server'}}
+        $result=Invoke-ActorTool $runtime.Dotnet @((Join-Path $Root 'runtime/FluxVault.TestHost.dll'),'--mode','windows-service-restart',
+            '--configuration',(Join-Path $Root 'runtime/database-probe.json'),'--actor',$Actor,'--phase',$phase)
+        if($result.ExitCode -ne 0){throw ('Native restart proof failed: '+$result.Error)}
+        $results.Add(@{Kind='Restart';Result=($result.Output | ConvertFrom-Json)})
     } elseif ($ClientKind -like 'Packaged*') {
         if($Actor -notin @('A','B')){throw 'A packaged client requires an ordinary fixture account.'}
         $selfProcess=Get-Process -Id $PID

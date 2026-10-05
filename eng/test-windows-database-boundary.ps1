@@ -8,6 +8,7 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$RunCallerFileTests,
     [switch]$RunSingleVaultTests,
     [switch]$RunNativeAccessTests,
+    [switch]$RunRestartTests,
     [switch]$RunPackagedIdentityTests,
     [string]$PackageSdkDirectory = 'E:\Windows Kits\10\bin\10.0.28000.0\x64',
     [switch]$RunIntegrityTests,
@@ -19,6 +20,9 @@ if($RunCallerFileTests -and $RunSingleVaultTests){throw 'Select one native file 
 if($RunIntegrityTests -and ($RunCallerFileTests -or $RunSingleVaultTests)){throw 'Run the integrity suite in its own fresh fixture.'}
 if($RunNativeAccessTests -and -not $RunSingleVaultTests){throw 'Native access proof requires the single-vault product workflow.'}
 if($RunPackagedIdentityTests -and -not $RunSingleVaultTests){throw 'Packaged identity proof requires the single-vault product workflow.'}
+if($RunRestartTests -and (-not $RunSingleVaultTests -or $RunNativeAccessTests -or $RunPackagedIdentityTests)){
+    throw 'Restart proof requires an exclusive single-vault extension within the existing resource bound.'
+}
 Set-StrictMode -Version Latest
 Import-Module (Join-Path $PSScriptRoot 'fixtures/vault-windows-fixture.psm1') -Force
 Import-Module (Join-Path $PSScriptRoot 'fixtures/verified-postgresql-snapshot.psm1') -Force
@@ -208,6 +212,7 @@ function Invoke-SystemActor {
                 $fixtureObservations.Add(@{NativeCallerFiles=$native})
             }
             if($RunNativeAccessTests){Invoke-NativeAccessProof}
+            if($RunRestartTests){Invoke-RestartGrant 'grant-group'}
             if($RunPackagedIdentityTests) {
                 foreach($actor in @('A','B')) {
                     $packaged=Invoke-UserActor $actor '127.0.0.1' 'PackagedClient'
@@ -218,8 +223,30 @@ function Invoke-SystemActor {
                 }
             }
             'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/caller-files-stop')
+        } elseif($ClientKind -eq 'RestartServer') {
+            $ready=Join-Path $fixtureRoot 'runtime/restart-ready.json'
+            $deadline=[DateTime]::UtcNow.AddSeconds(15)
+            while(-not(Test-Path -LiteralPath $ready)) {
+                if((Test-Path -LiteralPath (Join-Path $fixtureRoot ("output-System/$runId-result.json"))) -or
+                    (Test-Path -LiteralPath (Join-Path $fixtureRoot 'system-actor-error.json'))){
+                    $early=Read-ActorResult System $runId
+                    throw 'Replacement server finished before publishing readiness.'
+                }
+                if([DateTime]::UtcNow -gt $deadline){throw 'Replacement server readiness exceeded its deadline.'}
+                Start-Sleep -Milliseconds 100
+            }
+            $replacementIdentity=Read-SystemServerIdentity $runId -ReadyPath $ready
+            Assert-ProcessAbsent $fixtureOriginalServer
+            if($replacementIdentity.ProcessId -eq $fixtureOriginalServer.ProcessId -and
+                $replacementIdentity.StartedUtc -eq $fixtureOriginalServer.StartedUtc){throw 'Server process was not replaced.'}
+            $fixtureObservations.Add(@{NativeRestartIdentity=@{Original=$fixtureOriginalServer;Replacement=$replacementIdentity;OriginalJoinedBeforeReplacement=$true}})
+            $creator=Invoke-UserActor 'A' '127.0.0.1' 'RestartAfter'
+            Assert-RestartCreator $creator 'after' 14
+            $fixtureObservations.Add(@{NativeRestart=$creator})
+            Invoke-RestartGrant 'revoke'
+            'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/restart-stop')
         }
-        $result=Read-ActorResult System $runId -TimeoutSeconds $(if($ClientKind -eq 'Integrity'){$IntegrityTimeoutSeconds+10}elseif($RunPackagedIdentityTests -and $ClientKind -eq 'CallerFiles'){130}else{70})
+        $result=Read-ActorResult System $runId -TimeoutSeconds $(if($ClientKind -eq 'Integrity'){$IntegrityTimeoutSeconds+10}elseif($RunPackagedIdentityTests -and $ClientKind -eq 'CallerFiles'){130}elseif($RunRestartTests){100}else{70})
         Wait-SystemTaskIdle $registered
         Join-ActorProcesses System $runId
         if($fixtureJobs[$jobName].ProcessIds().Length){throw 'SYSTEM invocation job is not empty after completion.'}
@@ -296,6 +323,94 @@ function Invoke-NativeAccessProof {
             if($reopenedProof.Count -ne 1 -or -not $reopenedProof[0].Result.NativeAccessVerified -or $reopenedProof[0].Result.NativeElevated){throw 'Reopened native access proof is incomplete.'}
         }
     }
+}
+
+function Assert-RestartCreator {
+    param($Result,[string]$Phase,[int]$Checks)
+    $proof=@($Result.Results | Where-Object Kind -eq 'Restart')
+    if($Result.Actor -ne 'A' -or $Result.WindowsSid -ne $actors.A -or $proof.Count -ne 1 -or
+        -not $proof[0].Result.NativeRestartVerified -or $proof[0].Result.Phase -ne $Phase -or
+        $proof[0].Result.WindowsSid -ne $actors.A -or $proof[0].Result.Passed -ne $Checks){throw 'Native creator restart proof is incomplete.'}
+}
+
+function Assert-RestartAccessActor {
+    param($Result,[int]$Checks)
+    $proof=@($Result.Results | Where-Object Kind -eq 'Access')
+    if($Result.Actor -ne 'B' -or $Result.WindowsSid -ne $actors.B -or $proof.Count -ne 1 -or
+        -not $proof[0].Result.NativeAccessVerified -or $proof[0].Result.NativeElevated -or
+        $proof[0].Result.WindowsSid -ne $actors.B -or $proof[0].Result.Passed -ne $Checks){throw 'Native restart grant/denial proof is incomplete.'}
+    $fixtureObservations.Add(@{NativeRestartAccess=$Result})
+}
+
+function Invoke-RestartGrant {
+    param([ValidateSet('grant-group','revoke')][string]$Phase)
+    $owned=@($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Group' -and $_.Name -eq 'FVGate_261003' -and $_.State -eq 'Created'})
+    if($owned.Count -ne 1){throw 'Missing owned restart-test group.'}
+    $group=Get-LocalGroup -Name $owned[0].Name
+    $user=Get-LocalUser -Name 'FVGateB_261003'
+    if($group.SID.Value -ne $owned[0].Identity.Sid -or $group.Description -ne $fixtureDescription -or
+        $user.SID.Value -ne $actors.B -or $user.Description -ne $fixtureDescription){throw 'Restart-test principal ownership changed.'}
+    $members=@(Get-LocalGroupMember -SID $group.SID)
+    if($Phase -eq 'grant-group') {
+        if($members.Count){throw 'Restart-test group already has members.'}
+        $group.SID.Value | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/access-group-sid')
+    } else {
+        if($members.Count -ne 1 -or $members[0].SID.Value -ne $actors.B){throw 'Restart-test group membership changed.'}
+        Assert-RestartAccessActor (Invoke-UserActor 'B' '127.0.0.1' 'AccessGroup') 9
+    }
+    $native=Invoke-OwnedTool $fixtureDotnet @((Join-Path $fixtureRoot 'runtime/FluxVault.TestHost.dll'),'--mode','windows-access-grant',
+        '--configuration',(Join-Path $fixtureRoot 'runtime/database-probe.json'),'--actor','Elevated','--phase',$Phase,'--group-sid',$group.SID.Value)
+    if($native.ExitCode -ne 0){throw ('Native restart access change failed: '+$native.Error)}
+    $proof=$native.Output | ConvertFrom-Json
+    if(-not $proof.NativeAccessVerified -or -not $proof.NativeElevated -or $proof.Phase -ne $Phase -or $proof.Passed -ne 3){throw 'Elevated restart grant proof is incomplete.'}
+    $operation=[guid]::Parse($proof.OperationId)
+    if($operation -eq [guid]::Empty){throw 'Restart grant receipt is missing.'}
+    $operation.ToString('N') | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/access-operation-id')
+    $fixtureObservations.Add(@{NativeRestartAccess=$proof})
+    Assert-RestartAccessActor (Invoke-UserActor 'B' '127.0.0.1' 'AccessDenied') 2
+    if($Phase -eq 'grant-group') {
+        Add-LocalGroupMember -SID $group.SID -Member $user
+        Assert-RestartAccessActor (Invoke-UserActor 'B' '127.0.0.1' 'AccessGroup') 9
+        $creator=Invoke-UserActor 'A' '127.0.0.1' 'RestartBefore'
+        Assert-RestartCreator $creator 'before' 6
+        $fixtureObservations.Add(@{NativeRestart=$creator})
+    }
+}
+
+function Assert-ProcessAbsent {
+    param($Identity)
+    $process=Get-Process -Id $Identity.ProcessId -ErrorAction SilentlyContinue
+    if($null -ne $process) {
+        try {
+            if($process.StartTime.ToUniversalTime().ToString('o') -eq $Identity.StartedUtc){throw 'Previous native server process remains.'}
+        } finally {$process.Dispose()}
+    }
+}
+
+function Read-SystemServerIdentity {
+    param([string]$RunId,[string]$ReadyPath)
+    $path=Join-Path $fixtureRoot ("output-System/$RunId-processes.jsonl")
+    Assert-VaultFixtureTrustedPath $path
+    if((Get-Item -LiteralPath $path).Length -gt 65536){throw 'SYSTEM process identity log exceeds its bound.'}
+    $identities=@(Get-Content -LiteralPath $path | ForEach-Object {$_ | ConvertFrom-Json -AsHashtable} | Where-Object Executable -eq $fixtureDotnet)
+    if($identities.Count -ne 1){throw 'Expected one native service host process.'}
+    $identity=$identities[0]
+    $identity.StartedUtc=([DateTimeOffset]$identity.StartedUtc).UtcDateTime.ToString('o')
+    if($ReadyPath) {
+        Assert-VaultFixtureTrustedPath $ReadyPath
+        if((Get-Item -LiteralPath $ReadyPath).Length -gt 16384){throw 'Restart readiness exceeds its bound.'}
+        $ready=Get-Content -LiteralPath $ReadyPath -Raw | ConvertFrom-Json
+        if(-not $ready.NativeRestartServer -or $ready.FixtureId -ne $FixtureId -or $ready.ProcessId -ne $identity.ProcessId -or
+            ([DateTimeOffset]$ready.StartedUtc).UtcDateTime.ToString('o') -ne $identity.StartedUtc -or $ready.Executable -ne $identity.Executable){throw 'Replacement readiness/process identity mismatch.'}
+        $process=Get-Process -Id $identity.ProcessId
+        try {
+            $actual=Get-VaultFixtureProcessIdentity $process
+            $native=Get-CimInstance Win32_Process -Filter ("ProcessId="+$identity.ProcessId)
+            if($actual.StartedUtc -ne $identity.StartedUtc -or $actual.Executable -ne $identity.Executable -or
+                (Invoke-CimMethod -InputObject $native -MethodName GetOwnerSid).Sid -ne $actors.System){throw 'Replacement process native identity changed.'}
+        } finally {$process.Dispose()}
+    }
+    return $identity
 }
 
 function Invoke-UserActor {
@@ -642,7 +757,7 @@ try {
     }
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
-    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
+    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
     @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     if($RunPackagedIdentityTests) {
         $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure()
@@ -757,6 +872,7 @@ host all all ::1/128 reject
         }}
     }
     if ($RunCallerFileTests -or $RunSingleVaultTests) {
+        $restartPostmaster=if($RunRestartTests){Get-OwnedPostmaster}else{$null}
         $native = Invoke-SystemActor '127.0.0.1' 'CallerFiles'
         $fixtureObservations.Add(@{NativeCallerFiles=$native})
         $proof=@($native.Results | Where-Object {$_.Kind -eq 'CallerFiles'})
@@ -778,6 +894,21 @@ host all all ::1/128 reject
                 -not $proof[0].Result.ProtectedRehearsalOutputCleaned -or -not $proof[0].Result.DrainEffectVerified) {
                 throw 'Required current maintenance proof is missing; rebuild the Release test host before running.'
             }
+        }
+        if($RunRestartTests) {
+            $fixtureOriginalServer=Read-SystemServerIdentity $native.RunId
+            Assert-ProcessAbsent $fixtureOriginalServer
+            $replacement=Invoke-SystemActor '127.0.0.1' 'RestartServer'
+            $restartProof=@($replacement.Results | Where-Object Kind -eq 'Restart')
+            if($restartProof.Count -ne 1 -or -not $restartProof[0].Result.NativeRestartServer -or
+                -not $restartProof[0].Result.ExistingBootstrapOpened -or -not $restartProof[0].Result.RequestsJoined){throw 'Actual replacement server proof is incomplete.'}
+            $newIdentity=Read-SystemServerIdentity $replacement.RunId
+            Assert-ProcessAbsent $newIdentity
+            $livePostmaster=Get-OwnedPostmaster
+            if($null -eq $restartPostmaster -or $null -eq $livePostmaster -or
+                $restartPostmaster.ProcessId -ne $livePostmaster.ProcessId -or $restartPostmaster.StartedUtc -ne $livePostmaster.StartedUtc -or
+                $restartPostmaster.Executable -ne $livePostmaster.Executable){throw 'Private PostgreSQL changed during service-process replacement.'}
+            $fixtureObservations.Add(@{NativeRestartServer=$replacement;PostmasterUnchanged=$true;BothServersJoined=$true})
         }
     }
     if($RunIntegrityTests) {

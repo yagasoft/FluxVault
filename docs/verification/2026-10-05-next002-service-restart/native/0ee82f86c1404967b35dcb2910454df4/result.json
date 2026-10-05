@@ -1,0 +1,1548 @@
+{
+  "Failure": null,
+  "Observations": [
+    {
+      "Complete": true,
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "0ee82f86c1404967b35dcb2910454df4",
+            "ProbeId": "650b12a1129b458c84f6bfb971c15e4c",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql"
+        },
+        {
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL"
+        }
+      ],
+      "RunId": "5c8d38cadcff4494a0a9e5830e73b304",
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 897,
+      "ServerLogEnd": 2307
+    },
+    {
+      "RunId": "76e2da38a18d4a789c76c2958e19a044",
+      "Complete": true,
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "ExitCode": 2,
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 59623 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Output": "",
+          "ProbeId": "f923cb245f304be8b280ad4b9094dfbc",
+          "Kind": "libpq"
+        },
+        {
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL"
+        }
+      ],
+      "ServerLogStart": 2307,
+      "ServerLogEnd": 3012
+    },
+    {
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "RunId": "9548a470d2e4430297b2901b6e587a32",
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "0ee82f86c1404967b35dcb2910454df4",
+            "ProbeId": "3009ec360d684a9e934d2e47cc5b08a1",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "Kind": "ACL"
+        }
+      ],
+      "ServerLogStart": 3012,
+      "ServerLogEnd": 4400
+    },
+    {
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "RunId": "08c4335830334d6ebf26ef614fc36b13",
+      "Results": [
+        {
+          "Host": "::1",
+          "Error": "psql: error: connection to server at \"::1\", port 59623 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ExitCode": 2,
+          "Kind": "libpq",
+          "Output": "",
+          "ProbeId": "475ff8712080480baf4a44fe9753bcf8"
+        },
+        {
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "Complete": true,
+      "ServerLogStart": 4400,
+      "ServerLogEnd": 5094
+    },
+    {
+      "RunId": "10fbf73692054e62979eed0104f1e0db",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "0ee82f86c1404967b35dcb2910454df4",
+            "ProbeId": "a8abfa6b22fe4b07868aeff9bb4eedeb",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 125,
+              "Checks": [
+                "creator and initial revision",
+                "initial authorised status resolves only the installed repository without mutation",
+                "ungranted initial status reveals no installed identity",
+                "installation already initialised refuses another repository identity",
+                "rejected replacement preserves installed binding",
+                "ungranted admission",
+                "omitted target",
+                "unknown target",
+                "generic admission cannot consume save identity",
+                "saved round trip and revision",
+                "full configuration round trip",
+                "exact committed save replay",
+                "operation fingerprint collision",
+                "stale revision CAS",
+                "metadata rebinding rejected",
+                "privileged log rebinding rejected",
+                "generic admission cannot consume access identity",
+                "owner cannot manage access",
+                "read grant admits history",
+                "read grant cannot restore",
+                "acknowledged revocation blocks new admission",
+                "revocation persists across store restart",
+                "installed binding and configuration persist across store restart",
+                "catalogue identity mismatch fails closed",
+                "durable admission before side effects",
+                "automatic retention authority is durable with backup admission",
+                "interrupted mutation cannot be replayed",
+                "receipt reconciliation after completion",
+                "other actor cannot inspect receipt",
+                "cross actor collision rejects malformed response before decoding",
+                "effective purge permissions are durable",
+                "partial revocation denies purge receipt",
+                "partial revocation denies purge replay",
+                "protection-only backup cannot prune enabled retention",
+                "protection-only save cannot change retention policy",
+                "real catalogue denial precedes repository executor",
+                "real catalogue dispatch retains installed binding and revision",
+                "lost save acknowledgement does not execute dependent repository command",
+                "durable save is reconciled after acknowledgement loss",
+                "same save returns committed receipt without repeating effect",
+                "retention-policy edit authority is durable",
+                "protection-only capture allowed when automatic retention is disabled",
+                "ordinary protection edit does not require destructive authority",
+                "protection-only caller cannot enable automatic pruning",
+                "denied retention edit preserves authoritative configuration and revision",
+                "PUBLIC has no control schema access",
+                "acknowledgement durability settings",
+                "invalid selection refused before receipt: PreviewRestoreSelection/47",
+                "invalid selection refused before receipt: PreviewRestoreSelection/48",
+                "invalid selection refused before receipt: PreviewRestoreSelection/49",
+                "invalid selection refused before receipt: PreviewRestoreSelection/50",
+                "invalid selection refused before receipt: PreviewRestoreSelection/51",
+                "invalid selection refused before receipt: PreviewRestoreSelection/52",
+                "invalid selection refused before receipt: RunRestoreSelection/53",
+                "invalid selection refused before receipt: RunRestoreSelection/54",
+                "invalid selection refused before receipt: RunRestoreSelection/55",
+                "invalid selection refused before receipt: RunRestoreSelection/56",
+                "invalid selection refused before receipt: RunRestoreSelection/57",
+                "invalid selection refused before receipt: RunRestoreSelection/58",
+                "selection preview is read-only without privileged filesystem inspection",
+                "real selection receipt retains verified result and warnings without re-execution",
+                "invalid diagnostics directory refused before receipt: relative",
+                "invalid diagnostics directory refused before receipt: C:relative",
+                "invalid diagnostics directory refused before receipt: \\\\server\\share",
+                "invalid diagnostics directory refused before receipt: C:\\work\\..\\elsewhere",
+                "invalid diagnostics directory refused before receipt: C:\\work\\CON.txt",
+                "invalid diagnostics directory refused before receipt: C:\\work\\trailing.",
+                "invalid diagnostics directory refused before receipt: C:\\work\\\\ambiguous",
+                "invalid diagnostics directory refused before receipt: ",
+                "syntactically valid diagnostics directory admits without privileged filesystem access",
+                "real diagnostics receipt round trip retains publication warning without re-execution",
+                "drain completion rejects a changed request fingerprint",
+                "drain completion rejects a different reported destination",
+                "drain completion rejects a changed durable permission receipt",
+                "ordinary completion cannot bypass drain configuration CAS",
+                "rejected drain completion retains the admitted receipt",
+                "cancelled drain completion keeps its receipt admitted and configuration enabled",
+                "remaining actions prevent disabling even with a healthy zero-count report",
+                "incomplete drain preserves every configuration field and revision",
+                "failed drain result is retained without a configuration revision",
+                "failed drain completion preserves enabled mirrors and untouched settings",
+                "drain completion CAS rejects newer configuration after repository effects",
+                "failed drain CAS preserves newer configuration and revision",
+                "failed drain CAS remains uncertain rather than falsely completed",
+                "failure before drain commit rolls back configuration and receipt together",
+                "rolled-back drain has no configuration effect",
+                "rolled-back drain keeps its original admitted revision",
+                "completed drain atomically increments revision and disables only its requested mirror",
+                "disabled destination drain replays its exact completed response before current selector validation",
+                "lost drain acknowledgement leaves a durable atomic result",
+                "lost drain acknowledgement reconciles exactly once without another configuration effect",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: null",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination:  ",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: missing",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: first",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: third",
+                "invalid and final-destination drain refusal preserves configuration and revision",
+                "ungranted toggle is refused before configuration or receipt mutation",
+                "denied toggle leaves no receipt",
+                "toggle completes in real catalogue without repository execution",
+                "toggle changes only IsEnabled and preserves every untouched setting",
+                "toggle exact replay and receipt retain the atomic committed revision without another effect",
+                "another toggle at an old revision is refused",
+                "stale toggle leaves no receipt",
+                "toggle operation identity cannot be reused with a different payload",
+                "toggle refuses unrelated write payload before admission: 105",
+                "invalid toggle leaves no receipt: 106",
+                "toggle refuses unrelated write payload before admission: 107",
+                "invalid toggle leaves no receipt: 108",
+                "toggle refuses unrelated write payload before admission: 109",
+                "invalid toggle leaves no receipt: 110",
+                "toggle refuses unrelated write payload before admission: 111",
+                "invalid toggle leaves no receipt: 112",
+                "toggle refuses unrelated write payload before admission: 113",
+                "invalid toggle leaves no receipt: 114",
+                "cancelled queued toggle is a definite refusal",
+                "cancelled toggle leaves no receipt",
+                "sync status is read-only without a mutation receipt",
+                "postcommit payload exception retains uncertainty without repository execution",
+                "real store retains completed toggle after acknowledgement loss",
+                "same lost toggle returns its completed receipt without retoggling",
+                "two real toggles and all replays restore the full baseline with exactly two revisions",
+                "queued backup remains behind the real committed toggle until its acknowledgement is released",
+                "queued backup receives the new authoritative configuration and revision, never the pre-toggle snapshot",
+                "sequencing checks restore the complete baseline through another atomic toggle"
+              ],
+              "NativeActor": "SYSTEM",
+              "PolicyActorsAreDoubles": true,
+              "MirrorDrainCatalogueVerified": true,
+              "DiagnosticsCatalogueVerified": true,
+              "SelectionCatalogueVerified": true,
+              "ProtectionStateCatalogueVerified": true,
+              "StoreHost": "127.0.0.1",
+              "Metadata": {
+                "Passed": 125,
+                "Checks": [
+                  "bound manifest round trip",
+                  "bound descriptor lookup",
+                  "bound version inventory",
+                  "folder and lineage round trip",
+                  "current entry inventory",
+                  "current winner preserves 100 ns ordering",
+                  "latest manifest agrees with exact current winner",
+                  "case-equivalent Windows path has one current winner",
+                  "latest lookup resolves canonical path identity",
+                  "current winner uses ordinal case-distinct ID ties",
+                  "file and folder identities remain distinct",
+                  "out-of-order replay cannot replace a newer current entry",
+                  "display casing comes from the winning manifest after replay",
+                  "deleting non-current history preserves its current tombstone",
+                  "deletion fallback includes retained tombstones",
+                  "deleting the current version restores retained history",
+                  "failed batch rolls back current pointer and generation together",
+                  "failed deletion rebuild rolls back removed history, current pointer and generation together",
+                  "poison fixture affects exactly one current pointer",
+                  "wrong-path current pointer fails closed",
+                  "wrong-tick current pointer fails closed",
+                  "cached binding refuses schema v3",
+                  "provisioning and schema guard refuse schema v3",
+                  "refusal preserves data and schema for schema v3",
+                  "cached binding refuses nullable current tick key",
+                  "provisioning and schema guard refuse nullable current tick key",
+                  "refusal preserves data and schema for nullable current tick key",
+                  "cached binding refuses missing canonical primary key",
+                  "provisioning and schema guard refuse missing canonical primary key",
+                  "refusal preserves data and schema for missing canonical primary key",
+                  "cached binding refuses missing path foreign key",
+                  "provisioning and schema guard refuse missing path foreign key",
+                  "refusal preserves data and schema for missing path foreign key",
+                  "deletion preserves exact case-distinct identifier selection",
+                  "deleting all path history removes its current row",
+                  "recent limit 1 preserves full-inventory order and fields",
+                  "recent limit 50 preserves full-inventory order and fields",
+                  "recent limit 200 preserves full-inventory order and fields",
+                  "mixed-case identifier ties use ordinal order",
+                  "one-tick boundary retains manifest precision instead of PostgreSQL timestamp precision",
+                  "recent query never deserialises a corrupt manifest outside its window",
+                  "complete history still validates out-of-window manifests",
+                  "selected manifest corruption fails closed",
+                  "selected identifier must exactly match its ordinal SQL ordering key",
+                  "selected ordering key must match its immutable manifest",
+                  "recent read honours cancellation",
+                  "recent read refuses a non-positive limit",
+                  "bounded recent ordering can use its supporting index",
+                  "actual store refuses v1 and malformed v2 schemas without changing existing schema or data",
+                  "exact drive-root scope includes its recorded root snapshot",
+                  "drive-root descendant scope includes self and children",
+                  "scoped first page retains 100ns and ordinal keys before limit",
+                  "newer page reverses exact keyset without omissions",
+                  "newer page reverses exact keyset without omissions",
+                  "newer page reverses exact keyset without omissions",
+                  "newer page reverses exact keyset without omissions",
+                  "all history pages have no holes or duplicates and escape wildcard scope",
+                  "history headers omit unbounded child and lineage arrays",
+                  "cursor refuses changed path",
+                  "cursor refuses changed scope",
+                  "cursor refuses changed kind",
+                  "query refuses wrong binding",
+                  "immutable folder detail is independently paged",
+                  "recorded child is fetched even outside visible history page",
+                  "cancelled mutation changes neither generation nor history",
+                  "committed deletion invalidates stale cursor",
+                  "committed insertion invalidates stale cursor",
+                  "selected header validates exact immutable timestamp",
+                  "SQL limits aggregate header transfer before IPC materialisation",
+                  "actual escaped wire envelope fits the byte budget",
+                  "SQL limits aggregate header transfer before IPC materialisation",
+                  "actual escaped wire envelope fits the byte budget",
+                  "SQL limits aggregate header transfer before IPC materialisation",
+                  "actual escaped wire envelope fits the byte budget",
+                  "SQL limits aggregate header transfer before IPC materialisation",
+                  "actual escaped wire envelope fits the byte budget",
+                  "SQL limits aggregate header transfer before IPC materialisation",
+                  "actual escaped wire envelope fits the byte budget",
+                  "SQL and IPC shortened pages retain every version exactly once",
+                  "current page count is bounded and advances",
+                  "current page count is bounded and advances",
+                  "current page count is bounded and advances",
+                  "current page count is bounded and advances",
+                  "current keysets preserve all entries including tombstones",
+                  "current pages project thin headers without folder children or lineage arrays",
+                  "current keysets advance strictly through canonical path IDs",
+                  "current pages refuse another repository binding",
+                  "current pages refuse invalid counts",
+                  "current cursor cannot change page size",
+                  "mutation invalidates current-entry cursors without data",
+                  "selected current pointer mismatch refuses the page",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "size-shortened current pages have no holes or duplicates",
+                  "size-shortened current pages retain complete inventory semantics",
+                  "mutation lock waiter cancels without partial mutation",
+                  "outbox refuses wrong repository root",
+                  "rejected export creates no storage",
+                  "bound outbox export",
+                  "version deletion removes requested history",
+                  "deleted history retires chunk references",
+                  "deleted history retires outbox entries",
+                  "wrong manifest identity is rejected",
+                  "unbound manifest cannot be adopted",
+                  "missing namespace does not auto-provision",
+                  "root binding mismatch fails before metadata access",
+                  "existing namespace is never silently adopted",
+                  "bound recent read rechecks required ordering-column shape after cached initialisation",
+                  "binding is rechecked after cached initialisation"
+                ],
+                "RecentVersionsVerified": true,
+                "HistoryPagingVerified": true,
+                "CurrentProjectionVerified": true,
+                "CurrentPagingVerified": true
+              },
+              "Repository": {
+                "Passed": 10,
+                "Checks": [
+                  "captured manifest carries installed repository identity",
+                  "file and folder manifests remain bound",
+                  "reopened repository returns verified file bytes",
+                  "reopened repository returns verified folder bytes",
+                  "metadata root mismatch rejects before storage access",
+                  "reprovisioning existing storage is rejected",
+                  "authorised history purge removes requested inventory",
+                  "repository remains usable after authorised purge",
+                  "changed metadata binding rejects before chunk publication",
+                  "failed binding capture preserves every existing storage byte"
+                ],
+                "NativeCallerFileAccess": false
+              }
+            }
+          }
+        },
+        {
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "Complete": true,
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "ServerLogStart": 5157,
+      "ServerLogEnd": 43797
+    },
+    {
+      "RunId": "b9fe98be0c454dffaeb763b609b30e2b",
+      "Results": [
+        {
+          "Output": "0ee82f86c1404967b35dcb2910454df4|fv_gate_261003|fv_gate_service",
+          "Kind": "libpq",
+          "ProbeId": "792e3183b18f47afac164e8c5fc14b3e",
+          "ExitCode": 0,
+          "Host": "127.0.0.1",
+          "Error": ""
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WriteRuntime": true
+        }
+      ],
+      "Complete": true,
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 43797,
+      "ServerLogEnd": 44350
+    },
+    {
+      "Complete": true,
+      "RunId": "a74ec16b0ff64c96a16d40a1b2ea4c46",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "0ee82f86c1404967b35dcb2910454df4",
+            "ProbeId": "ebbfe4ebe54543459c17e2c09eadccac",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 125,
+              "Checks": [
+                "creator and initial revision",
+                "initial authorised status resolves only the installed repository without mutation",
+                "ungranted initial status reveals no installed identity",
+                "installation already initialised refuses another repository identity",
+                "rejected replacement preserves installed binding",
+                "ungranted admission",
+                "omitted target",
+                "unknown target",
+                "generic admission cannot consume save identity",
+                "saved round trip and revision",
+                "full configuration round trip",
+                "exact committed save replay",
+                "operation fingerprint collision",
+                "stale revision CAS",
+                "metadata rebinding rejected",
+                "privileged log rebinding rejected",
+                "generic admission cannot consume access identity",
+                "owner cannot manage access",
+                "read grant admits history",
+                "read grant cannot restore",
+                "acknowledged revocation blocks new admission",
+                "revocation persists across store restart",
+                "installed binding and configuration persist across store restart",
+                "catalogue identity mismatch fails closed",
+                "durable admission before side effects",
+                "automatic retention authority is durable with backup admission",
+                "interrupted mutation cannot be replayed",
+                "receipt reconciliation after completion",
+                "other actor cannot inspect receipt",
+                "cross actor collision rejects malformed response before decoding",
+                "effective purge permissions are durable",
+                "partial revocation denies purge receipt",
+                "partial revocation denies purge replay",
+                "protection-only backup cannot prune enabled retention",
+                "protection-only save cannot change retention policy",
+                "real catalogue denial precedes repository executor",
+                "real catalogue dispatch retains installed binding and revision",
+                "lost save acknowledgement does not execute dependent repository command",
+                "durable save is reconciled after acknowledgement loss",
+                "same save returns committed receipt without repeating effect",
+                "retention-policy edit authority is durable",
+                "protection-only capture allowed when automatic retention is disabled",
+                "ordinary protection edit does not require destructive authority",
+                "protection-only caller cannot enable automatic pruning",
+                "denied retention edit preserves authoritative configuration and revision",
+                "PUBLIC has no control schema access",
+                "acknowledgement durability settings",
+                "invalid selection refused before receipt: PreviewRestoreSelection/47",
+                "invalid selection refused before receipt: PreviewRestoreSelection/48",
+                "invalid selection refused before receipt: PreviewRestoreSelection/49",
+                "invalid selection refused before receipt: PreviewRestoreSelection/50",
+                "invalid selection refused before receipt: PreviewRestoreSelection/51",
+                "invalid selection refused before receipt: PreviewRestoreSelection/52",
+                "invalid selection refused before receipt: RunRestoreSelection/53",
+                "invalid selection refused before receipt: RunRestoreSelection/54",
+                "invalid selection refused before receipt: RunRestoreSelection/55",
+                "invalid selection refused before receipt: RunRestoreSelection/56",
+                "invalid selection refused before receipt: RunRestoreSelection/57",
+                "invalid selection refused before receipt: RunRestoreSelection/58",
+                "selection preview is read-only without privileged filesystem inspection",
+                "real selection receipt retains verified result and warnings without re-execution",
+                "invalid diagnostics directory refused before receipt: relative",
+                "invalid diagnostics directory refused before receipt: C:relative",
+                "invalid diagnostics directory refused before receipt: \\\\server\\share",
+                "invalid diagnostics directory refused before receipt: C:\\work\\..\\elsewhere",
+                "invalid diagnostics directory refused before receipt: C:\\work\\CON.txt",
+                "invalid diagnostics directory refused before receipt: C:\\work\\trailing.",
+                "invalid diagnostics directory refused before receipt: C:\\work\\\\ambiguous",
+                "invalid diagnostics directory refused before receipt: ",
+                "syntactically valid diagnostics directory admits without privileged filesystem access",
+                "real diagnostics receipt round trip retains publication warning without re-execution",
+                "drain completion rejects a changed request fingerprint",
+                "drain completion rejects a different reported destination",
+                "drain completion rejects a changed durable permission receipt",
+                "ordinary completion cannot bypass drain configuration CAS",
+                "rejected drain completion retains the admitted receipt",
+                "cancelled drain completion keeps its receipt admitted and configuration enabled",
+                "remaining actions prevent disabling even with a healthy zero-count report",
+                "incomplete drain preserves every configuration field and revision",
+                "failed drain result is retained without a configuration revision",
+                "failed drain completion preserves enabled mirrors and untouched settings",
+                "drain completion CAS rejects newer configuration after repository effects",
+                "failed drain CAS preserves newer configuration and revision",
+                "failed drain CAS remains uncertain rather than falsely completed",
+                "failure before drain commit rolls back configuration and receipt together",
+                "rolled-back drain has no configuration effect",
+                "rolled-back drain keeps its original admitted revision",
+                "completed drain atomically increments revision and disables only its requested mirror",
+                "disabled destination drain replays its exact completed response before current selector validation",
+                "lost drain acknowledgement leaves a durable atomic result",
+                "lost drain acknowledgement reconciles exactly once without another configuration effect",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: null",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination:  ",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: missing",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: first",
+                "drain rejects missing, blank, unknown, disabled or final enabled destination: third",
+                "invalid and final-destination drain refusal preserves configuration and revision",
+                "ungranted toggle is refused before configuration or receipt mutation",
+                "denied toggle leaves no receipt",
+                "toggle completes in real catalogue without repository execution",
+                "toggle changes only IsEnabled and preserves every untouched setting",
+                "toggle exact replay and receipt retain the atomic committed revision without another effect",
+                "another toggle at an old revision is refused",
+                "stale toggle leaves no receipt",
+                "toggle operation identity cannot be reused with a different payload",
+                "toggle refuses unrelated write payload before admission: 105",
+                "invalid toggle leaves no receipt: 106",
+                "toggle refuses unrelated write payload before admission: 107",
+                "invalid toggle leaves no receipt: 108",
+                "toggle refuses unrelated write payload before admission: 109",
+                "invalid toggle leaves no receipt: 110",
+                "toggle refuses unrelated write payload before admission: 111",
+                "invalid toggle leaves no receipt: 112",
+                "toggle refuses unrelated write payload before admission: 113",
+                "invalid toggle leaves no receipt: 114",
+                "cancelled queued toggle is a definite refusal",
+                "cancelled toggle leaves no receipt",
+                "sync status is read-only without a mutation receipt",
+                "postcommit payload exception retains uncertainty without repository execution",
+                "real store retains completed toggle after acknowledgement loss",
+                "same lost toggle returns its completed receipt without retoggling",
+                "two real toggles and all replays restore the full baseline with exactly two revisions",
+                "queued backup remains behind the real committed toggle until its acknowledgement is released",
+                "queued backup receives the new authoritative configuration and revision, never the pre-toggle snapshot",
+                "sequencing checks restore the complete baseline through another atomic toggle"
+              ],
+              "NativeActor": "SYSTEM",
+              "PolicyActorsAreDoubles": true,
+              "MirrorDrainCatalogueVerified": true,
+              "DiagnosticsCatalogueVerified": true,
+              "SelectionCatalogueVerified": true,
+              "ProtectionStateCatalogueVerified": true,
+              "StoreHost": "::1",
+              "Metadata": {
+                "Passed": 125,
+                "Checks": [
+                  "bound manifest round trip",
+                  "bound descriptor lookup",
+                  "bound version inventory",
+                  "folder and lineage round trip",
+                  "current entry inventory",
+                  "current winner preserves 100 ns ordering",
+                  "latest manifest agrees with exact current winner",
+                  "case-equivalent Windows path has one current winner",
+                  "latest lookup resolves canonical path identity",
+                  "current winner uses ordinal case-distinct ID ties",
+                  "file and folder identities remain distinct",
+                  "out-of-order replay cannot replace a newer current entry",
+                  "display casing comes from the winning manifest after replay",
+                  "deleting non-current history preserves its current tombstone",
+                  "deletion fallback includes retained tombstones",
+                  "deleting the current version restores retained history",
+                  "failed batch rolls back current pointer and generation together",
+                  "failed deletion rebuild rolls back removed history, current pointer and generation together",
+                  "poison fixture affects exactly one current pointer",
+                  "wrong-path current pointer fails closed",
+                  "wrong-tick current pointer fails closed",
+                  "cached binding refuses schema v3",
+                  "provisioning and schema guard refuse schema v3",
+                  "refusal preserves data and schema for schema v3",
+                  "cached binding refuses nullable current tick key",
+                  "provisioning and schema guard refuse nullable current tick key",
+                  "refusal preserves data and schema for nullable current tick key",
+                  "cached binding refuses missing canonical primary key",
+                  "provisioning and schema guard refuse missing canonical primary key",
+                  "refusal preserves data and schema for missing canonical primary key",
+                  "cached binding refuses missing path foreign key",
+                  "provisioning and schema guard refuse missing path foreign key",
+                  "refusal preserves data and schema for missing path foreign key",
+                  "deletion preserves exact case-distinct identifier selection",
+                  "deleting all path history removes its current row",
+                  "recent limit 1 preserves full-inventory order and fields",
+                  "recent limit 50 preserves full-inventory order and fields",
+                  "recent limit 200 preserves full-inventory order and fields",
+                  "mixed-case identifier ties use ordinal order",
+                  "one-tick boundary retains manifest precision instead of PostgreSQL timestamp precision",
+                  "recent query never deserialises a corrupt manifest outside its window",
+                  "complete history still validates out-of-window manifests",
+                  "selected manifest corruption fails closed",
+                  "selected identifier must exactly match its ordinal SQL ordering key",
+                  "selected ordering key must match its immutable manifest",
+                  "recent read honours cancellation",
+                  "recent read refuses a non-positive limit",
+                  "bounded recent ordering can use its supporting index",
+                  "actual store refuses v1 and malformed v2 schemas without changing existing schema or data",
+                  "exact drive-root scope includes its recorded root snapshot",
+                  "drive-root descendant scope includes self and children",
+                  "scoped first page retains 100ns and ordinal keys before limit",
+                  "newer page reverses exact keyset without omissions",
+                  "newer page reverses exact keyset without omissions",
+                  "newer page reverses exact keyset without omissions",
+                  "newer page reverses exact keyset without omissions",
+                  "all history pages have no holes or duplicates and escape wildcard scope",
+                  "history headers omit unbounded child and lineage arrays",
+                  "cursor refuses changed path",
+                  "cursor refuses changed scope",
+                  "cursor refuses changed kind",
+                  "query refuses wrong binding",
+                  "immutable folder detail is independently paged",
+                  "recorded child is fetched even outside visible history page",
+                  "cancelled mutation changes neither generation nor history",
+                  "committed deletion invalidates stale cursor",
+                  "committed insertion invalidates stale cursor",
+                  "selected header validates exact immutable timestamp",
+                  "SQL limits aggregate header transfer before IPC materialisation",
+                  "actual escaped wire envelope fits the byte budget",
+                  "SQL limits aggregate header transfer before IPC materialisation",
+                  "actual escaped wire envelope fits the byte budget",
+                  "SQL limits aggregate header transfer before IPC materialisation",
+                  "actual escaped wire envelope fits the byte budget",
+                  "SQL limits aggregate header transfer before IPC materialisation",
+                  "actual escaped wire envelope fits the byte budget",
+                  "SQL limits aggregate header transfer before IPC materialisation",
+                  "actual escaped wire envelope fits the byte budget",
+                  "SQL and IPC shortened pages retain every version exactly once",
+                  "current page count is bounded and advances",
+                  "current page count is bounded and advances",
+                  "current page count is bounded and advances",
+                  "current page count is bounded and advances",
+                  "current keysets preserve all entries including tombstones",
+                  "current pages project thin headers without folder children or lineage arrays",
+                  "current keysets advance strictly through canonical path IDs",
+                  "current pages refuse another repository binding",
+                  "current pages refuse invalid counts",
+                  "current cursor cannot change page size",
+                  "mutation invalidates current-entry cursors without data",
+                  "selected current pointer mismatch refuses the page",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "current wire page fits its bound",
+                  "current wire measurement includes authenticated envelope and escaping",
+                  "current page count is bounded and advances",
+                  "size-shortened current pages have no holes or duplicates",
+                  "size-shortened current pages retain complete inventory semantics",
+                  "mutation lock waiter cancels without partial mutation",
+                  "outbox refuses wrong repository root",
+                  "rejected export creates no storage",
+                  "bound outbox export",
+                  "version deletion removes requested history",
+                  "deleted history retires chunk references",
+                  "deleted history retires outbox entries",
+                  "wrong manifest identity is rejected",
+                  "unbound manifest cannot be adopted",
+                  "missing namespace does not auto-provision",
+                  "root binding mismatch fails before metadata access",
+                  "existing namespace is never silently adopted",
+                  "bound recent read rechecks required ordering-column shape after cached initialisation",
+                  "binding is rechecked after cached initialisation"
+                ],
+                "RecentVersionsVerified": true,
+                "HistoryPagingVerified": true,
+                "CurrentProjectionVerified": true,
+                "CurrentPagingVerified": true
+              },
+              "Repository": {
+                "Passed": 10,
+                "Checks": [
+                  "captured manifest carries installed repository identity",
+                  "file and folder manifests remain bound",
+                  "reopened repository returns verified file bytes",
+                  "reopened repository returns verified folder bytes",
+                  "metadata root mismatch rejects before storage access",
+                  "reprovisioning existing storage is rejected",
+                  "authorised history purge removes requested inventory",
+                  "repository remains usable after authorised purge",
+                  "changed metadata binding rejects before chunk publication",
+                  "failed binding capture preserves every existing storage byte"
+                ],
+                "NativeCallerFileAccess": false
+              }
+            }
+          }
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "ReadProtected": true
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "ServerLogStart": 44350,
+      "ServerLogEnd": 82828
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "libpq",
+          "Output": "0ee82f86c1404967b35dcb2910454df4|fv_gate_261003|fv_gate_service",
+          "Error": "",
+          "ProbeId": "b862a404b8ab4e2ab9aab562ac18c893",
+          "ExitCode": 0
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WriteRuntime": true
+        }
+      ],
+      "Actor": "System",
+      "RunId": "09a4960956364170924dd3e089380af2",
+      "ServerLogStart": 82828,
+      "ServerLogEnd": 83375
+    },
+    {
+      "Actor": "A",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "127.0.0.1",
+          "Result": {
+            "FixtureId": "0ee82f86c1404967b35dcb2910454df4",
+            "ProbeId": "a1bb98ab47014f9eba639ce8c842a569",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": false,
+          "WriteRuntime": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271"
+        }
+      ],
+      "RunId": "6d1d3214aed845a88ce34313c979a108",
+      "Complete": true,
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+      "ServerLogStart": 83375,
+      "ServerLogEnd": 84809
+    },
+    {
+      "Complete": true,
+      "Actor": "A",
+      "RunId": "9e5b446220cf48f3b51781098663b0ed",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "libpq",
+          "ProbeId": "69ffe4dd9dcc40248f530ba3dc63546a",
+          "ExitCode": 2,
+          "Output": "",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 59623 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\""
+        },
+        {
+          "ReadProtected": false,
+          "WriteRuntime": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+          "Kind": "ACL"
+        }
+      ],
+      "ServerLogStart": 84809,
+      "ServerLogEnd": 85526
+    },
+    {
+      "Complete": true,
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "0ee82f86c1404967b35dcb2910454df4",
+            "ProbeId": "1d30cbab8dd64f449d4d861235717d99",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+          "WriteRuntime": false,
+          "ReadProtected": false
+        }
+      ],
+      "RunId": "2a1e22e71c8d4b5a9c725f5c0e09fe2b",
+      "Actor": "A",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+      "ServerLogStart": 85526,
+      "ServerLogEnd": 86938
+    },
+    {
+      "Results": [
+        {
+          "Kind": "libpq",
+          "ExitCode": 2,
+          "Error": "psql: error: connection to server at \"::1\", port 59623 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Host": "::1",
+          "ProbeId": "82ce31d943544097b4363b9da5cb45c2",
+          "Output": ""
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+          "WriteRuntime": false
+        }
+      ],
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+      "RunId": "08fab61eeb1442ae96fa2a43c67d96c5",
+      "Actor": "A",
+      "Complete": true,
+      "ServerLogStart": 86938,
+      "ServerLogEnd": 87644
+    },
+    {
+      "Actor": "B",
+      "RunId": "c9927e245ecf4ba590a5ce77e132f489",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "0ee82f86c1404967b35dcb2910454df4",
+            "ProbeId": "b46a92477b8747d2befdaa36529d6e73",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1"
+        },
+        {
+          "Kind": "ACL",
+          "WriteRuntime": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+          "ReadProtected": false
+        }
+      ],
+      "Complete": true,
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+      "ServerLogStart": 87644,
+      "ServerLogEnd": 89078
+    },
+    {
+      "Actor": "B",
+      "RunId": "1c6da8f7bfd345b7bbfedab3d401c6e8",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+      "Results": [
+        {
+          "Kind": "libpq",
+          "ExitCode": 2,
+          "Output": "",
+          "ProbeId": "55b197218db64650ba77e0ab1ab08ebf",
+          "Host": "127.0.0.1",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 59623 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\""
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+          "WriteRuntime": false,
+          "ReadProtected": false
+        }
+      ],
+      "Complete": true,
+      "ServerLogStart": 89078,
+      "ServerLogEnd": 89795
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+      "RunId": "91d562d721ad4900ac60217be94d1858",
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "0ee82f86c1404967b35dcb2910454df4",
+            "ProbeId": "c6169af969df4a1a80abb1abb7c07f1f",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "::1",
+          "Kind": "Npgsql"
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+          "WriteRuntime": false,
+          "ReadProtected": false,
+          "Kind": "ACL"
+        }
+      ],
+      "Actor": "B",
+      "Complete": true,
+      "ServerLogStart": 89795,
+      "ServerLogEnd": 91207
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+      "RunId": "f830a5888afb49149ff5e71332347214",
+      "Actor": "B",
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "::1",
+          "Output": "",
+          "Kind": "libpq",
+          "ProbeId": "f082fde6cfbe435aa8d401c288def053",
+          "Error": "psql: error: connection to server at \"::1\", port 59623 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ExitCode": 2
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+          "ReadProtected": false,
+          "Kind": "ACL",
+          "WriteRuntime": false
+        }
+      ],
+      "ServerLogStart": 91207,
+      "ServerLogEnd": 91913
+    },
+    {
+      "NativeCallerFiles": {
+        "Complete": true,
+        "Results": [
+          {
+            "Result": {
+              "Actor": "A",
+              "Passed": 132,
+              "Checks": [
+                "product composition truthfully reports blocked automatic protection",
+                "native creator receives the installed identity and configuration",
+                "real PostgreSQL save preserves every untouched configuration property",
+                "multiple protected folders and file types persist in the single vault",
+                "stale save cannot replace accepted configuration",
+                "wrong repository identity cannot read history",
+                "native caller files are captured through the authenticated executor",
+                "duplicate backup returns its durable receipt without repeated execution",
+                "history contains all three captured files from both source folders",
+                "legacy fallback fixture retains exactly two independent file histories",
+                "native actual recovery view-model receives a bounded authoritative first page",
+                "actual older command returns a bounded page",
+                "actual older command returns a bounded page",
+                "actual native page flow preserves complete scoped history without duplicates",
+                "actual native folder navigation opens its recorded child snapshot",
+                "actual paged view-model restores the recorded child with independently verified bytes",
+                "native page command refuses query/envelope binding mismatch",
+                "native stale-page proof obtains a continuation",
+                "native authenticated command returns HistoryChanged without page data",
+                "authorised history inspection succeeds",
+                "preview uses caller-authorised publication and independently verified bytes",
+                "the ordinary caller prepares a read-only preview copy",
+                "preview replay returns the original durable result",
+                "preview refuses an existing destination without replacing it",
+                "folder preview is refused before output preparation",
+                "standalone recovery publishes independently verified bytes to the caller",
+                "nested folder recovery preserves independently verified bytes",
+                "new status requests retain completed backup state",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "malformed purge scopes are refused before configuration CAS and receipt admission",
+                "combined save commits once and removes only confirmed CAD history",
+                "save-purge replay and receipt lookup return the original retained result",
+                "CAD history is gone and preserved Office history remains",
+                "preserved Office bytes remain independently recoverable after purge",
+                "caller working copy is captured after its CAD parent",
+                "preservation conflict reports saved configuration and failed purge",
+                "preservation refusal leaves all PostgreSQL history unchanged",
+                "failed purge replay never executes the destructive effect again",
+                "preserved inherited working bytes remain independently recoverable after refusal",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "invalid mirror selections are refused before receipt admission without changing configuration or history",
+                "authorised repository health loads its protected state",
+                "RunRepositoryScrub replay and status return its exact durable outcome",
+                "native scrub verifies real PostgreSQL repository chunks",
+                "RunRestoreRehearsal replay and status return its exact durable outcome",
+                "native rehearsal verifies recovery in protected temporary storage",
+                "repair preview accepts the configured selector case-insensitively and reports both mirrors",
+                "RunMirrorRepair replay and status return its exact durable outcome",
+                "explicit all-mirror repair completes through the authorised service",
+                "mirror placement preview remains available",
+                "RunMirrorRebalance replay and status return its exact durable outcome",
+                "mirror placement executes through its durable receipt",
+                "mirror drain preview reports the selected destination without disabling it",
+                "health retains each report after concurrent-capable snapshot publication",
+                "retention preview identifies disposable superseded versions",
+                "RunRetentionNow replay and status return its exact durable outcome",
+                "retention actually prunes only owned fixture history",
+                "history and cached status reflect retention while retaining the latest working version",
+                "latest working bytes remain independently recoverable after maintenance and retention",
+                "RunMirrorDrain replay and status return its exact durable outcome",
+                "native mirror drain publishes its completed result and incremented configuration revision",
+                "native drain changes only the selected mirror enablement and preserves every untouched setting",
+                "an old save cannot re-enable the drained mirror",
+                "the final enabled mirror is refused before new receipt admission",
+                "backup uses the remaining enabled mirror after the drain revision",
+                "save and drain revisions still permit backup, history and independent verified recovery",
+                "native diagnostics returns its exact operation-specific destination",
+                "diagnostics JSON retains its admitted repository identity and revision",
+                "diagnostics truthfully explains unavailable automatic protection",
+                "diagnostics contains actual repository status and inventory",
+                "caller can edit published report and exact replay/status does not overwrite it",
+                "exact replay does not recreate a deleted diagnostics report",
+                "distinct diagnostics operations create separate reports",
+                "SYSTEM service cannot export into a directory denied to the native caller",
+                "failed admitted diagnostics does not report a completed export or repeat its effect",
+                "selection preview traverses blind fixture ancestors without creating output",
+                "selection file recovery returns independently verified caller output",
+                "selection replay/status preserve caller edits and exact verification receipt",
+                "selection refuses unconfirmed overwrite before publication",
+                "definite selection refusal has a durable outcome",
+                "explicit file overwrite uses caller-authorised publication",
+                "selection replay never recreates a deleted published file",
+                "folder selection preview includes the earlier inherited CAD copy without creating output",
+                "exact folder selection publishes all three files as one independently verified tree",
+                "existing recovery folder is never merged despite overwrite flag",
+                "wrong-kind existing destination is a conflict rather than missing",
+                "preview never treats an unavailable caller destination as missing",
+                "SYSTEM cannot recover into its private directory for an unauthorised caller",
+                "legacy independent-file history previews as one folder without output",
+                "real PostgreSQL fallback history publishes one independently verified caller tree",
+                "missing history cannot publish an empty success",
+                "explicit tombstoned file restores verified last-good bytes to its original caller path",
+                "all selection recovery staging is gone before caller exit",
+                "native pause returns its atomic incremented revision",
+                "native sync snapshot is an authorised read and pause preserves every untouched setting",
+                "paused status truthfully distinguishes disabled manual capture from unavailable automatic capture",
+                "paused backup does not enumerate or capture changed caller files",
+                "paused backup creates no history and performs no retention or deletion reconciliation",
+                "paused diagnostics reports the same truthful capture state",
+                "native resume publishes its own atomic revision",
+                "replaying old pause after resume returns its historical receipt without toggling the current configuration",
+                "resume and old replay retain the complete enabled baseline and blocked automatic-protection notice",
+                "resumed manual backup captures the file changed while paused",
+                "pause-resume revisions preserve backup-history-verified-recovery through the real pipe",
+                "native protected status omits current inventory with explicit paging capability",
+                "native current pages retain exact binding revision and generation",
+                "native current pages retain exact binding revision and generation",
+                "native current pages retain exact binding revision and generation",
+                "native current pages retain exact binding revision and generation",
+                "native current pages retain exact binding revision and generation",
+                "native current keysets advance without duplicates",
+                "native current query cannot override its admitted repository binding",
+                "native current inventory retains the browser's live working-file contract",
+                "native fixture backup invalidates the shared runtime cache through its durable receipt",
+                "native separate full status request warms the new cache epoch before dashboard polling",
+                "native actual dashboard view-model publishes the verified current entry",
+                "native automatic warmed-cache refresh pages current entries and retains pending edits before joined shutdown",
+                "native unsent Protect edit force-flushes and joins before exit",
+                "native local draft retention sends no save or backup through the authenticated pipe",
+                "native unsent draft leaves real PostgreSQL configuration and revision unchanged",
+                "native actual view-model restart restores editable draft without replay",
+                "native save association is durable before dispatch and confirmed save permits exactly one dependent backup",
+                "native explicit save publishes recovered selection edit at the exact successor revision",
+                "native recovered draft flows through save backup history and independently verified recovery",
+                "native final draft writer is joined with no outstanding local changes"
+              ],
+              "SingleVault": true,
+              "VaultId": "0ee82f86-c140-4967-b35d-cb2910454df4",
+              "CallerCanEditPublished": true,
+              "IndependentSha256": true,
+              "ActualCatalogueAndExecutor": true,
+              "MaintenanceCommandsVerified": true,
+              "DrainCommandsVerified": true,
+              "DiagnosticsCommandsVerified": true,
+              "SelectionCommandsVerified": true,
+              "ProtectionStateCommandsVerified": true,
+              "HistoryPagingVerified": true,
+              "CurrentPagingVerified": true,
+              "LocalProtectionDraftVerified": true
+            },
+            "Kind": "CallerFiles"
+          },
+          {
+            "Kind": "ACL",
+            "ReadProtected": false,
+            "WriteRuntime": false,
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271"
+          }
+        ],
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+        "RunId": "a2ec4c493ced4f40a52b48b9ef62035e",
+        "Actor": "A"
+      }
+    },
+    {
+      "NativeCallerFiles": {
+        "Results": [
+          {
+            "Result": {
+              "Actor": "B",
+              "Denied": true,
+              "NoIdentityOrHistory": true,
+              "MaintenanceDenied": 19
+            },
+            "Kind": "CallerFiles"
+          },
+          {
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+            "ReadProtected": false,
+            "WriteRuntime": false,
+            "Kind": "ACL"
+          }
+        ],
+        "Complete": true,
+        "RunId": "9b737e8503994a8d9357cc235d573882",
+        "Actor": "B",
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272"
+      }
+    },
+    {
+      "NativeRestartAccess": {
+        "Actor": "Elevated",
+        "Phase": "grant-group",
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+        "NativeElevated": true,
+        "Passed": 3,
+        "Checks": [
+          "native elevated administrator receives the installed identity",
+          "native elevated administrator commits only the explicit access change",
+          "access change replay retains its exact revision and receipt"
+        ],
+        "OperationId": "fb2bed33-c112-405e-96e0-e09528bcf5ce",
+        "NativeAccessVerified": true
+      }
+    },
+    {
+      "NativeRestartAccess": {
+        "RunId": "dbaa378525e044bea509e2b968011824",
+        "Complete": true,
+        "Actor": "B",
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+        "Results": [
+          {
+            "Kind": "Access",
+            "Result": {
+              "Actor": "B",
+              "Phase": "denied",
+              "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+              "NativeElevated": false,
+              "Passed": 2,
+              "Checks": [
+                "ungranted ordinary principal receives neither repository identity nor status",
+                "an ungranted ordinary principal cannot start history work"
+              ],
+              "OperationId": null,
+              "NativeAccessVerified": true
+            }
+          },
+          {
+            "Kind": "ACL",
+            "ReadProtected": false,
+            "WriteRuntime": false,
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272"
+          }
+        ]
+      }
+    },
+    {
+      "NativeRestartAccess": {
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+        "Results": [
+          {
+            "Result": {
+              "Actor": "B",
+              "Phase": "group",
+              "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+              "NativeElevated": false,
+              "Passed": 9,
+              "Checks": [
+                "fresh ordinary token contains the explicitly owned fixture group",
+                "explicit read grant permits native ordinary-user status",
+                "explicit read grant permits retained history",
+                "read-only principal cannot execute RunBackupNow",
+                "read-only principal cannot execute RunRepositoryScrub",
+                "read-only principal cannot execute RunRetentionNow",
+                "read-only principal cannot execute RestoreVersion",
+                "read-only principal cannot execute SetVaultAccess",
+                "unrelated operation receipt remains private despite the history grant"
+              ],
+              "OperationId": null,
+              "NativeAccessVerified": true
+            },
+            "Kind": "Access"
+          },
+          {
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+            "Kind": "ACL",
+            "WriteRuntime": false,
+            "ReadProtected": false
+          }
+        ],
+        "RunId": "d219a2a2960d4eae924faf400eb2c329",
+        "Actor": "B",
+        "Complete": true
+      }
+    },
+    {
+      "NativeRestart": {
+        "Actor": "A",
+        "Complete": true,
+        "RunId": "839e61bf258048039e5e6dd21f485f45",
+        "Results": [
+          {
+            "Result": {
+              "Actor": "A",
+              "Phase": "before",
+              "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+              "Passed": 6,
+              "Checks": [
+                "native creator receives the same installation binding",
+                "complete configuration save has a durable revisioned receipt",
+                "saving preserves the complete accepted configuration",
+                "backup has its original successful receipt",
+                "pre-restart recovery independently matches the captured source",
+                "creator retains bounded original requests and receipt envelopes before process replacement"
+              ],
+              "NativeRestartVerified": true
+            },
+            "Kind": "Restart"
+          },
+          {
+            "Kind": "ACL",
+            "ReadProtected": false,
+            "WriteRuntime": false,
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271"
+          }
+        ],
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271"
+      }
+    },
+    {
+      "NativeCallerFiles": {
+        "WindowsSid": "S-1-5-18",
+        "Complete": true,
+        "Results": [
+          {
+            "Kind": "CallerFiles",
+            "Result": {
+              "Passed": 167,
+              "NativeCallerTokens": true,
+              "SingleVault": true,
+              "ProtectedProductComposition": true,
+              "ActualCatalogueAndExecutor": true,
+              "ProtectedRehearsalOutputCleaned": true,
+              "DrainEffectVerified": true,
+              "DiagnosticsOutputCleaned": true,
+              "SelectionOutputCleaned": true,
+              "CreatorVerified": true,
+              "UngrantDenied": true,
+              "ExactInstalledBinding": "0ee82f86-c140-4967-b35d-cb2910454df4"
+            }
+          },
+          {
+            "Kind": "ACL",
+            "ReadProtected": true,
+            "WindowsSid": "S-1-5-18",
+            "WriteRuntime": true
+          }
+        ],
+        "RunId": "616e33e0c90a4379858fb270fcb549cc",
+        "Actor": "System"
+      }
+    },
+    {
+      "NativeRestartIdentity": {
+        "OriginalJoinedBeforeReplacement": true,
+        "Replacement": {
+          "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+          "StartedUtc": "2026-10-05T02:27:29.9828027Z",
+          "ProcessId": 64584
+        },
+        "Original": {
+          "StartedUtc": "2026-10-05T02:27:09.7700885Z",
+          "ProcessId": 25392,
+          "Executable": "C:\\Program Files\\dotnet\\dotnet.exe"
+        }
+      }
+    },
+    {
+      "NativeRestart": {
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+        "Complete": true,
+        "Results": [
+          {
+            "Result": {
+              "Actor": "A",
+              "Phase": "after",
+              "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+              "Passed": 14,
+              "Checks": [
+                "native creator receives the same installation binding",
+                "process replacement retains exact revision and complete configuration",
+                "pre-replay source still matches the checkpoint",
+                "independent source hash differs before receipt replay",
+                "original complete receipt envelope survives process replacement: SaveConfiguration",
+                "exact request replay returns the original envelope: SaveConfiguration",
+                "original complete receipt envelope survives process replacement: RunBackupNow",
+                "exact request replay returns the original envelope: RunBackupNow",
+                "save and backup replay do not mutate retained history despite changed source",
+                "replay cannot advance or replace the accepted configuration",
+                "post-restart original recovery matches retained SHA rather than the changed live source",
+                "fresh authorised backup succeeds after process replacement",
+                "fresh backup records a new version of the changed source",
+                "fresh post-restart recovery independently matches the new source hash"
+              ],
+              "NativeRestartVerified": true
+            },
+            "Kind": "Restart"
+          },
+          {
+            "Kind": "ACL",
+            "WriteRuntime": false,
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1271",
+            "ReadProtected": false
+          }
+        ],
+        "RunId": "4da40733aba64a3a8b7551874e804ab2",
+        "Actor": "A"
+      }
+    },
+    {
+      "NativeRestartAccess": {
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+        "Actor": "B",
+        "Results": [
+          {
+            "Result": {
+              "Actor": "B",
+              "Phase": "group",
+              "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+              "NativeElevated": false,
+              "Passed": 9,
+              "Checks": [
+                "fresh ordinary token contains the explicitly owned fixture group",
+                "explicit read grant permits native ordinary-user status",
+                "explicit read grant permits retained history",
+                "read-only principal cannot execute RunBackupNow",
+                "read-only principal cannot execute RunRepositoryScrub",
+                "read-only principal cannot execute RunRetentionNow",
+                "read-only principal cannot execute RestoreVersion",
+                "read-only principal cannot execute SetVaultAccess",
+                "unrelated operation receipt remains private despite the history grant"
+              ],
+              "OperationId": null,
+              "NativeAccessVerified": true
+            },
+            "Kind": "Access"
+          },
+          {
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+            "ReadProtected": false,
+            "Kind": "ACL",
+            "WriteRuntime": false
+          }
+        ],
+        "RunId": "2730199f7c5043b1b3f493c285d7604c",
+        "Complete": true
+      }
+    },
+    {
+      "NativeRestartAccess": {
+        "Actor": "Elevated",
+        "Phase": "revoke",
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+        "NativeElevated": true,
+        "Passed": 3,
+        "Checks": [
+          "native elevated administrator receives the installed identity",
+          "native elevated administrator commits only the explicit access change",
+          "access change replay retains its exact revision and receipt"
+        ],
+        "OperationId": "daaa04ba-376d-42a7-86d2-af30434ef570",
+        "NativeAccessVerified": true
+      }
+    },
+    {
+      "NativeRestartAccess": {
+        "Results": [
+          {
+            "Kind": "Access",
+            "Result": {
+              "Actor": "B",
+              "Phase": "denied",
+              "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272",
+              "NativeElevated": false,
+              "Passed": 2,
+              "Checks": [
+                "ungranted ordinary principal receives neither repository identity nor status",
+                "an ungranted ordinary principal cannot start history work"
+              ],
+              "OperationId": null,
+              "NativeAccessVerified": true
+            }
+          },
+          {
+            "ReadProtected": false,
+            "WriteRuntime": false,
+            "Kind": "ACL",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272"
+          }
+        ],
+        "Complete": true,
+        "RunId": "2e3ffe908f414865aebc86e863117819",
+        "Actor": "B",
+        "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1272"
+      }
+    },
+    {
+      "BothServersJoined": true,
+      "NativeRestartServer": {
+        "Results": [
+          {
+            "Result": {
+              "Actor": "System",
+              "NativeRestartServer": true,
+              "ExistingBootstrapOpened": true,
+              "RepositoryId": "0ee82f86-c140-4967-b35d-cb2910454df4",
+              "RequestsJoined": true
+            },
+            "Kind": "Restart"
+          },
+          {
+            "WriteRuntime": true,
+            "ReadProtected": true,
+            "Kind": "ACL",
+            "WindowsSid": "S-1-5-18"
+          }
+        ],
+        "Actor": "System",
+        "RunId": "8b08fe68ba884018840f0d23b045a614",
+        "Complete": true,
+        "WindowsSid": "S-1-5-18"
+      },
+      "PostmasterUnchanged": true
+    }
+  ],
+  "FailureLocation": null,
+  "FixtureId": "0ee82f86c1404967b35dcb2910454df4"
+}

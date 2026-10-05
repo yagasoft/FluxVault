@@ -29,7 +29,7 @@ internal static class WindowsSingleVaultProbe
         fixture.Validate();
         using var identity = WindowsIdentity.GetCurrent();
         if (!fixture.Actors.TryGetValue(actor, out var expected) || identity.User?.Value != expected) throw new UnauthorizedAccessException();
-        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(fixture.RunPackagedIdentityTests ? 110 : 55));
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(fixture.RunPackagedIdentityTests ? 110 : fixture.RunRestartTests ? 80 : 55));
         var pipe = "FluxVault.Tests." + fixture.FixtureId;
         if (actor == "System") return await RunServerAsync(fixture, pipe, deadline);
         var client = new NamedPipeFluxVaultClient(WindowsFluxVaultPipeClientFactory.ForPrivateFixture(pipe, fixture.Actors["System"]));

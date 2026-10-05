@@ -7,6 +7,17 @@ namespace FluxVault.Integration.Tests;
 
 public sealed class WindowsDatabaseProbeTests
 {
+    [Fact]
+    public void Restart_probe_is_opt_in_and_requires_an_exclusive_single_vault_fixture()
+    {
+        var configuration = Configuration();
+        Assert.False(configuration.RunRestartTests);
+        Assert.Throws<ArgumentException>(() => (configuration with { RunRestartTests = true }).Validate());
+        Assert.Throws<ArgumentException>(() => (configuration with
+            { RunRestartTests = true, RunSingleVaultTests = true, RunPackagedIdentityTests = true }).Validate());
+        (configuration with { RunRestartTests = true, RunSingleVaultTests = true }).Validate();
+    }
+
     [Theory]
     [InlineData("127.0.0.1")]
     [InlineData("::1")]

@@ -1,0 +1,14 @@
+{
+  "Root": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\0ee82f86c1404967b35dcb2910454df4",
+  "State": "Complete",
+  "Description": "FluxVault output cleanup 0ee82f86c1404967b35dcb2910454df4",
+  "DefinitionSha256": "3A23D728C7EB0F69D71641F331F62E82FEBDC252C92EECCD83EDF4797B245179",
+  "FixtureId": "0ee82f86c1404967b35dcb2910454df4",
+  "OwnerSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+  "Version": 1,
+  "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "Arguments": "-NoProfile -NonInteractive -File \"C:\\ProgramData\\FluxVault.Tests\\NEXT002\\0ee82f86c1404967b35dcb2910454df4\\runtime\\invoke-windows-output-cleanup.ps1\" -Root \"C:\\ProgramData\\FluxVault.Tests\\NEXT002\\0ee82f86c1404967b35dcb2910454df4\" -Ledger \"C:\\ProgramData\\FluxVault.Tests\\NEXT002\\0ee82f86c1404967b35dcb2910454df4\\output-cleanup-owner.json\"",
+  "KernelName": "Global\\FluxVault.NEXT002.73d525ceced24b03815b774c42df95b5",
+  "JournalSha256": "A0A4088D528B69B732A28063C1D209A9BE1ACFB1B0BC77F9E42178DF5700607D",
+  "InstanceId": "{B47124F0-22E6-47F0-8C7C-837DD58FE9C8}"
+}

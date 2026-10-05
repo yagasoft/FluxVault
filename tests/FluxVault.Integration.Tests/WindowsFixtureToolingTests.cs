@@ -7,6 +7,54 @@ namespace FluxVault.Integration.Tests;
 public sealed class WindowsFixtureToolingTests
 {
     [Fact]
+    public async Task Restart_runner_refuses_invalid_batches_before_creating_any_fixture_resources()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $runner=Join-Path (Split-Path (Split-Path $module)) 'test-windows-database-boundary.ps1'
+            $refusals=[Collections.Generic.List[bool]]::new()
+            foreach($flags in @(@{RunRestartTests=$true},
+                @{RunRestartTests=$true;RunSingleVaultTests=$true;RunNativeAccessTests=$true},
+                @{RunRestartTests=$true;RunSingleVaultTests=$true;RunPackagedIdentityTests=$true})) {
+                $refused=$false
+                try {& $runner @flags -FixtureId $fixtureId -EvidenceDirectory (Join-Path $root 'unused')}
+                catch {$refused=$_.Exception.Message -eq 'Restart proof requires an exclusive single-vault extension within the existing resource bound.'}
+                $refusals.Add($refused)
+            }
+            @{Refusals=@($refusals);RootEmpty=@(Get-ChildItem -LiteralPath $root -Force).Count -eq 0;
+                NoProgramDataRoot=(-not(Test-Path -LiteralPath (Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $fixtureId)))} | ConvertTo-Json -Compress
+            """);
+        Assert.All(result.GetProperty("Refusals").EnumerateArray(), item => Assert.True(item.GetBoolean()));
+        Assert.True(result.GetProperty("RootEmpty").GetBoolean());
+        Assert.True(result.GetProperty("NoProgramDataRoot").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Restart_process_absence_gate_refuses_a_live_native_identity_without_stopping_it()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $runner=Join-Path (Split-Path (Split-Path $module)) 'test-windows-database-boundary.ps1'
+            $ast=[Management.Automation.Language.Parser]::ParseFile($runner,[ref]$null,[ref]$null)
+            $definition=$ast.Find({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Assert-ProcessAbsent'},$true)
+            Invoke-Expression $definition.Extent.Text
+            $self=Get-Process -Id $PID
+            try {
+                $identity=Get-VaultFixtureProcessIdentity $self
+                $refused=$false
+                try {Assert-ProcessAbsent $identity} catch {$refused=$_.Exception.Message -eq 'Previous native server process remains.'}
+                $wrong=$identity.Clone();$wrong.StartedUtc=([DateTimeOffset]$identity.StartedUtc).AddMinutes(-1).UtcDateTime.ToString('o')
+                Assert-ProcessAbsent $wrong
+                $self.Refresh()
+                @{Refused=$refused;LiveIdentityPreserved=(-not $self.HasExited);OldStartDoesNotMatch=$true}|ConvertTo-Json -Compress
+            } finally {$self.Dispose()}
+            """);
+        Assert.True(result.GetProperty("Refused").GetBoolean());
+        Assert.True(result.GetProperty("LiveIdentityPreserved").GetBoolean());
+        Assert.True(result.GetProperty("OldStartDoesNotMatch").GetBoolean());
+    }
+
+    [Fact]
     public async Task Interrupted_native_key_import_is_recovered_without_deleting_an_unrelated_key()
     {
         using var fixture = new ScriptFixture();

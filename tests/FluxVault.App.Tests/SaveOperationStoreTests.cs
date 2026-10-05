@@ -8,6 +8,50 @@ namespace FluxVault.App.Tests;
 public sealed class SaveOperationStoreTests
 {
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(bool options)
+    {
+        using var files=new Files();
+        var snapshot=files.Snapshot with{Origin=options ? ConfigurationSaveOrigin.Options : ConfigurationSaveOrigin.Protect,
+            ProtectionDraftId=options ? Guid.NewGuid() : Guid.Empty,ProtectionDraftBaselineFingerprint=new string('A',64)};
+        Assert.Throws<InvalidDataException>(()=>files.Store.Reserve(snapshot));
+        Assert.False(File.Exists(files.Path));
+    }
+
+    [Fact]
+    public void Protect_draft_correlation_round_trips_and_older_records_remain_unlinked()
+    {
+        using var files=new Files();
+        var linked=files.Snapshot with{ProtectionDraftId=Guid.NewGuid(),ProtectionDraftBaselineFingerprint=new string('A',64)};
+        files.Store.Reserve(linked);
+        var reopened=new FileConfigurationSaveOperationStore(files.Path).Read()!;
+        Assert.Equal(linked.ProtectionDraftId,reopened.ProtectionDraftId);
+        Assert.Equal(linked.ProtectionDraftBaselineFingerprint,reopened.ProtectionDraftBaselineFingerprint);files.Store.Clear(reopened);
+        var node=System.Text.Json.Nodes.JsonNode.Parse(JsonSerializer.Serialize(files.Snapshot,new JsonSerializerOptions(JsonSerializerDefaults.Web)))!;
+        node.AsObject().Remove("protectionDraftId");node.AsObject().Remove("protectionDraftBaselineFingerprint");File.WriteAllText(files.Path,node.ToJsonString());
+        Assert.Null(files.Store.Read()!.ProtectionDraftId);
+    }
+
+    [Theory]
+    [InlineData("missing_identity")]
+    [InlineData("missing_fingerprint")]
+    [InlineData("invalid_fingerprint")]
+    public void Incomplete_local_draft_correlation_cannot_be_reserved(string failure)
+    {
+        using var files=new Files();
+        var linked=files.Snapshot with{ProtectionDraftId=Guid.NewGuid(),ProtectionDraftBaselineFingerprint=new string('A',64)};
+        linked=failure switch
+        {
+            "missing_identity"=>linked with{ProtectionDraftId=null},
+            "missing_fingerprint"=>linked with{ProtectionDraftBaselineFingerprint=null},
+            "invalid_fingerprint"=>linked with{ProtectionDraftBaselineFingerprint="foreign"},
+            _=>throw new InvalidOperationException()
+        };
+        Assert.Throws<InvalidDataException>(()=>files.Store.Reserve(linked));Assert.False(File.Exists(files.Path));
+    }
+
+    [Theory]
     [InlineData(987, false)]
     [InlineData((int)ConfigurationSaveOrigin.Options, true)]
     public void Unknown_origin_and_options_purge_intent_are_refused_before_reservation(int origin, bool purge)

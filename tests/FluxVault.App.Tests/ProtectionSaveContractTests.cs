@@ -24,6 +24,23 @@ public sealed class ProtectionSaveContractTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    public async Task Protection_draft_delay_round_trips_through_actual_Options_and_preserves_untouched_settings(bool profileStore)
+    {
+        using var fixture=new StoreFixture(profileStore);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root) with{ProtectionDraft=new(2300)});
+        var before=await fixture.Reopen().LoadAsync();
+        var options=new OptionsViewModel(new StoreClient(fixture.Store));await options.InitialiseAsync();
+        Assert.Equal(2300,options.ProtectionDraftSaveDelayMilliseconds);
+        options.ProtectionDraftSaveDelayMilliseconds=700;await options.SaveCommand.ExecuteAsync(null);
+        var reopened=await fixture.Reopen().LoadAsync();Assert.Equal(700,reopened.ProtectionDraft.SaveDelayMilliseconds);
+        Assert.Equal(JsonSerializer.Serialize(before.Sync),JsonSerializer.Serialize(reopened.Sync));
+        Assert.Equal(JsonSerializer.Serialize(before.SelectionRules),JsonSerializer.Serialize(reopened.SelectionRules));
+        Assert.Equal(before.IsEnabled,reopened.IsEnabled);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
     public async Task Recovery_page_setting_round_trips_through_actual_Options_save_and_real_store(bool profileStore)
     {
         using var fixture = new StoreFixture(profileStore);

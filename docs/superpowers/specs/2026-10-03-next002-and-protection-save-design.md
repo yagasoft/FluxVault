@@ -154,6 +154,24 @@ recovery IDs cannot be hidden by cached live rows. Preserve unchanged objects,
 loaded/expanded descendants, selected items, pending rules and an edited
 address; a selected-folder object replacement is not a navigation reload.
 
+Unsent Protect edits extend the existing S2 interruption work only. Keep their
+per-user draft separate from dispatched-save receipts, with exact repository,
+baseline revision/fingerprint and editing/publication identities. A typed
+`ProtectionDraft.SaveDelayMilliseconds` policy controls the bounded coalesced
+writer; local retention does not imply a service save or backup. An explicit
+save durably retains its snapshot and receipt association before dispatch.
+Restart preserves newer edits and checks the original receipt without replay.
+Confirmed completion retires the submitted draft or retains newer rebased edits
+before receipt cleanup; correlation remains valid through interrupted cleanup.
+Discard checks the reviewed record, pending receipt and edit generation before
+applying status, retaining edits arriving during retirement. Bounded corrupt
+unsent records may be quarantined with exact byte revalidation; unresolved
+receipts remain gated. Exit fences editing and refuses outstanding save/receipt
+work, force-flushes and joins the writer, then joins reads. Failed retention
+keeps the window usable. Verify these transitions through real local stores and
+actual view-model commands, with controlled publication/interruption races.
+No service/schema/privilege contract, roadmap stage or gate is added or weakened.
+
 ## Acceptance gates, unchanged in strength
 
 | ID | Required result and evidence | Owner batch |

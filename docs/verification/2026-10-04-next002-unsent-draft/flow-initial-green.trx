@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="7f2d5f63-c9be-4be9-b372-3a73512c9012" name="os008@OS008-HOME 2026-10-05 01:51:18" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T01:51:18.7194573+03:00" queuing="2026-10-05T01:51:18.7194574+03:00" start="2026-10-05T01:51:17.7088032+03:00" finish="2026-10-05T01:51:18.7235700+03:00" />
+  <TestSettings name="default" id="878dfcd6-90de-449e-b050-78c88d87d586">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_01_51_18" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="8a84ea3b-0150-4400-b052-18e62da1f664" testId="3e95c83f-7132-fcdf-5d88-06a8014b9b18" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup(conflict: &quot;corrupt&quot;)" computerName="OS008-HOME" duration="00:00:00.0135403" startTime="2026-10-05T01:51:18.5687448+03:00" endTime="2026-10-05T01:51:18.5824226+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8a84ea3b-0150-4400-b052-18e62da1f664" />
+    <UnitTestResult executionId="7973d0af-471b-49ac-8991-d84772a1423d" testId="7ec16c97-d59d-4d19-22db-151d284081c2" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup(conflict: &quot;fingerprint&quot;)" computerName="OS008-HOME" duration="00:00:00.0113728" startTime="2026-10-05T01:51:18.5571128+03:00" endTime="2026-10-05T01:51:18.5606031+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7973d0af-471b-49ac-8991-d84772a1423d" />
+    <UnitTestResult executionId="cfac0f4b-2ab6-4354-92e9-82c2e2861dfe" testId="c402fdc8-67f8-101d-d000-5f16eb597b28" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Incomplete_repository_edit_survives_restart_as_a_draft" computerName="OS008-HOME" duration="00:00:00.0157023" startTime="2026-10-05T01:51:18.5839475+03:00" endTime="2026-10-05T01:51:18.5993934+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cfac0f4b-2ab6-4354-92e9-82c2e2861dfe" />
+    <UnitTestResult executionId="40ec609a-82ea-4fb1-b012-d86df4a8fafb" testId="05df91a9-725e-121d-83d4-fbbdd084b64a" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Never_dispatched_edits_survive_joined_exit_and_restart_without_saving_or_backing_up" computerName="OS008-HOME" duration="00:00:00.0283750" startTime="2026-10-05T01:51:18.5995028+03:00" endTime="2026-10-05T01:51:18.6280357+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="40ec609a-82ea-4fb1-b012-d86df4a8fafb" />
+    <UnitTestResult executionId="5bc4a968-a322-4f41-933f-87729f225000" testId="21cc6c14-f04c-cbbc-ea12-ea24bb22edca" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup(conflict: &quot;repository&quot;)" computerName="OS008-HOME" duration="00:00:00.2719783" startTime="2026-10-05T01:51:18.2682356+03:00" endTime="2026-10-05T01:51:18.5483231+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5bc4a968-a322-4f41-933f-87729f225000" />
+    <UnitTestResult executionId="1d59f42a-ec89-4ef4-bbce-db3f7783ab9c" testId="85dad486-7d1b-171c-1438-f6d2eb221dae" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup(conflict: &quot;revision&quot;)" computerName="OS008-HOME" duration="00:00:00.0078301" startTime="2026-10-05T01:51:18.5611618+03:00" endTime="2026-10-05T01:51:18.5686567+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d59f42a-ec89-4ef4-bbce-db3f7783ab9c" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Incomplete_repository_edit_survives_restart_as_a_draft" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="c402fdc8-67f8-101d-d000-5f16eb597b28">
+      <Execution id="cfac0f4b-2ab6-4354-92e9-82c2e2861dfe" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="Incomplete_repository_edit_survives_restart_as_a_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Never_dispatched_edits_survive_joined_exit_and_restart_without_saving_or_backing_up" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="05df91a9-725e-121d-83d4-fbbdd084b64a">
+      <Execution id="40ec609a-82ea-4fb1-b012-d86df4a8fafb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="Never_dispatched_edits_survive_joined_exit_and_restart_without_saving_or_backing_up" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup(conflict: &quot;repository&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="21cc6c14-f04c-cbbc-ea12-ea24bb22edca">
+      <Execution id="5bc4a968-a322-4f41-933f-87729f225000" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup(conflict: &quot;corrupt&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="3e95c83f-7132-fcdf-5d88-06a8014b9b18">
+      <Execution id="8a84ea3b-0150-4400-b052-18e62da1f664" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup(conflict: &quot;revision&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="85dad486-7d1b-171c-1438-f6d2eb221dae">
+      <Execution id="1d59f42a-ec89-4ef4-bbce-db3f7783ab9c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup(conflict: &quot;fingerprint&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7ec16c97-d59d-4d19-22db-151d284081c2">
+      <Execution id="7973d0af-471b-49ac-8991-d84772a1423d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="Unrelated_or_unreadable_draft_is_preserved_and_blocks_save_and_dependent_backup" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3e95c83f-7132-fcdf-5d88-06a8014b9b18" executionId="8a84ea3b-0150-4400-b052-18e62da1f664" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ec16c97-d59d-4d19-22db-151d284081c2" executionId="7973d0af-471b-49ac-8991-d84772a1423d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c402fdc8-67f8-101d-d000-5f16eb597b28" executionId="cfac0f4b-2ab6-4354-92e9-82c2e2861dfe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05df91a9-725e-121d-83d4-fbbdd084b64a" executionId="40ec609a-82ea-4fb1-b012-d86df4a8fafb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="21cc6c14-f04c-cbbc-ea12-ea24bb22edca" executionId="5bc4a968-a322-4f41-933f-87729f225000" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="85dad486-7d1b-171c-1438-f6d2eb221dae" executionId="1d59f42a-ec89-4ef4-bbce-db3f7783ab9c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="6" executed="6" passed="6" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.57]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

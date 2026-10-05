@@ -240,6 +240,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="130" />
@@ -295,6 +296,12 @@
                                        Foreground="#1E293B"
                                        TextWrapping="Wrap"
                                        Margin="0,8,0,0" />
+                            <TextBlock Name="LocalProtectionDraftStatusText" Grid.Row="4" Grid.ColumnSpan="5"
+                                       Text="{Binding LocalProtectionDraftMessage}"
+                                       Visibility="{Binding HasLocalProtectionDraftMessage, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                       AutomationProperties.Name="Local protection draft status"
+                                       AutomationProperties.LiveSetting="Polite"
+                                       Foreground="#1E293B" TextWrapping="Wrap" Margin="0,8,0,0" />
                         </Grid>
                     </Border>
 

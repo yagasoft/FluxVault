@@ -138,6 +138,7 @@ public sealed class FileFluxVaultConfigurationStore(string configPath, string pr
             DiagnosticsPolicy = (configuration.DiagnosticsPolicy ?? DiagnosticsPolicy.CreateDefault(programDataPath)).Normalise(programDataPath),
             VersionPreview = (configuration.VersionPreview ?? new()).Normalise(),
             RepositoryBrowse = (configuration.RepositoryBrowse ?? new()).Normalise(),
+            ProtectionDraft = (configuration.ProtectionDraft ?? new()).Normalise(),
             SelectionRules = selectionRules.Select(NormaliseSelectionRule).ToArray(),
             ExclusionRules = exclusionRules,
             WatchedFolders = selectionRules.Count == 0

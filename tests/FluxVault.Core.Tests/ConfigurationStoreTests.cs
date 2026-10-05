@@ -9,6 +9,21 @@ namespace FluxVault.Core.Tests;
 public sealed class ConfigurationStoreTests
 {
     [Theory]
+    [InlineData(null,500)]
+    [InlineData(0,100)]
+    [InlineData(2300,2300)]
+    [InlineData(10000,5000)]
+    public async Task Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store(int? requested,int expected)
+    {
+        using var workspace=TemporaryWorkspace.Create();
+        var path=Path.Combine(workspace.RootPath,"config.json");
+        var store=new FileFluxVaultConfigurationStore(path,workspace.RootPath);
+        var config=FluxVaultConfiguration.CreateDefault(workspace.RootPath) with{ProtectionDraft=requested is null ? null! : new(requested.Value)};
+        await store.SaveAsync(config);
+        Assert.Equal(expected,(await new FileFluxVaultConfigurationStore(path,workspace.RootPath).LoadAsync()).ProtectionDraft.SaveDelayMilliseconds);
+    }
+
+    [Theory]
     [InlineData(null, 100)]
     [InlineData(0, 1)]
     [InlineData(37, 37)]

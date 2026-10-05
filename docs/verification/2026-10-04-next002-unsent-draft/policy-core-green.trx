@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1152a3fa-20ab-4c8f-8c8e-86b8af33a7e4" name="os008@OS008-HOME 2026-10-05 02:00:38" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T02:00:38.9200330+03:00" queuing="2026-10-05T02:00:38.9200331+03:00" start="2026-10-05T02:00:38.0481797+03:00" finish="2026-10-05T02:00:38.9241590+03:00" />
+  <TestSettings name="default" id="12b74f0f-9898-4eaa-99e4-192be3a721c4">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_02_00_38" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="351277d1-4320-47a7-99df-11815e6ca4b1" testId="6dfbcb03-d0e8-715d-4f70-32b5f53791ce" testName="FluxVault.Core.Tests.ConfigurationStoreTests.Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store(requested: null, expected: 500)" computerName="OS008-HOME" duration="00:00:00.0030352" startTime="2026-10-05T02:00:38.8249620+03:00" endTime="2026-10-05T02:00:38.8281306+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="351277d1-4320-47a7-99df-11815e6ca4b1" />
+    <UnitTestResult executionId="b91a731c-ee52-4c96-9adc-7cfbe5b8b0e6" testId="dbb7e7c9-cd28-faf4-d1c6-e653067b98c2" testName="FluxVault.Core.Tests.ConfigurationStoreTests.Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store(requested: 0, expected: 100)" computerName="OS008-HOME" duration="00:00:00.1934755" startTime="2026-10-05T02:00:38.6143638+03:00" endTime="2026-10-05T02:00:38.8149709+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b91a731c-ee52-4c96-9adc-7cfbe5b8b0e6" />
+    <UnitTestResult executionId="a48afd61-163a-4d42-89fb-2d2545f4f90e" testId="a1b6d3ff-db99-fac0-33f9-6574cda24eb5" testName="FluxVault.Core.Tests.ConfigurationStoreTests.Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store(requested: 2300, expected: 2300)" computerName="OS008-HOME" duration="00:00:00.0034972" startTime="2026-10-05T02:00:38.8234269+03:00" endTime="2026-10-05T02:00:38.8248749+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a48afd61-163a-4d42-89fb-2d2545f4f90e" />
+    <UnitTestResult executionId="35c89115-a2c6-4698-b305-4c18a65212ae" testId="f29033fb-270a-538f-3961-91727ba592ef" testName="FluxVault.Core.Tests.ConfigurationStoreTests.Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store(requested: 10000, expected: 5000)" computerName="OS008-HOME" duration="00:00:00.0052505" startTime="2026-10-05T02:00:38.8229432+03:00" endTime="2026-10-05T02:00:38.8229950+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35c89115-a2c6-4698-b305-4c18a65212ae" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.ConfigurationStoreTests.Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store(requested: 10000, expected: 5000)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="f29033fb-270a-538f-3961-91727ba592ef">
+      <Execution id="35c89115-a2c6-4698-b305-4c18a65212ae" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ConfigurationStoreTests" name="Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ConfigurationStoreTests.Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store(requested: 2300, expected: 2300)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="a1b6d3ff-db99-fac0-33f9-6574cda24eb5">
+      <Execution id="a48afd61-163a-4d42-89fb-2d2545f4f90e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ConfigurationStoreTests" name="Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ConfigurationStoreTests.Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store(requested: 0, expected: 100)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="dbb7e7c9-cd28-faf4-d1c6-e653067b98c2">
+      <Execution id="b91a731c-ee52-4c96-9adc-7cfbe5b8b0e6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ConfigurationStoreTests" name="Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ConfigurationStoreTests.Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store(requested: null, expected: 500)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="6dfbcb03-d0e8-715d-4f70-32b5f53791ce">
+      <Execution id="351277d1-4320-47a7-99df-11815e6ca4b1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ConfigurationStoreTests" name="Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6dfbcb03-d0e8-715d-4f70-32b5f53791ce" executionId="351277d1-4320-47a7-99df-11815e6ca4b1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbb7e7c9-cd28-faf4-d1c6-e653067b98c2" executionId="b91a731c-ee52-4c96-9adc-7cfbe5b8b0e6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a1b6d3ff-db99-fac0-33f9-6574cda24eb5" executionId="a48afd61-163a-4d42-89fb-2d2545f4f90e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f29033fb-270a-538f-3961-91727ba592ef" executionId="35c89115-a2c6-4698-b305-4c18a65212ae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.43]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

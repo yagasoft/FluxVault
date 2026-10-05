@@ -75,6 +75,37 @@ live rows cannot hide a newly missing file/folder, restored items become live,
 and changed recovery IDs replace old pointers. Unchanged nodes/rows, loaded
 descendants, expansion, selection, pending rules and typed address are retained.
 
+Protect edits have a separate per-user local draft, alongside the existing
+dispatched-save receipt ledger. It contains the complete editable snapshot,
+repository identity, exact saved revision/fingerprint, stable editing identity
+and fresh publication identity. One coalesced writer flushes an atomic bounded
+record off the dispatcher. `ProtectionDraft.SaveDelayMilliseconds` defaults to
+500 and is constrained to 100–5000 in configuration and Options. Continuous
+typing does not postpone every publication; edits since the last completed
+write remain vulnerable to a crash. The UI distinguishes pending, retained,
+unreadable and failed local retention from a service save.
+
+An explicit Protect save first retains its exact draft, reserves the operation
+receipt and associates that operation before IPC. Failed preparation sends no
+save or dependent backup. Restart reads both local records without replay;
+newer local edits take precedence over an older submitted snapshot. Original
+and acknowledged revision/fingerprint phases remain uncertain until the exact
+authoritative receipt is checked. Acknowledgement retains newer edits at the
+confirmed baseline, or retires the submitted draft, before clearing the receipt.
+Editing identity survives an interrupted receipt retirement; completed discard
+or editing-session retirement prevents its reuse for a new session.
+
+Explicit discard fences the writer and rechecks edits, draft identity and save
+receipt after the current status request. It conditionally retires only the
+reviewed draft before applying saved settings. Bounded unreadable draft bytes
+may be preserved in a unique quarantine after length/hash revalidation;
+unreadable or oversized files and unresolved dispatched receipts remain gated.
+Edits arriving during retirement are retained instead of overwritten. Exit
+fences the editor, refuses outstanding save/receipt work, force-flushes and joins
+the draft writer before joining repository reads. Failed retention stops Exit,
+explains the failure and keeps the window usable. This local record confers no
+server authority and changes neither creator access nor repository binding.
+
 Fresh staging metadata uses schema version 4. Current entries have one row per
 canonical Windows path and entry kind, keyed by the existing path identity.
 Exact UTC ticks and ordinal version IDs select the winner, including tombstones;

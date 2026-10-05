@@ -196,6 +196,9 @@ public sealed partial class OptionsViewModel : ObservableObject
     private int recoveryItemsPerPage = 100;
 
     [ObservableProperty]
+    private int protectionDraftSaveDelayMilliseconds = 500;
+
+    [ObservableProperty]
     private string previewText = "Retention preview has not been run.";
 
     [ObservableProperty]
@@ -398,7 +401,8 @@ public sealed partial class OptionsViewModel : ObservableObject
         RepositoryMaintenancePolicy = BuildMaintenance(), WorkloadPolicy = BuildWorkload(),
         MetadataStore = BuildMetadataStore(), DiagnosticsPolicy = BuildDiagnostics(),
         VersionPreview = new VersionPreviewPolicy(PreviewRetentionDays).Normalise(),
-        RepositoryBrowse = new RepositoryBrowsePolicy(RecoveryItemsPerPage).Normalise(), ExclusionRules = []
+        RepositoryBrowse = new RepositoryBrowsePolicy(RecoveryItemsPerPage).Normalise(),
+        ProtectionDraft = new ProtectionDraftPolicy(ProtectionDraftSaveDelayMilliseconds).Normalise(), ExclusionRules = []
     };
 
     private void ApplyEditableConfiguration(FluxVaultConfiguration configuration)
@@ -412,6 +416,7 @@ public sealed partial class OptionsViewModel : ObservableObject
         ApplyDiagnostics(configuration.DiagnosticsPolicy);
         PreviewRetentionDays = (configuration.VersionPreview ?? new()).Normalise().RetentionDays;
         RecoveryItemsPerPage = (configuration.RepositoryBrowse ?? new()).Normalise().ItemsPerPage;
+        ProtectionDraftSaveDelayMilliseconds = (configuration.ProtectionDraft ?? new()).Normalise().SaveDelayMilliseconds;
         ApplyExclusions(configuration.ExclusionRules ?? []);
     }
 

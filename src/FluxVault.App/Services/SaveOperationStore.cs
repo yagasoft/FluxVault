@@ -13,7 +13,8 @@ public enum ConfigurationSaveOrigin { Protect, Options }
 public sealed record PendingConfigurationSave(Guid RepositoryId, Guid OperationId, long Revision,
     FluxVaultConfiguration Configuration, bool PurgeRemovedSelections,
     IReadOnlyList<RepositoryPurgeScope> RemovedSelections, IReadOnlyList<RepositoryPurgeScope> PreservedSelections,
-    ConfigurationSaveOrigin Origin = ConfigurationSaveOrigin.Protect)
+    ConfigurationSaveOrigin Origin = ConfigurationSaveOrigin.Protect, Guid? ProtectionDraftId = null,
+    string? ProtectionDraftBaselineFingerprint = null)
 {
     internal void Validate()
     {
@@ -23,6 +24,11 @@ public sealed record PendingConfigurationSave(Guid RepositoryId, Guid OperationI
         if (!Enum.IsDefined(Origin) || Origin == ConfigurationSaveOrigin.Options &&
             (PurgeRemovedSelections || RemovedSelections.Count != 0 || PreservedSelections.Count != 0))
             throw new InvalidDataException("The pending save has an invalid origin or incompatible purge intent. It has been preserved.");
+        if (ProtectionDraftId is null != (ProtectionDraftBaselineFingerprint is null) || ProtectionDraftId == Guid.Empty ||
+            ProtectionDraftBaselineFingerprint is not null &&
+            (ProtectionDraftBaselineFingerprint.Length != 64 || !ProtectionDraftBaselineFingerprint.All(Uri.IsHexDigit)) ||
+            Origin != ConfigurationSaveOrigin.Protect && ProtectionDraftId is not null)
+            throw new InvalidDataException("Only a protection save may reference a valid local editing draft. Its record has been preserved.");
     }
     internal FluxVaultIpcRequest Request => FluxVaultIpcRequest.SaveConfiguration(Configuration,
         purgeRemovedSelections: PurgeRemovedSelections, removedSelections: RemovedSelections, preservedSelections: PreservedSelections) with
@@ -89,7 +95,7 @@ public sealed class FileConfigurationSaveOperationStore(string path) : IConfigur
             {
                 ValidateJson(bytes);
                 using var document = JsonDocument.Parse(bytes, new() { MaxDepth = 32 });
-                if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Count() is not (7 or 8) ||
+                if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Count() is not (7 or 8 or 9 or 10) ||
                     new[] { "repositoryId", "operationId", "revision", "configuration", "purgeRemovedSelections", "removedSelections", "preservedSelections" }
                         .Any(name => !document.RootElement.TryGetProperty(name, out _)))
                     throw new InvalidDataException("The pending save has missing fields. It has been preserved.");

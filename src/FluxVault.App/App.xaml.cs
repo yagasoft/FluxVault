@@ -15,6 +15,7 @@ public partial class App : System.Windows.Application
     private ActivityPaneWindow? activityPaneWindow;
     private IAppStartupRequestRouter? startupRequestRouter;
     private readonly DashboardWindowLifetimeController dashboardWindowLifetime = new();
+    private bool isExitPreparing;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -125,20 +126,47 @@ public partial class App : System.Windows.Application
 
     private async void ExitApplication()
     {
-        dashboardWindowLifetime.BeginExit();
+        if (isExitPreparing) return;
+        isExitPreparing = true;
+        // Fence the visible editor and command entry points through the complete
+        // flush-and-join interval. A failed flush leaves the window usable.
+        if (mainWindow is not null) mainWindow.IsEnabled = false;
+        if (activityPaneWindow is not null) activityPaneWindow.IsEnabled = false;
+        var exitAccepted = false;
         try
         {
-            if (mainWindow?.DataContext is MainWindowViewModel viewModel)
-                await viewModel.StopRepositoryReadsAsync();
+            if (mainWindow?.DataContext is MainWindowViewModel editor && !await editor.PrepareForExitAsync())
+            {
+                mainWindow.Show(); mainWindow.Activate();
+                System.Windows.MessageBox.Show(mainWindow,editor.LocalProtectionDraftMessage,"Protection edits are kept",MessageBoxButton.OK,MessageBoxImage.Information);
+                return;
+            }
+            exitAccepted = true;
+            dashboardWindowLifetime.BeginExit();
+            try
+            {
+                if (mainWindow?.DataContext is MainWindowViewModel viewModel)
+                    await viewModel.StopRepositoryReadsAsync();
+            }
+            catch (Exception exception) { System.Diagnostics.Trace.TraceError("Repository read shutdown: {0}", exception); }
+            Shutdown();
         }
-        catch (Exception exception) { System.Diagnostics.Trace.TraceError("Repository read shutdown: {0}", exception); }
-        Shutdown();
+        finally
+        {
+            if (!exitAccepted)
+            {
+                if (mainWindow is not null) mainWindow.IsEnabled = true;
+                if (activityPaneWindow is not null) activityPaneWindow.IsEnabled = true;
+                isExitPreparing = false;
+            }
+        }
     }
 
     private Task HandleStartupRequestAsync(AppStartupRequest request)
     {
         Dispatcher.Invoke(() =>
         {
+            if (isExitPreparing) return;
             ShowDashboard();
             if (mainWindow?.DataContext is MainWindowViewModel viewModel)
             {

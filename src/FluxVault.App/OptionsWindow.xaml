@@ -393,6 +393,10 @@
                             <TextBox Text="{Binding RecoveryItemsPerPage, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,4,0,0"
                                      AutomationProperties.Name="Items per repository page"
                                      ToolTip="History and folder browsing load 1–256 items per page (default 100). A page may be shorter to keep the response within the supported size." />
+                            <TextBlock Text="Retain protection edits every (milliseconds)" Margin="0,12,0,0" />
+                            <TextBox Name="ProtectionDraftSaveDelayTextBox" Text="{Binding ProtectionDraftSaveDelayMilliseconds, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,4,0,0"
+                                     AutomationProperties.Name="Local protection draft retention delay in milliseconds"
+                                     ToolTip="Retain unsent protection edits locally every 100–5000 milliseconds (default 500). Changes made since the latest local write can be lost if Windows or FluxVault stops unexpectedly. Exit flushes and joins the writer; this does not save to the service or start a backup." />
                         </StackPanel>
                         <TextBlock Grid.Row="22" Grid.ColumnSpan="2" Text="Explorer context menu" FontWeight="SemiBold" Margin="0,0,0,12" />
                         <TextBlock Grid.Row="23" Grid.ColumnSpan="2" Text="{Binding ExplorerContextMenuStatus}" Foreground="#3C4043" TextWrapping="Wrap" Margin="0,0,0,8"

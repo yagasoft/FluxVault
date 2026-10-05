@@ -1,0 +1,635 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e5f8e819-fe11-4d25-ae03-1259ff3b9d1d" name="os008@OS008-HOME 2026-10-05 01:39:02" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T01:39:02.4188380+03:00" queuing="2026-10-05T01:39:02.4188380+03:00" start="2026-10-05T01:39:01.6110184+03:00" finish="2026-10-05T01:39:02.4547071+03:00" />
+  <TestSettings name="default" id="55a56819-7d3c-4371-92f1-91b6755f094b">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_01_39_02" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="3cd91023-72f2-4de2-b267-359216338321" testId="5bf81681-509e-0ec7-bc68-3bc981080a8d" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;configuration&quot;)" computerName="OS008-HOME" duration="00:00:00.0004018" startTime="2026-10-05T01:39:02.3964129+03:00" endTime="2026-10-05T01:39:02.3964392+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3cd91023-72f2-4de2-b267-359216338321">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="915f0475-19ab-4e73-9a10-b5894cf3f3da" testId="8ed76905-2b0b-05fd-65e9-96d81238988f" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;record&quot;)" computerName="OS008-HOME" duration="00:00:00.0005042" startTime="2026-10-05T01:39:02.3969618+03:00" endTime="2026-10-05T01:39:02.3969879+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="915f0475-19ab-4e73-9a10-b5894cf3f3da">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6713cda5-efc3-4f66-bb93-3156adf68ea1" testId="74fbf6c3-b5f7-44db-bd7b-a71a14736dc2" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;repository&quot;)" computerName="OS008-HOME" duration="00:00:00.0004908" startTime="2026-10-05T01:39:02.3951619+03:00" endTime="2026-10-05T01:39:02.3951984+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6713cda5-efc3-4f66-bb93-3156adf68ea1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="11769731-f285-4115-b804-44ba8a24a120" testId="7676adc5-2d7b-008a-e6c9-9e3c6307b891" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Published_and_read_snapshots_do_not_alias_mutable_caller_collections" computerName="OS008-HOME" duration="00:00:00.0006443" startTime="2026-10-05T01:39:02.4010836+03:00" endTime="2026-10-05T01:39:02.4011147+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="11769731-f285-4115-b804-44ba8a24a120">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.Published_and_read_snapshots_do_not_alias_mutable_caller_collections() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 32&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="686e89e1-53bf-43d0-a858-be783905397c" testId="d5b98877-b6a6-499f-a882-4b11c2be017c" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: &quot;unknown&quot;)" computerName="OS008-HOME" duration="00:00:00.0009857" startTime="2026-10-05T01:39:02.3680490+03:00" endTime="2026-10-05T01:39:02.3680767+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="686e89e1-53bf-43d0-a858-be783905397c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 146&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Read() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 22&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass7_0.&lt;Malformed_existing_records_are_preserved_and_block_replacement&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 146</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1c019435-f35c-4263-973f-bb57f629de61" testId="7544ef65-a305-4d79-a50a-0331b526cf1c" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: &quot;missing&quot;)" computerName="OS008-HOME" duration="00:00:00.0008682" startTime="2026-10-05T01:39:02.3696099+03:00" endTime="2026-10-05T01:39:02.3699860+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c019435-f35c-4263-973f-bb57f629de61">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 146&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Read() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 22&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass7_0.&lt;Malformed_existing_records_are_preserved_and_block_replacement&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 146</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f6fd3e51-f090-4f8b-a77a-75249eb6718f" testId="8d7e6dd8-6b8e-d262-244a-ce5c9cba8b30" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Existing_reader_keeps_a_complete_snapshot_across_atomic_replacement" computerName="OS008-HOME" duration="00:00:00.0006129" startTime="2026-10-05T01:39:02.3990035+03:00" endTime="2026-10-05T01:39:02.3990288+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f6fd3e51-f090-4f8b-a77a-75249eb6718f">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.Existing_reader_keeps_a_complete_snapshot_across_atomic_replacement() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 88&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4b85cedb-1504-4b5b-80d8-73a7e9adb697" testId="cfdfaa5a-cbae-aef5-8770-0f4cbd61e2d7" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;fingerprint&quot;)" computerName="OS008-HOME" duration="00:00:00.0004558" startTime="2026-10-05T01:39:02.3980294+03:00" endTime="2026-10-05T01:39:02.3980537+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b85cedb-1504-4b5b-80d8-73a7e9adb697">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="aa257dd1-1b2a-423d-bd16-701905f70e99" testId="091b7a0c-f4ea-aa82-0ef1-1c73e1491527" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Expected_snapshot_must_match_content_as_well_as_record_identity" computerName="OS008-HOME" duration="00:00:00.0006176" startTime="2026-10-05T01:39:02.3993851+03:00" endTime="2026-10-05T01:39:02.3994102+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa257dd1-1b2a-423d-bd16-701905f70e99">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.Expected_snapshot_must_match_content_as_well_as_record_identity() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 60&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="65d0a335-30a8-43a3-beaf-4ba9c568fb96" testId="7db5d318-a922-b898-f36b-5c20e806c75e" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;operation&quot;)" computerName="OS008-HOME" duration="00:00:00.0004721" startTime="2026-10-05T01:39:02.3958618+03:00" endTime="2026-10-05T01:39:02.3958884+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="65d0a335-30a8-43a3-beaf-4ba9c568fb96">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="08a5af9c-a1ea-47c6-abcb-b9a3a11eb2fc" testId="7a4e85fa-f095-a4e7-e904-3e5a427b2869" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;oversize&quot;)" computerName="OS008-HOME" duration="00:00:00.0013571" startTime="2026-10-05T01:39:02.3725034+03:00" endTime="2026-10-05T01:39:02.3733886+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08a5af9c-a1ea-47c6-abcb-b9a3a11eb2fc">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="26a41bc8-3566-46f1-ae5d-138616aae535" testId="1d5a31af-f87f-e84c-7513-a18bfd7198f5" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: &quot;truncated&quot;)" computerName="OS008-HOME" duration="00:00:00.0009154" startTime="2026-10-05T01:39:02.3686027+03:00" endTime="2026-10-05T01:39:02.3690639+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="26a41bc8-3566-46f1-ae5d-138616aae535">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 146&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Read() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 22&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass7_0.&lt;Malformed_existing_records_are_preserved_and_block_replacement&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 146</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f5e6e4eb-c9a1-4215-898d-e80d8d07cce3" testId="7176c234-1aef-0b86-8ff2-ac707fb0a29d" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Full_configuration_and_save_correlation_survive_atomic_publication_and_reopening" computerName="OS008-HOME" duration="00:00:00.0073537" startTime="2026-10-05T01:39:02.1942139+03:00" endTime="2026-10-05T01:39:02.2118039+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5e6e4eb-c9a1-4215-898d-e80d8d07cce3">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Services.FileProtectionDraftStore.Read() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 22&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.Full_configuration_and_save_correlation_survive_atomic_publication_and_reopening() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 16&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="52d425bf-6b4f-4bda-bf37-7fa1fd2d9dff" testId="108a6ab4-0887-8851-66f0-991350102e6c" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;draft&quot;)" computerName="OS008-HOME" duration="00:00:00.0010230" startTime="2026-10-05T01:39:02.3712246+03:00" endTime="2026-10-05T01:39:02.3719722+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="52d425bf-6b4f-4bda-bf37-7fa1fd2d9dff">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4bf14d16-f120-494f-a14a-d4ae6d20867f" testId="96a0bfb2-472c-c6eb-77b8-8c0131f5672b" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;revision&quot;)" computerName="OS008-HOME" duration="00:00:00.0004649" startTime="2026-10-05T01:39:02.3974925+03:00" endTime="2026-10-05T01:39:02.3975169+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4bf14d16-f120-494f-a14a-d4ae6d20867f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 120</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c2f0ac62-b4ba-4cb7-b954-66992a35cd39" testId="fd992d8f-797e-5409-1b4d-91b3628ae266" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Competing_session_cannot_overwrite_or_discard_a_newer_record" computerName="OS008-HOME" duration="00:00:00.0006770" startTime="2026-10-05T01:39:02.3985769+03:00" endTime="2026-10-05T01:39:02.3986020+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2f0ac62-b4ba-4cb7-b954-66992a35cd39">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.Competing_session_cannot_overwrite_or_discard_a_newer_record() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 44&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0758751b-d09c-4227-954c-e8ff9138e70a" testId="d1448696-7f19-977a-6f61-4c5d70ab4a4a" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: &quot;duplicate&quot;)" computerName="OS008-HOME" duration="00:00:00.0011400" startTime="2026-10-05T01:39:02.3674177+03:00" endTime="2026-10-05T01:39:02.3674607+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0758751b-d09c-4227-954c-e8ff9138e70a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 146&#xD;
+   at InvokeStub_ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Read() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 22&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass7_0.&lt;Malformed_existing_records_are_preserved_and_block_replacement&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 146</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e784f70e-54a6-4107-9bb3-313fb89538c5" testId="3c757d85-c4e3-6a9c-55a7-0f4aefe5731d" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Failed_or_cancelled_publication_preserves_prior_bytes_and_removes_owned_temporary_file" computerName="OS008-HOME" duration="00:00:00.0008051" startTime="2026-10-05T01:39:02.3705493+03:00" endTime="2026-10-05T01:39:02.3708615+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e784f70e-54a6-4107-9bb3-313fb89538c5">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 24&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.Failed_or_cancelled_publication_preserves_prior_bytes_and_removes_owned_temporary_file() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 72&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bcdf8e73-50e8-46f8-80a6-6088a69058d6" testId="8d34c667-f787-0516-02f1-acf41b59bd1f" testName="FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: &quot;alias&quot;)" computerName="OS008-HOME" duration="00:00:00.1520923" startTime="2026-10-05T01:39:02.2240377+03:00" endTime="2026-10-05T01:39:02.3657877+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bcdf8e73-50e8-46f8-80a6-6088a69058d6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.InvalidDataException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 146&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.App.Services.FileProtectionDraftStore.Read() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs:line 22&#xD;
+   at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass7_0.&lt;Malformed_existing_records_are_preserved_and_block_replacement&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs:line 146</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: &quot;truncated&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="1d5a31af-f87f-e84c-7513-a18bfd7198f5">
+      <Execution id="26a41bc8-3566-46f1-ae5d-138616aae535" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Malformed_existing_records_are_preserved_and_block_replacement" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;record&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="8ed76905-2b0b-05fd-65e9-96d81238988f">
+      <Execution id="915f0475-19ab-4e73-9a10-b5894cf3f3da" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Invalid_records_cannot_be_published_or_reinterpreted" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;repository&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="74fbf6c3-b5f7-44db-bd7b-a71a14736dc2">
+      <Execution id="6713cda5-efc3-4f66-bb93-3156adf68ea1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Invalid_records_cannot_be_published_or_reinterpreted" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Failed_or_cancelled_publication_preserves_prior_bytes_and_removes_owned_temporary_file" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="3c757d85-c4e3-6a9c-55a7-0f4aefe5731d">
+      <Execution id="e784f70e-54a6-4107-9bb3-313fb89538c5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Failed_or_cancelled_publication_preserves_prior_bytes_and_removes_owned_temporary_file" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;revision&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="96a0bfb2-472c-c6eb-77b8-8c0131f5672b">
+      <Execution id="4bf14d16-f120-494f-a14a-d4ae6d20867f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Invalid_records_cannot_be_published_or_reinterpreted" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: &quot;duplicate&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="d1448696-7f19-977a-6f61-4c5d70ab4a4a">
+      <Execution id="0758751b-d09c-4227-954c-e8ff9138e70a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Malformed_existing_records_are_preserved_and_block_replacement" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;draft&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="108a6ab4-0887-8851-66f0-991350102e6c">
+      <Execution id="52d425bf-6b4f-4bda-bf37-7fa1fd2d9dff" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Invalid_records_cannot_be_published_or_reinterpreted" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Published_and_read_snapshots_do_not_alias_mutable_caller_collections" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7676adc5-2d7b-008a-e6c9-9e3c6307b891">
+      <Execution id="11769731-f285-4115-b804-44ba8a24a120" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Published_and_read_snapshots_do_not_alias_mutable_caller_collections" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;fingerprint&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="cfdfaa5a-cbae-aef5-8770-0f4cbd61e2d7">
+      <Execution id="4b85cedb-1504-4b5b-80d8-73a7e9adb697" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Invalid_records_cannot_be_published_or_reinterpreted" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;oversize&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7a4e85fa-f095-a4e7-e904-3e5a427b2869">
+      <Execution id="08a5af9c-a1ea-47c6-abcb-b9a3a11eb2fc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Invalid_records_cannot_be_published_or_reinterpreted" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Expected_snapshot_must_match_content_as_well_as_record_identity" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="091b7a0c-f4ea-aa82-0ef1-1c73e1491527">
+      <Execution id="aa257dd1-1b2a-423d-bd16-701905f70e99" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Expected_snapshot_must_match_content_as_well_as_record_identity" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;operation&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7db5d318-a922-b898-f36b-5c20e806c75e">
+      <Execution id="65d0a335-30a8-43a3-beaf-4ba9c568fb96" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Invalid_records_cannot_be_published_or_reinterpreted" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: &quot;configuration&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="5bf81681-509e-0ec7-bc68-3bc981080a8d">
+      <Execution id="3cd91023-72f2-4de2-b267-359216338321" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Invalid_records_cannot_be_published_or_reinterpreted" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: &quot;unknown&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="d5b98877-b6a6-499f-a882-4b11c2be017c">
+      <Execution id="686e89e1-53bf-43d0-a858-be783905397c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Malformed_existing_records_are_preserved_and_block_replacement" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Competing_session_cannot_overwrite_or_discard_a_newer_record" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="fd992d8f-797e-5409-1b4d-91b3628ae266">
+      <Execution id="c2f0ac62-b4ba-4cb7-b954-66992a35cd39" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Competing_session_cannot_overwrite_or_discard_a_newer_record" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Existing_reader_keeps_a_complete_snapshot_across_atomic_replacement" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="8d7e6dd8-6b8e-d262-244a-ce5c9cba8b30">
+      <Execution id="f6fd3e51-f090-4f8b-a77a-75249eb6718f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Existing_reader_keeps_a_complete_snapshot_across_atomic_replacement" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Full_configuration_and_save_correlation_survive_atomic_publication_and_reopening" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7176c234-1aef-0b86-8ff2-ac707fb0a29d">
+      <Execution id="f5e6e4eb-c9a1-4215-898d-e80d8d07cce3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Full_configuration_and_save_correlation_survive_atomic_publication_and_reopening" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: &quot;alias&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="8d34c667-f787-0516-02f1-acf41b59bd1f">
+      <Execution id="bcdf8e73-50e8-46f8-80a6-6088a69058d6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Malformed_existing_records_are_preserved_and_block_replacement" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: &quot;missing&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7544ef65-a305-4d79-a50a-0331b526cf1c">
+      <Execution id="1c019435-f35c-4263-973f-bb57f629de61" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionDraftStoreTests" name="Malformed_existing_records_are_preserved_and_block_replacement" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5bf81681-509e-0ec7-bc68-3bc981080a8d" executionId="3cd91023-72f2-4de2-b267-359216338321" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ed76905-2b0b-05fd-65e9-96d81238988f" executionId="915f0475-19ab-4e73-9a10-b5894cf3f3da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="74fbf6c3-b5f7-44db-bd7b-a71a14736dc2" executionId="6713cda5-efc3-4f66-bb93-3156adf68ea1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7676adc5-2d7b-008a-e6c9-9e3c6307b891" executionId="11769731-f285-4115-b804-44ba8a24a120" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5b98877-b6a6-499f-a882-4b11c2be017c" executionId="686e89e1-53bf-43d0-a858-be783905397c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7544ef65-a305-4d79-a50a-0331b526cf1c" executionId="1c019435-f35c-4263-973f-bb57f629de61" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d7e6dd8-6b8e-d262-244a-ce5c9cba8b30" executionId="f6fd3e51-f090-4f8b-a77a-75249eb6718f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cfdfaa5a-cbae-aef5-8770-0f4cbd61e2d7" executionId="4b85cedb-1504-4b5b-80d8-73a7e9adb697" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="091b7a0c-f4ea-aa82-0ef1-1c73e1491527" executionId="aa257dd1-1b2a-423d-bd16-701905f70e99" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7db5d318-a922-b898-f36b-5c20e806c75e" executionId="65d0a335-30a8-43a3-beaf-4ba9c568fb96" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7a4e85fa-f095-a4e7-e904-3e5a427b2869" executionId="08a5af9c-a1ea-47c6-abcb-b9a3a11eb2fc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1d5a31af-f87f-e84c-7513-a18bfd7198f5" executionId="26a41bc8-3566-46f1-ae5d-138616aae535" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7176c234-1aef-0b86-8ff2-ac707fb0a29d" executionId="f5e6e4eb-c9a1-4215-898d-e80d8d07cce3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="108a6ab4-0887-8851-66f0-991350102e6c" executionId="52d425bf-6b4f-4bda-bf37-7fa1fd2d9dff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="96a0bfb2-472c-c6eb-77b8-8c0131f5672b" executionId="4bf14d16-f120-494f-a14a-d4ae6d20867f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd992d8f-797e-5409-1b4d-91b3628ae266" executionId="c2f0ac62-b4ba-4cb7-b954-66992a35cd39" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d1448696-7f19-977a-6f61-4c5d70ab4a4a" executionId="0758751b-d09c-4227-954c-e8ff9138e70a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c757d85-c4e3-6a9c-55a7-0f4aefe5731d" executionId="e784f70e-54a6-4107-9bb3-313fb89538c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d34c667-f787-0516-02f1-acf41b59bd1f" executionId="bcdf8e73-50e8-46f8-80a6-6088a69058d6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="19" executed="19" passed="0" failed="19" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.23]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(22,0): at FluxVault.App.Services.FileProtectionDraftStore.Read()&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(16,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Full_configuration_and_save_correlation_survive_atomic_publication_and_reopening()&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.38]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.38]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.38]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.38]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(146,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(String failure)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.39]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(22,0): at FluxVault.App.Services.FileProtectionDraftStore.Read()&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(146,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass7_0.&lt;Malformed_existing_records_are_preserved_and_block_replacement&gt;b__0()&#xD;
+[xUnit.net 00:00:00.39]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.39]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.39]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.39]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(146,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(String failure)&#xD;
+[xUnit.net 00:00:00.39]            at InvokeStub_ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.39]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(22,0): at FluxVault.App.Services.FileProtectionDraftStore.Read()&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(146,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass7_0.&lt;Malformed_existing_records_are_preserved_and_block_replacement&gt;b__0()&#xD;
+[xUnit.net 00:00:00.39]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.39]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.39]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.39]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(146,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(String failure)&#xD;
+[xUnit.net 00:00:00.39]            at InvokeStub_ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.39]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(22,0): at FluxVault.App.Services.FileProtectionDraftStore.Read()&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(146,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass7_0.&lt;Malformed_existing_records_are_preserved_and_block_replacement&gt;b__0()&#xD;
+[xUnit.net 00:00:00.39]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.39]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.39]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.39]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(146,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(String failure)&#xD;
+[xUnit.net 00:00:00.39]            at InvokeStub_ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.39]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(22,0): at FluxVault.App.Services.FileProtectionDraftStore.Read()&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(146,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass7_0.&lt;Malformed_existing_records_are_preserved_and_block_replacement&gt;b__0()&#xD;
+[xUnit.net 00:00:00.39]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.39]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.39]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.39]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(146,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(String failure)&#xD;
+[xUnit.net 00:00:00.39]            at InvokeStub_ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.39]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(22,0): at FluxVault.App.Services.FileProtectionDraftStore.Read()&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(146,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass7_0.&lt;Malformed_existing_records_are_preserved_and_block_replacement&gt;b__0()&#xD;
+[xUnit.net 00:00:00.39]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(72,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Failed_or_cancelled_publication_preserves_prior_bytes_and_removes_owned_temporary_file()&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.39]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.39]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.39]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.39]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.39]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0()&#xD;
+[xUnit.net 00:00:00.39]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.39]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.39]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.39]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure)&#xD;
+[xUnit.net 00:00:00.39]            at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.39]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0()&#xD;
+[xUnit.net 00:00:00.41]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.41]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.41]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.41]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure)&#xD;
+[xUnit.net 00:00:00.41]            at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.41]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0()&#xD;
+[xUnit.net 00:00:00.41]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.41]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.41]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.41]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure)&#xD;
+[xUnit.net 00:00:00.41]            at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.41]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0()&#xD;
+[xUnit.net 00:00:00.42]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.42]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.42]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.42]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure)&#xD;
+[xUnit.net 00:00:00.42]            at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.42]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0()&#xD;
+[xUnit.net 00:00:00.42]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.42]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.42]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.42]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure)&#xD;
+[xUnit.net 00:00:00.42]            at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.42]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0()&#xD;
+[xUnit.net 00:00:00.42]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.42]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.42]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.42]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure)&#xD;
+[xUnit.net 00:00:00.42]            at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.42]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0()&#xD;
+[xUnit.net 00:00:00.42]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.42]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.42]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.42]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(String failure)&#xD;
+[xUnit.net 00:00:00.42]            at InvokeStub_ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.42]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(120,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.&lt;&gt;c__DisplayClass6_0.&lt;Invalid_records_cannot_be_published_or_reinterpreted&gt;b__0()&#xD;
+[xUnit.net 00:00:00.42]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(44,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Competing_session_cannot_overwrite_or_discard_a_newer_record()&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.42]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(88,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Existing_reader_keeps_a_complete_snapshot_across_atomic_replacement()&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.42]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(60,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Expected_snapshot_must_match_content_as_well_as_record_identity()&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.42]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\Services\ProtectionDraftStore.cs(24,0): at FluxVault.App.Services.FileProtectionDraftStore.Write(PendingProtectionDraft expected, PendingProtectionDraft next, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionDraftStoreTests.cs(32,0): at FluxVault.App.Tests.ProtectionDraftStoreTests.Published_and_read_snapshots_do_not_alias_mutable_caller_collections()&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.42]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.2139841+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.App.Tests.ProtectionDraftStoreTests.Full_configuration_and_save_correlation_survive_atomic_publication_and_reopening [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.3662940+03:00">
+        <Text>[xUnit.net 00:00:00.38]     FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: "alias") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.3676133+03:00">
+        <Text>[xUnit.net 00:00:00.39]     FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: "duplicate") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.3682037+03:00">
+        <Text>[xUnit.net 00:00:00.39]     FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: "unknown") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.3692102+03:00">
+        <Text>[xUnit.net 00:00:00.39]     FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: "truncated") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.3701060+03:00">
+        <Text>[xUnit.net 00:00:00.39]     FluxVault.App.Tests.ProtectionDraftStoreTests.Malformed_existing_records_are_preserved_and_block_replacement(failure: "missing") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.3709785+03:00">
+        <Text>[xUnit.net 00:00:00.39]     FluxVault.App.Tests.ProtectionDraftStoreTests.Failed_or_cancelled_publication_preserves_prior_bytes_and_removes_owned_temporary_file [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.3720919+03:00">
+        <Text>[xUnit.net 00:00:00.39]     FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: "draft") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.3735079+03:00">
+        <Text>[xUnit.net 00:00:00.39]     FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: "oversize") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.4247993+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: "repository") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.4248591+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: "operation") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.4249090+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: "configuration") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.4249649+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: "record") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.4250362+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: "revision") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.4250793+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.ProtectionDraftStoreTests.Invalid_records_cannot_be_published_or_reinterpreted(failure: "fingerprint") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.4251151+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.ProtectionDraftStoreTests.Competing_session_cannot_overwrite_or_discard_a_newer_record [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.4251479+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.ProtectionDraftStoreTests.Existing_reader_keeps_a_complete_snapshot_across_atomic_replacement [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.4251762+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.ProtectionDraftStoreTests.Expected_snapshot_must_match_content_as_well_as_record_identity [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T01:39:02.4265886+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.ProtectionDraftStoreTests.Published_and_read_snapshots_do_not_alias_mutable_caller_collections [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

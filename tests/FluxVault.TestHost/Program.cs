@@ -49,6 +49,7 @@ internal static class Program
             var mode = Require(options, "mode");
             if (mode == "ui") { ShowUi(options, scratch); return 0; }
             if (mode == "ui-save") { ProtectionSaveUiFixture.Show(options, scratch); return 0; }
+            if (mode == "ui-draft-render") return ProtectionDraftUiFixture.Render(scratch);
             return RunAsync(options, scratch, mode).GetAwaiter().GetResult();
         }
         catch (Exception exception)

@@ -9,12 +9,16 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$RunSingleVaultTests,
     [switch]$RunNativeAccessTests,
     [switch]$RunRestartTests,
+    [switch]$RunInterruptedEffectTests,
     [switch]$RunPackagedIdentityTests,
     [string]$PackageSdkDirectory = 'E:\Windows Kits\10\bin\10.0.28000.0\x64',
     [switch]$RunIntegrityTests,
     [ValidateRange(60,600)][int]$IntegrityTimeoutSeconds = 300,
     [string]$EvidenceDirectory = (Join-Path $PSScriptRoot ("../docs/verification/2026-10-03-next002-windows-fixture/live/$FixtureId")))
 $ErrorActionPreference = 'Stop'
+if($RunInterruptedEffectTests -and (-not $RunSingleVaultTests -or $RunRestartTests -or $RunNativeAccessTests -or $RunPackagedIdentityTests -or $RunCallerFileTests -or $RunIntegrityTests)) {
+    throw 'Interrupted-effect proof requires an exclusive single-vault extension within the existing resource bound.'
+}
 if($RunMetadataTests -and -not $RunCatalogueTests){throw 'Metadata proof requires the catalogue contracts.'}
 if($RunCallerFileTests -and $RunSingleVaultTests){throw 'Select one native file workflow per fresh fixture.'}
 if($RunIntegrityTests -and ($RunCallerFileTests -or $RunSingleVaultTests)){throw 'Run the integrity suite in its own fresh fixture.'}
@@ -223,6 +227,36 @@ function Invoke-SystemActor {
                 }
             }
             'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/caller-files-stop')
+        } elseif($ClientKind -in @('InterruptedHeldServer','InterruptedReopenedServer')) {
+            $phase=if($ClientKind -eq 'InterruptedHeldServer'){'held-server'}else{'reopened-server'}
+            $ready=Join-Path $fixtureRoot ("runtime/effect-$phase-ready.json")
+            $deadline=[DateTime]::UtcNow.AddSeconds(25)
+            while(-not(Test-Path -LiteralPath $ready)) {
+                if((Test-Path -LiteralPath (Join-Path $fixtureRoot ("output-System/$runId-result.json"))) -or
+                    (Test-Path -LiteralPath (Join-Path $fixtureRoot 'system-actor-error.json'))){
+                    $early=Read-ActorResult System $runId
+                    throw 'Interrupted server finished before readiness.'
+                }
+                if([DateTime]::UtcNow -gt $deadline){throw 'Interrupted server readiness exceeded its deadline.'}
+                Start-Sleep -Milliseconds 50
+            }
+            $serverIdentity=Read-SystemServerIdentity $runId -ReadyPath $ready -ExpectedKind NativeInterruptedServer
+            Assert-ProcessAbsent $fixtureOriginalServer
+            if($ClientKind -eq 'InterruptedHeldServer') {
+                # A's invocation has its own run/job locals. Retain the SYSTEM
+                # dispatch context explicitly across that nested dynamic scope.
+                $fixtureInterruptedDispatch=@{RunId=$runId;ReadyPath=$ready;JobName=$jobName}
+                $creator=Invoke-UserActor 'A' '127.0.0.1' 'InterruptedBefore' -WhileRunning {
+                    Stop-InterruptedServer -RunId $fixtureInterruptedDispatch.RunId -ReadyPath $fixtureInterruptedDispatch.ReadyPath -JobName $fixtureInterruptedDispatch.JobName
+                }
+                Assert-InterruptedCreator $creator 'before' 5
+            } else {
+                Assert-ProcessAbsent $script:fixtureInterruptedServerIdentity
+                $creator=Invoke-UserActor 'A' '127.0.0.1' 'InterruptedAfter'
+                Assert-InterruptedCreator $creator 'after' 7
+                'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/effect-stop')
+            }
+            $fixtureObservations.Add(@{NativeInterruptedCreator=$creator})
         } elseif($ClientKind -eq 'RestartServer') {
             $ready=Join-Path $fixtureRoot 'runtime/restart-ready.json'
             $deadline=[DateTime]::UtcNow.AddSeconds(15)
@@ -388,7 +422,7 @@ function Assert-ProcessAbsent {
 }
 
 function Read-SystemServerIdentity {
-    param([string]$RunId,[string]$ReadyPath)
+    param([string]$RunId,[string]$ReadyPath,[ValidateSet('NativeRestartServer','NativeInterruptedServer')][string]$ExpectedKind='NativeRestartServer')
     $path=Join-Path $fixtureRoot ("output-System/$RunId-processes.jsonl")
     Assert-VaultFixtureTrustedPath $path
     if((Get-Item -LiteralPath $path).Length -gt 65536){throw 'SYSTEM process identity log exceeds its bound.'}
@@ -400,7 +434,7 @@ function Read-SystemServerIdentity {
         Assert-VaultFixtureTrustedPath $ReadyPath
         if((Get-Item -LiteralPath $ReadyPath).Length -gt 16384){throw 'Restart readiness exceeds its bound.'}
         $ready=Get-Content -LiteralPath $ReadyPath -Raw | ConvertFrom-Json
-        if(-not $ready.NativeRestartServer -or $ready.FixtureId -ne $FixtureId -or $ready.ProcessId -ne $identity.ProcessId -or
+        if(-not $ready.$ExpectedKind -or $ready.FixtureId -ne $FixtureId -or $ready.ProcessId -ne $identity.ProcessId -or
             ([DateTimeOffset]$ready.StartedUtc).UtcDateTime.ToString('o') -ne $identity.StartedUtc -or $ready.Executable -ne $identity.Executable){throw 'Replacement readiness/process identity mismatch.'}
         $process=Get-Process -Id $identity.ProcessId
         try {
@@ -413,8 +447,67 @@ function Read-SystemServerIdentity {
     return $identity
 }
 
+function Assert-InterruptedCreator {
+    param($Result,[string]$Phase,[int]$ExpectedChecks)
+    $proof=@($Result.Results | Where-Object Kind -eq 'Interrupted')
+    if($Result.Actor -ne 'A' -or $Result.WindowsSid -ne $actors.A -or $proof.Count -ne 1 -or
+        -not $proof[0].Result.NativeInterruptedEffect -or $proof[0].Result.Phase -ne $Phase -or
+        $proof[0].Result.Passed -ne $ExpectedChecks -or [guid]$proof[0].Result.OriginalOperationId -ne [guid]::ParseExact($FixtureId,'N')) {
+        throw 'Native interrupted creator proof is incomplete.'
+    }
+}
+
+function Stop-InterruptedServer {
+    param([string]$RunId,[string]$ReadyPath,[string]$JobName)
+    $heldPath=Join-Path $fixtureRoot 'runtime/effect-held.json'
+    $checkpointPath=Join-Path $fixtureRoot 'output-A/interrupted-checkpoint.json'
+    $deadline=[DateTime]::UtcNow.AddSeconds(8)
+    while(-not(Test-Path -LiteralPath $heldPath) -or -not(Test-Path -LiteralPath $checkpointPath)) {
+        if([DateTime]::UtcNow -gt $deadline){throw 'Held completion/effect checkpoint missed its termination window.'}
+        Start-Sleep -Milliseconds 20
+    }
+    Assert-VaultFixtureTrustedPath $heldPath
+    if((Get-Item -LiteralPath $heldPath).Length -gt 16384 -or (Get-Item -LiteralPath $checkpointPath).Length -gt 65536){throw 'Interrupted evidence exceeds its bound.'}
+    $held=Get-Content -LiteralPath $heldPath -Raw | ConvertFrom-Json
+    # A's bounded result is assertion data only, never a source of stop authority or paths.
+    $checkpoint=Get-Content -LiteralPath $checkpointPath -Raw | ConvertFrom-Json
+    $operation=[guid]::ParseExact($FixtureId,'N')
+    if($held.FixtureId -ne $FixtureId -or [guid]$held.Operation -ne $operation -or $held.ActorSid -ne $actors.A -or
+        $held.Revision -le 0 -or $held.BackendPid -le 0 -or $checkpoint.FixtureId -ne $FixtureId -or
+        [guid]$checkpoint.Request.OperationId -ne $operation -or $checkpoint.Request.ExpectedVaultRevision -ne $held.Revision -or
+        $checkpoint.Hash -notmatch '^[A-F0-9]{64}$' -or $checkpoint.SourceBytes -lt 0 -or
+        [DateTime]::UtcNow -ge ([DateTimeOffset]$held.LatestKillUtc).UtcDateTime -or
+        [DateTime]::UtcNow - ([DateTimeOffset]$held.ObservedUtc).UtcDateTime -gt [TimeSpan]::FromSeconds(5)) {
+        throw 'Interrupted evidence identity changed or its termination window was missed.'
+    }
+    $identity=Read-SystemServerIdentity $RunId -ReadyPath $ReadyPath -ExpectedKind NativeInterruptedServer
+    if($identity.ProcessId -notin $fixtureJobs[$JobName].ProcessIds()){throw 'Interrupted server is not in its owned SYSTEM job.'}
+    $process=Get-Process -Id $identity.ProcessId
+    try {
+        # Retain the native kernel handle before death. A PID-only observer can
+        # lose its exit code after another Process object closes its handle.
+        $null=$process.Handle
+        Stop-VaultFixtureProcess $identity
+        if(-not $process.WaitForExit(1000)){throw 'Interrupted server did not exit.'}
+        $terminatedUtc=[DateTime]::UtcNow
+        if($terminatedUtc -ge ([DateTimeOffset]$held.LatestKillUtc).UtcDateTime){throw 'Actual process death missed the held completion window.'}
+        $exitCode=$process.ExitCode
+        if($null -eq $exitCode -or $exitCode -eq 0){throw 'Interrupted server termination exit code was not confirmed.'}
+        $script:fixtureInterruptedServerIdentity=$identity
+        $proof=@{FixtureId=$FixtureId;Operation=$operation;RunId=$RunId;Identity=$identity;Backend=$held;
+            TerminatedUtc=$terminatedUtc.ToString('o');ExitCode=$exitCode;WithinHoldWindow=$true;OwnedSystemJob=$fixtureJobs[$JobName].Name}
+        $temporary=Join-Path $fixtureRoot 'runtime/interrupted-termination.json.tmp'
+        $bytes=[Text.Encoding]::UTF8.GetBytes(($proof|ConvertTo-Json -Depth 6))
+        $output=[IO.FileStream]::new($temporary,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+        try{$output.Write($bytes);$output.Flush($true)}finally{$output.Dispose()}
+        [IO.File]::Move($temporary,(Join-Path $fixtureRoot 'runtime/interrupted-termination.json'))
+        $fixtureObservations.Add(@{NativeInterruptedTermination=$proof})
+    } finally {$process.Dispose()}
+    Assert-ProcessAbsent $identity
+}
+
 function Invoke-UserActor {
-    param([ValidateSet('A','B')][string]$Actor, [string]$HostAddress, [string]$ClientKind)
+    param([ValidateSet('A','B')][string]$Actor, [string]$HostAddress, [string]$ClientKind, [scriptblock]$WhileRunning)
     $runId=[guid]::NewGuid().ToString('N')
     $name='actor-'+$Actor+'-'+$runId
     $jobName='user-'+$Actor+'-'+$runId
@@ -437,6 +530,7 @@ function Invoke-UserActor {
         if($owner.ReturnValue -ne 0 -or $owner.Sid -ne $actors[$Actor]){throw 'Actor launcher has the wrong actual Windows token.'}
         $actorJob.Assign($process)
         if($process.Id -notin $actorJob.ProcessIds()){throw 'Parent admission did not contain the actor.'}
+        if($null -ne $WhileRunning){& $WhileRunning}
         $result=Read-ActorResult $Actor $runId -TimeoutSeconds $(if($ClientKind -like 'Packaged*'){90}else{70})
         if(-not $process.WaitForExit(10000)){throw 'User actor did not exit.'}
         if($process.ExitCode -ne 0){throw 'User actor failed.'}
@@ -653,12 +747,22 @@ function Remove-OwnedFixture {
         $source=Join-Path $fixtureRoot $pair.Source
         if(Test-Path -LiteralPath $source){Assert-VaultFixtureTrustedPath $source;Copy-Item -LiteralPath $source -Destination (Join-Path $fixtureEvidence $pair.Target)}
     }
+    foreach($name in @('effect-gate-intent.json','effect-gate-created.json','effect-gate-removed.json','effect-held.json',
+        'effect-held-server-ready.json','effect-reopened-server-ready.json','interrupted-termination.json')) {
+        $source=Join-Path $fixtureRoot ('runtime/'+$name)
+        if(Test-Path -LiteralPath $source){Assert-VaultFixtureTrustedPath $source;Copy-Item -LiteralPath $source -Destination (Join-Path $fixtureEvidence $name)}
+    }
     $callerError=Join-Path $fixtureRoot 'runtime/caller-server-error.json'
     if(Test-Path -LiteralPath $callerError){Assert-VaultFixtureTrustedPath $callerError;Copy-Item -LiteralPath $callerError -Destination (Join-Path $fixtureEvidence 'caller-server-error.json')}
     foreach($diagnostic in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'output-System') -File -ErrorAction SilentlyContinue | Where-Object {$_.Name -match '^[0-9a-f]{32}-result\.json$'}){
         Assert-VaultFixtureTrustedPath $diagnostic.FullName
         if($diagnostic.Length -gt 1048576){throw 'SYSTEM diagnostic exceeds its evidence bound.'}
         Copy-Item -LiteralPath $diagnostic.FullName -Destination (Join-Path $fixtureEvidence ('system-result-'+$diagnostic.Name))
+    }
+    foreach($processLog in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'output-System') -File -ErrorAction SilentlyContinue | Where-Object {$_.Name -match '^[0-9a-f]{32}-processes\.jsonl$'}) {
+        Assert-VaultFixtureTrustedPath $processLog.FullName
+        if($processLog.Length -gt 65536){throw 'SYSTEM process journal exceeds its evidence bound.'}
+        Copy-Item -LiteralPath $processLog.FullName -Destination (Join-Path $fixtureEvidence ('system-processes-'+$processLog.Name))
     }
     # Supervisors persist only redacted exit/output diagnostics, never child environment or passwords.
     foreach($toolResult in Get-ChildItem -LiteralPath $fixtureRoot -File | Where-Object {$_.Name -match '^(tool-[0-9a-f]{32}(-child)?|system-scheduler-[0-9a-f]{32}|system-actor-error)\.json$'}) {
@@ -757,7 +861,7 @@ try {
     }
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
-    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
+    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
     @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     if($RunPackagedIdentityTests) {
         $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure()
@@ -909,6 +1013,28 @@ host all all ::1/128 reject
                 $restartPostmaster.ProcessId -ne $livePostmaster.ProcessId -or $restartPostmaster.StartedUtc -ne $livePostmaster.StartedUtc -or
                 $restartPostmaster.Executable -ne $livePostmaster.Executable){throw 'Private PostgreSQL changed during service-process replacement.'}
             $fixtureObservations.Add(@{NativeRestartServer=$replacement;PostmasterUnchanged=$true;BothServersJoined=$true})
+        }
+        if($RunInterruptedEffectTests) {
+            $beforePostmaster=Get-OwnedPostmaster
+            $fixtureOriginalServer=Read-SystemServerIdentity $native.RunId
+            Assert-ProcessAbsent $fixtureOriginalServer
+            $held=Invoke-SystemActor '127.0.0.1' 'InterruptedHeldServer'
+            $heldProof=@($held.Results | Where-Object Kind -eq 'InterruptedTermination')
+            if($heldProof.Count -ne 1 -or -not $heldProof[0].ExpectedOwnedTermination -or
+                $heldProof[0].ExitCode -eq 0){throw 'Intentional native server termination was not correlated.'}
+            Assert-ProcessAbsent $script:fixtureInterruptedServerIdentity
+            $reopened=Invoke-SystemActor '127.0.0.1' 'InterruptedReopenedServer'
+            $proof=@($reopened.Results | Where-Object Kind -eq 'Interrupted')
+            if($proof.Count -ne 1 -or -not $proof[0].Result.NativeInterruptedServer -or
+                -not $proof[0].Result.ExistingBootstrapOpened -or -not $proof[0].Result.CompletionGateRemoved -or
+                -not $proof[0].Result.CompletionBackendAbsent -or -not $proof[0].Result.RequestsJoined){throw 'Interrupted service reopen proof is incomplete.'}
+            $reopenedIdentity=Read-SystemServerIdentity $reopened.RunId
+            Assert-ProcessAbsent $reopenedIdentity
+            $afterPostmaster=Get-OwnedPostmaster
+            if($beforePostmaster.ProcessId -ne $afterPostmaster.ProcessId -or $beforePostmaster.StartedUtc -ne $afterPostmaster.StartedUtc -or
+                $beforePostmaster.Executable -ne $afterPostmaster.Executable){throw 'Private PostgreSQL changed during interrupted service recovery.'}
+            $fixtureObservations.Add(@{NativeInterruptedServers=@{Original=$fixtureOriginalServer;Killed=$script:fixtureInterruptedServerIdentity;
+                Reopened=$reopenedIdentity;AllJoined=$true;PrivatePostmasterUnchanged=$true};InterruptedReopen=$reopened})
         }
     }
     if($RunIntegrityTests) {

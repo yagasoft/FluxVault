@@ -7,6 +7,92 @@ namespace FluxVault.Integration.Tests;
 public sealed class WindowsFixtureToolingTests
 {
     [Fact]
+    public async Task Interrupted_effect_runner_refuses_invalid_batches_before_creating_any_fixture_resources()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $runner=Join-Path (Split-Path (Split-Path $module)) 'test-windows-database-boundary.ps1'
+            $refusals=[Collections.Generic.List[bool]]::new()
+            foreach($flags in @(@{RunInterruptedEffectTests=$true},
+                @{RunInterruptedEffectTests=$true;RunSingleVaultTests=$true;RunRestartTests=$true},
+                @{RunInterruptedEffectTests=$true;RunSingleVaultTests=$true;RunNativeAccessTests=$true},
+                @{RunInterruptedEffectTests=$true;RunSingleVaultTests=$true;RunPackagedIdentityTests=$true})) {
+                $refused=$false
+                try {& $runner @flags -FixtureId $fixtureId -EvidenceDirectory (Join-Path $root 'unused')}
+                catch {$refused=$_.Exception.Message -eq 'Interrupted-effect proof requires an exclusive single-vault extension within the existing resource bound.'}
+                $refusals.Add($refused)
+            }
+            @{Refusals=@($refusals);RootEmpty=@(Get-ChildItem -LiteralPath $root -Force).Count -eq 0;
+                NoProgramDataRoot=(-not(Test-Path -LiteralPath (Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $fixtureId)))} | ConvertTo-Json -Compress
+            """);
+        Assert.All(result.GetProperty("Refusals").EnumerateArray(), item => Assert.True(item.GetBoolean()));
+        Assert.True(result.GetProperty("RootEmpty").GetBoolean());
+        Assert.True(result.GetProperty("NoProgramDataRoot").GetBoolean());
+    }
+
+    [Fact]
+    public async Task A_retained_native_handle_reports_the_owned_process_termination_exit_code()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $start=[Diagnostics.ProcessStartInfo]::new('pwsh')
+            $start.UseShellExecute=$false;$start.CreateNoWindow=$true
+            foreach($argument in @('-NoProfile','-NonInteractive','-Command','Start-Sleep -Seconds 30')){$start.ArgumentList.Add($argument)}
+            $child=[Diagnostics.Process]::Start($start)
+            $observer=$null
+            try {
+                $identity=Get-VaultFixtureProcessIdentity $child
+                $observer=Get-Process -Id $child.Id
+                $null=$observer.Handle
+                Stop-VaultFixtureProcess $identity
+                if(-not $observer.WaitForExit(1000) -or -not $child.WaitForExit(1000)){throw 'Owned child did not exit.'}
+                $nativeExit=$observer.ExitCode
+                @{NativeHandleExit=$nativeExit;LaunchedHandleExit=$child.ExitCode;BothExited=$observer.HasExited -and $child.HasExited}|ConvertTo-Json -Compress
+            } finally {
+                if(-not $child.HasExited){Stop-VaultFixtureProcess (Get-VaultFixtureProcessIdentity $child)}
+                if(-not $child.WaitForExit(5000)){throw 'Owned child remains.'}
+                if($null -ne $observer){$observer.Dispose()};$child.Dispose()
+            }
+            """);
+        Assert.Equal(-1, result.GetProperty("NativeHandleExit").GetInt32());
+        Assert.Equal(-1, result.GetProperty("LaunchedHandleExit").GetInt32());
+        Assert.True(result.GetProperty("BothExited").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Interrupted_effect_stop_gate_refuses_an_expired_or_wrong_operation_without_stopping_a_process()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $runner=Join-Path (Split-Path (Split-Path $module)) 'test-windows-database-boundary.ps1'
+            $ast=[Management.Automation.Language.Parser]::ParseFile($runner,[ref]$null,[ref]$null)
+            $definition=$ast.Find({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Stop-InterruptedServer'},$true)
+            Invoke-Expression $definition.Extent.Text
+            $fixtureRoot=$root;$FixtureId=$fixtureId;$actors=@{A='S-1-5-21-1-2-3-1001'}
+            New-VaultFixtureProtectedDirectory (Join-Path $root 'runtime')
+            New-VaultFixtureProtectedDirectory (Join-Path $root 'output-A')
+            $op=[guid]::ParseExact($fixtureId,'N')
+            $held=@{FixtureId=$fixtureId;Operation=$op;ActorSid=$actors.A;Revision=1;BackendPid=1;
+                ObservedUtc=[DateTime]::UtcNow.ToString('o');LatestKillUtc=[DateTime]::UtcNow.AddSeconds(-1).ToString('o')}
+            $checkpoint=@{FixtureId=$fixtureId;Request=@{OperationId=$op;ExpectedVaultRevision=1};Hash=('A'*64);SourceBytes=1}
+            $checkpoint|ConvertTo-Json -Depth 4|Set-Content -LiteralPath (Join-Path $root 'output-A/interrupted-checkpoint.json')
+            $refusals=[Collections.Generic.List[bool]]::new()
+            foreach($variant in @('Expired','WrongOperation')) {
+                if($variant -eq 'WrongOperation'){$held.LatestKillUtc=[DateTime]::UtcNow.AddSeconds(5).ToString('o');$held.Operation=[guid]::NewGuid()}
+                $held|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $root 'runtime/effect-held.json')
+                $refused=$false
+                try{Stop-InterruptedServer -RunId $fixtureId -ReadyPath (Join-Path $root 'unused') -JobName 'unused'}
+                catch{$refused=$_.Exception.Message -eq 'Interrupted evidence identity changed or its termination window was missed.'}
+                $refusals.Add($refused)
+            }
+            $self=Get-Process -Id $PID
+            try{@{Refusals=@($refusals);NativeSelfPreserved=(-not $self.HasExited)}|ConvertTo-Json -Compress}finally{$self.Dispose()}
+            """);
+        Assert.All(result.GetProperty("Refusals").EnumerateArray(), item => Assert.True(item.GetBoolean()));
+        Assert.True(result.GetProperty("NativeSelfPreserved").GetBoolean());
+    }
+
+    [Fact]
     public async Task Restart_runner_refuses_invalid_batches_before_creating_any_fixture_resources()
     {
         using var fixture = new ScriptFixture();

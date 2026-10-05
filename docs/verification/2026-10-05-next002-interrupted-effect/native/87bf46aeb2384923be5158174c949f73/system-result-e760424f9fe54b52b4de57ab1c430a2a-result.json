@@ -1,0 +1,26 @@
+{
+  "Results": [
+    {
+      "Kind": "Interrupted",
+      "Result": {
+        "Actor": "System",
+        "Phase": "reopened-server",
+        "NativeInterruptedServer": true,
+        "ExistingBootstrapOpened": true,
+        "CompletionGateRemoved": true,
+        "CompletionBackendAbsent": true,
+        "RequestsJoined": true
+      }
+    },
+    {
+      "Kind": "ACL",
+      "ReadProtected": true,
+      "WriteRuntime": true,
+      "WindowsSid": "S-1-5-18"
+    }
+  ],
+  "Actor": "System",
+  "RunId": "e760424f9fe54b52b4de57ab1c430a2a",
+  "Complete": true,
+  "WindowsSid": "S-1-5-18"
+}

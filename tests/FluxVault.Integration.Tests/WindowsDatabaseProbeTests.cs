@@ -8,6 +8,18 @@ namespace FluxVault.Integration.Tests;
 public sealed class WindowsDatabaseProbeTests
 {
     [Fact]
+    public void Interrupted_effect_probe_is_opt_in_and_requires_an_exclusive_single_vault_fixture()
+    {
+        var configuration = Configuration();
+        Assert.False(configuration.RunInterruptedEffectTests);
+        Assert.Throws<ArgumentException>(() => (configuration with { RunInterruptedEffectTests = true }).Validate());
+        Assert.Throws<ArgumentException>(() => (configuration with
+            { RunInterruptedEffectTests = true, RunSingleVaultTests = true, RunPackagedIdentityTests = true }).Validate());
+        Assert.Throws<ArgumentException>(() => (configuration with
+            { RunInterruptedEffectTests = true, RunSingleVaultTests = true, RunRestartTests = true }).Validate());
+        (configuration with { RunInterruptedEffectTests = true, RunSingleVaultTests = true }).Validate();
+    }
+    [Fact]
     public void Restart_probe_is_opt_in_and_requires_an_exclusive_single_vault_fixture()
     {
         var configuration = Configuration();

@@ -160,6 +160,17 @@ processes and all 112 owned resources across both rehearsals are retired, with n
 unchanged. Interrupted effects, reboot, packaged identity and full S07/G01 and
 rollout gates remain open.
 
+The [native interrupted-effect extension](verification/2026-10-05-next002-interrupted-effect/README.md)
+adds one controlled in-flight SYSTEM process death after durable admission and
+independently verified recovery publication. A5/A7 verify exact unknown receipts
+after reopen, replay without recreating deleted output, and independently verified
+recovery under a new operation; the existing A132/B19 workflow passes. Independent
+review accepts bounded delivery and complete teardown: all 63 focused checks
+pass, the Release build has zero warnings/errors, 104 captured identities and all
+135 journal resources are retired, with normal services/data unchanged.
+Whole-branch G01, packaged identity and rollout remain separate;
+no overall roadmap or acceptance requirement changes.
+
 The [manual maintenance Options correction](verification/2026-10-05-next002-manual-options/README.md)
 disables unavailable scheduling, explains manual operation and preserves the
 saved enabled state, automatic preference and exact interval. Meaningful

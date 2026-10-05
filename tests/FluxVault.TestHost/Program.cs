@@ -32,6 +32,9 @@ internal static class Program
         try
         {
             var options = Parse(arguments);
+            if (Require(options, "mode") == "windows-interrupted-effect")
+                return WindowsInterruptedEffectProbe.RunAsync(Require(options, "configuration"), Require(options, "actor"),
+                    Require(options, "phase")).GetAwaiter().GetResult();
             if (Require(options, "mode") == "windows-service-restart")
                 return WindowsServiceRestartProbe.RunAsync(Require(options, "configuration"), Require(options, "actor"),
                     Require(options, "phase")).GetAwaiter().GetResult();

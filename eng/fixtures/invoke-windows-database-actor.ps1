@@ -45,7 +45,7 @@ catch {
     try { $admissionState=[FluxVault.Fixtures.OwnedWindowsJob]::CurrentContainment() } catch { $admissionState='Containment query failed: '+$_.Exception.Message }
     throw ($admissionError+'; '+$admissionState)
 }
-if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles','Integrity','AccessUser','AccessGroup','AccessReopened','AccessDenied','RestartBefore','RestartAfter','RestartServer','PackagedClient','PackagedCleanup')) { throw 'Actor requires one explicit loopback/client probe.' }
+if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles','Integrity','AccessUser','AccessGroup','AccessReopened','AccessDenied','RestartBefore','RestartAfter','RestartServer','PackagedClient','PackagedCleanup','InterruptedBefore','InterruptedAfter','InterruptedHeldServer','InterruptedReopenedServer')) { throw 'Actor requires one explicit loopback/client probe.' }
 $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 if ($sid -ne $configuration.Actors.$Actor -or -not [guid]::TryParseExact($RunId, 'N', [ref]$parsed) -or $parsed -eq [guid]::Empty) { throw 'Actor identity mismatch.' }
 $expectedRoot = Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $configuration.FixtureId
@@ -83,7 +83,7 @@ function Invoke-ActorTool {
         $limit=if($ClientKind -eq 'Integrity'){[int]$runtime.IntegrityTimeoutSeconds*1000}elseif($ClientKind -eq 'CallerFiles'){
             if(($configuration.PSObject.Properties.Name -contains 'RunPackagedIdentityTests') -and $configuration.RunPackagedIdentityTests){120000}
             elseif(($configuration.PSObject.Properties.Name -contains 'RunRestartTests') -and $configuration.RunRestartTests){90000}else{60000}
-        }elseif($ClientKind -eq 'RestartServer'){70000}elseif($ClientKind -like 'Packaged*'){60000}else{25000}
+        }elseif($ClientKind -eq 'RestartServer' -or $ClientKind -like 'Interrupted*Server'){70000}elseif($ClientKind -like 'Packaged*'){60000}else{25000}
         if (-not $child.WaitForExit($limit)) { throw 'Actor tool exceeded its finite deadline.' }
         return @{ ExitCode=$child.ExitCode; Output=$stdout.GetAwaiter().GetResult(); Error=$stderr.GetAwaiter().GetResult() }
     } finally {
@@ -106,6 +106,28 @@ try {
         $suite=Invoke-ActorTool $runtime.Dotnet @('exec',$runtime.Vstest,(Join-Path $Root 'runtime/integration/FluxVault.Integration.Tests.dll'),
             '/TestCaseFilter:Category=RequiresPostgreSql','/Logger:trx;LogFileName=PostgreSql.trx',('/ResultsDirectory:'+(Join-Path $Root 'integrity/results')))
         $results.Add(@{Kind='Integrity';ExitCode=$suite.ExitCode;Output=$suite.Output;Error=$suite.Error})
+    } elseif ($ClientKind -like 'Interrupted*') {
+        $server=$ClientKind -like '*Server'
+        if(-not $configuration.RunInterruptedEffectTests -or -not $configuration.RunSingleVaultTests -or
+            ($server -and $Actor -ne 'System') -or (-not $server -and $Actor -ne 'A')){throw 'Interrupted proof requires its exact owned native actor.'}
+        $phase=switch($ClientKind){InterruptedBefore{'before'} InterruptedAfter{'after'} InterruptedHeldServer{'held-server'} InterruptedReopenedServer{'reopened-server'}}
+        $result=Invoke-ActorTool $runtime.Dotnet @((Join-Path $Root 'runtime/FluxVault.TestHost.dll'),'--mode','windows-interrupted-effect',
+            '--configuration',(Join-Path $Root 'runtime/database-probe.json'),'--actor',$Actor,'--phase',$phase)
+        if($ClientKind -eq 'InterruptedHeldServer') {
+            $termination=Join-Path $Root 'runtime/interrupted-termination.json'
+            $deadline=[DateTime]::UtcNow.AddSeconds(5)
+            while(-not(Test-Path -LiteralPath $termination)){if([DateTime]::UtcNow -gt $deadline){throw 'Expected owned termination proof was not published.'};Start-Sleep -Milliseconds 20}
+            $fixtureOwner=(Get-Acl -LiteralPath $Root).GetOwner([Security.Principal.SecurityIdentifier]).Value
+            Assert-VaultFixtureTrustedPath $termination -AdditionalTrustedOwnerSid $fixtureOwner
+            if((Get-Item -LiteralPath $termination).Length -gt 16384){throw 'Termination proof exceeds its bound.'}
+            $proof=Get-Content -LiteralPath $termination -Raw | ConvertFrom-Json
+            if($proof.FixtureId -ne $configuration.FixtureId -or $proof.RunId -ne $RunId -or
+                -not $proof.WithinHoldWindow -or $result.ExitCode -eq 0 -or $result.ExitCode -ne $proof.ExitCode){throw 'Native server exit did not match the owned termination.'}
+            $results.Add(@{Kind='InterruptedTermination';ExpectedOwnedTermination=$true;ExitCode=$result.ExitCode})
+        } else {
+            if($result.ExitCode -ne 0){throw ('Native interrupted proof failed: '+$result.Error)}
+            $results.Add(@{Kind='Interrupted';Result=($result.Output | ConvertFrom-Json)})
+        }
     } elseif ($ClientKind -like 'Restart*') {
         if(-not $configuration.RunRestartTests -or -not $configuration.RunSingleVaultTests -or
             ($ClientKind -eq 'RestartServer' -and $Actor -ne 'System') -or

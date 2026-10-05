@@ -202,3 +202,24 @@ authentication and unrelated primary edits remain unchanged. The frozen MSI/EXE
 candidate is unchanged. The [independent assessment](architecture-review.md)
 accepts this bounded correction; S05 commissioning/rollback, S01, D01 and final
 G01 remain open before separately approved rollout and live validation.
+
+The administrator handshake checkpoint is now independently accepted. The
+[actual helper](commission-administrator.psm1) withholds DDL until the same
+owned psql process publishes its closed, bounded backend identity, that identity
+matches the expected database/data directory/role/port, and a require-new receipt
+has been flushed. It executes the reviewed SQL once and joins the worker on
+success, failure and cancellation. Eight real-child regressions cover those
+paths, including receipt publication failure and cancellation after an effect;
+the combined existing tooling suite passes 71/71 without skips.
+
+The [current native run](native/1ddfdc01f9f848beb004582d7c411551/result.json)
+uses that same helper and exact prepared SQL in the owned PostgreSQL fixture.
+Its [receipt and inspection](native/1ddfdc01f9f848beb004582d7c411551/prepared-sql.json)
+confirm worker joining, backend retirement, restricted database ownership and
+repeat refusal. The updated census verifies 205 captured identities absent and
+169 resources retired across eight runs. Normal PostgreSQL, authentication,
+installed files and unrelated edits remain unchanged; the candidate is unchanged.
+This closes backend publication and worker lifetime proof, not the full normal
+authentication supervisor, post-revocation checks or rollback. S05, S01, D01 and
+final G01 remain the critical path; no additional framework or roadmap scope is
+introduced.

@@ -6,6 +6,104 @@ namespace FluxVault.Integration.Tests;
 // Current-user tooling checks. These do not claim the real A/B/SYSTEM acceptance gates.
 public sealed class WindowsFixtureToolingTests
 {
+    [Theory]
+    [InlineData("success")]
+    [InlineData("wrong-binding")]
+    [InlineData("publication-failure")]
+    [InlineData("missing-backend")]
+    [InlineData("sql-failure")]
+    [InlineData("cancelled")]
+    [InlineData("cancelled-after-open")]
+    [InlineData("cancelled-after-effect")]
+    public async Task Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(string scenario)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $helper=Join-Path (Split-Path (Split-Path (Split-Path $module))) 'docs/verification/2026-10-05-next002-rollout-preparation/commission-administrator.psm1'
+            if(-not(Test-Path -LiteralPath $helper)){throw 'The bounded administrator helper is missing.'}
+            $tokens=$null;$errors=$null
+            $ast=[Management.Automation.Language.Parser]::ParseFile($helper,[ref]$tokens,[ref]$errors)
+            if($errors.Count){throw 'Administrator helper has parser errors.'}
+            foreach($function in $ast.FindAll({param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst]},$false)){
+                . ([scriptblock]::Create($function.Extent.Text))
+            }
+            $scenario='SCENARIO_VALUE'
+            $fake=Join-Path $root 'fake-psql.ps1'
+            @'
+            $ErrorActionPreference='Stop'
+            $scenario=$env:FV_SCENARIO;$root=$env:FV_ROOT;$publication=$null
+            [IO.File]::WriteAllText((Join-Path $root 'child.pid'),$PID.ToString())
+            while($null -ne ($line=[Console]::In.ReadLine())) {
+                if($line -match "^\\o '([^']+)'$"){$publication=$Matches[1]}
+                elseif($line -eq '\o') {
+                    if($scenario -notin @('missing-backend','cancelled-after-open')) {
+                        @{backend_pid=$PID;role=$(if($scenario -eq 'wrong-binding'){'another_role'}else{'postgres'});
+                            database='postgres';data_directory=$root;port='5433'} |
+                            ConvertTo-Json -Compress | Set-Content -LiteralPath $publication
+                    }
+                } elseif($line -eq 'CREATE ROLE owned_test;') {
+                    $receipt=Join-Path $root 'administrator-session.json'
+                    if(-not(Test-Path -LiteralPath $receipt)){throw 'DDL arrived before a durable receipt.'}
+                    $confirmed=Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json
+                    if($confirmed.Backend.backend_pid -ne $PID){throw 'DDL receipt identifies another session.'}
+                    [IO.File]::WriteAllText((Join-Path $root 'ddl.txt'),'effect after receipt')
+                    if($scenario -eq 'cancelled-after-effect'){Start-Sleep -Seconds 30}
+                    if($scenario -eq 'sql-failure'){exit 3}
+                }
+            }
+            '@ | Set-Content -LiteralPath $fake
+            $sql=Join-Path $root 'create.sql';[IO.File]::WriteAllText($sql,'CREATE ROLE owned_test;')
+            $empty=Join-Path $root 'empty.pgpass';[IO.File]::WriteAllText($empty,'')
+            $context=@{WorkRoot=$root;PsqlPath=(Get-Command pwsh).Source;SqlPath=$sql;SqlSha256=(Get-FileHash -LiteralPath $sql).Hash;
+                ApplicationName='FluxVault.OwnedTest';EmptyPasswordFile=$empty;Connection='inert';DataDirectory=$root;
+                Role='postgres';Database='postgres';Port=5433;PrefixArguments=@('-NoProfile','-NonInteractive','-File',$fake);
+                Environment=@{FV_SCENARIO=$scenario;FV_ROOT=$root}}
+            if($scenario -eq 'publication-failure') {
+                function Write-CommissionAdministratorReceipt {throw 'Simulated durable publication failure.'}
+            }
+            $cancel=[Threading.CancellationTokenSource]::new()
+            if($scenario -eq 'cancelled'){$cancel.Cancel()}
+            $observer=$null
+            if($scenario -in @('cancelled-after-open','cancelled-after-effect')) {
+                Add-Type @'
+            public static class CancelAtOwnedMarker {
+                public static async System.Threading.Tasks.Task Run(string path, System.Threading.CancellationTokenSource source) {
+                    var deadline=System.Diagnostics.Stopwatch.StartNew();
+                    while(!System.IO.File.Exists(path)) {
+                        if(deadline.Elapsed.TotalSeconds>5) throw new System.TimeoutException("Owned cancellation marker did not appear.");
+                        await System.Threading.Tasks.Task.Delay(10);
+                    }
+                    source.Cancel();
+                }
+            }
+            '@
+                $marker=if($scenario -eq 'cancelled-after-open'){'child.pid'}else{'ddl.txt'}
+                $observer=[CancelAtOwnedMarker]::Run((Join-Path $root $marker),$cancel)
+            }
+            $failure=$null;$reply=$null
+            try {$reply=Invoke-CommissionAdministrator $context -PublicationTimeoutSeconds 2 -ExecutionTimeoutSeconds 10 -CancellationToken $cancel.Token}
+            catch {$failure=$_.Exception.Message}
+            finally {try{if($null -ne $observer){$null=$observer.GetAwaiter().GetResult()}}finally{$cancel.Dispose()}}
+            $childPath=Join-Path $root 'child.pid';$launched=Test-Path -LiteralPath $childPath;$absent=$true
+            if($launched){$childPid=[int][IO.File]::ReadAllText($childPath);$child=Get-Process -Id $childPid -ErrorAction SilentlyContinue;
+                if($null -ne $child){try{$absent=$child.HasExited}finally{$child.Dispose()}}}
+            @{Failure=$failure;Ddl=(Test-Path -LiteralPath (Join-Path $root 'ddl.txt'));
+                Receipt=(Test-Path -LiteralPath (Join-Path $root 'administrator-session.json'));
+                ChildLaunched=$launched;ChildAbsent=$absent;Joined=$(if($reply){$reply.WorkerJoined}else{$false})} | ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.True(result.GetProperty("ChildAbsent").GetBoolean());
+        var succeeded = scenario == "success";
+        var admitted = scenario is "success" or "sql-failure" or "cancelled-after-effect";
+        Assert.Equal(admitted, result.GetProperty("Ddl").GetBoolean());
+        Assert.Equal(admitted, result.GetProperty("Receipt").GetBoolean());
+        Assert.Equal(scenario != "cancelled", result.GetProperty("ChildLaunched").GetBoolean());
+        Assert.Equal(succeeded, result.GetProperty("Joined").GetBoolean());
+        if (succeeded) Assert.Equal(JsonValueKind.Null, result.GetProperty("Failure").ValueKind);
+        else Assert.False(string.IsNullOrWhiteSpace(result.GetProperty("Failure").GetString()));
+        if (scenario.StartsWith("cancelled", StringComparison.Ordinal))
+            Assert.Contains("cancel", result.GetProperty("Failure").GetString(), StringComparison.OrdinalIgnoreCase);
+    }
+
     [Fact]
     public async Task Interrupted_effect_runner_refuses_invalid_batches_before_creating_any_fixture_resources()
     {

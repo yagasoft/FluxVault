@@ -207,10 +207,37 @@ SELECT json_build_object(
     $before=Get-OwnedPostmaster
     if($before.Port -eq 5432 -or $before.DataDirectory -ne $fixtureData){throw 'Prepared DDL refuses a normal PostgreSQL target.'}
     $ddl=[IO.File]::ReadAllText($sourceSql)
-    $create=Invoke-OwnedTool (Join-Path $fixtureBin 'psql.exe') @('-X','-w','-A','-t','-v','ON_ERROR_STOP=1','--dbname',$Connection) ("SELECT pg_backend_pid();`n"+$ddl) @{PGPASSWORD=$Password}
+    $administratorRoot=Join-Path $fixtureRoot 'administrator-proof'
+    New-VaultFixtureProtectedDirectory $administratorRoot
+    $administratorHelper=Join-Path $PSScriptRoot '../docs/verification/2026-10-05-next002-rollout-preparation/commission-administrator.psm1'
+    Assert-VaultFixtureTrustedPath $administratorHelper
+    Copy-Item -LiteralPath $administratorHelper -Destination (Join-Path $administratorRoot 'commission-administrator.psm1')
+    Copy-Item -LiteralPath $sourceSql -Destination (Join-Path $administratorRoot 'create.sql')
+    [IO.File]::WriteAllText((Join-Path $administratorRoot 'empty.pgpass'),'')
+    @{WorkRoot=$administratorRoot;PsqlPath=(Join-Path $fixtureBin 'psql.exe');SqlPath=(Join-Path $administratorRoot 'create.sql');
+        SqlSha256=(Get-FileHash -LiteralPath $sourceSql).Hash;ApplicationName=('FluxVault.PreparedSql.'+$FixtureId);
+        EmptyPasswordFile=(Join-Path $administratorRoot 'empty.pgpass');Connection=$Connection;DataDirectory=$fixtureData;
+        Role='fv_gate_bootstrap';Database='postgres';Port=$fixturePort} |
+        ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $administratorRoot 'context.json')
+    @'
+param([string]$Root)
+$ErrorActionPreference='Stop'
+Import-Module (Join-Path (Split-Path $Root) 'runtime/vault-windows-fixture.psm1') -Force
+Import-Module (Join-Path $Root 'commission-administrator.psm1') -Force
+$context=Get-Content -LiteralPath (Join-Path $Root 'context.json') -Raw | ConvertFrom-Json -AsHashtable
+$context.Environment=@{PGPASSWORD=$env:PGPASSWORD}
+try {Invoke-CommissionAdministrator $context | ConvertTo-Json -Depth 6 -Compress}
+finally {$context.Environment.Clear()}
+'@ | Set-Content -LiteralPath (Join-Path $administratorRoot 'prove.ps1')
+    # Existing Invoke-OwnedTool admits this launcher to the cluster job before
+    # it creates psql; all descendants remain in that parent-owned job.
+    $create=Invoke-OwnedTool $fixturePwsh @('-NoProfile','-NonInteractive','-File',(Join-Path $administratorRoot 'prove.ps1'),'-Root',$administratorRoot) $null @{PGPASSWORD=$Password}
     if($create.ExitCode -ne 0){throw 'Exact prepared DDL failed in the owned PostgreSQL cluster.'}
-    $backend=0
-    if(-not [int]::TryParse(($create.Output -split '\r?\n')[0],[ref]$backend) -or $backend -le 0){throw 'Prepared DDL did not report its backend.'}
+    $administrator=$create.Output.Trim() | ConvertFrom-Json -AsHashtable
+    if(-not $administrator.WorkerJoined -or $administrator.ExitCode -ne 0){throw 'Prepared DDL administrator did not join successfully.'}
+    $backend=[int]$administrator.Backend.backend_pid
+    Copy-Item -LiteralPath (Join-Path $administratorRoot 'administrator-session.json') -Destination (Join-Path $fixtureEvidence 'administrator-session.json')
+    Copy-Item -LiteralPath (Join-Path $administratorRoot 'administrator-backend.json') -Destination (Join-Path $fixtureEvidence 'administrator-backend.json')
     $inspect=@'
 SELECT json_build_object(
  'role',(SELECT row_to_json(r) FROM
@@ -238,7 +265,7 @@ SELECT json_build_object(
     if($after.ExitCode -ne 0 -or $after.Output -cne $check.Output){throw 'Rejected prepared DDL changed the owned target.'}
     $live=Get-OwnedPostmaster
     if($live.ProcessId -ne $before.ProcessId -or $live.StartedUtc -ne $before.StartedUtc){throw 'Prepared authentication/DDL proof restarted its owned PostgreSQL.'}
-    @{Accepted=$true;SqlSha256=(Get-FileHash -LiteralPath $sourceSql).Hash;BackendPid=$backend;State=$state;
+    @{Accepted=$true;SqlSha256=(Get-FileHash -LiteralPath $sourceSql).Hash;BackendPid=$backend;Administrator=$administrator;State=$state;
         RepeatedCreateRejected=$true;TargetUnchanged=$true;PostmasterUnchanged=$true} |
         ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $fixtureEvidence 'prepared-sql.json')
 }

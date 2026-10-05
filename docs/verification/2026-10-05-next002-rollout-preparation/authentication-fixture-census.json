@@ -1,8 +1,8 @@
 {
   "NormalPostmaster": {
     "ProcessId": 50372,
-    "StartedUtc": "2026-10-01T13:38:16.2557791Z",
-    "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe"
+    "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+    "StartedUtc": "2026-10-01T13:38:16.2557791Z"
   },
   "Runs": [
     {
@@ -60,8 +60,16 @@
       "RetiredResources": 43,
       "FixtureId": "5a477969f6b54962b10cd909a0955554",
       "RetiredProcessIdentities": 53
+    },
+    {
+      "RetiredResources": 43,
+      "FixtureId": "1ddfdc01f9f848beb004582d7c411551",
+      "NormalStateUnchanged": true,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "RetiredProcessIdentities": 54
     }
   ],
-  "ObservedUtc": "2026-10-05T07:56:01.3910239Z",
+  "ObservedUtc": "2026-10-05T08:39:35.5008218Z",
   "NormalAuthenticationUnchanged": true
 }

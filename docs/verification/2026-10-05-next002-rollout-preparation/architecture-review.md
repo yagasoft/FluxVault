@@ -54,3 +54,22 @@ identities/126 resources across seven runs with normal state unchanged.
 This assessment covers only the completed preparation correction/private proof.
 It does not accept the unfinished normal commissioning supervisor, final G01,
 normal application or rollout. The lifetime requirements above remain required.
+
+## Administrator handshake checkpoint
+
+The existing independent Astra reviewer accepts the completed helper checkpoint
+with no blocking finding. The real-child tests and current native run establish
+that DDL follows validated publication and durable receipt, runs once, and has
+a joined worker on success, failure and cancellation. Separate native inspection
+confirms backend retirement and unchanged state after repeat refusal. The eight
+focused regressions and combined 71-test tooling suite pass. The updated census
+includes the new owned run. This assessment does not close the complete normal
+supervisor, temporary-admission retirement, checked rollback or final G01.
+
+For the remaining normal authentication guard, the reviewer accepts recognising
+the existing NetworkService PostgreSQL authority only at the exact verified
+PostgreSQL authentication paths. Verify the observed daemon identity and the
+existing operator's direct Administrators membership; retain reparse, ancestor
+replacement and untrusted/propagating-writer checks. Preserve existing ACLs and
+do not broaden commissioning, executable or vault-root guards. This is a bounded
+path-specific assessment, not permission to apply the prepared files or deploy.

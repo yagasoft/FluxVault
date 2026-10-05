@@ -171,6 +171,15 @@ pass, the Release build has zero warnings/errors, 104 captured identities and al
 Whole-branch G01, packaged identity and rollout remain separate;
 no overall roadmap or acceptance requirement changes.
 
+The [Protection failure visibility correction](verification/2026-10-05-next002-desktop-observation/README.md)
+shows full save/local-draft explanations and exposes useful primary control
+names. Actual WPF peer/layout regressions reproduce both defects before fixing;
+all 478 App tests pass and the Release build has zero warnings/errors. Two
+joined disposable desktop observations verify retained edits and zero dependent
+backups; native automation confirms the corrected names/messages. Desktop pixel
+capture remains inconsistent and is not counted as visual acceptance. Full
+D01/accessibility/scale, G01 and rollout gates remain open; scope is unchanged.
+
 The [manual maintenance Options correction](verification/2026-10-05-next002-manual-options/README.md)
 disables unavailable scheduling, explains manual operation and preserves the
 saved enabled state, automatic preference and exact interval. Meaningful

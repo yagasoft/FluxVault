@@ -18,7 +18,7 @@ namespace FluxVault.TestHost;
 // Finite rendered WPF evidence; all stores and responses are disposable/local.
 internal static class ProtectionDraftUiFixture
 {
-    internal static int Render(string scratch)
+    internal static int Render(string scratch, bool interactive = false)
     {
         using var process=System.Diagnostics.Process.GetCurrentProcess();
         File.WriteAllText(Path.Combine(scratch,"ui-process.json"),JsonSerializer.Serialize(new
@@ -32,8 +32,43 @@ internal static class ProtectionDraftUiFixture
         var window=new FluxVault.App.MainWindow(new FileDataGridLayoutStore(Path.Combine(scratch,"layout.json")))
             {DataContext=model,Width=1440,Height=900,Title="FluxVault disposable local draft verification"};
         FluxVault.App.OptionsWindow? options=null; Exception? failure=null;
+        var closing=false; var joined=false;
+        var lifetime=new DispatcherTimer{Interval=TimeSpan.FromMinutes(8)};
+        if(interactive)
+        {
+            // Finite UI observation only: the actual window/view-model and local
+            // stores run with a rejecting client, never the installed service.
+            lifetime.Tick+=(_,_)=>window.Close(); lifetime.Start();
+            window.Closing+=async (_,args)=>
+            {
+                if(joined)return;
+                args.Cancel=true;
+                if(closing)return;
+                closing=true;
+                try
+                {
+                    if(!await model.PrepareForExitAsync())throw new IOException(model.LocalProtectionDraftMessage);
+                    await model.StopRepositoryReadsAsync();
+                    File.WriteAllText(Path.Combine(scratch,"ui-result.json"),JsonSerializer.Serialize(new
+                    {Interactive=true,Joined=true,client.Backups,client.Saves,model.ProtectionSaveMessage,model.LocalProtectionDraftMessage,
+                        model.RepositoryPath,SaveState=model.ProtectionSaveState.ToString()}));
+                }
+                catch(Exception exception){failure=exception;}
+                finally
+                {
+                    try{await model.CancelAndJoinLocalProtectionDraftWriterAsync();}
+                    finally{lifetime.Stop();joined=true;window.Close();app.Shutdown();}
+                }
+            };
+        }
         window.Loaded+=async (_,_)=>
         {
+            if(interactive)
+            {
+                try{await model.RefreshAsync();model.SelectedWorkspaceIndex=1;}
+                catch(Exception exception){failure=exception;window.Close();}
+                return;
+            }
             try
             {
                 await model.RefreshAsync(); model.RepositoryPath=Path.Combine(scratch,"unfinished-repository");
@@ -85,11 +120,12 @@ internal static class ProtectionDraftUiFixture
     }
     private sealed class Client(IFluxVaultConfigurationStore store):IFluxVaultServiceClient
     {
-        private readonly VaultId id=VaultId.New(); internal int Backups;
+        private readonly VaultId id=VaultId.New(); internal int Backups; internal int Saves;
         public async Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request,CancellationToken cancellationToken=default)
         {
             if(request.Command==FluxVaultIpcCommand.GetStatus)return FluxVaultIpcResponse.WithStatus(new(true,await store.LoadAsync(cancellationToken),"Disposable local UI fixture",null,[],[],TrackedEntries:[])) with{VaultId=id,VaultRevision=1};
             if(request.Command==FluxVaultIpcCommand.RunBackupNow)Backups++;
+            if(request.Command==FluxVaultIpcCommand.SaveConfiguration)Saves++;
             return FluxVaultIpcResponse.Failure("Disposable service rejected the save. Check the selection and try again.") with{ErrorCode=FluxVaultIpcErrorCode.InvalidRequest};
         }
     }

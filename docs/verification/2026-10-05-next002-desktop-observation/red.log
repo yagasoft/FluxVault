@@ -1,0 +1,56 @@
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.App.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.33]     FluxVault.App.Tests.DashboardAccessibilityContractTests.Protection_page_shows_the_complete_failed_save_explanation_without_hover(width: 1440) [FAIL]
+  Failed FluxVault.App.Tests.DashboardAccessibilityContractTests.Protection_page_shows_the_complete_failed_save_explanation_without_hover(width: 1440) [1 s]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: [TextBlock { ActualHeight = 34.583333333333336, ActualWidth = 591.77904761904756, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }, TextBlock { ActualHeight = 17.290000000000003, ActualWidth = 591.77904761904756, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }, TextBlock { ActualHeight = 15.960000000000001, ActualWidth = 124.16000000000003, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }, TextBlock { ActualHeight = 15.960000000000001, ActualWidth = 108.87333333333333, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }, TextBlock { ActualHeight = 0, ActualWidth = 0, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }, ···]
+  Stack Trace:
+     at FluxVault.App.Tests.DashboardAccessibilityContractTests.<>c__DisplayClass1_0.<<Protection_page_shows_the_complete_failed_save_explanation_without_hover>b__0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 65
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.DashboardAccessibilityContractTests.<>c__DisplayClass1_0.<<Protection_page_shows_the_complete_failed_save_explanation_without_hover>b__0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 78
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.DashboardAccessibilityContractTests.<>c__DisplayClass3_1.<<RunSta>b__1>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 98
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.DashboardAccessibilityContractTests.RunSta(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 105
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:01.61]     FluxVault.App.Tests.DashboardAccessibilityContractTests.Protection_page_shows_the_complete_failed_save_explanation_without_hover(width: 1080) [FAIL]
+[xUnit.net 00:00:01.87]     FluxVault.App.Tests.DashboardAccessibilityContractTests.Primary_controls_expose_useful_native_automation_names [FAIL]
+  Failed FluxVault.App.Tests.DashboardAccessibilityContractTests.Protection_page_shows_the_complete_failed_save_explanation_without_hover(width: 1080) [275 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: [TextBlock { ActualHeight = 34.583333333333336, ActualWidth = 231.77904761904756, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }, TextBlock { ActualHeight = 17.290000000000003, ActualWidth = 231.77904761904756, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }, TextBlock { ActualHeight = 15.960000000000001, ActualWidth = 124.16000000000003, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }, TextBlock { ActualHeight = 15.960000000000001, ActualWidth = 108.87333333333333, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }, TextBlock { ActualHeight = 0, ActualWidth = 0, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }, ···]
+  Stack Trace:
+     at FluxVault.App.Tests.DashboardAccessibilityContractTests.<>c__DisplayClass1_0.<<Protection_page_shows_the_complete_failed_save_explanation_without_hover>b__0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 65
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.DashboardAccessibilityContractTests.<>c__DisplayClass1_0.<<Protection_page_shows_the_complete_failed_save_explanation_without_hover>b__0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 78
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.DashboardAccessibilityContractTests.<>c__DisplayClass3_1.<<RunSta>b__1>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 98
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.DashboardAccessibilityContractTests.RunSta(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 105
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.DashboardAccessibilityContractTests.Primary_controls_expose_useful_native_automation_names [258 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "Refresh"
+Actual:   ""
+  Stack Trace:
+     at FluxVault.App.Tests.DashboardAccessibilityContractTests.<>c.<<Primary_controls_expose_useful_native_automation_names>b__0_0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 37
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.DashboardAccessibilityContractTests.<>c.<<Primary_controls_expose_useful_native_automation_names>b__0_0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 43
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.DashboardAccessibilityContractTests.<>c__DisplayClass3_1.<<RunSta>b__1>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 98
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.DashboardAccessibilityContractTests.RunSta(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DashboardAccessibilityContractTests.cs:line 105
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-desktop-observation\red.trx
+
+Failed!  - Failed:     3, Passed:     0, Skipped:     0, Total:     3, Duration: 1 s - FluxVault.App.Tests.dll (net10.0)

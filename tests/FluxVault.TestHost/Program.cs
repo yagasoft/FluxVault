@@ -62,6 +62,7 @@ internal static class Program
             if (mode == "ui") { ShowUi(options, scratch); return 0; }
             if (mode == "ui-save") { ProtectionSaveUiFixture.Show(options, scratch); return 0; }
             if (mode == "ui-draft-render") return ProtectionDraftUiFixture.Render(scratch);
+            if (mode == "ui-draft-interactive") return ProtectionDraftUiFixture.Render(scratch, interactive: true);
             return RunAsync(options, scratch, mode).GetAwaiter().GetResult();
         }
         catch (Exception exception)

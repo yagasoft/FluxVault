@@ -91,13 +91,14 @@
                 </Border>
             </StackPanel>
             <StackPanel Grid.Column="1" Name="OperationalCockpitCommandBar" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Command="{Binding RefreshCommand}" ToolTip="Refresh dashboard status and version data.">
+                <Button Command="{Binding RefreshCommand}" AutomationProperties.Name="Refresh" ToolTip="Refresh dashboard status and version data.">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⟳" Margin="0,0,6,0" />
                         <TextBlock Text="Refresh" />
                     </StackPanel>
                 </Button>
                 <Button Name="ServiceControlToggleButton"
+                        AutomationProperties.Name="{Binding ServiceControlActionLabel}"
                         Command="{Binding ToggleWindowsServiceCommand}"
                         IsEnabled="{Binding IsServiceControlActionEnabled}"
                         ToolTip="{Binding ServiceControlToolTip}">
@@ -106,32 +107,33 @@
                         <TextBlock Text="{Binding ServiceControlActionLabel}" />
                     </StackPanel>
                 </Button>
-                <Button Command="{Binding RunBackupNowCommand}" ToolTip="Run a full scan backup now.">
+                <Button Command="{Binding RunBackupNowCommand}" AutomationProperties.Name="Run backup now" ToolTip="Run a full scan backup now.">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="↥" Margin="0,0,6,0" />
                         <TextBlock Text="Run backup now" />
                     </StackPanel>
                 </Button>
-                <Button Command="{Binding RestoreSelectedCommand}" ToolTip="Restore the selected repository version.">
+                <Button Command="{Binding RestoreSelectedCommand}" AutomationProperties.Name="Restore" ToolTip="Restore the selected repository version.">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="↙" Margin="0,0,6,0" />
                         <TextBlock Text="Restore" />
                     </StackPanel>
                 </Button>
                 <Button Name="OpenOptionsButton" Click="Options_Click"
+                        AutomationProperties.Name="Options"
                         IsEnabled="{Binding CanOpenOptions}" ToolTip="{Binding OptionsEntryToolTip}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⚙" Margin="0,0,6,0" />
                         <TextBlock Text="Options" />
                     </StackPanel>
                 </Button>
-                <Button Click="About_Click" ToolTip="About FluxVault.">
+                <Button Click="About_Click" AutomationProperties.Name="About" ToolTip="About FluxVault.">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="ⓘ" Margin="0,0,6,0" />
                         <TextBlock Text="About" />
                     </StackPanel>
                 </Button>
-                <Button Command="{Binding ExportDiagnosticsCommand}" ToolTip="Export local service status, diagnostics, and health details.">
+                <Button Command="{Binding ExportDiagnosticsCommand}" AutomationProperties.Name="Export diagnostics" ToolTip="Export local service status, diagnostics, and health details.">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="▣" Margin="0,0,6,0" />
                         <TextBlock Text="Export diagnostics" />
@@ -160,7 +162,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="12" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -169,6 +171,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding RepositoryPath, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.Name="Repository path"
                              Margin="0,0,8,8" Padding="8" />
                     <Button Grid.Row="0" Grid.Column="1" Content="Repository" Command="{Binding BrowseRepositoryCommand}" Margin="0,0,0,8" />
                     <Border Grid.Row="1" Grid.Column="0" Margin="0,0,8,0" Padding="8"
@@ -176,6 +179,18 @@
                         <TextBlock Text="{Binding MirrorSummary}" TextWrapping="Wrap" />
                     </Border>
                     <Button Grid.Row="1" Grid.Column="1" Content="Open Mirrors" Command="{Binding OpenMirrorsWorkspaceCommand}" Margin="0" />
+
+                    <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,12">
+                        <TextBlock Text="{Binding ProtectionSaveMessage}"
+                                   Visibility="{Binding HasProtectionSaveMessage, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   AutomationProperties.LiveSetting="Polite" Foreground="#1E293B"
+                                   TextWrapping="Wrap" Margin="0,8,0,0" />
+                        <TextBlock Text="{Binding LocalProtectionDraftMessage}"
+                                   Visibility="{Binding HasLocalProtectionDraftMessage, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   AutomationProperties.Name="{Binding LocalProtectionDraftMessage}"
+                                   AutomationProperties.LiveSetting="Polite" Foreground="#1E293B"
+                                   TextWrapping="Wrap" Margin="0,8,0,0" />
+                    </StackPanel>
 
                     <DataGrid Grid.Row="3"
                               Grid.ColumnSpan="2"

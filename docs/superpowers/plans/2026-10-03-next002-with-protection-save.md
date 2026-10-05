@@ -78,6 +78,17 @@ Completed, bounded prerequisites remain evidence rather than a claim of full ser
 
 ## UI scope
 
+The [Protection failure visibility correction](../../verification/2026-10-05-next002-desktop-observation/README.md)
+adds full wrapped save/local-draft explanations and useful native primary-control
+names. Three actual rendered-control regressions reproduce the defects before
+the correction; all 478 App tests and the zero-warning Release build pass.
+Two disposable desktop observations retain one failed save, zero dependent
+backups and pending drafts, then join their processes and remove their roots.
+Native automation confirms the corrected states/names. Stale desktop capture
+pixels remain an unresolved observation, so this does not close visual D01,
+Narrator/DPI/high-contrast/scale or G01. No command/security contract or overall
+roadmap changes.
+
 The [manual maintenance Options correction](../../verification/2026-10-05-next002-manual-options/README.md)
 removes an unavailable scheduling promise and preserves its exact saved fields
 through the real file store and actual view-model command. All 475 App checks

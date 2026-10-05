@@ -143,6 +143,13 @@ this bounded preparation and correction. Native per-user
 package registration, temporary public-certificate trust and Windows profiles
 await bounded resource approval; S01/G01 and normal rollout remain open.
 
+The [native pipe resource checks](verification/2026-10-05-next002-resource-boundary/README.md)
+verify saturation recovery, absolute frame deadlines, stalled-output/receipt
+token retirement and joined native I/O shutdown. All 147 Windows tests pass
+without skips; independent review accepts this bounded same-user transport
+milestone. No runtime or installation change was needed. Wider S06/G01 and
+normal rollout gates remain open.
+
 | ID | Priority | Capability | Status | Required verification |
 | --- | --- | --- | --- | --- |
 | NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |

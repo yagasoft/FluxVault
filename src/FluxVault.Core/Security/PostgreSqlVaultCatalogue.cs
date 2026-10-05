@@ -59,6 +59,20 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
     }
 
     /// <summary>Explicit control-plane provisioning; ordinary opens never create or adopt a catalogue.</summary>
+    public async Task VerifyFreshTargetAsync(VaultBinding binding, CancellationToken cancellationToken = default)
+    {
+        binding.Validate();
+        if (binding.MetadataStore.Host != Endpoint.Host || binding.MetadataStore.Port != Endpoint.Port ||
+            binding.MetadataStore.DatabaseName != Endpoint.Database || binding.MetadataStore.Username != Endpoint.ServiceRole)
+            throw new VaultCatalogueException(VaultCatalogueFailure.IdentityMismatch);
+        await using var connection = await OpenAsync(cancellationToken);
+        await using var command = new NpgsqlCommand("SELECT EXISTS (SELECT FROM pg_namespace WHERE nspname IN ('fv_control', @metadata))", connection);
+        command.Parameters.AddWithValue("metadata", binding.MetadataNamespace);
+        if (await command.ExecuteScalarAsync(cancellationToken) is not false)
+            throw new VaultCatalogueException(VaultCatalogueFailure.IdentityMismatch);
+    }
+
+    /// <summary>Explicit control-plane provisioning; ordinary opens never create or adopt a catalogue.</summary>
     public async Task ProvisionAsync(CancellationToken cancellationToken = default)
     {
         await using var connection = await OpenAsync(cancellationToken);

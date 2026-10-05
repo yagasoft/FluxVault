@@ -252,7 +252,7 @@ public sealed class WindowsCallerRecoveryTarget : IRepositoryRestoreTarget
     private sealed class ProtectedParent(SafeFileHandle handle, List<SafeFileHandle> handles) : IDisposable
     { internal SafeFileHandle Handle => handle; public void Dispose() => Release(handles); }
     private static void Release(List<SafeFileHandle> handles) { for (var index = handles.Count - 1; index >= 0; index--) handles[index].Dispose(); handles.Clear(); }
-    private static void Rename(SafeFileHandle source, SafeFileHandle parent, string name, bool replace)
+    internal static void Rename(SafeFileHandle source, SafeFileHandle parent, string name, bool replace)
     {
         var text = Encoding.Unicode.GetBytes(name); var offset = IntPtr.Size == 8 ? 20 : 12;
         var buffer = Marshal.AllocHGlobal(offset + text.Length); var held = false;

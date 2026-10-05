@@ -39,7 +39,7 @@ public sealed record FluxVaultInstallation(VaultCatalogueEndpoint Endpoint, Vaul
             throw new InvalidDataException("An installation requires its recorded Windows creator.");
     }
 
-    private static void RejectDuplicates(JsonElement element)
+    internal static void RejectDuplicates(JsonElement element)
     {
         if (element.ValueKind == JsonValueKind.Object)
         {

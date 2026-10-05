@@ -2,8 +2,10 @@
 
 The [once-only provisioning contract](provisioning-contract.md) and its
 [independent architecture assessment](architecture-review.md) define the missing
-NEXT-002 installation prerequisite. The approach is approved for implementation;
-provisioning code, native setup evidence and completed-change review are pending.
+NEXT-002 installation prerequisite. The provisioning component and explicit
+service setup mode are implemented. The [corrected preflight](setup-preflight-review.md)
+and [completed checkpoint review](setup-acceptance-review.md) accept the bounded
+native result below.
 Normal installation rollout is not approved or performed.
 
 The [read-only preflight](staging-preflight.json), produced by
@@ -21,10 +23,39 @@ two distinct exact preservation paths and the intended native operator, and its
 final observed output satisfies those assertions. Neither preview executed a
 move or used the proposed paths as deletion input.
 
-The first executable checkpoint remains authenticated native setup → joined
-setup host → ordinary product open → save/backup/history/verified recovery in
-the existing disposable fixture. Preserve partial state on failure; bootstrap
-publication is activation. Scope, architecture, creator access policy and the
-overall roadmap remain unchanged. Package identity, complete desktop/scale,
-final G01/deployment review, exact candidate/rollback and separate operational
-approval still apply.
+The first executable checkpoint passes in fresh fixture
+[`534f66d5c3814eeeafe4d5eb2c058d2b`](native/534f66d5c3814eeeafe4d5eb2c058d2b/result.json):
+authenticated native setup → joined setup host → ordinary product open →
+save/backup/history/independently hash-verified file and folder recovery.
+Thirty-six setup checks cover wrong native actor/correlation, existing empty/file
+targets, both namespace refusals, exclusive-creation races, publication
+cancellation/failure/collision, retained partial state, same-lifetime result replay
+and reopened-target refusal. The native owner passes 143 workflow checks,
+ungranted B is denied setup and nineteen ordinary commands, and SYSTEM records
+163 successful ordinary responses. Actual view-model/local-draft and real-store
+configuration preservation and save/backup sequencing remain covered.
+
+Core 105/105, Windows 154/154 and tooling 63/63 pass without skips. The final
+complete Release build has zero warnings/errors. An initial tooling selection
+included two existing database tests without their required owned integrity
+fixture; both refused execution. That diagnostic remains in
+`setup-tooling-combined.trx`; the corrected existing category filter passes.
+A concurrent copy diagnostic (`setup-release-copy-race.log`) is retained;
+joining the tooling host and rebuilding removes both transient MSB3026 retries.
+
+The first native attempt, `6eb5ebbe54e04cbaabf12fd52ac73ec6`, failed the protected
+ticket-parent guard before provisioning. The fixture now writes its nine flushed
+tickets below a fresh SYSTEM-owned `catalogue/setup-intents`, preserving the
+product guard. Its [failed-run census](failed-native-census.json) records the
+unaccepted run and all 41 captured identities/37 resources retired. The
+[accepted-run census](accepted-native-census.json) verifies 44 identities/43
+resources retired. Both roots/accounts/group/tasks are gone; normal services,
+authentication/configuration and unrelated primary edits remain unchanged.
+
+This runs real provisioning components over the private fixture pipe. The
+installed fixed-path Service.exe setup entry has not been executed. Next prepare
+the bounded creator handshake launcher, installer/service ordering, exact
+candidate/hash, database/authentication delta and checked legacy rollback before
+requesting the separately required installation approval. Scope, architecture,
+creator policy and the overall roadmap remain unchanged. Packaged identity,
+complete desktop/scale, final G01/deployment review and live rollout remain open.

@@ -1,4 +1,9 @@
 # Read-only census; never stops or deletes an unowned resource.
+param(
+    [string]$FixtureId='72370762bcfb46f79b3e5f5f9e83d5bf',
+    [string]$EvidenceDirectory=(Join-Path $PSScriptRoot ('native/'+$FixtureId)),
+    [string]$OutputPath=(Join-Path $PSScriptRoot 'resource-census.json'),
+    [switch]$AllowFailedRun)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $fixtureRepo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
@@ -24,12 +29,11 @@ $primary=@(foreach($pair in @(
     @{Path=$path;Unchanged=((Get-FileHash -LiteralPath $path).Hash -eq $pair.Hash)}
 })
 if(@($primary|Where-Object Unchanged -ne $true).Count){throw 'Unrelated primary-checkout edits changed.'}
-$fixtureId='72370762bcfb46f79b3e5f5f9e83d5bf'
-$evidence=Join-Path $PSScriptRoot ('native/'+$fixtureId)
+$evidence=[IO.Path]::GetFullPath($EvidenceDirectory)
 $owner=Get-Content -LiteralPath (Join-Path $evidence 'completed-owner.json') -Raw | ConvertFrom-Json
 $cleanup=Get-Content -LiteralPath (Join-Path $evidence 'cleanup.json') -Raw | ConvertFrom-Json
 $run=Get-Content -LiteralPath (Join-Path $evidence 'result.json') -Raw | ConvertFrom-Json
-if($owner.FixtureId -ne $fixtureId -or $run.Failure -or -not $cleanup.OwnedJobsJoined -or -not $cleanup.RootRemoved -or
+if($owner.FixtureId -ne $fixtureId -or ($run.Failure -and -not $AllowFailedRun) -or -not $cleanup.OwnedJobsJoined -or -not $cleanup.RootRemoved -or
     -not $cleanup.InstallationUnchanged -or @($owner.Resources | Where-Object State -ne 'Removed').Count){throw 'Owned native run/teardown is incomplete.'}
 $identities=@($owner.RunnerIdentity)+@($owner.Resources | Where-Object Kind -in 'Process','Postmaster' | ForEach-Object {$_.Identity})
 foreach($file in Get-ChildItem -LiteralPath $evidence -Filter '*-child.json'){$identities+=@(Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json)}
@@ -48,7 +52,7 @@ if(Get-LocalGroup -Name 'FVGate_261003' -ErrorAction SilentlyContinue){throw 'Ow
 if(Get-ScheduledTask -TaskName 'FluxVault-NEXT002-261003-SYSTEM' -ErrorAction SilentlyContinue){throw 'Owned SYSTEM task remains.'}
 @{ObservedUtc=[DateTime]::UtcNow.ToString('o');Worktree=$fixtureRepo;WorktreeBuildTestExecutablesAbsent=$true;
     NormalInstallationUnchanged=$true;OriginalServices=$current.Services;OriginalFiles=$current.Files;UnrelatedPrimaryEdits=$primary;
-    OwnedFixture=$fixtureId;CapturedIdentitiesAbsent=$identities.Count;ResourcesRemoved=$owner.Resources.Count;
+    OwnedFixture=$fixtureId;NativeRunAccepted=(-not [bool]$run.Failure);CapturedIdentitiesAbsent=$identities.Count;ResourcesRemoved=$owner.Resources.Count;
     OwnedRootAbsent=$true;OwnedAccountsGroupTaskAbsent=$true} |
-    ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $PSScriptRoot 'resource-census.json')
+    ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $OutputPath
 'No worktree build/test executables remain; normal services/authentication/configuration and unrelated edits are unchanged.'

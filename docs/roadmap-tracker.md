@@ -199,6 +199,17 @@ warnings/errors. All 55 captured identities and 56 resources are retired with
 the normal installation unchanged. Scheduling/VSS/reboot are not delivered;
 packaged identity, D01/scale, final G01 and approved rollout remain open.
 
+The [once-only installation checkpoint](verification/2026-10-05-next002-rollout-preparation/README.md)
+now passes actual protected setup → joined host → ordinary product open →
+save/backup/history/hash-verified recovery over the private fixture pipe. Native
+setup36/A143/B19 and Core105/Windows154/tooling63 pass; Release has zero
+warnings/errors and independent review accepts the bounded result. Both attempts
+retire 85 captured identities/80 resources with the normal installation unchanged.
+The bounded creator launcher, installer ordering, exact candidate/authentication
+delta/rollback, fixed-path live setup and separately approved rollout remain next;
+packaged identity, D01/scale and final G01 remain applicable. This adds no roadmap
+scope, migration/adoption or additional-vault capability.
+
 | ID | Priority | Capability | Status | Required verification |
 | --- | --- | --- | --- | --- |
 | NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |

@@ -14,10 +14,11 @@ public sealed class NamedPipeFluxVaultServer(
     IFluxVaultCallerContextProvider callerContextProvider,
     FluxVaultIpcLimits? limits = null,
     ILogger<NamedPipeFluxVaultServer>? logger = null,
-    TelemetryCollector? telemetryCollector = null)
+    TelemetryCollector? telemetryCollector = null,
+    Func<bool>? stopAfterConnection = null)
 {
     public const string DefaultPipeName = "FluxVault.Service";
-    private readonly FluxVaultIpcLimits limits = Validate(limits ?? new());
+    private readonly FluxVaultIpcLimits limits = Validate(limits ?? new(), stopAfterConnection);
     private readonly HashSet<Task> accepted = [];
     private readonly object acceptedGate = new();
     private int started;
@@ -71,6 +72,10 @@ public sealed class NamedPipeFluxVaultServer(
                     if (connected) anchor.Disconnect();
                     capacity.Release();
                 }
+                // Once-only setup may retire only after response delivery/receipt and
+                // native caller cleanup. Serial admission prevents another connection
+                // from observing a terminal handler while its response is still in flight.
+                if (stopAfterConnection?.Invoke() == true) return;
             }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
@@ -161,5 +166,11 @@ public sealed class NamedPipeFluxVaultServer(
         finally { caller?.Dispose(); }
     }
 
-    private static FluxVaultIpcLimits Validate(FluxVaultIpcLimits value) { value.Validate(); return value; }
+    private static FluxVaultIpcLimits Validate(FluxVaultIpcLimits value, Func<bool>? stopAfterConnection)
+    {
+        value.Validate();
+        if (stopAfterConnection is not null && (value.PendingListeners != 1 || value.MaximumConcurrentRequests != 1))
+            throw new ArgumentException("A terminal pipe lifetime requires one listener and one concurrent request.", nameof(stopAfterConnection));
+        return value;
+    }
 }

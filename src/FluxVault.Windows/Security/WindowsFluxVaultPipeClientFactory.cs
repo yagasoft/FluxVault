@@ -19,6 +19,9 @@ public sealed class WindowsFluxVaultPipeClientFactory : IFluxVaultPipeClientFact
     public static WindowsFluxVaultPipeClientFactory ForService() =>
         new(NamedPipeFluxVaultServer.DefaultPipeName, WindowsPipeSecurity.SystemSid);
 
+    public static WindowsFluxVaultPipeClientFactory ForSetup() =>
+        new(WindowsFluxVaultPipeServerFactory.SetupPipeName, WindowsPipeSecurity.SystemSid);
+
     public static WindowsFluxVaultPipeClientFactory ForPrivateFixture(string pipeName, string expectedServerSid)
     {
         WindowsPipeSecurity.ValidateFixtureName(pipeName);

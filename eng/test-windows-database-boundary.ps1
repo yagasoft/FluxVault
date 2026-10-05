@@ -211,6 +211,12 @@ function Invoke-SystemActor {
                 if ([DateTime]::UtcNow -gt $deadline) { throw 'Caller file server readiness exceeded its deadline.' }
                 Start-Sleep -Milliseconds 100
             }
+            if($RunSingleVaultTests) {
+                $setupDenied=Invoke-UserActor 'B' $HostAddress $ClientKind
+                $setupProof=@($setupDenied.Results | Where-Object Kind -eq 'CallerFiles')
+                if($setupProof.Count -ne 1 -or -not $setupProof[0].Result.SetupWrongActorDenied -or -not $setupProof[0].Result.NoIdentityOrData){throw 'Native setup wrong-actor refusal did not complete.'}
+                $fixtureObservations.Add(@{NativeSetupDenied=$setupDenied})
+            }
             foreach ($actor in @('A','B')) {
                 $native=Invoke-UserActor $actor $HostAddress $ClientKind
                 $fixtureObservations.Add(@{NativeCallerFiles=$native})
@@ -752,6 +758,15 @@ function Remove-OwnedFixture {
         $source=Join-Path $fixtureRoot ('runtime/'+$name)
         if(Test-Path -LiteralPath $source){Assert-VaultFixtureTrustedPath $source;Copy-Item -LiteralPath $source -Destination (Join-Path $fixtureEvidence $name)}
     }
+    foreach($name in @('installation-ticket.json','setup-existing-empty.json','setup-existing-file.json','setup-metadata-namespace.json',
+        'setup-control-namespace.json','setup-creation-race.json','setup-cancel-publication.json','setup-failed-publication.json','setup-activation-collision.json')) {
+        $source=Join-Path $fixtureRoot ('catalogue/setup-intents/'+$name)
+        if(Test-Path -LiteralPath $source){
+            Assert-VaultFixtureTrustedPath $source
+            if((Get-Item -LiteralPath $source).Length -gt 1048576){throw 'Protected setup ticket exceeds its evidence bound.'}
+            Copy-Item -LiteralPath $source -Destination (Join-Path $fixtureEvidence $name)
+        }
+    }
     $callerError=Join-Path $fixtureRoot 'runtime/caller-server-error.json'
     if(Test-Path -LiteralPath $callerError){Assert-VaultFixtureTrustedPath $callerError;Copy-Item -LiteralPath $callerError -Destination (Join-Path $fixtureEvidence 'caller-server-error.json')}
     foreach($diagnostic in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'output-System') -File -ErrorAction SilentlyContinue | Where-Object {$_.Name -match '^[0-9a-f]{32}-result\.json$'}){
@@ -981,7 +996,8 @@ host all all ::1/128 reject
         $fixtureObservations.Add(@{NativeCallerFiles=$native})
         $proof=@($native.Results | Where-Object {$_.Kind -eq 'CallerFiles'})
         if($proof.Count -ne 1 -or $proof[0].Result.Passed -lt 8 -or -not $proof[0].Result.NativeCallerTokens){throw 'Native caller file contracts did not complete.'}
-        if($RunSingleVaultTests -and (-not $proof[0].Result.SingleVault -or -not $proof[0].Result.ActualCatalogueAndExecutor -or -not $proof[0].Result.CreatorVerified -or -not $proof[0].Result.UngrantDenied)){throw 'Required native single-vault command flow did not complete.'}
+        if($RunSingleVaultTests -and (-not $proof[0].Result.SingleVault -or -not $proof[0].Result.ActualCatalogueAndExecutor -or -not $proof[0].Result.CreatorVerified -or -not $proof[0].Result.UngrantDenied -or
+            -not $proof[0].Result.ProvisioningProductVerified -or -not $proof[0].Result.SetupRequestsJoined -or $proof[0].Result.SetupRegressionCount -lt 25)){throw 'Required real setup/native single-vault command flow did not complete.'}
         if($RunSingleVaultTests) {
             $creatorProof=@($fixtureObservations | Where-Object { ($_ -is [Collections.IDictionary] -and $_.Contains('NativeCallerFiles') -or
                     $null -ne $_.PSObject.Properties['NativeCallerFiles']) -and $_.NativeCallerFiles.Actor -eq 'A' } |
@@ -993,7 +1009,7 @@ host all all ::1/128 reject
                 -not $creatorProof[0].Result.DrainCommandsVerified -or -not $creatorProof[0].Result.DiagnosticsCommandsVerified -or
                 -not $creatorProof[0].Result.SelectionCommandsVerified -or -not $proof[0].Result.SelectionOutputCleaned -or
                 -not $creatorProof[0].Result.ProtectionStateCommandsVerified -or -not $creatorProof[0].Result.HistoryPagingVerified -or -not $creatorProof[0].Result.CurrentPagingVerified -or
-                -not $creatorProof[0].Result.LocalProtectionDraftVerified -or -not $creatorProof[0].Result.LockedSourceBoundaryVerified -or
+                -not $creatorProof[0].Result.LocalProtectionDraftVerified -or -not $creatorProof[0].Result.LockedSourceBoundaryVerified -or -not $creatorProof[0].Result.ProvisioningSetupVerified -or
                 $deniedProof.Count -ne 1 -or $deniedProof[0].Result.MaintenanceDenied -ne 19 -or -not $proof[0].Result.DiagnosticsOutputCleaned -or
                 -not $proof[0].Result.ProtectedRehearsalOutputCleaned -or -not $proof[0].Result.DrainEffectVerified) {
                 throw 'Required current maintenance proof is missing; rebuild the Release test host before running.'

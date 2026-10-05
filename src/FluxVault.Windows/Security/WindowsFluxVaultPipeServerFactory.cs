@@ -29,6 +29,15 @@ public sealed class WindowsFluxVaultPipeServerFactory : IFluxVaultPipeServerFact
         return new(NamedPipeFluxVaultServer.DefaultPipeName, WindowsPipeSecurity.SystemSid);
     }
 
+    public const string SetupPipeName = "FluxVault.Setup";
+    public static WindowsFluxVaultPipeServerFactory ForSetup()
+    {
+        using var identity = WindowsIdentity.GetCurrent();
+        if (identity.User is null || !WindowsPipeSecurity.SystemSid.Equals(identity.User) || identity.ImpersonationLevel != TokenImpersonationLevel.None)
+            throw new UnauthorizedAccessException("The setup pipe must be created by LocalSystem without impersonation.");
+        return new(SetupPipeName, WindowsPipeSecurity.SystemSid);
+    }
+
     public static WindowsFluxVaultPipeServerFactory ForPrivateFixture(string pipeName)
     {
         WindowsPipeSecurity.ValidateFixtureName(pipeName);

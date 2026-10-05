@@ -89,13 +89,18 @@ retired; normal installation is unchanged. No scheduling, VSS, reboot capability
 rollout authority or wider roadmap scope is added. Final G01 remains separate.
 
 The [installation preparation](../../verification/2026-10-05-next002-rollout-preparation/README.md)
-now has an independently reviewed once-only native-creator provisioning contract.
-It requires full freshness checks before mutation, exclusive protected creation,
-fixed setup-pipe ownership, a latched partial attempt and bootstrap activation
-semantics. Fresh read-only observations match the 204 installed v1.0.4 payload
-files and retained setup, with normal services/data unchanged. Product setup
-implementation and its native end-to-end checkpoint remain next; this is not
-rollout readiness or operational approval.
+now implements the independently reviewed once-only native-creator provisioning
+contract and passes its real component/private-pipe setup → joined host → ordinary
+open → save/backup/history/hash-verified recovery checkpoint. Full target/both
+namespace checks precede effects, creation is exclusive/protected, partial
+attempts remain latched and require-new bootstrap publication activates the vault.
+Native setup36/A143/B19, Core105/Windows154/tooling63 and the zero-warning Release
+build pass; independent review accepts the checkpoint. Both owned attempts retire
+85 captured identities/80 resources, preserving normal services/data and unrelated
+edits. Next prepare the bounded creator launcher, installer/service ordering,
+exact candidate/authentication delta/rollback and separately approved rollout.
+Fixed-path Service.exe execution, packaged identity, D01/scale and final G01 stay
+open. The overall roadmap and architecture are unchanged.
 
 ## UI scope
 

@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4125c683-81ec-4417-92e4-2d969fb26a11" name="os008@OS008-HOME 2026-10-05 08:19:44" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T08:19:44.8406283+03:00" queuing="2026-10-05T08:19:44.8406284+03:00" start="2026-10-05T08:19:43.9273969+03:00" finish="2026-10-05T08:19:44.8714678+03:00" />
+  <TestSettings name="default" id="32bf3f9e-97b6-4510-ad7c-180bea57ce50">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_08_19_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1c49c6ec-da47-4058-9b56-be26a2228086" testId="e43c25bc-28f5-b4a3-fdb0-a76524d92aa5" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;bootstrap-is-ancestor&quot;)" computerName="OS008-HOME" duration="00:00:00.0003244" startTime="2026-10-05T08:19:44.8173866+03:00" endTime="2026-10-05T08:19:44.8174111+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c49c6ec-da47-4058-9b56-be26a2228086">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(String defect) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProvisioningTicketTests.cs:line 66&#xD;
+   at InvokeStub_ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e84af7c1-a087-44ee-86a9-4c12714362d5" testId="a677a331-6e8f-7536-f29d-afe7d85ce25d" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;timeout&quot;)" computerName="OS008-HOME" duration="00:00:00.0003728" startTime="2026-10-05T08:19:44.8172305+03:00" endTime="2026-10-05T08:19:44.8172591+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e84af7c1-a087-44ee-86a9-4c12714362d5" />
+    <UnitTestResult executionId="e170312d-a157-477a-8b24-3d253fc59314" testId="37e98e98-9271-4ad8-f091-686d596829bf" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;relative&quot;)" computerName="OS008-HOME" duration="00:00:00.0016194" startTime="2026-10-05T08:19:44.7865398+03:00" endTime="2026-10-05T08:19:44.7867977+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e170312d-a157-477a-8b24-3d253fc59314" />
+    <UnitTestResult executionId="4928c7f3-556b-450f-91f0-cf51a49f1539" testId="15eee17f-1888-7168-7eef-cac6907c4a71" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;bootstrap-is-storage&quot;)" computerName="OS008-HOME" duration="00:00:00.2235704" startTime="2026-10-05T08:19:44.5388853+03:00" endTime="2026-10-05T08:19:44.7741115+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4928c7f3-556b-450f-91f0-cf51a49f1539">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(String defect) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProvisioningTicketTests.cs:line 66&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f1ea90f8-984a-4b7a-a662-52086d7c6947" testId="a822ec79-03a7-c194-55ad-79285c66e8af" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;unknown&quot;)" computerName="OS008-HOME" duration="00:00:00.0007106" startTime="2026-10-05T08:19:44.7880244+03:00" endTime="2026-10-05T08:19:44.7880633+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f1ea90f8-984a-4b7a-a662-52086d7c6947" />
+    <UnitTestResult executionId="b29f99ac-8f34-4688-995a-0fa772a44ce9" testId="0d4de158-5701-e0c2-509c-d7467c6b1a27" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;nested-duplicate&quot;)" computerName="OS008-HOME" duration="00:00:00.0002057" startTime="2026-10-05T08:19:44.8173128+03:00" endTime="2026-10-05T08:19:44.8173379+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b29f99ac-8f34-4688-995a-0fa772a44ce9" />
+    <UnitTestResult executionId="02cd3019-4ebe-4da7-a0a9-73dcdcf69904" testId="b2557117-58f3-48ae-4291-cb0e9ec4667f" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;overlapping-root&quot;)" computerName="OS008-HOME" duration="00:00:00.0003951" startTime="2026-10-05T08:19:44.7881962+03:00" endTime="2026-10-05T08:19:44.7882207+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="02cd3019-4ebe-4da7-a0a9-73dcdcf69904" />
+    <UnitTestResult executionId="2445871d-c692-4e29-9899-05a7d9813cc4" testId="2d8350a5-e5f6-15c9-72e0-aaef5e19b43f" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Setup_accepts_only_its_exact_correlated_handshake_and_native_intended_creator" computerName="OS008-HOME" duration="00:00:00.0043392" startTime="2026-10-05T08:19:44.8186453+03:00" endTime="2026-10-05T08:19:44.8186707+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2445871d-c692-4e29-9899-05a7d9813cc4" />
+    <UnitTestResult executionId="6c3c9b27-0ff5-4238-822c-b8a08c909f37" testId="146a4108-e7a6-54b6-7b14-e0bb2c028c5b" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;oversized&quot;)" computerName="OS008-HOME" duration="00:00:00.0001292" startTime="2026-10-05T08:19:44.8170102+03:00" endTime="2026-10-05T08:19:44.8170487+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6c3c9b27-0ff5-4238-822c-b8a08c909f37" />
+    <UnitTestResult executionId="a738ecbe-0e1e-48bd-96db-309c5fea130c" testId="9c596c11-9f2f-5313-76f7-7f3de41473cf" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;schema&quot;)" computerName="OS008-HOME" duration="00:00:00.0003768" startTime="2026-10-05T08:19:44.7888289+03:00" endTime="2026-10-05T08:19:44.7888536+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a738ecbe-0e1e-48bd-96db-309c5fea130c" />
+    <UnitTestResult executionId="a0f84ed3-e64e-4e45-8b83-a778f42b8327" testId="f48dfdd0-fec2-f2cf-a401-41811358ad6f" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Strict_ticket_round_trip_declares_the_complete_fresh_target_without_creating_it" computerName="OS008-HOME" duration="00:00:00.0116716" startTime="2026-10-05T08:19:44.8185291+03:00" endTime="2026-10-05T08:19:44.8185581+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a0f84ed3-e64e-4e45-8b83-a778f42b8327" />
+    <UnitTestResult executionId="9ad45c65-818c-4afc-9536-3a23164d497b" testId="e31326d0-1559-4edb-2391-b3afc04f4b40" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;duplicate&quot;)" computerName="OS008-HOME" duration="00:00:00.0002261" startTime="2026-10-05T08:19:44.7881196+03:00" endTime="2026-10-05T08:19:44.7881481+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9ad45c65-818c-4afc-9536-3a23164d497b" />
+    <UnitTestResult executionId="803af179-43b0-49fc-a8f1-bbc7242051e8" testId="73027a18-e509-cddf-8ad3-b1fe7c107291" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;binding&quot;)" computerName="OS008-HOME" duration="00:00:00.0004308" startTime="2026-10-05T08:19:44.7877894+03:00" endTime="2026-10-05T08:19:44.7878332+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="803af179-43b0-49fc-a8f1-bbc7242051e8" />
+    <UnitTestResult executionId="cd62d5b6-bb6c-43ec-8e14-3bc7562fb045" testId="d16aa916-e0f5-b269-e15e-59b7b8fde84d" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;invalid-configuration&quot;)" computerName="OS008-HOME" duration="00:00:00.0004219" startTime="2026-10-05T08:19:44.7887506+03:00" endTime="2026-10-05T08:19:44.7887772+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd62d5b6-bb6c-43ec-8e14-3bc7562fb045" />
+    <UnitTestResult executionId="0e6fb062-153a-4a86-97d3-a57b4f957224" testId="d9ca60e8-569a-366f-a0b4-2530ef3b2738" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;pending-is-storage&quot;)" computerName="OS008-HOME" duration="00:00:00.0006866" startTime="2026-10-05T08:19:44.7882654+03:00" endTime="2026-10-05T08:19:44.7883121+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0e6fb062-153a-4a86-97d3-a57b4f957224">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(String defect) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProvisioningTicketTests.cs:line 66&#xD;
+   at InvokeStub_ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5dad296f-8414-4205-b242-c3016a1e235d" testId="76086d67-e80f-3998-b8bc-5386d894cdeb" testName="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;metadata&quot;)" computerName="OS008-HOME" duration="00:00:00.0003355" startTime="2026-10-05T08:19:44.8177712+03:00" endTime="2026-10-05T08:19:44.8177963+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5dad296f-8414-4205-b242-c3016a1e235d" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;bootstrap-is-ancestor&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="e43c25bc-28f5-b4a3-fdb0-a76524d92aa5">
+      <Execution id="1c49c6ec-da47-4058-9b56-be26a2228086" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;duplicate&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="e31326d0-1559-4edb-2391-b3afc04f4b40">
+      <Execution id="9ad45c65-818c-4afc-9536-3a23164d497b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Strict_ticket_round_trip_declares_the_complete_fresh_target_without_creating_it" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="f48dfdd0-fec2-f2cf-a401-41811358ad6f">
+      <Execution id="a0f84ed3-e64e-4e45-8b83-a778f42b8327" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Strict_ticket_round_trip_declares_the_complete_fresh_target_without_creating_it" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;timeout&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="a677a331-6e8f-7536-f29d-afe7d85ce25d">
+      <Execution id="e84af7c1-a087-44ee-86a9-4c12714362d5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Setup_accepts_only_its_exact_correlated_handshake_and_native_intended_creator" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="2d8350a5-e5f6-15c9-72e0-aaef5e19b43f">
+      <Execution id="2445871d-c692-4e29-9899-05a7d9813cc4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Setup_accepts_only_its_exact_correlated_handshake_and_native_intended_creator" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;oversized&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="146a4108-e7a6-54b6-7b14-e0bb2c028c5b">
+      <Execution id="6c3c9b27-0ff5-4238-822c-b8a08c909f37" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;binding&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="73027a18-e509-cddf-8ad3-b1fe7c107291">
+      <Execution id="803af179-43b0-49fc-a8f1-bbc7242051e8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;bootstrap-is-storage&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="15eee17f-1888-7168-7eef-cac6907c4a71">
+      <Execution id="4928c7f3-556b-450f-91f0-cf51a49f1539" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;invalid-configuration&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="d16aa916-e0f5-b269-e15e-59b7b8fde84d">
+      <Execution id="cd62d5b6-bb6c-43ec-8e14-3bc7562fb045" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;pending-is-storage&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="d9ca60e8-569a-366f-a0b4-2530ef3b2738">
+      <Execution id="0e6fb062-153a-4a86-97d3-a57b4f957224" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;unknown&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="a822ec79-03a7-c194-55ad-79285c66e8af">
+      <Execution id="f1ea90f8-984a-4b7a-a662-52086d7c6947" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;relative&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="37e98e98-9271-4ad8-f091-686d596829bf">
+      <Execution id="e170312d-a157-477a-8b24-3d253fc59314" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;metadata&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="76086d67-e80f-3998-b8bc-5386d894cdeb">
+      <Execution id="5dad296f-8414-4205-b242-c3016a1e235d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;nested-duplicate&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="0d4de158-5701-e0c2-509c-d7467c6b1a27">
+      <Execution id="b29f99ac-8f34-4688-995a-0fa772a44ce9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;schema&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="9c596c11-9f2f-5313-76f7-7f3de41473cf">
+      <Execution id="a738ecbe-0e1e-48bd-96db-309c5fea130c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: &quot;overlapping-root&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="b2557117-58f3-48ae-4291-cb0e9ec4667f">
+      <Execution id="02cd3019-4ebe-4da7-a0a9-73dcdcf69904" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProvisioningTicketTests" name="Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e43c25bc-28f5-b4a3-fdb0-a76524d92aa5" executionId="1c49c6ec-da47-4058-9b56-be26a2228086" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a677a331-6e8f-7536-f29d-afe7d85ce25d" executionId="e84af7c1-a087-44ee-86a9-4c12714362d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="37e98e98-9271-4ad8-f091-686d596829bf" executionId="e170312d-a157-477a-8b24-3d253fc59314" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="15eee17f-1888-7168-7eef-cac6907c4a71" executionId="4928c7f3-556b-450f-91f0-cf51a49f1539" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a822ec79-03a7-c194-55ad-79285c66e8af" executionId="f1ea90f8-984a-4b7a-a662-52086d7c6947" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d4de158-5701-e0c2-509c-d7467c6b1a27" executionId="b29f99ac-8f34-4688-995a-0fa772a44ce9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2557117-58f3-48ae-4291-cb0e9ec4667f" executionId="02cd3019-4ebe-4da7-a0a9-73dcdcf69904" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2d8350a5-e5f6-15c9-72e0-aaef5e19b43f" executionId="2445871d-c692-4e29-9899-05a7d9813cc4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="146a4108-e7a6-54b6-7b14-e0bb2c028c5b" executionId="6c3c9b27-0ff5-4238-822c-b8a08c909f37" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9c596c11-9f2f-5313-76f7-7f3de41473cf" executionId="a738ecbe-0e1e-48bd-96db-309c5fea130c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f48dfdd0-fec2-f2cf-a401-41811358ad6f" executionId="a0f84ed3-e64e-4e45-8b83-a778f42b8327" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e31326d0-1559-4edb-2391-b3afc04f4b40" executionId="9ad45c65-818c-4afc-9536-3a23164d497b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="73027a18-e509-cddf-8ad3-b1fe7c107291" executionId="803af179-43b0-49fc-a8f1-bbc7242051e8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d16aa916-e0f5-b269-e15e-59b7b8fde84d" executionId="cd62d5b6-bb6c-43ec-8e14-3bc7562fb045" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d9ca60e8-569a-366f-a0b4-2530ef3b2738" executionId="0e6fb062-153a-4a86-97d3-a57b4f957224" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="76086d67-e80f-3998-b8bc-5386d894cdeb" executionId="5dad296f-8414-4205-b242-c3016a1e235d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="16" executed="16" passed="13" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.47]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.47]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProvisioningTicketTests.cs(66,0): at FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(String defect)&#xD;
+[xUnit.net 00:00:00.47]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.47]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.48]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.48]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProvisioningTicketTests.cs(66,0): at FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(String defect)&#xD;
+[xUnit.net 00:00:00.48]            at InvokeStub_ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.51]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.51]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProvisioningTicketTests.cs(66,0): at FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(String defect)&#xD;
+[xUnit.net 00:00:00.51]            at InvokeStub_ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.51]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.52]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T08:19:44.7766031+03:00">
+        <Text>[xUnit.net 00:00:00.47]     FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: "bootstrap-is-storage") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T08:19:44.7885074+03:00">
+        <Text>[xUnit.net 00:00:00.48]     FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: "pending-is-storage") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T08:19:44.8459004+03:00">
+        <Text>[xUnit.net 00:00:00.51]     FluxVault.Core.Tests.ProvisioningTicketTests.Ambiguous_or_inconsistent_targets_are_rejected_before_any_effect(defect: "bootstrap-is-ancestor") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

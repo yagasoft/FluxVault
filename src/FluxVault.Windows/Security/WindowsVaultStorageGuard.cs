@@ -87,7 +87,7 @@ public sealed class WindowsVaultStorageGuard
         catch { file?.Dispose(); foreach (var pin in Enumerable.Reverse(pins)) pin.Dispose(); throw; }
     }
 
-    private static void CheckDescriptor(SafeFileHandle handle, string? expectedOwner, IReadOnlySet<string> trusted, bool storageRoot)
+    internal static void CheckDescriptor(SafeFileHandle handle, string? expectedOwner, IReadOnlySet<string> trusted, bool storageRoot)
     {
         var error = GetSecurityInfo(handle, 1, 5, out _, out _, out _, out _, out var descriptor);
         if (error != 0) throw new IOException("Protected storage security could not be read.", new Win32Exception((int)error));

@@ -33,6 +33,15 @@ internal static class WindowsSingleVaultProbe
         var pipe = "FluxVault.Tests." + fixture.FixtureId;
         if (actor == "System") return await RunServerAsync(fixture, pipe, deadline);
         var client = new NamedPipeFluxVaultClient(WindowsFluxVaultPipeClientFactory.ForPrivateFixture(pipe, fixture.Actors["System"]));
+        var productReady = Path.Combine(fixture.Root, "runtime", "caller-files-product-ready");
+        if (actor == "B" && !File.Exists(productReady))
+        {
+            var setupDenial = await client.SendAsync(FluxVaultIpcRequest.GetStatus() with { OperationId = Guid.ParseExact(fixture.FixtureId, "N") }, deadline.Token);
+            if (setupDenial.Success || setupDenial.ErrorCode != FluxVaultIpcErrorCode.Denied || setupDenial.VaultId is not null || setupDenial.Status is not null)
+                throw new InvalidOperationException("Native B bypassed setup creator admission.");
+            Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, SetupWrongActorDenied = true, NoIdentityOrData = true }));
+            return 0;
+        }
         if (actor == "B")
         {
             var denied = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), deadline.Token);
@@ -62,6 +71,15 @@ internal static class WindowsSingleVaultProbe
             return 0;
         }
         var checks = new List<string>();
+        var wrongSetup = await client.SendAsync(FluxVaultIpcRequest.GetStatus() with { OperationId = Guid.NewGuid() }, deadline.Token);
+        if (wrongSetup.Success || wrongSetup.ErrorCode != FluxVaultIpcErrorCode.Denied)
+            throw new InvalidOperationException("Wrong setup correlation was admitted.");
+        checks.Add("native creator with wrong setup correlation is refused without ending setup");
+        var setupResponse = await client.SendAsync(FluxVaultIpcRequest.GetStatus() with { OperationId = Guid.ParseExact(fixture.FixtureId, "N") }, deadline.Token);
+        if (!setupResponse.Success || setupResponse.VaultId?.Value != Guid.ParseExact(fixture.FixtureId, "N") || setupResponse.VaultRevision != 1)
+            throw new InvalidOperationException("Native authenticated product setup did not complete: " + setupResponse.ErrorMessage);
+        while (!File.Exists(productReady)) await Task.Delay(20, deadline.Token);
+        checks.Add("setup host joins before ordinary product runtime accepts the owner workflow");
         var output = Path.Combine(fixture.Root, "output-A");
         var source = Path.Combine(output, "office"); var cad = Path.Combine(output, "cad");
         var destination = Path.Combine(output, "destination");
@@ -360,7 +378,7 @@ internal static class WindowsSingleVaultProbe
             CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true,
             MaintenanceCommandsVerified = true, DrainCommandsVerified = true, DiagnosticsCommandsVerified = true, SelectionCommandsVerified = true,
             ProtectionStateCommandsVerified = true, HistoryPagingVerified = true, CurrentPagingVerified = true, LocalProtectionDraftVerified = true,
-            LockedSourceBoundaryVerified = true }));
+            LockedSourceBoundaryVerified = true, ProvisioningSetupVerified = true }));
         return 0;
 
         FluxVaultIpcRequest Bind(FluxVaultIpcRequest request) => request with { VaultId = id,
@@ -398,7 +416,6 @@ internal static class WindowsSingleVaultProbe
         var parent = Path.Combine(fixture.Root, "catalogue", "single"); CreateFreshPrivateRoot(parent);
         var repositoryPath = Path.Combine(parent, "repository"); var statePath = Path.Combine(parent, "state");
         var mirrorOne = Path.Combine(parent, "mirror-one"); var mirrorTwo = Path.Combine(parent, "mirror-two");
-        foreach (var path in new[] { repositoryPath, statePath, mirrorOne, mirrorTwo }) CreateFreshPrivateRoot(path);
         var metadata = MetadataStoreConfiguration.CreateDefault(statePath) with
         { Host = endpoint.Host, Port = endpoint.Port, DatabaseName = endpoint.Database, Username = endpoint.ServiceRole };
         var binding = new VaultBinding(new(endpoint.InstanceId), repositoryPath, statePath, metadata);
@@ -406,12 +423,44 @@ internal static class WindowsSingleVaultProbe
             RetentionPolicy = RetentionPolicy.CreateDefault() with { IsEnabled = false },
             MirrorSet = new([new("first", "First", mirrorOne, true), new("second", "Second", mirrorTwo, true)]) };
         await using var catalogue = new PostgreSqlVaultCatalogue(endpoint);
-        await catalogue.ProvisionAsync(deadline.Token);
+        var bootstrap = Path.Combine(statePath, "installation.json");
+        var ticket = new FluxVaultProvisioningTicket(new(endpoint, binding, fixture.Actors["A"]), bootstrap, configuration);
+        CreateFreshPrivateRoot(Path.Combine(fixture.Root, "catalogue", "setup-intents"));
+        var ticketPath = Path.Combine(fixture.Root, "catalogue", "setup-intents", "installation-ticket.json");
+        await WindowsProvisioningProbe.WriteTicketAsync(ticketPath, ticket, deadline.Token);
+        List<string> setupChecks;
+        await using (var setup = WindowsSingleVaultProvisioner.Open(ticketPath, bootstrap))
+        {
+            var probe = new WindowsProvisioningProbe(fixture, ticket, setup);
+            var setupServer = new NamedPipeFluxVaultServer(probe, WindowsFluxVaultPipeServerFactory.ForPrivateFixture(pipe),
+                new WindowsFluxVaultCallerContextProvider(), new() { PendingListeners = 1, MaximumConcurrentRequests = 1 }, stopAfterConnection: () => setup.Terminal);
+            var settingUp = setupServer.RunAsync(deadline.Token);
+            try
+            {
+                await File.WriteAllTextAsync(Path.Combine(fixture.Root, "runtime", "caller-files-ready.json"),
+                    JsonSerializer.Serialize(new { Pipe = pipe, SetupOnly = true }), deadline.Token);
+                await settingUp;
+            }
+            finally
+            {
+                if (!settingUp.IsCompleted) await deadline.CancelAsync();
+                await settingUp;
+            }
+            if (setup.Result?.Success != true || !probe.NativeWrongActorDenied) throw new InvalidOperationException("Owned setup did not complete.", setup.LastFailure);
+            setupChecks = probe.Checks;
+        }
+        var installed = await catalogue.VerifyInstallationAsync(ticket.Installation, deadline.Token);
+        if (installed.Access.OwnerSid != fixture.Actors["A"]) throw new InvalidOperationException("Product setup recorded another creator.");
+        try
+        {
+            await catalogue.VerifyInstallationAsync(ticket.Installation with { CreatorSid = fixture.Actors["B"] }, deadline.Token);
+            throw new InvalidOperationException("A different bootstrap creator was accepted.");
+        }
+        catch (VaultCatalogueException exception) when (exception.Failure == VaultCatalogueFailure.IdentityMismatch) { }
         await using (var store = new PostgreSqlRepositoryMetadataStore(binding))
         {
-            await store.ProvisionVaultAsync(deadline.Token);
+            await store.InitializeAsync(deadline.Token);
             var repository = new FileSystemChunkRepository(binding, new FastCdcChunker(new()), new Blake3ContentHasher(), new ZstdChunkCodec(), configuration.MirrorSet, store);
-            await repository.ProvisionVaultStorageAsync(deadline.Token);
             foreach (var item in new[] { ("a.txt", WindowsSelectionRecoveryProbe.HistoricalFirst),
                 (Path.Combine("nested", "b.txt"), WindowsSelectionRecoveryProbe.HistoricalSecond) })
             {
@@ -421,12 +470,12 @@ internal static class WindowsSingleVaultProbe
                     DateTimeOffset.UtcNow, CaptureConsistency.BestEffort, CompressionPreference.Off, 1024, bytes), deadline.Token);
             }
         }
-        await using var handler = new ProvisionedFixtureHandler(fixture, endpoint, binding, configuration, catalogue);
+        await using var handler = new ProvisionedFixtureHandler(fixture, binding, await WindowsSingleVaultService.OpenAsync(bootstrap, deadline.Token));
         var server = new NamedPipeFluxVaultServer(handler, WindowsFluxVaultPipeServerFactory.ForPrivateFixture(pipe), new WindowsFluxVaultCallerContextProvider());
         var serving = server.RunAsync(deadline.Token);
         try
         {
-            await File.WriteAllTextAsync(Path.Combine(fixture.Root, "runtime", "caller-files-ready.json"), JsonSerializer.Serialize(new { Pipe = pipe }), deadline.Token);
+            await File.WriteAllTextAsync(Path.Combine(fixture.Root, "runtime", "caller-files-product-ready"), "product ready after joined setup", deadline.Token);
             while (!File.Exists(Path.Combine(fixture.Root, "runtime", "caller-files-stop")))
             {
                 var reopen = Path.Combine(fixture.Root,"runtime","caller-access-reopen");
@@ -453,20 +502,19 @@ internal static class WindowsSingleVaultProbe
             throw new InvalidOperationException("Diagnostics left staging output or wrote into a caller-denied directory.");
         Console.WriteLine(JsonSerializer.Serialize(new { Passed = handler.Completed, NativeCallerTokens = true, SingleVault = true, ProtectedProductComposition = true,
             ActualCatalogueAndExecutor = true, ProtectedRehearsalOutputCleaned = true, DrainEffectVerified = true,
-            DiagnosticsOutputCleaned = true, SelectionOutputCleaned = true, handler.CreatorVerified, handler.UngrantDenied, ExactInstalledBinding = binding.Id }));
+            DiagnosticsOutputCleaned = true, SelectionOutputCleaned = true, handler.CreatorVerified, handler.UngrantDenied, ExactInstalledBinding = binding.Id,
+            ProvisioningProductVerified = true, SetupRequestsJoined = true, SetupRegressionCount = setupChecks.Count, SetupChecks = setupChecks }));
         return 0;
     }
 
-    // Explicitly owned fixture provisioning, not a product request/lifecycle API. The
-    // trusted mission names the creator; owner SID is taken from the native pipe token.
-    // All commands after that one-time provision use the actual catalogue dispatcher.
-    private sealed class ProvisionedFixtureHandler(WindowsDatabaseProbeConfiguration fixture, VaultCatalogueEndpoint endpoint, VaultBinding binding,
-        FluxVaultConfiguration configuration, PostgreSqlVaultCatalogue catalogue)
+    // Observation/reopen wrapper only. Provisioning is the actual once-only product component above.
+    private sealed class ProvisionedFixtureHandler(WindowsDatabaseProbeConfiguration fixture, VaultBinding binding,
+        WindowsSingleVaultService opened)
         : IAuthenticatedFluxVaultRequestHandler, IAsyncDisposable
     {
         private readonly SemaphoreSlim initialisation = new(1, 1);
-        internal bool CreatorVerified; internal bool UngrantDenied; internal int Completed;
-        private WindowsSingleVaultService? service;
+        internal bool CreatorVerified = true; internal bool UngrantDenied; internal int Completed;
+        private WindowsSingleVaultService? service = opened;
         internal async Task ReopenAsync(CancellationToken token)
         {
             await initialisation.WaitAsync(token);
@@ -480,30 +528,6 @@ internal static class WindowsSingleVaultProbe
         }
         public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken token)
         {
-            await initialisation.WaitAsync(token);
-            try
-            {
-                if (!CreatorVerified && caller.UserSid == fixture.Actors["A"] && caller.ImpersonationPermitted && request.Command == FluxVaultIpcCommand.GetStatus && request.VaultId is null)
-                {
-                    var installed = await catalogue.InitializeAsync(caller, binding, "FluxVault", configuration, token);
-                    CreatorVerified = installed.Access.OwnerSid == caller.UserSid;
-                    var installation = new FluxVaultInstallation(endpoint, binding, caller.UserSid);
-                    try
-                    {
-                        await catalogue.VerifyInstallationAsync(installation with { CreatorSid = fixture.Actors["B"] }, token);
-                        throw new InvalidOperationException("A different bootstrap creator was accepted.");
-                    }
-                    catch (VaultCatalogueException exception) when (exception.Failure == VaultCatalogueFailure.IdentityMismatch) { }
-                    var bootstrap = Path.Combine(binding.StateRoot, "installation.json");
-                    var temp = bootstrap + ".tmp";
-                    await File.WriteAllBytesAsync(temp, JsonSerializer.SerializeToUtf8Bytes(installation), token);
-                    var fileAcl = new FileInfo(temp).GetAccessControl(); fileAcl.SetOwner(new SecurityIdentifier("S-1-5-18"));
-                    new FileInfo(temp).SetAccessControl(fileAcl);
-                    File.Move(temp, bootstrap, overwrite: false);
-                    service = await WindowsSingleVaultService.OpenAsync(bootstrap, token);
-                }
-            }
-            finally { initialisation.Release(); }
             var response = service is null
                 ? FluxVaultIpcResponse.Failure("The installation is not initialised.") with { ErrorCode = FluxVaultIpcErrorCode.Denied }
                 : await service.HandleAsync(caller, request, token);

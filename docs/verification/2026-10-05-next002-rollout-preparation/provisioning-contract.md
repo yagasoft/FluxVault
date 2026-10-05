@@ -37,6 +37,11 @@ needed.
 - A strict bounded ticket is read through the existing protected-file/pinning
   guard. It names one installation/operation identity, protected binding/endpoint,
   intended creator SID, finite setup deadline and fresh initial configuration.
+  The ticket is limited to 1 MiB/depth 32 and the exact serialized bootstrap to
+  64 KiB/depth 16. Validate the bootstrap and its deterministic `.provisioning`
+  file path, reject file/directory collisions, and recheck the normalised metadata
+  binding before effects. Each directory parent must already exist or itself be
+  an explicitly planned fresh root; do not create undeclared intermediate paths.
   It durably identifies every potential root, file and database namespace before
   creation, making interrupted owned resources attributable. The ticket's
   intended SID restricts admission; the native authenticated pipe
@@ -66,8 +71,12 @@ needed.
   becomes available before success. After publication, cancellation/acknowledgement
   loss cannot be reported as proof that nothing activated; preserve that exact
   installation and reconcile it through ordinary authorised status.
-- Repeated handshake after a successful same-lifetime setup returns that exact
-  recorded installation result. Reopened setup does not create another vault or
+- The component records the exact result for same-lifetime replay. The setup
+  transport admits one request at a time and terminates only after the authorised
+  attempt's response/receipt handling and native caller cleanup finish. A lost
+  receipt has a finite deadline. Reconnection after shutdown uses ordinary
+  bootstrap/status reconciliation. Denied/malformed requests do not end setup.
+  Reopened setup does not create another vault or
   repair/adopt partial state. A lost acknowledgement is reconciled against the
   protected bootstrap and ordinary authorised status, never by blind provisioning.
 

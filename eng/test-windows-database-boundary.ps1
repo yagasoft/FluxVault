@@ -241,7 +241,7 @@ function Invoke-SystemActor {
                 $replacementIdentity.StartedUtc -eq $fixtureOriginalServer.StartedUtc){throw 'Server process was not replaced.'}
             $fixtureObservations.Add(@{NativeRestartIdentity=@{Original=$fixtureOriginalServer;Replacement=$replacementIdentity;OriginalJoinedBeforeReplacement=$true}})
             $creator=Invoke-UserActor 'A' '127.0.0.1' 'RestartAfter'
-            Assert-RestartCreator $creator 'after' 14
+            Assert-RestartCreator $creator 'after' 17
             $fixtureObservations.Add(@{NativeRestart=$creator})
             Invoke-RestartGrant 'revoke'
             'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/restart-stop')
@@ -372,7 +372,7 @@ function Invoke-RestartGrant {
         Add-LocalGroupMember -SID $group.SID -Member $user
         Assert-RestartAccessActor (Invoke-UserActor 'B' '127.0.0.1' 'AccessGroup') 9
         $creator=Invoke-UserActor 'A' '127.0.0.1' 'RestartBefore'
-        Assert-RestartCreator $creator 'before' 6
+        Assert-RestartCreator $creator 'before' 8
         $fixtureObservations.Add(@{NativeRestart=$creator})
     }
 }

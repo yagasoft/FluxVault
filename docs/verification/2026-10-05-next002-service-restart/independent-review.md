@@ -26,3 +26,14 @@ are retired. Normal installation snapshots remain unchanged. The 59 focused
 tests and zero-warning Release build pass. No blocking runtime or teardown
 finding remained. This acceptance excludes interrupted effects, reboot,
 packaged identity, full S07/G01 and normal rollout.
+
+The admitted-unknown follow-on was preflight-approved for fixture
+`2b3ee620d8064a03a9537f36c1fb79af`, without a product hook or new resource class.
+Its original unknown preview receipt persists across clean replacement. Removing
+only A's fixed owned output makes a repeated effect observable; exact replay
+must not recreate it. The reviewer inspected A8/A17, the exact unknown receipt
+and no recreated output, successful teardown and the final zero-warning build,
+then accepted this bounded extension. The two-fixture census proves all 58
+captured identities absent and normal snapshots unchanged. This remains an
+admitted unknown outcome across clean replacement, not a forced crash or an
+interrupted effect.

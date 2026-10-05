@@ -151,12 +151,12 @@ milestone. No runtime or installation change was needed. Wider S06/G01 and
 normal rollout gates remain open.
 
 The [native process-replacement checks](verification/2026-10-05-next002-service-restart/README.md)
-prove exact configuration/receipt persistence, replay without duplicate history,
+prove exact configuration/receipt persistence, retained unknown outcomes without re-execution, replay without duplicate history,
 explicit group access/revocation and old/new independently hashed recovery
-across clean SYSTEM server-process replacement. All 48 added native checks and
+across clean SYSTEM server-process replacement. All 53 added native checks and
 59 focused tooling tests pass; the Release build has zero warnings/errors.
-Independent review accepts runtime and teardown: both servers, 29 captured
-processes and all 56 owned resources are retired, with normal installation
+Independent review accepts runtime and teardown: all four servers, 58 captured
+processes and all 112 owned resources across both rehearsals are retired, with normal installation
 unchanged. Interrupted effects, reboot, packaged identity and full S07/G01 and
 rollout gates remain open.
 

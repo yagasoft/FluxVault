@@ -68,8 +68,17 @@ internal static class WindowsServiceRestartProbe
                 Path.Combine(fixture.Root, "output-A", "restart-before.docx"))));
             Check(restored.RestoreResult?.VerifiedLogicalBytes == sourceBytes && Hash(restored.OutputPath!) == hash,
                 "pre-restart recovery independently matches the captured source");
+            var unknownRequest = Bind(FluxVaultIpcRequest.RestoreVersionPreview(version.VersionId) with { OutputPath = restored.OutputPath });
+            var refusedPreview = await client.SendAsync(unknownRequest, deadline.Token);
+            Check(!refusedPreview.Success && refusedPreview.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown && Hash(restored.OutputPath!) == hash,
+                "admitted new-file preview fails on the existing destination without changing its bytes");
+            var unknownReceipt = await client.SendAsync(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null,
+                VaultId: id, OperationId: unknownRequest.OperationId), deadline.Token);
+            Check(!unknownReceipt.Success && unknownReceipt.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown &&
+                unknownReceipt.OperationId == unknownRequest.OperationId && unknownReceipt.VaultRevision == revision && unknownReceipt.OutputPath is null,
+                "the admitted failed effect has its durable unknown receipt rather than a successful publication");
             var baseline = new Checkpoint(fixture.FixtureId, accepted.Status.Configuration, revision,
-                saveRequest, saved, backupRequest, backup, version.VersionId, hash, sourceBytes);
+                saveRequest, saved, backupRequest, backup, version.VersionId, hash, sourceBytes, unknownRequest, unknownReceipt);
             var bytes = JsonSerializer.SerializeToUtf8Bytes(baseline, Json);
             if (bytes.Length > CheckpointLimit) throw new InvalidDataException("Restart checkpoint exceeds its bound.");
             WindowsDatabaseProbeConfiguration.RejectReparseComponents(checkpointPath);
@@ -99,6 +108,17 @@ internal static class WindowsServiceRestartProbe
             await File.WriteAllTextAsync(sourcePath, "changed native source after service process replacement " + fixture.FixtureId, deadline.Token);
             var changedHash = Hash(sourcePath);
             Check(changedHash != baseline.SourceHash, "independent source hash differs before receipt replay");
+            var formerlyOccupied = Path.Combine(fixture.Root, "output-A", "restart-before.docx");
+            Check(Hash(formerlyOccupied) == baseline.SourceHash,
+                "refused pre-restart preview destination retains its original independent hash");
+            File.Delete(formerlyOccupied); // Make duplicate execution observably possible; only native A removes its own output.
+            var stillUnknown = await client.SendAsync(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null,
+                VaultId: id, OperationId: baseline.UnknownRequest.OperationId), deadline.Token);
+            Check(Same(stillUnknown, baseline.UnknownReceipt) && stillUnknown.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown && !stillUnknown.Success,
+                "original admitted unknown receipt survives actual process replacement without invented success");
+            var unknownReplay = await client.SendAsync(baseline.UnknownRequest, deadline.Token);
+            Check(Same(unknownReplay, baseline.UnknownReceipt) && !File.Exists(formerlyOccupied),
+                "unknown request replay cannot recreate output even after the original destination obstruction is removed");
             foreach (var pair in new[] { (baseline.SaveRequest, baseline.SaveResponse), (baseline.BackupRequest, baseline.BackupResponse) })
             {
                 var receipt = await Send(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null,
@@ -127,7 +147,8 @@ internal static class WindowsServiceRestartProbe
                 "fresh post-restart recovery independently matches the new source hash");
         }
         Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Phase = phase, WindowsSid = identity.User!.Value,
-            Passed = checks.Count, Checks = checks, NativeRestartVerified = true }));
+            Passed = checks.Count, Checks = checks, NativeRestartVerified = true,
+            UnknownOutcomePreservedWithoutReplay = phase == "after" }));
         return 0;
 
         FluxVaultIpcRequest Bind(FluxVaultIpcRequest request) => request with { VaultId = id,
@@ -206,10 +227,19 @@ internal static class WindowsServiceRestartProbe
             value.SaveResponse.VaultRevision != value.Revision || value.BackupResponse.VaultRevision != value.Revision ||
             value.SaveRequest.ExpectedVaultRevision != value.Revision - 1 || value.BackupRequest.ExpectedVaultRevision != value.Revision ||
             !Same(value.SaveRequest.Configuration, value.Configuration) || string.IsNullOrWhiteSpace(value.VersionId) ||
-            value.SourceBytes < 0 || value.SourceHash is not { Length: 64 } || value.SourceHash.Any(character => !Uri.IsHexDigit(character)))
+            value.SourceBytes < 0 || value.SourceHash is not { Length: 64 } || value.SourceHash.Any(character => !Uri.IsHexDigit(character)) ||
+            value.UnknownRequest is null || value.UnknownReceipt is null ||
+            value.UnknownRequest.Command != FluxVaultIpcCommand.RestoreVersionPreview || value.UnknownRequest.VaultId != id ||
+            value.UnknownRequest.OperationId is null || value.UnknownRequest.OperationId == Guid.Empty ||
+            value.UnknownRequest.ExpectedVaultRevision != value.Revision || value.UnknownRequest.VersionId != value.VersionId ||
+            value.UnknownRequest.OutputPath != Path.Combine(fixture.Root, "output-A", "restart-before.docx") ||
+            value.UnknownReceipt.Success || value.UnknownReceipt.ErrorCode != FluxVaultIpcErrorCode.OutcomeUnknown ||
+            value.UnknownReceipt.VaultId != id || value.UnknownReceipt.OperationId != value.UnknownRequest.OperationId ||
+            value.UnknownReceipt.VaultRevision != value.Revision || value.UnknownReceipt.OutputPath is not null)
             throw new InvalidDataException("Restart checkpoint requests or receipt envelopes are invalid.");
     }
     private sealed record Checkpoint(string FixtureId, FluxVaultConfiguration Configuration, long Revision,
         FluxVaultIpcRequest SaveRequest, FluxVaultIpcResponse SaveResponse, FluxVaultIpcRequest BackupRequest,
-        FluxVaultIpcResponse BackupResponse, string VersionId, string SourceHash, long SourceBytes);
+        FluxVaultIpcResponse BackupResponse, string VersionId, string SourceHash, long SourceBytes,
+        FluxVaultIpcRequest UnknownRequest, FluxVaultIpcResponse UnknownReceipt);
 }

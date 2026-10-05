@@ -2,14 +2,14 @@
 
 Bounded continuation of the existing NEXT-002 lifecycle checks, based on
 `c337ed0`. Product behaviour and the overall roadmap are unchanged. This checks
-clean replacement after completed operations; interrupted effects, reboot,
+clean replacement after completed operations and an admitted unknown outcome; interrupted effects, reboot,
 packaged identity and the full S07/G01/rollout gates remain separate.
 
 The optional, default-off `-RunRestartTests` requires `-RunSingleVaultTests` and
 cannot combine with the native-access or packaged-identity extensions. It uses
 the existing disposable A/B accounts, group, SYSTEM scheduled task, private
 SSPI cluster and contained jobs. No profiles, trust changes, normal service or
-database installation is involved. The expected resource count is 56, within
+database installation is involved. The observed per-run resource count is 56, within
 the existing journal limit of 64; failures preserve ownership and evidence.
 
 The original server runs the existing creator recovery and ungranted-user
@@ -45,24 +45,36 @@ creator workflow and nineteen initial ungranted-user command denials pass.
 The actual native servers have distinct PID/start identities: 25392 at
 02:27:09.7700885Z and 64584 at 02:27:29.9828027Z on 5 October 2026.
 
+The [follow-on run](native/2b3ee620d8064a03a9537f36c1fb79af/result.json), based
+on `0322d54`, adds five checks for an admitted unknown outcome. A's new-file
+preview is refused because the destination already exists; its independently
+hashed bytes remain unchanged. The original unknown receipt persists across
+actual replacement. A removes only that fixed owned destination, making
+duplicate execution observable: exact replay must still return the unknown
+receipt and must not recreate the now-eligible output. All 53 checks pass
+(A8/A17, elevated6, B22), together with the existing A132/B19 workflow. The
+replacement identities are 12780 at 02:38:30.4029146Z and 14660 at
+02:38:50.2422139Z. No fault hook or product runtime change was introduced; this
+is not a forced crash or an interruption during an effect.
+
 All 59 focused fixture/database tooling checks pass without skips. Both
 PowerShell entry points parse, and the final complete Release solution build
 has zero warnings/errors. No product runtime or dependency changed; the
 previous product regression and forty-case integrity evidence remains
 applicable to that unchanged implementation.
 
-The [final census](process-census.json) verifies both servers and all 29 captured
-process identities absent, all 56 journal resources retired, and the private
-root, jobs, accounts, group and task gone. The private postmaster did not change
-during replacement. Normal service identities, authentication/configuration
+The [final census](process-census.json) covers both rehearsals: all four servers
+and 58 captured process identities are absent, all 112 journal resources are
+retired, and both private roots, jobs, accounts, group and task are gone. Each
+private postmaster remained unchanged during replacement. Normal service identities, authentication/configuration
 files and unrelated primary edits are unchanged. The independent Astra
 reviewer accepted the corrected preflight, runtime and teardown without a
 blocking finding. No package/profile/trust or normal installation was changed.
 
 ```powershell
-./eng/test-windows-database-boundary.ps1 -FixtureId 0ee82f86c1404967b35dcb2910454df4 `
+./eng/test-windows-database-boundary.ps1 -FixtureId 2b3ee620d8064a03a9537f36c1fb79af `
   -RunCatalogueTests -RunMetadataTests -RunSingleVaultTests -RunRestartTests `
-  -EvidenceDirectory ./docs/verification/2026-10-05-next002-service-restart/native/0ee82f86c1404967b35dcb2910454df4
+  -EvidenceDirectory ./docs/verification/2026-10-05-next002-service-restart/native/2b3ee620d8064a03a9537f36c1fb79af
 ```
 
 Normal FluxVault installation rollout remains separately gated. Normal

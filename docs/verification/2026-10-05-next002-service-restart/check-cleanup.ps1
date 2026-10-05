@@ -2,7 +2,7 @@ param([string]$EvidenceDirectory = $PSScriptRoot)
 $ErrorActionPreference = 'Stop'
 $evidenceRoot = (Resolve-Path -LiteralPath $EvidenceDirectory).Path
 $worktreeRoot = (Resolve-Path -LiteralPath (Join-Path $evidenceRoot '../../..')).Path
-$fixturePaths = @('native/0ee82f86c1404967b35dcb2910454df4')
+$fixturePaths = @('native/0ee82f86c1404967b35dcb2910454df4','native/2b3ee620d8064a03a9537f36c1fb79af')
 $owners = @($fixturePaths | ForEach-Object { Get-Content -LiteralPath (Join-Path $evidenceRoot "$_/completed-owner.json") -Raw | ConvertFrom-Json })
 $identities = @($owners | ForEach-Object {
     $_.RunnerIdentity
@@ -11,14 +11,20 @@ $identities = @($owners | ForEach-Object {
 
 $runs=@($fixturePaths | ForEach-Object { Get-Content -LiteralPath (Join-Path $evidenceRoot "$_/result.json") -Raw | ConvertFrom-Json })
 if(@($runs | Where-Object Failure).Count){throw 'Native rehearsal did not pass.'}
-$replacement=@($runs.Observations | Where-Object {$null -ne $_.PSObject.Properties['NativeRestartIdentity']})
-$joined=@($runs.Observations | Where-Object {$null -ne $_.PSObject.Properties['NativeRestartServer']})
-if($replacement.Count -ne 1 -or $joined.Count -ne 1 -or -not $replacement[0].NativeRestartIdentity.OriginalJoinedBeforeReplacement -or
-    -not $joined[0].BothServersJoined -or -not $joined[0].PostmasterUnchanged){throw 'Native process replacement/join evidence is missing.'}
-$original=$replacement[0].NativeRestartIdentity.Original
-$newServer=$replacement[0].NativeRestartIdentity.Replacement
-if($original.ProcessId -eq $newServer.ProcessId -and $original.StartedUtc -eq $newServer.StartedUtc){throw 'Native server identity was not replaced.'}
-$identities+=@($original,$newServer)
+foreach($run in $runs) {
+    $replacement=@($run.Observations | Where-Object {$null -ne $_.PSObject.Properties['NativeRestartIdentity']})
+    $joined=@($run.Observations | Where-Object {$null -ne $_.PSObject.Properties['NativeRestartServer']})
+    if($replacement.Count -ne 1 -or $joined.Count -ne 1 -or -not $replacement[0].NativeRestartIdentity.OriginalJoinedBeforeReplacement -or
+        -not $joined[0].BothServersJoined -or -not $joined[0].PostmasterUnchanged){throw 'Native process replacement/join evidence is missing.'}
+    $original=$replacement[0].NativeRestartIdentity.Original
+    $newServer=$replacement[0].NativeRestartIdentity.Replacement
+    if($original.ProcessId -eq $newServer.ProcessId -and $original.StartedUtc -eq $newServer.StartedUtc){throw 'Native server identity was not replaced.'}
+    $identities+=@($original,$newServer)
+}
+$unknownProof=@($runs.Observations | Where-Object {$null -ne $_.PSObject.Properties['NativeRestart']} |
+    ForEach-Object {$_.NativeRestart.Results | Where-Object Kind -eq 'Restart'} |
+    Where-Object {$_.Result.Phase -eq 'after' -and $_.Result.UnknownOutcomePreservedWithoutReplay -and $_.Result.Passed -eq 17})
+if($unknownProof.Count -ne 1){throw 'The admitted unknown outcome restart/replay proof is missing.'}
 
 $identities = @($identities | Sort-Object ProcessId,StartedUtc -Unique)
 $liveOwned = @($identities | ForEach-Object {
@@ -82,6 +88,7 @@ $report = [ordered]@{
     BothNativeServersAbsent=$liveOwned.Count -eq 0
     DistinctNativeServerIdentities=$true
     PrivatePostmasterUnchangedDuringReplacement=$true
+    AdmittedUnknownOutcomePreservedWithoutReplay=$true
     AccountsAbsent=@(Get-LocalUser | Where-Object Name -in 'FVGateA_261003','FVGateB_261003').Count -eq 0
     GroupAbsent=@(Get-LocalGroup | Where-Object Name -eq 'FVGate_261003').Count -eq 0
     TaskAbsent=@(Get-ScheduledTask | Where-Object TaskName -eq 'FluxVault-NEXT002-261003-SYSTEM').Count -eq 0

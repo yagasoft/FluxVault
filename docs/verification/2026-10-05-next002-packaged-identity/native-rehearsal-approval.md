@@ -1,6 +1,9 @@
 # Bounded native package identity rehearsal
 
-Technical review: approved preparation; execution approval pending.
+Technical review: approved preparation. Execution authorised by the user's
+5 October 2026 approval of the pending S01/D01 prompts. This authorises the exact
+scoped rehearsal below and the guided disposable desktop session; normal
+installation rollout remains separately gated.
 
 Fresh native fixture ID: `bf4645f9aaba450abb0b822dea68a6c7`.
 Root: `C:\ProgramData\FluxVault.Tests\NEXT002\bf4645f9aaba450abb0b822dea68a6c7`.
@@ -51,3 +54,61 @@ developer/sideload policy and certificate stores unchanged.
 ```
 
 Normal FluxVault rollout remains separately gated. PostgreSQL is not restarted.
+
+## Proposed machine-trust extension, awaiting separate approval
+
+Technical preparation is independently accepted after the reopened-boundary
+correction; final affected checks pass 116/116 with no skips or new warnings.
+No machine-trust execution has occurred. User resource approval is pending.
+
+The approved per-user attempt reached registration and failed with `0x800B0109`.
+Its exact root, accounts/profiles, package trust and imported signing keys were
+removed. No successful packaged caller proof is claimed.
+
+Retain the exact fixture ID, root, A/B account names, package/version/publisher
+above. Add only one newly generated short-lived public code-signing leaf to
+`LocalMachine\TrustedPeople` for one bounded rehearsal. Its certificate has no
+private key, is not a CA, permits only digital signature/code signing, and has
+a lifetime under four hours. The old certificate/package were deleted by
+teardown; this approval targets the fixed fixture publisher and bounded
+generation procedure, not reuse of the old certificate bytes.
+
+Before import, the privileged runner verifies the protected public CER hash,
+thumbprint, publisher and leaf constraints against package metadata, verifies
+matching signing-key retirement and fresh native absence, and refuses existing
+machine trust. It durably records the exact new hash/thumbprint, fixture/root,
+store, publisher and owner SID before adding that leaf. A/B independently reopen
+their per-user store before registration and record exact bytes, SID and absence
+of private material. No Root store, private-key store, normal runner certificate
+trust, Developer Mode or sideloading-policy change is included.
+
+Rollback uses the existing cleanup path after all actors/tools have joined.
+It removes only the exact recorded public leaf, verifies fresh store absence,
+then records retirement. This runs on success or failure, before later profile
+cleanup can fail. The same protected intent supports interrupted recovery;
+changed identity or a certificate reappearing after recorded retirement is
+preserved with an error. Final census must show unrelated normal/machine trust,
+services/data/authentication and PostgreSQL postmaster unchanged.
+Interrupted cleanup keeps the package trust/policy snapshot requirement from
+the loaded `before.json`, including a stop after import but before profile intents.
+
+Machine trust temporarily affects all Windows users. It is outside the earlier
+per-user approval and requires explicit user approval before this command:
+
+```powershell
+./eng/test-windows-database-boundary.ps1 -FixtureId bf4645f9aaba450abb0b822dea68a6c7 `
+  -RunCatalogueTests -RunMetadataTests -RunSingleVaultTests -RunPackagedIdentityTests `
+  -PermitMachinePackageTrust `
+  -EvidenceDirectory ./docs/verification/2026-10-05-next002-packaged-identity/native/bf4645f9aaba450abb0b822dea68a6c7-machine-trust
+```
+
+If interrupted, recover through the same existing runner and exact fixture:
+
+```powershell
+./eng/test-windows-database-boundary.ps1 -Mode Cleanup `
+  -FixtureId bf4645f9aaba450abb0b822dea68a6c7 `
+  -EvidenceDirectory ./docs/verification/2026-10-05-next002-packaged-identity/native/bf4645f9aaba450abb0b822dea68a6c7-machine-trust
+```
+
+Recovery removes an already owned leaf; it never creates or adopts trust.
+Normal installation rollout is neither requested nor authorised by this extension.

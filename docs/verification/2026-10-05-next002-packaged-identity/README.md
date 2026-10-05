@@ -1,7 +1,9 @@
 # Prepared packaged desktop identity rehearsal
 
-Status: source independently reviewed and package construction verified; native
-registration remains unexecuted and unaccepted. Based on `1c76d9b`.
+Status: the approved native rehearsal reached registration but Windows rejected
+per-user certificate trust with `0x800B0109`. All owned resources were retired.
+S01 remains unaccepted; a separately scoped machine-trust fallback is prepared
+below. Earlier preparation evidence is retained, based on `1c76d9b`.
 This closes the remaining packaged full-trust desktop portion of S01 only after
 real native results and teardown. It does not change product authorisation,
 Windows/WPF/.NET/PostgreSQL architecture, single-vault scope or the roadmap.
@@ -31,10 +33,10 @@ native object and verifies absence. Enumeration is silent and provider errors
 preserve the private recovery record/root. Unrelated keys are preserved. The
 transient PFX is removed and the memory key disposed; neither private material
 nor unrelated baseline names are copied into evidence. No certificate trust is
-added to the normal runner's stores. Only the public certificate is trusted in
-`CurrentUser\TrustedPeople` for A and B; no machine-wide trust, Developer Mode
-or sideloading-policy change is permitted. Registration failure stops the
-approach rather than weakening these bounds.
+added to the normal runner's stores. Under the original approval only the public
+certificate is trusted in `CurrentUser\TrustedPeople` for A and B; no machine-wide
+trust, Developer Mode or sideloading-policy change was permitted. Registration
+failure stopped that approach. The extension below requires separate approval.
 
 The installed SDK is under `E:\Windows Kits\10\bin\10.0.28000.0\x64`, beneath
 a standard-user-writable ancestor. It is never executed there. Ten explicit
@@ -124,21 +126,89 @@ and [root teardown](artifacts/0e356aa7ec694ecfa4ff4cfce4c1e0d8/cleanup.json)
 are retained. The final Release build has zero warnings/errors.
 
 The fresh [artifact and integrity census](artifact-process-census.json) proves
-seven private roots, named jobs, 59 captured process identities and all six
+ten private roots, named jobs, 134 captured process identities and all captured
 fixture signing keys absent through native/backing-file checks. All 38
 database intents are retired; accounts, group, task, profiles and package
 registrations are absent. Normal services/configuration/certificate stores and
 unrelated primary-checkout edits remain unchanged.
-No package registration or certificate trust has occurred. The separately
-approved integrity refresh created and removed its disposable accounts and
-database cluster; it did not use the package extension. Native token results
-and installation teardown are not inferred from successful signing.
+The third native attempt added and then removed A's public per-user trust;
+registration failed before any packaged caller proof. The separately approved
+integrity refresh did not use the package extension. Native packaged token
+results are not inferred from successful signing or cleanup.
 
 Independent source review accepted the bounded preparation after corrections;
-see [review record](independent-review.md). Approval for temporary A/B package,
-public-certificate trust and Windows profiles is still required before the
-optional native switch. Normal FluxVault installation rollout approval remains
+see [review record](independent-review.md). The user approved the exact A/B
+package, per-user public-certificate trust and Windows profiles on 5 October.
+That scope has been exercised; it does not include machine trust. Normal FluxVault installation rollout approval remains
 separately required. S01 packaged identity and full G01 remain open.
+
+## Native rehearsal and smallest remaining correction
+
+Three attempts used the exact approved fixture `bf4645f9aaba450abb0b822dea68a6c7`:
+
+- [First attempt](native/bf4645f9aaba450abb0b822dea68a6c7-first-attempt/result.json)
+  found a collision with the cloned runtime's Assets directory. The package now
+  owns its logo under its fresh packaging directory. An actual module regression
+  proves package placement and preservation of the existing runtime bytes/ACL.
+- [Second attempt](native/bf4645f9aaba450abb0b822dea68a6c7-second-attempt/result.json)
+  found that an ordinary actor cannot inspect traversal-only private ancestors.
+  The privileged parent retains those checks. The ordinary launcher retains
+  canonical UUID/root, native SID and exact payload hashes, matching the existing
+  ordinary launcher. Independently reviewed targeted cleanup retired the
+  preserved root and its owned profile/accounts without widening permissions.
+- [Third attempt](native/bf4645f9aaba450abb0b822dea68a6c7/result.json)
+  passed those guards and reached `Add-AppxPackage`, which returned certificate
+  trust error `0x800B0109`. Its [cleanup](native/bf4645f9aaba450abb0b822dea68a6c7/cleanup.json)
+  proves joined owned jobs, root removal and unchanged normal installation.
+
+Microsoft's [external-location guide](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/grant-identity-to-nonpackaged-apps)
+describes per-user trust, whereas its [troubleshooting entry for this error](https://learn.microsoft.com/en-us/windows/msix/msix-troubleshooting-guide#certificate-not-trusted-0x800b0109)
+specifies Local Computer TrustedPeople. The evidence supports a bounded fallback;
+it does not prove machine trust is the only solution. Repeating unchanged
+per-user registration would not close S01. The next attempt independently
+reopens A/B's CurrentUser store before registration and records native SID,
+exact public bytes/hash/thumbprint and `HasPrivateKey=false`.
+
+The existing package module and runner now prepare a default-off
+`-PermitMachinePackageTrust` extension. It permits only one short-lived public
+code-signing leaf in LocalMachine TrustedPeople, after the signing PFX and
+matching owned native keys are absent. Durable protected intent and exact
+certificate identity precede import; existing cleanup removes only that leaf
+and verifies absence on success, failure or interrupted recovery. A collision,
+changed identity or reappearance after retirement is preserved for review.
+No Root store, private-key store, normal-user trust or Windows policy is changed.
+The [approval record](native-rehearsal-approval.md) specifies this additional
+scope and its executable recovery command. Machine trust has not been executed.
+
+Meaningful retirement-owner/fingerprint and reappearance regressions failed
+before their guards; the native-key case likewise fails before the existence
+check. The focused fallback suite passes 10/10. These tests reopen actual
+protected ownership files and use real public certificates and native key
+presence, substituting only the machine X509Store boundary. They are logic
+evidence, not real machine-store or packaged-token acceptance.
+
+The combined affected tooling suite passes 115/115 without skips or new build
+warnings. All test parents/children are joined, the real test-owned CNG key is
+absent, and no tooling scratch root or worktree test/build worker remains.
+The refreshed existing census confirms all ten private roots and 134 captured
+native identities absent, signing imports retired, and normal services,
+authentication/configuration, trust and unrelated primary edits unchanged.
+The frozen normal candidate's MSI and Setup hashes still match their manifest.
+
+Independent review identified one pre-profile interruption gap: cleanup without
+the original command switches could omit package trust/policy verification if
+the runner stopped immediately after machine publication. The actual snapshot
+function now retains this requirement from reopened `before.json`. The real
+baseline/journal/lost-ack regression fails before that correction and passes
+after it, also detecting a subsequent trust change. Native state/store boundaries
+are substituted in this focused check; it does not claim native interrupted
+machine-store proof. Existing ownership/cleanup mechanisms remain unchanged.
+
+The final combined affected suite, after that correction, passes 116/116 with
+zero skips and no new build warnings. The independent reviewer accepts the
+complete bounded preparation with no blocking finding. The separate machine
+resource approval, actual packaged native result/teardown, D01 observations and
+normal rollout/live validation remain open; NEXT-002 is not complete.
 
 ## Approved integrity refresh
 

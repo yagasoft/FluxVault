@@ -1010,6 +1010,299 @@ public sealed class WindowsFixtureToolingTests
         Assert.True(result.GetProperty("NoKey").GetBoolean());
     }
 
+    [Theory]
+    [InlineData("Owner")]
+    [InlineData("Fingerprint")]
+    [InlineData("Provider")]
+    public async Task Machine_trust_refuses_private_key_ownership_mismatch_without_publication(string fault)
+    {
+        var result = await RunMachineTrustCaseAsync("""
+            switch('FAULT_VALUE') {
+                Owner {$keys.OwnerSid='S-1-5-21-1-2-3-9199'}
+                Fingerprint {$keys.PublicFingerprint='0'*64}
+                Provider {$keys.Provider='A different provider'}
+            }
+            $keys|ConvertTo-Json -Depth 4|Set-Content -LiteralPath $keysPath
+            $failure=$null;try{Invoke-VaultFixtureMachineTrust $journal Add -Approved}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Adds=$fakeStore.Adds;OwnerExists=(Test-Path -LiteralPath $ownerPath)}|ConvertTo-Json -Compress
+            """.Replace("FAULT_VALUE", fault, StringComparison.Ordinal));
+        Assert.Equal("Signing private keys have not been retired.", result.GetProperty("Failure").GetString());
+        Assert.Equal(0, result.GetProperty("Adds").GetInt32());
+        Assert.False(result.GetProperty("OwnerExists").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Machine_trust_refuses_a_signing_key_that_still_exists_despite_a_retired_record()
+    {
+        var result = await RunMachineTrustCaseAsync("""
+            $parameters=[Security.Cryptography.CngKeyCreationParameters]::new()
+            $parameters.Provider=[Security.Cryptography.CngProvider]::MicrosoftSoftwareKeyStorageProvider
+            $keyName='{'+[guid]::NewGuid().ToString()+'}'
+            $nativeKey=[Security.Cryptography.CngKey]::Create([Security.Cryptography.CngAlgorithm]::Rsa,$keyName,$parameters)
+            try {
+                $keys.OwnedKeys=@(@{KeyName=$nativeKey.KeyName;UniqueName=$nativeKey.UniqueName;PublicFingerprint=$keys.PublicFingerprint;State='Removed'})
+                $keys|ConvertTo-Json -Depth 4|Set-Content -LiteralPath $keysPath
+                $failure=$null;try{Invoke-VaultFixtureMachineTrust $journal Add -Approved}catch{$failure=$_.Exception.Message}
+                @{Failure=$failure;Adds=$fakeStore.Adds;OwnerExists=(Test-Path -LiteralPath $ownerPath)}|ConvertTo-Json -Compress
+            } finally {
+                $nativeKey.Delete();$nativeKey.Dispose()
+                if([Security.Cryptography.CngKey]::Exists($keyName,$parameters.Provider)){throw 'Test-owned signing key remains.'}
+            }
+            """);
+        Assert.Equal("Signing private keys have not been retired.", result.GetProperty("Failure").GetString());
+        Assert.Equal(0, result.GetProperty("Adds").GetInt32());
+        Assert.False(result.GetProperty("OwnerExists").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Machine_trust_recovery_refuses_reappearance_after_retirement()
+    {
+        var result = await RunMachineTrustCaseAsync("""
+            Invoke-VaultFixtureMachineTrust $journal Add -Approved
+            Invoke-VaultFixtureMachineTrust $journal Remove
+            $fakeStore.Certificates.Add($public)|Out-Null
+            $failure=$null;try{Invoke-VaultFixtureMachineTrust $journal Remove}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Removes=$fakeStore.Removes;Certificates=$fakeStore.Certificates.Count}|ConvertTo-Json -Compress
+            """);
+        Assert.Equal("A retired machine certificate reappeared; preserve it for review.", result.GetProperty("Failure").GetString());
+        Assert.Equal(1, result.GetProperty("Removes").GetInt32());
+        Assert.Equal(2, result.GetProperty("Certificates").GetInt32());
+    }
+
+    [Fact]
+    public async Task Machine_trust_recovers_a_lost_import_acknowledgement_from_its_real_ownership_record()
+    {
+        var result = await RunMachineTrustCaseAsync("""
+            $fakeStore.FailAfterAdd=$true
+            $failure=$null;try{Invoke-VaultFixtureMachineTrust $journal Add -Approved}catch{$failure=$_.Exception.Message}
+            $before=Get-Content -LiteralPath $ownerPath -Raw|ConvertFrom-Json
+            Invoke-VaultFixtureMachineTrust $journal Remove
+            $after=Get-Content -LiteralPath $ownerPath -Raw|ConvertFrom-Json
+            @{Failure=$failure;Before=$before.State;After=$after.State;Adds=$fakeStore.Adds;Removes=$fakeStore.Removes;
+                Remaining=$fakeStore.Certificates.Count;UnrelatedPreserved=($fakeStore.Certificates[0].Thumbprint -eq $unrelated.Thumbprint)}|ConvertTo-Json -Compress
+            """);
+        Assert.Contains("Lost import acknowledgement.", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+        Assert.Equal("Intent", result.GetProperty("Before").GetString());
+        Assert.Equal("Removed", result.GetProperty("After").GetString());
+        Assert.Equal(1, result.GetProperty("Adds").GetInt32());
+        Assert.Equal(1, result.GetProperty("Removes").GetInt32());
+        Assert.Equal(1, result.GetProperty("Remaining").GetInt32());
+        Assert.True(result.GetProperty("UnrelatedPreserved").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Machine_trust_interrupted_before_profile_intents_retains_reopened_boundary_verification()
+    {
+        var result = await RunMachineTrustCaseAsync("""
+            $runner=Join-Path (Split-Path (Split-Path $module)) 'test-windows-database-boundary.ps1'
+            $ast=[Management.Automation.Language.Parser]::ParseFile($runner,[ref]$null,[ref]$null)
+            $definition=$ast.Find({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Get-InstallationSnapshot'},$true)
+            Invoke-Expression $definition.Extent.Text
+            # Native machine/store checks are substituted. Run the actual snapshot
+            # function over the real reopened baseline and ownership journal.
+            function Get-CimInstance {param($ClassName,$Filter) @{State='Running';ProcessId=$PID;StartName='Preserved';PathName='Preserved'}}
+            function Get-FileHash {
+                param($LiteralPath,$Algorithm='SHA256')
+                if($LiteralPath -in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf','C:\ProgramData\FluxVault\config.json')){@{Hash='A'*64}}
+                else {Microsoft.PowerShell.Utility\Get-FileHash -LiteralPath $LiteralPath -Algorithm $Algorithm}
+            }
+            function Get-ChildItem {
+                param($Path)
+                if($Path -eq 'Cert:\LocalMachine\TrustedPeople'){$fakeStore.Certificates}
+                elseif($Path -eq 'Cert:\CurrentUser\TrustedPeople'){[pscustomobject]@{Thumbprint='Retained runner trust'}}
+                else{throw 'Unexpected snapshot enumeration.'}
+            }
+            $RunPackagedIdentityTests=$true;$fixtureJournal=$journal;$fixtureBefore=$null
+            $before=Get-InstallationSnapshot
+            $beforePath=Join-Path $root 'before.json';$before|ConvertTo-Json -Depth 6|Set-Content -LiteralPath $beforePath
+            $fakeStore.FailAfterAdd=$true
+            $failure=$null;try{Invoke-VaultFixtureMachineTrust $journal Add -Approved}catch{$failure=$_.Exception.Message}
+            $intent=Get-Content -LiteralPath $ownerPath -Raw|ConvertFrom-Json
+            $RunPackagedIdentityTests=$false
+            $fixtureJournal=Read-VaultFixtureJournal $root $parent $fixtureId
+            $fixtureBefore=Get-Content -LiteralPath $beforePath -Raw|ConvertFrom-Json
+            Invoke-VaultFixtureMachineTrust $fixtureJournal Remove
+            $after=Get-InstallationSnapshot
+            $included=$after.ContainsKey('PackageBoundary')
+            $same=$false;$changed=$false
+            if($included){
+                $same=Test-VaultFixtureInstallationUnchanged $fixtureBefore $after
+                $fakeStore.Certificates.Add($public)|Out-Null
+                $changed=Test-VaultFixtureInstallationUnchanged $fixtureBefore (Get-InstallationSnapshot)
+            }
+            @{Failure=$failure;Intent=$intent.State;ProfileIntents=@($fixtureJournal.Resources|Where-Object Kind -eq 'PackageUser').Count;
+                BoundaryIncluded=$included;Same=$same;Changed=$changed;Removes=$fakeStore.Removes}|ConvertTo-Json -Compress
+            """);
+        Assert.Contains("Lost import acknowledgement.", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+        Assert.Equal("Intent", result.GetProperty("Intent").GetString());
+        Assert.Equal(0, result.GetProperty("ProfileIntents").GetInt32());
+        Assert.True(result.GetProperty("BoundaryIncluded").GetBoolean());
+        Assert.True(result.GetProperty("Same").GetBoolean());
+        Assert.False(result.GetProperty("Changed").GetBoolean());
+        Assert.Equal(1, result.GetProperty("Removes").GetInt32());
+    }
+
+    [Theory]
+    [InlineData("Approval", "Explicit machine-certificate scope approval is required.")]
+    [InlineData("Collision", "Existing machine certificate is not owned; no trust was changed.")]
+    [InlineData("Bytes", "Machine trust public certificate bytes changed.")]
+    [InlineData("RecoveryHash", "Machine certificate identity changed; preserve it for review.")]
+    public async Task Machine_trust_refusals_preserve_unowned_certificates(string fault, string expected)
+    {
+        var result = await RunMachineTrustCaseAsync("""
+            $fault='FAULT_VALUE';$failure=$null
+            if($fault -eq 'Collision'){$fakeStore.Certificates.Add($public)|Out-Null}
+            if($fault -eq 'Bytes'){[IO.File]::WriteAllText($certificatePath,'changed public bytes')}
+            if($fault -eq 'RecoveryHash') {
+                Invoke-VaultFixtureMachineTrust $journal Add -Approved
+                $record=Get-Content -LiteralPath $ownerPath -Raw|ConvertFrom-Json -AsHashtable
+                $record.CertificateSha256='0'*64;Write-VaultFixturePackageRecord $ownerPath $record
+            }
+            try {
+                if($fault -eq 'RecoveryHash'){Invoke-VaultFixtureMachineTrust $journal Remove}
+                else{Invoke-VaultFixtureMachineTrust $journal Add -Approved:($fault -ne 'Approval')}
+            }catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Adds=$fakeStore.Adds;Removes=$fakeStore.Removes;
+                UnrelatedPreserved=($fakeStore.Certificates[0].Thumbprint -eq $unrelated.Thumbprint)}|ConvertTo-Json -Compress
+            """.Replace("FAULT_VALUE", fault, StringComparison.Ordinal));
+        Assert.Equal(expected, result.GetProperty("Failure").GetString());
+        Assert.Equal(fault == "RecoveryHash" ? 1 : 0, result.GetProperty("Adds").GetInt32());
+        Assert.Equal(0, result.GetProperty("Removes").GetInt32());
+        Assert.True(result.GetProperty("UnrelatedPreserved").GetBoolean());
+    }
+
+    private static async Task<JsonElement> RunMachineTrustCaseAsync(string body)
+    {
+        using var fixture = new ScriptFixture();
+        return await fixture.RunAsync("""
+            Import-Module (Join-Path (Split-Path $module) 'packaged-identity.psm1') -Force
+            $journal=New-VaultFixtureJournal $root $parent $fixtureId
+            New-VaultFixtureProtectedDirectory (Join-Path $root 'runtime')
+            New-VaultFixtureProtectedDirectory (Join-Path $root 'catalogue')
+            New-VaultFixtureProtectedDirectory (Join-Path $root 'catalogue/package-signing')
+            $rsa=[Security.Cryptography.RSA]::Create(2048)
+            $request=[Security.Cryptography.X509Certificates.CertificateRequest]::new(('CN=FluxVault Fixture '+$fixtureId),$rsa,
+                [Security.Cryptography.HashAlgorithmName]::SHA256,[Security.Cryptography.RSASignaturePadding]::Pkcs1)
+            $request.CertificateExtensions.Add([Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($false,$false,0,$true))
+            $request.CertificateExtensions.Add([Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new([Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature,$true))
+            $usages=[Security.Cryptography.OidCollection]::new();$null=$usages.Add([Security.Cryptography.Oid]::new('1.3.6.1.5.5.7.3.3'))
+            $request.CertificateExtensions.Add([Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($usages,$false))
+            $signed=$request.CreateSelfSigned([DateTimeOffset]::UtcNow.AddMinutes(-1),[DateTimeOffset]::UtcNow.AddHours(1))
+            $certificatePath=Join-Path $root 'runtime/identity.cer';[IO.File]::WriteAllBytes($certificatePath,$signed.RawData)
+            $public=[Security.Cryptography.X509Certificates.X509CertificateLoader]::LoadCertificate($signed.RawData)
+            $unrelatedRequest=[Security.Cryptography.X509Certificates.CertificateRequest]::new('CN=Preserve unrelated test leaf',$rsa,
+                [Security.Cryptography.HashAlgorithmName]::SHA256,[Security.Cryptography.RSASignaturePadding]::Pkcs1)
+            $unrelated=$unrelatedRequest.CreateSelfSigned([DateTimeOffset]::UtcNow.AddMinutes(-1),[DateTimeOffset]::UtcNow.AddHours(1))
+            $metadata=@{Version=1;FixtureId=$fixtureId;Root=$root;PackageName=('FVGate.Package.'+$fixtureId);Publisher=$public.Subject;
+                Thumbprint=$public.Thumbprint;CertificateSha256=(Get-FileHash -LiteralPath $certificatePath).Hash}
+            $metadata|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $root 'runtime/package-identity.json')
+            $keys=@{FixtureId=$fixtureId;OwnerSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;
+                Provider='Microsoft Software Key Storage Provider';PublicFingerprint=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($rsa.ExportSubjectPublicKeyInfo()));State='Removed';OwnedKeys=@()}
+            $keysPath=Join-Path $root 'catalogue/package-signing/native-key-cleanup.json';$keys|ConvertTo-Json -Depth 4|Set-Content -LiteralPath $keysPath
+            $ownerPath=Join-Path $root 'catalogue/package-signing/machine-trust-owner.json'
+            # Substitute only the native store boundary. Files, ownership receipts,
+            # certificates and hash checks are real; this is not native trust proof.
+            $fakeStore=[pscustomobject]@{Certificates=[Security.Cryptography.X509Certificates.X509Certificate2Collection]::new();Adds=0;Removes=0;FailAfterAdd=$false}
+            $fakeStore.Certificates.Add($unrelated)|Out-Null
+            $fakeStore|Add-Member ScriptMethod Open {param($flags)}
+            $fakeStore|Add-Member ScriptMethod Dispose {}
+            $fakeStore|Add-Member ScriptMethod Add {param($certificate) $this.Adds++;$this.Certificates.Add([Security.Cryptography.X509Certificates.X509CertificateLoader]::LoadCertificate($certificate.RawData))|Out-Null;if($this.FailAfterAdd){throw 'Lost import acknowledgement.'}}
+            $fakeStore|Add-Member ScriptMethod Remove {param($certificate) $this.Removes++;$this.Certificates.Remove($certificate)}
+            $factory={return $fakeStore}.GetNewClosure()
+            & (Get-Module packaged-identity) {param($factory) Set-Item function:script:New-VaultFixtureMachineTrustStore $factory} $factory
+            try {
+            """ + body + """
+            } finally {foreach($item in $fakeStore.Certificates){$item.Dispose()};$public.Dispose();$signed.Dispose();$unrelated.Dispose();$rsa.Dispose()}
+            """);
+    }
+
+    [Fact]
+    public async Task Packaged_launcher_refuses_a_root_outside_its_fixed_fixture_parent()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $launcher=Join-Path (Split-Path $module) 'invoke-packaged-identity.ps1'
+            $failure=$null
+            try {& $launcher -Root $root -Actor A -Action Cleanup | Out-Null} catch {$failure=$_.Exception.Message}
+            @{Failure=$failure}|ConvertTo-Json -Compress
+            """);
+        Assert.Equal("Packaged actor fixture root mismatch.", result.GetProperty("Failure").GetString());
+    }
+
+    [Theory]
+    [InlineData("Sid")]
+    [InlineData("Hash")]
+    public async Task Packaged_launcher_refuses_wrong_native_SID_or_payload_hash_before_profile_effects(string fault)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $launcher=Join-Path (Split-Path $module) 'invoke-packaged-identity.ps1'
+            $canonical=Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $fixtureId
+            $sid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+            $actors=@{A=$sid;B='S-1-5-21-1-2-3-9199'}
+            if('FAULT' -eq 'Sid'){$actors.A=$actors.B}
+            @{FixtureId=$fixtureId;Root=$canonical;Actors=$actors}|ConvertTo-Json -Depth 3|Set-Content -LiteralPath (Join-Path $root 'database-probe.json')
+            $metadata=@{Version=1;FixtureId=$fixtureId;Root=$canonical;PackageName=('FVGate.Package.'+$fixtureId);
+                Publisher=('CN=FluxVault Fixture '+$fixtureId);Thumbprint=('A'*40)}
+            foreach($pair in @(@{Name='identity.msix';Field='PackageSha256'},@{Name='identity.cer';Field='CertificateSha256'},@{Name='FluxVault.TestHost.exe';Field='ApphostSha256'})) {
+                $path=Join-Path $root $pair.Name;[IO.File]::WriteAllText($path,'real fixture payload '+$pair.Name)
+                $metadata[$pair.Field]=(Get-FileHash -LiteralPath $path).Hash
+            }
+            if('FAULT' -eq 'Hash'){$metadata.PackageSha256='0'*64}
+            $metadata|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $root 'package-identity.json')
+            # Map only read-only payload paths to the real current-user test files.
+            # Native traversal-only A/B admission is proved separately by the owned Windows run.
+            $fixtureReadRoot=$root
+            function Get-Content {param($LiteralPath,[switch]$Raw) Microsoft.PowerShell.Management\Get-Content -LiteralPath (Join-Path $fixtureReadRoot ([IO.Path]::GetFileName($LiteralPath))) -Raw:$Raw}
+            function Get-FileHash {param($LiteralPath) Microsoft.PowerShell.Utility\Get-FileHash -LiteralPath (Join-Path $fixtureReadRoot ([IO.Path]::GetFileName($LiteralPath)))}
+            $failure=$null
+            try {& $launcher -Root $canonical -Actor A -Action Cleanup | Out-Null} catch {$failure=$_.Exception.Message}
+            @{Failure=$failure;NoProfileOwner=(-not(Test-Path -LiteralPath (Join-Path $root 'package-owner.json')))}|ConvertTo-Json -Compress
+            """.Replace("FAULT", fault, StringComparison.Ordinal));
+        Assert.Equal(fault == "Sid" ? "Packaged fixture identity mismatch." : "Packaged fixture payload changed.",
+            result.GetProperty("Failure").GetString());
+        Assert.True(result.GetProperty("NoProfileOwner").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Identity_package_owns_its_logo_and_preserves_cloned_runtime_assets()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            Import-Module (Join-Path (Split-Path $module) 'packaged-identity.psm1') -Force
+            $journal=New-VaultFixtureJournal $root $parent $fixtureId
+            $runtime=Join-Path $root 'runtime';New-VaultFixtureProtectedDirectory $runtime
+            New-VaultFixtureProtectedDirectory (Join-Path $root 'catalogue')
+            $assets=Join-Path $runtime 'Assets';New-VaultFixtureProtectedDirectory $assets
+            $sentinel=Join-Path $assets 'existing-logo.png';[IO.File]::WriteAllText($sentinel,'preserve cloned assets')
+            $acl=(Get-Acl -LiteralPath $assets).Sddl
+            [IO.File]::WriteAllText((Join-Path $runtime 'FluxVault.TestHost.exe'),'not executed')
+            $failure=$null
+            try {
+                New-VaultFixtureIdentityPackage $journal 'E:\Windows Kits\10\bin\10.0.28000.0\x64' {
+                    param($Executable,$Arguments)
+                    if([IO.Path]::GetFileName($Executable) -ne 'mt.exe'){throw 'Unexpected tool invocation.'}
+                    throw 'Reached bounded packaging boundary.'
+                } | Out-Null
+            } catch {$failure=$_.Exception.Message}
+            $package=Join-Path $root 'catalogue/package-signing/identity'
+            $logo=Join-Path $package 'Assets/logo.png'
+            $expectedLogo=Join-Path (Split-Path $module) '../../src/FluxVault.App/Assets/YagasoftLogo.png'
+            @{Failure=$failure;LogoExists=(Test-Path -LiteralPath $logo);
+                LogoMatches=((Test-Path -LiteralPath $logo) -and (Get-FileHash -LiteralPath $logo).Hash -eq (Get-FileHash -LiteralPath $expectedLogo).Hash);
+                OriginalBytes=[IO.File]::ReadAllText($sentinel);OriginalAclPreserved=((Get-Acl -LiteralPath $assets).Sddl -eq $acl);
+                NoRuntimeLogo=(-not(Test-Path -LiteralPath (Join-Path $assets 'logo.png')));
+                NoKey=(-not(Test-Path -LiteralPath (Join-Path $root 'catalogue/package-signing/ephemeral-key.pfx')))}|ConvertTo-Json -Compress
+            """);
+        Assert.Equal("Reached bounded packaging boundary.", result.GetProperty("Failure").GetString());
+        Assert.True(result.GetProperty("LogoExists").GetBoolean());
+        Assert.True(result.GetProperty("LogoMatches").GetBoolean());
+        Assert.Equal("preserve cloned assets", result.GetProperty("OriginalBytes").GetString());
+        Assert.True(result.GetProperty("OriginalAclPreserved").GetBoolean());
+        Assert.True(result.GetProperty("NoRuntimeLogo").GetBoolean());
+        Assert.True(result.GetProperty("NoKey").GetBoolean());
+    }
+
     [Fact]
     public async Task Interrupted_package_cleanup_reaches_B_after_A_is_already_unregistered()
     {

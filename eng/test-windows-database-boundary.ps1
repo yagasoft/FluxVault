@@ -13,6 +13,7 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$RunRestartTests,
     [switch]$RunInterruptedEffectTests,
     [switch]$RunPackagedIdentityTests,
+    [switch]$PermitMachinePackageTrust,
     [string]$PackageSdkDirectory = 'E:\Windows Kits\10\bin\10.0.28000.0\x64',
     [switch]$RunIntegrityTests,
     [ValidateRange(60,600)][int]$IntegrityTimeoutSeconds = 300,
@@ -26,6 +27,7 @@ if($RunCallerFileTests -and $RunSingleVaultTests){throw 'Select one native file 
 if($RunIntegrityTests -and ($RunCallerFileTests -or $RunSingleVaultTests)){throw 'Run the integrity suite in its own fresh fixture.'}
 if($RunNativeAccessTests -and -not $RunSingleVaultTests){throw 'Native access proof requires the single-vault product workflow.'}
 if($RunPackagedIdentityTests -and -not $RunSingleVaultTests){throw 'Packaged identity proof requires the single-vault product workflow.'}
+if($PermitMachinePackageTrust -and -not $RunPackagedIdentityTests){throw 'Machine certificate scope is confined to the packaged identity fixture.'}
 if($RunRestartTests -and (-not $RunSingleVaultTests -or $RunNativeAccessTests -or $RunPackagedIdentityTests)){
     throw 'Restart proof requires an exclusive single-vault extension within the existing resource bound.'
 }
@@ -73,7 +75,9 @@ function Get-InstallationSnapshot {
         @{ Path=$path; Sha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash }
     }
     $snapshot=@{Services=@($services);Files=@($files)}
-    if($RunPackagedIdentityTests -or ($null -ne $fixtureJournal -and @($fixtureJournal.Resources | Where-Object Kind -eq 'PackageUser').Count)) {
+    if($RunPackagedIdentityTests -or
+        ($null -ne $fixtureBefore -and $null -ne $fixtureBefore.PSObject.Properties['PackageBoundary']) -or
+        ($null -ne $fixtureJournal -and @($fixtureJournal.Resources | Where-Object Kind -eq 'PackageUser').Count)) {
         $policy=Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' -ErrorAction SilentlyContinue
         $developer=if($null -ne $policy){$policy.PSObject.Properties['AllowDevelopmentWithoutDevLicense']}else{$null}
         $sideload=if($null -ne $policy){$policy.PSObject.Properties['AllowAllTrustedApps']}else{$null}
@@ -1038,7 +1042,8 @@ function Remove-OwnedFixture {
     }
     foreach($resource in @($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Job' -and $_.Name -eq 'Cluster' -and $_.State -eq 'Created'})){Stop-OwnedJob $resource}
     # All possible signing tools are joined before provider-managed key recovery.
-    Remove-VaultFixtureImportedKeys $fixtureJournal
+    try {Remove-VaultFixtureImportedKeys $fixtureJournal}
+    finally {Invoke-VaultFixtureMachineTrust $fixtureJournal Remove}
     Remove-OwnedPackageUsers
     Remove-OwnedPackageProfiles
     foreach($resource in @($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Group' -and $_.State -eq 'Created'})) {
@@ -1071,7 +1076,7 @@ function Remove-OwnedFixture {
     New-Item -ItemType Directory -Path $fixtureEvidence -Force | Out-Null
     Copy-Item -LiteralPath $fixtureJournal.Path -Destination (Join-Path $fixtureEvidence 'completed-owner.json')
     foreach($path in @('postgres.log','before.json','result.json','postgresql-provenance.json','package-sdk-provenance.json','output-cleanup-owner.json','output-cleanup-result.json','output-cleanup-process.json')) { if(Test-Path -LiteralPath (Join-Path $fixtureRoot $path)){Copy-Item -LiteralPath (Join-Path $fixtureRoot $path) -Destination (Join-Path $fixtureEvidence $path)} }
-    foreach($pair in @(@{Source='runtime/package-identity.json';Target='package-identity.json'},@{Source='catalogue/package-signing/key-owner.json';Target='signing-key-owner.json'},@{Source='catalogue/package-signing/native-key-cleanup.json';Target='native-key-cleanup.json'})) {
+    foreach($pair in @(@{Source='runtime/package-identity.json';Target='package-identity.json'},@{Source='catalogue/package-signing/key-owner.json';Target='signing-key-owner.json'},@{Source='catalogue/package-signing/native-key-cleanup.json';Target='native-key-cleanup.json'},@{Source='catalogue/package-signing/machine-trust-owner.json';Target='machine-trust-owner.json'})) {
         $source=Join-Path $fixtureRoot $pair.Source
         if(Test-Path -LiteralPath $source){Assert-VaultFixtureTrustedPath $source;Copy-Item -LiteralPath $source -Destination (Join-Path $fixtureEvidence $pair.Target)}
     }
@@ -1202,6 +1207,7 @@ try {
     @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds;ValidatePreparedAuthentication=[bool]$ValidatePreparedAuthentication} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     if($RunPackagedIdentityTests) {
         $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure()
+        if($PermitMachinePackageTrust){Invoke-VaultFixtureMachineTrust $fixtureJournal Add -Approved}
         foreach($actor in @('A','B')) {
             $profilePath=Join-Path ([Environment]::ExpandEnvironmentVariables((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList').ProfilesDirectory)) ("FVGate${actor}_261003")
             if((Get-CimInstance Win32_UserProfile -Filter "SID='$($actors[$actor])'" -ErrorAction SilentlyContinue) -or (Test-Path -LiteralPath $profilePath)){throw 'Package profile collision.'}

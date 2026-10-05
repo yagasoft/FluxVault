@@ -95,8 +95,8 @@ function New-VaultFixtureIdentityPackage {
     $packageDirectory=Join-Path $staging 'identity'
     New-VaultFixtureProtectedDirectory $packageDirectory
     $apphost=Join-Path $runtime 'FluxVault.TestHost.exe'
-    $assets=Join-Path $runtime 'Assets'
-    New-VaultFixtureProtectedDirectory $assets -ReadSids @($Journal.Resources | Where-Object {$_.Kind -eq 'Account' -and $_.State -eq 'Created'} | ForEach-Object {$_.Identity.Sid})
+    $assets=Join-Path $packageDirectory 'Assets'
+    New-VaultFixtureProtectedDirectory $assets
     $logo=Join-Path $PSScriptRoot '../../src/FluxVault.App/Assets/YagasoftLogo.png'
     Assert-VaultFixtureTrustedPath $logo
     Copy-Item -LiteralPath $logo -Destination (Join-Path $assets 'logo.png')
@@ -169,4 +169,109 @@ function New-VaultFixtureIdentityPackage {
     }
 }
 
-Export-ModuleMember -Function New-VaultFixtureIdentityPackage,Write-VaultFixturePackageRecord,New-VaultFixtureSdkSnapshot
+function New-VaultFixtureMachineTrustStore {
+    return [Security.Cryptography.X509Certificates.X509Store]::new('TrustedPeople','LocalMachine')
+}
+
+function Invoke-VaultFixtureMachineTrust {
+    param([hashtable]$Journal,[ValidateSet('Add','Remove')][string]$Mode,[switch]$Approved)
+    $root=Resolve-VaultFixtureRoot $Journal.Root $Journal.Parent $Journal.FixtureId
+    Assert-VaultFixtureTrustedPath $root
+    $path=Join-Path $root 'catalogue/package-signing/machine-trust-owner.json'
+    if($Mode -eq 'Add') {
+        if(-not $Approved){throw 'Explicit machine-certificate scope approval is required.'}
+        if(Test-Path -LiteralPath $path){throw 'Machine trust ownership already exists; recover it first.'}
+        $metadataPath=Join-Path $root 'runtime/package-identity.json'
+        Assert-VaultFixtureTrustedPath $metadataPath
+        $metadata=Get-Content -LiteralPath $metadataPath -Raw|ConvertFrom-Json -AsHashtable
+        if($metadata.Version -ne 1 -or $metadata.FixtureId -ne $Journal.FixtureId -or $metadata.Root -ne $root -or
+            $metadata.PackageName -ne ('FVGate.Package.'+$Journal.FixtureId) -or
+            $metadata.Publisher -ne ('CN=FluxVault Fixture '+$Journal.FixtureId) -or
+            $metadata.Thumbprint -notmatch '^[A-F0-9]{40}$' -or $metadata.CertificateSha256 -notmatch '^[A-F0-9]{64}$') {
+            throw 'Machine trust package binding is invalid.'
+        }
+        $keyPath=Join-Path $root 'catalogue/package-signing/native-key-cleanup.json'
+        Assert-VaultFixtureTrustedPath $keyPath
+        $keys=Get-Content -LiteralPath $keyPath -Raw|ConvertFrom-Json -AsHashtable
+        if($keys.State -ne 'Removed' -or $keys.FixtureId -ne $Journal.FixtureId -or
+            $keys.OwnerSid -ne [Security.Principal.WindowsIdentity]::GetCurrent().User.Value -or
+            $keys.Provider -ne 'Microsoft Software Key Storage Provider' -or
+            $keys.PublicFingerprint -notmatch '^[A-F0-9]{64}$' -or $keys.OwnedKeys.Count -gt 8 -or
+            @($keys.OwnedKeys|Where-Object State -ne 'Removed').Count -or
+            (Test-Path -LiteralPath (Join-Path $root 'catalogue/package-signing/ephemeral-key.pfx'))) {
+            throw 'Signing private keys have not been retired.'
+        }
+        $certificatePath=Join-Path $root 'runtime/identity.cer'
+        Assert-VaultFixtureTrustedPath $certificatePath
+        if((Get-FileHash -LiteralPath $certificatePath).Hash -ne $metadata.CertificateSha256){throw 'Machine trust public certificate bytes changed.'}
+        $record=@{Version=1;FixtureId=$Journal.FixtureId;Root=$root;Store='LocalMachine/TrustedPeople';
+            OwnerSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;Publisher=$metadata.Publisher;
+            Thumbprint=$metadata.Thumbprint;CertificateSha256=$metadata.CertificateSha256;State='Intent'}
+        $certificate=[Security.Cryptography.X509Certificates.X509CertificateLoader]::LoadCertificateFromFile($certificatePath)
+    } else {
+        if(-not(Test-Path -LiteralPath $path)){return}
+        Assert-VaultFixtureTrustedPath $path
+        $record=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json -AsHashtable
+        if($record.Version -ne 1 -or $record.FixtureId -ne $Journal.FixtureId -or $record.Root -ne $root -or
+            $record.Store -ne 'LocalMachine/TrustedPeople' -or
+            $record.OwnerSid -ne [Security.Principal.WindowsIdentity]::GetCurrent().User.Value -or
+            $record.Publisher -ne ('CN=FluxVault Fixture '+$Journal.FixtureId) -or
+            $record.Thumbprint -notmatch '^[A-F0-9]{40}$' -or $record.CertificateSha256 -notmatch '^[A-F0-9]{64}$' -or
+            $record.State -notin @('Intent','Created','Removed')){throw 'Machine trust recovery binding is invalid.'}
+        $certificate=$null
+    }
+    $store=New-VaultFixtureMachineTrustStore
+    $matches=@()
+    try {
+        if($Mode -eq 'Add') {
+            $rsa=[Security.Cryptography.X509Certificates.RSACertificateExtensions]::GetRSAPublicKey($certificate)
+            try {
+                if($null -eq $rsa -or
+                    [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($rsa.ExportSubjectPublicKeyInfo())) -ne $keys.PublicFingerprint){throw 'Signing private keys have not been retired.'}
+            } finally {if($rsa){$rsa.Dispose()}}
+            foreach($key in $keys.OwnedKeys) {
+                $parsedKey=[guid]::Empty
+                if($key.PublicFingerprint -ne $keys.PublicFingerprint -or
+                    -not [guid]::TryParseExact($key.KeyName,'B',[ref]$parsedKey) -or $parsedKey -eq [guid]::Empty -or
+                    [Security.Cryptography.CngKey]::Exists($key.KeyName,[Security.Cryptography.CngProvider]::MicrosoftSoftwareKeyStorageProvider,[Security.Cryptography.CngKeyOpenOptions]::Silent)) {
+                    throw 'Signing private keys have not been retired.'
+                }
+            }
+            $constraints=@($certificate.Extensions|Where-Object {$_ -is [Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]})
+            $usage=@($certificate.Extensions|Where-Object {$_ -is [Security.Cryptography.X509Certificates.X509KeyUsageExtension]})
+            $enhanced=@($certificate.Extensions|Where-Object {$_ -is [Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]})
+            if($certificate.HasPrivateKey -or $certificate.Thumbprint -ne $record.Thumbprint -or $certificate.Subject -ne $record.Publisher -or
+                $constraints.Count -ne 1 -or $constraints[0].CertificateAuthority -or $usage.Count -ne 1 -or
+                $usage[0].KeyUsages -ne [Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature -or
+                $enhanced.Count -ne 1 -or $enhanced[0].EnhancedKeyUsages.Count -ne 1 -or
+                $enhanced[0].EnhancedKeyUsages[0].Value -ne '1.3.6.1.5.5.7.3.3' -or
+                $certificate.NotBefore.ToUniversalTime() -gt [DateTime]::UtcNow -or $certificate.NotAfter.ToUniversalTime() -le [DateTime]::UtcNow -or
+                ($certificate.NotAfter-$certificate.NotBefore).TotalHours -gt 4){throw 'Only the short-lived public code-signing leaf may be trusted.'}
+        }
+        $store.Open([Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+        $matches=@($store.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$record.Thumbprint,$false))
+        if($Mode -eq 'Remove' -and $record.State -eq 'Removed') {
+            if($matches.Count){throw 'A retired machine certificate reappeared; preserve it for review.'}
+            return
+        }
+        if($Mode -eq 'Add') {
+            if($matches.Count){throw 'Existing machine certificate is not owned; no trust was changed.'}
+            Write-VaultFixturePackageRecord $path $record
+            $store.Add($certificate)
+            $matches=@($store.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$record.Thumbprint,$false))
+            if($matches.Count -ne 1){throw 'Machine certificate publication is incomplete.'}
+        }
+        foreach($item in $matches) {
+            if($item.HasPrivateKey -or $item.Subject -ne $record.Publisher -or
+                [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($item.RawData)) -ne $record.CertificateSha256) {
+                throw 'Machine certificate identity changed; preserve it for review.'
+            }
+            if($Mode -eq 'Remove'){$store.Remove($item)}
+        }
+        if($Mode -eq 'Remove' -and $store.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$record.Thumbprint,$false).Count){throw 'Owned machine certificate remains.'}
+        $record.State=if($Mode -eq 'Add'){'Created'}else{'Removed'}
+        Write-VaultFixturePackageRecord $path $record
+    } finally {foreach($item in $matches){$item.Dispose()};$store.Dispose();if($certificate){$certificate.Dispose()}}
+}
+
+Export-ModuleMember -Function New-VaultFixtureIdentityPackage,Write-VaultFixturePackageRecord,New-VaultFixtureSdkSnapshot,Invoke-VaultFixtureMachineTrust

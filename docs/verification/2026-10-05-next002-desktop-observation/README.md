@@ -74,3 +74,16 @@ parent exits with the expected forced-stop diagnostic, which is not acceptance.
 Actual keyboard/Narrator/DPI/high-contrast/responsiveness and visual ambiguity
 remain for guided manual observation or repaired capture tooling. The user has
 been asked to choose that concrete path. No normal runtime is launched.
+
+The user's 5 October approval selected guided manual observation. Fresh attempt
+`8cc8ee6adf884f2da24c76e272b7e260` opened the real disposable WPF window and bound
+its native control tree. Pixel capture remained blank. The user received the
+keyboard/save-failure and Narrator/actual-scale/contrast instructions, but no
+observations arrived during the eight-minute lifetime. Its [result](manual-attempt-8cc8ee6adf884f2da24c76e272b7e260/ui-result.json)
+records zero saves/backups and no pending edit; it does not establish those
+workflows or visual/accessibility acceptance. The [cleanup](manual-attempt-8cc8ee6adf884f2da24c76e272b7e260/cleanup.json)
+records joined exit zero, exact root removal and unchanged normal installation.
+The earlier records/renders remain unchanged. No new unattended UI is left
+running; another bounded session awaits the user's readiness. Larger-inventory
+responsiveness and the successful installed workflow still require their real
+interfaces; the empty rejecting-client window cannot prove them.

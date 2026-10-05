@@ -6,11 +6,20 @@ Set-StrictMode -Version Latest
 Import-Module (Join-Path $PSScriptRoot 'vault-windows-fixture.psm1') -Force
 Import-Module (Join-Path $PSScriptRoot 'packaged-identity.psm1') -Force
 $fixtureId=Split-Path $Root -Leaf
-$Root=Resolve-VaultFixtureRoot $Root 'C:\ProgramData\FluxVault.Tests\NEXT002' $fixtureId
+$parsed=[guid]::Empty
+if(-not [guid]::TryParseExact($fixtureId,'N',[ref]$parsed) -or $parsed -eq [guid]::Empty -or
+    -not [IO.Path]::IsPathFullyQualified($Root) -or
+    [IO.Path]::GetFullPath($Root) -ne (Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $parsed.ToString('N'))) {
+    throw 'Packaged actor fixture root mismatch.'
+}
+$Root=[IO.Path]::GetFullPath($Root)
+# The privileged parent verifies and protects all ancestors. Like the ordinary
+# actor launcher, this account traverses private parents without inspecting them.
 $configuration=Get-Content -LiteralPath (Join-Path $Root 'runtime/database-probe.json') -Raw | ConvertFrom-Json
 $metadata=Get-Content -LiteralPath (Join-Path $Root 'runtime/package-identity.json') -Raw | ConvertFrom-Json
 $actualSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-if($actualSid -ne $configuration.Actors.$Actor -or $metadata.Version -ne 1 -or $metadata.FixtureId -ne $fixtureId -or
+if($actualSid -ne $configuration.Actors.$Actor -or $configuration.FixtureId -ne $fixtureId -or $configuration.Root -ne $Root -or
+    $metadata.Version -ne 1 -or $metadata.FixtureId -ne $fixtureId -or
     $metadata.Root -ne $Root -or $metadata.PackageName -ne ('FVGate.Package.'+$fixtureId) -or
     $metadata.Publisher -ne ('CN=FluxVault Fixture '+$fixtureId) -or $metadata.Thumbprint -notmatch '^[A-F0-9]{40}$') {
     throw 'Packaged fixture identity mismatch.'
@@ -19,7 +28,6 @@ $runtime=Join-Path $Root 'runtime'
 foreach($pair in @(@{Path='identity.msix';Hash=$metadata.PackageSha256},@{Path='identity.cer';Hash=$metadata.CertificateSha256},
     @{Path='FluxVault.TestHost.exe';Hash=$metadata.ApphostSha256})) {
     $path=Join-Path $runtime $pair.Path
-    Assert-VaultFixtureTrustedPath $path
     if((Get-FileHash -LiteralPath $path).Hash -ne $pair.Hash){throw 'Packaged fixture payload changed.'}
 }
 $ownerPath=Join-Path $Root ("output-$Actor/package-owner.json")
@@ -46,6 +54,18 @@ try {
         $mayCleanup=$true
         $store.Add($certificate)
         $state.State='CertificateCreated';Write-VaultFixturePackageRecord $ownerPath $state
+        $verifyStore=[Security.Cryptography.X509Certificates.X509Store]::new('TrustedPeople','CurrentUser')
+        $published=@()
+        try {
+            $verifyStore.Open([Security.Cryptography.X509Certificates.OpenFlags]::ReadOnly)
+            $published=@($verifyStore.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$metadata.Thumbprint,$false))
+            if($published.Count -ne 1 -or $published[0].HasPrivateKey -or $published[0].Subject -ne $metadata.Publisher -or
+                [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($published[0].RawData)) -ne $metadata.CertificateSha256 -or
+                [Security.Principal.WindowsIdentity]::GetCurrent().User.Value -ne $actualSid){throw 'Per-user public certificate publication was not verified.'}
+            $state.TrustProof=@{WindowsSid=$actualSid;Store='CurrentUser/TrustedPeople';Thumbprint=$metadata.Thumbprint;
+                CertificateSha256=$metadata.CertificateSha256;HasPrivateKey=$false;ReopenedVerified=$true}
+            Write-VaultFixturePackageRecord $ownerPath $state
+        } finally {foreach($item in $published){$item.Dispose()};$verifyStore.Dispose()}
         Add-AppxPackage -Path (Join-Path $runtime 'identity.msix') -ExternalLocation $runtime -ErrorAction Stop
         $package=@(Get-AppxPackage -Name $metadata.PackageName)
         if($package.Count -ne 1 -or $package[0].Publisher -ne $metadata.Publisher -or
@@ -96,6 +116,9 @@ finally {
         }
     } finally {$store.Dispose();$certificate.Dispose()}
 }
-if($failure){throw $failure}
+if($failure){
+    if($state.ContainsKey('TrustProof')){throw ($failure.Exception.Message+' Certificate publication: '+($state.TrustProof|ConvertTo-Json -Compress))}
+    throw $failure
+}
 @{Actor=$Actor;WindowsSid=$actualSid;Action=$Action;Proof=$proof;ProcessIdentity=$identity;PackageOwner=$state;
     PackageRemoved=$state.PackageRemoved;CertificateRemoved=$state.CertificateRemoved} | ConvertTo-Json -Depth 6

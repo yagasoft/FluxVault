@@ -1,0 +1,5 @@
+{
+  "Error": "",
+  "ExitCode": 0,
+  "Output": "The files belonging to this database system will be owned by user \"os008\".\r\nThis user must also own the server process.\r\n\r\nThe database cluster will be initialized with locale \"C\".\r\nThe default text search configuration will be set to \"english\".\r\n\r\nData page checksums are enabled.\r\n\r\ncreating directory C:/ProgramData/FluxVault.Tests/NEXT002/bf4645f9aaba450abb0b822dea68a6c7/data ... ok\r\ncreating subdirectories ... ok\r\nselecting dynamic shared memory implementation ... windows\r\nselecting default \"max_connections\" ... 100\r\nselecting default \"shared_buffers\" ... 128MB\r\nselecting default time zone ... Africa/Cairo\r\ncreating configuration files ... ok\r\nrunning bootstrap script ... ok\r\nperforming post-bootstrap initialization ... ok\r\nsyncing data to disk ... ok\r\n\r\nSuccess. You can now start the database server using:\r\n\r\n    ^\"C^:^\\ProgramData^\\FluxVault^.Tests^\\NEXT002^\\bf4645f9aaba450abb0b822dea68a6c7^\\postgresql^\\bin^\\pg^_ctl^\" -D ^\"C^:^\\ProgramData^\\FluxVault^.Tests^\\NEXT002^\\bf4645f9aaba450abb0b822dea68a6c7^\\data^\" -l logfile start\r\n\r\n"
+}

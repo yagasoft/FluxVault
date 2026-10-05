@@ -407,8 +407,8 @@ authentication/path `5d5ba09` and interruption `ad6087a` remain valid.
 
 | Matrix gate | Exact remaining dependency |
 | --- | --- |
-| S01 | Prepared native packaged A/B rehearsal is awaiting explicit approval for the two new profiles, scoped per-user certificate trust and one package registration; then run it and verify teardown. |
-| D01 | Guided actual-desktop keyboard/Narrator/DPI/high-contrast/rendering/responsiveness observations remain; native tool binding is inconsistent. Logical renders cannot satisfy them. |
+| S01 | Exact A/B profiles/package and per-user trust were approved and exercised. Native registration fails with `0x800B0109`; cleanup passes. Independent review accepts the bounded default-off machine TrustedPeople public-leaf fallback; separate resource approval and real packaged-token/teardown verification remain. No normal rollout approval is implied. |
+| D01 | Guided actual-desktop keyboard/Narrator/DPI/high-contrast/rendering/larger-inventory responsiveness observations remain. Native controls bind but capture pixels are blank. The approved eight-minute manual attempt closed/joined without user observations or interaction; it closes no desktop gate. A ready user session or repaired capture is the concrete dependency. Logical renders cannot satisfy these observations. |
 | S05 | Execute the fixed installed SYSTEM setup and verify normal SSPI/database/filesystem boundary, unchanged unrelated PG state/postmaster and checked legacy recovery during the separately approved rollout. Disposable native worker/component proofs and exact preparation are retained. |
 | G01 | Whole-branch source and executable preparation are independently accepted, including the response correction below. Combined/affected checks and cleanup pass. S01/D01 proofs and separately approved normal commissioning/live acceptance remain before full gate completion. |
 
@@ -475,3 +475,13 @@ executable for this exact candidate. S01/D01 and approved normal fixed-path
 installation/live validation remain required before complete matrix acceptance;
 the installed rollback drill remains unexecuted. No rollout approval is requested
 until the remaining predeployment technical gates close.
+
+The approved 5 October resource/manual attempt advances S01 to an actual Windows
+registration failure, not acceptance. The [retained native evidence](../2026-10-05-next002-packaged-identity/README.md)
+and [scoped fallback proposal](../2026-10-05-next002-packaged-identity/native-rehearsal-approval.md)
+make its remaining dependency explicit. The [manual attempt](../2026-10-05-next002-desktop-observation/manual-attempt-8cc8ee6adf884f2da24c76e272b7e260/cleanup.json)
+retired its UI without observations; D01 awaits a ready human session. Only
+fixture code changed: candidate `51b103b3c75645dfaa36600e2cbe07a5`, product source,
+configuration/authentication/ACL bytes and the executable normal commissioning
+procedure remain frozen. S05 installed execution and full G01/live acceptance
+remain behind the separately required rollout approval.

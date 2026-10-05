@@ -201,3 +201,13 @@ closes the C02/S07 blocker. Unaffected creator/installer, authentication/path an
 interruption checkpoints stay valid. S01 permission/proof, D01 actual-desktop/scale
 observations and separately approved normal installation/live workflow remain
 the critical path; the matrix and scope are unchanged.
+
+The 5 October approval was exercised for the exact packaged A/B profiles and
+per-user trust. Native registration reaches `Add-AppxPackage` but fails with
+`0x800B0109`; all owned resources are retired. The existing package module/runner
+prepares one default-off machine TrustedPeople public-leaf fallback, requiring
+separate resource approval, and an independently reopened per-user publication
+diagnostic. D01's approved bounded manual session closed/joined without human
+observations; a ready guided session or repaired pixels is its concrete
+dependency. These fixture-only corrections leave the candidate, C01–G01 matrix,
+single-vault architecture, commissioning procedure and roadmap unchanged.

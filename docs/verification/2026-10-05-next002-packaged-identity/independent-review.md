@@ -52,3 +52,45 @@ zero-warning/error Release build and the census. All six fixture signing keys,
 seven roots and 59 captured processes are absent; 38 database intents are
 retired. Normal installation and trust remain unchanged. Actual native package
 registration, packaged-token behaviour and teardown are still unverified.
+
+## Approved per-user attempt and bounded machine-trust preparation
+
+The same independent Astra reviewer assessed the 5 October actual attempts,
+complete fixture correction/fallback diff and public evidence. The package logo
+correction preserves cloned runtime Assets. The ordinary launcher retains fixed
+canonical UUID/root, native SID and payload hashes while the privileged parent
+retains ancestor/ACL checks. The third attempt reaches registration and fails
+with `0x800B0109`; all three cleanup guards pass and the captured fixture
+resources/signing imports are absent. This is not S01 acceptance.
+
+Conflicting Microsoft guidance and that native failure support preparation of
+a separate machine-trust resource request without another unchanged per-user
+rerun. They do not prove machine trust is the only solution. The prepared
+CurrentUser diagnostic independently reopens the store and checks exact public
+bytes/hash/thumbprint, native SID and `HasPrivateKey=false` before registration.
+
+The bounded default-off fallback uses only one public code-signing leaf in
+LocalMachine TrustedPeople. Exact baseline absence, durable intent and
+certificate identity precede publication. Signing PFX and owned native keys
+must be retired with matching owner/provider/RSA fingerprint and fresh silent
+native absence. Existing cleanup removes the exact owned leaf even if key
+recovery reports failure, then verifies absence. Changed identity, collision
+or reappearance after retirement is preserved. Lost-ack recovery reopens the
+actual protected record; unrelated trust and policies are preserved.
+
+The reviewer required one correction: retain the original package trust/policy
+snapshot requirement from reopened `before.json` when interruption precedes
+PackageUser intents. The actual snapshot/reopened-journal regression failed
+before correction and passes afterwards, including subsequent trust-change
+detection. Final assessment: approved technical preparation for the separate
+machine-trust resource decision, with no remaining blocking finding in this
+bounded diff. The reviewer inspected 10/10 focused, 115/115 combined and the
+added 1/1 interruption correction. The final combined run was pending at that
+inspection; its observed result is recorded separately in the preparation README.
+The subsequent final combined run passes 116/116, without skips or new build
+warnings, and its parent exits zero and joins. No source changed after the
+reviewed interruption correction.
+
+This assessment grants no machine-store mutation, packaged S01 acceptance,
+normal installation rollout or full G01 completion. The original user approval
+covered only A/B per-user trust/package/profiles and guided disposable D01.

@@ -8,13 +8,15 @@ $identities=[Collections.Generic.Dictionary[string,hashtable]]::new()
 $roots=[Collections.Generic.List[hashtable]]::new()
 $databases=[Collections.Generic.List[hashtable]]::new()
 $directories=@(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'artifacts') -Directory)+
-    @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'integrity-refresh') -Directory)
+    @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'integrity-refresh') -Directory)+
+    @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'native') -Directory -ErrorAction SilentlyContinue)
 foreach($directory in $directories) {
     $journalPath=Join-Path $directory.FullName 'owner.json'
     if(-not(Test-Path -LiteralPath $journalPath)){$journalPath=Join-Path $directory.FullName 'completed-owner.json'}
     $journal=Get-Content -LiteralPath $journalPath -Raw|ConvertFrom-Json -AsHashtable
     $root=Resolve-VaultFixtureRoot $journal.Root $journal.Parent $journal.FixtureId
-    if($directory.Name -ne $journal.FixtureId -or $journal.State -ne 'Complete' -or @($journal.Resources|Where-Object State -notin @('Removed','Absent')).Count){throw 'Preparation ownership is incomplete.'}
+    if($directory.Name -notin @($journal.FixtureId,($journal.FixtureId+'-first-attempt'),($journal.FixtureId+'-second-attempt'),($journal.FixtureId+'-machine-trust')) -or
+        $journal.State -ne 'Complete' -or @($journal.Resources|Where-Object State -notin @('Removed','Absent')).Count){throw 'Preparation ownership is incomplete.'}
     $captured=@($journal.RunnerIdentity)+@($journal.Resources|Where-Object Kind -in @('Process','Postmaster')|ForEach-Object Identity)
     foreach($file in Get-ChildItem -LiteralPath $directory.FullName -Filter 'tool-*-child.json') {$captured+=@(Get-Content -LiteralPath $file.FullName -Raw|ConvertFrom-Json -AsHashtable)}
     $cleanupProcess=Join-Path $directory.FullName 'output-cleanup-process.json'
@@ -48,7 +50,8 @@ foreach($directory in $directories) {
     $roots.Add(@{FixtureId=$journal.FixtureId;RootAbsent=$true;NamedJobsAbsent=$true})
 }
 $keyRecords=@(Get-Item -LiteralPath (Join-Path $PSScriptRoot 'imported-key-cleanup.json'))+
-    @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'artifacts') -Filter 'native-key-cleanup.json' -Recurse -File)
+    @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'artifacts') -Filter 'native-key-cleanup.json' -Recurse -File)+
+    @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'native') -Filter 'native-key-cleanup.json' -Recurse -File -ErrorAction SilentlyContinue)
 $removedKeys=[Collections.Generic.List[hashtable]]::new()
 $provider=[Security.Cryptography.CngProvider]::MicrosoftSoftwareKeyStorageProvider
 foreach($file in $keyRecords) {

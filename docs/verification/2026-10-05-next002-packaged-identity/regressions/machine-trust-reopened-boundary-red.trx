@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="64338e80-768e-46d6-b77e-c7a7c30f376a" name="os008@OS008-HOME 2026-10-05 22:15:27" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T22:15:27.7874282+03:00" queuing="2026-10-05T22:15:27.7874283+03:00" start="2026-10-05T22:15:25.2942086+03:00" finish="2026-10-05T22:15:27.7910731+03:00" />
+  <TestSettings name="default" id="f836b243-2a82-4be7-b494-7151d6d7b594">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_22_15_27" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="288e4e06-4dd9-440b-b4b9-aa789ff92311" testId="359c48a6-2215-f5fa-8317-1d2405328c44" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_interrupted_before_profile_intents_retains_reopened_boundary_verification" computerName="OS008-HOME" duration="00:00:01.8208455" startTime="2026-10-05T22:15:25.8803505+03:00" endTime="2026-10-05T22:15:27.7158835+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="288e4e06-4dd9-440b-b4b9-aa789ff92311">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_interrupted_before_profile_intents_retains_reopened_boundary_verification() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1139&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_interrupted_before_profile_intents_retains_reopened_boundary_verification" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="359c48a6-2215-f5fa-8317-1d2405328c44">
+      <Execution id="288e4e06-4dd9-440b-b4b9-aa789ff92311" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Machine_trust_interrupted_before_profile_intents_retains_reopened_boundary_verification" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="359c48a6-2215-f5fa-8317-1d2405328c44" executionId="288e4e06-4dd9-440b-b4b9-aa789ff92311" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:02.04]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:02.04]       Expected: True&#xD;
+[xUnit.net 00:00:02.04]       Actual:   False&#xD;
+[xUnit.net 00:00:02.04]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.05]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(1139,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_interrupted_before_profile_intents_retains_reopened_boundary_verification()&#xD;
+[xUnit.net 00:00:02.05]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.06]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T22:15:27.7183650+03:00">
+        <Text>[xUnit.net 00:00:02.04]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_interrupted_before_profile_intents_retains_reopened_boundary_verification [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

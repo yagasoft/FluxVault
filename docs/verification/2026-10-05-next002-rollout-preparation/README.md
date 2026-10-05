@@ -330,7 +330,87 @@ keyboard/Narrator/monitor DPI/high contrast/responsiveness and the unresolved
 native capture observation; exact normal setup/activation and rollback execution
 preparation; consolidated whole-branch G01; then separately approved installation
 and live save → backup → history → independently verified recovery. Native
-Computer Use's required `node_repl` interface is not callable in this session;
-logical renders and automation names do not close those desktop observations.
+Computer Use's `node_repl` interface has become callable, but native window
+enumeration and capture return inconsistent handles. Its documented single
+recovery retry fails; logical renders and automation names do not close those
+desktop observations. A guided manual session is awaiting the user's response.
 The candidate and normal installation remain unchanged. This is not slice
 completion or a rollout request.
+
+## Executable candidate installation and recovery
+
+[The fixed operator procedure](commission-installation.ps1) connects the frozen
+candidate to authentication retirement, the actual service setup command and
+native creator CLI, joined setup/verified bootstrap, and service activation.
+Its default `Prepare` mode is read-only. [Observed preflight](installation-procedure-preflight.json)
+matches all 208 candidate and 204 legacy payload hashes, exact ticket/SQL/auth
+inputs, current service policy and original preservation/ancestor state. Product
+source has not changed since the frozen `2ce19df` candidate.
+
+Targets remain `C:\Program Files\FluxVault` and the new creator-owned single-vault
+bootstrap/repository/state under `C:\ProgramData\FluxVault`. The protected
+commissioning directory is `C:\ProgramData\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f`.
+The [typed ticket and command inputs](normal-setup-inputs.json) pin creator
+`S-1-5-21-136112424-624261118-1239521417-1001`, installation
+`7871ff7f8d1b404db20771f2e742364f`, vault `675392789292487093cda011419228dc`
+and ticket SHA-256 `8DEAAA406C027C361E20C32C90F4C9AFD7ADDA76A72528E4D5E1E2936CA2DDE4`.
+The frozen product parser validates the ticket. Initial folder/mirror selections
+are empty; local-first/manual-only defaults apply.
+
+Run `commission-installation.ps1 -Mode Prepare` for the read-only recheck.
+Only after the required technical gates and separately recorded operational
+approval, run the same script with `-Mode Install -OperationalApprovalRecorded`.
+The switch records the caller's obligation; it does not grant approval. The
+procedure refuses existing attempt/preservation targets, quiesces FluxVault and
+its recovery policy, preserves legacy state, installs the exact bundle stopped
+and on demand, verifies the full installed payload, applies only the reviewed
+two-ancestor DACL correction, then runs and joins authentication workers.
+Setup waits for independent successful retirement, never merely a receipt.
+A separate SYSTEM job creates the protected ticket copy and runs the fixed
+installed setup entry. The native creator CLI confirms the exact instance/vault
+and revision; the SYSTEM host must exit successfully with a matching protected
+bootstrap. Only then may SCM recovery/delayed automatic start and runtime begin.
+
+For approved rollback, use `-Mode Rollback -OperationalApprovalRecorded`.
+Recovery reopens the frozen protected context and its separately pinned parent
+snapshots, recovers task ownership from the durable pre-registration intent
+even without launch acknowledgement, and joins owned actors. Every unmatched
+installer intent blocks further installers: a killed launcher cannot prove an
+external MSI transaction has ended. No SQL/setup/installer is retried automatically.
+Uninstall the exact new bundle before restoring legacy state and original
+authentication; retain fresh state at the declared Failed path. Restore only
+the two reviewed ancestor DACLs, then run the retained v1.0.4 installer and
+verify all 204 files, exact configuration/SCM policy and unchanged postmaster.
+The retained installer source has replaceable ancestors, so execution uses only
+its hash-verified protected commissioning copy. Failure keeps FluxVault stopped
+and preserves both databases, repositories and recovery records. No PostgreSQL
+restart or automatic data deletion is included.
+
+The launcher/operator flow regressions exercise actual function sequencing,
+typed ticket parsing, real filesystem receipts and joined real children. Native
+state/bootstrap and installer/SCM boundaries are substituted in those focused
+checks; they do not establish installed execution. The native
+[rollback run](native/3423b5b4d7b3447eadc358951f3c5ec7/rollback-authentication.json)
+uses the exact SYSTEM rollback worker, task intent/dispatch/teardown and private
+PostgreSQL to prove original-byte restoration and administrator retirement.
+The earlier `c1f7d...` proof predates the task-intent correction. The failed
+`94b006...` construction is retained, including its exact task-hash recovery;
+it supplies no acceptance claim. All three owned clusters/tasks/actors retire.
+The final combined checks pass 118/118 without skips or new build warnings;
+the [consolidated review](architecture-review.md) accepts this executable
+preparation scope. The refreshed existing census verifies 1,059 captured
+identities absent and 753 resources retired across 25 runs, with normal state,
+the candidate and unrelated changes unchanged.
+The native setup/creator/full-workflow and installer checkpoints at `9815673`,
+authentication/path `5d5ba09` and interruption `ad6087a` remain valid.
+
+| Matrix gate | Exact remaining dependency |
+| --- | --- |
+| S01 | Prepared native packaged A/B rehearsal is awaiting explicit approval for the two new profiles, scoped per-user certificate trust and one package registration; then run it and verify teardown. |
+| D01 | Guided actual-desktop keyboard/Narrator/DPI/high-contrast/rendering/responsiveness observations remain; native tool binding is inconsistent. Logical renders cannot satisfy them. |
+| S05 | Execute the fixed installed SYSTEM setup and verify normal SSPI/database/filesystem boundary, unchanged unrelated PG state/postmaster and checked legacy recovery during the separately approved rollout. Disposable native worker/component proofs and exact preparation are retained. |
+| G01 | Consolidated independent whole-branch security/integrity acceptance, required combined/named checks and final cleanup; then separate rollout approval and live save → backup → history → independently hash-verified recovery. |
+
+This is a candidate procedure and checked preparation, not an installed rollback
+drill, full matrix acceptance or NEXT-002 completion. No normal installation,
+authentication, ancestor ACL, service or data move has been performed.

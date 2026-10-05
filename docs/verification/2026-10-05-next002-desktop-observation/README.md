@@ -63,3 +63,14 @@ save/backup/history/verified recovery retains its separate native proof; the
 rejecting UI client does not substitute for it. Complete D01/S3 keyboard,
 Narrator, DPI, high contrast, larger inventory responsiveness, packaged identity,
 remaining source/background checks, final G01 and normal rollout remain open.
+
+The completion-mode retry initialises the restored `node_repl`/Computer Use
+interface, but native enumeration repeatedly returns handle 4461090 while capture
+rejects it and reports handle 198320. The documented single selection retry fails.
+No UI input is issued after that failure. The new disposable fixture process 66128
+is identified by its native start time/image, stopped and joined; its root is
+removed and normal services/authentication/configuration are unchanged. The
+parent exits with the expected forced-stop diagnostic, which is not acceptance.
+Actual keyboard/Narrator/DPI/high-contrast/responsiveness and visual ambiguity
+remain for guided manual observation or repaired capture tooling. The user has
+been asked to choose that concrete path. No normal runtime is launched.

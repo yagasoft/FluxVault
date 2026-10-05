@@ -215,6 +215,50 @@ function Invoke-PreparedAuthenticationTasks {
     }
 }
 
+function Test-PreparedAuthenticationRollback {
+    param([hashtable]$Context)
+    # Exercise the exact rollback worker and task dispatch against this owned
+    # cluster. This adds no new account/profile/trust or normal-system effect.
+    $source=Join-Path $PSScriptRoot '../docs/verification/2026-10-05-next002-rollout-preparation'
+    Copy-Item -LiteralPath (Join-Path $source 'commission-setup-worker.ps1') -Destination (Join-Path $Context.WorkRoot 'commission-setup-worker.ps1')
+    . (Join-Path $source 'commission-installation.ps1')
+    $jobName='authentication-rollback';$jobIdentity=@{KernelName=('Global\FluxVault.NEXT002.'+[guid]::NewGuid().ToString('N'));OwnerSid=$Context.OperatorSid}
+    Add-VaultFixtureIntent $fixtureJournal Job $jobName $jobIdentity
+    $fixtureJobs[$jobName]=[FluxVault.Fixtures.OwnedWindowsJob]::Create($jobIdentity.KernelName,$actors.System)
+    Set-VaultFixtureResourceState $fixtureJournal Job $jobName Created $jobIdentity
+    $Context.SetupJob=$jobIdentity;$Context.InstallationId=$FixtureId
+    $Context|ConvertTo-Json -Depth 12|Set-Content -LiteralPath (Join-Path $Context.WorkRoot 'context.json')
+    $Context.IdentitySha256=(Get-FileHash (Join-Path $Context.WorkRoot 'context.json')).Hash
+    $Context.Jobs=@{Setup=$fixtureJobs[$jobName]};$Context.Tasks=[Collections.Generic.List[object]]::new()
+    $taskName='FV-NEXT002-'+$FixtureId+'-restore'
+    Add-VaultFixtureIntent $fixtureJournal Task $taskName
+    try {
+        Restore-CommissionOriginalAuthentication $Context
+        foreach($name in $Context.OriginalHashes.Keys){if((Get-FileHash (Join-Path $Context.DataDirectory $name)).Hash -cne $Context.OriginalHashes[$name]){throw 'Native rollback did not restore exact original bytes.'}}
+        Copy-Item -LiteralPath (Join-Path $Context.WorkRoot 'rollback-authentication.json') -Destination (Join-Path $fixtureEvidence 'rollback-authentication.json')
+        Copy-Item -LiteralPath (Join-Path $Context.WorkRoot 'task-restore-started.json') -Destination (Join-Path $fixtureEvidence 'rollback-task.json')
+        Copy-Item -LiteralPath (Join-Path $Context.WorkRoot 'commission-processes.jsonl') -Destination (Join-Path $fixtureEvidence 'commission-processes.jsonl')
+        if(Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue){throw 'Native rollback task remains.'}
+        $identity=Get-Content (Join-Path $Context.WorkRoot 'task-restore-started.json') -Raw|ConvertFrom-Json -AsHashtable
+        Set-VaultFixtureResourceState $fixtureJournal Task $taskName Created @{DefinitionSha256=$identity.Hash;InstanceId=$identity.InstanceId}
+        Set-VaultFixtureResourceState $fixtureJournal Task $taskName Removed @{DefinitionSha256=$identity.Hash;InstanceId=$identity.InstanceId}
+        Set-VaultFixtureResourceState $fixtureJournal Job $jobName Removed $jobIdentity
+        $fixtureJobs.Remove($jobName)
+    }finally {
+        # Capture the exact registered invocation even when its proof fails, so
+        # the existing journal recovery does not have to infer its ownership.
+        $started=Join-Path $Context.WorkRoot 'task-restore-started.json'
+        if(Test-Path $started) {
+            $identity=Get-Content $started -Raw|ConvertFrom-Json -AsHashtable
+            $resource=@($fixtureJournal.Resources|Where-Object {$_.Kind -eq 'Task' -and $_.Name -eq $taskName})[0]
+            if($resource.State -eq 'Intent'){Set-VaultFixtureResourceState $fixtureJournal Task $taskName Created @{DefinitionSha256=$identity.Hash;InstanceId=$identity.InstanceId}}
+        }
+        Stop-CommissionActors $Context
+        if($fixtureJobs.ContainsKey($jobName)){$fixtureJobs.Remove($jobName)}
+    }
+    $Context.Remove('Jobs');$Context.Remove('Tasks')
+}
+
 function Test-PreparedAuthentication {
     param([string]$Connection,[string]$Password)
     # Parse exact proposed files only in this owned cluster, before any actors
@@ -338,6 +382,7 @@ SELECT json_build_object(
         Copy-Item -LiteralPath (Join-Path $administratorRoot 'authentication-completed.json') -Destination (Join-Path $fixtureEvidence 'authentication-completed.json')
         Copy-Item -LiteralPath (Join-Path $administratorRoot 'commission-processes.jsonl') -Destination (Join-Path $fixtureEvidence 'commission-processes.jsonl')
         Copy-Item -LiteralPath (Join-Path $administratorRoot 'administrator-baseline.json') -Destination (Join-Path $fixtureEvidence 'administrator-baseline.json')
+        Test-PreparedAuthenticationRollback $authenticationContext
         $interruptedRoot=Join-Path $fixtureRoot 'administrator-interrupted';New-VaultFixtureProtectedDirectory $interruptedRoot
         foreach($file in Get-ChildItem -LiteralPath $administratorRoot -File | Where-Object {($_.Name -match '\.(psm1|ps1|cs|conf)$' -and $_.Name -notlike 'original-*') -or $_.Name -in @('create.sql','empty.pgpass')}){Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $interruptedRoot $file.Name)}
         $faultWorker=Join-Path $interruptedRoot 'commission-authentication-worker.ps1'

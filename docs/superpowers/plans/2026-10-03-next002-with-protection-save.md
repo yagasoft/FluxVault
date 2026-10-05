@@ -168,6 +168,23 @@ The combined commissioning checks pass 101/101. Retained v1.0.4 MSI tables match
 the captured rollback service policy, so use that installer and verify its result.
 S01 permission, complete D01 observations/scale, exact normal setup/activation
 and rollback execution preparation, final G01 and separately approved rollout/live
-validation remain. The required native Computer Use `node_repl` surface is absent
-in the current session. Preserve existing gates and evidence; do not substitute
+validation remain. The native Computer Use surface now initialises, but window enumeration and capture return inconsistent handles; its single recovery retry fails. Guided manual observations await the user. Preserve existing gates and evidence; do not substitute
 logical WPF renders for those outstanding desktop observations.
+
+Completion update: one executable fixed-candidate installation/rollback procedure
+now connects stopped installation, independent authentication retirement, native
+creator confirmation, joined SYSTEM setup/verified bootstrap and service
+activation. Recovery joins owned tasks from pre-registration intents even after
+lost launch acknowledgements; unmatched installer intents block further installer
+work until external MSI state is reconciled. The retained v1.0.4 installer is
+copied by exact hash into the protected commissioning root before execution.
+The exact native rollback worker restores original authentication and retires
+administrator access in the existing private fixture, with joined resources and
+normal state unchanged. The read-only procedure matches all 208 candidate/all 204
+legacy files and its 4789-byte worker context fits the existing 64 KiB bound.
+
+Pending S01 resource approval/proof, D01 actual desktop/accessibility/scale,
+whole-branch G01 and separate normal rollout/live acceptance remain. This closes
+coherent executable preparation, subject to its consolidated technical review;
+fixed installed entry/SCM effects and legacy reinstall still need the approved
+normal rollout. No new plan, gate or roadmap scope is introduced.

@@ -135,3 +135,30 @@ ancestor ACLs, candidate hashes and unrelated primary edits are unchanged.
 This is technical checkpoint acceptance only. Exact normal setup/activation and
 rollback execution preparation, S01 resource permission/proof, D01, whole-branch
 G01 and separately approved normal rollout/live validation remain open.
+
+## Consolidated executable procedure acceptance
+
+The independent Astra reviewer accepts the fixed candidate installation/rollback
+procedure and disposable native proof, with no remaining blocking finding in
+this scope. The initial review identified two existing interruption invariants:
+an unmatched installer intent after operator death must block further installers,
+and task ownership must be durable before registration and recoverable without
+a launch acknowledgement. Both are corrected. Reopened-context regressions use
+real filesystem receipts and the actual parent recovery/wait/removal flow,
+substituting only its scheduler boundary; mismatched tasks remain preserved.
+
+The combined relevant checks pass 118/118 without skips or build warnings.
+Native `3423b5b4d7b3447eadc358951f3c5ec7` exercises the exact SYSTEM rollback
+worker/task intent/dispatch/teardown, restoring original authentication and
+retiring administrator access without restarting its private PostgreSQL.
+The fresh existing census verifies 25 runs, 1,059 captured process identities
+absent and 753 resources retired. Normal authentication, postmaster, ancestor
+ACLs, 204 installed payload files, 208 candidate payload files and unrelated
+primary changes remain unchanged. The exact source ticket is validated by the
+frozen product; the read-only operator preflight passes. The legacy installer
+executes only from a hash-verified protected copy of its retained input.
+
+This is acceptance of executable preparation, not normal installed execution,
+an installed legacy reinstall drill, S01/D01, complete G01 or rollout authority.
+Full-branch independent implementation assessment is proceeding while the
+specific S01 resource approval and D01 manual-observation responses are pending.

@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1f9fd6f0-b8d8-482e-8901-1b31717303ba" name="os008@OS008-HOME 2026-10-05 15:02:09" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T15:02:09.1642571+03:00" queuing="2026-10-05T15:02:09.1642572+03:00" start="2026-10-05T15:02:07.2958910+03:00" finish="2026-10-05T15:02:20.0022566+03:00" />
+  <TestSettings name="default" id="658d4e98-bd98-4ddc-8398-137303805a87">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_15_02_09" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a45bafda-b3b4-4080-806f-392a8ed6631b" testId="27d8536a-c317-f31d-f894-c107661bfcc4" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: &quot;success&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:01.7976395" startTime="2026-10-05T15:02:09.7305289+03:00" endTime="2026-10-05T15:02:11.5285354+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a45bafda-b3b4-4080-806f-392a8ed6631b">
+      <Output>
+        <ErrorInfo>
+          <Message>{"Completed":false,"Failure":"Exception calling \"ImagePath\" with \"1\" argument(s): \"A device attached to the system is not functioning.\"","Launched":true,"Reply":null,"CopiedTicket":true,"InputRetained":true}</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 139&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7196875e-4aea-454d-b197-240f5f004281" testId="1efa68fc-a998-37a8-b75b-846a01c99e40" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: &quot;binding-mismatch&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.8220723" startTime="2026-10-05T15:02:13.3650272+03:00" endTime="2026-10-05T15:02:15.1871972+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7196875e-4aea-454d-b197-240f5f004281" />
+    <UnitTestResult executionId="13f1eb9c-5ae1-4161-9eb4-fcec92413c87" testId="e984f791-0f3d-7e40-a3a9-a28cf4b33d1e" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: &quot;authentication-failed&quot;, activated: False)" computerName="OS008-HOME" duration="00:00:00.6222141" startTime="2026-10-05T15:02:17.4986098+03:00" endTime="2026-10-05T15:02:18.1209895+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="13f1eb9c-5ae1-4161-9eb4-fcec92413c87" />
+    <UnitTestResult executionId="2e52295b-0473-4c40-8596-507d3551b73b" testId="d5ae9a24-4dbb-de8a-0d57-506a99f86fa4" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: &quot;creator-failed&quot;, activated: False)" computerName="OS008-HOME" duration="00:00:00.5645643" startTime="2026-10-05T15:02:19.3774178+03:00" endTime="2026-10-05T15:02:19.9422414+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2e52295b-0473-4c40-8596-507d3551b73b" />
+    <UnitTestResult executionId="3ac08f9a-f823-4ff9-932c-0633c0f0dff2" testId="544623b0-3306-8a77-9867-b379b9cedb32" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer(scenario: &quot;installer-uncertain&quot;, restored: False)" computerName="OS008-HOME" duration="00:00:00.6277630" startTime="2026-10-05T15:02:07.8827532+03:00" endTime="2026-10-05T15:02:08.5187125+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3ac08f9a-f823-4ff9-932c-0633c0f0dff2" />
+    <UnitTestResult executionId="a6b8b221-3edb-483d-859d-9cb802be0b0f" testId="19268432-e674-3f37-c654-9a0c1579f6a3" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: &quot;setup-failed&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.8359775" startTime="2026-10-05T15:02:11.5293445+03:00" endTime="2026-10-05T15:02:13.3648240+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6b8b221-3edb-483d-859d-9cb802be0b0f" />
+    <UnitTestResult executionId="10523fd3-242c-488e-8d14-a9de07f6ffdb" testId="9a49e5ae-785a-cf41-e821-6944132bc170" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer(scenario: &quot;authentication-failed&quot;, restored: False)" computerName="OS008-HOME" duration="00:00:00.6140264" startTime="2026-10-05T15:02:09.1407092+03:00" endTime="2026-10-05T15:02:09.7289255+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="10523fd3-242c-488e-8d14-a9de07f6ffdb" />
+    <UnitTestResult executionId="d4e39855-ceae-4560-b658-a1eba02bfb47" testId="eb341013-9353-23b3-0415-ba9ba305a314" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer(scenario: &quot;success&quot;, restored: True)" computerName="OS008-HOME" duration="00:00:00.5877807" startTime="2026-10-05T15:02:08.5275105+03:00" endTime="2026-10-05T15:02:09.1153208+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d4e39855-ceae-4560-b658-a1eba02bfb47">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer(String scenario, Boolean restored) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 77&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b7cb5472-8120-4a1b-930d-6017b5228aa3" testId="0c5aaba1-1d32-001b-043f-90bd34b6f0eb" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: &quot;watchdog-failed&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:00.8271886" startTime="2026-10-05T15:02:15.1877246+03:00" endTime="2026-10-05T15:02:16.0147052+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7cb5472-8120-4a1b-930d-6017b5228aa3" />
+    <UnitTestResult executionId="d87f082a-d49c-4fe2-a925-04cfa340053b" testId="615df448-e91a-435a-94ea-9fd6f96c324d" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: &quot;cleanup-unconfirmed&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:00.8479345" startTime="2026-10-05T15:02:16.0148704+03:00" endTime="2026-10-05T15:02:16.8630111+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d87f082a-d49c-4fe2-a925-04cfa340053b" />
+    <UnitTestResult executionId="4a291803-3be3-497a-8233-e7a25943a151" testId="f6913972-d5c5-47fe-b485-bcaae3326943" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: &quot;setup-failed&quot;, activated: False)" computerName="OS008-HOME" duration="00:00:00.6349172" startTime="2026-10-05T15:02:16.8632885+03:00" endTime="2026-10-05T15:02:17.4984479+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a291803-3be3-497a-8233-e7a25943a151" />
+    <UnitTestResult executionId="0282e94a-4705-4840-a02b-38229490308e" testId="e56101fa-59df-c85d-ce8d-ee8cc973d96b" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: &quot;success&quot;, activated: True)" computerName="OS008-HOME" duration="00:00:00.6309166" startTime="2026-10-05T15:02:18.1211377+03:00" endTime="2026-10-05T15:02:18.7525869+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0282e94a-4705-4840-a02b-38229490308e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+                                                                ↓ (pos 12)&#xD;
+Expected: [···, "setup-joined", "activation-check", "Activate", "installation-completed", "join-actors"]&#xD;
+Actual:   [···, "setup-joined", "activation-check", "Activate", "Stop", "join-actors"]&#xD;
+                                                                ↑ (pos 12)</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(String scenario, Boolean activated) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 42&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="689fc080-e963-42a1-9c66-217787bcd674" testId="9113d00e-a5f0-c842-373f-a83e235f7149" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: &quot;installer-uncertain&quot;, activated: False)" computerName="OS008-HOME" duration="00:00:00.6243801" startTime="2026-10-05T15:02:18.7534595+03:00" endTime="2026-10-05T15:02:19.3772676+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="689fc080-e963-42a1-9c66-217787bcd674" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: &quot;installer-uncertain&quot;, activated: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="9113d00e-a5f0-c842-373f-a83e235f7149">
+      <Execution id="689fc080-e963-42a1-9c66-217787bcd674" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: &quot;setup-failed&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="19268432-e674-3f37-c654-9a0c1579f6a3">
+      <Execution id="a6b8b221-3edb-483d-859d-9cb802be0b0f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Setup_launcher_requires_retired_admission_and_joined_verified_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: &quot;setup-failed&quot;, activated: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="f6913972-d5c5-47fe-b485-bcaae3326943">
+      <Execution id="4a291803-3be3-497a-8233-e7a25943a151" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: &quot;binding-mismatch&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="1efa68fc-a998-37a8-b75b-846a01c99e40">
+      <Execution id="7196875e-4aea-454d-b197-240f5f004281" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Setup_launcher_requires_retired_admission_and_joined_verified_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer(scenario: &quot;authentication-failed&quot;, restored: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="9a49e5ae-785a-cf41-e821-6944132bc170">
+      <Execution id="10523fd3-242c-488e-8d14-a9de07f6ffdb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer(scenario: &quot;success&quot;, restored: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="eb341013-9353-23b3-0415-ba9ba305a314">
+      <Execution id="d4e39855-ceae-4560-b658-a1eba02bfb47" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer(scenario: &quot;installer-uncertain&quot;, restored: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="544623b0-3306-8a77-9867-b379b9cedb32">
+      <Execution id="3ac08f9a-f823-4ff9-932c-0633c0f0dff2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: &quot;authentication-failed&quot;, activated: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="e984f791-0f3d-7e40-a3a9-a28cf4b33d1e">
+      <Execution id="13f1eb9c-5ae1-4161-9eb4-fcec92413c87" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: &quot;creator-failed&quot;, activated: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="d5ae9a24-4dbb-de8a-0d57-506a99f86fa4">
+      <Execution id="2e52295b-0473-4c40-8596-507d3551b73b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: &quot;success&quot;, activated: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="e56101fa-59df-c85d-ce8d-ee8cc973d96b">
+      <Execution id="0282e94a-4705-4840-a02b-38229490308e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: &quot;success&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="27d8536a-c317-f31d-f894-c107661bfcc4">
+      <Execution id="a45bafda-b3b4-4080-806f-392a8ed6631b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Setup_launcher_requires_retired_admission_and_joined_verified_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: &quot;watchdog-failed&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="0c5aaba1-1d32-001b-043f-90bd34b6f0eb">
+      <Execution id="b7cb5472-8120-4a1b-930d-6017b5228aa3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Setup_launcher_requires_retired_admission_and_joined_verified_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: &quot;cleanup-unconfirmed&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="615df448-e91a-435a-94ea-9fd6f96c324d">
+      <Execution id="d87f082a-d49c-4fe2-a925-04cfa340053b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Setup_launcher_requires_retired_admission_and_joined_verified_publication" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="27d8536a-c317-f31d-f894-c107661bfcc4" executionId="a45bafda-b3b4-4080-806f-392a8ed6631b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1efa68fc-a998-37a8-b75b-846a01c99e40" executionId="7196875e-4aea-454d-b197-240f5f004281" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e984f791-0f3d-7e40-a3a9-a28cf4b33d1e" executionId="13f1eb9c-5ae1-4161-9eb4-fcec92413c87" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5ae9a24-4dbb-de8a-0d57-506a99f86fa4" executionId="2e52295b-0473-4c40-8596-507d3551b73b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="544623b0-3306-8a77-9867-b379b9cedb32" executionId="3ac08f9a-f823-4ff9-932c-0633c0f0dff2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="19268432-e674-3f37-c654-9a0c1579f6a3" executionId="a6b8b221-3edb-483d-859d-9cb802be0b0f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a49e5ae-785a-cf41-e821-6944132bc170" executionId="10523fd3-242c-488e-8d14-a9de07f6ffdb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb341013-9353-23b3-0415-ba9ba305a314" executionId="d4e39855-ceae-4560-b658-a1eba02bfb47" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c5aaba1-1d32-001b-043f-90bd34b6f0eb" executionId="b7cb5472-8120-4a1b-930d-6017b5228aa3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="615df448-e91a-435a-94ea-9fd6f96c324d" executionId="d87f082a-d49c-4fe2-a925-04cfa340053b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6913972-d5c5-47fe-b485-bcaae3326943" executionId="4a291803-3be3-497a-8233-e7a25943a151" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e56101fa-59df-c85d-ce8d-ee8cc973d96b" executionId="0282e94a-4705-4840-a02b-38229490308e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9113d00e-a5f0-c842-373f-a83e235f7149" executionId="689fc080-e963-42a1-9c66-217787bcd674" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="10" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.45]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.45]       Expected: True&#xD;
+[xUnit.net 00:00:01.45]       Actual:   False&#xD;
+[xUnit.net 00:00:01.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(77,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer(String scenario, Boolean restored)&#xD;
+[xUnit.net 00:00:01.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.86]       {"Completed":false,"Failure":"Exception calling \"ImagePath\" with \"1\" argument(s): \"A device attached to the system is not functioning.\"","Launched":true,"Reply":null,"CopiedTicket":true,"InputRetained":true}&#xD;
+[xUnit.net 00:00:03.86]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.86]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(139,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:03.86]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:11.08]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:11.08]                                                                       ↓ (pos 12)&#xD;
+[xUnit.net 00:00:11.08]       Expected: [···, "setup-joined", "activation-check", "Activate", "installation-completed", "join-actors"]&#xD;
+[xUnit.net 00:00:11.08]       Actual:   [···, "setup-joined", "activation-check", "Activate", "Stop", "join-actors"]&#xD;
+[xUnit.net 00:00:11.08]                                                                       ↑ (pos 12)&#xD;
+[xUnit.net 00:00:11.08]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.08]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(42,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(String scenario, Boolean activated)&#xD;
+[xUnit.net 00:00:11.08]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.28]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:02:09.1176898+03:00">
+        <Text>[xUnit.net 00:00:01.45]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer(scenario: "success", restored: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:02:11.5292258+03:00">
+        <Text>[xUnit.net 00:00:03.86]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: "success", accepted: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:02:18.7529300+03:00">
+        <Text>[xUnit.net 00:00:11.08]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(scenario: "success", activated: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

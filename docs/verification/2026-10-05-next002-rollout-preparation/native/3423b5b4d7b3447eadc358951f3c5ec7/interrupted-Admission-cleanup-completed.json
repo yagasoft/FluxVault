@@ -1,0 +1,24 @@
+{
+  "OwnedJobJoined": true,
+  "State": {
+    "administrator_absent": true,
+    "admin_pids": [],
+    "legacy_pids": [],
+    "database": "postgres",
+    "role": "fv_gate_monitor",
+    "port": 55123
+  },
+  "CanActivate": false,
+  "FinalRetained": false,
+  "Version": 1,
+  "AdmissionRetired": true,
+  "ObservedUtc": "2026-10-05T12:18:50.5706989Z",
+  "ContextSha256": "3902AC7FB7BE076DD3CABF922D024C13CB6D1D658E2A11141B0574D1F26EE32D",
+  "Postmaster": {
+    "Port": 55123,
+    "StartedUtc": "2026-10-05T12:18:27.8906728Z",
+    "DataDirectory": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\3423b5b4d7b3447eadc358951f3c5ec7\\data",
+    "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\3423b5b4d7b3447eadc358951f3c5ec7\\postgresql\\bin\\postgres.exe",
+    "ProcessId": 54876
+  }
+}

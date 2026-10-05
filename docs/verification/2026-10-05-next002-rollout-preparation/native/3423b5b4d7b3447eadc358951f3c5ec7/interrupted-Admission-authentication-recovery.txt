@@ -1,0 +1,1 @@
+Keep FluxVault stopped. Join the owned job. Verify target/postmaster and exact originals; restore original-pg_ident.conf before original-pg_hba.conf, preserve ACLs, reload only, and verify no temporary map/backend survives. Never retry SQL or delete partial data automatically.

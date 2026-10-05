@@ -1,0 +1,97 @@
+{
+  "VaultId": "675392789292487093cda011419228dc",
+  "TicketPath": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\docs\\verification\\2026-10-05-next002-rollout-preparation\\installation-ticket.template.json",
+  "ActivationRequiresNoWatchdogFailure": true,
+  "DirectoryTargets": [
+    "C:\\ProgramData\\FluxVault",
+    "C:\\ProgramData\\FluxVault\\repository",
+    "C:\\ProgramData\\FluxVault\\state"
+  ],
+  "TicketSha256": "8DEAAA406C027C361E20C32C90F4C9AFD7ADDA76A72528E4D5E1E2936CA2DDE4",
+  "SourceCommit": "2ce19dfdd97f3169d37001f9db15c3d5610e8f12",
+  "ObservedUtc": "2026-10-05T11:23:32.7200041Z",
+  "ValidatedByFrozenProduct": true,
+  "InitialMirrors": 0,
+  "BootstrapPath": "C:\\ProgramData\\FluxVault\\installation.json",
+  "InstanceId": "7871ff7f8d1b404db20771f2e742364f",
+  "InitialProtectedFolders": 0,
+  "RolloutApproval": "pending",
+  "CreatorSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+  "CreatorCommand": [
+    "C:\\Program Files\\FluxVault\\cli\\FluxVault.Cli.exe",
+    "setup-confirm",
+    "--instance",
+    "7871ff7f8d1b404db20771f2e742364f",
+    "--timeout-seconds",
+    "120"
+  ],
+  "CandidateId": "289c59630be846cb90f9a623c4ab0d1c",
+  "PreparedOnly": true,
+  "NativeSetupCommand": [
+    "C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe",
+    "--provision-installation",
+    "<SYSTEM-owned protected copy of the exact prepared ticket>"
+  ],
+  "Applied": false,
+  "AuthenticationCleanupRequired": true,
+  "PendingBootstrapPath": "C:\\ProgramData\\FluxVault\\installation.json.provisioning",
+  "ProcedureFiles": [
+    {
+      "Sha256": "F655D02B70514B10F9BD41D03AF643CEA416248FC9090A4FC62836356030F2AA",
+      "Name": "commission-installation.ps1"
+    },
+    {
+      "Sha256": "DC4246762A85112020ACAA4752AF061F7A42DE31AAA67AB162A8CA96BE13B666",
+      "Name": "commission-setup-worker.ps1"
+    },
+    {
+      "Sha256": "A39B9758B0EE380F3047E56A24A6D60634D5EA7061E20D31A0A7A01EC1341D07",
+      "Name": "commission-setup.psm1"
+    },
+    {
+      "Sha256": "DDF99FC021403BABE4D1784C16B828161C69171900B34DEB32C0E774BD449269",
+      "Name": "commission-authentication.psm1"
+    },
+    {
+      "Sha256": "5CC3B775269E34F09A642432A80DC8FD6830F47DFCBC5124CE149DB7E6751C40",
+      "Name": "commission-authentication-worker.ps1"
+    },
+    {
+      "Sha256": "80D0830EF0D21BDE16EF505D18D97FD35F5EBBBE2E910A53DE01F6079398DB32",
+      "Name": "commission-authentication-cleanup.ps1"
+    },
+    {
+      "Sha256": "F2EE87728F88D4FC307BD1E6883AD4827621A7C7EF717840D1560A1FEB678E06",
+      "Name": "commission-administrator.psm1"
+    },
+    {
+      "Sha256": "7F71C91012C58EBAA739B68D22B4A508790CB286AB2678D66DAED0D2AA02DD7E",
+      "Name": "commission-rollback.psm1"
+    },
+    {
+      "Sha256": "87E9F8A77C6526852856C52534DAFA36D3F2E75B8E5125D3276134D63880B84C",
+      "Name": "postgresql-ancestor-acl.cs"
+    },
+    {
+      "Sha256": "9BABD51E878E6DB13F63458CAB38939CEDCA2DAB0441A05AD55EDF1BA31738BD",
+      "Name": "postgresql-ancestor-acl-proposal.json"
+    },
+    {
+      "Sha256": "8DEAAA406C027C361E20C32C90F4C9AFD7ADDA76A72528E4D5E1E2936CA2DDE4",
+      "Name": "installation-ticket.template.json"
+    }
+  ],
+  "ProcedureReadOnlyPreflight": "installation-procedure-preflight.json",
+  "CombinedChecks": "installation-procedure-final-combined.trx",
+  "NativeRollbackProof": "native/3423b5b4d7b3447eadc358951f3c5ec7/rollback-authentication.json",
+  "RollbackInstallerProtectedCopy": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\legacy-setup.exe",
+  "RollbackInstallerSha256": "DD4C47DC6B20C0B348691289481965002466ACDF373CEA26E5D823AB9AF84F61",
+  "ExpectedRolloutMode": "Install",
+  "RemainingGates": [
+    "S01 scoped packaged rehearsal approval/proof",
+    "D01 actual desktop/accessibility/scale observation",
+    "G01 whole-branch review and final named checks",
+    "separate normal rollout approval and installed/live workflow"
+  ],
+  "TechnicalReview": "Accepted bounded executable installation/rollback preparation; full G01 remains incomplete"
+}

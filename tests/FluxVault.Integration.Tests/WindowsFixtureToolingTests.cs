@@ -7,6 +7,205 @@ namespace FluxVault.Integration.Tests;
 public sealed class WindowsFixtureToolingTests
 {
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Reopened_installer_context_refuses_an_unmatched_intent_without_a_catch_marker(bool completed)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));. (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/commission-installation.ps1')
+            $context=@{WorkRoot=$root;IdentitySha256=('A'*64);InstallerUncertain=$false}
+            Write-CommissionOperatorReceipt $context 'installer-Install-intent' @{ContextSha256=$context.IdentitySha256;Phase='Install'}
+            if(COMPLETED_VALUE){Write-CommissionOperatorReceipt $context 'installer-Install-completed' @{ContextSha256=$context.IdentitySha256;Joined=$true;ExitCode=0}}
+            # This is a fresh object, with no process-local catch state.
+            $reopened=@{WorkRoot=$root;IdentitySha256=('A'*64);InstallerUncertain=$false};$failure=$null
+            try{Assert-CommissionInstallerSettled $reopened}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;CatchMarkerExists=(Test-Path (Join-Path $root 'installer-uncertain.json'))}|ConvertTo-Json -Compress
+            """.Replace("COMPLETED_VALUE", completed ? "$true" : "$false", StringComparison.Ordinal));
+        Assert.False(result.GetProperty("CatchMarkerExists").GetBoolean());
+        if (completed) Assert.Equal(JsonValueKind.Null, result.GetProperty("Failure").ValueKind);
+        else Assert.Contains("intent has no confirmed completion", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Reopened_task_context_recovers_from_intent_without_launch_acknowledgement_and_refuses_a_mismatch(bool mismatched)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));. (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/commission-installation.ps1')
+            $id=[guid]::NewGuid().ToString('N');$context=@{WorkRoot=$root;InstallationId=$id;IdentitySha256=('A'*64);Tasks=[Collections.Generic.List[object]]::new()}
+            $intent=@{Name=('FV-NEXT002-'+$id+'-cleanup');ContextSha256=$context.IdentitySha256;Execute='owned-pwsh';Arguments='exact-owned-script';Description='exact-owned-description'}
+            Write-CommissionOperatorReceipt $context 'task-cleanup-intent' $intent
+            $script:observed=[pscustomobject]@{State='Ready';Description=$intent.Description;Actions=@([pscustomobject]@{Execute=$intent.Execute;Arguments=$(if(MISMATCH_VALUE){'unrelated-script'}else{$intent.Arguments});WorkingDirectory=''});
+                Triggers=@();Principal=[pscustomobject]@{UserId='SYSTEM';RunLevel='Highest';LogonType='ServiceAccount'};Settings=[pscustomobject]@{ExecutionTimeLimit='PT3M';MultipleInstances='IgnoreNew'}}
+            $script:retired=$false;$script:resultChecked=$false;$script:observations=0
+            function Get-ScheduledTask {param($TaskName) if($TaskName -like '*-cleanup' -and -not $script:retired){
+                $script:observations++;$script:observed.State=$(if($script:observations -lt 4){'Running'}else{'Ready'})
+                if($script:observed.State -eq 'Ready'){$script:resultChecked=$true};$script:observed}}
+            function Unregister-ScheduledTask {param($TaskName,$Confirm) if(-not $script:resultChecked){throw 'Task removal preceded joining'};$script:retired=$true}
+            function Export-ScheduledTask {param($TaskName) 'exact-native-definition'}
+            $failure=$null;try{Read-CommissionRecoveryTasks $context}catch{$failure=$_.Exception.Message}
+            $count=$context.Tasks.Count
+            if(-not $failure){$context.Jobs=@{};Stop-CommissionActors $context}
+            @{Failure=$failure;Recovered=$count;Retired=$script:retired;ResultChecked=$script:resultChecked;StartedExists=(Test-Path (Join-Path $root 'task-cleanup-started.json'));IntentRetained=(Test-Path (Join-Path $root 'task-cleanup-intent.json'))}|ConvertTo-Json -Compress
+            """.Replace("MISMATCH_VALUE", mismatched ? "$true" : "$false", StringComparison.Ordinal));
+        Assert.False(result.GetProperty("StartedExists").GetBoolean());
+        Assert.True(result.GetProperty("IntentRetained").GetBoolean());
+        Assert.Equal(mismatched ? 0 : 1, result.GetProperty("Recovered").GetInt32());
+        Assert.Equal(!mismatched, result.GetProperty("Retired").GetBoolean());
+        Assert.Equal(!mismatched, result.GetProperty("ResultChecked").GetBoolean());
+        if (mismatched) Assert.Contains("exact pre-registration intent", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+        else Assert.Equal(JsonValueKind.Null, result.GetProperty("Failure").ValueKind);
+    }
+
+    [Theory]
+    [InlineData("success", true)]
+    [InlineData("authentication-failed", false)]
+    [InlineData("creator-failed", false)]
+    [InlineData("setup-failed", false)]
+    [InlineData("installer-uncertain", false)]
+    public async Task Installation_flow_keeps_activation_after_retirement_creator_and_joined_setup(string scenario, bool activated)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));. (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/commission-installation.ps1')
+            $script:events=[Collections.Generic.List[string]]::new();$script:scenario='SCENARIO_VALUE'
+            function Assert-CommissionCandidate {param($Context,[switch]$Installed,[switch]$Legacy) $script:events.Add($(if($Installed){'verify-installed'}elseif($Legacy){'verify-legacy'}else{'preflight'}))}
+            function Invoke-CommissionServiceAction {param($Context,$Action) $script:events.Add($Action)}
+            function Move-CommissionLegacyState {param($Context,$Phase) $script:events.Add($Phase)}
+            function Invoke-CommissionInstaller {param($Context,$Phase) $script:events.Add($Phase);if($script:scenario -eq 'installer-uncertain'){ $Context.InstallerUncertain=$true;throw 'Installer transaction is unresolved'}}
+            function Set-CommissionAncestorState {param($Context,$Phase) $script:events.Add('acl-'+$Phase)}
+            function Invoke-CommissionAuthenticationTasks {param($Context) $script:events.Add('authentication');if($script:scenario -eq 'authentication-failed'){throw 'Retirement unconfirmed'}}
+            function Start-CommissionSetupTask {param($Context) $script:events.Add('setup-dispatch');@{Name='owned-setup'}}
+            function Invoke-CommissionCreatorConfirmation {param($Context) $script:events.Add('creator');if($script:scenario -eq 'creator-failed'){throw 'Creator acknowledgement uncertain'};@{Confirmed=$true}}
+            function Complete-CommissionSetupTask {param($Context,$Task) $script:events.Add('setup-joined');if($script:scenario -eq 'setup-failed'){throw 'Setup publication unconfirmed'};@{BootstrapVerified=$true}}
+            function Assert-CommissionActivation {param($Context,$Creator,$Setup) if(-not $Creator.Confirmed -or -not $Setup.BootstrapVerified){throw 'Invalid activation'};$script:events.Add('activation-check')}
+            function Stop-CommissionActors {param($Context) $script:events.Add('join-actors')}
+            function Write-CommissionOperatorReceipt {param($Context,$Name,$Value) $script:events.Add($Name)}
+            $context=@{IdentitySha256=('A'*64);InstallerUncertain=$false};$failure=$null
+            try{Invoke-CommissionInstallation $context|Out-Null}catch{$failure=$_.Exception.Message}
+            @{Events=@($script:events);Failure=$failure;Uncertain=$context.InstallerUncertain}|ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        var events = result.GetProperty("Events").EnumerateArray().Select(x => x.GetString()!).ToArray();
+        Assert.Equal(activated, events.Contains("Activate"));
+        Assert.Equal("join-actors", events[^1]);
+        if (activated)
+        {
+            Assert.Equal(["preflight", "Stop", "Preserve", "Install", "verify-installed", "acl-Apply", "authentication", "setup-dispatch", "creator", "setup-joined", "activation-check", "Activate", "installation-completed", "join-actors"], events);
+        }
+        else
+        {
+            Assert.NotNull(result.GetProperty("Failure").GetString());
+            Assert.Contains("Stop", events);
+            Assert.DoesNotContain("Restore", events); // No automatic recovery/retry from uncertainty.
+        }
+        Assert.Equal(scenario == "installer-uncertain", result.GetProperty("Uncertain").GetBoolean());
+    }
+
+    [Theory]
+    [InlineData("success", true)]
+    [InlineData("authentication-failed", false)]
+    [InlineData("installer-uncertain", false)]
+    public async Task Rollback_restores_verified_legacy_state_and_authentication_before_the_old_installer(string scenario, bool restored)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));. (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/commission-installation.ps1')
+            $script:events=[Collections.Generic.List[string]]::new();$script:scenario='SCENARIO_VALUE'
+            function Assert-CommissionRollbackInputs {param($Context) $script:events.Add('rollback-inputs');if($Context.InstallerUncertain){throw 'Installer transaction unresolved'}}
+            function Stop-CommissionActors {param($Context) $script:events.Add('join-actors')}
+            function Invoke-CommissionServiceAction {param($Context,$Action) $script:events.Add($Action)}
+            function Invoke-CommissionInstaller {param($Context,$Phase) $script:events.Add($Phase)}
+            function Move-CommissionLegacyState {param($Context,$Phase) $script:events.Add($Phase)}
+            function Restore-CommissionOriginalAuthentication {param($Context) $script:events.Add('restore-auth');if($script:scenario -eq 'authentication-failed'){throw 'Auth restore unconfirmed'}}
+            function Set-CommissionAncestorState {param($Context,$Phase) $script:events.Add('acl-'+$Phase)}
+            function Assert-CommissionCandidate {param($Context,[switch]$Installed,[switch]$Legacy) $script:events.Add('verify-legacy')}
+            function Write-CommissionOperatorReceipt {param($Context,$Name,$Value) $script:events.Add($Name)}
+            $context=@{IdentitySha256=('A'*64);FailedRoot=(Join-Path $root 'retained-failed');InstallerUncertain=($script:scenario -eq 'installer-uncertain')};$failure=$null
+            try{Invoke-CommissionRollback $context|Out-Null}catch{$failure=$_.Exception.Message}
+            @{Events=@($script:events);Failure=$failure}|ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        var events = result.GetProperty("Events").EnumerateArray().Select(x => x.GetString()!).ToArray();
+        Assert.Equal(restored, events.Contains("rollback-completed"));
+        if (restored)
+        {
+            Assert.Equal(["rollback-inputs", "join-actors", "Stop", "Uninstall", "Restore", "restore-auth", "acl-Restore", "LegacyInstall", "verify-legacy", "rollback-completed"], events);
+        }
+        else
+        {
+            Assert.NotNull(result.GetProperty("Failure").GetString());
+            Assert.DoesNotContain("LegacyInstall", events);
+            Assert.DoesNotContain("Uninstall", scenario == "installer-uncertain" ? events : []);
+        }
+    }
+
+    [Theory]
+    [InlineData("success", true)]
+    [InlineData("cleanup-unconfirmed", false)]
+    [InlineData("watchdog-failed", false)]
+    [InlineData("setup-failed", false)]
+    [InlineData("binding-mismatch", false)]
+    public async Task Setup_launcher_requires_retired_admission_and_joined_verified_publication(string scenario, bool accepted)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));$prepared=Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation'
+            $helper=Import-Module (Join-Path $prepared 'commission-setup.psm1') -Force -PassThru
+            $scenario='SCENARIO_VALUE';$ticket=Join-Path $root 'ticket.json';Copy-Item (Join-Path $prepared 'installation-ticket.template.json') $ticket
+            $context=@{WorkRoot=$root;IdentitySha256='A'*64;OperatorSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;
+                Setup=@{TicketPath=$ticket;TicketSha256=(Get-FileHash $ticket).Hash;ServiceExe='owned-setup-host';ServiceExeSha256='B'*64};
+                Postmaster=@{ProcessId=123;StartedUtc='2026-10-01T00:00:00Z';Executable='owned-postmaster'};Port=5432;ServiceDatabase='fluxvault_single';ServiceRole='fluxvault_service'}
+            @{ContextSha256=$context.IdentitySha256;CanActivate=($scenario -ne 'cleanup-unconfirmed');AdmissionRetired=$true;OwnedJobJoined=$true;FinalRetained=$true;Postmaster=$context.Postmaster;
+                State=@{database='fluxvault_single';role='fluxvault_service';port=5432}}|ConvertTo-Json -Depth 7|Set-Content (Join-Path $root 'cleanup-completed.json')
+            if($scenario -eq 'watchdog-failed'){'failed'|Set-Content (Join-Path $root 'cleanup-failed.json')}
+            $childScript=Join-Path $root 'setup-child.ps1';[IO.File]::WriteAllText($childScript,'param($Ticket,$ExitCode) if(-not(Test-Path -LiteralPath $Ticket)){exit 9};Start-Sleep -Milliseconds 500;exit ([int]$ExitCode)')
+            $actual=& $helper {
+                param($context,$prepared,$scenario,$childScript)
+                function Assert-CommissionSetupNativeState {}
+                function Get-CommissionSetupAssemblyRoot {param($Context) (Join-Path ((Get-Content (Join-Path $script:prepared 'candidate.json') -Raw|ConvertFrom-Json).Root) 'publish/service')}
+                function Assert-CommissionSetupExecutable {}
+                function Invoke-CommissionSetupHost {
+                    param($Context,$TicketPath)
+                    $script:launched=$true;$exit=if($script:scenario -eq 'setup-failed'){3}else{0}
+                    $start=[Diagnostics.ProcessStartInfo]::new('pwsh');$start.UseShellExecute=$false;$start.CreateNoWindow=$true
+                    foreach($arg in @('-NoProfile','-NonInteractive','-File',$script:childScript,$TicketPath,[string]$exit)){$start.ArgumentList.Add($arg)}
+                    $child=[Diagnostics.Process]::Start($start)
+                    try{$identity=Get-VaultFixtureProcessIdentity $child;if(-not $child.WaitForExit(5000)){throw 'Owned setup test child exceeded its deadline'};@{ExitCode=$child.ExitCode;Joined=$true;Process=$identity}}
+                    finally{if(-not $child.HasExited){$child.Kill($true);$child.WaitForExit(5000)|Out-Null};$child.Dispose()}
+                }
+                function Read-CommissionSetupBootstrap {
+                    param($Ticket)
+                    if($script:scenario -eq 'binding-mismatch'){return @{Matches=$false;Sha256='C'*64}}
+                    @{Matches=$true;Sha256='C'*64}
+                }
+                $script:prepared=$prepared;$script:scenario=$scenario;$script:childScript=$childScript;$script:launched=$false
+                $reply=$null;$failure=$null
+                try{$reply=Invoke-CommissionSetup $context}catch{$failure=$_.Exception.Message}
+                @{Reply=$reply;Failure=$failure;Launched=$script:launched;Completed=(Test-Path (Join-Path $context.WorkRoot 'setup-completed.json'));
+                    InputRetained=(Test-Path $context.Setup.TicketPath);CopiedTicket=(Test-Path (Join-Path $context.WorkRoot 'setup-intents/installation-ticket.json'))}|ConvertTo-Json -Depth 8 -Compress
+            } $context $prepared $scenario $childScript
+            $actual
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.True(result.GetProperty("InputRetained").GetBoolean());
+        Assert.Equal(scenario is not ("cleanup-unconfirmed" or "watchdog-failed"), result.GetProperty("Launched").GetBoolean());
+        Assert.True(accepted == result.GetProperty("Completed").GetBoolean(), result.ToString());
+        if (accepted)
+        {
+            var reply = result.GetProperty("Reply");
+            Assert.True(reply.GetProperty("SetupHost").GetProperty("Joined").GetBoolean());
+            Assert.True(reply.GetProperty("BootstrapVerified").GetBoolean());
+            Assert.False(reply.GetProperty("CanActivate").GetBoolean());
+            Assert.True(reply.GetProperty("CreatorConfirmationRequired").GetBoolean());
+        }
+        else
+        {
+            Assert.NotNull(result.GetProperty("Failure").GetString());
+        }
+    }
+
+    [Theory]
     [InlineData("temporary", false)]
     [InlineData("final", true)]
     [InlineData("final-unconfirmed", false)]

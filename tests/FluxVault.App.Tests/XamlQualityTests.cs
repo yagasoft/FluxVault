@@ -145,7 +145,7 @@ public sealed class XamlQualityTests
             "Maximum concurrent captures",
             "Profile / default / hot-file",
             "Level / minimum KB",
-            "Maintenance interval hours",
+            "Saved maintenance interval",
             "Restore rehearsal versions",
             "Default workload preset",
             "Skip extensions"
@@ -170,15 +170,8 @@ public sealed class XamlQualityTests
             element => (string?)element.Attribute("Text") == "Repository maintenance");
         Assert.Contains(
             document.Descendants(XamlNamespace + "CheckBox"),
-            element => (string?)element.Attribute("Content") == "Run repository maintenance automatically"
-                       && (string?)element.Attribute("IsChecked") == "{Binding MaintenanceRunAutomatically}");
-        Assert.Contains(
-            document.Descendants(XamlNamespace + "CheckBox"),
-            element => (string?)element.Attribute("Content") == "Repair automatically from mirror"
+            element => (string?)element.Attribute("Content") == "Repair from healthy mirrors during manual checks"
                        && (string?)element.Attribute("IsChecked") == "{Binding MaintenanceAutoRepairFromMirror}");
-        Assert.Contains(
-            document.Descendants(XamlNamespace + "TextBox"),
-            element => (string?)element.Attribute("Text") == "{Binding MaintenanceIntervalHours, UpdateSourceTrigger=PropertyChanged}");
         Assert.Contains(
             document.Descendants(XamlNamespace + "TextBox"),
             element => (string?)element.Attribute("Text") == "{Binding RestoreRehearsalVersionCount, UpdateSourceTrigger=PropertyChanged}");

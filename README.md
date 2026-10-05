@@ -79,9 +79,10 @@ FluxVault now has a developer-usable MVP loop:
   validates referenced manifests and chunks, repairs only from a healthy
   primary/mirror counterpart, and restore rehearsal verifies recent versions in
   FluxVault-owned temporary output.
-- Conservative automatic retention and manual-first repository maintenance, with a
-  WPF Options dialog for previewing retention, running retention, editing
-  maintenance cadence, and opting into automatic mirror repair/rehearsal runs.
+- Conservative automatic retention and manual repository maintenance, with a
+  WPF Options dialog for previewing/running retention and configuring manual
+  mirror repair and restore rehearsal. Automatic maintenance is unavailable
+  in the single-vault build; saved scheduling preferences are preserved.
 - Dedicated Mirrors workspace for adding and editing mirror node label, path,
   enabled state, capacity budget, and priority through an explicit dialog,
   while placement profile and minimum mirror copies remain workspace-level
@@ -418,15 +419,18 @@ scanning manifest files, and metadata outbox rows export to replayable
 clean PostgreSQL bootstrap, legacy import, backup/restore recovery,
 large-vault performance, and release smoke coverage.
 
-Open **Options** to review retention, scheduled maintenance, and the default
+Open **Options** to review retention, manual maintenance, and the default
 workload preset assigned to newly protected folders/files. The MVP
 retention defaults keep every version for 24 hours, keep one version per hour
 for 30 days, keep one version per day for 180 days, and always keep at least
 the latest 20 versions per source file. Retention is enabled by default and
 runs after successful service backups; the dialog can preview reclaimable
 repository space and run retention immediately. Maintenance is enabled by
-default, runs every 24 hours, repairs from a healthy mirror when possible, and
-rehearses the newest three versions unless changed in Options.
+default, repairs from a healthy mirror when possible, and rehearses the newest
+three versions during manual checks unless changed in Options. The single-vault
+service does not schedule maintenance. Options displays its saved automatic
+preference and exact interval as unavailable controls; unrelated saves preserve
+these fields and the maintenance enabled state exactly.
 
 The single-vault recovery browser loads bounded history pages. **Older** and
 **Newer** browse the selected path's history; **Refresh** starts again from the

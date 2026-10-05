@@ -88,21 +88,25 @@
 
                         <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Text="Repository maintenance" FontWeight="SemiBold" Margin="0,0,0,12" />
 
-                        <CheckBox Grid.Row="7" Grid.ColumnSpan="2" Content="Run repository maintenance automatically"
-                                  IsChecked="{Binding MaintenanceRunAutomatically}" Margin="0,0,0,14"
-                                  ToolTip="Run repository scrub and restore rehearsal automatically on the configured interval. Manual diagnostics actions remain available when this is off." />
+                        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Margin="0,0,0,14">
+                            <CheckBox Name="AutomaticMaintenanceToggle" Content="Saved automatic maintenance preference"
+                                      IsChecked="{Binding MaintenanceRunAutomatically, Mode=OneWay}" IsEnabled="False" Margin="0,0,0,6"
+                                      ToolTip="The saved preference is retained. Automatic maintenance is unavailable in this build." />
+                            <TextBlock Text="Automatic maintenance is unavailable in this build. The saved schedule is kept; run checks manually."
+                                       TextWrapping="Wrap" Foreground="#5F6368" />
+                        </StackPanel>
 
-                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Maintenance interval hours" VerticalAlignment="Center" Margin="0,0,14,10"
-                                   ToolTip="Minimum number of hours between scheduled repository scrub and restore rehearsal runs." />
-                        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding MaintenanceIntervalHours, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
-                                 ToolTip="FluxVault clamps this to at least 1 hour." />
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Saved maintenance interval" VerticalAlignment="Center" Margin="0,0,14,10"
+                                   ToolTip="Stored schedule interval; automatic scheduling is unavailable in this build." />
+                        <TextBox Name="AutomaticMaintenanceInterval" Grid.Row="8" Grid.Column="1" Text="{Binding SavedMaintenanceInterval, Mode=OneWay}" IsEnabled="False" Padding="8" Margin="0,0,0,10"
+                                 ToolTip="Stored duration in days, hours, minutes and seconds. This save preserves it exactly." />
 
                         <TextBlock Grid.Row="9" Grid.Column="0" Text="Restore rehearsal versions" VerticalAlignment="Center" Margin="0,0,14,10"
                                    ToolTip="Number of newest versions to restore into a temporary FluxVault-owned folder during rehearsal." />
                         <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding RestoreRehearsalVersionCount, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,10"
                                  ToolTip="Use 0 to disable version rehearsal while keeping repository scrub enabled." />
 
-                        <CheckBox Grid.Row="10" Grid.ColumnSpan="2" Content="Repair automatically from mirror"
+                        <CheckBox Grid.Row="10" Grid.ColumnSpan="2" Content="Repair from healthy mirrors during manual checks"
                                   IsChecked="{Binding MaintenanceAutoRepairFromMirror}" Margin="0,0,0,0"
                                   ToolTip="Repair repository artefacts from a healthy mirror copy, and repair mirror drift from a healthy primary copy." />
 

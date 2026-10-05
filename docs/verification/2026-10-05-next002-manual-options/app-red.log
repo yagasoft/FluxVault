@@ -1,0 +1,24 @@
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.37]     FluxVault.App.Tests.XamlQualityTests.Options_labels_have_helpful_tooltips [FAIL]
+  Failed FluxVault.App.Tests.XamlQualityTests.Options_labels_have_helpful_tooltips [9 ms]
+  Error Message:
+   System.InvalidOperationException : Sequence contains no matching element
+  Stack Trace:
+     at System.Linq.ThrowHelper.ThrowNoMatchException()
+   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source, Func`2 predicate)
+   at FluxVault.App.Tests.XamlQualityTests.Options_labels_have_helpful_tooltips() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\XamlQualityTests.cs:line 156
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.43]     FluxVault.App.Tests.XamlQualityTests.Options_dialog_exposes_repository_maintenance_controls [FAIL]
+  Failed FluxVault.App.Tests.XamlQualityTests.Options_dialog_exposes_repository_maintenance_controls [4 ms]
+  Error Message:
+   Assert.Contains() Failure: Filter not matched in collection
+Collection: [<CheckBox Grid.Row="0" Grid.ColumnSpan="2" Content="Enable automatic retention" IsChecked="{Binding RetentionEnabled}" Margin="0,0,0,14" ToolTip="Run repository retention automatically after successful backups." xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />, <CheckBox Name="AutomaticMaintenanceToggle" Content="Saved automatic maintenance preference" IsChecked="{Binding MaintenanceRunAutomatically, Mode=OneWay}" IsEnabled="False" Margin="0,0,0,6" ToolTip="The saved preference is retained. Automatic maintenance is unavailable in this build." xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />, <CheckBox Grid.Row="10" Grid.ColumnSpan="2" Content="Repair from healthy mirrors during manual checks" IsChecked="{Binding MaintenanceAutoRepairFromMirror}" Margin="0,0,0,0" ToolTip="Repair repository artefacts from a healthy mirror copy, and repair mirror drift from a healthy primary copy." xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />, <CheckBox Grid.Row="16" Grid.ColumnSpan="2" Content="Enable service file logging" IsChecked="{Binding DiagnosticsFileLoggingEnabled}" Margin="0,0,0,8" ToolTip="Write bounded rolling FluxVault service logs under the configured diagnostics directory." xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />]
+  Stack Trace:
+     at FluxVault.App.Tests.XamlQualityTests.Options_dialog_exposes_repository_maintenance_controls() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\XamlQualityTests.cs:line 171
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-manual-options\app.trx
+
+Failed!  - Failed:     2, Passed:   473, Skipped:     0, Total:   475, Duration: 6 s - FluxVault.App.Tests.dll (net10.0)

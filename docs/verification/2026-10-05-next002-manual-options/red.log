@@ -1,0 +1,36 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.App.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.53]     FluxVault.App.Tests.OptionsMaintenanceContractTests.Actual_options_save_preserves_unavailable_schedule_exactly_through_the_file_store [FAIL]
+[xUnit.net 00:00:01.23]     FluxVault.App.Tests.OptionsMaintenanceContractTests.Rendered_options_explain_unavailable_scheduling_and_disable_its_controls [FAIL]
+  Failed FluxVault.App.Tests.OptionsMaintenanceContractTests.Actual_options_save_preserves_unavailable_schedule_exactly_through_the_file_store [302 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: RepositoryMaintenancePolicy { IsEnabled = False, Interval = 07:31:00, AutoRepairFromMirror = False, RestoreRehearsalVersionCount = 7, RunAutomatically = True }
+Actual:   RepositoryMaintenancePolicy { IsEnabled = False, Interval = 08:00:00, AutoRepairFromMirror = False, RestoreRehearsalVersionCount = 7, RunAutomatically = False }
+  Stack Trace:
+     at FluxVault.App.Tests.OptionsMaintenanceContractTests.Actual_options_save_preserves_unavailable_schedule_exactly_through_the_file_store() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\OptionsMaintenanceContractTests.cs:line 31
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.OptionsMaintenanceContractTests.Rendered_options_explain_unavailable_scheduling_and_disable_its_controls [697 ms]
+  Error Message:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  Stack Trace:
+     at FluxVault.App.Tests.OptionsMaintenanceContractTests.<>c.<<Rendered_options_explain_unavailable_scheduling_and_disable_its_controls>b__1_0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\OptionsMaintenanceContractTests.cs:line 57
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.OptionsMaintenanceContractTests.<>c.<<Rendered_options_explain_unavailable_scheduling_and_disable_its_controls>b__1_0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\OptionsMaintenanceContractTests.cs:line 75
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.OptionsMaintenanceContractTests.<>c__DisplayClass3_1.<<RunSta>b__1>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\OptionsMaintenanceContractTests.cs:line 95
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.OptionsMaintenanceContractTests.RunSta(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\OptionsMaintenanceContractTests.cs:line 102
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-manual-options\red.trx
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 1 s - FluxVault.App.Tests.dll (net10.0)

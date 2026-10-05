@@ -77,6 +77,16 @@ Completed, bounded prerequisites remain evidence rather than a claim of full ser
 
 ## UI scope
 
+The [manual maintenance Options correction](../../verification/2026-10-05-next002-manual-options/README.md)
+removes an unavailable scheduling promise and preserves its exact saved fields
+through the real file store and actual view-model command. All 475 App checks
+pass, the complete Release build has zero warnings/errors, and independent
+review accepts the bounded correction and rendering. Owned test/build processes
+are absent and the normal installation is unchanged. This keeps the current
+slice manual-only; remaining source-denial/no-background, interrupted-effect,
+packaged identity, implemented-screen accessibility/scale, final G01 and rollout
+gates remain applicable. It does not add a scheduler or broaden NEXT-004.
+
 The completed [Overview → Protect → Recover concepts](../../ui-concepts/2026-10-03-next002/README.md) remain historical evidence. Their vault selectors and multi-vault concepts are superseded. Stop further multi-vault exploration. The existing UI should expose one vault, saved/draft configuration, busy/blocked/error/unknown outcomes and verified recovery results tied to the actual command contracts. Existing keyboard, Narrator, DPI, high-contrast and responsiveness gates remain for implemented UI; the broader redesign retains its roadmap position.
 
 ## Verification commands

@@ -129,6 +129,8 @@ public sealed partial class OptionsViewModel : ObservableObject
     [ObservableProperty]
     private int maintenanceIntervalHours;
 
+    public string SavedMaintenanceInterval => currentConfiguration?.RepositoryMaintenancePolicy?.Interval.ToString() ?? string.Empty;
+
     [ObservableProperty]
     private bool maintenanceAutoRepairFromMirror;
 
@@ -663,8 +665,9 @@ public sealed partial class OptionsViewModel : ObservableObject
 
     private void ApplyMaintenance(RepositoryMaintenancePolicy policy)
     {
-        MaintenanceRunAutomatically = policy.IsEnabled && policy.RunAutomatically;
+        MaintenanceRunAutomatically = policy.RunAutomatically;
         MaintenanceIntervalHours = Math.Max(1, (int)Math.Round(policy.Interval.TotalHours));
+        OnPropertyChanged(nameof(SavedMaintenanceInterval));
         MaintenanceAutoRepairFromMirror = policy.AutoRepairFromMirror;
         RestoreRehearsalVersionCount = Math.Max(0, policy.RestoreRehearsalVersionCount);
     }
@@ -676,12 +679,13 @@ public sealed partial class OptionsViewModel : ObservableObject
 
     private RepositoryMaintenancePolicy BuildMaintenance()
     {
-        return new RepositoryMaintenancePolicy(
-            IsEnabled: currentConfiguration?.RepositoryMaintenancePolicy?.IsEnabled ?? true,
-            Interval: TimeSpan.FromHours(Math.Max(1, MaintenanceIntervalHours)),
-            AutoRepairFromMirror: MaintenanceAutoRepairFromMirror,
-            RestoreRehearsalVersionCount: Math.Max(0, RestoreRehearsalVersionCount),
-            RunAutomatically: MaintenanceRunAutomatically);
+        // The current service has no scheduler. Preserve its unavailable settings,
+        // including exact duration precision, while editing the active manual policy.
+        return (currentConfiguration?.RepositoryMaintenancePolicy ?? RepositoryMaintenancePolicy.CreateDefault()) with
+        {
+            AutoRepairFromMirror = MaintenanceAutoRepairFromMirror,
+            RestoreRehearsalVersionCount = Math.Max(0, RestoreRehearsalVersionCount)
+        };
     }
 
     private void ApplyMetadataStore(MetadataStoreConfiguration configuration)

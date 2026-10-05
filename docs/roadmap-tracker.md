@@ -160,6 +160,15 @@ processes and all 112 owned resources across both rehearsals are retired, with n
 unchanged. Interrupted effects, reboot, packaged identity and full S07/G01 and
 rollout gates remain open.
 
+The [manual maintenance Options correction](verification/2026-10-05-next002-manual-options/README.md)
+disables unavailable scheduling, explains manual operation and preserves the
+saved enabled state, automatic preference and exact interval. Meaningful
+real-store/actual view-model and rendered WPF regressions pass; all 475 App tests
+and the zero-warning Release solution build pass. Independent review accepts
+the bounded correction; normal installation is unchanged and owned workers
+are absent. Remaining NEXT-002 security, interruption, accessibility/scale,
+final G01 and separately approved rollout gates stay open.
+
 | ID | Priority | Capability | Status | Required verification |
 | --- | --- | --- | --- | --- |
 | NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |

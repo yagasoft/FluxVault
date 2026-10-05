@@ -117,7 +117,7 @@ public sealed class OptionsViewModelTests
     }
 
     [Fact]
-    public async Task Save_persists_repository_maintenance_policy()
+    public async Task Save_applies_manual_maintenance_settings_and_preserves_the_unavailable_schedule()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
         var viewModel = new OptionsViewModel(client);
@@ -131,8 +131,8 @@ public sealed class OptionsViewModelTests
 
         var saved = Assert.Single(client.SavedConfigurations);
         Assert.True(saved.RepositoryMaintenancePolicy.IsEnabled);
-        Assert.True(saved.RepositoryMaintenancePolicy.RunAutomatically);
-        Assert.Equal(TimeSpan.FromHours(1), saved.RepositoryMaintenancePolicy.Interval);
+        Assert.False(saved.RepositoryMaintenancePolicy.RunAutomatically);
+        Assert.Equal(TimeSpan.FromHours(24), saved.RepositoryMaintenancePolicy.Interval);
         Assert.False(saved.RepositoryMaintenancePolicy.AutoRepairFromMirror);
         Assert.Equal(0, saved.RepositoryMaintenancePolicy.RestoreRehearsalVersionCount);
     }

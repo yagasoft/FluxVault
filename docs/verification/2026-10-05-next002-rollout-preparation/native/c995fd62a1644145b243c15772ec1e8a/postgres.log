@@ -1,0 +1,16 @@
+[64872]  LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+[64872]  LOG:  listening on IPv4 address "127.0.0.1", port 54912
+[64872]  LOG:  listening on IPv6 address "::1", port 54912
+[64104]  LOG:  database system was shut down at 2026-10-05 10:40:43 EEST
+[64872]  LOG:  database system is ready to accept connections
+[53504] [unknown] LOG:  connection received: host=127.0.0.1 port=54918
+[53504] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/c995fd62a1644145b243c15772ec1e8a/data/pg_hba.conf:119)
+[53504] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[53504] psql LOG:  connection ready: setup total=43.599 ms, fork=19.439 ms, authentication=10.376 ms
+[64872]  LOG:  received fast shutdown request
+[64872]  LOG:  aborting any active transactions
+[64872]  LOG:  background worker "logical replication launcher" (PID 34948) exited with exit code 1
+[8144]  LOG:  shutting down
+[8144]  LOG:  checkpoint starting: shutdown immediate
+[8144]  LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.002 s, total=0.011 s; sync files=2, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB; lsn=0/17F3580, redo lsn=0/17F3580
+[64872]  LOG:  database system is shut down

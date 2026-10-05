@@ -1,0 +1,21 @@
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.87]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Sspi_probe_refuses_real_PostgreSQL_trust_authentication [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Sspi_probe_refuses_real_PostgreSQL_trust_authentication [2 ms]
+  Error Message:
+   System.InvalidOperationException : PostgreSQL integrity tests require the authorised eng/test-windows-database-boundary.ps1 -RunIntegrityTests owned fixture. No test was skipped.
+  Stack Trace:
+     at FluxVault.Testing.OwnedPostgreSqlCluster.Load() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\OwnedPostgreSqlCluster.cs:line 20
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Sspi_probe_refuses_real_PostgreSQL_trust_authentication() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 74
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:00.88]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Accepted_connection_with_a_failed_verification_query_is_never_reported_as_denied [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Accepted_connection_with_a_failed_verification_query_is_never_reported_as_denied [< 1 ms]
+  Error Message:
+   System.InvalidOperationException : PostgreSQL integrity tests require the authorised eng/test-windows-database-boundary.ps1 -RunIntegrityTests owned fixture. No test was skipped.
+  Stack Trace:
+     at FluxVault.Testing.OwnedPostgreSqlCluster.Load() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\OwnedPostgreSqlCluster.cs:line 20
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Accepted_connection_with_a_failed_verification_query_is_never_reported_as_denied() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 56
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\authentication-tooling.trx
+
+Failed!  - Failed:     2, Passed:    63, Skipped:     0, Total:    65, Duration: 59 s - FluxVault.Integration.Tests.dll (net10.0)

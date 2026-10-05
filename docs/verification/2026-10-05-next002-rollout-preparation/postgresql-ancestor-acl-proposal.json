@@ -1,0 +1,38 @@
+[
+  {
+    "ProposedSddl": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;;FA;;;BA)(A;OICIIO;GA;;;BA)(A;;FA;;;SY)(A;OICIIO;GA;;;SY)(A;;0x1201bf;;;AU)(A;OICIIO;SDGXGWGR;;;AU)(A;;0x1200a9;;;BU)(A;OICIIO;GXGR;;;BU)",
+    "OriginalSddl": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:(A;ID;FA;;;BA)(A;OICIIOID;GA;;;BA)(A;ID;FA;;;SY)(A;OICIIOID;GA;;;SY)(A;ID;0x1301bf;;;AU)(A;OICIIOID;SDGXGWGR;;;AU)(A;ID;0x1200a9;;;BU)(A;OICIIOID;GXGR;;;BU)",
+    "Path": "D:\\Program Files",
+    "ObservedUtc": "2026-10-05T09:17:12.3563703Z",
+    "Applied": false,
+    "ProposedProtected": true,
+    "ChildDescriptorsMustRemainUnchanged": true,
+    "OriginalProtected": false,
+    "Changes": [
+      {
+        "AfterMask": 1180095,
+        "Scope": "This directory only",
+        "BeforeMask": 1245631,
+        "Sid": "S-1-5-11"
+      }
+    ]
+  },
+  {
+    "ProposedSddl": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;;FA;;;BA)(A;OICIIO;GA;;;BA)(A;;FA;;;SY)(A;OICIIO;GA;;;SY)(A;;0x1201bf;;;AU)(A;OICIIO;SDGXGWGR;;;AU)(A;;0x1200a9;;;BU)(A;OICIIO;GXGR;;;BU)",
+    "OriginalSddl": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:(A;ID;FA;;;BA)(A;OICIIOID;GA;;;BA)(A;ID;FA;;;SY)(A;OICIIOID;GA;;;SY)(A;ID;0x1301bf;;;AU)(A;OICIIOID;SDGXGWGR;;;AU)(A;ID;0x1200a9;;;BU)(A;OICIIOID;GXGR;;;BU)",
+    "Path": "D:\\Program Files\\PostgreSQL",
+    "ObservedUtc": "2026-10-05T09:17:12.3599462Z",
+    "Applied": false,
+    "ProposedProtected": true,
+    "ChildDescriptorsMustRemainUnchanged": true,
+    "OriginalProtected": false,
+    "Changes": [
+      {
+        "AfterMask": 1180095,
+        "Scope": "This directory only",
+        "BeforeMask": 1245631,
+        "Sid": "S-1-5-11"
+      }
+    ]
+  }
+]

@@ -1,0 +1,77 @@
+[50948]  LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+[50948]  LOG:  listening on IPv4 address "127.0.0.1", port 61859
+[50948]  LOG:  listening on IPv6 address "::1", port 61859
+[56616]  LOG:  database system was shut down at 2026-10-05 12:13:12 EEST
+[50948]  LOG:  database system is ready to accept connections
+[38560] [unknown] LOG:  connection received: host=127.0.0.1 port=61869
+[38560] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:126)
+[38560] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[38560] psql LOG:  connection ready: setup total=41.507 ms, fork=17.839 ms, authentication=10.433 ms
+[49468] [unknown] LOG:  connection received: host=127.0.0.1 port=60494
+[49468] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:134)
+[49468] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[49468] psql LOG:  connection ready: setup total=37.139 ms, fork=19.004 ms, authentication=10.054 ms
+[8608] [unknown] LOG:  connection received: host=127.0.0.1 port=60496
+[8608] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:134)
+[8608] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[8608] psql LOG:  connection ready: setup total=35.086 ms, fork=17.282 ms, authentication=10.111 ms
+[54888] [unknown] LOG:  connection received: host=127.0.0.1 port=60499
+[54888] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:1)
+[54888] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[54888] psql LOG:  connection ready: setup total=51.072 ms, fork=32.165 ms, authentication=10.463 ms
+[50948]  LOG:  received SIGHUP, reloading configuration files
+[65644] [unknown] LOG:  connection received: host=127.0.0.1 port=60502
+[65644] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:4)
+[65644] [unknown] LOG:  no match in usermap "fv_bootstrap_7871ff7f8d1b404db20771f2e742364f" for user "postgres" authenticated as "SYSTEM@NT AUTHORITY"
+[65644] [unknown] FATAL:  SSPI authentication failed for user "postgres"
+[65644] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf" line 4: "host postgres postgres 127.0.0.1/32 sspi map=fv_bootstrap_7871ff7f8d1b404db20771f2e742364f include_realm=1"
+[50948]  LOG:  received SIGHUP, reloading configuration files
+[53064] [unknown] LOG:  connection received: host=127.0.0.1 port=60503
+[53064] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:4)
+[53064] [unknown] LOG:  connection authorized: user=postgres database=postgres application_name=FluxVault.PreparedSql.49b70c1f9a06464c9342f1d401328ad6
+[53064] FluxVault.PreparedSql.49b70c1f9a06464c9342f1d401328ad6 LOG:  connection ready: setup total=33.441 ms, fork=20.748 ms, authentication=4.688 ms
+[26016] [unknown] LOG:  connection received: host=127.0.0.1 port=60504
+[26016] [unknown] LOG:  connection authenticated: user="fv_gate_monitor" method=trust (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:1)
+[26016] [unknown] LOG:  connection authorized: user=fv_gate_monitor database=postgres application_name=FluxVault.PreparedSql.49b70c1f9a06464c9342f1d401328ad6.check
+[26016] FluxVault.PreparedSql.49b70c1f9a06464c9342f1d401328ad6.check LOG:  connection ready: setup total=25.690 ms, fork=17.729 ms, authentication=0.196 ms
+[50948]  LOG:  received SIGHUP, reloading configuration files
+[48312] [unknown] LOG:  connection received: host=127.0.0.1 port=60505
+[48332] [unknown] LOG:  connection received: host=127.0.0.1 port=60507
+[48332] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:2)
+[48332] [unknown] LOG:  connection authorized: user=fluxvault_service database=fluxvault_single application_name=FluxVault.PreparedSql.49b70c1f9a06464c9342f1d401328ad6.check
+[48332] FluxVault.PreparedSql.49b70c1f9a06464c9342f1d401328ad6.check LOG:  connection ready: setup total=37.417 ms, fork=19.653 ms, authentication=5.563 ms
+[50948]  LOG:  received SIGHUP, reloading configuration files
+[18544] [unknown] LOG:  connection received: host=127.0.0.1 port=60510
+[18544] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:1)
+[18544] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[18544] psql LOG:  connection ready: setup total=37.003 ms, fork=18.492 ms, authentication=10.343 ms
+[42868] [unknown] LOG:  connection received: host=127.0.0.1 port=60511
+[42868] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:1)
+[42868] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[42868] psql LOG:  connection ready: setup total=35.406 ms, fork=17.553 ms, authentication=10.060 ms
+[42868] psql ERROR:  FluxVault target database/account already exists; refusing adoption
+[42868] psql CONTEXT:  PL/pgSQL function inline_code_block line 5 at RAISE
+[42868] psql STATEMENT:  DO $check$
+	BEGIN
+	    IF EXISTS (SELECT 1 FROM pg_database WHERE datname = 'fluxvault_single')
+	       OR EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'fluxvault_service') THEN
+	        RAISE EXCEPTION 'FluxVault target database/account already exists; refusing adoption';
+	    END IF;
+	END
+	$check$;
+[41192] [unknown] LOG:  connection received: host=127.0.0.1 port=60513
+[41192] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:1)
+[41192] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[41192] psql LOG:  connection ready: setup total=34.208 ms, fork=16.826 ms, authentication=9.560 ms
+[35204] [unknown] LOG:  connection received: host=127.0.0.1 port=56824
+[35204] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/49b70c1f9a06464c9342f1d401328ad6/data/pg_hba.conf:1)
+[35204] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[35204] psql LOG:  connection ready: setup total=35.185 ms, fork=17.498 ms, authentication=9.711 ms
+[50948]  LOG:  received SIGHUP, reloading configuration files
+[50948]  LOG:  received fast shutdown request
+[50948]  LOG:  aborting any active transactions
+[50948]  LOG:  background worker "logical replication launcher" (PID 46204) exited with exit code 1
+[25284]  LOG:  shutting down
+[25284]  LOG:  checkpoint starting: shutdown immediate
+[25284]  LOG:  checkpoint complete: wrote 1978 buffers (48.3%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.055 s, sync=0.585 s, total=0.651 s; sync files=610, longest=0.007 s, average=0.001 s; distance=9345 kB, estimate=9345 kB; lsn=0/2113988, redo lsn=0/2113988
+[50948]  LOG:  database system is shut down

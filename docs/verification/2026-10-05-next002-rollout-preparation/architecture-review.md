@@ -73,3 +73,23 @@ existing operator's direct Administrators membership; retain reparse, ancestor
 replacement and untrusted/propagating-writer checks. Preserve existing ACLs and
 do not broaden commissioning, executable or vault-root guards. This is a bounded
 path-specific assessment, not permission to apply the prepared files or deploy.
+
+## Authentication retirement and bounded ACL checkpoint
+
+The independent Astra reviewer accepts the coherent procedure/fixture/test
+checkpoint with no blocking finding. Administrator baselining precedes admission;
+fresh retirement checks reject unaccounted administrator and surviving legacy
+sessions. Native `2d9f2cc1c78447cca233ff5ecce6e018` proves exact SYSTEM SSPI,
+receipt-before-DDL, worker joining, backend retirement, fresh administrator refusal
+and restricted service access. The filesystem rollback portion preserves legacy
+bytes/ACLs and separates fresh failed state without overwriting it.
+
+The exact two-descriptor native proof establishes unchanged children/data,
+DELETE-handle refusal and denials after releasing pins, with an empty-junction
+control. A nonempty ancestor remains anchored by its protected next component;
+removing additional data/EA/attribute rights is not justified by this requirement.
+The reviewer observed the 86/86 combined checks and native ACL regression, plus
+the fresh census of 499 identities/390 resources across fifteen retired runs.
+Normal state remains unchanged. The scoped normal guard/supervisor, installer/SCM
+rollback, S01, D01 and final G01 remain open. This assessment authorises no normal
+ACL/authentication change or rollout.

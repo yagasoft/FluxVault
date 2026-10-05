@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="eed05601-dc8a-4d24-9ac1-a1ea7025f9d4" name="os008@OS008-HOME 2026-10-05 11:55:02" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T11:55:02.8629292+03:00" queuing="2026-10-05T11:55:02.8629295+03:00" start="2026-10-05T11:54:59.4636400+03:00" finish="2026-10-05T11:55:10.8395271+03:00" />
+  <TestSettings name="default" id="2dbe7758-d373-4671-b017-94e781fefd76">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_11_55_02" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="2a610d67-0c4b-4bb5-8794-c0a861951c6c" testId="658354bd-9f5b-c9d3-9d4a-fdcec6fda5f5" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;legacy-session&quot;)" computerName="OS008-HOME" duration="00:00:01.1542284" startTime="2026-10-05T11:55:07.3180640+03:00" endTime="2026-10-05T11:55:08.4727258+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a610d67-0c4b-4bb5-8794-c0a861951c6c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8a1d95ea-5a70-4e55-9fbd-b9643fdc304f" testId="d0ae1ddb-6777-72af-4733-0e6bf7372089" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;administrator-still-admitted&quot;)" computerName="OS008-HOME" duration="00:00:01.3463715" startTime="2026-10-05T11:55:01.4162681+03:00" endTime="2026-10-05T11:55:02.7487165+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8a1d95ea-5a70-4e55-9fbd-b9643fdc304f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c0d923e8-89a0-4641-8187-5c03e204ce04" testId="33d9a4d6-4434-3ac0-71d9-4181f31c4aac" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;service-failed&quot;)" computerName="OS008-HOME" duration="00:00:01.2787081" startTime="2026-10-05T11:55:00.1044944+03:00" endTime="2026-10-05T11:55:01.4008128+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c0d923e8-89a0-4641-8187-5c03e204ce04">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="154de063-edf5-4949-8e72-008386d823df" testId="39d20e6c-bbe7-1098-d187-1d304e8bde30" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;wrong-principal&quot;)" computerName="OS008-HOME" duration="00:00:01.1280472" startTime="2026-10-05T11:55:05.0319150+03:00" endTime="2026-10-05T11:55:06.1599124+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="154de063-edf5-4949-8e72-008386d823df" />
+    <UnitTestResult executionId="d2d5cba2-e798-46d4-b67d-022e9cdd08bc" testId="134415a8-d7bf-a48d-9201-d3d726931f45" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;administrator-failed&quot;)" computerName="OS008-HOME" duration="00:00:01.1245064" startTime="2026-10-05T11:55:03.9067874+03:00" endTime="2026-10-05T11:55:05.0310346+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2d5cba2-e798-46d4-b67d-022e9cdd08bc">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e8c1607d-24b3-476a-ae03-a7c3645e3971" testId="e3508f6b-9c1c-4396-7a77-9d23a5911559" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;administrator-survives&quot;)" computerName="OS008-HOME" duration="00:00:01.1565437" startTime="2026-10-05T11:55:02.7508369+03:00" endTime="2026-10-05T11:55:03.9058982+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e8c1607d-24b3-476a-ae03-a7c3645e3971">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6cdbd48f-3dae-4023-9489-6969ecf93b78" testId="9838ac6d-66d4-4605-6f75-5365c511bc4c" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;completion-publication-failed&quot;)" computerName="OS008-HOME" duration="00:00:01.1470902" startTime="2026-10-05T11:55:09.6320408+03:00" endTime="2026-10-05T11:55:10.7788643+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6cdbd48f-3dae-4023-9489-6969ecf93b78">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9017fc75-9e15-45fa-96fb-3de93beeafa0" testId="383920c3-8e82-bc7e-8e31-e0d136dd40ba" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;success&quot;)" computerName="OS008-HOME" duration="00:00:01.1578717" startTime="2026-10-05T11:55:08.4735636+03:00" endTime="2026-10-05T11:55:09.6312106+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9017fc75-9e15-45fa-96fb-3de93beeafa0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 97&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="309d6308-c688-43b7-9c16-0d47e8e4beef" testId="72ed8c6f-e502-4ba9-6d5e-b753b28b4bdb" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;original-changed&quot;)" computerName="OS008-HOME" duration="00:00:01.1578792" startTime="2026-10-05T11:55:06.1608906+03:00" endTime="2026-10-05T11:55:07.3178374+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="309d6308-c688-43b7-9c16-0d47e8e4beef" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;administrator-failed&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="134415a8-d7bf-a48d-9201-d3d726931f45">
+      <Execution id="d2d5cba2-e798-46d4-b67d-022e9cdd08bc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;success&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="383920c3-8e82-bc7e-8e31-e0d136dd40ba">
+      <Execution id="9017fc75-9e15-45fa-96fb-3de93beeafa0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;original-changed&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="72ed8c6f-e502-4ba9-6d5e-b753b28b4bdb">
+      <Execution id="309d6308-c688-43b7-9c16-0d47e8e4beef" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;completion-publication-failed&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="9838ac6d-66d4-4605-6f75-5365c511bc4c">
+      <Execution id="6cdbd48f-3dae-4023-9489-6969ecf93b78" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;administrator-still-admitted&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="d0ae1ddb-6777-72af-4733-0e6bf7372089">
+      <Execution id="8a1d95ea-5a70-4e55-9fbd-b9643fdc304f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;administrator-survives&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="e3508f6b-9c1c-4396-7a77-9d23a5911559">
+      <Execution id="e8c1607d-24b3-476a-ae03-a7c3645e3971" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;service-failed&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="33d9a4d6-4434-3ac0-71d9-4181f31c4aac">
+      <Execution id="c0d923e8-89a0-4641-8187-5c03e204ce04" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;legacy-session&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="658354bd-9f5b-c9d3-9d4a-fdcec6fda5f5">
+      <Execution id="2a610d67-0c4b-4bb5-8794-c0a861951c6c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: &quot;wrong-principal&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="39d20e6c-bbe7-1098-d187-1d304e8bde30">
+      <Execution id="154de063-edf5-4949-8e72-008386d823df" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="658354bd-9f5b-c9d3-9d4a-fdcec6fda5f5" executionId="2a610d67-0c4b-4bb5-8794-c0a861951c6c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d0ae1ddb-6777-72af-4733-0e6bf7372089" executionId="8a1d95ea-5a70-4e55-9fbd-b9643fdc304f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="33d9a4d6-4434-3ac0-71d9-4181f31c4aac" executionId="c0d923e8-89a0-4641-8187-5c03e204ce04" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="39d20e6c-bbe7-1098-d187-1d304e8bde30" executionId="154de063-edf5-4949-8e72-008386d823df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="134415a8-d7bf-a48d-9201-d3d726931f45" executionId="d2d5cba2-e798-46d4-b67d-022e9cdd08bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3508f6b-9c1c-4396-7a77-9d23a5911559" executionId="e8c1607d-24b3-476a-ae03-a7c3645e3971" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9838ac6d-66d4-4605-6f75-5365c511bc4c" executionId="6cdbd48f-3dae-4023-9489-6969ecf93b78" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="383920c3-8e82-bc7e-8e31-e0d136dd40ba" executionId="9017fc75-9e15-45fa-96fb-3de93beeafa0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72ed8c6f-e502-4ba9-6d5e-b753b28b4bdb" executionId="309d6308-c688-43b7-9c16-0d47e8e4beef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="9" executed="9" passed="2" failed="7" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.53]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.53]       Expected: True&#xD;
+[xUnit.net 00:00:01.53]       Actual:   False&#xD;
+[xUnit.net 00:00:01.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(104,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario)&#xD;
+[xUnit.net 00:00:01.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.87]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:02.87]       Expected: True&#xD;
+[xUnit.net 00:00:02.87]       Actual:   False&#xD;
+[xUnit.net 00:00:02.87]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(104,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario)&#xD;
+[xUnit.net 00:00:02.87]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.03]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:04.03]       Expected: True&#xD;
+[xUnit.net 00:00:04.03]       Actual:   False&#xD;
+[xUnit.net 00:00:04.03]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.03]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(104,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario)&#xD;
+[xUnit.net 00:00:04.03]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.15]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:05.15]       Expected: True&#xD;
+[xUnit.net 00:00:05.15]       Actual:   False&#xD;
+[xUnit.net 00:00:05.15]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.15]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(104,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario)&#xD;
+[xUnit.net 00:00:05.15]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.60]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:08.60]       Expected: True&#xD;
+[xUnit.net 00:00:08.60]       Actual:   False&#xD;
+[xUnit.net 00:00:08.60]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.60]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(104,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario)&#xD;
+[xUnit.net 00:00:08.60]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.75]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:09.75]       Expected: True&#xD;
+[xUnit.net 00:00:09.75]       Actual:   False&#xD;
+[xUnit.net 00:00:09.75]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.75]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(97,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario)&#xD;
+[xUnit.net 00:00:09.75]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.90]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:10.90]       Expected: True&#xD;
+[xUnit.net 00:00:10.90]       Actual:   False&#xD;
+[xUnit.net 00:00:10.90]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.90]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(104,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario)&#xD;
+[xUnit.net 00:00:10.90]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.91]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T11:55:01.4036169+03:00">
+        <Text>[xUnit.net 00:00:01.53]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "service-failed") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T11:55:02.7493248+03:00">
+        <Text>[xUnit.net 00:00:02.87]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "administrator-still-admitted") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T11:55:03.9067307+03:00">
+        <Text>[xUnit.net 00:00:04.03]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "administrator-survives") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T11:55:05.0314219+03:00">
+        <Text>[xUnit.net 00:00:05.15]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "administrator-failed") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T11:55:08.4730981+03:00">
+        <Text>[xUnit.net 00:00:08.60]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "legacy-session") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T11:55:09.6316262+03:00">
+        <Text>[xUnit.net 00:00:09.75]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "success") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T11:55:10.7791921+03:00">
+        <Text>[xUnit.net 00:00:10.90]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "completion-publication-failed") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,75 +1,131 @@
 {
-  "NormalPostmaster": {
-    "ProcessId": 50372,
-    "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
-    "StartedUtc": "2026-10-01T13:38:16.2557791Z"
-  },
+  "NormalAuthenticationUnchanged": true,
   "Runs": [
     {
       "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 11,
       "JournalComplete": true,
       "RootAccountsGroupTasksJobsAbsent": true,
-      "RetiredResources": 8,
-      "FixtureId": "c5784a21b0954b90b07028279896114c",
-      "RetiredProcessIdentities": 9
-    },
-    {
-      "NormalStateUnchanged": true,
-      "JournalComplete": true,
-      "RootAccountsGroupTasksJobsAbsent": true,
-      "RetiredResources": 9,
-      "FixtureId": "f93ec07c21d344a5a49c8e99f1c522a4",
-      "RetiredProcessIdentities": 11
-    },
-    {
-      "NormalStateUnchanged": true,
-      "JournalComplete": true,
-      "RootAccountsGroupTasksJobsAbsent": true,
-      "RetiredResources": 9,
-      "FixtureId": "6b7adef22d504b339065265a940be99e",
-      "RetiredProcessIdentities": 11
-    },
-    {
-      "NormalStateUnchanged": true,
-      "JournalComplete": true,
-      "RootAccountsGroupTasksJobsAbsent": true,
-      "RetiredResources": 9,
-      "FixtureId": "c995fd62a1644145b243c15772ec1e8a",
-      "RetiredProcessIdentities": 11
-    },
-    {
-      "NormalStateUnchanged": true,
-      "JournalComplete": true,
-      "RootAccountsGroupTasksJobsAbsent": true,
-      "RetiredResources": 9,
       "FixtureId": "10af87c4510d4494ace9f9d729ae5ebf",
-      "RetiredProcessIdentities": 11
+      "RetiredResources": 9
     },
     {
       "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 54,
       "JournalComplete": true,
       "RootAccountsGroupTasksJobsAbsent": true,
-      "RetiredResources": 39,
-      "FixtureId": "2296118023cf4232b8fbbd9f3c6d1875",
-      "RetiredProcessIdentities": 45
-    },
-    {
-      "NormalStateUnchanged": true,
-      "JournalComplete": true,
-      "RootAccountsGroupTasksJobsAbsent": true,
-      "RetiredResources": 43,
-      "FixtureId": "5a477969f6b54962b10cd909a0955554",
-      "RetiredProcessIdentities": 53
-    },
-    {
-      "RetiredResources": 43,
       "FixtureId": "1ddfdc01f9f848beb004582d7c411551",
+      "RetiredResources": 43
+    },
+    {
       "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 45,
       "JournalComplete": true,
       "RootAccountsGroupTasksJobsAbsent": true,
-      "RetiredProcessIdentities": 54
+      "FixtureId": "2296118023cf4232b8fbbd9f3c6d1875",
+      "RetiredResources": 39
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 65,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "2d9f2cc1c78447cca233ff5ecce6e018",
+      "RetiredResources": 45
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 20,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "33b0a465488c47f79be3a2a0cbbf25d3",
+      "RetiredResources": 15
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 40,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "49b70c1f9a06464c9342f1d401328ad6",
+      "RetiredResources": 21
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 44,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "534f66d5c3814eeeafe4d5eb2c058d2b",
+      "RetiredResources": 43
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 53,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "5a477969f6b54962b10cd909a0955554",
+      "RetiredResources": 43
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 11,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "6b7adef22d504b339065265a940be99e",
+      "RetiredResources": 9
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 41,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "6eb5ebbe54e04cbaabf12fd52ac73ec6",
+      "RetiredResources": 37
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 20,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "87d0b87935a1469d88c7f6d27d3d794d",
+      "RetiredResources": 15
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 9,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "c5784a21b0954b90b07028279896114c",
+      "RetiredResources": 8
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 11,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "c995fd62a1644145b243c15772ec1e8a",
+      "RetiredResources": 9
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 64,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "dd8173c048e740028334849bfaab7639",
+      "RetiredResources": 45
+    },
+    {
+      "NormalStateUnchanged": true,
+      "RetiredProcessIdentities": 11,
+      "JournalComplete": true,
+      "RootAccountsGroupTasksJobsAbsent": true,
+      "FixtureId": "f93ec07c21d344a5a49c8e99f1c522a4",
+      "RetiredResources": 9
     }
   ],
-  "ObservedUtc": "2026-10-05T08:39:35.5008218Z",
-  "NormalAuthenticationUnchanged": true
+  "NormalPostmaster": {
+    "ProcessId": 50372,
+    "StartedUtc": "2026-10-01T13:38:16.2557791Z",
+    "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe"
+  },
+  "ObservedUtc": "2026-10-05T09:51:57.8446290Z"
 }

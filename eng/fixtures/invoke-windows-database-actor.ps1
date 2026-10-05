@@ -45,7 +45,7 @@ catch {
     try { $admissionState=[FluxVault.Fixtures.OwnedWindowsJob]::CurrentContainment() } catch { $admissionState='Containment query failed: '+$_.Exception.Message }
     throw ($admissionError+'; '+$admissionState)
 }
-if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles','Integrity','AccessUser','AccessGroup','AccessReopened','AccessDenied','RestartBefore','RestartAfter','RestartServer','PackagedClient','PackagedCleanup','InterruptedBefore','InterruptedAfter','InterruptedHeldServer','InterruptedReopenedServer')) { throw 'Actor requires one explicit loopback/client probe.' }
+if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('CommissionAuthentication','Npgsql','libpq','CallerFiles','Integrity','AccessUser','AccessGroup','AccessReopened','AccessDenied','RestartBefore','RestartAfter','RestartServer','PackagedClient','PackagedCleanup','InterruptedBefore','InterruptedAfter','InterruptedHeldServer','InterruptedReopenedServer')) { throw 'Actor requires one explicit loopback/client probe.' }
 $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 if ($sid -ne $configuration.Actors.$Actor -or -not [guid]::TryParseExact($RunId, 'N', [ref]$parsed) -or $parsed -eq [guid]::Empty) { throw 'Actor identity mismatch.' }
 $expectedRoot = Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $configuration.FixtureId
@@ -94,7 +94,16 @@ function Invoke-ActorTool {
 }
 try {
     $probeId = [guid]::NewGuid().ToString('N')
-    if($ClientKind -eq 'Integrity') {
+    if($ClientKind -eq 'CommissionAuthentication') {
+        if($Actor -ne 'System' -or -not $runtime.ValidatePreparedAuthentication){throw 'Authentication proof requires its exact owned SYSTEM actor.'}
+        $proofRoot=Join-Path $Root 'administrator-proof'
+        $context=Get-Content -LiteralPath (Join-Path $proofRoot 'context.json') -Raw | ConvertFrom-Json -AsHashtable
+        if($context.NormalInstallation -or $context.Port -eq 5432 -or $context.DataDirectory -ine (Join-Path $Root 'data')){throw 'Normal authentication target refused by the fixture.'}
+        Import-Module (Join-Path $proofRoot 'commission-administrator.psm1') -Force
+        Import-Module (Join-Path $proofRoot 'commission-authentication.psm1') -Force
+        $receipt=Invoke-CommissionAuthentication $context
+        $results.Add(@{Kind='CommissionAuthentication';Receipt=$receipt})
+    } elseif($ClientKind -eq 'Integrity') {
         if($Actor -ne 'System' -or $HostAddress -ne '127.0.0.1'){throw 'The owned integrity suite requires the SYSTEM actor.'}
         $rootOwner=(Get-Acl -LiteralPath $Root).GetOwner([Security.Principal.SecurityIdentifier]).Value
         foreach($path in @($Root,(Join-Path $Root 'runtime'),(Join-Path $Root 'integrity'),$runtime.Dotnet,$runtime.Vstest)) {

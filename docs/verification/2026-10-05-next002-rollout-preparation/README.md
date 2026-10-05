@@ -223,3 +223,55 @@ This closes backend publication and worker lifetime proof, not the full normal
 authentication supervisor, post-revocation checks or rollback. S05, S01, D01 and
 final G01 remain the critical path; no additional framework or roadmap scope is
 introduced.
+
+Completion preparation now proves the finite authentication phase through the
+actual SYSTEM worker and PostgreSQL interfaces. The
+[current owned run](native/2d9f2cc1c78447cca233ff5ecce6e018/result.json) uses
+[the operator procedure](commission-authentication.psm1): it checks original
+bytes and SQL hash before changing admission, preserves durable recovery inputs,
+observes the exact SYSTEM SSPI principal, publishes the administrator backend
+before once-only SQL, joins its worker, checks fresh administrator/legacy-session
+retirement, removes the temporary map, and verifies fresh administrator refusal
+and restricted service login without restarting the private postmaster.
+An administrator baseline preserves unrelated existing sessions; any new,
+unaccounted administrator session blocks activation. The meaningful failing
+regression is retained in `unaccounted-administrator-red.trx`. The current native
+[baseline](native/2d9f2cc1c78447cca233ff5ecce6e018/administrator-baseline.json)
+and [completion receipt](native/2d9f2cc1c78447cca233ff5ecce6e018/authentication-completed.json)
+support the stronger retirement check. Ten procedure regressions cover success,
+refusal, surviving sessions, final-login failures and failed receipt publication;
+failure restores the exact original bytes and keeps runtime blocked.
+
+[Legacy preservation/restore](commission-rollback.psm1) now has real filesystem
+round-trip and refusal regressions: retained bytes/root permissions survive,
+fresh interrupted state is retained separately, and collisions, changed legacy
+configuration and escaping paths are refused. This is the filesystem portion
+of rollback; exact installer/SCM restoration and the normal supervisor remain
+unfinished. It is not a completed installation rollback drill.
+
+Read-only inspection found effective Authenticated Users DELETE on the two
+PostgreSQL ancestors. The [unapplied exact proposal](postgresql-ancestor-acl-proposal.json)
+copies their inherited grants as protected explicit grants and removes DELETE
+only from the effective grant on each directory. Child inheritance templates,
+owner/group, normal data, authentication and service state remain unchanged.
+The [native correction/restore helper](postgresql-ancestor-acl.cs) pins the
+component chain without DELETE sharing and changes only the two DACLs using
+`SetFileSecurityW`. The native regression caught ineffective sharing exclusion
+when the directory handle requested only attributes; requesting directory-list
+access makes an existing DELETE handle a refusal before any effect.
+`ancestor-acl-sharing-correction.trx` proves exact apply/restore, unchanged child
+descriptors/data and post-pin access checks using an impersonated token with
+Administrators disabled and privileges removed. Formerly allowed DELETE opens
+and rename are denied, the protected next child cannot be renamed, and junction
+redirection returns directory-not-empty while an empty-directory control succeeds.
+This is a bounded S05 correction/proof, not permission to apply normal ACLs.
+
+`commissioning-completion-combined.trx` passes 86/86 without skips. The refreshed
+[census](authentication-fixture-census.json) verifies 499 captured process
+identities and 390 resources retired across fifteen owned runs. Normal services,
+postmaster, authentication/configuration and the two ancestor descriptors remain
+unchanged; the frozen 1.0.5 candidate and checkpoint 9815673 remain reusable.
+The remaining critical path is the scoped normal PostgreSQL guard/supervisor,
+checked installer/SCM rollback, pending S01 packaged rehearsal, remaining D01
+desktop observations/scale, and consolidated final G01 before separately approved
+normal rollout and live validation. The C01–G01 matrix and roadmap are unchanged.

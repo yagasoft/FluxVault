@@ -1,0 +1,62 @@
+{
+  "Complete": true,
+  "WindowsSid": "S-1-5-18",
+  "Results": [
+    {
+      "Receipt": {
+        "AfterRetirement": {
+          "administrator_absent": true,
+          "legacy_pids": [],
+          "database": "fluxvault_single",
+          "role": "fluxvault_service",
+          "port": 52509
+        },
+        "Accepted": true,
+        "FreshAdministratorDenied": true,
+        "PrincipalObservation": "no match in usermap \"fv_bootstrap_7871ff7f8d1b404db20771f2e742364f\" for user \"postgres\" authenticated as \"SYSTEM@NT AUTHORITY\"",
+        "Version": 1,
+        "BeforeRetirement": {
+          "administrator_absent": true,
+          "legacy_pids": [],
+          "database": "postgres",
+          "role": "fv_gate_monitor",
+          "port": 52509
+        },
+        "Postmaster": {
+          "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\dd8173c048e740028334849bfaab7639\\postgresql\\bin\\postgres.exe",
+          "StartedUtc": "2026-10-05T09:18:03.1593728Z",
+          "DataDirectory": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\dd8173c048e740028334849bfaab7639\\data",
+          "ProcessId": 25056,
+          "Port": 52509
+        },
+        "Administrator": {
+          "ReceiptPath": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\dd8173c048e740028334849bfaab7639\\administrator-proof\\administrator-session.json",
+          "Backend": {
+            "backend_pid": 63496,
+            "role": "postgres",
+            "database": "postgres",
+            "data_directory": "C:/ProgramData/FluxVault.Tests/NEXT002/dd8173c048e740028334849bfaab7639/data",
+            "port": "52509"
+          },
+          "WorkerJoined": true,
+          "Process": {
+            "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\dd8173c048e740028334849bfaab7639\\postgresql\\bin\\psql.exe",
+            "StartedUtc": "2026-10-05T09:18:10.7660537Z",
+            "ProcessId": 48992
+          },
+          "ExitCode": 0
+        },
+        "ObservedUtc": "2026-10-05T09:18:11.3323828Z"
+      },
+      "Kind": "CommissionAuthentication"
+    },
+    {
+      "ReadProtected": true,
+      "Kind": "ACL",
+      "WriteRuntime": true,
+      "WindowsSid": "S-1-5-18"
+    }
+  ],
+  "Actor": "System",
+  "RunId": "4941af9f17014e61976fdfc40cd0b9b6"
+}

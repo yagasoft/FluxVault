@@ -6,6 +6,311 @@ namespace FluxVault.Integration.Tests;
 // Current-user tooling checks. These do not claim the real A/B/SYSTEM acceptance gates.
 public sealed class WindowsFixtureToolingTests
 {
+    [Fact]
+    public async Task PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $source=Join-Path (Split-Path (Split-Path (Split-Path $module))) 'docs/verification/2026-10-05-next002-rollout-preparation/postgresql-ancestor-acl.cs'
+            if(-not(Test-Path -LiteralPath $source)){throw 'The checked ancestor correction is missing.'}
+            Add-Type -Path $source
+            Add-Type @'
+            using System;
+            using System.Runtime.InteropServices;
+            using System.Security.AccessControl;
+            using System.Security.Principal;
+            using System.Text;
+            using Microsoft.Win32.SafeHandles;
+            public static class AclFixtureSetup {
+                [DllImport("advapi32",EntryPoint="SetFileSecurityW",CharSet=CharSet.Unicode,SetLastError=true)]
+                private static extern bool Set(string path,uint info,byte[] descriptor);
+                [DllImport("advapi32",EntryPoint="GetFileSecurityW",CharSet=CharSet.Unicode,SetLastError=true)]
+                private static extern bool Get(string path,uint info,byte[] descriptor,uint length,out uint needed);
+                public static string Read(string path) {
+                    Get(path,7,null,0,out var needed);var bytes=new byte[needed];
+                    if(!Get(path,7,bytes,needed,out needed))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+                    return new RawSecurityDescriptor(bytes,0).GetSddlForm(AccessControlSections.All);
+                }
+                public static void Write(string path,string sddl) {
+                    var raw=new RawSecurityDescriptor(sddl);var bytes=new byte[raw.BinaryLength];raw.GetBinaryForm(bytes,0);
+                    var protection=(raw.ControlFlags&ControlFlags.DiscretionaryAclProtected)!=0?0x80000000u:0x20000000u;
+                    if(!Set(path,7u|protection,bytes))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+                }
+                [StructLayout(LayoutKind.Sequential)]private struct SidAndAttributes{public IntPtr Sid;public uint Attributes;}
+                [DllImport("advapi32",SetLastError=true)]private static extern bool OpenProcessToken(IntPtr process,uint access,out SafeAccessTokenHandle token);
+                [DllImport("advapi32",SetLastError=true)]private static extern bool CreateRestrictedToken(SafeAccessTokenHandle token,uint flags,uint disableCount,ref SidAndAttributes disable,uint privilegeCount,IntPtr privileges,uint restrictCount,IntPtr restrict,out SafeAccessTokenHandle restricted);
+                [DllImport("advapi32",SetLastError=true)]private static extern bool SetThreadToken(IntPtr thread,SafeAccessTokenHandle token);
+                [DllImport("advapi32",SetLastError=true)]private static extern bool DuplicateToken(SafeAccessTokenHandle token,int level,out SafeAccessTokenHandle impersonation);
+                [DllImport("advapi32",SetLastError=true)]private static extern bool RevertToSelf();
+                [DllImport("kernel32",EntryPoint="CreateFileW",CharSet=CharSet.Unicode,SetLastError=true)]private static extern SafeFileHandle Open(string path,uint access,uint sharing,IntPtr security,uint disposition,uint flags,IntPtr template);
+                [DllImport("kernel32",EntryPoint="MoveFileW",CharSet=CharSet.Unicode,SetLastError=true)]private static extern bool Move(string from,string to);
+                [DllImport("kernel32",SetLastError=true)]private static extern bool DeviceIoControl(SafeFileHandle file,uint control,byte[] input,uint inputSize,IntPtr output,uint outputSize,out uint returned,IntPtr overlapped);
+                public static SafeFileHandle HoldDelete(string path) {
+                    var file=Open(path,0x10000,7,IntPtr.Zero,3,0x02000000,IntPtr.Zero);
+                    if(file.IsInvalid){file.Dispose();throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());}return file;
+                }
+                private static int Junction(string path,string target) {
+                    var substitute=Encoding.Unicode.GetBytes("\\??\\"+target);var print=Encoding.Unicode.GetBytes(target);
+                    var data=new byte[16+substitute.Length+2+print.Length+2];
+                    Array.Copy(BitConverter.GetBytes(0xA0000003u),0,data,0,4);
+                    Array.Copy(BitConverter.GetBytes(checked((ushort)(data.Length-8))),0,data,4,2);
+                    Array.Copy(BitConverter.GetBytes(checked((ushort)substitute.Length)),0,data,10,2);
+                    Array.Copy(BitConverter.GetBytes(checked((ushort)(substitute.Length+2))),0,data,12,2);
+                    Array.Copy(BitConverter.GetBytes(checked((ushort)print.Length)),0,data,14,2);
+                    Array.Copy(substitute,0,data,16,substitute.Length);Array.Copy(print,0,data,18+substitute.Length,print.Length);
+                    using var file=Open(path,0x40000000,7,IntPtr.Zero,3,0x02200000,IntPtr.Zero);
+                    if(file.IsInvalid)return Marshal.GetLastWin32Error();
+                    return DeviceIoControl(file,0x900A4,data,(uint)data.Length,IntPtr.Zero,0,out _,IntPtr.Zero)?0:Marshal.GetLastWin32Error();
+                }
+                public static int[] Probe(string parent,string postgres,string child,string control,string target,bool before) {
+                    var sid=new SecurityIdentifier("S-1-5-32-544");var bytes=new byte[sid.BinaryLength];sid.GetBinaryForm(bytes,0);var memory=Marshal.AllocHGlobal(bytes.Length);
+                    try {
+                        Marshal.Copy(bytes,0,memory,bytes.Length);var disable=new SidAndAttributes{Sid=memory};
+                        if(!OpenProcessToken(System.Diagnostics.Process.GetCurrentProcess().Handle,0xE,out var original))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(),"OpenProcessToken");
+                        using(original) {
+                            if(!CreateRestrictedToken(original,1,1,ref disable,0,IntPtr.Zero,0,IntPtr.Zero,out var restricted))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(),"CreateRestrictedToken");
+                            using(restricted) {
+                                if(!DuplicateToken(restricted,2,out var impersonation))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(),"DuplicateToken");
+                                using var joinedToken=impersonation;
+                                if(!SetThreadToken(IntPtr.Zero,impersonation))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(),"SetThreadToken");
+                                try {
+                                    if(new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))throw new InvalidOperationException("Administrator group is still enabled.");
+                                    using var p=Open(parent,0x10000,7,IntPtr.Zero,3,0x02000000,IntPtr.Zero);var pError=p.IsInvalid?Marshal.GetLastWin32Error():0;
+                                    using var q=Open(postgres,0x10000,7,IntPtr.Zero,3,0x02000000,IntPtr.Zero);var qError=q.IsInvalid?Marshal.GetLastWin32Error():0;
+                                    if(before)return new[]{pError,qError};
+                                    var renamed=parent+".renamed";var renameError=Move(parent,renamed)?0:Marshal.GetLastWin32Error();
+                                    if(renameError==0 && !Move(renamed,parent))throw new InvalidOperationException("Unexpectedly permitted rename could not be restored.");
+                                    var childRenamed=child+".renamed";var childError=Move(child,childRenamed)?0:Marshal.GetLastWin32Error();
+                                    if(childError==0 && !Move(childRenamed,child))throw new InvalidOperationException("Unexpectedly permitted child rename could not be restored.");
+                                    return new[]{pError,qError,renameError,childError,Junction(parent,target),Junction(control,target)};
+                                } finally{if(!RevertToSelf())throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());}
+                            }
+                        }
+                    } finally{Marshal.FreeHGlobal(memory);}
+                }
+                public static void RemoveJunction(string path) {
+                    using var file=Open(path,0x40000000,7,IntPtr.Zero,3,0x02200000,IntPtr.Zero);var data=new byte[8];Array.Copy(BitConverter.GetBytes(0xA0000003u),data,4);
+                    if(!DeviceIoControl(file,0x900AC,data,8,IntPtr.Zero,0,out _,IntPtr.Zero))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+                }
+            }
+            '@
+            $shared=Join-Path $root 'shared';$postgres=Join-Path $shared 'PostgreSQL';$child=Join-Path $postgres '18'
+            foreach($path in @($shared,$postgres,$child)){[IO.Directory]::CreateDirectory($path) | Out-Null}
+            $file=Join-Path $child 'sentinel';[IO.File]::WriteAllText($file,'unrelated child remains unchanged')
+            $group=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+            $protected='O:BAG:'+$group+'D:P(A;OICI;FA;;;BA)(A;OICI;FA;;;SY)(A;OICI;0x1200a9;;;BU)'
+            foreach($path in @($root,$child,$file)){[AclFixtureSetup]::Write($path,$protected)}
+            $control=Join-Path $root 'empty-junction-control';$target=Join-Path $root 'junction-target'
+            foreach($path in @($control,$target)){[IO.Directory]::CreateDirectory($path) | Out-Null}
+            [AclFixtureSetup]::Write($control,('O:BAG:'+$group+'D:P(A;;FA;;;BA)(A;;FA;;;SY)(A;;0x1301bf;;;AU)'))
+            foreach($path in @($shared,$postgres)) {
+                $group=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+                [AclFixtureSetup]::Write($path,('O:BAG:'+ $group +'D:(A;ID;FA;;;BA)(A;OICIIOID;GA;;;BA)(A;ID;FA;;;SY)(A;OICIIOID;GA;;;SY)(A;ID;0x1301bf;;;AU)(A;OICIIOID;SDGXGWGR;;;AU)(A;ID;0x1200a9;;;BU)(A;OICIIOID;GXGR;;;BU)'))
+            }
+            $paths=[string[]]@($shared,$postgres)
+            $before=[string[]]@($paths | ForEach-Object {[AclFixtureSetup]::Read($_)})
+            $deleteBefore=[AclFixtureSetup]::Probe($shared,$postgres,$child,$control,$target,$true)
+            $childrenBefore=@([AclFixtureSetup]::Read($child),[AclFixtureSetup]::Read($file))
+            $hash=(Get-FileHash -LiteralPath $file).Hash
+            $after=[string[]]@(foreach($sddl in $before){
+                $raw=[Security.AccessControl.RawSecurityDescriptor]::new($sddl)
+                foreach($ace in $raw.DiscretionaryAcl){if($ace -is [Security.AccessControl.CommonAce] -and $ace.AceQualifier -eq 'AccessAllowed' -and
+                    $ace.SecurityIdentifier.Value -eq 'S-1-5-11' -and -not($ace.AceFlags -band [Security.AccessControl.AceFlags]::InheritOnly)){$ace.AccessMask=$ace.AccessMask -band (-bnot 0x10000)}
+                    $ace.AceFlags=$ace.AceFlags -band (-bnot [Security.AccessControl.AceFlags]::Inherited)
+                }
+                $raw.SetFlags($raw.ControlFlags -bor [Security.AccessControl.ControlFlags]::DiscretionaryAclProtected)
+                $raw.GetSddlForm('All')
+            })
+            $deleteHandle=[AclFixtureSetup]::HoldDelete($postgres);$conflictRefused=$false
+            try{try{[FluxVault.Commissioning.PostgreSqlAncestorAcl]::Replace($paths,$before,$after)}catch{$conflictRefused=$true}}
+            finally{$deleteHandle.Dispose()}
+            $conflictUnchanged=[string]::Join('|',@($paths | ForEach-Object {[AclFixtureSetup]::Read($_)})) -ceq [string]::Join('|',$before)
+            [FluxVault.Commissioning.PostgreSqlAncestorAcl]::Replace($paths,$before,$after)
+            $nativeAccess=[AclFixtureSetup]::Probe($shared,$postgres,$child,$control,$target,$false)
+            if($nativeAccess[5] -eq 0){[AclFixtureSetup]::RemoveJunction($control)}
+            $applied=[string[]]@($paths | ForEach-Object {[AclFixtureSetup]::Read($_)})
+            $noDelete=@(foreach($path in $paths){$acl=Get-Acl -LiteralPath $path;@($acl.GetAccessRules($true,$true,[Security.Principal.SecurityIdentifier]) | Where-Object {
+                $_.IdentityReference.Value -eq 'S-1-5-11' -and $_.AccessControlType -eq 'Allow' -and $_.PropagationFlags -ne 'InheritOnly' -and
+                ($_.FileSystemRights -band [Security.AccessControl.FileSystemRights]::Delete)}).Count -eq 0})
+            $childrenAfter=@([AclFixtureSetup]::Read($child),[AclFixtureSetup]::Read($file))
+            $changedRefused=$false
+            try{[FluxVault.Commissioning.PostgreSqlAncestorAcl]::Replace($paths,$before,$after)}catch{$changedRefused=$true}
+            [FluxVault.Commissioning.PostgreSqlAncestorAcl]::Replace($paths,$after,$before)
+            $restored=[string[]]@($paths | ForEach-Object {[AclFixtureSetup]::Read($_)})
+            @{AppliedExact=[string]::Join('|',$applied) -ceq [string]::Join('|',$after);
+                RestoredExact=[string]::Join('|',$restored) -ceq [string]::Join('|',$before);NoDelete=@($noDelete);
+                ChangedRefused=$changedRefused;ChildDescriptorsUnchanged=[string]::Join('|',$childrenBefore) -ceq [string]::Join('|',$childrenAfter);
+                DeleteBefore=@($deleteBefore);NativeAccess=@($nativeAccess);ConflictRefused=$conflictRefused;ConflictUnchanged=$conflictUnchanged;
+                DataUnchanged=(Get-FileHash -LiteralPath $file).Hash -ceq $hash} | ConvertTo-Json -Compress
+            """);
+        Assert.True(result.GetProperty("AppliedExact").GetBoolean(), result.ToString());
+        Assert.True(result.GetProperty("RestoredExact").GetBoolean());
+        Assert.True(result.GetProperty("ChangedRefused").GetBoolean());
+        Assert.True(result.GetProperty("ChildDescriptorsUnchanged").GetBoolean());
+        Assert.True(result.GetProperty("DataUnchanged").GetBoolean());
+        Assert.True(result.GetProperty("ConflictRefused").GetBoolean());
+        Assert.True(result.GetProperty("ConflictUnchanged").GetBoolean());
+        Assert.Equal(new[] { 0, 0 }, result.GetProperty("DeleteBefore").EnumerateArray().Select(value => value.GetInt32()));
+        Assert.Equal(new[] { 5, 5, 5, 5, 145, 0 }, result.GetProperty("NativeAccess").EnumerateArray().Select(value => value.GetInt32()));
+        Assert.All(result.GetProperty("NoDelete").EnumerateArray(), value => Assert.True(value.GetBoolean()));
+    }
+
+    [Theory]
+    [InlineData("round-trip")]
+    [InlineData("collision")]
+    [InlineData("changed-legacy")]
+    [InlineData("escaping-path")]
+    public async Task Rollback_preserves_legacy_bytes_and_ACLs_and_retains_fresh_state_without_overwriting(string scenario)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $helper=Join-Path (Split-Path (Split-Path (Split-Path $module))) 'docs/verification/2026-10-05-next002-rollout-preparation/commission-rollback.psm1'
+            if(-not(Test-Path -LiteralPath $helper)){throw 'Checked rollback procedure is missing.'}
+            Import-Module $helper -Force
+            $scenario='SCENARIO_VALUE'
+            $context=@{Parent=$root;InstallationId=$fixtureId;NormalInstallation=$false;ActiveRoot=(Join-Path $root 'FluxVault');
+                RollbackRoot=(Join-Path $root ('FluxVault.Rollback.'+$fixtureId));FailedRoot=(Join-Path $root ('FluxVault.Failed.'+$fixtureId))}
+            [IO.Directory]::CreateDirectory($context.ActiveRoot) | Out-Null
+            [IO.File]::WriteAllText((Join-Path $context.ActiveRoot 'config.json'),'all legacy settings retained')
+            [IO.File]::WriteAllBytes((Join-Path $context.ActiveRoot 'repository.bin'),[byte[]](0,255,16,13,10))
+            $context.LegacyConfigSha256=(Get-FileHash -LiteralPath (Join-Path $context.ActiveRoot 'config.json')).Hash
+            $dataHash=(Get-FileHash -LiteralPath (Join-Path $context.ActiveRoot 'repository.bin')).Hash;$sddl=(Get-Acl -LiteralPath $context.ActiveRoot).Sddl
+            if($scenario -eq 'collision'){[IO.Directory]::CreateDirectory($context.RollbackRoot) | Out-Null;[IO.File]::WriteAllText((Join-Path $context.RollbackRoot 'sentinel'),'unrelated destination')}
+            if($scenario -eq 'changed-legacy'){[IO.File]::AppendAllText((Join-Path $context.ActiveRoot 'config.json'),'external change')}
+            if($scenario -eq 'escaping-path'){$context.RollbackRoot=Join-Path $parent 'outside'}
+            $failure=$null;$preserved=$null;$restored=$null
+            try {
+                $preserved=Move-CommissionLegacyState $context Preserve
+                [IO.Directory]::CreateDirectory($context.ActiveRoot) | Out-Null
+                [IO.File]::WriteAllText((Join-Path $context.ActiveRoot 'fresh-state'),'preserve interrupted new state')
+                $restored=Move-CommissionLegacyState $context Restore
+            } catch {$failure=$_.Exception.Message}
+            @{Failure=$failure;Success=$null -ne $restored;OriginalDataUnchanged=(Get-FileHash -LiteralPath (Join-Path $context.ActiveRoot 'repository.bin')).Hash -ceq $dataHash;
+                OriginalAclUnchanged=(Get-Acl -LiteralPath $context.ActiveRoot).Sddl -ceq $sddl;
+                FreshRetained=(Test-Path -LiteralPath (Join-Path $context.FailedRoot 'fresh-state'));
+                CollisionRetained=$(if($scenario -eq 'collision'){[IO.File]::ReadAllText((Join-Path $context.RollbackRoot 'sentinel')) -ceq 'unrelated destination'}else{$true});
+                EscapedAbsent=(-not(Test-Path -LiteralPath (Join-Path $parent 'outside')))} | ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.True(result.GetProperty("OriginalDataUnchanged").GetBoolean());
+        Assert.True(result.GetProperty("OriginalAclUnchanged").GetBoolean());
+        Assert.True(result.GetProperty("CollisionRetained").GetBoolean());
+        Assert.True(result.GetProperty("EscapedAbsent").GetBoolean());
+        var success = scenario == "round-trip";
+        Assert.True(success == result.GetProperty("Success").GetBoolean(), result.ToString());
+        Assert.Equal(success, result.GetProperty("FreshRetained").GetBoolean());
+        if (!success) Assert.False(string.IsNullOrWhiteSpace(result.GetProperty("Failure").GetString()));
+    }
+
+    [Theory]
+    [InlineData("success")]
+    [InlineData("original-changed")]
+    [InlineData("wrong-principal")]
+    [InlineData("administrator-failed")]
+    [InlineData("legacy-session")]
+    [InlineData("administrator-survives")]
+    [InlineData("extra-administrator")]
+    [InlineData("administrator-still-admitted")]
+    [InlineData("service-failed")]
+    [InlineData("completion-publication-failed")]
+    public async Task Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(string scenario)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $preparation=Join-Path (Split-Path (Split-Path (Split-Path $module))) 'docs/verification/2026-10-05-next002-rollout-preparation'
+            $helper=Join-Path $preparation 'commission-authentication.psm1'
+            if(-not(Test-Path -LiteralPath $helper)){throw 'The finite authentication procedure is missing.'}
+            $tokens=$null;$errors=$null
+            $ast=[Management.Automation.Language.Parser]::ParseFile($helper,[ref]$tokens,[ref]$errors)
+            if($errors.Count){throw 'Authentication procedure has parser errors.'}
+            foreach($function in $ast.FindAll({param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst]},$false)){
+                . ([scriptblock]::Create($function.Extent.Text))
+            }
+            $scenario='SCENARIO_VALUE';$calls=[Collections.Generic.List[string]]::new()
+            # Native boundaries are intercepted; real pinned files, byte backups,
+            # hashing, ACL preservation, flushes and the procedure flow execute.
+            function Assert-CommissionSystemWorker {}
+            function Assert-CommissionPostmaster {param($Context)}
+            function Read-PinnedAuthentication {param($Path)
+                $stream=[IO.FileStream]::new($Path,'Open','Read','ReadWrite')
+                $reader=[IO.StreamReader]::new($stream)
+                try{return $reader.ReadToEnd()}finally{$reader.Dispose()}}
+            function Invoke-CommissionTool {param($Context,$Executable,$Arguments,$InputText)
+                if($Arguments[-1] -ne 'reload'){throw 'Unexpected native tool.'}
+                $calls.Add('reload');return @{ExitCode=0;Joined=$true}}
+            $hba=Join-Path $root 'pg_hba.conf';$ident=Join-Path $root 'pg_ident.conf'
+            [IO.File]::WriteAllBytes($hba,[byte[]](239,187,191,35,111,108,100,13,10))
+            [IO.File]::WriteAllText($ident,"# original map`r`n")
+            $originalHba=[Convert]::ToBase64String([IO.File]::ReadAllBytes($hba));$originalIdent=[Convert]::ToBase64String([IO.File]::ReadAllBytes($ident))
+            $hbaAcl=(Get-Acl -LiteralPath $hba).Sddl;$identAcl=(Get-Acl -LiteralPath $ident).Sddl
+            $context=@{WorkRoot=$root;DataDirectory=$root;OperatorSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;
+                NormalInstallation=$false;Postmaster=@{};Port=5433;PsqlPath=(Get-Command pwsh).Source;PgCtlPath=(Get-Command pwsh).Source;
+                SqlPath=(Join-Path $root 'create.sql');EmptyPasswordFile=(Join-Path $root 'empty.pgpass');ApplicationName='owned-commission';
+                Connection='admin';LegacyConnection='legacy';ServiceConnection='service';Role='postgres';AdminMap='owned_map';
+                LegacyRole='old_role';ServiceDatabase='owned_db';ServiceRole='owned_role';LogPath=(Join-Path $root 'postgres.log');
+                OriginalHashes=@{'pg_hba.conf'=(Get-FileHash -LiteralPath $hba).Hash;'pg_ident.conf'=(Get-FileHash -LiteralPath $ident).Hash};Prepared=@{}}
+            [IO.File]::WriteAllText($context.SqlPath,'inert');[IO.File]::WriteAllText($context.EmptyPasswordFile,'');[IO.File]::WriteAllText($context.LogPath,'')
+            $context.SqlSha256=(Get-FileHash -LiteralPath $context.SqlPath).Hash
+            foreach($name in @('FinalHba','FinalIdent','TemporaryHba','TemporaryIdent','ProbeIdent')) {
+                $path=Join-Path $root ($name+'.txt');[IO.File]::WriteAllText($path,$name)
+                $context.Prepared[$name]=@{Path=$path;Sha256=(Get-FileHash -LiteralPath $path).Hash}
+            }
+            if($scenario -eq 'original-changed'){[IO.File]::AppendAllText($hba,'concurrent change');$originalHba=[Convert]::ToBase64String([IO.File]::ReadAllBytes($hba))}
+            function Invoke-CommissionQuery {param($Context,$Connection,$Sql,[switch]$AllowRefusal)
+                $calls.Add($Connection)
+                if($Connection -eq 'legacy' -and -not $Context.ContainsKey('AdministratorBaseline')){
+                    return @{ExitCode=0;Joined=$true;Output='{"admin_pids":[777]}'}}
+                $currentHba=Read-PinnedAuthentication $hba;$currentIdent=Read-PinnedAuthentication $ident
+                if($Connection -eq 'admin') {
+                    if($currentIdent -eq 'ProbeIdent') {
+                        if($currentHba -ne 'TemporaryHba'){throw 'Principal probe did not use temporary HBA.'}
+                        $principal=if($scenario -eq 'wrong-principal'){'another@NT AUTHORITY'}else{'SYSTEM@NT AUTHORITY'}
+                        [IO.File]::AppendAllText($Context.LogPath,('no match in usermap "owned_map" for user "postgres" authenticated as "'+$principal+'"'))
+                        return @{ExitCode=2;Output='';Joined=$true}
+                    }
+                    if($currentIdent -ne 'FinalIdent' -or $currentHba -ne 'FinalHba'){throw 'Administrator retirement probe preceded final authentication.'}
+                    return @{ExitCode=$(if($scenario -eq 'administrator-still-admitted'){0}else{2});Output='';Joined=$true}
+                }
+                if($Connection -eq 'legacy' -and ($currentIdent -ne 'TemporaryIdent' -or $currentHba -ne 'TemporaryHba')){throw 'Legacy inspection did not precede trust retirement.'}
+                if($Connection -eq 'service' -and ($currentIdent -ne 'FinalIdent' -or $currentHba -ne 'FinalHba')){throw 'Fresh service inspection preceded authentication retirement.'}
+                if($Connection -eq 'service' -and $scenario -eq 'service-failed'){throw 'Service authentication refused.'}
+                return @{ExitCode=0;Joined=$true;Output=(@{administrator_absent=$scenario -ne 'administrator-survives';
+                    admin_pids=@(777;if($scenario -eq 'extra-administrator'){888});
+                    legacy_pids=@(if($scenario -eq 'legacy-session'){42});database='owned_db';role='owned_role';port=5433} | ConvertTo-Json -Compress)}
+            }
+            function Invoke-CommissionAdministrator {param($Context)
+                if((Read-PinnedAuthentication $ident) -ne 'TemporaryIdent'){throw 'Administrator executed outside its exact map.'}
+                foreach($name in @('original-pg_hba.conf','original-pg_ident.conf','authentication-recovery.txt')){
+                    if(-not(Test-Path -LiteralPath (Join-Path $root $name))){throw 'Administrator preceded retained restoration inputs.'}}
+                $calls.Add('ddl');[IO.File]::WriteAllText((Join-Path $root 'partial-state'),'preserve this SQL effect')
+                if($scenario -eq 'administrator-failed'){throw 'SQL failed after partial state.'}
+                return @{WorkerJoined=$true;Backend=@{backend_pid=123}}
+            }
+            function Write-CommissionAuthenticationReceipt {param($Path,$Receipt)
+                if($scenario -eq 'completion-publication-failed' -and (Split-Path $Path -Leaf) -eq 'authentication-completed.json'){throw 'Completion flush failed.'}
+                [IO.File]::WriteAllText($Path,($Receipt | ConvertTo-Json -Depth 6))}
+            $failure=$null;$reply=$null
+            try{$reply=Invoke-CommissionAuthentication $context}catch{$failure=$_.Exception.Message}
+            $finalHba=[Convert]::ToBase64String([IO.File]::ReadAllBytes($hba));$finalIdent=[Convert]::ToBase64String([IO.File]::ReadAllBytes($ident))
+            @{Failure=$failure;Accepted=$null -ne $reply;Calls=@($calls);OriginalsRestored=$finalHba -ceq $originalHba -and $finalIdent -ceq $originalIdent;
+                FinalActive=[IO.File]::ReadAllText($hba) -ceq 'FinalHba' -and [IO.File]::ReadAllText($ident) -ceq 'FinalIdent';
+                AclsPreserved=(Get-Acl -LiteralPath $hba).Sddl -ceq $hbaAcl -and (Get-Acl -LiteralPath $ident).Sddl -ceq $identAcl;
+                PartialStateRetained=(Test-Path -LiteralPath (Join-Path $root 'partial-state'));
+                Activated=(Test-Path -LiteralPath (Join-Path $root 'authentication-completed.json'))} | ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        var success = scenario == "success";
+        Assert.True(success == result.GetProperty("Accepted").GetBoolean(), result.ToString());
+        Assert.Equal(success, result.GetProperty("Activated").GetBoolean());
+        Assert.Equal(success, result.GetProperty("FinalActive").GetBoolean());
+        Assert.Equal(!success, result.GetProperty("OriginalsRestored").GetBoolean());
+        Assert.True(result.GetProperty("AclsPreserved").GetBoolean());
+        var calls = result.GetProperty("Calls").EnumerateArray().Select(item => item.GetString()!).ToArray();
+        var effected = scenario is not ("original-changed" or "wrong-principal");
+        Assert.True(effected == result.GetProperty("PartialStateRetained").GetBoolean(), result.ToString());
+        Assert.Equal(effected ? 1 : 0, calls.Count(item => item == "ddl"));
+        if (success) Assert.Equal(["legacy", "reload", "admin", "reload", "ddl", "legacy", "reload", "admin", "service"], calls);
+        else Assert.False(string.IsNullOrWhiteSpace(result.GetProperty("Failure").GetString()));
+    }
+
     [Theory]
     [InlineData("success")]
     [InlineData("wrong-binding")]

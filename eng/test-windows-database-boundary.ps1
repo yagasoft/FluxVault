@@ -201,7 +201,8 @@ SELECT json_build_object(
     }
     # Execute the exact DDL in the same disposable cluster, then prove restricted
     # attributes, PUBLIC denial, backend retirement and non-adoption on replay.
-    # psql has no pool; Invoke-OwnedTool joins it and its supervisor.
+    # psql has no pool. Run the complete procedure as the existing owned SYSTEM
+    # actor; private-only roles and monitor admission replace normal legacy inputs.
     $sourceSql=Join-Path $prepared 'create-fluxvault.sql'
     Assert-VaultFixtureTrustedPath $sourceSql
     $before=Get-OwnedPostmaster
@@ -212,28 +213,48 @@ SELECT json_build_object(
     $administratorHelper=Join-Path $PSScriptRoot '../docs/verification/2026-10-05-next002-rollout-preparation/commission-administrator.psm1'
     Assert-VaultFixtureTrustedPath $administratorHelper
     Copy-Item -LiteralPath $administratorHelper -Destination (Join-Path $administratorRoot 'commission-administrator.psm1')
+    Copy-Item -LiteralPath (Join-Path (Split-Path $administratorHelper) 'commission-authentication.psm1') -Destination (Join-Path $administratorRoot 'commission-authentication.psm1')
     Copy-Item -LiteralPath $sourceSql -Destination (Join-Path $administratorRoot 'create.sql')
     [IO.File]::WriteAllText((Join-Path $administratorRoot 'empty.pgpass'),'')
-    @{WorkRoot=$administratorRoot;PsqlPath=(Join-Path $fixtureBin 'psql.exe');SqlPath=(Join-Path $administratorRoot 'create.sql');
+    $privateRoles=Invoke-OwnedTool (Join-Path $fixtureBin 'psql.exe') @('-X','-w','-A','-t','-v','ON_ERROR_STOP=1','--dbname',$Connection) `
+        'CREATE ROLE postgres LOGIN SUPERUSER PASSWORD NULL; CREATE ROLE fv_gate_monitor LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE PASSWORD NULL;' @{PGPASSWORD=$Password}
+    if($privateRoles.ExitCode -ne 0){throw 'Owned authentication procedure role inputs failed.'}
+    $monitor="host postgres fv_gate_monitor 127.0.0.1/32 trust`r`nhost postgres fv_gate_monitor ::1/128 trust`r`n"
+    [IO.File]::WriteAllText($hba,$monitor+[IO.File]::ReadAllText($hba),[Text.UTF8Encoding]::new($false))
+    $privatePrepared=@{}
+    foreach($pair in @(@('FinalHba','final-pg_hba.conf'),@('FinalIdent','final-pg_ident.conf'),@('TemporaryHba','temporary-pg_hba.conf'),@('TemporaryIdent','temporary-pg_ident.conf'),@('ProbeIdent','probe-pg_ident.conf'))) {
+        $path=Join-Path $administratorRoot $pair[1]
+        Copy-Item -LiteralPath (Join-Path $prepared $pair[1]) -Destination $path
+        if($pair[0] -eq 'TemporaryHba') {
+            [IO.File]::WriteAllText($path,$monitor+[IO.File]::ReadAllText($path),[Text.UTF8Encoding]::new($false))
+        }
+        $privatePrepared[$pair[0]]=@{Path=$path;Sha256=(Get-FileHash -LiteralPath $path).Hash}
+    }
+    @{WorkRoot=$administratorRoot;NormalInstallation=$false;OperatorSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;
+        PsqlPath=(Join-Path $fixtureBin 'psql.exe');PgCtlPath=(Join-Path $fixtureBin 'pg_ctl.exe');SqlPath=(Join-Path $administratorRoot 'create.sql');
         SqlSha256=(Get-FileHash -LiteralPath $sourceSql).Hash;ApplicationName=('FluxVault.PreparedSql.'+$FixtureId);
-        EmptyPasswordFile=(Join-Path $administratorRoot 'empty.pgpass');Connection=$Connection;DataDirectory=$fixtureData;
-        Role='fv_gate_bootstrap';Database='postgres';Port=$fixturePort} |
-        ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $administratorRoot 'context.json')
-    @'
-param([string]$Root)
-$ErrorActionPreference='Stop'
-Import-Module (Join-Path (Split-Path $Root) 'runtime/vault-windows-fixture.psm1') -Force
-Import-Module (Join-Path $Root 'commission-administrator.psm1') -Force
-$context=Get-Content -LiteralPath (Join-Path $Root 'context.json') -Raw | ConvertFrom-Json -AsHashtable
-$context.Environment=@{PGPASSWORD=$env:PGPASSWORD}
-try {Invoke-CommissionAdministrator $context | ConvertTo-Json -Depth 6 -Compress}
-finally {$context.Environment.Clear()}
-'@ | Set-Content -LiteralPath (Join-Path $administratorRoot 'prove.ps1')
-    # Existing Invoke-OwnedTool admits this launcher to the cluster job before
-    # it creates psql; all descendants remain in that parent-owned job.
-    $create=Invoke-OwnedTool $fixturePwsh @('-NoProfile','-NonInteractive','-File',(Join-Path $administratorRoot 'prove.ps1'),'-Root',$administratorRoot) $null @{PGPASSWORD=$Password}
-    if($create.ExitCode -ne 0){throw 'Exact prepared DDL failed in the owned PostgreSQL cluster.'}
-    $administrator=$create.Output.Trim() | ConvertFrom-Json -AsHashtable
+        EmptyPasswordFile=(Join-Path $administratorRoot 'empty.pgpass');
+        Connection="host=127.0.0.1 port=$fixturePort dbname=postgres user=postgres connect_timeout=3 require_auth=sspi";
+        LegacyConnection="host=127.0.0.1 port=$fixturePort dbname=postgres user=fv_gate_monitor connect_timeout=3 require_auth=none";
+        ServiceConnection="host=127.0.0.1 port=$fixturePort dbname=fluxvault_single user=fluxvault_service connect_timeout=3 require_auth=sspi";
+        DataDirectory=$fixtureData;Role='postgres';Database='postgres';Port=$fixturePort;Postmaster=$before;
+        LegacyRole='fv_gate_monitor';ServiceRole='fluxvault_service';ServiceDatabase='fluxvault_single';AdminMap=$adminMap;
+        LogPath=(Join-Path $fixtureRoot 'postgres.log');OriginalHashes=@{'pg_hba.conf'=(Get-FileHash -LiteralPath $hba).Hash;'pg_ident.conf'=(Get-FileHash -LiteralPath $ident).Hash};Prepared=$privatePrepared} |
+        ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $administratorRoot 'context.json')
+    try {
+        $create=Invoke-SystemActor '127.0.0.1' 'CommissionAuthentication'
+        $proof=@($create.Results | Where-Object Kind -eq 'CommissionAuthentication')
+        if($proof.Count -ne 1 -or -not $proof[0].Receipt.Accepted){throw 'Owned SYSTEM authentication procedure did not complete.'}
+        $administrator=$proof[0].Receipt.Administrator
+        Copy-Item -LiteralPath (Join-Path $administratorRoot 'authentication-completed.json') -Destination (Join-Path $fixtureEvidence 'authentication-completed.json')
+        Copy-Item -LiteralPath (Join-Path $administratorRoot 'commission-processes.jsonl') -Destination (Join-Path $fixtureEvidence 'commission-processes.jsonl')
+        Copy-Item -LiteralPath (Join-Path $administratorRoot 'administrator-baseline.json') -Destination (Join-Path $fixtureEvidence 'administrator-baseline.json')
+    } finally {
+        # Restore only the same owned cluster for the existing remaining proof.
+        [IO.File]::WriteAllBytes($ident,$originalIdent);[IO.File]::WriteAllBytes($hba,$originalHba)
+        $reload=Invoke-OwnedTool (Join-Path $fixtureBin 'pg_ctl.exe') @('-D',$fixtureData,'reload')
+        if($reload.ExitCode -ne 0){throw 'Private authentication procedure restoration failed.'}
+    }
     if(-not $administrator.WorkerJoined -or $administrator.ExitCode -ne 0){throw 'Prepared DDL administrator did not join successfully.'}
     $backend=[int]$administrator.Backend.backend_pid
     Copy-Item -LiteralPath (Join-Path $administratorRoot 'administrator-session.json') -Destination (Join-Path $fixtureEvidence 'administrator-session.json')
@@ -1021,7 +1042,7 @@ try {
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
     @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
-    @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
+    @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds;ValidatePreparedAuthentication=[bool]$ValidatePreparedAuthentication} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     if($RunPackagedIdentityTests) {
         $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure()
         foreach($actor in @('A','B')) {

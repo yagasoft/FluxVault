@@ -1,0 +1,68 @@
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.53]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "service-failed") [FAIL]
+[xUnit.net 00:00:02.87]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "administrator-still-admitted") [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "service-failed") [1 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104
+--- End of stack trace from previous location ---
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "administrator-still-admitted") [1 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:04.03]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "administrator-survives") [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "administrator-survives") [1 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:05.15]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "administrator-failed") [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "administrator-failed") [1 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:08.60]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "legacy-session") [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "legacy-session") [1 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:09.75]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "success") [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "success") [1 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 97
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:10.90]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "completion-publication-failed") [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "completion-publication-failed") [1 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 104
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\authentication-procedure-green.trx
+
+Failed!  - Failed:     7, Passed:     2, Skipped:     0, Total:     9, Duration: 10 s - FluxVault.Integration.Tests.dll (net10.0)

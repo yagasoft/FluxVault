@@ -18,9 +18,10 @@ function Invoke-CommissionAdministrator {
         [ValidateRange(1,120)][int]$ExecutionTimeoutSeconds=60)
     $CancellationToken.ThrowIfCancellationRequested()
     $root=[IO.Path]::TrimEndingDirectorySeparator([IO.Path]::GetFullPath($Context.WorkRoot))
-    Assert-VaultFixtureTrustedPath $root
-    Assert-VaultFixtureTrustedPath $Context.PsqlPath
-    Assert-VaultFixtureTrustedPath $Context.SqlPath
+    $operatorSid=if($Context.ContainsKey('OperatorSid')){$Context.OperatorSid}else{$null}
+    Assert-VaultFixtureTrustedPath $root -AdditionalTrustedOwnerSid $operatorSid
+    Assert-VaultFixtureTrustedPath $Context.PsqlPath -AdditionalTrustedOwnerSid $operatorSid
+    Assert-VaultFixtureTrustedPath $Context.SqlPath -AdditionalTrustedOwnerSid $operatorSid
     if((Get-FileHash -LiteralPath $Context.SqlPath).Hash -cne $Context.SqlSha256){throw 'Reviewed commissioning SQL changed; no administrator was opened.'}
     $handshake=Join-Path $root 'administrator-backend.json'
     $receipt=Join-Path $root 'administrator-session.json'

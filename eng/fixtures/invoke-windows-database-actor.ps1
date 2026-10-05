@@ -45,7 +45,7 @@ catch {
     try { $admissionState=[FluxVault.Fixtures.OwnedWindowsJob]::CurrentContainment() } catch { $admissionState='Containment query failed: '+$_.Exception.Message }
     throw ($admissionError+'; '+$admissionState)
 }
-if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles','Integrity')) { throw 'Actor requires one explicit loopback/client probe.' }
+if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles','Integrity','AccessUser','AccessGroup','AccessReopened','AccessDenied')) { throw 'Actor requires one explicit loopback/client probe.' }
 $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 if ($sid -ne $configuration.Actors.$Actor -or -not [guid]::TryParseExact($RunId, 'N', [ref]$parsed) -or $parsed -eq [guid]::Empty) { throw 'Actor identity mismatch.' }
 $expectedRoot = Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $configuration.FixtureId
@@ -103,6 +103,14 @@ try {
         $suite=Invoke-ActorTool $runtime.Dotnet @('exec',$runtime.Vstest,(Join-Path $Root 'runtime/integration/FluxVault.Integration.Tests.dll'),
             '/TestCaseFilter:Category=RequiresPostgreSql','/Logger:trx;LogFileName=PostgreSql.trx',('/ResultsDirectory:'+(Join-Path $Root 'integrity/results')))
         $results.Add(@{Kind='Integrity';ExitCode=$suite.ExitCode;Output=$suite.Output;Error=$suite.Error})
+    } elseif ($ClientKind -like 'Access*') {
+        if($Actor -ne 'B'){throw 'Access-grant validation requires the owned ordinary B actor.'}
+        $phase=switch($ClientKind){AccessUser{'user'} AccessGroup{'group'} AccessReopened{'reopened'} AccessDenied{'denied'}}
+        $groupSid=(Get-Content -LiteralPath (Join-Path $Root 'runtime/access-group-sid') -Raw).Trim()
+        $result=Invoke-ActorTool $runtime.Dotnet @((Join-Path $Root 'runtime/FluxVault.TestHost.dll'),'--mode','windows-access-grant',
+            '--configuration',(Join-Path $Root 'runtime/database-probe.json'),'--actor','B','--phase',$phase,'--group-sid',$groupSid)
+        if($result.ExitCode -ne 0){throw ('Native access proof failed: '+$result.Error)}
+        $results.Add(@{Kind='Access';Result=($result.Output | ConvertFrom-Json)})
     } elseif ($ClientKind -eq 'CallerFiles') {
         $singleVault=($configuration.PSObject.Properties.Name -contains 'RunSingleVaultTests') -and $configuration.RunSingleVaultTests
         $mode=if($singleVault){if($Actor -eq 'System'){'windows-single-server'}else{'windows-single-client'}}else{if($Actor -eq 'System'){'windows-file-server'}else{'windows-file-client'}}

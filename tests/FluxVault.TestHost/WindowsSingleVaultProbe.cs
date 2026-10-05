@@ -425,7 +425,17 @@ internal static class WindowsSingleVaultProbe
         try
         {
             await File.WriteAllTextAsync(Path.Combine(fixture.Root, "runtime", "caller-files-ready.json"), JsonSerializer.Serialize(new { Pipe = pipe }), deadline.Token);
-            while (!File.Exists(Path.Combine(fixture.Root, "runtime", "caller-files-stop"))) await Task.Delay(50, deadline.Token);
+            while (!File.Exists(Path.Combine(fixture.Root, "runtime", "caller-files-stop")))
+            {
+                var reopen = Path.Combine(fixture.Root,"runtime","caller-access-reopen");
+                if (File.Exists(reopen))
+                {
+                    await handler.ReopenAsync(deadline.Token);
+                    File.Delete(reopen);
+                    await File.WriteAllTextAsync(Path.Combine(fixture.Root,"runtime","caller-access-reopened"),"reopened",deadline.Token);
+                }
+                await Task.Delay(50,deadline.Token);
+            }
         }
         finally { await deadline.CancelAsync(); await serving; }
         var rehearsalRoot = Path.Combine(statePath, "restore-rehearsal");
@@ -455,6 +465,17 @@ internal static class WindowsSingleVaultProbe
         private readonly SemaphoreSlim initialisation = new(1, 1);
         internal bool CreatorVerified; internal bool UngrantDenied; internal int Completed;
         private WindowsSingleVaultService? service;
+        internal async Task ReopenAsync(CancellationToken token)
+        {
+            await initialisation.WaitAsync(token);
+            try
+            {
+                if (service is null || !CreatorVerified) throw new InvalidOperationException("No owned service to reopen.");
+                await service.DisposeAsync(); service = null;
+                service = await WindowsSingleVaultService.OpenAsync(Path.Combine(binding.StateRoot,"installation.json"),token);
+            }
+            finally { initialisation.Release(); }
+        }
         public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken token)
         {
             await initialisation.WaitAsync(token);

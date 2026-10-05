@@ -7,6 +7,7 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$RunMetadataTests,
     [switch]$RunCallerFileTests,
     [switch]$RunSingleVaultTests,
+    [switch]$RunNativeAccessTests,
     [switch]$RunIntegrityTests,
     [ValidateRange(60,600)][int]$IntegrityTimeoutSeconds = 300,
     [string]$EvidenceDirectory = (Join-Path $PSScriptRoot ("../docs/verification/2026-10-03-next002-windows-fixture/live/$FixtureId")))
@@ -14,6 +15,7 @@ $ErrorActionPreference = 'Stop'
 if($RunMetadataTests -and -not $RunCatalogueTests){throw 'Metadata proof requires the catalogue contracts.'}
 if($RunCallerFileTests -and $RunSingleVaultTests){throw 'Select one native file workflow per fresh fixture.'}
 if($RunIntegrityTests -and ($RunCallerFileTests -or $RunSingleVaultTests)){throw 'Run the integrity suite in its own fresh fixture.'}
+if($RunNativeAccessTests -and -not $RunSingleVaultTests){throw 'Native access proof requires the single-vault product workflow.'}
 Set-StrictMode -Version Latest
 Import-Module (Join-Path $PSScriptRoot 'fixtures/vault-windows-fixture.psm1') -Force
 Import-Module (Join-Path $PSScriptRoot 'fixtures/verified-postgresql-snapshot.psm1') -Force
@@ -190,6 +192,7 @@ function Invoke-SystemActor {
                 $native=Invoke-UserActor $actor $HostAddress $ClientKind
                 $fixtureObservations.Add(@{NativeCallerFiles=$native})
             }
+            if($RunNativeAccessTests){Invoke-NativeAccessProof}
             'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/caller-files-stop')
         }
         $result=Read-ActorResult System $runId -TimeoutSeconds $(if($ClientKind -eq 'Integrity'){$IntegrityTimeoutSeconds+10}else{70})
@@ -220,6 +223,55 @@ function Wait-SystemTaskIdle {
         Start-Sleep -Milliseconds 100
     } while([DateTime]::UtcNow -lt $deadline)
     throw 'Previous SYSTEM task instance did not exit within its deadline.'
+}
+
+function Invoke-NativeAccessProof {
+    # Only existing fixture-owned principals and the protected private runtime are affected.
+    $ownedGroup=@($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Group' -and $_.Name -eq 'FVGate_261003' -and $_.State -eq 'Created'})
+    if($ownedGroup.Count -ne 1){throw 'Missing owned access-test group.'}
+    $currentGroup=Get-LocalGroup -Name $ownedGroup[0].Name
+    if($currentGroup.SID.Value -ne $ownedGroup[0].Identity.Sid -or $currentGroup.Description -ne $fixtureDescription){throw 'Owned group changed.'}
+    $currentUser=Get-LocalUser -Name 'FVGateB_261003'
+    if($currentUser.SID.Value -ne $actors.B -or $currentUser.Description -ne $fixtureDescription){throw 'Owned B account changed.'}
+    if(@(Get-LocalGroupMember -SID $currentGroup.SID).Count){throw 'Access-test group already has members.'}
+    $currentGroup.SID.Value | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/access-group-sid')
+    foreach($phase in @('grant-user','grant-group','revoke')) {
+        $native=Invoke-OwnedTool $fixtureDotnet @((Join-Path $fixtureRoot 'runtime/FluxVault.TestHost.dll'),'--mode','windows-access-grant',
+            '--configuration',(Join-Path $fixtureRoot 'runtime/database-probe.json'),'--actor','Elevated','--phase',$phase,'--group-sid',$currentGroup.SID.Value)
+        if($native.ExitCode -ne 0){throw ('Elevated native access proof failed: '+$native.Error)}
+        $proof=$native.Output | ConvertFrom-Json
+        if(-not $proof.NativeAccessVerified -or -not $proof.NativeElevated -or $proof.Phase -ne $phase -or $proof.Passed -ne 3){throw 'Elevated native access proof is incomplete.'}
+        $grantOperation=[guid]::Parse($proof.OperationId)
+        if($grantOperation -eq [guid]::Empty){throw 'Access grant receipt is missing.'}
+        $grantOperation.ToString('N') | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/access-operation-id')
+        $fixtureObservations.Add(@{NativeAccess=$proof})
+        if($phase -eq 'grant-group') {
+            # Replacing the direct B grant must deny B before membership; otherwise
+            # a retained user grant could masquerade as successful group evaluation.
+            $notMember=Invoke-UserActor 'B' '127.0.0.1' 'AccessDenied'
+            $notMemberProof=@($notMember.Results | Where-Object Kind -eq 'Access')
+            if($notMemberProof.Count -ne 1 -or -not $notMemberProof[0].Result.NativeAccessVerified -or $notMemberProof[0].Result.NativeElevated){throw 'Nonmember denial proof is incomplete.'}
+            $fixtureObservations.Add(@{NativeAccess=$notMember})
+            Add-LocalGroupMember -SID $currentGroup.SID -Member $currentUser
+        }
+        $clientKind=switch($phase){'grant-user'{'AccessUser'} 'grant-group'{'AccessGroup'} 'revoke'{'AccessDenied'}}
+        $ordinary=Invoke-UserActor 'B' '127.0.0.1' $clientKind
+        $ordinaryProof=@($ordinary.Results | Where-Object Kind -eq 'Access')
+        if($ordinaryProof.Count -ne 1 -or -not $ordinaryProof[0].Result.NativeAccessVerified -or $ordinaryProof[0].Result.NativeElevated){throw 'Ordinary native access proof is incomplete.'}
+        $fixtureObservations.Add(@{NativeAccess=$ordinary})
+        if($phase -eq 'grant-group') {
+            'reopen' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/caller-access-reopen')
+            $deadline=[datetime]::UtcNow.AddSeconds(8)
+            while(-not (Test-Path -LiteralPath (Join-Path $fixtureRoot 'runtime/caller-access-reopened'))) {
+                if([datetime]::UtcNow -gt $deadline){throw 'Owned service reopen exceeded its deadline.'}
+                Start-Sleep -Milliseconds 50
+            }
+            $reopened=Invoke-UserActor 'B' '127.0.0.1' 'AccessReopened'
+            $fixtureObservations.Add(@{NativeAccess=$reopened})
+            $reopenedProof=@($reopened.Results | Where-Object Kind -eq 'Access')
+            if($reopenedProof.Count -ne 1 -or -not $reopenedProof[0].Result.NativeAccessVerified -or $reopenedProof[0].Result.NativeElevated){throw 'Reopened native access proof is incomplete.'}
+        }
+    }
 }
 
 function Invoke-UserActor {

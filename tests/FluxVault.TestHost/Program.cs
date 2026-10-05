@@ -32,6 +32,9 @@ internal static class Program
         try
         {
             var options = Parse(arguments);
+            if (Require(options,"mode") == "windows-access-grant")
+                return WindowsAccessGrantProbe.RunAsync(Require(options,"configuration"),Require(options,"actor"),
+                    Require(options,"phase"),options.GetValueOrDefault("group-sid")).GetAwaiter().GetResult();
             if (Require(options, "mode") is "windows-single-server" or "windows-single-client")
                 return WindowsSingleVaultProbe.RunAsync(Require(options, "configuration"), Require(options, "actor")).GetAwaiter().GetResult();
             if (Require(options, "mode") is "windows-file-server" or "windows-file-client")

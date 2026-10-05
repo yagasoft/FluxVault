@@ -123,6 +123,14 @@ All six private fixtures, 111 captured process identities and 38 database
 intents are removed, preserving the normal installation. This closes bounded
 never-dispatched Protect retention; broader NEXT-002 and rollout gates remain.
 
+The [native access extension](verification/2026-10-05-next002-native-access/README.md)
+passes forty actual elevated-user and ordinary-user checks for user grants,
+group-only replacement, membership, reopened service composition, receipt privacy
+and revocation. The A132/B19 workflow passes and all 27 captured process
+identities and owned resources are removed, with the normal installation
+unchanged. Independent review accepted this bounded verification extension;
+packaged identity and the complete S01/G01/rollout gates remain open.
+
 | ID | Priority | Capability | Status | Required verification |
 | --- | --- | --- | --- | --- |
 | NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |

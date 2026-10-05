@@ -17,6 +17,8 @@ $start.RedirectStandardOutput=-not $requestData.StartsPostmaster;$start.Redirect
 foreach($argument in $requestData.Arguments){$start.ArgumentList.Add($argument)}
 $child=[Diagnostics.Process]::Start($start)
 try {
+    $childIdentity=Get-VaultFixtureLiveProcessIdentity $child
+    if($null -ne $childIdentity){$childIdentity | ConvertTo-Json -Compress | Set-Content -LiteralPath $requestData.OwnerPath.Replace('-owner.json','-child.json')}
     if(-not $requestData.StartsPostmaster){$stdout=$child.StandardOutput.ReadToEndAsync();$stderr=$child.StandardError.ReadToEndAsync()}
     if($null -ne $requestData.InputText){$child.StandardInput.Write($requestData.InputText)};$child.StandardInput.Close()
     if(-not $child.WaitForExit($requestData.TimeoutSeconds*1000)){throw 'Owned child deadline exceeded.'}

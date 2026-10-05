@@ -1,0 +1,645 @@
+{
+  "FixturePackagesAbsent": true,
+  "UnrelatedPrimaryEdits": [
+    {
+      "Path": "E:\\Drive\\Work (1)\\Code\\FluxVault\\scripts\\fluxvault-index.json",
+      "Unchanged": true
+    },
+    {
+      "Path": "E:\\Drive\\Work (1)\\Code\\FluxVault\\scripts\\fluxvault-index.ps1",
+      "Unchanged": true
+    }
+  ],
+  "NormalCertificateStoresUnchanged": true,
+  "CapturedCount": 59,
+  "DatabaseIntents": [
+    {
+      "State": "Removed",
+      "Database": "fv_test_00ea87213495485e8049a31350348fce",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_02ee43d439e945dc8a62a7235f80368b",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_071f59c0266f4ef4bb660cf4c7ecf747",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_09e9ad74aadc499d9b0d5f4924ac8d72",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_163a6c77f08349d5a5a0ff27054fa0ba",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_265e5831ba344db4bbba6e27a736ed03",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_32bdcb7e3640421cba7b000a22179245",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_3b4eafc4a4b747a7bd4a641a0075d647",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_42a94e6aa853440fbb895cb54e9761e2",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_42ef6572f6fa417a8cfe09b1ed97a841",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_535ae88afd094f639b2bf7ce0a557654",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_55f434d940594bf6be6fb1f01041605c",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_5e510c4c7cb84275815ea61965da906a",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_60a44329e4a5483cb0301ef1faf44bc3",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_6c3eb46ed4b74dd183698904774bf74a",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_75f79f8654774a86828b1041388e12ba",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_78d46541826e4ce2bccc361f284cce0f",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_844e968f2fce4e85ad60e58ea9dc2adc",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_84ca0e4b61c846e4bfb6e5c59a256056",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_895495b658754fd98585dd3e0b0ead20",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_8c04c43e21d4428abbb10e107dacf74b",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_8d0465c4212d4e6891fbd160c4b7c530",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_92d863cca689403f8e04daa7985197a0",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_9a9ea5d285de4939a0024eaddeffd9a0",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_a9d53af8d29d4106b423aab4f36b290d",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_abcda645abf64278a0863d16603b8b47",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_aeca04ff7b254d35b49ae98026432c58",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_aeca4228b0784789912b67f7a2b0fbbb",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_b2c3696ff6c3413ab5d87a62284ec28b",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_b6f0741aa4f24fddabfc95ca23d19cde",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_bda8874e16b945448afdbd523fddb616",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_c0ceea6f7bd6498f9cf095b6dc40aa8c",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_c49873ce166c40f4b69a0623b0301284",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_c79bb492a2f94e2684b2350cd738b8ce",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_e275cc45c601411c9a06a33658446098",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_ef5a21a33be241ad8304afb1146933ed",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_f1d7066425b54b70854d967e75b5744e",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    },
+    {
+      "State": "Removed",
+      "Database": "fv_test_ff9693ce53794b60b86ed55956e95b98",
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    }
+  ],
+  "DatabaseIntentCount": 38,
+  "Roots": [
+    {
+      "NamedJobsAbsent": true,
+      "RootAbsent": true,
+      "FixtureId": "02c4a688f1354b6ca4ad5a342e957db9"
+    },
+    {
+      "NamedJobsAbsent": true,
+      "RootAbsent": true,
+      "FixtureId": "0e356aa7ec694ecfa4ff4cfce4c1e0d8"
+    },
+    {
+      "NamedJobsAbsent": true,
+      "RootAbsent": true,
+      "FixtureId": "39be6d851f764b59aa669618bfa539db"
+    },
+    {
+      "NamedJobsAbsent": true,
+      "RootAbsent": true,
+      "FixtureId": "4549b7c838b04fbf9aa907a407ed4a62"
+    },
+    {
+      "NamedJobsAbsent": true,
+      "RootAbsent": true,
+      "FixtureId": "9a7ee4405e8946dead557d89d21c53b2"
+    },
+    {
+      "NamedJobsAbsent": true,
+      "RootAbsent": true,
+      "FixtureId": "a90e934089bd45e88f07f2b7b60473de"
+    },
+    {
+      "NamedJobsAbsent": true,
+      "RootAbsent": true,
+      "FixtureId": "9502277264a74301b76818204cc7db85"
+    }
+  ],
+  "FixtureAccountsAbsent": true,
+  "RemovedSigningKeys": [
+    {
+      "NativeAbsent": true,
+      "KeyName": "{616197E6-E548-4EAF-89E3-365DA55E2C25}",
+      "BackingFileAbsent": true,
+      "UniqueName": "94a5ce71ba0a9c1a2b7ac960ba7de872_a7b640d9-c49a-4335-ae73-46b3c8e3386f"
+    },
+    {
+      "NativeAbsent": true,
+      "KeyName": "{BDE1ED75-689E-4679-AEF8-CE008C26D417}",
+      "BackingFileAbsent": true,
+      "UniqueName": "b9557a705069d46cf19c24c40a4fdd64_a7b640d9-c49a-4335-ae73-46b3c8e3386f"
+    },
+    {
+      "NativeAbsent": true,
+      "KeyName": "{1E029FB9-4562-447A-BBBF-F9B4E45A8B6D}",
+      "BackingFileAbsent": true,
+      "UniqueName": "30930a558a54c9b3d6a49fd2174d8a96_a7b640d9-c49a-4335-ae73-46b3c8e3386f"
+    },
+    {
+      "NativeAbsent": true,
+      "KeyName": "{D275737D-5CD5-4AC0-847F-AB6A10F50E04}",
+      "BackingFileAbsent": true,
+      "UniqueName": "b8c238212306ee8b0e2bae0fa9c8f911_a7b640d9-c49a-4335-ae73-46b3c8e3386f"
+    },
+    {
+      "NativeAbsent": true,
+      "KeyName": "{3382B73B-263D-4DC2-97FB-1DFC33F0F47C}",
+      "BackingFileAbsent": true,
+      "UniqueName": "d0291de49759ffb6d9c8277228eb517e_a7b640d9-c49a-4335-ae73-46b3c8e3386f"
+    },
+    {
+      "NativeAbsent": true,
+      "KeyName": "{13DC05D8-F1A0-4316-B015-EE35B28FF985}",
+      "BackingFileAbsent": true,
+      "UniqueName": "28778971001b2dec00df2c65e92f3f21_a7b640d9-c49a-4335-ae73-46b3c8e3386f"
+    }
+  ],
+  "FixtureProfilesAbsent": true,
+  "FixtureGroupsAbsent": true,
+  "NormalInstallationUnchanged": true,
+  "CapturedProcesses": [
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 49348,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:08:11.7729062Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 39640,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:08:16.6530411Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 3360,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:08:18.0009546Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 36348,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:08:18.9886128Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 6584,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:08:20.1399451Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\02c4a688f1354b6ca4ad5a342e957db9\\package-sdk\\signtool.exe",
+      "ProcessId": 26332,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:08:20.8046444Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\02c4a688f1354b6ca4ad5a342e957db9\\package-sdk\\makeappx.exe",
+      "ProcessId": 63320,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:08:18.6801385Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\02c4a688f1354b6ca4ad5a342e957db9\\package-sdk\\mt.exe",
+      "ProcessId": 62588,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:08:17.5802442Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\02c4a688f1354b6ca4ad5a342e957db9\\package-sdk\\signtool.exe",
+      "ProcessId": 32976,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:08:19.6648005Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 41960,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:42:16.3911667Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 61352,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:42:21.3105228Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 44056,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:42:22.6142393Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 65280,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:42:23.7349134Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 43204,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:42:25.1158354Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\0e356aa7ec694ecfa4ff4cfce4c1e0d8\\package-sdk\\signtool.exe",
+      "ProcessId": 54080,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:42:25.8063758Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\0e356aa7ec694ecfa4ff4cfce4c1e0d8\\package-sdk\\mt.exe",
+      "ProcessId": 58832,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:42:22.1941888Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\0e356aa7ec694ecfa4ff4cfce4c1e0d8\\package-sdk\\makeappx.exe",
+      "ProcessId": 42724,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:42:23.2872227Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\0e356aa7ec694ecfa4ff4cfce4c1e0d8\\package-sdk\\signtool.exe",
+      "ProcessId": 8452,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:42:24.4942789Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 26032,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:02:03.7339992Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 2300,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:03:42.805872Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 51016,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:03:48.0527352Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\4549b7c838b04fbf9aa907a407ed4a62\\package-sdk\\mt.exe",
+      "ProcessId": 40012,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:03:48.9876465Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 63320,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:05:18.5427355Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 32104,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:05:23.4949006Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 47280,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:05:24.8283887Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\9a7ee4405e8946dead557d89d21c53b2\\package-sdk\\mt.exe",
+      "ProcessId": 25688,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:05:24.405586Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 14752,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:39:27.7589485Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 60184,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:39:32.7086016Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 58868,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:39:34.027983Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 11692,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:39:35.1712367Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 2704,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:39:36.4273398Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\a90e934089bd45e88f07f2b7b60473de\\package-sdk\\mt.exe",
+      "ProcessId": 10680,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:39:33.604723Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\a90e934089bd45e88f07f2b7b60473de\\package-sdk\\signtool.exe",
+      "ProcessId": 17548,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:39:35.8823907Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\a90e934089bd45e88f07f2b7b60473de\\package-sdk\\signtool.exe",
+      "ProcessId": 64172,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:39:37.1026684Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\a90e934089bd45e88f07f2b7b60473de\\package-sdk\\makeappx.exe",
+      "ProcessId": 59548,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:39:34.704164Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 40712,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:16:15.4294822Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 53164,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:05.7839022Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\9502277264a74301b76818204cc7db85\\postgresql\\bin\\postgres.exe",
+      "ProcessId": 37772,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:09.7448944Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 47212,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:08.9093369Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 21812,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:10.2241928Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 60600,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:11.6707387Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 41752,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:21.343351Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 49928,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:40.0019428Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 8796,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:41.7152002Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 51820,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:43.0709119Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 50488,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:44.7421299Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 37964,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:46.0990292Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 49080,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:47.8530242Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 52184,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:49.345394Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 58288,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:51.0729432Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 33168,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:18:27.951091Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\9502277264a74301b76818204cc7db85\\postgresql\\bin\\pg_ctl.exe",
+      "ProcessId": 30728,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:09.6692239Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\9502277264a74301b76818204cc7db85\\postgresql\\bin\\psql.exe",
+      "ProcessId": 33832,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:10.9136524Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\9502277264a74301b76818204cc7db85\\postgresql\\bin\\pg_ctl.exe",
+      "ProcessId": 52468,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:18:28.6932172Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\9502277264a74301b76818204cc7db85\\postgresql\\bin\\pg_ctl.exe",
+      "ProcessId": 61348,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:22.1942042Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\9502277264a74301b76818204cc7db85\\postgresql\\bin\\pg_ctl.exe",
+      "ProcessId": 52516,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:12.3573389Z"
+    },
+    {
+      "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\9502277264a74301b76818204cc7db85\\postgresql\\bin\\initdb.exe",
+      "ProcessId": 31800,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:17:06.5233064Z"
+    },
+    {
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 15872,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:18:30.2859153Z"
+    },
+    {
+      "Executable": "C:\\Windows\\System32\\certutil.exe",
+      "ProcessId": 47156,
+      "ExactIdentityAbsent": true,
+      "StartedUtc": "2026-10-05T01:21:58.4724325Z"
+    }
+  ],
+  "ObservedUtc": "2026-10-05T01:44:14.7948976Z",
+  "FixtureTasksAbsent": true
+}

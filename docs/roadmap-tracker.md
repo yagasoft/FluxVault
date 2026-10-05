@@ -131,6 +131,18 @@ identities and owned resources are removed, with the normal installation
 unchanged. Independent review accepted this bounded verification extension;
 packaged identity and the complete S01/G01/rollout gates remain open.
 
+The [packaged identity preparation](verification/2026-10-05-next002-packaged-identity/README.md)
+passes 56 focused regressions and a zero-warning Release build. Private package
+construction proves authenticated SDK execution and full owned process/root
+cleanup. A reproduced SignTool key-persistence leak is corrected by private
+pre-import intent, silent native recovery and exact fingerprint-verified key
+retirement. Fresh construction and interrupted native import preserve unrelated
+keys; the census proves six fixture keys and 59 captured processes absent. The
+approved integrity refresh passes all forty cases. Independent review accepts
+this bounded preparation and correction. Native per-user
+package registration, temporary public-certificate trust and Windows profiles
+await bounded resource approval; S01/G01 and normal rollout remain open.
+
 | ID | Priority | Capability | Status | Required verification |
 | --- | --- | --- | --- | --- |
 | NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |

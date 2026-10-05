@@ -32,6 +32,9 @@ internal static class Program
         try
         {
             var options = Parse(arguments);
+            if (Require(options,"mode") == "windows-packaged-identity")
+                return WindowsPackagedIdentityProbe.RunAsync(Require(options,"configuration"),Require(options,"actor"),
+                    Require(options,"package-full-name")).GetAwaiter().GetResult();
             if (Require(options,"mode") == "windows-access-grant")
                 return WindowsAccessGrantProbe.RunAsync(Require(options,"configuration"),Require(options,"actor"),
                     Require(options,"phase"),options.GetValueOrDefault("group-sid")).GetAwaiter().GetResult();

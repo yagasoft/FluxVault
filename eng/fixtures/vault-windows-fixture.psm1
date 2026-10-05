@@ -100,6 +100,8 @@ function Assert-FixtureResource {
         'Process' { @('ProcessId', 'StartedUtc', 'Executable') }
         'Postmaster' { @('ProcessId', 'StartedUtc', 'Executable', 'DataDirectory', 'Port') }
         'Job' { @('KernelName','OwnerSid') }
+        'PackageUser' { @('Sid','PackageName','Publisher','Thumbprint') }
+        'Profile' { @('Sid','Path') }
         default { throw 'Unknown fixture resource kind.' }
     }
     if ($Resource.Name -notmatch '^[A-Za-z0-9_-]{1,80}$' -or $Resource.State -notin @('Intent', 'Created', 'Removed', 'Absent')) { throw 'Invalid fixture resource.' }
@@ -120,7 +122,7 @@ function Save-FixtureJournal {
     if($Journal.ContainsKey('RunnerIdentity')) { Assert-FixtureResource @{Kind='Process';Name='runner';State='Created';Identity=$Journal.RunnerIdentity} }
     $root = Resolve-VaultFixtureRoot $Journal.Root $Journal.Parent $Journal.FixtureId
     if ($Journal.Path -ne (Join-Path $root 'owner.json')) { throw 'Fixture journal path changed.' }
-    foreach ($resource in $Journal.Resources) { Assert-FixtureResource $resource }
+    foreach ($resource in $Journal.Resources) { Assert-FixtureResource $resource; Assert-FixturePackageResource $Journal $resource }
     if ($New -and (Test-Path -LiteralPath $Journal.Path)) { throw 'Existing fixture ownership journal must not be adopted.' }
     Assert-FixtureNoReparse $Journal.Path
     $temporary = Join-Path $root ('.owner-' + [guid]::NewGuid().ToString('N') + '.tmp')
@@ -150,6 +152,7 @@ function Add-VaultFixtureIntent {
     if (@($Journal.Resources | Where-Object { $_.Kind -eq $Kind -and $_.Name -eq $Name }).Count) { throw 'Fixture resource is already recorded.' }
     $resource = @{ Kind = $Kind; Name = $Name; State = 'Intent'; Identity = $Identity }
     Assert-FixtureResource $resource
+    Assert-FixturePackageResource $Journal $resource
     $Journal.Resources += @($resource)
     Save-FixtureJournal $Journal
 }
@@ -174,11 +177,34 @@ function Read-VaultFixtureJournal {
     }
     foreach ($resource in $journal.Resources) {
         Assert-FixtureResource $resource
+        Assert-FixturePackageResource $journal $resource
         if ($resource.Identity.ContainsKey('StartedUtc')) {
             $resource.Identity.StartedUtc = ([DateTimeOffset]$resource.Identity.StartedUtc).UtcDateTime.ToString('o')
         }
     }
     return $journal
+}
+
+function Assert-FixturePackageResource {
+    param([hashtable]$Journal,[hashtable]$Resource)
+    if($Resource.Kind -notin @('Profile','PackageUser')){return}
+    $prefix=if($Resource.Kind -eq 'Profile'){'profile-'}else{'package-'}
+    if($Resource.Name -notmatch ('^'+$prefix+'[AB]$')){throw 'Unknown package fixture actor.'}
+    $actor=$Resource.Name.Substring($prefix.Length)
+    if($Resource.Identity.Sid -notmatch '^S-1-5-21-\d+-\d+-\d+-\d+$'){throw 'Package resources require an ordinary owned account SID.'}
+    $account=@($Journal.Resources | Where-Object {$_.Kind -eq 'Account' -and $_.Name -eq ("FVGate${actor}_261003") -and $_.State -in @('Created','Removed')})
+    if($account.Count -ne 1 -or $account[0].Identity.Sid -ne $Resource.Identity.Sid){throw 'Package resource does not belong to its recorded fixture account.'}
+    if($Resource.Kind -eq 'PackageUser') {
+        if($Resource.Identity.PackageName -ne ('FVGate.Package.'+$Journal.FixtureId) -or
+            $Resource.Identity.Publisher -ne ('CN=FluxVault Fixture '+$Journal.FixtureId) -or
+            $Resource.Identity.Thumbprint -notmatch '^[A-F0-9]{40}$'){throw 'Package resource is not bound to this fixture identity.'}
+    } else {
+        $profileParent=[Environment]::ExpandEnvironmentVariables((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList').ProfilesDirectory)
+        $expected=Join-Path $profileParent ("FVGate${actor}_261003")
+        if(-not [IO.Path]::IsPathFullyQualified($Resource.Identity.Path) -or
+            [IO.Path]::GetFullPath($Resource.Identity.Path) -ne $expected){throw 'Package profile is outside its exact owned account path.'}
+        Assert-FixtureNoReparse $Resource.Identity.Path
+    }
 }
 
 function Set-VaultFixtureResourceState {
@@ -356,6 +382,15 @@ function Test-VaultFixtureInstallationUnchanged {
         if(([DateTimeOffset]$current[0].Identity.StartedUtc).UtcDateTime -ne ([DateTimeOffset]$original.Identity.StartedUtc).UtcDateTime){return $false}
     }
     foreach($original in $Expected.Files){$current=@($Actual.Files | Where-Object {$_.Path -eq $original.Path});if($current.Count -ne 1 -or $current[0].Sha256 -ne $original.Sha256){return $false}}
+    $hasPackageBoundary=if($Expected -is [Collections.IDictionary]){$Expected.Contains('PackageBoundary')}else{$null -ne $Expected.PSObject.Properties['PackageBoundary']}
+    if($hasPackageBoundary) {
+        foreach($key in @('DeveloperModePresent','DeveloperMode','SideloadPresent','Sideload')) {
+            if($Expected.PackageBoundary.$key -ne $Actual.PackageBoundary.$key){return $false}
+        }
+        foreach($key in @('RunnerTrustedPeople','MachineTrustedPeople')) {
+            if([string]::Join(',',@($Expected.PackageBoundary.$key)) -ne [string]::Join(',',@($Actual.PackageBoundary.$key))){return $false}
+        }
+    }
     return $true
 }
 

@@ -7,6 +7,206 @@ namespace FluxVault.Integration.Tests;
 public sealed class WindowsFixtureToolingTests
 {
     [Fact]
+    public async Task Interrupted_native_key_import_is_recovered_without_deleting_an_unrelated_key()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            Import-Module (Join-Path (Split-Path $module) 'packaged-identity.psm1') -Force
+            Import-Module (Join-Path (Split-Path $module) 'fixture-cng-keys.psm1') -Force
+            $journal=New-VaultFixtureJournal $root $parent $fixtureId
+            New-VaultFixtureProtectedDirectory (Join-Path $root 'catalogue')
+            New-VaultFixtureProtectedDirectory (Join-Path $root 'catalogue/package-signing')
+            $provider=[Security.Cryptography.CngProvider]::MicrosoftSoftwareKeyStorageProvider
+            $unrelatedName='FluxVault.Unrelated.Test.'+$fixtureId
+            $unrelated=$null
+            $rsa=[Security.Cryptography.RSA]::Create(2048);$cert=$null;$imported=$null;$importedRsa=$null;$importedName=$null
+            try {
+                $request=[Security.Cryptography.X509Certificates.CertificateRequest]::new(('CN=FluxVault Fixture '+$fixtureId),$rsa,[Security.Cryptography.HashAlgorithmName]::SHA256,[Security.Cryptography.RSASignaturePadding]::Pkcs1)
+                $cert=$request.CreateSelfSigned([DateTimeOffset]::UtcNow.AddMinutes(-1),[DateTimeOffset]::UtcNow.AddHours(1))
+                $fingerprint=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($rsa.ExportSubjectPublicKeyInfo()))
+                $intent=New-VaultFixtureKeyImportIntent $journal $fingerprint
+                # A concurrent unrelated import after the baseline must also survive.
+                $unrelated=[Security.Cryptography.CngKey]::Create([Security.Cryptography.CngAlgorithm]::Rsa,$unrelatedName)
+                # Native Windows PFX import persists the key, just as SignTool does.
+                # No result/Created state is published before reopening the intent.
+                $imported=[Security.Cryptography.X509Certificates.X509CertificateLoader]::LoadPkcs12($cert.Export([Security.Cryptography.X509Certificates.X509ContentType]::Pfx,''),'',[Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet)
+                $importedRsa=[Security.Cryptography.X509Certificates.RSACertificateExtensions]::GetRSAPrivateKey($imported)
+                $importedName=$importedRsa.Key.KeyName
+                $importedRsa.Dispose();$importedRsa=$null;$imported.Dispose();$imported=$null
+                $before=Get-Content -LiteralPath $intent -Raw|ConvertFrom-Json
+                Remove-VaultFixtureImportedKeys (Read-VaultFixtureJournal $root $parent $fixtureId)
+                $after=Get-Content -LiteralPath $intent -Raw|ConvertFrom-Json
+                @{Before=$before.State;After=$after.State;OwnedCount=$after.OwnedKeys.Count;
+                    OwnedAbsent=(-not[Security.Cryptography.CngKey]::Exists($importedName,$provider,[Security.Cryptography.CngKeyOpenOptions]::Silent));
+                    UnrelatedPreserved=[Security.Cryptography.CngKey]::Exists($unrelatedName,$provider,[Security.Cryptography.CngKeyOpenOptions]::Silent)}|ConvertTo-Json -Compress
+            } finally {
+                if($importedRsa){$importedRsa.Dispose()};if($imported){$imported.Dispose()}
+                if($importedName -and [Security.Cryptography.CngKey]::Exists($importedName,$provider,[Security.Cryptography.CngKeyOpenOptions]::Silent)){
+                    $left=[Security.Cryptography.CngKey]::Open($importedName,$provider,[Security.Cryptography.CngKeyOpenOptions]::Silent);try{$left.Delete()}finally{$left.Dispose()}
+                }
+                if($unrelated){$unrelated.Delete();$unrelated.Dispose()};if($cert){$cert.Dispose()};$rsa.Dispose()
+            }
+            """);
+        Assert.Equal("Intent", result.GetProperty("Before").GetString());
+        Assert.Equal("Removed", result.GetProperty("After").GetString());
+        Assert.Equal(1, result.GetProperty("OwnedCount").GetInt32());
+        Assert.True(result.GetProperty("OwnedAbsent").GetBoolean());
+        Assert.True(result.GetProperty("UnrelatedPreserved").GetBoolean());
+    }
+
+    [Theory]
+    [InlineData("DeveloperMode")]
+    [InlineData("Sideload")]
+    [InlineData("RunnerTrustedPeople")]
+    [InlineData("MachineTrustedPeople")]
+    public async Task Installation_snapshot_detects_package_trust_or_policy_changes(string changedField)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $snapshot=@{Services=@();Files=@();PackageBoundary=@{DeveloperModePresent=$true;DeveloperMode=0;SideloadPresent=$true;Sideload=0;
+                RunnerTrustedPeople=@('A');MachineTrustedPeople=@('B')}}
+            $path=Join-Path $root 'snapshot.json';$snapshot|ConvertTo-Json -Depth 4|Set-Content -LiteralPath $path
+            $expected=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json
+            $same=Test-VaultFixtureInstallationUnchanged $expected $snapshot
+            $field='FIELD'
+            $snapshot.PackageBoundary[$field]=$(if($field.EndsWith('TrustedPeople')){@('unrelated changed thumbprint')}else{1})
+            @{Same=$same;Changed=(Test-VaultFixtureInstallationUnchanged $expected $snapshot)}|ConvertTo-Json -Compress
+            """.Replace("FIELD", changedField, StringComparison.Ordinal));
+        Assert.True(result.GetProperty("Same").GetBoolean());
+        Assert.False(result.GetProperty("Changed").GetBoolean());
+    }
+
+    [Fact]
+    public async Task SDK_snapshot_refuses_unsigned_copied_dependencies_before_tool_execution()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            Import-Module (Join-Path (Split-Path $module) 'packaged-identity.psm1') -Force
+            $journal=New-VaultFixtureJournal $root $parent $fixtureId
+            $source=Join-Path $root 'untrusted-sdk';$null=New-Item -ItemType Directory $source
+            [IO.File]::WriteAllText((Join-Path $source 'appxpackaging.dll'),'unsigned payload')
+            $refused=$false
+            try {New-VaultFixtureSdkSnapshot $journal $source | Out-Null} catch {$refused=$_.Exception.Message -eq 'Copied SDK signature or tool identity is not the reviewed Microsoft payload.'}
+            $copied=Join-Path $root 'package-sdk/appxpackaging.dll'
+            @{Refused=$refused;CopyExists=(Test-Path -LiteralPath $copied);CopiedBytes=[IO.File]::ReadAllText($copied);
+                NoKey=(-not(Test-Path -LiteralPath (Join-Path $root 'catalogue/package-signing/ephemeral-key.pfx')))}|ConvertTo-Json -Compress
+            """);
+        Assert.True(result.GetProperty("Refused").GetBoolean());
+        Assert.True(result.GetProperty("CopyExists").GetBoolean());
+        Assert.Equal("unsigned payload", result.GetProperty("CopiedBytes").GetString());
+        Assert.True(result.GetProperty("NoKey").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Interrupted_package_cleanup_reaches_B_after_A_is_already_unregistered()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $runner=Join-Path (Split-Path (Split-Path $module)) 'test-windows-database-boundary.ps1'
+            $ast=[Management.Automation.Language.Parser]::ParseFile($runner,[ref]$null,[ref]$null)
+            $definition=$ast.Find({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Remove-OwnedPackageUsers'},$true)
+            Invoke-Expression $definition.Extent.Text
+            $fixtureJournal=New-VaultFixtureJournal $root $parent $fixtureId
+            $fixtureDescription='FluxVault N2 '+$fixtureId
+            $fixtureCredentials=@{A='not used';B='not used'}
+            $users=@{}
+            foreach($actor in @('A','B')) {
+                $sid='S-1-5-21-1-2-3-'+$(if($actor -eq 'A'){9198}else{9199})
+                $name="FVGate${actor}_261003"
+                $users[$name]=[pscustomobject]@{Name=$name;SID=[pscustomobject]@{Value=$sid};Description=$fixtureDescription}
+                Add-VaultFixtureIntent $fixtureJournal Account $name
+                Set-VaultFixtureResourceState $fixtureJournal Account $name Created @{Sid=$sid}
+                $identity=@{Sid=$sid;PackageName=('FVGate.Package.'+$fixtureId);Publisher=('CN=FluxVault Fixture '+$fixtureId);Thumbprint=('A'*40)}
+                Add-VaultFixtureIntent $fixtureJournal PackageUser "package-$actor" $identity
+                Set-VaultFixtureResourceState $fixtureJournal PackageUser "package-$actor" Created $identity
+            }
+            $remaining=[Collections.Generic.HashSet[string]]::new();$null=$remaining.Add('B')
+            $visited=[Collections.Generic.List[string]]::new()
+            function Get-LocalUser {param($Name) $users[$Name]}
+            function Invoke-UserActor {
+                param($Actor,$HostAddress,$ClientKind)
+                $visited.Add($Actor);$null=$remaining.Remove($Actor)
+                [pscustomobject]@{Results=@([pscustomobject]@{Kind='Packaged';Result=[pscustomobject]@{PackageRemoved=$true;CertificateRemoved=$true}})}
+            }
+            function Get-AppxPackage {
+                param([switch]$AllUsers,$Name,$User)
+                foreach($actor in $remaining) {
+                    if($AllUsers -or $User -eq $users["FVGate${actor}_261003"].SID.Value) {[pscustomobject]@{Name=$Name}}
+                }
+            }
+            Remove-OwnedPackageUsers
+            $reopened=Read-VaultFixtureJournal $root $parent $fixtureId
+            @{Visited=@($visited);Remaining=$remaining.Count;Removed=@($reopened.Resources|Where-Object {$_.Kind -eq 'PackageUser' -and $_.State -eq 'Removed'}).Count}|ConvertTo-Json -Compress
+            """);
+        Assert.Equal(new[] { "A", "B" }, result.GetProperty("Visited").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(0, result.GetProperty("Remaining").GetInt32());
+        Assert.Equal(2, result.GetProperty("Removed").GetInt32());
+    }
+
+    [Fact]
+    public async Task Profile_cleanup_preserves_a_leftover_directory_after_CIM_record_removal()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $runner=Join-Path (Split-Path (Split-Path $module)) 'test-windows-database-boundary.ps1'
+            $ast=[Management.Automation.Language.Parser]::ParseFile($runner,[ref]$null,[ref]$null)
+            $definition=$ast.Find({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Remove-OwnedPackageProfiles'},$true)
+            Invoke-Expression $definition.Extent.Text
+            $fixtureJournal=New-VaultFixtureJournal $root $parent $fixtureId
+            $sid='S-1-5-21-1-2-3-9199'
+            Add-VaultFixtureIntent $fixtureJournal Account 'FVGateA_261003'
+            Set-VaultFixtureResourceState $fixtureJournal Account 'FVGateA_261003' Created @{Sid=$sid}
+            $profileParent=[Environment]::ExpandEnvironmentVariables((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList').ProfilesDirectory)
+            $profilePath=Join-Path $profileParent 'FVGateA_261003'
+            $identity=@{Sid=$sid;Path=$profilePath}
+            Add-VaultFixtureIntent $fixtureJournal Profile 'profile-A' $identity
+            Set-VaultFixtureResourceState $fixtureJournal Profile 'profile-A' Created $identity
+            $script:recordPresent=$true
+            function Get-CimInstance {param($ClassName,$Filter) if($script:recordPresent){[pscustomobject]@{Loaded=$false;LocalPath=$profilePath}}}
+            function Remove-CimInstance {param([Parameter(ValueFromPipeline)]$InputObject) process {$script:recordPresent=$false}}
+            function Test-Path {param($LiteralPath) $LiteralPath -eq $profilePath}
+            $refused=$false
+            try {Remove-OwnedPackageProfiles} catch {$refused=$_.Exception.Message -eq 'Owned package profile directory remains.'}
+            Remove-Item function:Test-Path
+            $reopened=Read-VaultFixtureJournal $root $parent $fixtureId
+            @{Refused=$refused;CimRemoved=(-not $script:recordPresent);State=@($reopened.Resources|Where-Object Kind -eq 'Profile')[0].State}|ConvertTo-Json -Compress
+            """);
+        Assert.True(result.GetProperty("Refused").GetBoolean());
+        Assert.True(result.GetProperty("CimRemoved").GetBoolean());
+        Assert.Equal("Created", result.GetProperty("State").GetString());
+    }
+
+    [Fact]
+    public async Task Package_and_profile_intents_remain_bound_to_the_owned_fixture_principals()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $journal=New-VaultFixtureJournal $root $parent $fixtureId
+            $sid='S-1-5-21-1-2-3-9199'
+            Add-VaultFixtureIntent $journal Account 'FVGateA_261003'
+            Set-VaultFixtureResourceState $journal Account 'FVGateA_261003' Created @{Sid=$sid}
+            $wrongPackage=$false
+            try {Add-VaultFixtureIntent $journal PackageUser 'package-A' @{Sid=$sid;PackageName=('FVGate.Package.'+[guid]::NewGuid().ToString('N'));Publisher=('CN=FluxVault Fixture '+$fixtureId);Thumbprint=('A'*40)}} catch {$wrongPackage=$true}
+            $wrongProfile=$false
+            try {Add-VaultFixtureIntent $journal Profile 'profile-A' @{Sid=$sid;Path=(Join-Path $root 'unrelated')}} catch {$wrongProfile=$true}
+            $wrongPrincipal=$false
+            try {Add-VaultFixtureIntent $journal PackageUser 'package-B' @{Sid=$sid;PackageName=('FVGate.Package.'+$fixtureId);Publisher=('CN=FluxVault Fixture '+$fixtureId);Thumbprint=('A'*40)}} catch {$wrongPrincipal=$true}
+            $profileParent=[Environment]::ExpandEnvironmentVariables((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList').ProfilesDirectory)
+            Add-VaultFixtureIntent $journal Profile 'profile-A' @{Sid=$sid;Path=(Join-Path $profileParent 'FVGateA_261003')}
+            Add-VaultFixtureIntent $journal PackageUser 'package-A' @{Sid=$sid;PackageName=('FVGate.Package.'+$fixtureId);Publisher=('CN=FluxVault Fixture '+$fixtureId);Thumbprint=('A'*40)}
+            $reopened=Read-VaultFixtureJournal $root $parent $fixtureId
+            $intents=@($reopened.Resources|Where-Object {$_.Kind -in @('Profile','PackageUser')})
+            @{WrongPackage=$wrongPackage;WrongProfile=$wrongProfile;WrongPrincipal=$wrongPrincipal;ValidIntents=$intents.Count;
+                PrincipalsMatch=(@($intents|Where-Object {$_.Identity.Sid -ne $sid}).Count -eq 0)}|ConvertTo-Json -Compress
+            """);
+        Assert.True(result.GetProperty("WrongPackage").GetBoolean());
+        Assert.True(result.GetProperty("WrongProfile").GetBoolean());
+        Assert.True(result.GetProperty("WrongPrincipal").GetBoolean());
+        Assert.Equal(2,result.GetProperty("ValidIntents").GetInt32());
+        Assert.True(result.GetProperty("PrincipalsMatch").GetBoolean());
+    }
+
+    [Fact]
     public async Task Additional_trusted_fixture_owner_requires_direct_administrator_membership()
     {
         using var fixture = new ScriptFixture();
@@ -767,7 +967,8 @@ public sealed class WindowsFixtureToolingTests
             var script = Path.Combine(parent, $"case-{Guid.NewGuid():N}.ps1");
             await File.WriteAllTextAsync(script, $"""
                 $ErrorActionPreference = 'Stop'
-                Import-Module '{Quote(module)}' -Force
+                $module = '{Quote(module)}'
+                Import-Module $module -Force
                 $parent = '{Quote(parent)}'
                 $root = '{Quote(Root)}'
                 $fixtureId = '{Path.GetFileName(Root)}'

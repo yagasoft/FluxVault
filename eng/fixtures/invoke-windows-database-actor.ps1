@@ -45,7 +45,7 @@ catch {
     try { $admissionState=[FluxVault.Fixtures.OwnedWindowsJob]::CurrentContainment() } catch { $admissionState='Containment query failed: '+$_.Exception.Message }
     throw ($admissionError+'; '+$admissionState)
 }
-if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles','Integrity','AccessUser','AccessGroup','AccessReopened','AccessDenied')) { throw 'Actor requires one explicit loopback/client probe.' }
+if ($HostAddress -notin @('127.0.0.1','::1') -or $ClientKind -notin @('Npgsql','libpq','CallerFiles','Integrity','AccessUser','AccessGroup','AccessReopened','AccessDenied','PackagedClient','PackagedCleanup')) { throw 'Actor requires one explicit loopback/client probe.' }
 $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 if ($sid -ne $configuration.Actors.$Actor -or -not [guid]::TryParseExact($RunId, 'N', [ref]$parsed) -or $parsed -eq [guid]::Empty) { throw 'Actor identity mismatch.' }
 $expectedRoot = Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $configuration.FixtureId
@@ -80,7 +80,9 @@ function Invoke-ActorTool {
         $stdout = $child.StandardOutput.ReadToEndAsync(); $stderr = $child.StandardError.ReadToEndAsync()
         $childIdentity = Get-VaultFixtureLiveProcessIdentity $child
         if ($null -ne $childIdentity) { ($childIdentity | ConvertTo-Json -Compress) | Add-Content -LiteralPath $processJournal }
-        $limit=if($ClientKind -eq 'Integrity'){[int]$runtime.IntegrityTimeoutSeconds*1000}elseif($ClientKind -eq 'CallerFiles'){60000}else{20000}
+        $limit=if($ClientKind -eq 'Integrity'){[int]$runtime.IntegrityTimeoutSeconds*1000}elseif($ClientKind -eq 'CallerFiles'){
+            if(($configuration.PSObject.Properties.Name -contains 'RunPackagedIdentityTests') -and $configuration.RunPackagedIdentityTests){120000}else{60000}
+        }elseif($ClientKind -like 'Packaged*'){60000}else{20000}
         if (-not $child.WaitForExit($limit)) { throw 'Actor tool exceeded its finite deadline.' }
         return @{ ExitCode=$child.ExitCode; Output=$stdout.GetAwaiter().GetResult(); Error=$stderr.GetAwaiter().GetResult() }
     } finally {
@@ -103,6 +105,15 @@ try {
         $suite=Invoke-ActorTool $runtime.Dotnet @('exec',$runtime.Vstest,(Join-Path $Root 'runtime/integration/FluxVault.Integration.Tests.dll'),
             '/TestCaseFilter:Category=RequiresPostgreSql','/Logger:trx;LogFileName=PostgreSql.trx',('/ResultsDirectory:'+(Join-Path $Root 'integrity/results')))
         $results.Add(@{Kind='Integrity';ExitCode=$suite.ExitCode;Output=$suite.Output;Error=$suite.Error})
+    } elseif ($ClientKind -like 'Packaged*') {
+        if($Actor -notin @('A','B')){throw 'A packaged client requires an ordinary fixture account.'}
+        $selfProcess=Get-Process -Id $PID
+        try {$pwsh=$selfProcess.Path} finally {$selfProcess.Dispose()}
+        $action=if($ClientKind -eq 'PackagedClient'){'Client'}else{'Cleanup'}
+        $result=Invoke-ActorTool $pwsh @('-NoProfile','-NonInteractive','-File',(Join-Path $Root 'runtime/invoke-packaged-identity.ps1'),
+            '-Root',$Root,'-Actor',$Actor,'-Action',$action)
+        if($result.ExitCode -ne 0){throw ('Packaged identity proof failed: '+$result.Error)}
+        $results.Add(@{Kind='Packaged';Result=($result.Output | ConvertFrom-Json)})
     } elseif ($ClientKind -like 'Access*') {
         if($Actor -ne 'B'){throw 'Access-grant validation requires the owned ordinary B actor.'}
         $phase=switch($ClientKind){AccessUser{'user'} AccessGroup{'group'} AccessReopened{'reopened'} AccessDenied{'denied'}}

@@ -8,6 +8,8 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$RunCallerFileTests,
     [switch]$RunSingleVaultTests,
     [switch]$RunNativeAccessTests,
+    [switch]$RunPackagedIdentityTests,
+    [string]$PackageSdkDirectory = 'E:\Windows Kits\10\bin\10.0.28000.0\x64',
     [switch]$RunIntegrityTests,
     [ValidateRange(60,600)][int]$IntegrityTimeoutSeconds = 300,
     [string]$EvidenceDirectory = (Join-Path $PSScriptRoot ("../docs/verification/2026-10-03-next002-windows-fixture/live/$FixtureId")))
@@ -16,9 +18,12 @@ if($RunMetadataTests -and -not $RunCatalogueTests){throw 'Metadata proof require
 if($RunCallerFileTests -and $RunSingleVaultTests){throw 'Select one native file workflow per fresh fixture.'}
 if($RunIntegrityTests -and ($RunCallerFileTests -or $RunSingleVaultTests)){throw 'Run the integrity suite in its own fresh fixture.'}
 if($RunNativeAccessTests -and -not $RunSingleVaultTests){throw 'Native access proof requires the single-vault product workflow.'}
+if($RunPackagedIdentityTests -and -not $RunSingleVaultTests){throw 'Packaged identity proof requires the single-vault product workflow.'}
 Set-StrictMode -Version Latest
 Import-Module (Join-Path $PSScriptRoot 'fixtures/vault-windows-fixture.psm1') -Force
 Import-Module (Join-Path $PSScriptRoot 'fixtures/verified-postgresql-snapshot.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot 'fixtures/packaged-identity.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot 'fixtures/fixture-cng-keys.psm1') -Force
 Import-VaultFixtureJobType
 $fixtureParent = 'C:\ProgramData\FluxVault.Tests\NEXT002'
 $fixtureRoot = Resolve-VaultFixtureRoot -Root (Join-Path $fixtureParent $FixtureId) -Parent $fixtureParent -FixtureId $FixtureId
@@ -57,7 +62,17 @@ function Get-InstallationSnapshot {
     $files = foreach ($path in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf','C:\ProgramData\FluxVault\config.json')) {
         @{ Path=$path; Sha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash }
     }
-    return @{ Services=@($services); Files=@($files) }
+    $snapshot=@{Services=@($services);Files=@($files)}
+    if($RunPackagedIdentityTests -or ($null -ne $fixtureJournal -and @($fixtureJournal.Resources | Where-Object Kind -eq 'PackageUser').Count)) {
+        $policy=Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' -ErrorAction SilentlyContinue
+        $developer=if($null -ne $policy){$policy.PSObject.Properties['AllowDevelopmentWithoutDevLicense']}else{$null}
+        $sideload=if($null -ne $policy){$policy.PSObject.Properties['AllowAllTrustedApps']}else{$null}
+        $snapshot.PackageBoundary=@{DeveloperModePresent=($null -ne $developer);DeveloperMode=$(if($null -ne $developer){$developer.Value}else{$null});
+            SideloadPresent=($null -ne $sideload);Sideload=$(if($null -ne $sideload){$sideload.Value}else{$null});
+            RunnerTrustedPeople=@(Get-ChildItem Cert:\CurrentUser\TrustedPeople | ForEach-Object Thumbprint | Sort-Object);
+            MachineTrustedPeople=@(Get-ChildItem Cert:\LocalMachine\TrustedPeople | ForEach-Object Thumbprint | Sort-Object)}
+    }
+    return $snapshot
 }
 
 function Invoke-OwnedTool {
@@ -143,7 +158,7 @@ function Invoke-SystemActor {
     $runId=[guid]::NewGuid().ToString('N')
     $arguments='-NoProfile -NonInteractive -File "'+(Join-Path $fixtureRoot 'runtime/invoke-windows-database-actor.ps1')+'" -Root "'+$fixtureRoot+'" -Actor System -RunId mission'
     $action=New-ScheduledTaskAction -Execute $fixturePwsh -Argument $arguments
-    $taskSeconds=if($RunIntegrityTests){$IntegrityTimeoutSeconds+30}else{120}
+    $taskSeconds=if($RunIntegrityTests){$IntegrityTimeoutSeconds+30}elseif($RunPackagedIdentityTests){150}else{120}
     $settings=New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Seconds $taskSeconds) -MultipleInstances IgnoreNew
     $existing=Get-ScheduledTask -TaskName $fixtureTask -ErrorAction SilentlyContinue
     if ($null -ne $existing) {
@@ -193,9 +208,18 @@ function Invoke-SystemActor {
                 $fixtureObservations.Add(@{NativeCallerFiles=$native})
             }
             if($RunNativeAccessTests){Invoke-NativeAccessProof}
+            if($RunPackagedIdentityTests) {
+                foreach($actor in @('A','B')) {
+                    $packaged=Invoke-UserActor $actor '127.0.0.1' 'PackagedClient'
+                    $proof=@($packaged.Results | Where-Object Kind -eq 'Packaged')
+                    if($proof.Count -ne 1 -or -not $proof[0].Result.Proof.NativePackagedVerified -or
+                        -not $proof[0].Result.PackageRemoved -or -not $proof[0].Result.CertificateRemoved){throw 'Packaged native validation or cleanup is incomplete.'}
+                    $fixtureObservations.Add(@{NativePackaged=$packaged})
+                }
+            }
             'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/caller-files-stop')
         }
-        $result=Read-ActorResult System $runId -TimeoutSeconds $(if($ClientKind -eq 'Integrity'){$IntegrityTimeoutSeconds+10}else{70})
+        $result=Read-ActorResult System $runId -TimeoutSeconds $(if($ClientKind -eq 'Integrity'){$IntegrityTimeoutSeconds+10}elseif($RunPackagedIdentityTests -and $ClientKind -eq 'CallerFiles'){130}else{70})
         Wait-SystemTaskIdle $registered
         Join-ActorProcesses System $runId
         if($fixtureJobs[$jobName].ProcessIds().Length){throw 'SYSTEM invocation job is not empty after completion.'}
@@ -290,7 +314,7 @@ function Invoke-UserActor {
     $process=$null
     $identity=$null
     try {
-        $process=Start-Process -FilePath $fixturePwsh -ArgumentList $arguments -Credential $fixtureCredentials[$Actor] -WorkingDirectory (Join-Path $fixtureRoot 'runtime') -WindowStyle Hidden -PassThru
+        $process=Start-Process -FilePath $fixturePwsh -ArgumentList $arguments -Credential $fixtureCredentials[$Actor] -WorkingDirectory (Join-Path $fixtureRoot 'runtime') -WindowStyle Hidden -PassThru -LoadUserProfile:($ClientKind -like 'Packaged*')
         $identity=Get-VaultFixtureProcessIdentity $process
         Set-VaultFixtureResourceState $fixtureJournal Process $name Created $identity
         $native=Get-CimInstance Win32_Process -Filter "ProcessId=$($process.Id)"
@@ -298,13 +322,19 @@ function Invoke-UserActor {
         if($owner.ReturnValue -ne 0 -or $owner.Sid -ne $actors[$Actor]){throw 'Actor launcher has the wrong actual Windows token.'}
         $actorJob.Assign($process)
         if($process.Id -notin $actorJob.ProcessIds()){throw 'Parent admission did not contain the actor.'}
-        $result=Read-ActorResult $Actor $runId
+        $result=Read-ActorResult $Actor $runId -TimeoutSeconds $(if($ClientKind -like 'Packaged*'){90}else{70})
         if(-not $process.WaitForExit(10000)){throw 'User actor did not exit.'}
         if($process.ExitCode -ne 0){throw 'User actor failed.'}
         foreach($line in Get-Content -LiteralPath (Join-Path $fixtureRoot ("output-$Actor/$runId-processes.jsonl"))) {
             $reported=$line | ConvertFrom-Json -AsHashtable
             $remaining=Get-Process -Id $reported.ProcessId -ErrorAction SilentlyContinue
             if($null -ne $remaining){try{if($remaining.StartTime.ToUniversalTime().ToString('o') -eq ([DateTimeOffset]$reported.StartedUtc).UtcDateTime.ToString('o')){throw 'User actor descendant remains; untrusted output is not authority to stop it.'}}finally{$remaining.Dispose()}}
+        }
+        foreach($proof in @($result.Results | Where-Object Kind -eq 'Packaged')) {
+            $reported=$proof.Result.ProcessIdentity
+            if($null -eq $reported){continue}
+            $remaining=Get-Process -Id $reported.ProcessId -ErrorAction SilentlyContinue
+            if($null -ne $remaining){try{if($remaining.StartTime.ToUniversalTime().ToString('o') -eq ([DateTimeOffset]$reported.StartedUtc).UtcDateTime.ToString('o')){throw 'Packaged apphost remains; actor evidence is not stop authority.'}}finally{$remaining.Dispose()}}
         }
         if($actorJob.ProcessIds().Length){throw 'User actor job contains a surviving child.'}
         $actorJob.StopAndJoin();$actorJob.Dispose();$fixtureJobs.Remove($jobName)
@@ -364,6 +394,42 @@ function Stop-OwnedJob {
     Set-VaultFixtureResourceState $fixtureJournal Job $Resource.Name Removed $Resource.Identity
 }
 
+function Remove-OwnedPackageUsers {
+    foreach($resource in @($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'PackageUser' -and $_.State -eq 'Created'})) {
+        $actor=$resource.Name.Replace('package-','')
+        if($actor -notin @('A','B')){throw 'Unknown owned package actor.'}
+        $user=Get-LocalUser -Name ("FVGate${actor}_261003") -ErrorAction Stop
+        if($user.SID.Value -ne $resource.Identity.Sid -or $user.Description -ne $fixtureDescription){throw 'Package account identity changed.'}
+        $actors=@{System='S-1-5-18';A=(Get-LocalUser -Name FVGateA_261003).SID.Value;B=(Get-LocalUser -Name FVGateB_261003).SID.Value}
+        if(-not $fixtureCredentials.ContainsKey($actor)) {
+            # Recover only the explicitly owned disposable account, never a normal user.
+            $password=ConvertTo-SecureString ('aA1!'+[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))) -AsPlainText -Force
+            Set-LocalUser -SID $user.SID -Password $password
+            $fixtureCredentials[$actor]=[Management.Automation.PSCredential]::new("$env:COMPUTERNAME\$($user.Name)",$password)
+        }
+        $packageCleanup=Invoke-UserActor $actor '127.0.0.1' 'PackagedCleanup'
+        $packageProof=@($packageCleanup.Results | Where-Object Kind -eq 'Packaged')
+        if($packageProof.Count -ne 1 -or -not $packageProof[0].Result.PackageRemoved -or -not $packageProof[0].Result.CertificateRemoved){throw 'Owned package or certificate trust remains.'}
+        if(@(Get-AppxPackage -User $resource.Identity.Sid -Name $resource.Identity.PackageName).Count){throw 'Owned per-user package remains.'}
+        Set-VaultFixtureResourceState $fixtureJournal PackageUser $resource.Name Removed $resource.Identity
+    }
+    # A surviving B registration must not stop recovery after already-clean A.
+    foreach($packageName in @($fixtureJournal.Resources | Where-Object Kind -eq 'PackageUser' | ForEach-Object {$_.Identity.PackageName} | Select-Object -Unique)) {
+        if(@(Get-AppxPackage -AllUsers -Name $packageName).Count){throw 'Owned package remains registered or staged.'}
+    }
+}
+
+function Remove-OwnedPackageProfiles {
+    foreach($resource in @($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Profile' -and $_.State -eq 'Created'})) {
+        $profile=Get-CimInstance Win32_UserProfile -Filter "SID='$($resource.Identity.Sid)'"
+        if($profile){if($profile.Loaded -or $profile.LocalPath -ne $resource.Identity.Path){throw 'Owned profile remains loaded or its path changed.'};$profile | Remove-CimInstance}
+        if(Get-CimInstance Win32_UserProfile -Filter "SID='$($resource.Identity.Sid)'" -ErrorAction SilentlyContinue){throw 'Owned package profile remains.'}
+        if(Test-Path -LiteralPath $resource.Identity.Path){throw 'Owned package profile directory remains.'}
+        if(Test-Path -LiteralPath ('HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\'+$resource.Identity.Sid)){throw 'Owned package profile registry entry remains.'}
+        Set-VaultFixtureResourceState $fixtureJournal Profile $resource.Name Removed $resource.Identity
+    }
+}
+
 function Remove-OwnedFixture {
     if ($null -eq $fixtureJournal) { return }
     # Resolve interrupted creation using protected intent plus exact fixture-owned descriptions/paths.
@@ -377,6 +443,21 @@ function Remove-OwnedFixture {
             Job {
                 $job=[FluxVault.Fixtures.OwnedWindowsJob]::Open($resource.Identity.KernelName,$resource.Identity.OwnerSid)
                 if($null -ne $job){$fixtureJobs[$resource.Name]=$job;$identity=$resource.Identity}
+            }
+            PackageUser {
+                $profile=Get-CimInstance Win32_UserProfile -Filter "SID='$($resource.Identity.Sid)'"
+                if($null -ne $profile){$identity=$resource.Identity}
+                else {
+                    $registered=@(Get-AppxPackage -AllUsers -Name $resource.Identity.PackageName | ForEach-Object {$_.PackageUserInformation} |
+                        Where-Object {$_.UserSecurityId.ToString() -eq $resource.Identity.Sid})
+                    $trustPath='Registry::HKEY_USERS\'+$resource.Identity.Sid+'\Software\Microsoft\SystemCertificates\TrustedPeople\Certificates\'+$resource.Identity.Thumbprint
+                    if($registered.Count -or (Test-Path -LiteralPath $trustPath)){throw 'Owned package or trust has no matching profile; preserve it for review.'}
+                }
+            }
+            Profile {
+                $profile=Get-CimInstance Win32_UserProfile -Filter "SID='$($resource.Identity.Sid)'"
+                if($null -ne $profile){if($profile.LocalPath -ne $resource.Identity.Path){throw 'Owned package profile path changed.'};$identity=$resource.Identity}
+                elseif(Test-Path -LiteralPath $resource.Identity.Path){throw 'A partial profile has no verified SID; preserve it for review.'}
             }
             Process {
                 $ownerPath=Join-Path $fixtureRoot ($resource.Name+'-owner.json')
@@ -419,6 +500,10 @@ function Remove-OwnedFixture {
         Set-VaultFixtureResourceState $fixtureJournal Postmaster $resource.Name Removed $resource.Identity
     }
     foreach($resource in @($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Job' -and $_.Name -eq 'Cluster' -and $_.State -eq 'Created'})){Stop-OwnedJob $resource}
+    # All possible signing tools are joined before provider-managed key recovery.
+    Remove-VaultFixtureImportedKeys $fixtureJournal
+    Remove-OwnedPackageUsers
+    Remove-OwnedPackageProfiles
     foreach($resource in @($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'Group' -and $_.State -eq 'Created'})) {
         $item=Get-LocalGroup -Name $resource.Name -ErrorAction SilentlyContinue
         if($null -ne $item){if($item.SID.Value -ne $resource.Identity.Sid){throw 'Group SID changed.'};Remove-LocalGroup -SID $item.SID}
@@ -448,7 +533,11 @@ function Remove-OwnedFixture {
     & (Join-Path $PSScriptRoot 'fixtures/cleanup-windows-fixture-outputs.ps1') -Root $fixtureRoot -FixtureId $FixtureId
     New-Item -ItemType Directory -Path $fixtureEvidence -Force | Out-Null
     Copy-Item -LiteralPath $fixtureJournal.Path -Destination (Join-Path $fixtureEvidence 'completed-owner.json')
-    foreach($path in @('postgres.log','before.json','result.json','postgresql-provenance.json','output-cleanup-owner.json','output-cleanup-result.json','output-cleanup-process.json')) { if(Test-Path -LiteralPath (Join-Path $fixtureRoot $path)){Copy-Item -LiteralPath (Join-Path $fixtureRoot $path) -Destination (Join-Path $fixtureEvidence $path)} }
+    foreach($path in @('postgres.log','before.json','result.json','postgresql-provenance.json','package-sdk-provenance.json','output-cleanup-owner.json','output-cleanup-result.json','output-cleanup-process.json')) { if(Test-Path -LiteralPath (Join-Path $fixtureRoot $path)){Copy-Item -LiteralPath (Join-Path $fixtureRoot $path) -Destination (Join-Path $fixtureEvidence $path)} }
+    foreach($pair in @(@{Source='runtime/package-identity.json';Target='package-identity.json'},@{Source='catalogue/package-signing/key-owner.json';Target='signing-key-owner.json'},@{Source='catalogue/package-signing/native-key-cleanup.json';Target='native-key-cleanup.json'})) {
+        $source=Join-Path $fixtureRoot $pair.Source
+        if(Test-Path -LiteralPath $source){Assert-VaultFixtureTrustedPath $source;Copy-Item -LiteralPath $source -Destination (Join-Path $fixtureEvidence $pair.Target)}
+    }
     $callerError=Join-Path $fixtureRoot 'runtime/caller-server-error.json'
     if(Test-Path -LiteralPath $callerError){Assert-VaultFixtureTrustedPath $callerError;Copy-Item -LiteralPath $callerError -Destination (Join-Path $fixtureEvidence 'caller-server-error.json')}
     foreach($diagnostic in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'output-System') -File -ErrorAction SilentlyContinue | Where-Object {$_.Name -match '^[0-9a-f]{32}-result\.json$'}){
@@ -457,7 +546,7 @@ function Remove-OwnedFixture {
         Copy-Item -LiteralPath $diagnostic.FullName -Destination (Join-Path $fixtureEvidence ('system-result-'+$diagnostic.Name))
     }
     # Supervisors persist only redacted exit/output diagnostics, never child environment or passwords.
-    foreach($toolResult in Get-ChildItem -LiteralPath $fixtureRoot -File | Where-Object {$_.Name -match '^(tool-[0-9a-f]{32}|system-scheduler-[0-9a-f]{32}|system-actor-error)\.json$'}) {
+    foreach($toolResult in Get-ChildItem -LiteralPath $fixtureRoot -File | Where-Object {$_.Name -match '^(tool-[0-9a-f]{32}(-child)?|system-scheduler-[0-9a-f]{32}|system-actor-error)\.json$'}) {
         Assert-VaultFixtureTrustedPath $toolResult.FullName
         Copy-Item -LiteralPath $toolResult.FullName -Destination (Join-Path $fixtureEvidence $toolResult.Name)
     }
@@ -542,6 +631,7 @@ try {
         foreach($section in @('temp','results','database-intents')) {New-VaultFixtureProtectedDirectory (Join-Path $fixtureRoot ('integrity/'+$section))}
     }
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'fixtures/vault-windows-fixture.psm1'),(Join-Path $PSScriptRoot 'fixtures/invoke-windows-database-actor.ps1'),(Join-Path $PSScriptRoot 'fixtures/invoke-owned-tool.ps1'),(Join-Path $PSScriptRoot 'fixtures/owned-windows-job.cs') -Destination (Join-Path $fixtureRoot 'runtime')
+    if($RunPackagedIdentityTests){foreach($helper in @('packaged-identity.psm1','invoke-packaged-identity.ps1','fixture-cng-keys.psm1','fixture-cng-keys.cs')){Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('fixtures/'+$helper)) -Destination (Join-Path $fixtureRoot 'runtime')}}
     foreach($actor in @('Cluster')) {
         $kernelName='Global\FluxVault.NEXT002.'+[guid]::NewGuid().ToString('N')
         $jobIdentity=@{KernelName=$kernelName;OwnerSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value}
@@ -552,8 +642,17 @@ try {
     }
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
-    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
+    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
     @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
+    if($RunPackagedIdentityTests) {
+        $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure()
+        foreach($actor in @('A','B')) {
+            $profilePath=Join-Path ([Environment]::ExpandEnvironmentVariables((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList').ProfilesDirectory)) ("FVGate${actor}_261003")
+            if((Get-CimInstance Win32_UserProfile -Filter "SID='$($actors[$actor])'" -ErrorAction SilentlyContinue) -or (Test-Path -LiteralPath $profilePath)){throw 'Package profile collision.'}
+            Add-VaultFixtureIntent $fixtureJournal Profile ("profile-$actor") @{Sid=$actors[$actor];Path=$profilePath}
+            Add-VaultFixtureIntent $fixtureJournal PackageUser ("package-$actor") @{Sid=$actors[$actor];PackageName=$package.PackageName;Publisher=$package.Publisher;Thumbprint=$package.Thumbprint}
+        }
+    }
     foreach($entry in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'runtime') -Recurse -Force){Assert-VaultFixtureTrustedPath $entry.FullName}
     $bootstrap=[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(48))
     $passwordFile=Join-Path $fixtureRoot 'bootstrap.pw'

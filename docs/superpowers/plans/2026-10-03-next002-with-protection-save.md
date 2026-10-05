@@ -88,6 +88,15 @@ Release has zero warnings/errors. All 55 captured identities/56 resources are
 retired; normal installation is unchanged. No scheduling, VSS, reboot capability,
 rollout authority or wider roadmap scope is added. Final G01 remains separate.
 
+The [installation preparation](../../verification/2026-10-05-next002-rollout-preparation/README.md)
+now has an independently reviewed once-only native-creator provisioning contract.
+It requires full freshness checks before mutation, exclusive protected creation,
+fixed setup-pipe ownership, a latched partial attempt and bootstrap activation
+semantics. Fresh read-only observations match the 204 installed v1.0.4 payload
+files and retained setup, with normal services/data unchanged. Product setup
+implementation and its native end-to-end checkpoint remain next; this is not
+rollout readiness or operational approval.
+
 ## UI scope
 
 The [Protection failure visibility correction](../../verification/2026-10-05-next002-desktop-observation/README.md)

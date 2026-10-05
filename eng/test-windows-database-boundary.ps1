@@ -3,6 +3,7 @@
 param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [string]$FixtureId = '43a32654d27a4e8fb0b20012702300af',
     [switch]$FreshReference,
+    [switch]$ValidatePreparedAuthentication,
     [switch]$RunCatalogueTests,
     [switch]$RunMetadataTests,
     [switch]$RunCallerFileTests,
@@ -124,6 +125,122 @@ function Invoke-OwnedTool {
         if ($null -ne $identity) { Set-VaultFixtureResourceState $fixtureJournal Process $name Removed $identity }
         $process.Dispose()
     }
+}
+
+function Test-PreparedAuthentication {
+    param([string]$Connection,[string]$Password)
+    # Parse exact proposed files only in this owned cluster, before any actors
+    # or product state exist. The bootstrap SCRAM role matches the unchanged
+    # general rule; no normal-instance file or admission is touched.
+    $prepared=Join-Path $PSScriptRoot '../docs/verification/2026-10-05-next002-rollout-preparation/authentication'
+    [IO.Directory]::CreateDirectory($fixtureEvidence) | Out-Null
+    $hba=Join-Path $fixtureData 'pg_hba.conf';$ident=Join-Path $fixtureData 'pg_ident.conf'
+    $originalHba=[IO.File]::ReadAllBytes($hba);$originalIdent=[IO.File]::ReadAllBytes($ident)
+    $target='7871ff7f8d1b404db20771f2e742364f'
+    $serviceMap='fv_service_'+$target;$adminMap='fv_bootstrap_'+$target
+    $sql=@'
+SELECT json_build_object(
+ 'rules',(SELECT coalesce(json_agg(r ORDER BY rule_number,line_number),'[]'::json)
+          FROM (SELECT rule_number,line_number,type,database,user_name,address,netmask,auth_method,options,error FROM pg_hba_file_rules) r),
+ 'maps',(SELECT coalesce(json_agg(m ORDER BY map_number,line_number),'[]'::json)
+         FROM (SELECT map_number,line_number,map_name,sys_name,pg_username,error FROM pg_ident_file_mappings) m));
+'@
+    try {
+        foreach($phase in @('final','temporary','probe')) {
+            $hbaName=if($phase -eq 'probe'){'temporary-pg_hba.conf'}else{$phase+'-pg_hba.conf'}
+            $identName=$phase+'-pg_ident.conf'
+            $sourceHba=Join-Path $prepared $hbaName;$sourceIdent=Join-Path $prepared $identName
+            Assert-VaultFixtureTrustedPath $sourceHba;Assert-VaultFixtureTrustedPath $sourceIdent
+            [IO.File]::WriteAllBytes($hba,[IO.File]::ReadAllBytes($sourceHba))
+            [IO.File]::WriteAllBytes($ident,[IO.File]::ReadAllBytes($sourceIdent))
+            $parsed=Invoke-OwnedTool (Join-Path $fixtureBin 'psql.exe') @('-X','-w','-A','-t','-v','ON_ERROR_STOP=1','--dbname',$Connection) $sql @{PGPASSWORD=$Password}
+            if($parsed.ExitCode -ne 0){throw 'Prepared authentication could not be inspected by the owned PostgreSQL parser.'}
+            $rows=$parsed.Output.Trim() | ConvertFrom-Json -AsHashtable
+            # Keep the exact rows even for a failed assertion; zero syntax errors
+            # alone would have accepted the reproduced all-comment defect.
+            $proof=@{Phase=$phase;HbaSha256=(Get-FileHash -LiteralPath $sourceHba).Hash;
+                IdentSha256=(Get-FileHash -LiteralPath $sourceIdent).Hash;Parsed=$rows;Accepted=$false}
+            $proofPath=Join-Path $fixtureEvidence ('authentication-parser-'+$phase+'.json')
+            $proof | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $proofPath
+            if(@($rows.rules | Where-Object {$_.error}).Count -or @($rows.maps | Where-Object {$_.error}).Count){throw 'Prepared authentication has PostgreSQL parser errors.'}
+            $expected=[Collections.Generic.List[object]]::new()
+            if($phase -ne 'final') {
+                foreach($address in @('127.0.0.1','::1')){$expected.Add(@{Db='postgres';User='postgres';Address=$address;Method='sspi';Map=$adminMap})}
+            }
+            foreach($address in @('127.0.0.1','::1')){$expected.Add(@{Db='fluxvault_single';User='fluxvault_service';Address=$address;Method='sspi';Map=$serviceMap})}
+            foreach($address in @('127.0.0.1','::1')){$expected.Add(@{Db='fluxvault_single';User='all';Address=$address;Method='reject';Map=$null})}
+            foreach($address in @('127.0.0.1','::1')){$expected.Add(@{Db='all';User='fluxvault_service';Address=$address;Method='reject';Map=$null})}
+            if($rows.rules.Count -lt $expected.Count){throw 'Prepared authentication is missing active scoped rule rows.'}
+            for($index=0;$index -lt $expected.Count;$index++) {
+                $actual=$rows.rules[$index];$wanted=$expected[$index]
+                $mask=if($wanted.Address -eq '::1'){'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'}else{'255.255.255.255'}
+                # PostgreSQL renders the parsed Boolean as true, not input 1.
+                $options=if($wanted.Map){@(('map='+$wanted.Map),'include_realm=true')}else{@()}
+                if($actual.rule_number -ne $index+1 -or $actual.type -ne 'host' -or
+                    $actual.database.Count -ne 1 -or $actual.database[0] -cne $wanted.Db -or
+                    $actual.user_name.Count -ne 1 -or $actual.user_name[0] -cne $wanted.User -or
+                    $actual.address -ne $wanted.Address -or $actual.netmask -ne $mask -or $actual.auth_method -ne $wanted.Method -or
+                    [string]::Join('|',@($actual.options | Sort-Object)) -cne [string]::Join('|',@($options | Sort-Object))) {
+                    throw ('Prepared authentication scoped rule/order mismatch at row '+($index+1)+'.')
+                }
+            }
+            $wantedMaps=@(if($phase -eq 'final'){@{Name=$serviceMap;User='fluxvault_service'}}elseif($phase -eq 'temporary'){@{Name=$serviceMap;User='fluxvault_service'};@{Name=$adminMap;User='postgres'}})
+            if($rows.maps.Count -ne $wantedMaps.Count){throw 'Prepared authentication map count differs.'}
+            for($index=0;$index -lt $wantedMaps.Count;$index++) {
+                $actual=$rows.maps[$index];$wanted=$wantedMaps[$index]
+                if($actual.map_name -cne $wanted.Name -or $actual.sys_name -cne 'SYSTEM@NT AUTHORITY' -or $actual.pg_username -cne $wanted.User){throw 'Prepared authentication map broadens the exact principal/role.'}
+            }
+            $legacy=@($rows.rules | Where-Object {$_.database -contains 'fluxvault_metadata' -and $_.user_name -contains 'fluxvault' -and $_.auth_method -eq 'trust'})
+            if($legacy.Count -ne $(if($phase -eq 'final'){0}else{2})){throw 'Temporary monitoring/final legacy-trust retirement contract differs.'}
+            $proof.Accepted=$true;$proof | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $proofPath
+        }
+    } finally {
+        [IO.File]::WriteAllBytes($hba,$originalHba);[IO.File]::WriteAllBytes($ident,$originalIdent)
+        if((Get-FileHash -LiteralPath $hba).Hash -ne [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($originalHba)) -or
+            (Get-FileHash -LiteralPath $ident).Hash -ne [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($originalIdent))){throw 'Owned parser fixture authentication restoration failed.'}
+    }
+    # Execute the exact DDL in the same disposable cluster, then prove restricted
+    # attributes, PUBLIC denial, backend retirement and non-adoption on replay.
+    # psql has no pool; Invoke-OwnedTool joins it and its supervisor.
+    $sourceSql=Join-Path $prepared 'create-fluxvault.sql'
+    Assert-VaultFixtureTrustedPath $sourceSql
+    $before=Get-OwnedPostmaster
+    if($before.Port -eq 5432 -or $before.DataDirectory -ne $fixtureData){throw 'Prepared DDL refuses a normal PostgreSQL target.'}
+    $ddl=[IO.File]::ReadAllText($sourceSql)
+    $create=Invoke-OwnedTool (Join-Path $fixtureBin 'psql.exe') @('-X','-w','-A','-t','-v','ON_ERROR_STOP=1','--dbname',$Connection) ("SELECT pg_backend_pid();`n"+$ddl) @{PGPASSWORD=$Password}
+    if($create.ExitCode -ne 0){throw 'Exact prepared DDL failed in the owned PostgreSQL cluster.'}
+    $backend=0
+    if(-not [int]::TryParse(($create.Output -split '\r?\n')[0],[ref]$backend) -or $backend -le 0){throw 'Prepared DDL did not report its backend.'}
+    $inspect=@'
+SELECT json_build_object(
+ 'role',(SELECT row_to_json(r) FROM
+  (SELECT rolname,rolcanlogin,rolinherit,rolsuper,rolcreatedb,rolcreaterole,rolreplication,rolbypassrls,
+          rolpassword IS NULL AS password_free,shobj_description(oid,'pg_authid') AS ownership
+   FROM pg_authid WHERE rolname='fluxvault_service') r),
+ 'database',(SELECT row_to_json(d) FROM
+  (SELECT datname,pg_get_userbyid(datdba) AS owner,shobj_description(oid,'pg_database') AS ownership,
+          NOT EXISTS(SELECT 1 FROM aclexplode(datacl) WHERE grantee=0) AS public_denied
+   FROM pg_database WHERE datname='fluxvault_single') d),
+ 'backend_retired',NOT EXISTS(SELECT 1 FROM pg_stat_activity WHERE pid=BACKEND_PID));
+'@
+    $inspect=$inspect.Replace('BACKEND_PID',$backend.ToString([Globalization.CultureInfo]::InvariantCulture))
+    $check=Invoke-OwnedTool (Join-Path $fixtureBin 'psql.exe') @('-X','-w','-A','-t','-v','ON_ERROR_STOP=1','--dbname',$Connection) $inspect @{PGPASSWORD=$Password}
+    if($check.ExitCode -ne 0){throw 'Prepared DDL verification failed.'}
+    $state=$check.Output.Trim() | ConvertFrom-Json -AsHashtable
+    $ownership='FluxVault installation '+$target
+    if(-not $state.role.rolcanlogin -or -not $state.role.password_free -or $state.role.rolinherit -or $state.role.rolsuper -or
+        $state.role.rolcreatedb -or $state.role.rolcreaterole -or $state.role.rolreplication -or $state.role.rolbypassrls -or
+        $state.role.ownership -cne $ownership -or $state.database.owner -cne 'fluxvault_service' -or
+        $state.database.ownership -cne $ownership -or -not $state.database.public_denied -or -not $state.backend_retired){throw 'Prepared DDL violates ownership, privilege or session retirement contracts.'}
+    $repeat=Invoke-OwnedTool (Join-Path $fixtureBin 'psql.exe') @('-X','-w','-A','-t','-v','ON_ERROR_STOP=1','--dbname',$Connection) $ddl @{PGPASSWORD=$Password}
+    if($repeat.ExitCode -ne 3 -or -not $repeat.Error.Contains('refusing adoption')){throw 'Prepared DDL did not refuse target adoption.'}
+    $after=Invoke-OwnedTool (Join-Path $fixtureBin 'psql.exe') @('-X','-w','-A','-t','-v','ON_ERROR_STOP=1','--dbname',$Connection) $inspect @{PGPASSWORD=$Password}
+    if($after.ExitCode -ne 0 -or $after.Output -cne $check.Output){throw 'Rejected prepared DDL changed the owned target.'}
+    $live=Get-OwnedPostmaster
+    if($live.ProcessId -ne $before.ProcessId -or $live.StartedUtc -ne $before.StartedUtc){throw 'Prepared authentication/DDL proof restarted its owned PostgreSQL.'}
+    @{Accepted=$true;SqlSha256=(Get-FileHash -LiteralPath $sourceSql).Hash;BackendPid=$backend;State=$state;
+        RepeatedCreateRejected=$true;TargetUnchanged=$true;PostmasterUnchanged=$true} |
+        ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $fixtureEvidence 'prepared-sql.json')
 }
 
 function Get-OwnedPostmaster {
@@ -922,6 +1039,7 @@ host all all ::1/128 reject
     }
     try {
         $bootstrapConnection="host=127.0.0.1 port=$fixturePort dbname=postgres user=fv_gate_bootstrap connect_timeout=5 require_auth=scram-sha-256"
+        if($ValidatePreparedAuthentication){Test-PreparedAuthentication $bootstrapConnection $bootstrap}
         $createDb=if($RunIntegrityTests){'CREATEDB'}else{'NOCREATEDB'}
         $sql="CREATE ROLE fv_gate_service LOGIN NOSUPERUSER $createDb NOCREATEROLE NOREPLICATION;`nCREATE DATABASE fv_gate_261003 OWNER fv_gate_service;`nREVOKE ALL ON DATABASE fv_gate_261003 FROM PUBLIC;`n"
         if($RunIntegrityTests) {

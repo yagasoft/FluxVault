@@ -119,8 +119,11 @@ none of its CREATE/COMMENT/REVOKE statements is executed.
 The [prepared SQL](authentication/create-fluxvault.sql) refuses existing targets,
 creates only that fresh database/account, assigns restricted role attributes and
 revokes PUBLIC database access. Proposed authentication files retain unrelated
-rules, remove exactly the two legacy FluxVault trust lines and add scoped SYSTEM
-SSPI plus explicit database/account rejection rules. The temporary administrator
+rules, remove exactly the two legacy FluxVault trust lines in the final files and
+add scoped SYSTEM SSPI plus explicit database/account rejection rules. The
+temporary files retain the unchanged old trust block for finite read-only
+session-retirement monitoring while FluxVault remains stopped. That existing
+access itself is not read-only. The temporary administrator
 map is SYSTEM-only on `postgres`/`postgres`, with realm identity preserved; it
 still confers cluster-superuser authority. Normal-instance correlated SSPI
 observation must confirm the expected principal before adding either map.
@@ -128,15 +131,20 @@ No prepared SQL/authentication file is applied now.
 
 | Proposed replacement | SHA-256 |
 | --- | --- |
-| final-pg_hba.conf | `D8AAAFCF1453B987B385782AEB0962250C4EBF617639F2AC46523DF9A85ADD80` |
-| final-pg_ident.conf | `F044B17A35A0DE52951E042543B9B2039B11E62E4906B20B02D0719ED34A2C5E` |
-| temporary-pg_hba.conf | `9397D46140EFD78D34BE5FF29B4B3A102053F3CC188571342E1F6A0AE05A688E` |
-| temporary-pg_ident.conf | `36A5A445F6247D43045B884E0346AE8C1DAE89F8C8A4B45319FB0B177EE614EE` |
+| final-pg_hba.conf | `83F8A4844E68DCF26C6F068890794D2327F83544DFDA1E8BF95FB9321628E40E` |
+| final-pg_ident.conf | `DD710C85E5064576F4108CDD6862B1A2FAA077D611ED23E31D76CDB56C40E2B3` |
+| temporary-pg_hba.conf | `08AA5DB675E5112DE605DF235B6B73CCD37516CC17DB129F4E3C0ECCECADC946` |
+| temporary-pg_ident.conf | `71EA5A61F5913FFA3E93523902839F50FB38C115E573F7D477FD86B965717E56` |
 
 Finish the finite owned commissioning supervisor, close/join its non-pooled
 administrator connection/backend before removing the exact temporary map/rules
 and reloading, prove fresh admin-login refusal and service-only login, then allow
-setup. Preserve exact original auth bytes and interrupted-cleanup instructions
+setup. Publish and validate its protected backend PID before any DDL. Use a
+fresh short read-only transaction for each monitoring poll; after retiring
+admission, repeat the backend-absence check through a fresh service connection.
+Account for surviving old-role sessions too: removing trust does not close them.
+Join monitoring connections and never terminate unrelated sessions automatically.
+Preserve exact original auth bytes and interrupted-cleanup instructions
 before any access change. No ordinary runtime starts while temporary admin
 access is unresolved. Existing guarded legacy paths and retained v1.0.4 setup/
 204 matching installed hashes remain rollback inputs; complete the checked
@@ -155,3 +163,42 @@ only S01 packaged proof, D01 observations/scale, S05 commissioning/rollback and
 final G01 as the critical path. No scheduler/VSS/crash matrix or new verification
 programme is added. Pending package/profile/trust approval remains distinct from
 the separately required normal rollout approval. The slice is not complete.
+
+The bounded S05 preparation now has executable proof. Independent review found
+the first generated HBA blocks were each a single comment line; their hashes did
+not establish active admission or rejection. The actual PostgreSQL parser
+reproduces this failure in `native/c995fd62a1644145b243c15772ec1e8a` before the
+correction. [Generation](authentication/prepare-authentication.ps1) now uses
+literal multiline blocks and verifies normal authentication hashes before and
+after writing only the proposed files. Its [current hashes](authentication/prepared-hashes.json)
+supersede the earlier unaccepted proposals. No normal file is replaced or reloaded.
+
+The final [owned run](native/5a477969f6b54962b10cd909a0955554/result.json) uses
+PostgreSQL's `pg_hba_file_rules` and `pg_ident_file_mappings` to check the exact
+final/temporary/probe bytes, active rule order, loopback scope, parsed realm flag,
+exact SYSTEM maps and legacy trust retirement. These views report the current
+files, allowing bounded inspection in the disposable cluster; see the
+[HBA view](https://www.postgresql.org/docs/18/view-pg-hba-file-rules.html) and
+[mapping view](https://www.postgresql.org/docs/18/view-pg-ident-file-mappings.html).
+The fixture restores its own original bytes before continuing. Its
+[exact SQL proof](native/5a477969f6b54962b10cd909a0955554/prepared-sql.json)
+confirms restricted role attributes/password absence, database owner/comments,
+PUBLIC denial, the joined administrator backend's absence, and refused repeated
+creation with unchanged state. The private postmaster is not restarted.
+This proves the prepared SQL, not the unfinished normal supervisor's protected
+PID publication, authentication retirement or installed setup entry.
+
+Initial fixture-construction diagnostics (unexported guard, missing projected
+sort column, evidence-directory creation and parsed Boolean canonicalisation)
+remain retained and supply no acceptance claim. `authentication-tooling-final.trx`
+passes 63/63 without skips. An initial broad filter accidentally included two
+tests requiring the separately owned integrity fixture; that refusal is retained
+in `authentication-tooling.trx`. Unchanged product source/build dependencies
+retain the accepted zero-warning Release and C01–C03/full-workflow evidence.
+The [fresh census](authentication-fixture-census.json) verifies 151 captured
+process identities absent, 126 resources retired across seven runs and every
+root/account/group/task/job gone. Normal services, actual postmaster identity,
+authentication and unrelated primary edits remain unchanged. The frozen MSI/EXE
+candidate is unchanged. The [independent assessment](architecture-review.md)
+accepts this bounded correction; S05 commissioning/rollback, S01, D01 and final
+G01 remain open before separately approved rollout and live validation.

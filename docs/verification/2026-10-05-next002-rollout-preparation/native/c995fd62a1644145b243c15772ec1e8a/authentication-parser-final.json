@@ -1,0 +1,116 @@
+{
+  "Phase": "final",
+  "Parsed": {
+    "rules": [
+      {
+        "rule_number": 1,
+        "line_number": 114,
+        "type": "local",
+        "database": [
+          "all"
+        ],
+        "user_name": [
+          "all"
+        ],
+        "address": null,
+        "netmask": null,
+        "auth_method": "scram-sha-256",
+        "options": null,
+        "error": null
+      },
+      {
+        "rule_number": 2,
+        "line_number": 119,
+        "type": "host",
+        "database": [
+          "all"
+        ],
+        "user_name": [
+          "all"
+        ],
+        "address": "127.0.0.1",
+        "netmask": "255.255.255.255",
+        "auth_method": "scram-sha-256",
+        "options": null,
+        "error": null
+      },
+      {
+        "rule_number": 3,
+        "line_number": 121,
+        "type": "host",
+        "database": [
+          "all"
+        ],
+        "user_name": [
+          "all"
+        ],
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "auth_method": "scram-sha-256",
+        "options": null,
+        "error": null
+      },
+      {
+        "rule_number": 4,
+        "line_number": 124,
+        "type": "local",
+        "database": [
+          "replication"
+        ],
+        "user_name": [
+          "all"
+        ],
+        "address": null,
+        "netmask": null,
+        "auth_method": "scram-sha-256",
+        "options": null,
+        "error": null
+      },
+      {
+        "rule_number": 5,
+        "line_number": 125,
+        "type": "host",
+        "database": [
+          "replication"
+        ],
+        "user_name": [
+          "all"
+        ],
+        "address": "127.0.0.1",
+        "netmask": "255.255.255.255",
+        "auth_method": "scram-sha-256",
+        "options": null,
+        "error": null
+      },
+      {
+        "rule_number": 6,
+        "line_number": 126,
+        "type": "host",
+        "database": [
+          "replication"
+        ],
+        "user_name": [
+          "all"
+        ],
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "auth_method": "scram-sha-256",
+        "options": null,
+        "error": null
+      }
+    ],
+    "maps": [
+      {
+        "map_number": 1,
+        "line_number": 74,
+        "map_name": "fv_service_7871ff7f8d1b404db20771f2e742364f",
+        "sys_name": "SYSTEM@NT AUTHORITY",
+        "pg_username": "fluxvault_service",
+        "error": null
+      }
+    ]
+  },
+  "Accepted": false,
+  "IdentSha256": "F044B17A35A0DE52951E042543B9B2039B11E62E4906B20B02D0719ED34A2C5E",
+  "HbaSha256": "D8AAAFCF1453B987B385782AEB0962250C4EBF617639F2AC46523DF9A85ADD80"
+}

@@ -27,3 +27,30 @@ G01 approval or normal-machine rollout authorisation. Database/authentication
 changes, legacy relocation, service replacement and rollout remain separately
 gated. No scheduler, schema migration/adoption or general installer framework
 is added.
+
+## Bounded S05 preparation assessment
+
+The independent Astra reviewer accepts the finite retention of the two unchanged
+legacy trust entries for retirement monitoring while runtime is blocked. This
+does not restrict that old access to reads. Use a fresh short transaction for
+each poll, publish and validate the protected administrator backend PID before
+DDL, retire admission and reload, then check backend absence again through a
+fresh service connection. Account for old-role sessions and join monitoring
+connections before activation; removing HBA admission does not close established
+sessions. Never terminate unrelated sessions automatically. Uncertainty must
+retire administrator admission, preserve partial state and keep runtime blocked.
+
+The reviewer found the initially generated HBA prefixes were comment lines,
+requiring active parsed-row proof rather than hashes or syntax-error absence.
+The corrected proposed files and optional bounded existing-fixture proof are
+now accepted with no blocking finding. Current file hashes match PostgreSQL's
+ordered SSPI/reject rows and exact maps; final has zero old trust rules and
+temporary/probe have exactly two. Exact prepared SQL proves restricted role
+attributes, database ownership, PUBLIC denial, administrator backend retirement
+and repeat refusal without target changes. The final owned run has no failure,
+tooling passes 63/63 with no skips, and the census verifies 151 retired process
+identities/126 resources across seven runs with normal state unchanged.
+
+This assessment covers only the completed preparation correction/private proof.
+It does not accept the unfinished normal commissioning supervisor, final G01,
+normal application or rollout. The lifetime requirements above remain required.

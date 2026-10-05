@@ -11,6 +11,13 @@ docs/verification/2026-10-04-next002-source-inventory/*/postgres.log -text -diff
 docs/verification/2026-10-04-next002-source-inventory/**/*.log -whitespace
 # Preserve the native creator checkpoint journal/log/ticket bytes for hash and offset verification.
 docs/verification/2026-10-05-next002-rollout-preparation/native/a773b350b6a74cb6a4977a478cc0c1db/** -text
+docs/verification/2026-10-05-next002-rollout-preparation/native/c5784a21b0954b90b07028279896114c/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/f93ec07c21d344a5a49c8e99f1c522a4/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/6b7adef22d504b339065265a940be99e/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/c995fd62a1644145b243c15772ec1e8a/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/10af87c4510d4494ace9f9d729ae5ebf/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/2296118023cf4232b8fbbd9f3c6d1875/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/5a477969f6b54962b10cd909a0955554/** -text -whitespace
 docs/verification/2026-10-05-next002-rollout-preparation/**/*.log -whitespace
 # Proposed normal authentication replacements are approval inputs pinned by exact SHA-256.
 docs/verification/2026-10-05-next002-rollout-preparation/authentication/*.conf -text -whitespace

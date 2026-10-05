@@ -1,0 +1,35 @@
+{
+  "ObservedUtc": "2026-10-05T07:42:01.0715541Z",
+  "Applied": false,
+  "Original": {
+    "pg_ident.conf": "2151E28F0BF5A8BB69109F91DBE61EBFFE48C6F9B71620F6A7B0B02B410E7DE5",
+    "pg_hba.conf": "C37D219F5AEE60D710ABCD9628A1F3D6C94F5C9861B4E31A52290DE995D97379"
+  },
+  "Proposed": [
+    {
+      "Name": "final-pg_hba.conf",
+      "Sha256": "83F8A4844E68DCF26C6F068890794D2327F83544DFDA1E8BF95FB9321628E40E",
+      "Bytes": 6218
+    },
+    {
+      "Name": "final-pg_ident.conf",
+      "Sha256": "DD710C85E5064576F4108CDD6862B1A2FAA077D611ED23E31D76CDB56C40E2B3",
+      "Bytes": 2906
+    },
+    {
+      "Name": "probe-pg_ident.conf",
+      "Sha256": "94850BE9C661F3644FED12DBED68D4BA0FB192B32099E67CAE7FF1B4349DDA41",
+      "Bytes": 2844
+    },
+    {
+      "Name": "temporary-pg_hba.conf",
+      "Sha256": "08AA5DB675E5112DE605DF235B6B73CCD37516CC17DB129F4E3C0ECCECADC946",
+      "Bytes": 6756
+    },
+    {
+      "Name": "temporary-pg_ident.conf",
+      "Sha256": "71EA5A61F5913FFA3E93523902839F50FB38C115E573F7D477FD86B965717E56",
+      "Bytes": 3050
+    }
+  ]
+}

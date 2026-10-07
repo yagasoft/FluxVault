@@ -24,6 +24,9 @@ if($actualSid -ne $configuration.Actors.$Actor -or $configuration.FixtureId -ne 
     $metadata.Publisher -ne ('CN=FluxVault Fixture '+$fixtureId) -or $metadata.Thumbprint -notmatch '^[A-F0-9]{40}$') {
     throw 'Packaged fixture identity mismatch.'
 }
+$trustMode=if($configuration.PSObject.Properties['PackageTrustMode']){$configuration.PackageTrustMode}else{'PerUser'}
+$metadataMode=if($metadata.PSObject.Properties['TrustMode']){$metadata.TrustMode}else{'PerUser'}
+if($trustMode -notin @('PerUser','MachineParent') -or $metadataMode -cne $trustMode){throw 'Packaged fixture trust mode mismatch.'}
 $runtime=Join-Path $Root 'runtime'
 foreach($pair in @(@{Path='identity.msix';Hash=$metadata.PackageSha256},@{Path='identity.cer';Hash=$metadata.CertificateSha256},
     @{Path='FluxVault.TestHost.exe';Hash=$metadata.ApphostSha256})) {
@@ -32,9 +35,19 @@ foreach($pair in @(@{Path='identity.msix';Hash=$metadata.PackageSha256},@{Path='
 }
 $ownerPath=Join-Path $Root ("output-$Actor/package-owner.json")
 $state=@{Version=1;FixtureId=$fixtureId;UserSid=$actualSid;PackageName=$metadata.PackageName;Publisher=$metadata.Publisher;
-    Thumbprint=$metadata.Thumbprint;PackageFullName='';State='Intent';PackageRemoved=$false;CertificateRemoved=$false}
+    Thumbprint=$metadata.Thumbprint;TrustMode=$trustMode;TrustOwner=$(if($trustMode -eq 'MachineParent'){'MachineParent'}else{'Actor'});
+    PackageFullName='';State='Intent';PackageRemoved=$false;CertificateRemoved=$false;EffectiveTrustAbsent=$false}
+$hasOwner=Test-Path -LiteralPath $ownerPath
+if($hasOwner) {
+    if($Action -eq 'Client'){throw 'Existing package ownership record; cleanup is required.'}
+    $old=Get-Content -LiteralPath $ownerPath -Raw|ConvertFrom-Json -AsHashtable
+    $oldMode=if($old.ContainsKey('TrustMode')){$old.TrustMode}else{'PerUser'}
+    if($old.Version -ne 1 -or $old.FixtureId -ne $fixtureId -or $old.UserSid -ne $actualSid -or
+        $old.PackageName -ne $metadata.PackageName -or $old.Publisher -ne $metadata.Publisher -or
+        $old.Thumbprint -ne $metadata.Thumbprint -or $oldMode -cne $trustMode){throw 'Package cleanup ownership mismatch.'}
+}
 $certificate=[Security.Cryptography.X509Certificates.X509CertificateLoader]::LoadCertificateFromFile((Join-Path $runtime 'identity.cer'))
-$store=[Security.Cryptography.X509Certificates.X509Store]::new('TrustedPeople','CurrentUser')
+$store=& (Get-Module packaged-identity) {New-VaultFixtureUserTrustStore}
 $child=$null
 $failure=$null
 $proof=$null
@@ -43,28 +56,34 @@ $mayCleanup=$Action -eq 'Cleanup'
 $storeOpened=$false
 try {
     if($certificate.Thumbprint -ne $metadata.Thumbprint -or $certificate.Subject -ne $metadata.Publisher){throw 'Wrong fixture certificate.'}
-    $store.Open([Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+    $store.Open($(if($trustMode -eq 'MachineParent'){[Security.Cryptography.X509Certificates.OpenFlags]::ReadOnly}else{[Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite}))
     $storeOpened=$true
     if($Action -eq 'Client') {
-        if(@(Get-AppxPackage -Name $metadata.PackageName).Count -or
-            $store.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$metadata.Thumbprint,$false).Count) {
-            throw 'Owned package or certificate collision; no existing resource was changed.'
+        if(@(Get-AppxPackage -Name $metadata.PackageName).Count){throw 'Owned package collision; no existing resource was changed.'}
+        if($trustMode -eq 'PerUser') {
+            if($store.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$metadata.Thumbprint,$false).Count){throw 'Owned per-user certificate collision; no existing resource was changed.'}
+            Write-VaultFixturePackageRecord $ownerPath $state
+            $mayCleanup=$true
+            $hasOwner=$true
+            $store.Add($certificate)
+            $state.State='CertificateCreated';Write-VaultFixturePackageRecord $ownerPath $state
         }
-        Write-VaultFixturePackageRecord $ownerPath $state
-        $mayCleanup=$true
-        $store.Add($certificate)
-        $state.State='CertificateCreated';Write-VaultFixturePackageRecord $ownerPath $state
-        $verifyStore=[Security.Cryptography.X509Certificates.X509Store]::new('TrustedPeople','CurrentUser')
+        $verifyStore=& (Get-Module packaged-identity) {New-VaultFixtureUserTrustStore}
         $published=@()
         try {
             $verifyStore.Open([Security.Cryptography.X509Certificates.OpenFlags]::ReadOnly)
             $published=@($verifyStore.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$metadata.Thumbprint,$false))
             if($published.Count -ne 1 -or $published[0].HasPrivateKey -or $published[0].Subject -ne $metadata.Publisher -or
                 [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($published[0].RawData)) -ne $metadata.CertificateSha256 -or
-                [Security.Principal.WindowsIdentity]::GetCurrent().User.Value -ne $actualSid){throw 'Per-user public certificate publication was not verified.'}
+                [Security.Principal.WindowsIdentity]::GetCurrent().User.Value -ne $actualSid){
+                if($trustMode -eq 'MachineParent'){throw 'Machine-parent certificate publication was not verified.'}
+                throw 'Per-user public certificate publication was not verified.'
+            }
             $state.TrustProof=@{WindowsSid=$actualSid;Store='CurrentUser/TrustedPeople';Thumbprint=$metadata.Thumbprint;
-                CertificateSha256=$metadata.CertificateSha256;HasPrivateKey=$false;ReopenedVerified=$true}
+                TrustMode=$trustMode;TrustOwner=$state.TrustOwner;CertificateSha256=$metadata.CertificateSha256;HasPrivateKey=$false;ReopenedVerified=$true}
             Write-VaultFixturePackageRecord $ownerPath $state
+            $mayCleanup=$true
+            $hasOwner=$true
         } finally {foreach($item in $published){$item.Dispose()};$verifyStore.Dispose()}
         Add-AppxPackage -Path (Join-Path $runtime 'identity.msix') -ExternalLocation $runtime -ErrorAction Stop
         $package=@(Get-AppxPackage -Name $metadata.PackageName)
@@ -100,18 +119,34 @@ finally {
         if($mayCleanup -and $storeOpened) {
         # This user's exact GUID identity only. No provisioned or other package is touched.
         foreach($package in @(Get-AppxPackage -Name $metadata.PackageName)) {
-            if($package.Publisher -ne $metadata.Publisher -or
+            if(-not $hasOwner -or $package.Publisher -ne $metadata.Publisher -or
                 $package.PackageFullName -notlike ($metadata.PackageName+'_1.0.0.0_x64__*')){throw 'Package cleanup identity mismatch.'}
             Remove-AppxPackage -Package $package.PackageFullName -ErrorAction Stop
         }
         if(@(Get-AppxPackage -Name $metadata.PackageName).Count){throw 'Owned per-user package remains.'}
         $state.PackageRemoved=$true
-        foreach($existing in $store.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$metadata.Thumbprint,$false)) {
-            if($existing.Subject -ne $metadata.Publisher){throw 'Certificate cleanup identity mismatch.'}
-            $store.Remove($existing)
+        if($trustMode -eq 'PerUser') {
+            foreach($existing in $store.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$metadata.Thumbprint,$false)) {
+                if(-not $hasOwner -or $existing.HasPrivateKey -or $existing.Subject -ne $metadata.Publisher -or
+                    [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($existing.RawData)) -ne $metadata.CertificateSha256){throw 'Certificate cleanup identity mismatch.'}
+                $store.Remove($existing)
+            }
         }
-        if($store.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$metadata.Thumbprint,$false).Count){throw 'Owned per-user certificate trust remains.'}
-        $state.CertificateRemoved=$true;$state.State='Removed'
+        $verifyStore=& (Get-Module packaged-identity) {New-VaultFixtureUserTrustStore}
+        $remaining=@()
+        try {
+            $verifyStore.Open([Security.Cryptography.X509Certificates.OpenFlags]::ReadOnly)
+            $remaining=@($verifyStore.Certificates.Find([Security.Cryptography.X509Certificates.X509FindType]::FindByThumbprint,$metadata.Thumbprint,$false))
+            if($trustMode -eq 'MachineParent' -and $Action -eq 'Client') {
+                if($remaining.Count -ne 1 -or $remaining[0].HasPrivateKey -or $remaining[0].Subject -ne $metadata.Publisher -or
+                    [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($remaining[0].RawData)) -ne $metadata.CertificateSha256){throw 'Parent-owned effective certificate trust changed.'}
+            } elseif($remaining.Count) {
+                if($trustMode -eq 'MachineParent'){throw 'Parent-owned effective certificate trust remains.'}
+                throw 'Owned per-user certificate trust remains.'
+            }
+            $state.EffectiveTrustAbsent=$remaining.Count -eq 0
+        } finally {foreach($item in $remaining){$item.Dispose()};$verifyStore.Dispose()}
+        $state.CertificateRemoved=$trustMode -eq 'PerUser';$state.State='Removed'
         Write-VaultFixturePackageRecord $ownerPath $state
         }
     } finally {$store.Dispose();$certificate.Dispose()}
@@ -121,4 +156,5 @@ if($failure){
     throw $failure
 }
 @{Actor=$Actor;WindowsSid=$actualSid;Action=$Action;Proof=$proof;ProcessIdentity=$identity;PackageOwner=$state;
+    TrustMode=$trustMode;TrustOwner=$state.TrustOwner;EffectiveTrustAbsent=$state.EffectiveTrustAbsent;
     PackageRemoved=$state.PackageRemoved;CertificateRemoved=$state.CertificateRemoved} | ConvertTo-Json -Depth 6

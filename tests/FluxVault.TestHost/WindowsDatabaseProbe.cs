@@ -9,12 +9,14 @@ namespace FluxVault.Testing;
 internal sealed record WindowsDatabaseProbeConfiguration(string FixtureId, string Root, int Port,
     string Database, string Role, int TimeoutSeconds, Dictionary<string, string> Actors, bool RunCatalogueTests = false, bool RunMetadataTests = false,
     bool RunSingleVaultTests = false, bool RunPackagedIdentityTests = false, bool RunRestartTests = false,
-    bool RunInterruptedEffectTests = false)
+    bool RunInterruptedEffectTests = false, string PackageTrustMode = "PerUser")
 {
     internal static string AllowedParent => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "FluxVault.Tests", "NEXT002");
 
     internal void Validate()
     {
+        if (PackageTrustMode is not ("PerUser" or "MachineParent") || (PackageTrustMode == "MachineParent" && !RunPackagedIdentityTests))
+            throw new ArgumentException("Probe requires a known, scoped package trust ownership mode.");
         if (RunInterruptedEffectTests && (!RunSingleVaultTests || RunPackagedIdentityTests || RunRestartTests))
             throw new ArgumentException("Interrupted-effect proof requires an exclusive single-vault fixture.");
         if (RunRestartTests && (!RunSingleVaultTests || RunPackagedIdentityTests))

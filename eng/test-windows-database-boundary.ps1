@@ -61,6 +61,7 @@ $fixtureFailure = $null
 $fixtureFailureLocation = $null
 $fixtureObservations = [Collections.Generic.List[object]]::new()
 $fixtureCredentials = @{}
+$fixturePackageTrustMode=if($PermitMachinePackageTrust){'MachineParent'}else{'PerUser'}
 $fixtureEvidence = [IO.Path]::GetFullPath($EvidenceDirectory)
 if (-not ([Security.Principal.WindowsPrincipal]::new([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole('Administrators')) { throw 'An elevated, authorised fixture runner is required.' }
 
@@ -553,7 +554,10 @@ function Invoke-SystemActor {
                     $packaged=Invoke-UserActor $actor '127.0.0.1' 'PackagedClient'
                     $proof=@($packaged.Results | Where-Object Kind -eq 'Packaged')
                     if($proof.Count -ne 1 -or -not $proof[0].Result.Proof.NativePackagedVerified -or
-                        -not $proof[0].Result.PackageRemoved -or -not $proof[0].Result.CertificateRemoved){throw 'Packaged native validation or cleanup is incomplete.'}
+                        -not $proof[0].Result.PackageRemoved -or $proof[0].Result.TrustMode -cne $fixturePackageTrustMode -or
+                        -not $proof[0].Result.PackageOwner.TrustProof.ReopenedVerified -or
+                        ($fixturePackageTrustMode -eq 'PerUser' -and (-not $proof[0].Result.CertificateRemoved -or -not $proof[0].Result.EffectiveTrustAbsent)) -or
+                        ($fixturePackageTrustMode -eq 'MachineParent' -and ($proof[0].Result.CertificateRemoved -or $proof[0].Result.EffectiveTrustAbsent -or $proof[0].Result.TrustOwner -cne 'MachineParent'))){throw 'Packaged native validation or cleanup is incomplete.'}
                     $fixtureObservations.Add(@{NativePackaged=$packaged})
                 }
             }
@@ -936,7 +940,13 @@ function Stop-OwnedJob {
 }
 
 function Remove-OwnedPackageUsers {
+    if(-not @($fixtureJournal.Resources|Where-Object Kind -eq 'PackageUser').Count){return}
+    $runtimeConfiguration=Get-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json') -Raw|ConvertFrom-Json
+    $trustMode=if($runtimeConfiguration.PSObject.Properties['PackageTrustMode']){$runtimeConfiguration.PackageTrustMode}else{'PerUser'}
+    if($trustMode -notin @('PerUser','MachineParent')){throw 'Unknown package trust ownership mode.'}
     foreach($resource in @($fixtureJournal.Resources | Where-Object {$_.Kind -eq 'PackageUser' -and $_.State -eq 'Created'})) {
+        $recordMode=if($resource.Identity.ContainsKey('TrustMode')){$resource.Identity.TrustMode}else{'PerUser'}
+        if($recordMode -cne $trustMode){throw 'Package cleanup trust ownership mismatch.'}
         $actor=$resource.Name.Replace('package-','')
         if($actor -notin @('A','B')){throw 'Unknown owned package actor.'}
         $user=Get-LocalUser -Name ("FVGate${actor}_261003") -ErrorAction Stop
@@ -950,7 +960,10 @@ function Remove-OwnedPackageUsers {
         }
         $packageCleanup=Invoke-UserActor $actor '127.0.0.1' 'PackagedCleanup'
         $packageProof=@($packageCleanup.Results | Where-Object Kind -eq 'Packaged')
-        if($packageProof.Count -ne 1 -or -not $packageProof[0].Result.PackageRemoved -or -not $packageProof[0].Result.CertificateRemoved){throw 'Owned package or certificate trust remains.'}
+        if($packageProof.Count -ne 1 -or -not $packageProof[0].Result.PackageRemoved -or
+            $packageProof[0].Result.TrustMode -cne $trustMode -or -not $packageProof[0].Result.EffectiveTrustAbsent -or
+            ($trustMode -eq 'PerUser' -and -not $packageProof[0].Result.CertificateRemoved) -or
+            ($trustMode -eq 'MachineParent' -and ($packageProof[0].Result.CertificateRemoved -or $packageProof[0].Result.TrustOwner -cne 'MachineParent'))){throw 'Owned package or certificate trust remains.'}
         if(@(Get-AppxPackage -User $resource.Identity.Sid -Name $resource.Identity.PackageName).Count){throw 'Owned per-user package remains.'}
         Set-VaultFixtureResourceState $fixtureJournal PackageUser $resource.Name Removed $resource.Identity
     }
@@ -1203,16 +1216,16 @@ try {
     }
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
-    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
+    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;PackageTrustMode=$fixturePackageTrustMode;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
     @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds;ValidatePreparedAuthentication=[bool]$ValidatePreparedAuthentication} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     if($RunPackagedIdentityTests) {
-        $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure()
+        $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure() -TrustMode $fixturePackageTrustMode
         if($PermitMachinePackageTrust){Invoke-VaultFixtureMachineTrust $fixtureJournal Add -Approved}
         foreach($actor in @('A','B')) {
             $profilePath=Join-Path ([Environment]::ExpandEnvironmentVariables((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList').ProfilesDirectory)) ("FVGate${actor}_261003")
             if((Get-CimInstance Win32_UserProfile -Filter "SID='$($actors[$actor])'" -ErrorAction SilentlyContinue) -or (Test-Path -LiteralPath $profilePath)){throw 'Package profile collision.'}
             Add-VaultFixtureIntent $fixtureJournal Profile ("profile-$actor") @{Sid=$actors[$actor];Path=$profilePath}
-            Add-VaultFixtureIntent $fixtureJournal PackageUser ("package-$actor") @{Sid=$actors[$actor];PackageName=$package.PackageName;Publisher=$package.Publisher;Thumbprint=$package.Thumbprint}
+            Add-VaultFixtureIntent $fixtureJournal PackageUser ("package-$actor") @{Sid=$actors[$actor];PackageName=$package.PackageName;Publisher=$package.Publisher;Thumbprint=$package.Thumbprint;TrustMode=$fixturePackageTrustMode}
         }
     }
     foreach($entry in Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'runtime') -Recurse -Force){Assert-VaultFixtureTrustedPath $entry.FullName}

@@ -15,8 +15,12 @@ foreach($directory in $directories) {
     if(-not(Test-Path -LiteralPath $journalPath)){$journalPath=Join-Path $directory.FullName 'completed-owner.json'}
     $journal=Get-Content -LiteralPath $journalPath -Raw|ConvertFrom-Json -AsHashtable
     $root=Resolve-VaultFixtureRoot $journal.Root $journal.Parent $journal.FixtureId
-    if($directory.Name -notin @($journal.FixtureId,($journal.FixtureId+'-first-attempt'),($journal.FixtureId+'-second-attempt'),($journal.FixtureId+'-machine-trust')) -or
+    if($directory.Name -notin @($journal.FixtureId,($journal.FixtureId+'-first-attempt'),($journal.FixtureId+'-second-attempt'),($journal.FixtureId+'-machine-trust'),($journal.FixtureId+'-machine-trust-first-attempt')) -or
         $journal.State -ne 'Complete' -or @($journal.Resources|Where-Object State -notin @('Removed','Absent')).Count){throw 'Preparation ownership is incomplete.'}
+    $beforePath=Join-Path $directory.FullName 'before.json';$afterPath=Join-Path $directory.FullName 'after.json'
+    if((Test-Path -LiteralPath $beforePath) -and (Test-Path -LiteralPath $afterPath)) {
+        if(-not (Test-VaultFixtureInstallationUnchanged (Get-Content $beforePath -Raw|ConvertFrom-Json) (Get-Content $afterPath -Raw|ConvertFrom-Json))){throw 'A retained run changed its normal installation baseline.'}
+    }
     $captured=@($journal.RunnerIdentity)+@($journal.Resources|Where-Object Kind -in @('Process','Postmaster')|ForEach-Object Identity)
     foreach($file in Get-ChildItem -LiteralPath $directory.FullName -Filter 'tool-*-child.json') {$captured+=@(Get-Content -LiteralPath $file.FullName -Raw|ConvertFrom-Json -AsHashtable)}
     $cleanupProcess=Join-Path $directory.FullName 'output-cleanup-process.json'
@@ -70,11 +74,21 @@ $enumeration=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'cng-enumeration.
 $process=Get-Process -Id $enumeration.ProcessId -ErrorAction SilentlyContinue
 if($null -ne $process){try{if($process.StartTime.ToUniversalTime() -eq ([DateTimeOffset]$enumeration.StartedUtc).UtcDateTime -and $process.Path -eq $enumeration.Executable){throw 'The read-only enumeration tool remains.'}}finally{$process.Dispose()}}
 $identities[([string]$enumeration.ProcessId+'|'+$enumeration.StartedUtc+'|'+$enumeration.Executable)]=@{ProcessId=$enumeration.ProcessId;StartedUtc=$enumeration.StartedUtc;Executable=$enumeration.Executable;ExactIdentityAbsent=$true}
-$prior=Get-Content -LiteralPath (Join-Path $repo 'docs/verification/2026-10-05-next002-native-access/native/ccabb1b8008d492986e30a7fca83f2f8/before.json') -Raw|ConvertFrom-Json
+$baselinePath=Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/staging-preflight-completion.json'
+$baseline=Get-Content -LiteralPath $baselinePath -Raw|ConvertFrom-Json
+# Normal services restarted outside these runs on 6 October. Historical before/
+# after records remain unchanged; current census uses the freshly checked lifetime.
+$prior=@{Services=$baseline.ExistingServices;Files=$baseline.ExistingFiles}
 $current=@{Services=@(foreach($old in $prior.Services){$service=Get-CimInstance Win32_Service -Filter "Name='$($old.Name)'";$process=Get-Process -Id $service.ProcessId;try{@{Name=$service.Name;StartName=$service.StartName;PathName=$service.PathName;Identity=(Get-VaultFixtureProcessIdentity $process)}}finally{$process.Dispose()}});
     Files=@(foreach($old in $prior.Files){@{Path=$old.Path;Sha256=(Get-FileHash -LiteralPath $old.Path).Hash}})}
 $normalUnchanged=Test-VaultFixtureInstallationUnchanged $prior $current
 if(-not $normalUnchanged){throw 'Normal installation changed from the recorded live baseline.'}
+$normalPostmaster=Get-Content -LiteralPath (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/prepared-check-20261007.json') -Raw|ConvertFrom-Json
+$expected=$normalPostmaster.Postmaster
+$pidLines=[IO.File]::ReadAllLines((Join-Path $expected.DataDirectory 'postmaster.pid'))
+if([int]$pidLines[0] -ne $expected.ProcessId -or [IO.Path]::GetFullPath($pidLines[1]) -ine $expected.DataDirectory -or [int]$pidLines[3] -ne $expected.Port){throw 'Normal postmaster binding changed.'}
+$process=Get-Process -Id $expected.ProcessId
+try {if($process.Path -ine $expected.Executable -or $process.StartTime.ToUniversalTime() -ne ([DateTimeOffset]$expected.StartedUtc).UtcDateTime){throw 'Normal postmaster lifetime changed.'}}finally{$process.Dispose()}
 $prerequisites=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'read-only-prerequisites.json') -Raw|ConvertFrom-Json
 $runnerTrust=@(Get-ChildItem Cert:\CurrentUser\TrustedPeople|ForEach-Object Thumbprint|Sort-Object)
 $machineTrust=@(Get-ChildItem Cert:\LocalMachine\TrustedPeople|ForEach-Object Thumbprint|Sort-Object)
@@ -94,7 +108,7 @@ $primary=@(foreach($pair in @(@{Name='fluxvault-index.json';Hash='9752DDF184A20E
 })
 if(@($primary|Where-Object Unchanged -ne $true).Count){throw 'Unrelated primary checkout edits changed.'}
 @{ObservedUtc=[DateTime]::UtcNow.ToString('o');Roots=@($roots);CapturedProcesses=@($identities.Values);CapturedCount=$identities.Count;
-    NormalInstallationUnchanged=$normalUnchanged;NormalCertificateStoresUnchanged=$trustUnchanged;RemovedSigningKeys=@($removedKeys);
+    NormalInstallationUnchanged=$normalUnchanged;NormalBaseline=$baselinePath;NormalPostmasterUnchanged=$true;NormalCertificateStoresUnchanged=$trustUnchanged;RemovedSigningKeys=@($removedKeys);
     DatabaseIntents=@($databases);DatabaseIntentCount=$databases.Count;
     FixturePackagesAbsent=$true;FixtureProfilesAbsent=$true;FixtureAccountsAbsent=$true;FixtureGroupsAbsent=$true;FixtureTasksAbsent=$true;UnrelatedPrimaryEdits=$primary}|
     ConvertTo-Json -Depth 6|Set-Content -LiteralPath (Join-Path $PSScriptRoot 'artifact-process-census.json')

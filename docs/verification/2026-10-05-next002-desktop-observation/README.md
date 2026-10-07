@@ -87,3 +87,11 @@ The earlier records/renders remain unchanged. No new unattended UI is left
 running; another bounded session awaits the user's readiness. Larger-inventory
 responsiveness and the successful installed workflow still require their real
 interfaces; the empty rejecting-client window cannot prove them.
+
+On 7 October the current Computer Use `sky.list_windows` interface successfully
+enumerates the unlocked desktop's windows. There is no active FluxVault fixture
+window; this read-only check proves tool availability, not repaired pixels or
+desktop acceptance. The readiness question remains pending. Another bounded
+session must supply actual keyboard/focus/failure-state, Narrator, monitor DPI,
+contrast/rendering and non-empty inventory responsiveness observations. No
+unattended UI session was launched and no unrelated window received input.

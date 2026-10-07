@@ -81,8 +81,13 @@ function Write-VaultFixturePackageRecord {
     } finally {if(Test-Path -LiteralPath $temporary){Remove-Item -LiteralPath $temporary -Force}}
 }
 
+function New-VaultFixtureUserTrustStore {
+    return [Security.Cryptography.X509Certificates.X509Store]::new('TrustedPeople','CurrentUser')
+}
+
 function New-VaultFixtureIdentityPackage {
-    param([hashtable]$Journal,[string]$SdkDirectory,[scriptblock]$InvokeTool)
+    param([hashtable]$Journal,[string]$SdkDirectory,[scriptblock]$InvokeTool,
+        [ValidateSet('PerUser','MachineParent')][string]$TrustMode='PerUser')
     $root=Resolve-VaultFixtureRoot $Journal.Root $Journal.Parent $Journal.FixtureId
     $runtime=Join-Path $root 'runtime'
     $packageName='FVGate.Package.'+$Journal.FixtureId
@@ -155,7 +160,7 @@ function New-VaultFixtureIdentityPackage {
                 if($call.Executable -eq 'signtool.exe'){Remove-VaultFixtureImportedKeys $Journal}
             }
         }
-        $metadata=@{Version=1;FixtureId=$Journal.FixtureId;Root=$root;PackageName=$packageName;Publisher=$publisher;
+        $metadata=@{Version=1;FixtureId=$Journal.FixtureId;Root=$root;PackageName=$packageName;Publisher=$publisher;TrustMode=$TrustMode;
             Thumbprint=$certificate.Thumbprint;PackageSha256=(Get-FileHash -LiteralPath $packagePath).Hash;
             CertificateSha256=(Get-FileHash -LiteralPath $certificatePath).Hash;ApphostSha256=(Get-FileHash -LiteralPath $apphost).Hash}
         Write-VaultFixturePackageRecord (Join-Path $runtime 'package-identity.json') $metadata

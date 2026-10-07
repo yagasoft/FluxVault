@@ -94,3 +94,26 @@ reviewed interruption correction.
 This assessment grants no machine-store mutation, packaged S01 acceptance,
 normal installation rollout or full G01 completion. The original user approval
 covered only A/B per-user trust/package/profiles and guided disposable D01.
+
+## 7 October consolidated acceptance
+
+The user separately approved the fixed machine-leaf rehearsal. Independent Astra
+review accepts the inherited-trust correction and current commissioning lifetime
+repin. One blocker was found before native execution: the .NET fixture reader
+would reject the new trust-mode field. Test-first correction adds only a validated
+defaulted field to that existing strict configuration; unknown JSON fields remain
+refused. The reviewer accepts that correction after checking the actual reader.
+
+The affected suite passes 151/151 with no skips/new build warnings and joined exit
+zero. The real corrected rehearsal passes packaged A5/B4, verifies exact inherited
+public trust and records parent retirement. All 59 journal resources are Removed;
+cleanup's three guards and the twelve-root/208-identity census pass. Review accepts
+bounded S01 packaged-caller proof and cleanup, with no technical blocker.
+Post-parent effective absence is proved by the enforced cleanup checks and the
+completed journal; separate post-cleanup A/B owner records were not retained.
+
+The reviewer also accepts the preserved historical normal baseline and refreshed
+fixed lifetimes: read-only Prepare matches all 208 candidate/204 legacy files,
+pins the current actual postmaster and reports `RolloutApproved=false`. No normal
+authentication, ACL, installation or service mutation occurred. D01, final G01
+consolidation and separate normal rollout/live acceptance remain open.

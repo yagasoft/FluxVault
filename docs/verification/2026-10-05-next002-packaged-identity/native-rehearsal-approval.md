@@ -55,11 +55,14 @@ developer/sideload policy and certificate stores unchanged.
 
 Normal FluxVault rollout remains separately gated. PostgreSQL is not restarted.
 
-## Proposed machine-trust extension, awaiting separate approval
+## Approved bounded machine-trust extension
 
 Technical preparation is independently accepted after the reopened-boundary
 correction; final affected checks pass 116/116 with no skips or new warnings.
-No machine-trust execution has occurred. User resource approval is pending.
+The user approved this exact additional scope on 7 October 2026. Execution now
+uses the prepared command below; normal installation rollout remains separately
+gated. Current Windows service lifetimes differ from the 5 October evidence;
+the new run captures their current identities and requires before/after equality.
 
 The approved per-user attempt reached registration and failed with `0x800B0109`.
 Its exact root, accounts/profiles, package trust and imported signing keys were
@@ -92,8 +95,8 @@ services/data/authentication and PostgreSQL postmaster unchanged.
 Interrupted cleanup keeps the package trust/policy snapshot requirement from
 the loaded `before.json`, including a stop after import but before profile intents.
 
-Machine trust temporarily affects all Windows users. It is outside the earlier
-per-user approval and requires explicit user approval before this command:
+Machine trust temporarily affects all Windows users. The 7 October approval
+extends the earlier per-user scope only as specified here, for this command:
 
 ```powershell
 ./eng/test-windows-database-boundary.ps1 -FixtureId bf4645f9aaba450abb0b822dea68a6c7 `

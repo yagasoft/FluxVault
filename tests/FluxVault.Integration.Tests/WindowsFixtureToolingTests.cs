@@ -1264,6 +1264,122 @@ public sealed class WindowsFixtureToolingTests
         Assert.True(result.GetProperty("NoProfileOwner").GetBoolean());
     }
 
+    [Theory]
+    [InlineData("MachineParent", "Client", "None", "Reached registration boundary.", 0, 0)]
+    [InlineData("MachineParent", "Client", "Missing", "Machine-parent certificate publication was not verified.", 0, 0)]
+    [InlineData("MachineParent", "Client", "Changed", "Machine-parent certificate publication was not verified.", 0, 0)]
+    [InlineData("MachineParent", "Client", "Package", "Owned package collision; no existing resource was changed.", 0, 0)]
+    [InlineData("MachineParent", "Client", "Mode", "Packaged fixture trust mode mismatch.", 0, 0)]
+    [InlineData("MachineParent", "Cleanup", "Missing", "", 0, 0)]
+    [InlineData("MachineParent", "Cleanup", "Registered", "", 0, 0)]
+    [InlineData("MachineParent", "Cleanup", "OwnerMode", "Package cleanup ownership mismatch.", 0, 0)]
+    [InlineData("MachineParent", "Cleanup", "None", "Parent-owned effective certificate trust remains.", 0, 0)]
+    [InlineData("PerUser", "Client", "Missing", "Reached registration boundary.", 1, 1)]
+    [InlineData("PerUser", "Client", "None", "Owned per-user certificate collision; no existing resource was changed.", 0, 0)]
+    public async Task Packaged_launcher_observes_trust_ownership_through_its_actual_flow(
+        string mode, string action, string fault, string expectedFailure, int adds, int removes)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            Import-Module (Join-Path (Split-Path $module) 'packaged-identity.psm1') -Force
+            $launcher=Join-Path (Split-Path $module) 'invoke-packaged-identity.ps1'
+            $canonical=Join-Path 'C:\ProgramData\FluxVault.Tests\NEXT002' $fixtureId
+            $caseRoot=$root
+            $null=New-Item -ItemType Directory -Path (Join-Path $root 'runtime'),(Join-Path $root 'output-A')
+            $sid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+            @{FixtureId=$fixtureId;Root=$canonical;Actors=@{A=$sid};PackageTrustMode='MODE'} |
+                ConvertTo-Json -Depth 3 | Set-Content -LiteralPath (Join-Path $root 'runtime/database-probe.json')
+            $rsa=[Security.Cryptography.RSA]::Create(2048)
+            $request=[Security.Cryptography.X509Certificates.CertificateRequest]::new(('CN=FluxVault Fixture '+$fixtureId),$rsa,
+                [Security.Cryptography.HashAlgorithmName]::SHA256,[Security.Cryptography.RSASignaturePadding]::Pkcs1)
+            $signed=$request.CreateSelfSigned([DateTimeOffset]::UtcNow.AddMinutes(-1),[DateTimeOffset]::UtcNow.AddHours(1))
+            $cer=Join-Path $root 'runtime/identity.cer'
+            [IO.File]::WriteAllBytes($cer,$signed.Export([Security.Cryptography.X509Certificates.X509ContentType]::Cert))
+            $public=[Security.Cryptography.X509Certificates.X509CertificateLoader]::LoadCertificateFromFile($cer)
+            [IO.File]::WriteAllText((Join-Path $root 'runtime/identity.msix'),'not installed')
+            [IO.File]::WriteAllText((Join-Path $root 'runtime/FluxVault.TestHost.exe'),'not executed')
+            $metadata=@{Version=1;FixtureId=$fixtureId;Root=$canonical;PackageName=('FVGate.Package.'+$fixtureId);
+                Publisher=$public.Subject;Thumbprint=$public.Thumbprint;TrustMode='MODE'}
+            if('FAULT' -eq 'Mode'){$metadata.TrustMode='Unknown'}
+            foreach($pair in @(@{Name='identity.msix';Field='PackageSha256'},@{Name='identity.cer';Field='CertificateSha256'},@{Name='FluxVault.TestHost.exe';Field='ApphostSha256'})) {
+                $metadata[$pair.Field]=(Get-FileHash -LiteralPath (Join-Path $root ('runtime/'+$pair.Name))).Hash
+            }
+            $metadata|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $root 'runtime/package-identity.json')
+            if('ACTION' -eq 'Cleanup') {
+                $owner=@{Version=1;FixtureId=$fixtureId;UserSid=$sid;PackageName=$metadata.PackageName;Publisher=$metadata.Publisher;
+                    Thumbprint=$metadata.Thumbprint;TrustMode='MODE';State='PackageCreated'}
+                if('FAULT' -eq 'OwnerMode'){$owner.TrustMode='PerUser'}
+                Write-VaultFixturePackageRecord (Join-Path $root 'output-A/package-owner.json') $owner
+            }
+            # Substitute only native certificate/package APIs and map the fixed
+            # read/write paths into this real isolated fixture. Run the full launcher.
+            $fakeStore=[pscustomobject]@{Items=[Security.Cryptography.X509Certificates.X509Certificate2Collection]::new();Adds=0;Removes=0;Opened=[Collections.Generic.List[string]]::new()}
+            $fakeStore|Add-Member ScriptProperty Certificates {
+                $snapshot=[Security.Cryptography.X509Certificates.X509Certificate2Collection]::new()
+                foreach($item in $this.Items){$null=$snapshot.Add([Security.Cryptography.X509Certificates.X509CertificateLoader]::LoadCertificate($item.RawData))}
+                return ,$snapshot
+            }
+            $changed=$null
+            if('FAULT' -eq 'Changed') {
+                $otherRequest=[Security.Cryptography.X509Certificates.CertificateRequest]::new('CN=Different leaf',$rsa,
+                    [Security.Cryptography.HashAlgorithmName]::SHA256,[Security.Cryptography.RSASignaturePadding]::Pkcs1)
+                $changed=$otherRequest.CreateSelfSigned([DateTimeOffset]::UtcNow.AddMinutes(-1),[DateTimeOffset]::UtcNow.AddHours(1))
+                $null=$fakeStore.Items.Add($changed)
+            } elseif('FAULT' -notin @('Missing','Registered')){$null=$fakeStore.Items.Add($public)}
+            $fakeStore|Add-Member ScriptMethod Open {param($flags) $this.Opened.Add($flags.ToString())}
+            $fakeStore|Add-Member ScriptMethod Dispose {}
+            $fakeStore|Add-Member ScriptMethod Add {param($certificate) $this.Adds++;$null=$this.Items.Add([Security.Cryptography.X509Certificates.X509CertificateLoader]::LoadCertificate($certificate.RawData))}
+            $fakeStore|Add-Member ScriptMethod Remove {param($certificate) $this.Removes++;foreach($item in @($this.Items|Where-Object Thumbprint -eq $certificate.Thumbprint)){$this.Items.Remove($item);$item.Dispose()}}
+            $factory={return $fakeStore}.GetNewClosure()
+            & (Get-Module packaged-identity) {param($factory) Set-Item function:script:New-VaultFixtureUserTrustStore $factory} $factory
+            # Imports were performed above so the isolated native boundary survives.
+            function Import-Module {param($Name,[switch]$Force)}
+            function Join-Path {
+                param($Path,$ChildPath)
+                if($Path -eq $canonical){$Path=$caseRoot}
+                Microsoft.PowerShell.Management\Join-Path $Path $ChildPath
+            }
+            $nativeCalls=[Collections.Generic.List[string]]::new()
+            $packageState=@{Present=('FAULT' -in @('Package','Registered'))}
+            function Get-AppxPackage {
+                param($Name)
+                if($packageState.Present){[pscustomobject]@{Publisher=$metadata.Publisher;PackageFullName=($metadata.PackageName+'_1.0.0.0_x64__collision')}}
+            }
+            function Add-AppxPackage {param($Path,$ExternalLocation,$ErrorAction) $nativeCalls.Add('Register');throw 'Reached registration boundary.'}
+            function Remove-AppxPackage {param($Package,$ErrorAction) $nativeCalls.Add('Remove');$packageState.Present=$false}
+            $failure='';$reply=$null
+            try { $reply=& $launcher -Root $canonical -Actor A -Action 'ACTION' | ConvertFrom-Json }
+            catch { $failure=$_.Exception.Message.Split(' Certificate publication:')[0] }
+            $ownerPath=Join-Path $caseRoot 'output-A/package-owner.json'
+            $owner=if(Test-Path -LiteralPath $ownerPath){Get-Content -LiteralPath $ownerPath -Raw|ConvertFrom-Json}else{$null}
+            @{Failure=$failure;Adds=$fakeStore.Adds;Removes=$fakeStore.Removes;OpenFlags=@($fakeStore.Opened);
+                NativeCalls=@($nativeCalls);Owner=$owner;Reply=$reply}|ConvertTo-Json -Depth 8 -Compress
+            if($changed){$changed.Dispose()};$public.Dispose();$signed.Dispose();$rsa.Dispose()
+            """.Replace("MODE", mode, StringComparison.Ordinal).Replace("FAULT", fault, StringComparison.Ordinal)
+                .Replace("ACTION", action, StringComparison.Ordinal));
+        Assert.Equal(expectedFailure, result.GetProperty("Failure").GetString());
+        Assert.Equal(adds, result.GetProperty("Adds").GetInt32());
+        Assert.Equal(removes, result.GetProperty("Removes").GetInt32());
+        var registrations = result.GetProperty("NativeCalls").EnumerateArray().Select(x => x.GetString()).ToArray();
+        Assert.Equal(expectedFailure == "Reached registration boundary." ? new[] { "Register" }
+            : fault == "Registered" ? ["Remove"] : [], registrations);
+        if (mode == "MachineParent")
+            Assert.DoesNotContain("ReadWrite", result.GetProperty("OpenFlags").EnumerateArray().Select(x => x.GetString()));
+        if (expectedFailure == "Reached registration boundary.")
+        {
+            var owner = result.GetProperty("Owner");
+            Assert.Equal(mode, owner.GetProperty("TrustMode").GetString());
+            Assert.True(owner.GetProperty("TrustProof").GetProperty("ReopenedVerified").GetBoolean());
+            Assert.Equal(mode == "PerUser", owner.GetProperty("CertificateRemoved").GetBoolean());
+            Assert.Equal(mode == "PerUser", owner.GetProperty("EffectiveTrustAbsent").GetBoolean());
+        }
+        if (action == "Cleanup" && fault is "Missing" or "Registered")
+        {
+            Assert.True(result.GetProperty("Reply").GetProperty("EffectiveTrustAbsent").GetBoolean());
+            Assert.False(result.GetProperty("Reply").GetProperty("CertificateRemoved").GetBoolean());
+        }
+    }
+
     [Fact]
     public async Task Identity_package_owns_its_logo_and_preserves_cloned_runtime_assets()
     {
@@ -1303,8 +1419,10 @@ public sealed class WindowsFixtureToolingTests
         Assert.True(result.GetProperty("NoKey").GetBoolean());
     }
 
-    [Fact]
-    public async Task Interrupted_package_cleanup_reaches_B_after_A_is_already_unregistered()
+    [Theory]
+    [InlineData("PerUser")]
+    [InlineData("MachineParent")]
+    public async Task Interrupted_package_cleanup_reaches_B_after_A_is_already_unregistered(string trustMode)
     {
         using var fixture = new ScriptFixture();
         var result = await fixture.RunAsync("""
@@ -1313,6 +1431,9 @@ public sealed class WindowsFixtureToolingTests
             $definition=$ast.Find({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Remove-OwnedPackageUsers'},$true)
             Invoke-Expression $definition.Extent.Text
             $fixtureJournal=New-VaultFixtureJournal $root $parent $fixtureId
+            $fixtureRoot=$root
+            $null=New-Item -ItemType Directory -Path (Join-Path $root 'runtime')
+            @{PackageTrustMode='TRUST_MODE'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $root 'runtime/database-probe.json')
             $fixtureDescription='FluxVault N2 '+$fixtureId
             $fixtureCredentials=@{A='not used';B='not used'}
             $users=@{}
@@ -1322,7 +1443,7 @@ public sealed class WindowsFixtureToolingTests
                 $users[$name]=[pscustomobject]@{Name=$name;SID=[pscustomobject]@{Value=$sid};Description=$fixtureDescription}
                 Add-VaultFixtureIntent $fixtureJournal Account $name
                 Set-VaultFixtureResourceState $fixtureJournal Account $name Created @{Sid=$sid}
-                $identity=@{Sid=$sid;PackageName=('FVGate.Package.'+$fixtureId);Publisher=('CN=FluxVault Fixture '+$fixtureId);Thumbprint=('A'*40)}
+                $identity=@{Sid=$sid;PackageName=('FVGate.Package.'+$fixtureId);Publisher=('CN=FluxVault Fixture '+$fixtureId);Thumbprint=('A'*40);TrustMode='TRUST_MODE'}
                 Add-VaultFixtureIntent $fixtureJournal PackageUser "package-$actor" $identity
                 Set-VaultFixtureResourceState $fixtureJournal PackageUser "package-$actor" Created $identity
             }
@@ -1332,7 +1453,7 @@ public sealed class WindowsFixtureToolingTests
             function Invoke-UserActor {
                 param($Actor,$HostAddress,$ClientKind)
                 $visited.Add($Actor);$null=$remaining.Remove($Actor)
-                [pscustomobject]@{Results=@([pscustomobject]@{Kind='Packaged';Result=[pscustomobject]@{PackageRemoved=$true;CertificateRemoved=$true}})}
+                [pscustomobject]@{Results=@([pscustomobject]@{Kind='Packaged';Result=[pscustomobject]@{PackageRemoved=$true;CertificateRemoved=('TRUST_MODE' -eq 'PerUser');TrustMode='TRUST_MODE';TrustOwner=$(if('TRUST_MODE' -eq 'MachineParent'){'MachineParent'}else{'Actor'});EffectiveTrustAbsent=$true}})}
             }
             function Get-AppxPackage {
                 param([switch]$AllUsers,$Name,$User)
@@ -1343,7 +1464,7 @@ public sealed class WindowsFixtureToolingTests
             Remove-OwnedPackageUsers
             $reopened=Read-VaultFixtureJournal $root $parent $fixtureId
             @{Visited=@($visited);Remaining=$remaining.Count;Removed=@($reopened.Resources|Where-Object {$_.Kind -eq 'PackageUser' -and $_.State -eq 'Removed'}).Count}|ConvertTo-Json -Compress
-            """);
+            """.Replace("TRUST_MODE", trustMode, StringComparison.Ordinal));
         Assert.Equal(new[] { "A", "B" }, result.GetProperty("Visited").EnumerateArray().Select(x => x.GetString()).ToArray());
         Assert.Equal(0, result.GetProperty("Remaining").GetInt32());
         Assert.Equal(2, result.GetProperty("Removed").GetInt32());

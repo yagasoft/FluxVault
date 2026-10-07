@@ -178,7 +178,8 @@ and verifies absence on success, failure or interrupted recovery. A collision,
 changed identity or reappearance after retirement is preserved for review.
 No Root store, private-key store, normal-user trust or Windows policy is changed.
 The [approval record](native-rehearsal-approval.md) specifies this additional
-scope and its executable recovery command. Machine trust has not been executed.
+scope and its executable recovery command. Machine trust had not been executed
+at that preparation checkpoint; the 7 October result is recorded below.
 
 Meaningful retirement-owner/fingerprint and reappearance regressions failed
 before their guards; the native-key case likewise fails before the existence
@@ -209,6 +210,59 @@ zero skips and no new build warnings. The independent reviewer accepts the
 complete bounded preparation with no blocking finding. The separate machine
 resource approval, actual packaged native result/teardown, D01 observations and
 normal rollout/live validation remain open; NEXT-002 is not complete.
+
+## Authorised packaged result on 7 October
+
+The user approved the exact fixed fixture's bounded machine-leaf scope. The
+[first machine attempt](native/bf4645f9aaba450abb0b822dea68a6c7-machine-trust-first-attempt/result.json)
+stopped at the launcher's combined package/certificate collision guard. Cleanup
+retired its leaf and every owned resource. Windows CurrentUser TrustedPeople
+inherits machine trust; the original guard did not distinguish that inherited
+leaf from a per-user import. The correction binds `PerUser`/`MachineParent` to
+protected runtime/package metadata, journal identity and actor ownership. Machine
+mode opens the effective user store read-only, verifies exact public bytes and
+native SID before registration, and never imports or removes user trust.
+Unconditional package collisions still fail before publication. Cleanup checks
+owned receipts before package removal and requires fresh effective absence after
+parent retirement, including when the package remains registered.
+
+The full launcher regressions use real certificates/files/receipts and substitute
+only native trust/package boundaries. They reproduce the inherited collision
+before correction and cover wrong/missing trust, mismatched mode/ownership,
+package/per-user collisions and cleanup before/after parent retirement. Independent
+review caught a strict test-host configuration mismatch before retry; the existing
+reader now accepts a validated defaulted mode while rejecting null/unknown modes
+and unknown JSON fields. Its actual owned-file reader regressions failed before
+correction. The combined affected [suite](machine-parent-final.trx) passes 151/151
+without skips or new build warnings; its parent exits zero and joins.
+
+The corrected [native run](native/bf4645f9aaba450abb0b822dea68a6c7-machine-trust/result.json)
+exits zero with no failure. Actual packaged creator A passes all five checks,
+including history and independently verified caller-authorised recovery.
+Packaged B passes all four denial checks: package identity cannot grant an
+ungranted Windows user repository identity or history. A/B independently reopen
+the same inherited public leaf, without private material. Parent retirement is
+recorded for thumbprint `B756220F7B9D643EFD96867569C1838064B775FA`, CER SHA-256
+`CA8CEB7D7879DB756931AB2F51073B474E1DB74C74C302E76A55644395B0F8BC`.
+Post-parent effective absence is supported by enforced cleanup checks and the
+completed journal; no separate post-cleanup A/B owner files were retained.
+
+The same run also passes creator A's 143 workflow checks, SYSTEM's 166 checks and
+36 setup regressions, with ungranted B denied. Its [teardown](native/bf4645f9aaba450abb0b822dea68a6c7-machine-trust/cleanup.json)
+records joined jobs, root removal and unchanged normal installation; all 59
+journal resources are Removed. The refreshed existing census verifies twelve
+private roots and 208 exact captured identities absent, imported keys retired,
+and no package/profile/account/group/task remaining. Normal trust, configuration,
+authentication, actual PostgreSQL postmaster and unrelated primary edits match.
+Historical census/baseline records are preserved: services restarted outside
+these runs on 6 October, so the current census uses the freshly checked lifetimes
+and separately checks each retained before/after pair.
+
+Independent Astra review accepts this bounded S01 packaged proof, correction and
+cleanup with no remaining blocker. Existing elevated/user/group/reopen evidence
+remains applicable. D01 actual desktop observations, final G01 consolidation and
+separately authorised normal rollout/live validation remain open. The frozen
+normal product candidate is unchanged; this is not NEXT-002 completion.
 
 ## Approved integrity refresh
 

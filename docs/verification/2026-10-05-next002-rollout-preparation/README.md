@@ -407,10 +407,10 @@ authentication/path `5d5ba09` and interruption `ad6087a` remain valid.
 
 | Matrix gate | Exact remaining dependency |
 | --- | --- |
-| S01 | Exact A/B profiles/package and per-user trust were approved and exercised. Native registration fails with `0x800B0109`; cleanup passes. Independent review accepts the bounded default-off machine TrustedPeople public-leaf fallback; separate resource approval and real packaged-token/teardown verification remain. No normal rollout approval is implied. |
+| S01 | Closed by the separately approved 7 October fixed-fixture machine-leaf rehearsal: actual packaged A5/B4, caller recovery independently verified, ungranted identity/history refused, exact trust/resources retired. Independent Astra review accepts the proof and cleanup; prior native elevated/user/group/reopen evidence remains valid. No normal rollout approval is implied. |
 | D01 | Guided actual-desktop keyboard/Narrator/DPI/high-contrast/rendering/larger-inventory responsiveness observations remain. Native controls bind but capture pixels are blank. The approved eight-minute manual attempt closed/joined without user observations or interaction; it closes no desktop gate. A ready user session or repaired capture is the concrete dependency. Logical renders cannot satisfy these observations. |
 | S05 | Execute the fixed installed SYSTEM setup and verify normal SSPI/database/filesystem boundary, unchanged unrelated PG state/postmaster and checked legacy recovery during the separately approved rollout. Disposable native worker/component proofs and exact preparation are retained. |
-| G01 | Whole-branch source and executable preparation are independently accepted, including the response correction below. Combined/affected checks and cleanup pass. S01/D01 proofs and separately approved normal commissioning/live acceptance remain before full gate completion. |
+| G01 | Whole-branch source and executable preparation are independently accepted, including the response correction below and 7 October fixture/repin delta. Affected checks and S01 cleanup pass. D01 observations, final consolidation and separately approved normal commissioning/live acceptance remain before full gate completion. |
 
 This is a candidate procedure and checked preparation, not an installed rollback
 drill, full matrix acceptance or NEXT-002 completion. No normal installation,
@@ -485,3 +485,25 @@ fixture code changed: candidate `51b103b3c75645dfaa36600e2cbe07a5`, product sour
 configuration/authentication/ACL bytes and the executable normal commissioning
 procedure remain frozen. S05 installed execution and full G01/live acceptance
 remain behind the separately required rollout approval.
+
+On 7 October, the [authorised packaged rehearsal](../2026-10-05-next002-packaged-identity/README.md)
+closes the remaining S01 packaged proof. The correction is confined to fixture
+trust ownership and strict test-host configuration; candidate/source, ticket,
+SQL, proposed authentication/ACL bytes and rollback ordering remain unchanged.
+The normal services had restarted outside this work on 6 October. Fresh
+[read-only capture](staging-preflight-20261007.json) matches the installed 204-file
+payload, retained installer, configuration/authentication hashes, ACLs and service
+rollback policy. The original input is preserved as
+`staging-preflight-completion-20261005.json`; only service lifetimes/observation
+time change in the active input. The fixed actual postmaster is now PID 10660,
+start `2026-10-06T09:31:44.0114872Z`, same executable/data/5432 binding. The existing
+[Prepare command result](prepared-check-20261007.json) matches all 208 candidate
+and 204 legacy hashes and reports no rollout authority. Independent review
+accepts this refresh. Normal PostgreSQL was never restarted by this work.
+
+The critical path is D01's ready guided desktop session (including non-empty
+inventory responsiveness), then final technical consolidation and the one exact
+normal rollout decision. S05 installed authentication/setup/SCM/filesystem proof
+and live save → backup → history → verified recovery follow that separate
+approval; the installed legacy reinstall drill remains unexecuted. No new plan
+or gate is introduced, and normal rollout approval is not yet requested.

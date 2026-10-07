@@ -7,6 +7,60 @@ namespace FluxVault.Integration.Tests;
 
 public sealed class WindowsDatabaseProbeTests
 {
+    [Theory]
+    [InlineData(null)]
+    [InlineData("PerUser")]
+    [InlineData("MachineParent")]
+    public void Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(string? mode)
+    {
+        var configuration = Configuration() with { RunSingleVaultTests = true, RunPackagedIdentityTests = true };
+        var json = JsonSerializer.SerializeToNode(configuration)!.AsObject();
+        if (mode is not null) json["PackageTrustMode"] = mode;
+        else json.Remove("PackageTrustMode");
+        WithOwnedConfiguration(configuration, json.ToJsonString(), path =>
+        {
+            var actual = WindowsDatabaseProbeConfiguration.Read(path);
+            Assert.Equal(mode ?? "PerUser", JsonSerializer.SerializeToElement(actual).GetProperty("PackageTrustMode").GetString());
+            Assert.Equal(configuration.FixtureId, actual.FixtureId);
+        });
+    }
+
+    [Theory]
+    [InlineData("Unknown", false)]
+    [InlineData(null, false)]
+    [InlineData("MachineParent", true)]
+    public void Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(string? mode, bool unknownField)
+    {
+        var configuration = Configuration() with { RunSingleVaultTests = true, RunPackagedIdentityTests = true };
+        var json = JsonSerializer.SerializeToNode(configuration)!.AsObject();
+        json["PackageTrustMode"] = mode;
+        if (unknownField) json["FutureUnapprovedField"] = true;
+        WithOwnedConfiguration(configuration, json.ToJsonString(), path =>
+        {
+            if (unknownField) Assert.Throws<JsonException>(() => WindowsDatabaseProbeConfiguration.Read(path));
+            else Assert.Throws<ArgumentException>(() => WindowsDatabaseProbeConfiguration.Read(path));
+        });
+    }
+
+    private static void WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, string json, Action<string> assertion)
+    {
+        var root = configuration.Root;
+        Assert.False(Directory.Exists(root));
+        var runtime = Directory.CreateDirectory(Path.Combine(root, "runtime"));
+        try
+        {
+            var path = Path.Combine(runtime.FullName, "database-probe.json");
+            File.WriteAllText(path, json);
+            assertion(path);
+        }
+        finally
+        {
+            WindowsDatabaseProbeConfiguration.RejectReparseComponents(root);
+            Directory.Delete(root, recursive: true);
+            Assert.False(Directory.Exists(root));
+        }
+    }
+
     [Fact]
     public void Interrupted_effect_probe_is_opt_in_and_requires_an_exclusive_single_vault_fixture()
     {

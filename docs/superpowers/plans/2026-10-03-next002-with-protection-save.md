@@ -211,3 +211,15 @@ diagnostic. D01's approved bounded manual session closed/joined without human
 observations; a ready guided session or repaired pixels is its concrete
 dependency. These fixture-only corrections leave the candidate, C01–G01 matrix,
 single-vault architecture, commissioning procedure and roadmap unchanged.
+
+7 October delivery checkpoint: the approved fixed-fixture machine-leaf rehearsal
+now closes S01's actual packaged A/B proof, with independently verified creator
+recovery and complete trust/resource retirement. Independent Astra review accepts
+the bounded correction, native evidence and refreshed normal process pins; the
+candidate, security/configuration contracts and rollback ordering are unchanged.
+Current read-only Prepare matches 208 candidate/204 legacy files. Historical
+normal baselines are preserved after the external 6 October service restart.
+D01 awaits a ready actual desktop session with the required accessibility/display
+and non-empty inventory observations. Final G01 consolidation, the separately
+approved normal installation/S05 and installed live workflow remain the critical
+path. Do not rerun accepted checkpoints or expand the roadmap.

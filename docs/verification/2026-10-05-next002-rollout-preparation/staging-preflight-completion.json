@@ -2,9 +2,9 @@
   "ExistingServices": [
     {
       "Identity": {
-        "ProcessId": 7296,
+        "ProcessId": 8600,
         "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
-        "StartedUtc": "2026-10-01T13:38:16.1935068Z"
+        "StartedUtc": "2026-10-06T09:31:43.1964555Z"
       },
       "PathName": "\"D:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe\" runservice -N \"postgresql-x64-18\" -D \"D:\\Program Files\\PostgreSQL\\18\\data\" -w",
       "StartName": "NT AUTHORITY\\NetworkService",
@@ -14,9 +14,9 @@
     },
     {
       "Identity": {
-        "ProcessId": 40216,
+        "ProcessId": 27988,
         "Executable": "C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe",
-        "StartedUtc": "2026-10-02T07:02:21.5434164Z"
+        "StartedUtc": "2026-10-06T09:33:49.3973829Z"
       },
       "PathName": "\"C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe\"",
       "StartName": "LocalSystem",
@@ -1181,5 +1181,5 @@
   ],
   "ProvisioningImplemented": true,
   "LiveInstalledClients": [],
-  "ObservedUtc": "2026-10-05T07:03:37.9873776Z"
+  "ObservedUtc": "2026-10-07T17:53:31.5937612Z"
 }

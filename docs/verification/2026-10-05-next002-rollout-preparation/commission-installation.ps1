@@ -23,7 +23,7 @@ function New-CommissionContext {
     $postmasterId=[int]([IO.File]::ReadAllLines('D:\Program Files\PostgreSQL\18\data\postmaster.pid')[0])
     $postmaster=Get-Process -Id $postmasterId
     try{$postmasterIdentity=Get-VaultFixtureProcessIdentity $postmaster}finally{$postmaster.Dispose()}
-    if($postmasterIdentity.ProcessId -ne 50372 -or ([DateTimeOffset]$postmasterIdentity.StartedUtc).UtcDateTime -ne ([DateTimeOffset]'2026-10-01T13:38:16.2557791Z').UtcDateTime -or
+    if($postmasterIdentity.ProcessId -ne 10660 -or ([DateTimeOffset]$postmasterIdentity.StartedUtc).UtcDateTime -ne ([DateTimeOffset]'2026-10-06T09:31:44.0114872Z').UtcDateTime -or
         $postmasterIdentity.Executable -ine 'D:\Program Files\PostgreSQL\18\bin\postgres.exe'){throw 'Prepared normal postmaster identity changed.'}
     $postmasterIdentity.DataDirectory='D:\Program Files\PostgreSQL\18\data';$postmasterIdentity.Port=5432
     $logEntry=@(Get-Content 'D:\Program Files\PostgreSQL\18\data\current_logfiles'|Where-Object {$_ -like 'stderr *'})
@@ -486,7 +486,7 @@ if($MyInvocation.InvocationName -ne '.') {
     }else {
         $context=New-CommissionContext
         Assert-CommissionCandidate $context
-        if($Mode -eq 'Prepare') {@{ReadOnly=$true;CandidateId=$context.Candidate.CandidateId;PayloadHashesMatched=208;LegacyHashesMatched=204;TicketSha256=$context.Setup.TicketSha256;RolloutApproved=$false;WorkRoot=$context.WorkRoot}|ConvertTo-Json}
+        if($Mode -eq 'Prepare') {@{ReadOnly=$true;CandidateId=$context.Candidate.CandidateId;PayloadHashesMatched=208;LegacyHashesMatched=204;TicketSha256=$context.Setup.TicketSha256;Postmaster=$context.Postmaster;RolloutApproved=$false;WorkRoot=$context.WorkRoot}|ConvertTo-Json}
         else {
             if(-not $OperationalApprovalRecorded){throw 'Separate rollout approval must be recorded before effects.'}
             try{Initialize-CommissionWork $context;Invoke-CommissionInstallation $context}

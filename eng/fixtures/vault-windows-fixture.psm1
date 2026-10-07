@@ -100,7 +100,7 @@ function Assert-FixtureResource {
         'Process' { @('ProcessId', 'StartedUtc', 'Executable') }
         'Postmaster' { @('ProcessId', 'StartedUtc', 'Executable', 'DataDirectory', 'Port') }
         'Job' { @('KernelName','OwnerSid') }
-        'PackageUser' { @('Sid','PackageName','Publisher','Thumbprint') }
+        'PackageUser' { @('Sid','PackageName','Publisher','Thumbprint','TrustMode') }
         'Profile' { @('Sid','Path') }
         default { throw 'Unknown fixture resource kind.' }
     }
@@ -108,7 +108,7 @@ function Assert-FixtureResource {
     foreach ($key in $Resource.Identity.Keys) {
         if ($key -notin $allowed) { throw 'Unknown fixture identity field; secrets cannot be journalled.' }
     }
-    if ($Resource.State -notin @('Intent','Absent') -and @($allowed | Where-Object { -not $Resource.Identity.ContainsKey($_) }).Count) {
+    if ($Resource.State -notin @('Intent','Absent') -and @($allowed | Where-Object { -not $Resource.Identity.ContainsKey($_) -and -not ($Resource.Kind -eq 'PackageUser' -and $_ -eq 'TrustMode') }).Count) {
         throw 'Created resource identity is incomplete.'
     }
 }
@@ -195,6 +195,7 @@ function Assert-FixturePackageResource {
     $account=@($Journal.Resources | Where-Object {$_.Kind -eq 'Account' -and $_.Name -eq ("FVGate${actor}_261003") -and $_.State -in @('Created','Removed')})
     if($account.Count -ne 1 -or $account[0].Identity.Sid -ne $Resource.Identity.Sid){throw 'Package resource does not belong to its recorded fixture account.'}
     if($Resource.Kind -eq 'PackageUser') {
+        if($Resource.Identity.ContainsKey('TrustMode') -and $Resource.Identity.TrustMode -notin @('PerUser','MachineParent')){throw 'Unknown package trust ownership mode.'}
         if($Resource.Identity.PackageName -ne ('FVGate.Package.'+$Journal.FixtureId) -or
             $Resource.Identity.Publisher -ne ('CN=FluxVault Fixture '+$Journal.FixtureId) -or
             $Resource.Identity.Thumbprint -notmatch '^[A-F0-9]{40}$'){throw 'Package resource is not bound to this fixture identity.'}

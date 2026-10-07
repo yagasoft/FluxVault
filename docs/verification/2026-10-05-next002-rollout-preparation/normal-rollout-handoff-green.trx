@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="340de02f-e188-4875-bb96-7145be0f572b" name="os008@OS008-HOME 2026-10-07 23:01:56" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-07T23:01:56.9775719+03:00" queuing="2026-10-07T23:01:56.9775722+03:00" start="2026-10-07T23:01:53.5935444+03:00" finish="2026-10-07T23:02:09.7549067+03:00" />
+  <TestSettings name="default" id="1686d418-5286-475e-8ff9-3c6054101407">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-07_23_01_56" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="75637933-5cc9-4d22-bc86-4e692889ad65" testId="cd63e943-946c-bf32-4d34-815de2a29d19" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;before-context&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:02.0132608" startTime="2026-10-07T23:01:54.3656302+03:00" endTime="2026-10-07T23:01:56.3897295+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="75637933-5cc9-4d22-bc86-4e692889ad65" />
+    <UnitTestResult executionId="87db60e9-1a88-48cc-8642-2747318ce678" testId="af3eaa87-2a28-cb17-a554-f2947684c8e6" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly" computerName="OS008-HOME" duration="00:00:01.4742028" startTime="2026-10-07T23:02:08.2306060+03:00" endTime="2026-10-07T23:02:09.7045493+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87db60e9-1a88-48cc-8642-2747318ce678" />
+    <UnitTestResult executionId="a787e68f-1bfa-4cf1-81d6-68d09c5a20b5" testId="7f0817d3-bc65-5c7a-7b71-32c665d05538" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;before-completion&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.9654484" startTime="2026-10-07T23:02:00.3581749+03:00" endTime="2026-10-07T23:02:02.3190779+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a787e68f-1bfa-4cf1-81d6-68d09c5a20b5" />
+    <UnitTestResult executionId="3376bfce-adfd-40a3-a085-d96486886ea4" testId="209a6c5f-4d1a-e220-1259-8349d5d6f0e9" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;complete&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:02.0472503" startTime="2026-10-07T23:02:06.1818981+03:00" endTime="2026-10-07T23:02:08.2288904+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3376bfce-adfd-40a3-a085-d96486886ea4" />
+    <UnitTestResult executionId="a6b813ed-135b-4775-82a3-7fc283650297" testId="5fb65553-b098-e624-7958-8eb8c92b4b53" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;changed-original&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.9846456" startTime="2026-10-07T23:01:56.3982879+03:00" endTime="2026-10-07T23:01:58.3755064+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6b813ed-135b-4775-82a3-7fc283650297" />
+    <UnitTestResult executionId="94c5047b-8729-4736-8815-bc43d5471ece" testId="da43d330-8690-cd15-5e70-a0e642e8af24" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;after-intent&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.8629087" startTime="2026-10-07T23:02:02.3196727+03:00" endTime="2026-10-07T23:02:04.1823663+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94c5047b-8729-4736-8815-bc43d5471ece" />
+    <UnitTestResult executionId="ec9ba696-6377-4090-9fd9-8fa11e7d974d" testId="4bb388a9-63c3-0ec3-148b-6356d5806c9d" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;changed-context&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.9985822" startTime="2026-10-07T23:02:04.1828255+03:00" endTime="2026-10-07T23:02:06.1813197+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ec9ba696-6377-4090-9fd9-8fa11e7d974d" />
+    <UnitTestResult executionId="96967a38-4543-43b4-a576-cedb8af10fc3" testId="5adb7e37-73e5-6c91-48db-4b95f4635927" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;after-context&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.9773955" startTime="2026-10-07T23:01:58.3761468+03:00" endTime="2026-10-07T23:02:00.3532679+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96967a38-4543-43b4-a576-cedb8af10fc3" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;after-context&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5adb7e37-73e5-6c91-48db-4b95f4635927">
+      <Execution id="96967a38-4543-43b4-a576-cedb8af10fc3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="af3eaa87-2a28-cb17-a554-f2947684c8e6">
+      <Execution id="87db60e9-1a88-48cc-8642-2747318ce678" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;changed-original&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5fb65553-b098-e624-7958-8eb8c92b4b53">
+      <Execution id="a6b813ed-135b-4775-82a3-7fc283650297" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;before-completion&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="7f0817d3-bc65-5c7a-7b71-32c665d05538">
+      <Execution id="a787e68f-1bfa-4cf1-81d6-68d09c5a20b5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;after-intent&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="da43d330-8690-cd15-5e70-a0e642e8af24">
+      <Execution id="94c5047b-8729-4736-8815-bc43d5471ece" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;changed-context&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="4bb388a9-63c3-0ec3-148b-6356d5806c9d">
+      <Execution id="ec9ba696-6377-4090-9fd9-8fa11e7d974d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;before-context&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="cd63e943-946c-bf32-4d34-815de2a29d19">
+      <Execution id="75637933-5cc9-4d22-bc86-4e692889ad65" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;complete&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="209a6c5f-4d1a-e220-1259-8349d5d6f0e9">
+      <Execution id="3376bfce-adfd-40a3-a085-d96486886ea4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="cd63e943-946c-bf32-4d34-815de2a29d19" executionId="75637933-5cc9-4d22-bc86-4e692889ad65" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="af3eaa87-2a28-cb17-a554-f2947684c8e6" executionId="87db60e9-1a88-48cc-8642-2747318ce678" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f0817d3-bc65-5c7a-7b71-32c665d05538" executionId="a787e68f-1bfa-4cf1-81d6-68d09c5a20b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="209a6c5f-4d1a-e220-1259-8349d5d6f0e9" executionId="3376bfce-adfd-40a3-a085-d96486886ea4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5fb65553-b098-e624-7958-8eb8c92b4b53" executionId="a6b813ed-135b-4775-82a3-7fc283650297" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da43d330-8690-cd15-5e70-a0e642e8af24" executionId="94c5047b-8729-4736-8815-bc43d5471ece" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4bb388a9-63c3-0ec3-148b-6356d5806c9d" executionId="ec9ba696-6377-4090-9fd9-8fa11e7d974d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5adb7e37-73e5-6c91-48db-4b95f4635927" executionId="96967a38-4543-43b4-a576-cedb8af10fc3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.13]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.31]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:15.70]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

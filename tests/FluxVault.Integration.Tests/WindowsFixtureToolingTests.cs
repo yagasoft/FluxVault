@@ -7,6 +7,69 @@ namespace FluxVault.Integration.Tests;
 public sealed class WindowsFixtureToolingTests
 {
     [Theory]
+    [InlineData("complete", true)]
+    [InlineData("before-context", false)]
+    [InlineData("after-context", false)]
+    [InlineData("after-intent", false)]
+    [InlineData("before-completion", false)]
+    [InlineData("changed-context", false)]
+    [InlineData("changed-original", false)]
+    public async Task Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(string scenario, bool accepted)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));. (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/commission-installation.ps1')
+            $value=@{WorkRoot=$root;OperatorSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;
+                OperatorIdentity=@{ProcessId=123;StartedUtc='2026-01-01T00:00:00Z';Executable='original-operator'};
+                InstallationId=[guid]::NewGuid().ToString('N');Targets=@('unchanged-repository','unchanged-database');InstallerUncertain=$false}
+            $value|ConvertTo-Json -Depth 8|Set-Content (Join-Path $root 'context.json')
+            $context=Get-Content (Join-Path $root 'context.json') -Raw|ConvertFrom-Json -AsHashtable
+            $context.IdentitySha256=(Get-FileHash (Join-Path $root 'context.json')).Hash
+            Write-CommissionOperatorReceipt $context 'installer-Install-intent' @{ContextSha256=$context.IdentitySha256;Phase='Install';Path='already-completed-installer';Sha256=('B'*64)}
+            Write-CommissionOperatorReceipt $context 'installer-Install-completed' @{ContextSha256=$context.IdentitySha256;ExitCode=0;Joined=$true;Process=@{ProcessId=456;StartedUtc='2026-01-01T00:00:01Z';Executable='already-completed-installer'}}
+            $names=@('context.json','installer-Install-intent.json','installer-Install-completed.json')
+            $originalHashes=@{};foreach($name in $names){$originalHashes[$name]=(Get-FileHash (Join-Path $root $name)).Hash}
+            Publish-CommissionAclHandoff $context
+            $replayRefused=$false;try{Publish-CommissionAclHandoff $context}catch{$replayRefused=$_.Exception.Message -like '*cannot be replayed*'}
+            $originalsExact=@($names|Where-Object {(Get-FileHash (Join-Path $root ('acl-handoff-original-'+$_))).Hash -cne $originalHashes[$_]}).Count -eq 0
+            $successor=Get-Content (Join-Path $root 'context.json') -Raw|ConvertFrom-Json -AsHashtable
+            $actualProcess=Get-Process -Id $PID
+            try{$operatorMatches=$successor.OperatorIdentity.ProcessId -eq $PID -and ([DateTimeOffset]$successor.OperatorIdentity.StartedUtc).UtcDateTime -eq $actualProcess.StartTime.ToUniversalTime()}finally{$actualProcess.Dispose()}
+            $scenario='SCENARIO_VALUE'
+            if($scenario -like '*context' -or $scenario -in @('after-intent','before-completion')){
+                if($scenario -ne 'changed-context'){Remove-Item -LiteralPath (Join-Path $root 'acl-handoff-completed.json')}
+                if($scenario -eq 'before-context'){foreach($name in $names){Copy-Item (Join-Path $root ('acl-handoff-original-'+$name)) (Join-Path $root $name) -Force}}
+                if($scenario -eq 'after-context'){foreach($name in $names[1..2]){Copy-Item (Join-Path $root ('acl-handoff-original-'+$name)) (Join-Path $root $name) -Force}}
+                if($scenario -eq 'after-intent'){Copy-Item (Join-Path $root ('acl-handoff-original-'+$names[2])) (Join-Path $root $names[2]) -Force}
+                if($scenario -eq 'changed-context'){$successor.Targets=@('different-repository');$successor|ConvertTo-Json -Depth 8|Set-Content (Join-Path $root 'context.json')}
+            }
+            if($scenario -eq 'changed-original'){Add-Content (Join-Path $root 'acl-handoff-original-context.json') 'changed'}
+            # Reopen from the real current context; do not reuse the in-memory successor.
+            $reopened=Get-Content (Join-Path $root 'context.json') -Raw|ConvertFrom-Json -AsHashtable
+            $reopened.IdentitySha256=(Get-FileHash (Join-Path $root 'context.json')).Hash
+            $failure=$null;try{Assert-CommissionAclHandoff $reopened;Assert-CommissionInstallerSettled $reopened}catch{$failure=$_.Exception.Message}
+            $script:effects=0
+            function Stop-CommissionActors {param($Context) $script:effects++}
+            function Invoke-CommissionServiceAction {param($Context,$Action) $script:effects++}
+            if($failure){try{Invoke-CommissionRollback $reopened}catch{}}
+            @{Failure=$failure;OriginalsExact=$originalsExact;OperatorMatches=$operatorMatches;TargetsUnchanged=($successor.Targets -join ',') -ceq 'unchanged-repository,unchanged-database';
+                Effects=$script:effects;ReplayRefused=$replayRefused;OriginalInstallerRetained=(Get-Content (Join-Path $root 'acl-handoff-original-installer-Install-completed.json') -Raw|ConvertFrom-Json).Process.ProcessId -eq 456}|ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.True(result.GetProperty("OriginalsExact").GetBoolean());
+        Assert.True(result.GetProperty("OperatorMatches").GetBoolean());
+        Assert.True(result.GetProperty("OriginalInstallerRetained").GetBoolean());
+        Assert.True(result.GetProperty("ReplayRefused").GetBoolean());
+        Assert.Equal(0, result.GetProperty("Effects").GetInt32());
+        if (accepted)
+        {
+            Assert.True(result.GetProperty("TargetsUnchanged").GetBoolean());
+            Assert.Equal(JsonValueKind.Null, result.GetProperty("Failure").ValueKind);
+        }
+        else Assert.Contains(scenario == "changed-original" ? "Frozen input changed" : scenario == "changed-context" ? "ACL handoff binding changed" : "ACL handoff is partial",
+            result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+    }
+
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
     public async Task Reopened_installer_context_refuses_an_unmatched_intent_without_a_catch_marker(bool completed)
@@ -389,6 +452,7 @@ public sealed class WindowsFixtureToolingTests
         var result = await fixture.RunAsync("""
             $source=Join-Path (Split-Path (Split-Path (Split-Path $module))) 'docs/verification/2026-10-05-next002-rollout-preparation/postgresql-ancestor-acl.cs'
             if(-not(Test-Path -LiteralPath $source)){throw 'The checked ancestor correction is missing.'}
+            . (Join-Path (Split-Path $source) 'commission-installation.ps1')
             Add-Type -Path $source
             Add-Type @'
             using System;
@@ -501,25 +565,46 @@ public sealed class WindowsFixtureToolingTests
             try{try{[FluxVault.Commissioning.PostgreSqlAncestorAcl]::Replace($paths,$before,$after)}catch{$conflictRefused=$true}}
             finally{$deleteHandle.Dispose()}
             $conflictUnchanged=[string]::Join('|',@($paths | ForEach-Object {[AclFixtureSetup]::Read($_)})) -ceq [string]::Join('|',$before)
-            [FluxVault.Commissioning.PostgreSqlAncestorAcl]::Replace($paths,$before,$after)
+            @(for($index=0;$index -lt 2;$index++){@{Path=$paths[$index];OriginalSddl=$before[$index];ProposedSddl=$after[$index]}})|
+                ConvertTo-Json -Depth 4|Set-Content (Join-Path $root 'postgresql-ancestor-acl-proposal.json')
+            $context=@{WorkRoot=$root}
+            Set-CommissionAncestorState $context Apply
             $nativeAccess=[AclFixtureSetup]::Probe($shared,$postgres,$child,$control,$target,$false)
             if($nativeAccess[5] -eq 0){[AclFixtureSetup]::RemoveJunction($control)}
             $applied=[string[]]@($paths | ForEach-Object {[AclFixtureSetup]::Read($_)})
+            $managedReordered=(Get-Acl -LiteralPath $paths[0]).Sddl -cne $after[0]
+            $descriptorRefusals=@(foreach($change in @('rights','owner','group','protection','inheritance','extra-entry')){
+                $wrong=[Security.AccessControl.RawSecurityDescriptor]::new($after[0])
+                switch($change){
+                    rights {foreach($ace in $wrong.DiscretionaryAcl){if($ace.SecurityIdentifier.Value -eq 'S-1-5-11' -and -not($ace.AceFlags -band [Security.AccessControl.AceFlags]::InheritOnly)){$ace.AccessMask=$ace.AccessMask -bor 0x10000}}}
+                    owner {$wrong.Owner=[Security.Principal.SecurityIdentifier]::new('S-1-5-18')}
+                    group {$wrong.Group=[Security.Principal.SecurityIdentifier]::new('S-1-5-18')}
+                    protection {$wrong.SetFlags($wrong.ControlFlags -band (-bnot [Security.AccessControl.ControlFlags]::DiscretionaryAclProtected))}
+                    inheritance {$wrong.DiscretionaryAcl[0].AceFlags=[Security.AccessControl.AceFlags]::ObjectInherit}
+                    extra-entry {$wrong.DiscretionaryAcl.InsertAce(0,[Security.AccessControl.CommonAce]::new('None','AccessAllowed',0x1200a9,[Security.Principal.SecurityIdentifier]::new('S-1-1-0'),$false,$null))}
+                }
+                -not(Test-CommissionAncestorDescriptor $paths[0] $wrong.GetSddlForm('All'))
+            })
             $noDelete=@(foreach($path in $paths){$acl=Get-Acl -LiteralPath $path;@($acl.GetAccessRules($true,$true,[Security.Principal.SecurityIdentifier]) | Where-Object {
                 $_.IdentityReference.Value -eq 'S-1-5-11' -and $_.AccessControlType -eq 'Allow' -and $_.PropagationFlags -ne 'InheritOnly' -and
                 ($_.FileSystemRights -band [Security.AccessControl.FileSystemRights]::Delete)}).Count -eq 0})
             $childrenAfter=@([AclFixtureSetup]::Read($child),[AclFixtureSetup]::Read($file))
             $changedRefused=$false
             try{[FluxVault.Commissioning.PostgreSqlAncestorAcl]::Replace($paths,$before,$after)}catch{$changedRefused=$true}
-            [FluxVault.Commissioning.PostgreSqlAncestorAcl]::Replace($paths,$after,$before)
+            Set-CommissionAncestorState $context Restore
+            Set-CommissionAncestorState $context Restore # Already-restored path must not attempt another replacement.
             $restored=[string[]]@($paths | ForEach-Object {[AclFixtureSetup]::Read($_)})
             @{AppliedExact=[string]::Join('|',$applied) -ceq [string]::Join('|',$after);
                 RestoredExact=[string]::Join('|',$restored) -ceq [string]::Join('|',$before);NoDelete=@($noDelete);
                 ChangedRefused=$changedRefused;ChildDescriptorsUnchanged=[string]::Join('|',$childrenBefore) -ceq [string]::Join('|',$childrenAfter);
                 DeleteBefore=@($deleteBefore);NativeAccess=@($nativeAccess);ConflictRefused=$conflictRefused;ConflictUnchanged=$conflictUnchanged;
+                ManagedReordered=$managedReordered;DescriptorRefusals=$descriptorRefusals;
                 DataUnchanged=(Get-FileHash -LiteralPath $file).Hash -ceq $hash} | ConvertTo-Json -Compress
             """);
         Assert.True(result.GetProperty("AppliedExact").GetBoolean(), result.ToString());
+        Assert.True(result.GetProperty("ManagedReordered").GetBoolean());
+        Assert.Equal(6, result.GetProperty("DescriptorRefusals").GetArrayLength());
+        Assert.All(result.GetProperty("DescriptorRefusals").EnumerateArray(), value => Assert.True(value.GetBoolean()));
         Assert.True(result.GetProperty("RestoredExact").GetBoolean());
         Assert.True(result.GetProperty("ChangedRefused").GetBoolean());
         Assert.True(result.GetProperty("ChildDescriptorsUnchanged").GetBoolean());

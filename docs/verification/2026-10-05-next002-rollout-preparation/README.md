@@ -7,8 +7,10 @@ service setup mode are implemented. The [corrected preflight](setup-preflight-re
 and [completed checkpoint review](setup-acceptance-review.md) accept the bounded
 native result below.
 The user approved the unchanged prepared normal rollout on 7 October: “When you
-get to the rollout, it's approved by me.” Installation has not yet run. Execute
-only after the fresh preflight and required independent predeployment review.
+get to the rollout, it's approved by me.” The installer has now completed and
+the exact raw ancestor ACLs are applied. Commissioning stopped before any
+authentication/provisioning effect at the managed ACL comparison described below;
+the service remains stopped while guarded continuation is reviewed.
 
 Current critical path, 7 October: native desktop observations now resolve the
 earlier blank-capture dependency. Only accessibility and theme checks/remediation
@@ -546,3 +548,53 @@ pins and the unchanged normal postmaster. The user's separate approval is record
 in `normal-setup-inputs.json`. The next action is the existing fixed Install mode,
 followed by installed S05, visible live UI/workflow/recovery and cleanup evidence.
 No installed acceptance or demonstrated legacy reinstall is claimed in advance.
+
+## Approved rollout and ACL checkpoint recovery
+
+The [original Install attempt](normal-rollout-install.log) completes the exact
+installer with exit zero and a joined launcher. All 208 installed payload hashes
+match. Legacy state is preserved at the approved rollback path. The unchanged
+native ACL helper writes and verifies the exact two reviewed raw descriptors.
+The parent's subsequent `Get-Acl.Sddl` comparison fails because DirectorySecurity
+canonicalises explicit ACE order. The [native diagnostic](normal-rollout-acl-diagnostic.json)
+proves both raw descriptors match exactly and all five recorded children are
+absent. Original authentication bytes and the PostgreSQL postmaster are unchanged;
+there are no authentication/provisioning tasks or fresh vault state. FluxVault
+remains stopped/demand-start. This is a partial rollout, not live acceptance.
+
+The existing native ACL regression now calls the actual operator function and
+reproduces that failure [before correction](normal-rollout-acl-red.trx).
+Normalising only the managed comparison passes the [focused proof](normal-rollout-acl-green.trx),
+including six distinct changed descriptor refusals and already-restored rollback.
+Native exact descriptor comparisons, physical pins and child preservation remain
+unchanged. The affected tooling batch passes 128 checks without skips or warnings.
+
+The original operator has exited, so independent authentication supervision
+requires a fresh process binding. The independently accepted recovery design
+preserves the original context and installer receipts byte-for-byte, durably
+records a handoff before replacement, changes only OperatorIdentity, carries the
+completed installer fact with explicit original receipt hashes and blocks both
+continuation and rollback on partial/mismatched handoff. Existing workers,
+watchdog, task arguments, candidate, targets and SQL/authentication inputs remain
+unchanged. The [focused handoff proof](normal-rollout-handoff-green.trx) exercises
+real files and actual recovery readers; original receipts do not claim another
+installer execution. The original protected files remain authoritative until
+the handoff is executed; copies under `normal-rollout-original-*` retain the
+pre-recovery evidence.
+
+The one-checkpoint [continuation](continue-after-acl-verification.ps1) cannot call
+an installer or reapply ACLs. Its [read-only normal check](normal-rollout-continuation-preflight.json)
+matches the original completed installer, installed payload, preserved legacy
+inputs, exact raw ACLs, original authentication, unchanged postmaster and absent
+original actors/jobs/provisioning/tasks. Its Check mode is read-only. Continue
+requires the existing recorded rollout approval and concrete independent review,
+then uses the existing authentication → joined setup → creator confirmation →
+activation flow and cleanup. It refuses reuse after any handoff starts. The
+reviewed parent procedure hash is updated; the frozen product candidate is not.
+
+Concrete independent review accepts this recovery and all twelve current
+procedure pins. The [affected combined run](normal-rollout-continuation-combined.trx)
+passes 135 checks without failures, skips or build warnings, then exits zero and
+joins, satisfying the review's final condition before continuation effects.
+The original approved operation is continued under that authority; no repeat
+installation or ACL application is permitted.

@@ -226,3 +226,21 @@ Installed S05, visible save → backup → history → independently verified re
 and final cleanup remain necessary for completion. The legacy reinstall drill
 remains unexecuted; this assessment supplies no demonstrated installed rollback
 claim.
+
+## Concrete ACL checkpoint continuation acceptance
+
+The independent Astra reviewer accepts the managed comparison correction,
+original-preserving operator handoff and exact checkpoint continuation. No
+remaining source blocker is identified. The reviewer inspects the concrete
+procedure, read-only normal preflight and all twelve current procedure hashes.
+Native raw ACL comparisons/pins are unchanged. Partial/replayed handoffs fail
+before rollback effects; the continuation cannot repeat the installer or ACL
+application. Only the operator process identity changes in the successor context,
+with explicit provenance for the already completed installer receipts.
+
+Acceptance was conditional on the affected combined checks passing and joining
+before effects. The observed `normal-rollout-continuation-combined.trx` result is
+135 passed, zero failed/skipped, no build warnings; the dotnet process exits zero
+and is joined. This satisfies that condition under the user's existing exact
+rollout approval. Installed security, visible live workflow/verified recovery and
+final cleanup acceptance remain outstanding.

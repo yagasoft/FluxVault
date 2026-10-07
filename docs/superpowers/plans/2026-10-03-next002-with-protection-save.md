@@ -261,3 +261,14 @@ the rollout, it's approved by me.” Reuse this authority for the exact current
 candidate/targets/effects after preflight and independent technical review;
 do not request the same permission again. This is neither installed proof nor
 approval for a changed candidate or broader operational effects.
+
+The approved installer completes and preserves legacy state, then commissioning
+stops before authentication/provisioning at a managed ACL ordering comparison.
+The exact native ACL write/read-back is correct. A real operator-function
+regression reproduces the mismatch; the bounded managed normalisation correction
+retains native exactness and passes descriptor-change/restore cases. Continue
+only from the verified pre-authentication checkpoint, with byte-preserved
+original context/installer receipts, fresh operator supervision and partial
+handoff refusal in both continuation and rollback. The existing preparation
+record contains the concrete procedure and read-only normal proof. No installer
+or ACL replay, product change, broader plan or PostgreSQL restart is required.

@@ -26,18 +26,18 @@
     "120"
   ],
   "CandidateId": "51b103b3c75645dfaa36600e2cbe07a5",
-  "PreparedOnly": true,
+  "PreparedOnly": false,
   "NativeSetupCommand": [
     "C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe",
     "--provision-installation",
     "<SYSTEM-owned protected copy of the exact prepared ticket>"
   ],
-  "Applied": false,
+  "Applied": true,
   "AuthenticationCleanupRequired": true,
   "PendingBootstrapPath": "C:\\ProgramData\\FluxVault\\installation.json.provisioning",
   "ProcedureFiles": [
     {
-      "Sha256": "B0E55ADA1124877CC939B7FFC50F8C173C3750EF0B425C635CE9996DAD790C67",
+      "Sha256": "14EAB6EA7E61C35A15E8E16F7FB8CC6262FF7F52E6780599B638C5F21F7477DE",
       "Name": "commission-installation.ps1"
     },
     {
@@ -79,6 +79,10 @@
     {
       "Sha256": "8DEAAA406C027C361E20C32C90F4C9AFD7ADDA76A72528E4D5E1E2936CA2DDE4",
       "Name": "installation-ticket.template.json"
+    },
+    {
+      "Sha256": "6F3C94AF016D289EF8579D50BAE1478C0F4B1E455D44B1A1071A47D752E78FC3",
+      "Name": "continue-after-acl-verification.ps1"
     }
   ],
   "ProcedureReadOnlyPreflight": "prepared-check-20261007-desktop.json",
@@ -101,11 +105,14 @@
     "../2026-10-05-next002-desktop-observation/desktop-attempt-808cdedaca1a4609b94d62c2201237b2/ui-result.json"
   ],
   "DeferredByUser": "7 October: accessibility and theme testing/remediation only; other UI/UX acceptance remains required. Observed contrast defect retained in existing desktop record; no pass claimed.",
-  "TechnicalReview": "Independent Astra accepts the exact approved installation operation after fresh preflight and bounded desktop/deferral consolidation, with no remaining predeployment blocker. Prior whole-branch/procedure evidence remains valid. Installed S05/live UI/UX, verified recovery and final cleanup acceptance remain required; the legacy reinstall drill remains unexecuted.",
+  "TechnicalReview": "Independent Astra accepts the concrete ACL comparison/handoff/checkpoint continuation after inspection of read-only normal preflight and all12 procedure hashes. Conditional affected combined run passes135 with zero failures/skips/warnings and joined exit0. Installed S05/live UI/UX, independently verified recovery and final cleanup remain required.",
   "SupersededCandidateId": "289c59630be846cb90f9a623c4ab0d1c",
   "ResponseCorrectionVerified": true,
   "ReplacementPreparedUtc": "2026-10-05T15:57:24.3735775+03:00",
   "ReplacementTicketValidatedUtc": "2026-10-05T15:58:43.7612146+03:00",
   "ProcedureCombinedChecks": "installation-procedure-final-combined.trx",
-  "ActualReplacementMsiCheck": "actual-replacement-candidate-msi.trx"
+  "ActualReplacementMsiCheck": "actual-replacement-candidate-msi.trx",
+  "RolloutState": "Installer and exact raw ancestor ACLs completed; concrete guarded continuation independently accepted, 135 affected combined checks pass and join. Proceeding under unchanged exact user approval.",
+  "PreAclCorrectionProcedureSha256": "B0E55ADA1124877CC939B7FFC50F8C173C3750EF0B425C635CE9996DAD790C67",
+  "OriginalCommissionContextSha256": "FCCE1B56966471D65A5E62410B99207D1B943FF8EE8F902837EDB2FE5324A963"
 }

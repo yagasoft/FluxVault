@@ -195,15 +195,102 @@ function Assert-CommissionInstallerSettled {
     }
 }
 
+function Assert-CommissionAclHandoff {
+    param($Context)
+    $intentPath=Join-Path $Context.WorkRoot 'acl-handoff-intent.json'
+    if(-not(Test-Path -LiteralPath $intentPath)) {
+        if(@(Get-ChildItem -LiteralPath $Context.WorkRoot -Filter 'acl-handoff-*' -ErrorAction SilentlyContinue).Count){throw 'ACL handoff artifacts have no intent; no recovery effects are allowed.'}
+        return
+    }
+    $completedPath=Join-Path $Context.WorkRoot 'acl-handoff-completed.json'
+    if(-not(Test-Path -LiteralPath $completedPath)){throw 'ACL handoff is partial; no continuation or rollback effects are allowed.'}
+    foreach($path in @($intentPath,$completedPath)) {
+        Assert-VaultFixtureTrustedPath $path -AdditionalTrustedOwnerSid $Context.OperatorSid
+        if((Get-Item -LiteralPath $path).Length -gt 65536){throw 'ACL handoff exceeds its bound.'}
+    }
+    $intent=Get-Content -LiteralPath $intentPath -Raw|ConvertFrom-Json -AsHashtable -Depth 12
+    $completed=Get-Content -LiteralPath $completedPath -Raw|ConvertFrom-Json -AsHashtable
+    if($completed.ContextSha256 -cne $Context.IdentitySha256 -or $completed.IntentSha256 -cne (Get-FileHash -LiteralPath $intentPath).Hash -or
+        $intent.SuccessorContextSha256 -cne $Context.IdentitySha256 -or $intent.Files.Count -ne 3){throw 'ACL handoff binding changed.'}
+    $names=@('context.json','installer-Install-intent.json','installer-Install-completed.json')
+    for($index=0;$index -lt 3;$index++) {
+        $entry=$intent.Files[$index]
+        if($entry.Name -cne $names[$index]){throw 'ACL handoff file selection changed.'}
+        Assert-CommissionHash (Join-Path $Context.WorkRoot ('acl-handoff-original-'+$entry.Name)) $entry.OriginalSha256
+        Assert-CommissionHash (Join-Path $Context.WorkRoot $entry.Name) $entry.SuccessorSha256
+        if($index -gt 0) {
+            $carried=Read-CommissionOperatorReceipt $Context ([IO.Path]::GetFileNameWithoutExtension($entry.Name))
+            if($carried.CarriedFromOriginalSha256 -cne $entry.OriginalSha256){throw 'Completed installer provenance changed.'}
+        }
+    }
+    $original=Get-Content (Join-Path $Context.WorkRoot 'acl-handoff-original-context.json') -Raw|ConvertFrom-Json -AsHashtable -Depth 12
+    $successor=Get-Content (Join-Path $Context.WorkRoot 'context.json') -Raw|ConvertFrom-Json -AsHashtable -Depth 12
+    if($intent.OriginalContextSha256 -cne $intent.Files[0].OriginalSha256){throw 'Original ACL checkpoint context changed.'}
+    $successor.OperatorIdentity=$original.OperatorIdentity
+    if(($original|ConvertTo-Json -Depth 12 -Compress) -cne ($successor|ConvertTo-Json -Depth 12 -Compress)){throw 'ACL handoff changed more than the operator process identity.'}
+}
+
+function Publish-CommissionAclHandoff {
+    param($Context)
+    Assert-CommissionAclHandoff $Context
+    if(Test-Path (Join-Path $Context.WorkRoot 'acl-handoff-intent.json')){throw 'ACL handoff cannot be replayed.'}
+    Assert-CommissionInstallerSettled $Context
+    Assert-CommissionHash (Join-Path $Context.WorkRoot 'context.json') $Context.IdentitySha256
+    $identity=[Security.Principal.WindowsIdentity]::GetCurrent()
+    try{if($identity.User.Value -cne $Context.OperatorSid -or $identity.ImpersonationLevel -ne 'None'){throw 'The unchanged native operator is required.'}}finally{$identity.Dispose()}
+    $self=Get-Process -Id $PID
+    try{$operator=Get-VaultFixtureProcessIdentity $self}finally{$self.Dispose()}
+    $names=@('context.json','installer-Install-intent.json','installer-Install-completed.json')
+    $bytes=@{};$files=@()
+    foreach($name in $names) {
+        $path=Join-Path $Context.WorkRoot $name
+        Assert-VaultFixtureTrustedPath $path -AdditionalTrustedOwnerSid $Context.OperatorSid
+        if((Get-Item -LiteralPath $path).Length -gt 65536){throw 'ACL checkpoint input exceeds its bound.'}
+        $value=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json -AsHashtable -Depth 12
+        $hash=(Get-FileHash -LiteralPath $path).Hash
+        if($name -ceq 'context.json'){$value.OperatorIdentity=$operator}
+        else{$value.ContextSha256=$null;$value.CarriedFromOriginalSha256=$hash}
+        $bytes[$name]=$value
+        $files+=@{Name=$name;OriginalSha256=$hash}
+        foreach($reserved in @('acl-handoff-stage-'+$name,'acl-handoff-original-'+$name)){if(Test-Path (Join-Path $Context.WorkRoot $reserved)){throw 'ACL handoff target already exists.'}}
+    }
+    $contextBytes=[Text.Encoding]::UTF8.GetBytes(($bytes['context.json']|ConvertTo-Json -Depth 12))
+    $successorHash=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($contextBytes))
+    $bytes['context.json']=$contextBytes
+    foreach($name in $names[1..2]){$value=$bytes[$name];$value.ContextSha256=$successorHash;$bytes[$name]=[Text.Encoding]::UTF8.GetBytes(($value|ConvertTo-Json -Depth 12))}
+    foreach($entry in $files){$entry.SuccessorSha256=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($bytes[$entry.Name]))}
+    Write-CommissionOperatorReceipt $Context 'acl-handoff-intent' @{OriginalContextSha256=$Context.IdentitySha256;SuccessorContextSha256=$successorHash;Files=$files;InstallerExecutedAgain=$false}
+    foreach($name in $names) {
+        $stage=Join-Path $Context.WorkRoot ('acl-handoff-stage-'+$name)
+        $stream=[IO.FileStream]::new($stage,'CreateNew','Write','None')
+        try{$stream.Write($bytes[$name]);$stream.Flush($true)}finally{$stream.Dispose()}
+    }
+    foreach($name in $names){[IO.File]::Replace((Join-Path $Context.WorkRoot ('acl-handoff-stage-'+$name)),(Join-Path $Context.WorkRoot $name),(Join-Path $Context.WorkRoot ('acl-handoff-original-'+$name)))}
+    $Context.IdentitySha256=$successorHash;$Context.OperatorIdentity=$operator
+    Write-CommissionOperatorReceipt $Context 'acl-handoff-completed' @{ContextSha256=$successorHash;IntentSha256=(Get-FileHash (Join-Path $Context.WorkRoot 'acl-handoff-intent.json')).Hash;InstallerExecutedAgain=$false}
+    Assert-CommissionAclHandoff $Context
+    Assert-CommissionInstallerSettled $Context
+}
+
+function Test-CommissionAncestorDescriptor {
+    param([string]$Path,[string]$Expected)
+    # DirectorySecurity canonicalises explicit ACE order on read. Compare its
+    # representation with the same representation of the reviewed descriptor.
+    # The native Replace operation still pins paths and compares exact raw SDDL.
+    $normalised=[Security.AccessControl.DirectorySecurity]::new()
+    $normalised.SetSecurityDescriptorSddlForm($Expected)
+    return (Get-Acl -LiteralPath $Path).Sddl -ceq $normalised.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::All)
+}
+
 function Set-CommissionAncestorState {
     param($Context,[ValidateSet('Apply','Restore')][string]$Phase)
     $proposal=Get-Content (Join-Path $Context.WorkRoot 'postgresql-ancestor-acl-proposal.json') -Raw|ConvertFrom-Json
     [string[]]$paths=@($proposal|ForEach-Object Path)
     [string[]]$before=@($proposal|ForEach-Object {if($Phase -eq 'Apply'){$_.OriginalSddl}else{$_.ProposedSddl}})
     [string[]]$after=@($proposal|ForEach-Object {if($Phase -eq 'Apply'){$_.ProposedSddl}else{$_.OriginalSddl}})
-    if($Phase -eq 'Restore' -and @($paths|Where-Object {(Get-Acl $_).Sddl -cne $after[[Array]::IndexOf($paths,$_)]}).Count -eq 0){return}
+    if($Phase -eq 'Restore' -and @($paths|Where-Object {-not(Test-CommissionAncestorDescriptor $_ $after[[Array]::IndexOf($paths,$_)])}).Count -eq 0){return}
     [FluxVault.Commissioning.PostgreSqlAncestorAcl]::Replace($paths,$before,$after)
-    foreach($path in $paths){if((Get-Acl $path).Sddl -cne $after[[Array]::IndexOf($paths,$path)]){throw 'Ancestor security transition is unconfirmed.'}}
+    foreach($path in $paths){if(-not(Test-CommissionAncestorDescriptor $path $after[[Array]::IndexOf($paths,$path)])){throw 'Ancestor security transition is unconfirmed.'}}
 }
 
 function Start-CommissionTask {
@@ -396,6 +483,7 @@ function Invoke-CommissionInstallation {
 
 function Assert-CommissionRollbackInputs {
     param($Context)
+    Assert-CommissionAclHandoff $Context
     Assert-CommissionInstallerSettled $Context
     $identity=[Security.Principal.WindowsIdentity]::GetCurrent()
     try {if($identity.User.Value -cne 'S-1-5-21-136112424-624261118-1239521417-1001' -or $identity.ImpersonationLevel -ne 'None' -or
@@ -479,7 +567,9 @@ if($MyInvocation.InvocationName -ne '.') {
             Assert-CommissionHash $inputPath $context.ParentInputHashes[$key]
             $context[$key]=Get-Content $inputPath -Raw|ConvertFrom-Json -AsHashtable -Depth 12
         }
-        $context.IdentitySha256=(Get-FileHash $path).Hash;$context.Jobs=@{};$context.Tasks=[Collections.Generic.List[object]]::new()
+        $context.IdentitySha256=(Get-FileHash $path).Hash
+        Assert-CommissionAclHandoff $context
+        $context.Jobs=@{};$context.Tasks=[Collections.Generic.List[object]]::new()
         foreach($entry in @(@('Auth','WorkerJob'),@('Setup','SetupJob'))){$job=[FluxVault.Fixtures.OwnedWindowsJob]::Open($context[$entry[1]].KernelName,$context.OperatorSid);if($null -ne $job){$context.Jobs[$entry[0]]=$job}}
         Read-CommissionRecoveryTasks $context
         Invoke-CommissionRollback $context

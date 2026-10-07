@@ -37,7 +37,7 @@
   "PendingBootstrapPath": "C:\\ProgramData\\FluxVault\\installation.json.provisioning",
   "ProcedureFiles": [
     {
-      "Sha256": "21A6C5DDB4269A3AE3619AD3E75DC456D908B72C9CC4987E453AA29908B37E5B",
+      "Sha256": "B0E55ADA1124877CC939B7FFC50F8C173C3750EF0B425C635CE9996DAD790C67",
       "Name": "commission-installation.ps1"
     },
     {
@@ -81,7 +81,7 @@
       "Name": "installation-ticket.template.json"
     }
   ],
-  "ProcedureReadOnlyPreflight": "installation-procedure-preflight.json",
+  "ProcedureReadOnlyPreflight": "prepared-check-20261007.json",
   "CombinedChecks": [
     "ipc-response-core-final.trx",
     "ipc-response-combined_net10.0_20261005154809.trx",
@@ -93,12 +93,11 @@
   "RollbackInstallerSha256": "DD4C47DC6B20C0B348691289481965002466ACDF373CEA26E5D823AB9AF84F61",
   "ExpectedRolloutMode": "Install",
   "RemainingGates": [
-    "S01 scoped packaged rehearsal approval/proof",
     "D01 actual desktop/accessibility/scale observation",
     "G01 final named proofs and acceptance once remaining gates close",
     "separate normal rollout approval and installed/live workflow"
   ],
-  "TechnicalReview": "Independent Astra accepted whole-source and code/preparation delta; full G01/S01/D01/normal live acceptance remain incomplete",
+  "TechnicalReview": "Independent Astra accepted final consolidated code/procedure preparation, including S01 proof/cleanup, normal lifetime refresh and bounded inventory delta; full G01 remains conditional on D01 and separately authorised installed/S05/live acceptance",
   "SupersededCandidateId": "289c59630be846cb90f9a623c4ab0d1c",
   "ResponseCorrectionVerified": true,
   "ReplacementPreparedUtc": "2026-10-05T15:57:24.3735775+03:00",

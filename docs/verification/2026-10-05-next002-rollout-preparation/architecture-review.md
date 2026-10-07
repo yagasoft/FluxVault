@@ -191,3 +191,20 @@ This accepts the code and preparation portion of G01, not full G01 or rollout.
 S01 packaged runtime permission/proof, D01 actual desktop/scale observations and
 separately authorised normal commissioning/live acceptance remain open. The
 normal fixed entry/SCM effects and retained-installer rollback drill have not run.
+
+## Final predeployment technical assessment, 7 October
+
+Independent Astra review accepts the consolidated code and executable preparation
+at `31a9834`, together with the prepared-input correction to the accepted
+commissioning lifetime refresh. Product source and candidate are unchanged;
+all eleven recorded procedure hashes match. The reviewer accepts the bounded
+inventory delta, five focused regressions and joined native cleanup evidence,
+with no new source or procedure blocker.
+
+This completes the current candidate's technical preparation assessment. Full
+G01 remains conditional on D01's actual desktop observations and separately
+authorised installed setup/S05/live save → backup → history → independently
+verified recovery. Blank captures and zero native saves supply no D01 closure.
+The installed legacy reinstall drill remains unexecuted; checked rollback
+preparation is not demonstrated installed recovery. No operational authority
+or slice-completion claim is supplied by this review.

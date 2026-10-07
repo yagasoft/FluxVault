@@ -410,7 +410,7 @@ authentication/path `5d5ba09` and interruption `ad6087a` remain valid.
 | S01 | Closed by the separately approved 7 October fixed-fixture machine-leaf rehearsal: actual packaged A5/B4, caller recovery independently verified, ungranted identity/history refused, exact trust/resources retired. Independent Astra review accepts the proof and cleanup; prior native elevated/user/group/reopen evidence remains valid. No normal rollout approval is implied. |
 | D01 | Guided actual-desktop keyboard/Narrator/DPI/high-contrast/rendering/larger-inventory responsiveness observations remain. The existing fixture now loads 10,000 synthetic files into the actual VM/grid with bounded realised rows and last-row reachability. Focused regressions pass; controlled native attempt f6c76c... closes/joins with normal state unchanged. Capture pixels remain blank and no native save is confirmed. A ready human session is the concrete dependency; logical renders/layout timings do not satisfy these observations. |
 | S05 | Execute the fixed installed SYSTEM setup and verify normal SSPI/database/filesystem boundary, unchanged unrelated PG state/postmaster and checked legacy recovery during the separately approved rollout. Disposable native worker/component proofs and exact preparation are retained. |
-| G01 | Whole-branch source and executable preparation are independently accepted, including the response correction below and 7 October fixture/repin delta. Affected checks and S01 cleanup pass. D01 observations, final consolidation and separately approved normal commissioning/live acceptance remain before full gate completion. |
+| G01 | Final consolidated code/procedure preparation is independently accepted, including the response correction, S01/repin and bounded inventory delta. All eleven prepared procedure hashes match; affected checks and S01 cleanup pass. Full G01 remains conditional on D01 observations and separately approved normal commissioning/S05/live acceptance. |
 
 This is a candidate procedure and checked preparation, not an installed rollback
 drill, full matrix acceptance or NEXT-002 completion. No normal installation,
@@ -507,3 +507,13 @@ normal rollout decision. S05 installed authentication/setup/SCM/filesystem proof
 and live save → backup → history → verified recovery follow that separate
 approval; the installed legacy reinstall drill remains unexecuted. No new plan
 or gate is introduced, and normal rollout approval is not yet requested.
+
+The final [independent technical assessment](architecture-review.md) accepts
+the current code/procedure preparation at `31a9834`, including the inventory
+delta. Reconciliation corrects one stale procedure hash in
+`normal-setup-inputs.json` after the accepted lifetime refresh and removes its
+obsolete S01 dependency; all eleven listed hashes now match. The product candidate,
+SQL/authentication/ACL changes and rollback ordering remain unchanged. D01 human
+observations are the remaining predeployment dependency. S05/installed live proof
+and complete G01 follow the separate rollout decision; the actual installed
+legacy reinstall drill is still unexecuted.

@@ -232,3 +232,11 @@ pixels and no native save is confirmed. D01 remains dependent on ready human
 observations of rendering, keyboard, accessibility, scaling/contrast and native
 responsiveness. This fixture-only batch leaves the frozen installation candidate,
 accepted security/integrity evidence and remaining rollout sequence unchanged.
+
+Final consolidated independent Astra assessment accepts the current code and
+executable preparation, including the bounded inventory delta. Prepared inputs
+now carry the accepted lifetime-refresh procedure hash and current S01 status;
+all eleven recorded procedure hashes match. D01 human observations remain the
+predeployment dependency. Complete G01 and installed S05/live acceptance require
+the separate normal rollout decision and its observed results; no installed
+legacy reinstall proof is claimed.

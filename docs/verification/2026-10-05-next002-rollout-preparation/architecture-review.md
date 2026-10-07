@@ -208,3 +208,21 @@ verified recovery. Blank captures and zero native saves supply no D01 closure.
 The installed legacy reinstall drill remains unexecuted; checked rollback
 preparation is not demonstrated installed recovery. No operational authority
 or slice-completion claim is supplied by this review.
+
+## Immediate predeployment consolidation, 7 October
+
+The same independent Astra reviewer accepts the exact approved installation
+operation, with no remaining predeployment blocker. Review reuses the accepted
+whole-branch/procedure assessment and checks the fresh Prepare evidence:
+208 candidate files, 204 legacy files, all eleven procedure hashes and the
+pinned unchanged postmaster. Native desktop evidence supplies rejected-save
+clarity, retained edits, navigation, 10,000-item browsing and actual DPI layout.
+The user's accessibility/theme deferral is explicit; those items are not passed
+and all other UI/UX requirements remain.
+
+Proceed only with the reviewed unchanged candidate/procedure and their existing
+refusal/recovery controls under the user's separate explicit rollout approval.
+Installed S05, visible save → backup → history → independently verified recovery
+and final cleanup remain necessary for completion. The legacy reinstall drill
+remains unexecuted; this assessment supplies no demonstrated installed rollback
+claim.

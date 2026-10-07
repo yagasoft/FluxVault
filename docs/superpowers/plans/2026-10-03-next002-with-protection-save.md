@@ -129,7 +129,7 @@ slice manual-only; the source/startup and interrupted-effect continuations above
 now supply their bounded proofs. Packaged identity, implemented-screen accessibility/scale, final G01 and rollout
 gates remain applicable. It does not add a scheduler or broaden NEXT-004.
 
-The completed [Overview → Protect → Recover concepts](../../ui-concepts/2026-10-03-next002/README.md) remain historical evidence. Their vault selectors and multi-vault concepts are superseded. Stop further multi-vault exploration. The existing UI should expose one vault, saved/draft configuration, busy/blocked/error/unknown outcomes and verified recovery results tied to the actual command contracts. Existing keyboard, Narrator, DPI, high-contrast and responsiveness gates remain for implemented UI; the broader redesign retains its roadmap position.
+The completed [Overview → Protect → Recover concepts](../../ui-concepts/2026-10-03-next002/README.md) remain historical evidence. Their vault selectors and multi-vault concepts are superseded. Stop further multi-vault exploration. The existing UI should expose one vault, saved/draft configuration, busy/blocked/error/unknown outcomes and verified recovery results tied to the actual command contracts. Keyboard, DPI, layout, navigation, responsiveness and other UI/UX checks remain for implemented UI. The user's 7 October instruction defers accessibility and theme testing/remediation, including Narrator and the observed contrast defect; it does not defer other UI/UX work. The broader redesign retains its roadmap position.
 
 ## Verification commands
 
@@ -240,3 +240,24 @@ all eleven recorded procedure hashes match. D01 human observations remain the
 predeployment dependency. Complete G01 and installed S05/live acceptance require
 the separate normal rollout decision and its observed results; no installed
 legacy reinstall proof is claimed.
+
+7 October native desktop completion: the agent now observes usable actual
+pixels, visible keyboard focus, retained selections and full failed-save
+explanations, zero dependent backups, navigation through 10,000 files and actual
+175% → 200% → 175% scaling through the existing bounded fixture. Both windows
+and Settings exit, owned roots are removed and normal state is unchanged.
+The [existing desktop record](../../verification/2026-10-05-next002-desktop-observation/README.md)
+retains results and the explicitly deferred accessibility/theme defect. Earlier
+ready-human-session dependencies are superseded; do not request testing
+assistance. Other UI/UX gates remain required, including the installed successful
+workflow and its visible status/history/recovery states after separate rollout
+approval. Candidate, security/integrity gates and checked rollback are unchanged.
+The critical path is fresh read-only installation preflight, the consolidated
+predeployment assessment and one exact operational decision, then installed
+S05 and live UI/UX/workflow acceptance and final G01.
+
+The user subsequently approves that unchanged prepared rollout: “When you get to
+the rollout, it's approved by me.” Reuse this authority for the exact current
+candidate/targets/effects after preflight and independent technical review;
+do not request the same permission again. This is neither installed proof nor
+approval for a changed candidate or broader operational effects.

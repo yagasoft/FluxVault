@@ -6,7 +6,17 @@ NEXT-002 installation prerequisite. The provisioning component and explicit
 service setup mode are implemented. The [corrected preflight](setup-preflight-review.md)
 and [completed checkpoint review](setup-acceptance-review.md) accept the bounded
 native result below.
-Normal installation rollout is not approved or performed.
+The user approved the unchanged prepared normal rollout on 7 October: “When you
+get to the rollout, it's approved by me.” Installation has not yet run. Execute
+only after the fresh preflight and required independent predeployment review.
+
+Current critical path, 7 October: native desktop observations now resolve the
+earlier blank-capture dependency. Only accessibility and theme checks/remediation
+are explicitly deferred by the user; other UI/UX requirements remain. Complete
+the fresh read-only preflight and bounded predeployment review, then execute the
+approved exact rollout. Installed S05 and live save → backup → history →
+independently verified recovery, including visible UI/UX states and final cleanup,
+follow that approval. Historical status entries below retain their original context.
 
 The [read-only preflight](staging-preflight.json), produced by
 [this script](capture-staging-preflight.ps1), freshly matches all 204 retained
@@ -408,9 +418,9 @@ authentication/path `5d5ba09` and interruption `ad6087a` remain valid.
 | Matrix gate | Exact remaining dependency |
 | --- | --- |
 | S01 | Closed by the separately approved 7 October fixed-fixture machine-leaf rehearsal: actual packaged A5/B4, caller recovery independently verified, ungranted identity/history refused, exact trust/resources retired. Independent Astra review accepts the proof and cleanup; prior native elevated/user/group/reopen evidence remains valid. No normal rollout approval is implied. |
-| D01 | Guided actual-desktop keyboard/Narrator/DPI/high-contrast/rendering/larger-inventory responsiveness observations remain. The existing fixture now loads 10,000 synthetic files into the actual VM/grid with bounded realised rows and last-row reachability. Focused regressions pass; controlled native attempt f6c76c... closes/joins with normal state unchanged. Capture pixels remain blank and no native save is confirmed. A ready human session is the concrete dependency; logical renders/layout timings do not satisfy these observations. |
-| S05 | Execute the fixed installed SYSTEM setup and verify normal SSPI/database/filesystem boundary, unchanged unrelated PG state/postmaster and checked legacy recovery during the separately approved rollout. Disposable native worker/component proofs and exact preparation are retained. |
-| G01 | Final consolidated code/procedure preparation is independently accepted, including the response correction, S01/repin and bounded inventory delta. All eleven prepared procedure hashes match; affected checks and S01 cleanup pass. Full G01 remains conditional on D01 observations and separately approved normal commissioning/S05/live acceptance. |
+| D01 | Agent-operated native desktop observations now verify visible keyboard focus, complete failed-save messages, retained pending edits, zero dependent backups, file/Protection navigation, 10,000-item grid interaction and actual 175%/200% DPI. Both fixtures and Settings exit; scale/contrast are restored and normal state is unchanged. The user defers accessibility/theme work only, including Narrator and the recorded contrast defect; none is reported as passed. Other UI/UX gates remain, including installed successful workflow, visible status/history/recovery and final responsiveness observations after rollout. No user testing assistance is requested. |
+| S05 | Execute the fixed installed SYSTEM setup and verify normal SSPI/database/filesystem boundary, unchanged unrelated PG state/postmaster and checked legacy recovery during the now approved exact rollout. Disposable native worker/component proofs and exact preparation are retained. |
+| G01 | Final consolidated code/procedure preparation is independently accepted, including the response correction, S01/repin and bounded inventory delta. All eleven prepared procedure hashes match; affected checks and S01 cleanup pass. Consolidate the new desktop observations/user deferral at the predeployment gate; full G01 still requires separately approved normal commissioning/S05/live UI/UX and cleanup acceptance. |
 
 This is a candidate procedure and checked preparation, not an installed rollback
 drill, full matrix acceptance or NEXT-002 completion. No normal installation,
@@ -517,3 +527,22 @@ SQL/authentication/ACL changes and rollback ordering remain unchanged. D01 human
 observations are the remaining predeployment dependency. S05/installed live proof
 and complete G01 follow the separate rollout decision; the actual installed
 legacy reinstall drill is still unexecuted.
+
+The agent subsequently completed two [native desktop sessions](../2026-10-05-next002-desktop-observation/README.md)
+with usable capture, actual failed-save/pending-edit interaction, native inventory
+navigation and Windows scaling. The explicit user deferral applies only to
+accessibility/theme work, not other UI/UX checks. Both owned WPF processes and
+Settings exit; original 175% scale and None contrast are restored. This supersedes
+the ready-human-session dependency without changing product source, candidate,
+procedure, SQL/authentication/ACL bytes or rollback. The fresh read-only
+`prepared-check-20261007-desktop.json` and current predeployment assessment support
+the exact operational decision; installed success/recovery UI observations remain
+part of live acceptance, not an exemption.
+
+The [immediate predeployment consolidation](architecture-review.md) accepts
+the exact approved installation operation with no remaining predeployment blocker.
+Fresh Prepare matches all 208 candidate/204 legacy hashes, all eleven procedure
+pins and the unchanged normal postmaster. The user's separate approval is recorded
+in `normal-setup-inputs.json`. The next action is the existing fixed Install mode,
+followed by installed S05, visible live UI/workflow/recovery and cleanup evidence.
+No installed acceptance or demonstrated legacy reinstall is claimed in advance.

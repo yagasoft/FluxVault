@@ -15,7 +15,7 @@
   "BootstrapPath": "C:\\ProgramData\\FluxVault\\installation.json",
   "InstanceId": "7871ff7f8d1b404db20771f2e742364f",
   "InitialProtectedFolders": 0,
-  "RolloutApproval": "pending",
+  "RolloutApproval": "Approved by the user on 7 October in this conversation: When you get to the rollout, it's approved by me. Applies to the unchanged candidate, fixed targets and prepared effects after required technical review/preflight.",
   "CreatorSid": "S-1-5-21-136112424-624261118-1239521417-1001",
   "CreatorCommand": [
     "C:\\Program Files\\FluxVault\\cli\\FluxVault.Cli.exe",
@@ -81,7 +81,7 @@
       "Name": "installation-ticket.template.json"
     }
   ],
-  "ProcedureReadOnlyPreflight": "prepared-check-20261007.json",
+  "ProcedureReadOnlyPreflight": "prepared-check-20261007-desktop.json",
   "CombinedChecks": [
     "ipc-response-core-final.trx",
     "ipc-response-combined_net10.0_20261005154809.trx",
@@ -93,11 +93,15 @@
   "RollbackInstallerSha256": "DD4C47DC6B20C0B348691289481965002466ACDF373CEA26E5D823AB9AF84F61",
   "ExpectedRolloutMode": "Install",
   "RemainingGates": [
-    "D01 actual desktop/accessibility/scale observation",
-    "G01 final named proofs and acceptance once remaining gates close",
-    "separate normal rollout approval and installed/live workflow"
+    "S05 installed setup/authentication/filesystem boundary and live save/backup/history/verified recovery, including visible UI/UX states",
+    "G01 final installed/live evidence and cleanup acceptance"
   ],
-  "TechnicalReview": "Independent Astra accepted final consolidated code/procedure preparation, including S01 proof/cleanup, normal lifetime refresh and bounded inventory delta; full G01 remains conditional on D01 and separately authorised installed/S05/live acceptance",
+  "DesktopEvidence": [
+    "../2026-10-05-next002-desktop-observation/desktop-attempt-22adaf2210cd47a6b234694e56818794/ui-result.json",
+    "../2026-10-05-next002-desktop-observation/desktop-attempt-808cdedaca1a4609b94d62c2201237b2/ui-result.json"
+  ],
+  "DeferredByUser": "7 October: accessibility and theme testing/remediation only; other UI/UX acceptance remains required. Observed contrast defect retained in existing desktop record; no pass claimed.",
+  "TechnicalReview": "Independent Astra accepts the exact approved installation operation after fresh preflight and bounded desktop/deferral consolidation, with no remaining predeployment blocker. Prior whole-branch/procedure evidence remains valid. Installed S05/live UI/UX, verified recovery and final cleanup acceptance remain required; the legacy reinstall drill remains unexecuted.",
   "SupersededCandidateId": "289c59630be846cb90f9a623c4ab0d1c",
   "ResponseCorrectionVerified": true,
   "ReplacementPreparedUtc": "2026-10-05T15:57:24.3735775+03:00",

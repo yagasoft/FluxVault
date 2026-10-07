@@ -172,7 +172,7 @@ keeps the window usable. Verify these transitions through real local stores and
 actual view-model commands, with controlled publication/interruption races.
 No service/schema/privilege contract, roadmap stage or gate is added or weakened.
 
-## Acceptance gates, unchanged in strength
+## Acceptance gates
 
 | ID | Required result and evidence | Owner batch |
 | --- | --- | --- |
@@ -187,7 +187,7 @@ No service/schema/privilege contract, roadmap stage or gate is added or weakened
 | S06 | Oversize/deep/slow/stalled clients and concurrency saturation are bounded; ordinary allowed work still completes. Request/token/child lifetimes exit cleanly. | S2–S3 |
 | S07 | Repeated/ambiguous mutation requests cannot retarget or execute destructive work twice; committed-versus-unknown outcomes remain truthful across disconnect and restart. | S2–S3 |
 | S08 | Existing integrity cases remain green: corrupt/missing content, last-good-copy drain, bounded decoding, destination preservation, real PG/private IPC/process proofs. Authorised real-interface capture/list/restore has independent hashes. | S1–S3 |
-| D01 | Completed design evidence is retained. Multi-vault controls are superseded and further multi-vault exploration is stopped; existing UI state/accessibility/performance gates remain for implemented screens. | D |
+| D01 | Completed design evidence is retained. Multi-vault controls are superseded and further multi-vault exploration is stopped. Implemented-screen command states, retained edits, navigation, layout, responsiveness and installed recovery observations remain required. On 7 October the user explicitly deferred accessibility and theme testing/remediation; record those as deferred, not passed. Native keyboard, failed-save, 10,000-item navigation and actual 175%/200% DPI evidence is retained. | D |
 | G01 | Independent security/integrity review approves the final design and full implementation scope, zero new build warnings, combined suite plus named Windows/DB cases pass, temporary processes exited. Missing identity/packaged/DB prerequisites are incomplete gates, not skips that count as completion. | Review |
 
 ## Sequencing and recovery

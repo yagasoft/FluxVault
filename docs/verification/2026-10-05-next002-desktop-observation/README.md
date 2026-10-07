@@ -1,5 +1,14 @@
 # Protection failure visibility and accessible names
 
+Current status, 7 October: native capture now supplies usable pixels and the
+agent has completed the keyboard, failed-save, pending-edit, navigation,
+non-empty inventory and actual DPI observations below. The user has explicitly
+deferred accessibility and theme testing, including Narrator and contrast
+remediation. Other UI/UX checks remain in scope; successful installed
+save → backup → history → verified recovery and its visible states still require
+the separately approved rollout. Earlier capture/manual-session dependencies
+below are historical, not a request for further user testing assistance.
+
 The actual desktop WPF window exposed two focused presentation defects: the
 Protection page showed the full save-failure explanation only through a trimmed
 header/tooltip, and primary composite buttons plus the repository field lacked
@@ -128,3 +137,53 @@ actual rendering defect and observe keyboard/focus, failure explanations,
 Narrator, actual monitor scaling, high contrast and native responsiveness.
 The readiness question is pending; no further timed session is left unattended.
 Candidate `51b103b3c75645dfaa36600e2cbe07a5` and product source are unchanged.
+
+## Native desktop observations, 7 October
+
+The agent operated two bounded instances of the existing actual WPF fixture
+through the native Computer Use interface. These are agent observations, not
+human test reports. Fresh window selection/capture supplied usable pixels;
+one later stale capture was retried before further input. No product, fixture
+or installer code changed.
+
+In [attempt 22adaf...](desktop-attempt-22adaf2210cd47a6b234694e56818794/ui-result.json),
+selecting the first synthetic file and activating Run backup now produced the
+full persistent explanation: changes are kept and backup has not started.
+The selected checkbox and pending Added row remained visible. The result and
+real local stores record one rejected save, zero backups and a retained draft.
+Tab/Shift+Tab moved visible focus between controls; Tab into the file checkbox
+and Space toggled its pending selection without invoking a service command.
+Ctrl+End reached the final row of the 10,000-file grid, Ctrl+Home returned to the
+first row and the earlier selection remained. File browser → Protection
+navigation retained the complete failure/draft messages without overlap.
+Options correctly explained why pending changes must be saved or discarded
+before opening it. No freeze or lost pending edit was observed during these
+interactions; this is a bounded observation, not a general latency benchmark.
+
+In [attempt 808cde...](desktop-attempt-808cdedaca1a4609b94d62c2201237b2/ui-result.json),
+the same rejected-save contract remained visible while Windows Settings changed
+the actual monitor scale from 175% to 200%. File browser and Protection retained
+legible primary controls, complete messages and pending edits without overlap.
+Scale was restored to 175% and verified in Settings. Both runs loaded 10,000
+synthetic entries, realised 17 rows and reached the final row. Their respective
+refresh/layout measurements were 660/1,003 ms, final-row layout 20/120 ms and
+peak working set approximately 220/227 MiB. These single-run fixture metrics
+do not measure physical-file capture, service/database performance or isolated
+desktop input latency. The earlier minimum-width real-control renders and
+focused virtualisation regressions remain applicable.
+
+Before the user's deferral, temporary Aquatic contrast exposed a presentation
+defect: some fixed light surfaces combined with system light foregrounds made
+primary button labels and the Mirrors summary unreadable. Record this as
+deferred accessibility/theme work, not a pass. No correction was started.
+The original contrast setting None was restored and verified. Narrator was
+never launched. The user subsequently confirmed that all other UI and UX work
+must continue; this deferral does not remove command-state clarity, navigation,
+layout, responsiveness or installed recovery observations from D01.
+
+Both [first cleanup](desktop-attempt-22adaf2210cd47a6b234694e56818794/cleanup.json)
+and [second cleanup](desktop-attempt-808cdedaca1a4609b94d62c2201237b2/cleanup.json)
+confirm joined exit zero, exact scratch-root removal and unchanged normal
+configuration/authentication/service identities. Windows Settings was closed
+and its captured process identity exited. A final census found no Settings,
+Narrator or TestHost process. No temporary UI process remains running.

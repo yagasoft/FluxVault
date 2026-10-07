@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f81766cf-659e-4a58-9852-aa4f2008cdc4" name="os008@OS008-HOME 2026-10-07 21:34:58" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-07T21:34:58.8962706+03:00" queuing="2026-10-07T21:34:58.8962708+03:00" start="2026-10-07T21:34:55.5273409+03:00" finish="2026-10-07T21:35:04.4112479+03:00" />
+  <TestSettings name="default" id="bd5f94dc-485a-4f08-bc99-1c6733c3df30">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-07_21_34_58" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="64d29720-210f-4f96-b2b1-635436540f42" testId="cca80bac-9548-ce8e-de8b-a1f8793a986e" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(count: 10000)" computerName="OS008-HOME" duration="00:00:01.8226023" startTime="2026-10-07T21:34:56.1143080+03:00" endTime="2026-10-07T21:34:57.9532714+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64d29720-210f-4f96-b2b1-635436540f42">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.</Message>
+          <StackTrace>   at System.Text.Json.JsonElement.GetProperty(String propertyName)&#xD;
+   at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(Int32 count) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs:line 20&#xD;
+   at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(Int32 count) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs:line 31&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d807c69a-678e-4e46-8f13-886db6681361" testId="a0262b1f-9021-784f-a4af-2f360a9cac82" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;bad&quot;)" computerName="OS008-HOME" duration="00:00:01.6126807" startTime="2026-10-07T21:34:59.5631059+03:00" endTime="2026-10-07T21:35:01.1756412+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d807c69a-678e-4e46-8f13-886db6681361">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 3&#xD;
+Actual:   0</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs:line 44&#xD;
+   at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs:line 46&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c5714f5b-c5b2-4fdc-bb4b-6a7a9b8e31bf" testId="cc780ce0-1701-7388-fba6-4ff259116107" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;50001&quot;)" computerName="OS008-HOME" duration="00:00:01.5826171" startTime="2026-10-07T21:35:01.1762730+03:00" endTime="2026-10-07T21:35:02.7587611+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c5714f5b-c5b2-4fdc-bb4b-6a7a9b8e31bf">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 3&#xD;
+Actual:   0</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs:line 44&#xD;
+   at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs:line 46&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fd0f2f71-7618-4a88-9c44-f3e483da0331" testId="4b80bd88-e1a3-6404-add4-7694c5641080" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;-1&quot;)" computerName="OS008-HOME" duration="00:00:01.5950839" startTime="2026-10-07T21:35:02.7595075+03:00" endTime="2026-10-07T21:35:04.3543310+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd0f2f71-7618-4a88-9c44-f3e483da0331">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 3&#xD;
+Actual:   0</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs:line 44&#xD;
+   at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs:line 46&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0896a6f5-d8cb-4291-8541-e1e7b9eb4ec5" testId="6decdf4e-19db-f357-bc3c-ca2a8f1f3f8c" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(count: 0)" computerName="OS008-HOME" duration="00:00:01.6063060" startTime="2026-10-07T21:34:57.9653372+03:00" endTime="2026-10-07T21:34:59.5609001+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0896a6f5-d8cb-4291-8541-e1e7b9eb4ec5">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.</Message>
+          <StackTrace>   at System.Text.Json.JsonElement.GetProperty(String propertyName)&#xD;
+   at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(Int32 count) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs:line 20&#xD;
+   at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(Int32 count) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs:line 31&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(count: 0)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="6decdf4e-19db-f357-bc3c-ca2a8f1f3f8c">
+      <Execution id="0896a6f5-d8cb-4291-8541-e1e7b9eb4ec5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(count: 10000)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="cca80bac-9548-ce8e-de8b-a1f8793a986e">
+      <Execution id="64d29720-210f-4f96-b2b1-635436540f42" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;-1&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="4b80bd88-e1a3-6404-add4-7694c5641080">
+      <Execution id="fd0f2f71-7618-4a88-9c44-f3e483da0331" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;50001&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="cc780ce0-1701-7388-fba6-4ff259116107">
+      <Execution id="c5714f5b-c5b2-4fdc-bb4b-6a7a9b8e31bf" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;bad&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="a0262b1f-9021-784f-a4af-2f360a9cac82">
+      <Execution id="d807c69a-678e-4e46-8f13-886db6681361" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="cca80bac-9548-ce8e-de8b-a1f8793a986e" executionId="64d29720-210f-4f96-b2b1-635436540f42" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a0262b1f-9021-784f-a4af-2f360a9cac82" executionId="d807c69a-678e-4e46-8f13-886db6681361" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc780ce0-1701-7388-fba6-4ff259116107" executionId="c5714f5b-c5b2-4fdc-bb4b-6a7a9b8e31bf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4b80bd88-e1a3-6404-add4-7694c5641080" executionId="fd0f2f71-7618-4a88-9c44-f3e483da0331" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6decdf4e-19db-f357-bc3c-ca2a8f1f3f8c" executionId="0896a6f5-d8cb-4291-8541-e1e7b9eb4ec5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="0" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:02.05]       System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.&#xD;
+[xUnit.net 00:00:02.05]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.05]            at System.Text.Json.JsonElement.GetProperty(String propertyName)&#xD;
+[xUnit.net 00:00:02.05]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs(20,0): at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(Int32 count)&#xD;
+[xUnit.net 00:00:02.05]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs(31,0): at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(Int32 count)&#xD;
+[xUnit.net 00:00:02.05]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.66]       System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.&#xD;
+[xUnit.net 00:00:03.66]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.66]            at System.Text.Json.JsonElement.GetProperty(String propertyName)&#xD;
+[xUnit.net 00:00:03.66]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs(20,0): at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(Int32 count)&#xD;
+[xUnit.net 00:00:03.66]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs(31,0): at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(Int32 count)&#xD;
+[xUnit.net 00:00:03.66]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.27]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:05.27]       Expected: 3&#xD;
+[xUnit.net 00:00:05.27]       Actual:   0&#xD;
+[xUnit.net 00:00:05.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs(44,0): at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count)&#xD;
+[xUnit.net 00:00:05.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs(46,0): at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count)&#xD;
+[xUnit.net 00:00:05.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.85]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:06.85]       Expected: 3&#xD;
+[xUnit.net 00:00:06.85]       Actual:   0&#xD;
+[xUnit.net 00:00:06.85]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs(44,0): at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count)&#xD;
+[xUnit.net 00:00:06.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs(46,0): at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count)&#xD;
+[xUnit.net 00:00:06.85]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.45]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:08.45]       Expected: 3&#xD;
+[xUnit.net 00:00:08.45]       Actual:   0&#xD;
+[xUnit.net 00:00:08.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs(44,0): at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count)&#xD;
+[xUnit.net 00:00:08.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DesktopObservationFixtureTests.cs(46,0): at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(String count)&#xD;
+[xUnit.net 00:00:08.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.46]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T21:34:57.9558224+03:00">
+        <Text>[xUnit.net 00:00:02.05]     FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(count: 10000) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T21:34:59.5615526+03:00">
+        <Text>[xUnit.net 00:00:03.66]     FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(count: 0) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T21:35:01.1760293+03:00">
+        <Text>[xUnit.net 00:00:05.27]     FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: "bad") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T21:35:02.7591458+03:00">
+        <Text>[xUnit.net 00:00:06.85]     FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: "50001") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T21:35:04.3547389+03:00">
+        <Text>[xUnit.net 00:00:08.45]     FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: "-1") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

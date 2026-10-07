@@ -95,3 +95,36 @@ desktop acceptance. The readiness question remains pending. Another bounded
 session must supply actual keyboard/focus/failure-state, Narrator, monitor DPI,
 contrast/rendering and non-empty inventory responsiveness observations. No
 unattended UI session was launched and no unrelated window received input.
+
+The same fixture now accepts a bounded synthetic working-file inventory (default
+zero in TestHost, 10,000 in the guided wrapper, maximum 50,000). This addresses
+D01's non-empty inventory observation gap using the existing actual WPF window,
+view-model and grid; metadata is synthetic and no large working files, service
+or database are created. Each wrapper run preserves its evidence in a fresh
+`desktop-attempt-<fixture-id>` directory instead of overwriting earlier records.
+
+The [five focused regressions](inventory-final.trx) pass: the unchanged empty
+default, 10,000 loaded files, rejected save with zero dependent backups, visible
+failure/draft state, bounded realised rows and final-row reachability, plus three
+invalid inventory arguments refused before UI state creation. The retained
+[red](inventory-red.trx) precedes implementation. The 10,000-item run realised
+17 rows, refreshed/layouted in 679 ms and realised the final row in 23 ms, with
+189 MiB peak working set. These are single-run fixture layout measurements,
+not input-latency thresholds or physical-file/service/database benchmarks.
+
+The controlled native attempt
+[`f6c76c0f09254834ab17f1d689e05776`](desktop-attempt-f6c76c0f09254834ab17f1d689e05776/ui-result.json)
+also loads 10,000 files, realises 17 rows and reaches the last row. Native
+enumeration and accessibility expose the real inventory and controls, but two
+captures (with one fresh selection retry) both return blank client pixels.
+A checkbox input produces no confirmed selection change. Alt+F4 closes the
+owned window; its [cleanup](desktop-attempt-f6c76c0f09254834ab17f1d689e05776/cleanup.json)
+confirms successful joined exit, removed root and unchanged normal installation.
+The run records zero saves/backups, so it supplies no new native command-flow
+acceptance. No temporary UI/build/test process remains running.
+
+D01 still needs a ready human session to distinguish blank capture from an
+actual rendering defect and observe keyboard/focus, failure explanations,
+Narrator, actual monitor scaling, high contrast and native responsiveness.
+The readiness question is pending; no further timed session is left unattended.
+Candidate `51b103b3c75645dfaa36600e2cbe07a5` and product source are unchanged.

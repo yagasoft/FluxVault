@@ -223,3 +223,12 @@ D01 awaits a ready actual desktop session with the required accessibility/displa
 and non-empty inventory observations. Final G01 consolidation, the separately
 approved normal installation/S05 and installed live workflow remain the critical
 path. Do not rerun accepted checkpoints or expand the roadmap.
+
+The existing disposable desktop fixture now provides a bounded 10,000-item
+inventory through the actual WPF/view-model/grid, with focused regression proof
+of virtualised rows, final-row reachability and save-failure sequencing. The
+controlled native attempt closes and joins cleanly; capture still returns blank
+pixels and no native save is confirmed. D01 remains dependent on ready human
+observations of rendering, keyboard, accessibility, scaling/contrast and native
+responsiveness. This fixture-only batch leaves the frozen installation candidate,
+accepted security/integrity evidence and remaining rollout sequence unchanged.

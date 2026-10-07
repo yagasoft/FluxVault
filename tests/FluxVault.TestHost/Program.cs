@@ -61,8 +61,13 @@ internal static class Program
             var mode = Require(options, "mode");
             if (mode == "ui") { ShowUi(options, scratch); return 0; }
             if (mode == "ui-save") { ProtectionSaveUiFixture.Show(options, scratch); return 0; }
-            if (mode == "ui-draft-render") return ProtectionDraftUiFixture.Render(scratch);
-            if (mode == "ui-draft-interactive") return ProtectionDraftUiFixture.Render(scratch, interactive: true);
+            if (mode is "ui-draft-render" or "ui-draft-interactive")
+            {
+                if (!int.TryParse(options.GetValueOrDefault("inventory-count", "0"), System.Globalization.NumberStyles.None,
+                        System.Globalization.CultureInfo.InvariantCulture, out var inventoryCount) || inventoryCount > 50_000)
+                    throw new ArgumentException("UI inventory count must be between 0 and 50000.");
+                return ProtectionDraftUiFixture.Render(scratch, interactive: mode == "ui-draft-interactive", inventoryCount);
+            }
             return RunAsync(options, scratch, mode).GetAwaiter().GetResult();
         }
         catch (Exception exception)

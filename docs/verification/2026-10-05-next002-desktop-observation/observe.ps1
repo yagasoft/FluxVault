@@ -1,5 +1,6 @@
 # Runs only the local rejecting-client WPF fixture; no service/database changes.
-param([Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{32}$')][string]$FixtureId)
+param([Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{32}$')][string]$FixtureId,
+    [ValidateRange(0,50000)][int]$InventoryCount=10000)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $worktree=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
@@ -22,17 +23,21 @@ function Read-Normal {
     })}
 }
 Assert-NoReparse $root
+$evidence=Join-Path $PSScriptRoot ('desktop-attempt-'+$FixtureId)
+Assert-NoReparse $evidence
+if(Test-Path -LiteralPath $evidence){throw 'Fresh desktop evidence directory required; earlier observations are preserved.'}
+[void][IO.Directory]::CreateDirectory($evidence)
 $before=Read-Normal
-$before|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $PSScriptRoot 'before.json')
+$before|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $evidence 'before.json')
 [void][IO.Directory]::CreateDirectory($root)
 $start=[Diagnostics.ProcessStartInfo]::new((Join-Path $worktree 'tests/FluxVault.TestHost/bin/Release/net10.0-windows/FluxVault.TestHost.exe'))
 $start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.WorkingDirectory=$worktree
-foreach($argument in @('--mode','ui-draft-interactive','--scratch',$root)){$start.ArgumentList.Add($argument)}
+foreach($argument in @('--mode','ui-draft-interactive','--scratch',$root,'--inventory-count',$InventoryCount.ToString([Globalization.CultureInfo]::InvariantCulture))){$start.ArgumentList.Add($argument)}
 $native=$null;$identity=$null;$exitCode=$null;$failure=$null
 try {
     $native=[Diagnostics.Process]::Start($start)
     $identity=@{ProcessId=$native.Id;StartedUtc=$native.StartTime.ToUniversalTime().ToString('o');Executable=$native.MainModule.FileName;FixtureId=$FixtureId;Root=$root}
-    $identity|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $PSScriptRoot 'process.json')
+    $identity|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $evidence 'process.json')
     if(-not $native.WaitForExit(540000)){throw 'Owned UI exceeded its finite lifetime.'}
     $exitCode=$native.ExitCode
     if($exitCode -ne 0){throw ('Owned UI failed: '+$exitCode)}
@@ -53,19 +58,19 @@ finally {
     }
     foreach($name in @('ui-result.json','ui-process.json','configuration.json','draft.json')) {
         $path=Join-Path $root $name
-        if(Test-Path -LiteralPath $path){Copy-Item -LiteralPath $path -Destination (Join-Path $PSScriptRoot $name)}
+        if(Test-Path -LiteralPath $path){Copy-Item -LiteralPath $path -Destination (Join-Path $evidence $name)}
     }
     # Recheck the absolute target before recursive removal of this owned root.
     if([IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($root)) -ne $parent -or [IO.Path]::GetFileName($root) -ne $FixtureId){throw 'Cleanup target changed.'}
     Remove-Item -LiteralPath $root -Recurse -Force
     $after=Read-Normal
-    $after|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $PSScriptRoot 'after.json')
+    $after|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $evidence 'after.json')
     foreach($file in $before.Files){if(@($after.Files|Where-Object Path -eq $file.Path)[0].Sha256 -ne $file.Sha256){throw 'Normal configuration/authentication changed.'}}
     foreach($service in $before.Services){$other=@($after.Services|Where-Object Name -eq $service.Name)[0];foreach($field in @('ProcessId','StartedUtc','Path','Account')){if($other[$field] -ne $service[$field]){throw 'Normal service changed.'}}}
     $live=Get-Process -Id $identity.ProcessId -ErrorAction SilentlyContinue
     try{$same=$null -ne $live -and $live.StartTime.ToUniversalTime().ToString('o') -eq $identity.StartedUtc}finally{if($null -ne $live){$live.Dispose()}}
     @{ProcessJoined=-not $same;RootRemoved=-not(Test-Path -LiteralPath $root);NormalInstallationUnchanged=$true;ExitCode=$exitCode;Failure=$failure}|ConvertTo-Json|
-        Set-Content -LiteralPath (Join-Path $PSScriptRoot 'cleanup.json')
+        Set-Content -LiteralPath (Join-Path $evidence 'cleanup.json')
     if($same){throw 'Owned UI identity remains alive.'}
 }
 if($failure){throw $failure}

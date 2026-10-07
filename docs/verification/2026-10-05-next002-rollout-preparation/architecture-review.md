@@ -284,3 +284,32 @@ responsiveness criteria and bounded workload measurements, not an agreed numeric
 native-input threshold; record measurement limits without inventing a new gate.
 Layout, UI Automation and RenderTargetBitmap alone cannot satisfy D01. This is
 approach acceptance, not final implementation or revised deployment acceptance.
+
+## Frozen 1.0.6 pre-deployment technical gate
+
+The independent GPT-6 reviewer approves the exact frozen technical approach,
+with no required correction or unresolved technical decision. Its runtime variant
+is not exposed; it does not claim an Astra identity or a model switch. This uses
+the applicable independently capable equivalent permitted by AGENTS.md.
+
+The reviewer independently checks all208 candidate payload hashes, manifest
+`6BD79D60D69D6953EA2EB80EF94557AAAA0E0EBFAB4A5F5B473F9C11B670F43A`,
+MSI `96D80AA626F32A20A9E6703A098F57885EADC2A869E0F8F6375D11CE8D37A555`,
+Setup `3B2BB6F2CE539571131FD148CB4973A91649A392274BA4C6645E26B7D17D6E34`,
+and `update-presentation.ps1` SHA-256
+`1CB98CF02EEF98C5A09D53BEB7CCA34D20313179857A67D63B474575FC6DBD6C`.
+The source delta affects only process-local App rendering; retained security,
+integrity, commissioning and PostgreSQL evidence remains applicable to unchanged
+product boundaries. The procedure pins sealed MSI identities, checks settled
+registration, preserves commissioned data/authentication/ownership, joins native
+children and verifies payloads before restoring service policy and activation.
+Rollback covers neither-installed state and refuses parallel/unresolved/reboot
+states, without invoking legacy commissioning recovery.
+
+The affected combined343/343, zero failed/unexecuted, candidate zero-warning
+build logs, seven guard red/green cases and unchanged App487/Core563/Windows154
+results are inspected. Native staged interaction, actual DPI/navigation, rejected
+save retention and four independent matching recoveries are reviewed. Synthetic
+format and timing limitations remain explicit. Technical approval does not grant
+operational authority. The exact revised decision has been requested; installed
+corrected-candidate D01 and live postconditions remain required before G01 closes.

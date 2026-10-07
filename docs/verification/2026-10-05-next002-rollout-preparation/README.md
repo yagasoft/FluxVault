@@ -772,3 +772,85 @@ The concrete revised candidate still needs final technical and operational revie
 Earlier loose duplicate desktop receipts were moved, without deletion, to the
 ignored `artifacts/earlier-desktop-duplicates-20261008` directory with a hash list.
 The canonical historical attempt records remain available in this evidence tree.
+
+## Frozen presentation update and checked rollback, 8 October
+
+The corrected unsigned candidate is `a39b83ad153a49d0a6779a5098bb02f2`, version
+1.0.6.0, built from `da9eb329e8a05ed504bc4a2f2a22e3a7fdddbfda`:
+
+- Manifest SHA-256: `6BD79D60D69D6953EA2EB80EF94557AAAA0E0EBFAB4A5F5B473F9C11B670F43A`.
+- MSI SHA-256: `96D80AA626F32A20A9E6703A098F57885EADC2A869E0F8F6375D11CE8D37A555`.
+- Setup SHA-256: `3B2BB6F2CE539571131FD148CB4973A91649A392274BA4C6645E26B7D17D6E34`.
+
+Both packages are under `artifacts/staging-single-vault/a39b83ad153a49d0a6779a5098bb02f2/installer`.
+The update executes the MSI directly. Its ProductCode is
+`{1EEE244A-290D-4F25-94FE-E3AA8384F718}`; the retained 1.0.5 ProductCode is
+`{D8A16B7A-A24A-4DF6-893C-7911916A1ECB}`. The UpgradeCode remains
+`{4B89B6E7-D41E-49E6-BE42-09C10D6570D6}`. The sealed action table confirms
+RemoveExistingProducts1401, after InstallValidate1400 and before
+InstallInitialize1500. Neither MSI contains custom actions. Equal-version products
+can coexist under default WiX behaviour; this update changes the significant
+version fields and explicitly refuses parallel registration.
+
+The shipping source diff from the accepted original candidate is only the App
+constructor's process-local rendering correction. Other first-party binary hashes
+change with source-revision metadata; dependency versions and service/Core/Windows
+source are unchanged. All five candidate build processes exit zero and join, with
+no warnings. The real read-only [readiness](presentation-update-readiness.json)
+checks both sealed MSIs, retained rollback package, original208 installed payloads,
+exact old-only registration, commissioned bootstrap, creator ACLs, final SSPI
+configuration and unchanged normal PostgreSQL postmaster. No changes were applied.
+
+Use the existing elevated creator/operator, with App/CLI/test hosts exited and
+joined, then the single fixed procedure:
+
+```powershell
+& ./docs/verification/2026-10-05-next002-rollout-preparation/update-presentation.ps1 -Mode Check
+# After final technical review and recorded approval for this revised candidate:
+& ./docs/verification/2026-10-05-next002-rollout-preparation/update-presentation.ps1 -Mode Update -OperationalApprovalRecorded
+# Only on a settled failure, with explicit rollback authority:
+& ./docs/verification/2026-10-05-next002-rollout-preparation/update-presentation.ps1 -Mode Rollback -OperationalApprovalRecorded
+```
+
+The target is the existing `C:\Program Files\FluxVault`208-file payload and
+FluxVaultService registration. The procedure stops only FluxVault, installs6,
+verifies every payload hash and preserved boundary, then restores its reviewed
+failure policy and delayed-auto LocalSystem service. No database/schema/configuration,
+bootstrap, authentication or ACL mutation is included; PostgreSQL is never
+restarted or reloaded. Existing vault data, saved selections and receipts remain.
+Installer intents, results, process identities and logs are retained under the
+protected commissioning root's `presentation-update-1.0.6` directory.
+
+Timeout, missing completion or reboot-required outcomes block both activation
+and another transaction, including rollback, until external reconciliation. A
+normal failed MSI return permits only inspection and explicitly authorised rollback
+after the installer has settled. Rollback consults actual registration, removes6
+only if present, installs retained5 when necessary even if neither is present,
+then verifies its208 original hashes and the unchanged boundary before activation.
+It does not invoke the legacy1.0.4 commission rollback. Rollback restores5's known
+rendering defect. Its state/ordering checks use the actual procedure functions
+through the existing process-bounded test interface; they do not claim that a
+normal installed rollback was executed. The retained package is hash checked and
+its real sealed tables/installed registration inspected.
+
+S01's native standard/elevated/packaged identity and scoped trust proofs are
+complete and cleaned up; there is no remaining profile/certificate approval.
+S05's normal installed direct-access refusal, service SSPI, final ownership and
+unchanged PostgreSQL proofs are complete. D01's remaining non-deferred requirement
+is the exact corrected installed UI workflow. G01 needs final independent
+candidate/procedure assessment, the affected combined run and the installed/live
+postconditions. The historical rollout approval names the previous frozen
+candidate; the revised candidate's operational decision must be explicit. Theme
+and accessibility remain deferred. No additional acceptance framework is added.
+
+The affected ordinary Integration run subsequently completes343/343, zero failed
+or skipped (`presentation-update-combined.trx`), exits zero and joins. Fresh process
+inspection finds no dotnet/MSBuild/compiler/App/CLI/TestHost actors remaining.
+Together with unchanged App487/Core563/Windows154 evidence, the applicable
+ordinary combined coverage is1547 passing cases. This is supporting evidence;
+exact installed live acceptance remains open.
+
+Independent pre-deployment review now approves the exact candidate/procedure;
+see [technical gate](architecture-review.md#frozen-106-pre-deployment-technical-gate).
+The revised operational decision has been requested in the conversation. No
+update effects have been performed and no installed-candidate pass is claimed.

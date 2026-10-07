@@ -2467,6 +2467,66 @@ public sealed class WindowsFixtureToolingTests
         Assert.True(result.GetProperty("Exited").GetBoolean());
     }
 
+    [Theory]
+    [InlineData(false, true, "UninstallNew,InstallOld")]
+    [InlineData(false, false, "InstallOld")]
+    [InlineData(true, false, "")]
+    [InlineData(true, true, "Refused")]
+    public async Task Presentation_rollback_uses_actual_settled_registration_and_restores_a_missing_product(bool oldInstalled, bool newInstalled, string expected)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/update-presentation.ps1')
+            $script:calls=[Collections.Generic.List[string]]::new()
+            $script:oldInstalled=OLD_VALUE;$script:newInstalled=NEW_VALUE
+            function Get-PresentationRegistration { @{Old=$script:oldInstalled;New=$script:newInstalled} }
+            function Assert-PresentationSettled {param($Context)}
+            function Invoke-PresentationMsi {param($Context,$Phase)
+                $script:calls.Add($Phase)
+                if($Phase -eq 'UninstallNew'){$script:newInstalled=$false}
+                if($Phase -eq 'InstallOld'){$script:oldInstalled=$true}
+            }
+            $failure=$null;try{Restore-PresentationProduct @{}}catch{$failure=$_.Exception.Message}
+            @{Calls=[string]::Join(',',$script:calls);Failure=$failure;Old=$script:oldInstalled;New=$script:newInstalled}|ConvertTo-Json -Compress
+            """.Replace("OLD_VALUE", oldInstalled ? "$true" : "$false", StringComparison.Ordinal)
+                .Replace("NEW_VALUE", newInstalled ? "$true" : "$false", StringComparison.Ordinal));
+        if (expected == "Refused")
+        {
+            Assert.Contains("parallel", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+            Assert.Equal("", result.GetProperty("Calls").GetString());
+        }
+        else
+        {
+            Assert.Equal(JsonValueKind.Null, result.GetProperty("Failure").ValueKind);
+            Assert.Equal(expected, result.GetProperty("Calls").GetString());
+            Assert.True(result.GetProperty("Old").GetBoolean());
+            Assert.False(result.GetProperty("New").GetBoolean());
+        }
+    }
+
+    [Theory]
+    [InlineData("intent")]
+    [InlineData("uncertain")]
+    [InlineData("reboot")]
+    public async Task Presentation_update_blocks_unresolved_installer_state_before_rollback(string scenario)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/update-presentation.ps1')
+            $context=@{WorkRoot=$root};$script:effects=0
+            function Get-PresentationRegistration { $script:effects++;@{Old=$false;New=$true} }
+            function Invoke-PresentationMsi {param($Context,$Phase) $script:effects++}
+            $scenario='SCENARIO_VALUE'
+            $name=if($scenario -eq 'intent'){'Update-intent.json'}elseif($scenario -eq 'uncertain'){'installer-uncertain.json'}else{'reboot-required.json'}
+            [IO.File]::WriteAllText((Join-Path $root $name),'{}')
+            $failure=$null;try{Restore-PresentationProduct $context}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Effects=$script:effects}|ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.Contains("unresolved", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+        Assert.Equal(0, result.GetProperty("Effects").GetInt32());
+    }
     private sealed class ScriptFixture : IDisposable
     {
         private readonly string parent;

@@ -244,3 +244,43 @@ before effects. The observed `normal-rollout-continuation-combined.trx` result i
 and is joined. This satisfies that condition under the user's existing exact
 rollout approval. Installed security, visible live workflow/verified recovery and
 final cleanup acceptance remain outstanding.
+
+## Concrete native readiness and pre-admission reset acceptance
+
+Independent Astra accepts the exact held-native readiness correction and bounded
+pre-admission reset plus subsequent guarded continuation. The reviewer checks11
+focused passing tests, the read-only normal reset preflight and all12 procedure
+hashes. No blocking finding remains. Acceptance requires the affected combined
+run to pass and join before effects. Reset must be followed by the existing
+checkpoint Check before continuation. No installer/ACL replay or authentication
+retirement bypass is permitted; the next attempt must establish its own genuine
+baseline and successful retirement. Installed/live acceptance remains outstanding.
+The exact pre-admission watchdog failure may be archived as no admission effects,
+with retirement unconfirmed, without inventing a baseline or altering unrelated
+administrator sessions. This exception applies only to this file-only checkpoint.
+
+The required affected combined run subsequently passes146, zero failed/skipped,
+without build warnings; it exits zero and joins. Fresh cleanup proves all captured
+verification/commissioning actors and owned jobs/tasks absent. This fulfils the
+review's pre-effects condition. No reset or further commissioning effect is yet
+applied; installed/live acceptance is still required.
+
+## Presentation correction design amendment
+
+The independent Astra design reviewer accepts an unconditional process-local
+SoftwareOnly choice before App presentation creation. The concrete failure is
+independently visible in a Windows Snipping Tool capture; actual App startup has
+valid layout, native visibility and rendering events, while a single-variable
+SoftwareOnly diagnostic displays the complete UI. A particular NVIDIA driver
+fault is not established. No Options toggle, global graphics setting or automatic
+fallback framework is justified. Architecture, single-vault scope and security
+contracts remain unchanged.
+
+Required delta proof is fresh normal App startup without a harness override,
+native pixels and working navigation/reopen/Options/activity, actual175%/200%
+DPI, bounded10,000-row responsiveness and CPU/idle observations, then live
+save/history/independently verified recovery. Existing D01 has qualitative
+responsiveness criteria and bounded workload measurements, not an agreed numeric
+native-input threshold; record measurement limits without inventing a new gate.
+Layout, UI Automation and RenderTargetBitmap alone cannot satisfy D01. This is
+approach acceptance, not final implementation or revised deployment acceptance.

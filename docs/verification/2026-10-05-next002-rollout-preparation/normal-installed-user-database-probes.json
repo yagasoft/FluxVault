@@ -1,0 +1,54 @@
+[
+  {
+    "Joined": true,
+    "Error": "psql: error: connection to server at \"localhost\" (::1), port 5432 failed: FATAL:  SSPI authentication failed for user \"fluxvault_service\"\r\n",
+    "Output": "",
+    "Process": {
+      "StartedUtc": "2026-10-07T20:35:40.9776135Z",
+      "ExecutableRequested": "D:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+      "ProcessId": 31972
+    },
+    "ExitCode": 2,
+    "Role": "fluxvault_service",
+    "Database": "fluxvault_single"
+  },
+  {
+    "Joined": true,
+    "Error": "psql: error: connection to server at \"localhost\" (::1), port 5432 failed: FATAL:  pg_hba.conf rejects connection for host \"::1\", user \"fluxvault_service\", database \"postgres\", no encryption\r\n",
+    "Output": "",
+    "Process": {
+      "StartedUtc": "2026-10-07T20:35:41.0498224Z",
+      "ExecutableRequested": "D:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+      "ProcessId": 53224
+    },
+    "ExitCode": 2,
+    "Role": "fluxvault_service",
+    "Database": "postgres"
+  },
+  {
+    "Joined": true,
+    "Error": "psql: error: connection to server at \"localhost\" (::1), port 5432 failed: fe_sendauth: no password supplied\r\n",
+    "Output": "",
+    "Process": {
+      "StartedUtc": "2026-10-07T20:35:41.1091249Z",
+      "ExecutableRequested": "D:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+      "ProcessId": 50188
+    },
+    "ExitCode": 2,
+    "Role": "fluxvault",
+    "Database": "fluxvault"
+  },
+  {
+    "Joined": true,
+    "Error": "psql: error: connection to server at \"localhost\" (::1), port 5432 failed: fe_sendauth: no password supplied\r\n",
+    "Output": "",
+    "Process": {
+      "StartedUtc": "2026-10-07T20:35:41.1698318Z",
+      "ExecutableRequested": "D:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+      "ProcessId": 38488
+    },
+    "ExitCode": 2,
+    "Role": "postgres",
+    "Database": "postgres"
+  }
+]

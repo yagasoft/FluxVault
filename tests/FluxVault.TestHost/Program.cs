@@ -59,6 +59,12 @@ internal static class Program
             StorageOwnership.RejectReparseComponents(scratch);
             Directory.CreateDirectory(scratch);
             var mode = Require(options, "mode");
+            if (mode == "ui-normal-startup-observe")
+            {
+                if (!int.TryParse(options.GetValueOrDefault("observation-seconds", "3"), out var seconds) || seconds is < 3 or > 90)
+                    throw new ArgumentException("Normal startup observation must last between 3 and 90 seconds.");
+                return NormalStartupObservation.Run(scratch, options.GetValueOrDefault("software-rendering") == "true", seconds);
+            }
             if (mode == "ui") { ShowUi(options, scratch); return 0; }
             if (mode == "ui-save") { ProtectionSaveUiFixture.Show(options, scratch); return 0; }
             if (mode is "ui-draft-render" or "ui-draft-interactive")

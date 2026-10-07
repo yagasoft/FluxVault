@@ -13,7 +13,7 @@ function Assert-NoReparse([string]$path) {
     }
 }
 function Read-Normal {
-    @{Files=@(foreach($path in @('C:\ProgramData\FluxVault\config.json','D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf')) {
+    @{Files=@(foreach($path in @('C:\ProgramData\FluxVault\installation.json','D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf')) {
         @{Path=$path;Sha256=(Get-FileHash -LiteralPath $path).Hash}});
       Services=@(foreach($name in @('FluxVaultService','postgresql-x64-18')) {
         $service=Get-CimInstance Win32_Service -Filter "Name='$name'"

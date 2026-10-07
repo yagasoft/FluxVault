@@ -7,18 +7,25 @@ service setup mode are implemented. The [corrected preflight](setup-preflight-re
 and [completed checkpoint review](setup-acceptance-review.md) accept the bounded
 native result below.
 The user approved the unchanged prepared normal rollout on 7 October: “When you
-get to the rollout, it's approved by me.” The installer has now completed and
-the exact raw ancestor ACLs are applied. Commissioning stopped before any
-authentication/provisioning effect at the managed ACL comparison described below;
-the service remains stopped while guarded continuation is reviewed.
+get to the rollout, it's approved by me.” The installer and reviewed guarded
+commissioning now complete. The exact raw ancestor ACLs and final authentication
+files are applied; independent administrator retirement, joined setup and native
+creator confirmation succeed. FluxVaultService is running. Normal PostgreSQL
+retains its original process lifetime. The earlier failed checkpoints below are
+historical evidence, not the current installation state.
 
-Current critical path, 7 October: native desktop observations now resolve the
-earlier blank-capture dependency. Only accessibility and theme checks/remediation
-are explicitly deferred by the user; other UI/UX requirements remain. Complete
-the fresh read-only preflight and bounded predeployment review, then execute the
-approved exact rollout. Installed S05 and live save → backup → history →
-independently verified recovery, including visible UI/UX states and final cleanup,
-follow that approval. Historical status entries below retain their original context.
+Current critical path, 8 October: installed database and ordinary-user filesystem
+boundary probes pass. The independently captured native presentation failure is
+corrected by process-local SoftwareOnly rendering. The actual staged App, without
+a harness override, saves two synthetic folders through the commissioned service,
+backs up four files, displays eight history rows and recovers both folders to new
+destinations. Independent SHA-256 checks match all four originals; sources remain
+unchanged. The installed 1.0.5 binaries remain unchanged, so this staged capability
+does not complete installed-candidate acceptance. Package the correction as 1.0.6,
+review the concrete update/rollback, obtain its operational decision, then validate
+the installed candidate and close G01/cleanup. Only accessibility and theme work
+is deferred.
+Historical status entries below retain their original context.
 
 The [read-only preflight](staging-preflight.json), produced by
 [this script](capture-staging-preflight.ps1), freshly matches all 204 retained
@@ -598,3 +605,170 @@ passes 135 checks without failures, skips or build warnings, then exits zero and
 joins, satisfying the review's final condition before continuation effects.
 The original approved operation is continued under that authority; no repeat
 installation or ACL application is permitted.
+
+## Native readiness correction and pre-admission recovery
+
+The first guarded continuation completes its original-preserving handoff, then
+refuses the actual SYSTEM watchdog because CIM truncates its native process start
+time by five 100ns ticks. The authentication worker was never dispatched. The
+bounded watchdog exits and is joined; it reports an unaccounted administrator
+session because no worker baseline exists. It preserves unrelated sessions.
+This checkpoint means **no admission effects; watchdog retirement unconfirmed**,
+not successful retirement or permission to activate. Exact failed receipts,
+handoff, task receipts and state are retained as `normal-rollout-pre-admission-*`.
+Original HBA/ident bytes, both PostgreSQL process lifetimes, installed208 payload,
+raw ancestor ACLs and preserved legacy state match. All owned actors/jobs/tasks
+are absent; FluxVault remains stopped/manual with no new vault.
+
+The corrected actual readiness function holds the native process handle through
+exact native image/start and CIM image/SYSTEM-owner checks, rejecting exit or a
+changed lifetime without timestamp tolerance. Focused real-child tests reproduce
+the old precision refusal and wrong-lifetime/exit acceptance. The native child
+is real; CIM metadata/owner boundaries are explicitly substituted. Eleven focused
+checks pass and join; the intermediate reset error and final proof are preserved.
+
+The existing continuation adds one exact CheckReset/ResetPreAdmission checkpoint.
+It pins the failed context/ready/failure/error, forbids worker/admin/write/setup
+artefacts, verifies original authentication/same postmaster/native raw ACLs and
+absent owned actors/jobs/tasks, then permits a file-only reset. Durable intent
+precedes an exact hash-checked archive of15 files and atomic restoration of the
+three original context/installer receipts. Only archived old handoff/cleanup/task
+markers are removed; the failed watchdog evidence remains unchanged. Partial,
+corrupt and replayed resets block existing recovery readers before effects.
+The real-file regressions exercise those stages and actual rollback refusal.
+No installer, ACL, SQL or authentication action is replayed by reset.
+
+Independent Astra accepts the concrete correction and reset/continuation after
+checking the focused proof, normal read-only reset preflight and all12 procedure
+hashes, conditional on the affected combined run passing/joining before effects.
+After reset the existing Check must pass before Continue. The next attempt still
+requires its own genuine administrator baseline, successful retirement, joined
+setup, creator confirmation and activation checks. Installed S05, successful
+visible UI workflow, independently verified recovery and final G01 remain open.
+
+Computer Use subsequently reports a physical Escape stop. Desktop input stops
+immediately. No reset or further normal commissioning effect has occurred. The
+user's unchanged exact rollout approval remains recorded; no testing assistance
+or repeat operational approval is requested.
+
+The affected combined run `normal-rollout-native-readiness-reset-combined.trx`
+passes146 with zero failures/skips/build warnings, exits zero and joins. The fresh
+`normal-rollout-readiness-reset-cleanup.json` verifies captured verification
+processes, all recorded commissioning identities, both job names, tasks and
+fixture children absent. This satisfies the review condition before effects.
+Reset remains unapplied, exact B933 context and original authentication unchanged;
+FluxVault remains stopped/manual. The next safe action is the reviewed file-only
+reset, existing checkpoint Check, then guarded continuation and live acceptance.
+
+## Completed normal commissioning and remaining live acceptance
+
+The subsequent file-only reset and existing Check succeed. Guarded continuation
+exits zero and joins without installer or ACL replay. The new context is
+`85DF752EB228EB729523CCEDC04B24A5D2143A0600E7076AC0A67F54F988DC83`.
+The genuine administrator baseline preserves unrelated PID13948. Independent
+cleanup confirms final authentication retained, temporary admission retired and
+owned worker job joined before setup/activation. The SYSTEM setup host and native
+creator confirmation both exit zero and join; the final bootstrap hash is
+`1EC27A382AD49190A7EE67630510E49594807251229702B59EA870B4FB4ED617`.
+Receipts are retained as `normal-installed-*`. FluxVaultService runs as PID49676.
+
+Actual password-free psql probes refuse the creator's service-role login,
+service-role access to another database, legacy password-free login and temporary
+administrator access. All four children exit and join. A native restricted-token
+read probe confirms its own source control is readable while installed state,
+repository marker and bootstrap return access denied. The initial probe expected
+bootstrap readability incorrectly; actual SYSTEM/Administrators-only policy was
+inspected and the expectation corrected without changing ACLs or product code.
+The fresh `normal-installed-postconditions.json` matches all208 installed hashes,
+final authentication, original postmaster lifetime and preserved legacy config;
+125 recorded temporary identities, owned jobs and scheduled tasks are absent.
+The intentional running SCM service is not temporary.
+
+Normal desktop validation finds a real blank/black presentation failure across
+ordinary and Computer Use launches. Windows Snipping Tool independently captures
+the same pixels (`normal-live-independent-rendering-failure.png`, SHA256
+`75712AF92F9D5501E8C73CA2F79B9EA7AE997F36E3CBE5F62558B6586894B3DD`).
+The main thread is idle in WPF's message loop. Finite actual-App startup probes
+reach Loaded, ContentRendered, valid layout and native visibility at175% DPI;
+the process-only SoftwareOnly comparison displays the complete UI. This isolates
+the hardware/composition path, without proving a particular GPU driver defect.
+All diagnostic apps, Snipping Tool and analyser processes exit and join. Hidden
+diagnostic launches establish layout only; the visible repeat is explicitly
+distinguished. No protection edit, backup or restore has been submitted normally.
+
+Independent Astra accepts selecting SoftwareOnly before App presentation as a
+small internal implementation correction, without a configuration toggle or
+automatic fallback abstraction. The fresh-process regression runs actual App
+startup without a harness override: Default fails before the correction, then
+SoftwareOnly plus loaded/idle/joined read checks pass. The six affected desktop
+checks pass after moving the bounded inventory fixture to the same renderer.
+These logical checks are not native-pixel acceptance. Remaining work is actual
+corrected App interaction/reopen/Options/activity, relevant DPI and10,000-row
+responsiveness, the full live recovery workflow, a concrete revised candidate
+and checked update rollback, technical review and applicable operational approval.
+Normal authentication/provisioning must not be replayed for a presentation fix.
+
+## Corrected desktop capability, 8 October
+
+The actual staged App (`normal-live-corrected-launch.json`), with its own App
+constructor and no diagnostic renderer override, displays native pixels and
+accepts real control input. It saves recursive selections for the two owned
+synthetic folders. The UI acknowledges configuration saved before backup is
+available; the manually submitted backup reports four captured files. Repository
+history displays all four files and four folder snapshots. Selecting the final
+snapshot of each folder and restoring through the real destination dialogues
+creates fresh `Working files-Recovered` and `Design files-Recovered` directories.
+The [independent hashes](normal-live-corrected-recovery-hashes.json) match all four
+original lengths and SHA-256 values; all source hashes remain unchanged. These
+opaque synthetic bytes do not establish Office/CAD/Adobe application fidelity.
+
+Options loads and displays correctly. Its close briefly reports a skipped/failed
+reload while protection commands remain guarded; the advertised refresh completes
+and restores command availability. No Options save or setting change is submitted.
+Activity displays four caller-readable live captures. Hide-to-tray and reactivation
+retain the original process; the forwarding child exits zero and joins. The staged
+App is subsequently terminated by its exact idle process identity, after all
+operations complete; that is cleanup, not a graceful-exit claim.
+
+The corrected renderer is also exercised by the existing finite 10,000-item
+[desktop fixture](../2026-10-05-next002-desktop-observation/desktop-attempt-3933ed80a46e43f88f3a8765272b9d0c/ui-result.json).
+Native175% and200% layouts display the complete failure and local-retention
+messages without overlap. A selected synthetic file stays pending after one
+rejected save, with zero dependent backups. Ctrl+End/Ctrl+Home reach both ends at
+both actual scales; Tab/Shift+Tab move the visible cell/checkbox focus. Action plus
+capture round trips range362–1049ms and include tool overhead; they are not an
+application-only input benchmark. The fixture realises17rows, refreshes/layouts
+in789ms, reaches the final row in74ms and peaks at210MiB. The first5s observation
+immediately following DPI/input activity consumes2000ms process CPU; after Settings
+closes and scale restoration settles, a separate5.01s input-free interval consumes
+203ms,4.05% of one logical processor on this24-logical-processor machine. No
+steady-state CPU claim is inferred from the transition interval.
+
+The fixture gracefully flushes/joins and exits zero; its exact scratch root is
+removed. Both Settings processes exit, and the original175% scale is restored.
+The [fresh postconditions](normal-live-corrected-postconditions.json) confirm
+all208 original installed payload hashes, bootstrap/authentication and normal
+postmaster lifetime unchanged, service49676 running, and no temporary desktop,
+test-host, dotnet, MSBuild or compiler actors remaining.
+
+The affected ordinary suites pass1540 total (App487, Core563, Windows154,
+Integration336), zero failed/skipped and no build warnings. The fresh-process
+startup/fixture subset passes6. The earlier unfiltered integration invocation
+incorrectly ran40 owned-PostgreSQL prerequisites outside their runner; its40
+failures are retained in `normal-ui-final-integration.trx`. The corrected ordinary
+invocation passes336; the unchanged accepted owned-database/native proofs remain
+separate evidence, not skipped tests.
+
+The reviewed minimal update uses the existing MSI mechanism with version1.0.6.0.
+Inspect its ProductVersion, new ProductCode, retained UpgradeCode and action tables
+before deployment. The default MajorUpgrade schedule can remove1.0.5 before a
+failed update, so checked rollback must inspect actual settled product state and
+install retained1.0.5 even when neither product is registered. Uninstall1.0.6 only
+if present. Unresolved installer/timeouts or reboot-required results block service
+activation and another installer transaction. Data, DB, ownership and authentication
+are preserved; no commissioning/provisioning/ACL replay is authorised by the update.
+The concrete revised candidate still needs final technical and operational review.
+
+Earlier loose duplicate desktop receipts were moved, without deletion, to the
+ignored `artifacts/earlier-desktop-duplicates-20261008` directory with a hash list.
+The canonical historical attempt records remain available in this evidence tree.

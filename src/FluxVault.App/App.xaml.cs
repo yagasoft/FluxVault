@@ -17,6 +17,13 @@ public partial class App : System.Windows.Application
     private readonly DashboardWindowLifetimeController dashboardWindowLifetime = new();
     private bool isExitPreparing;
 
+    public App()
+    {
+        // Keep native presentation usable when the hardware composition path
+        // fails despite valid WPF layout. This choice affects only this process.
+        RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
+    }
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);

@@ -7,6 +7,115 @@ namespace FluxVault.Integration.Tests;
 public sealed class WindowsFixtureToolingTests
 {
     [Theory]
+    [InlineData("cim-precision", true)]
+    [InlineData("wrong-native-lifetime", false)]
+    [InlineData("wrong-owner", false)]
+    [InlineData("wrong-image", false)]
+    [InlineData("exited-during-owner", false)]
+    public async Task Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(string scenario, bool accepted)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));. (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/commission-installation.ps1')
+            $context=@{WorkRoot=$root;IdentitySha256=('A'*64)};$script:scenario='SCENARIO_VALUE'
+            $child=Start-Process -FilePath (Get-Command pwsh).Source -ArgumentList @('-NoProfile','-Command','Start-Sleep -Seconds 60') -WindowStyle Hidden -PassThru
+            try {
+                $script:child=$child;$native=Get-VaultFixtureProcessIdentity $child;$script:metadata=$native.Clone()
+                $receipt=$native.Clone()
+                if($script:scenario -eq 'wrong-native-lifetime'){$receipt.StartedUtc=([DateTimeOffset]$receipt.StartedUtc).AddTicks(1).ToString('o')}
+                # CIM is only an owner/image boundary in this focused proof. Its timestamp
+                # is deliberately different; the actual held child supplies native identity.
+                $script:cimTime=([DateTimeOffset]$receipt.StartedUtc).UtcDateTime
+                if($script:scenario -eq 'cim-precision'){$script:cimTime=$script:cimTime.AddTicks(-5)}
+                function Get-CimInstance {param($ClassName,$Filter) [pscustomobject]@{ExecutablePath=$(if($script:scenario -eq 'wrong-image'){'wrong.exe'}else{$script:metadata.Executable});CreationDate=$script:cimTime}}
+                function Invoke-CimMethod {param($InputObject,$MethodName)
+                    if($script:scenario -eq 'exited-during-owner'){$script:child.Kill($true);if(-not $script:child.WaitForExit(5000)){throw 'Owned readiness child did not exit'}}
+                    [pscustomobject]@{ReturnValue=0;Sid=$(if($script:scenario -eq 'wrong-owner'){'S-1-5-19'}else{'S-1-5-18'})}
+                }
+                Write-CommissionOperatorReceipt $context 'cleanup-ready' @{ContextSha256=$context.IdentitySha256;Process=$receipt}
+                $failure=$null;try{$null=Wait-CommissionReadiness $context 'cleanup-ready'}catch{$failure=$_.Exception.Message}
+            } finally {
+                if(-not $child.HasExited){$child.Kill($true)}
+                $joined=$child.WaitForExit(5000);$child.Dispose()
+                if(-not $joined){throw 'Owned readiness child did not join'}
+            }
+            @{Failure=$failure;Joined=$joined}|ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.True(result.GetProperty("Joined").GetBoolean());
+        if (accepted) Assert.Equal(JsonValueKind.Null, result.GetProperty("Failure").ValueKind);
+        else Assert.Contains("bound native SYSTEM process", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("complete", true)]
+    [InlineData("intent-only", false)]
+    [InlineData("after-context", false)]
+    [InlineData("after-receipts", false)]
+    [InlineData("before-completion", false)]
+    [InlineData("changed-archive", false)]
+    public async Task Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(string scenario, bool accepted)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));. (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/commission-installation.ps1')
+            $value=@{WorkRoot=$root;OperatorSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;
+                OperatorIdentity=@{ProcessId=123;StartedUtc='2026-01-01T00:00:00Z';Executable='original-operator'};
+                InstallationId=[guid]::NewGuid().ToString('N');Targets=@('unchanged-repository','unchanged-database');InstallerUncertain=$false;WorkerJob=@{KernelName='unchanged-job'}}
+            $value|ConvertTo-Json -Depth 8|Set-Content (Join-Path $root 'context.json')
+            $context=Get-Content (Join-Path $root 'context.json') -Raw|ConvertFrom-Json -AsHashtable
+            $context.IdentitySha256=(Get-FileHash (Join-Path $root 'context.json')).Hash
+            Write-CommissionOperatorReceipt $context 'installer-Install-intent' @{ContextSha256=$context.IdentitySha256;Phase='Install';Path='already-completed-installer';Sha256=('B'*64)}
+            Write-CommissionOperatorReceipt $context 'installer-Install-completed' @{ContextSha256=$context.IdentitySha256;ExitCode=0;Joined=$true;Process=@{ProcessId=456;StartedUtc='2026-01-01T00:00:01Z';Executable='already-completed-installer'}}
+            $names=@('context.json','installer-Install-intent.json','installer-Install-completed.json');$originalHashes=@{}
+            foreach($name in $names){$originalHashes[$name]=(Get-FileHash (Join-Path $root $name)).Hash}
+            Publish-CommissionAclHandoff $context
+            $errorText='An unaccounted administrator session survives; preserve unrelated sessions and keep runtime blocked.'
+            Write-CommissionOperatorReceipt $context 'cleanup-failed' @{ContextSha256=$context.IdentitySha256;CanActivate=$false;Error=$errorText}
+            Write-CommissionOperatorReceipt $context 'cleanup-error' @{Error=$errorText}
+            Write-CommissionOperatorReceipt $context 'cleanup-ready' @{ContextSha256=$context.IdentitySha256;WindowsSid='S-1-5-18';Job=$context.WorkerJob.KernelName;Process=@{ProcessId=789}}
+            foreach($phase in @('intent','registered','started')){Write-CommissionOperatorReceipt $context ('task-cleanup-'+$phase) @{ContextSha256=$context.IdentitySha256;Name=('FV-NEXT002-'+$context.InstallationId+'-cleanup')}}
+            [IO.File]::WriteAllText((Join-Path $root 'commission-processes.jsonl'),'original joined read-only probes')
+            $failedHash=(Get-FileHash (Join-Path $root 'cleanup-failed.json')).Hash
+            Publish-CommissionPreAdmissionReset $context
+            $archive=Join-Path $root 'pre-admission-reset'
+            $restoredExact=@($names|Where-Object {(Get-FileHash (Join-Path $root $_)).Hash -cne $originalHashes[$_]}).Count -eq 0
+            $preserved=(Get-FileHash (Join-Path $archive 'cleanup-failed.json')).Hash -ceq $failedHash
+            $replayRefused=$false;try{Publish-CommissionPreAdmissionReset $context}catch{$replayRefused=$_.Exception.Message -like '*cannot be replayed*'}
+            $scenario='SCENARIO_VALUE'
+            if($scenario -in @('intent-only','after-context','after-receipts','before-completion')){
+                Remove-Item -LiteralPath (Join-Path $archive 'completed.json')
+                if($scenario -eq 'intent-only'){foreach($name in $names){Copy-Item (Join-Path $archive $name) (Join-Path $root $name) -Force}}
+                if($scenario -eq 'after-context'){foreach($name in $names[1..2]){Copy-Item (Join-Path $archive $name) (Join-Path $root $name) -Force}}
+                if($scenario -eq 'after-receipts'){
+                    foreach($name in @('acl-handoff-intent.json','acl-handoff-completed.json','acl-handoff-original-context.json',
+                        'acl-handoff-original-installer-Install-intent.json','acl-handoff-original-installer-Install-completed.json',
+                        'cleanup-ready.json','cleanup-failed.json','cleanup-error.json','task-cleanup-intent.json','task-cleanup-registered.json','task-cleanup-started.json')){
+                        Copy-Item (Join-Path $archive $name) (Join-Path $root $name)
+                    }
+                }
+            }
+            if($scenario -eq 'changed-archive'){Add-Content (Join-Path $archive 'cleanup-failed.json') 'changed'}
+            $reopened=Get-Content (Join-Path $root 'context.json') -Raw|ConvertFrom-Json -AsHashtable
+            $reopened.IdentitySha256=(Get-FileHash (Join-Path $root 'context.json')).Hash
+            $failure=$null;try{Assert-CommissionAclHandoff $reopened;Assert-CommissionInstallerSettled $reopened}catch{$failure=$_.Exception.Message}
+            $script:effects=0
+            function Stop-CommissionActors {param($Context) $script:effects++}
+            function Invoke-CommissionServiceAction {param($Context,$Action) $script:effects++}
+            if($failure){try{Invoke-CommissionRollback $reopened}catch{}}
+            @{Failure=$failure;RestoredExact=$restoredExact;FailurePreserved=$preserved;ReplayRefused=$replayRefused;Effects=$script:effects;
+                ActiveFailureAbsent=(-not(Test-Path (Join-Path $root 'cleanup-failed.json')));InstallerId=(Get-Content (Join-Path $root 'installer-Install-completed.json') -Raw|ConvertFrom-Json).Process.ProcessId}|ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.True(result.GetProperty("RestoredExact").GetBoolean());
+        Assert.True(result.GetProperty("FailurePreserved").GetBoolean());
+        Assert.True(result.GetProperty("ReplayRefused").GetBoolean());
+        Assert.Equal(scenario != "after-receipts", result.GetProperty("ActiveFailureAbsent").GetBoolean());
+        Assert.Equal(456, result.GetProperty("InstallerId").GetInt32());
+        Assert.Equal(0, result.GetProperty("Effects").GetInt32());
+        if (accepted) Assert.Equal(JsonValueKind.Null, result.GetProperty("Failure").ValueKind);
+        else Assert.Contains(scenario == "changed-archive" ? "Frozen input changed" : "Pre-admission reset is partial", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+    }
+
+    [Theory]
     [InlineData("complete", true)]
     [InlineData("before-context", false)]
     [InlineData("after-context", false)]

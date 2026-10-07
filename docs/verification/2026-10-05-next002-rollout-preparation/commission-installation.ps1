@@ -197,6 +197,7 @@ function Assert-CommissionInstallerSettled {
 
 function Assert-CommissionAclHandoff {
     param($Context)
+    Assert-CommissionPreAdmissionReset $Context
     $intentPath=Join-Path $Context.WorkRoot 'acl-handoff-intent.json'
     if(-not(Test-Path -LiteralPath $intentPath)) {
         if(@(Get-ChildItem -LiteralPath $Context.WorkRoot -Filter 'acl-handoff-*' -ErrorAction SilentlyContinue).Count){throw 'ACL handoff artifacts have no intent; no recovery effects are allowed.'}
@@ -228,6 +229,91 @@ function Assert-CommissionAclHandoff {
     if($intent.OriginalContextSha256 -cne $intent.Files[0].OriginalSha256){throw 'Original ACL checkpoint context changed.'}
     $successor.OperatorIdentity=$original.OperatorIdentity
     if(($original|ConvertTo-Json -Depth 12 -Compress) -cne ($successor|ConvertTo-Json -Depth 12 -Compress)){throw 'ACL handoff changed more than the operator process identity.'}
+}
+
+function Assert-CommissionPreAdmissionReset {
+    param($Context)
+    $archive=Join-Path $Context.WorkRoot 'pre-admission-reset'
+    if(-not(Test-Path -LiteralPath $archive)){return}
+    Assert-VaultFixtureTrustedPath $archive -AdditionalTrustedOwnerSid $Context.OperatorSid
+    if(-not(Test-Path (Join-Path $archive 'intent.json')) -or -not(Test-Path (Join-Path $archive 'completed.json'))){throw 'Pre-admission reset is partial; no continuation or rollback effects are allowed.'}
+    $intentPath=Join-Path $archive 'intent.json';$completedPath=Join-Path $archive 'completed.json'
+    foreach($path in @($intentPath,$completedPath)) {
+        Assert-VaultFixtureTrustedPath $path -AdditionalTrustedOwnerSid $Context.OperatorSid
+        if((Get-Item -LiteralPath $path).Length -gt 65536){throw 'Reset receipt exceeds its bound.'}
+    }
+    $intent=Get-Content $intentPath -Raw|ConvertFrom-Json -AsHashtable -Depth 12
+    $completed=Get-Content $completedPath -Raw|ConvertFrom-Json -AsHashtable
+    $names=@('context.json','installer-Install-intent.json','installer-Install-completed.json',
+        'acl-handoff-intent.json','acl-handoff-completed.json','acl-handoff-original-context.json',
+        'acl-handoff-original-installer-Install-intent.json','acl-handoff-original-installer-Install-completed.json',
+        'cleanup-ready.json','cleanup-failed.json','cleanup-error.json',
+        'task-cleanup-intent.json','task-cleanup-registered.json','task-cleanup-started.json','commission-processes.jsonl')
+    if($completed.IntentSha256 -cne (Get-FileHash $intentPath).Hash -or $completed.RestoredContextSha256 -cne $intent.RestoredContextSha256 -or
+        $intent.Status -cne 'no admission effects; watchdog retirement unconfirmed' -or $intent.Files.Count -ne $names.Count){throw 'Pre-admission reset binding changed.'}
+    for($index=0;$index -lt $names.Count;$index++) {
+        if($intent.Files[$index].Name -cne $names[$index]){throw 'Pre-admission reset file selection changed.'}
+        Assert-CommissionHash (Join-Path $archive $names[$index]) $intent.Files[$index].Sha256
+    }
+}
+
+function Publish-CommissionPreAdmissionReset {
+    param($Context)
+    # File publication only. The exact normal checkpoint entry point must first
+    # prove native actors/jobs/tasks absent, original authentication and no worker
+    # dispatch. This exception never satisfies authentication or activation gates.
+    Assert-CommissionAclHandoff $Context
+    $archive=Join-Path $Context.WorkRoot 'pre-admission-reset'
+    if(Test-Path -LiteralPath $archive){throw 'Pre-admission reset cannot be replayed.'}
+    Assert-CommissionInstallerSettled $Context
+    $failure=Read-CommissionOperatorReceipt $Context 'cleanup-failed'
+    $ready=Read-CommissionOperatorReceipt $Context 'cleanup-ready'
+    $errorText='An unaccounted administrator session survives; preserve unrelated sessions and keep runtime blocked.'
+    if($failure.CanActivate -or $failure.Error -cne $errorText -or $ready.WindowsSid -cne 'S-1-5-18' -or $ready.Job -cne $Context.WorkerJob.KernelName){throw 'Only the proven pre-admission watchdog failure can be reset.'}
+    foreach($phase in @('intent','registered','started')) {
+        $task=Read-CommissionOperatorReceipt $Context ('task-cleanup-'+$phase)
+        if($task.Name -cne ('FV-NEXT002-'+$Context.InstallationId+'-cleanup')){throw 'Pre-admission task binding changed.'}
+    }
+    $names=@('context.json','installer-Install-intent.json','installer-Install-completed.json',
+        'acl-handoff-intent.json','acl-handoff-completed.json','acl-handoff-original-context.json',
+        'acl-handoff-original-installer-Install-intent.json','acl-handoff-original-installer-Install-completed.json',
+        'cleanup-ready.json','cleanup-failed.json','cleanup-error.json',
+        'task-cleanup-intent.json','task-cleanup-registered.json','task-cleanup-started.json','commission-processes.jsonl')
+    $allowed=@($names|Where-Object {$_ -like '*.json'})+@('parent-Candidate.json','parent-Baseline.json','installation-ticket.template.json','postgresql-ancestor-acl-proposal.json')
+    if(@(Get-ChildItem -LiteralPath $Context.WorkRoot -Filter '*.json'|Where-Object Name -cnotin $allowed).Count){throw 'Pre-admission reset refuses worker/provisioning effects or unknown receipts.'}
+    $files=@()
+    foreach($name in $names) {
+        $path=Join-Path $Context.WorkRoot $name
+        Assert-VaultFixtureTrustedPath $path -AdditionalTrustedOwnerSid $Context.OperatorSid
+        if((Get-Item $path).Length -gt 1048576){throw 'Reset evidence exceeds its bound.'}
+        $files+=@{Name=$name;Sha256=(Get-FileHash $path).Hash}
+    }
+    $handoff=Get-Content (Join-Path $Context.WorkRoot 'acl-handoff-intent.json') -Raw|ConvertFrom-Json
+    $null=New-Item -ItemType Directory -Path $archive
+    $archiveContext=@{WorkRoot=$archive}
+    Write-CommissionOperatorReceipt $archiveContext 'intent' @{FailedContextSha256=$Context.IdentitySha256;RestoredContextSha256=$handoff.OriginalContextSha256;
+        Status='no admission effects; watchdog retirement unconfirmed';Files=$files;InstallerExecutedAgain=$false;AuthenticationRetirementProven=$false}
+    foreach($entry in $files) {
+        $bytes=[IO.File]::ReadAllBytes((Join-Path $Context.WorkRoot $entry.Name))
+        $stream=[IO.FileStream]::new((Join-Path $archive $entry.Name),'CreateNew','Write','None')
+        try{$stream.Write($bytes);$stream.Flush($true)}finally{$stream.Dispose()}
+        Assert-CommissionHash (Join-Path $archive $entry.Name) $entry.Sha256
+    }
+    foreach($name in $names[0..2]) {
+        $source=Join-Path $archive ('acl-handoff-original-'+$name)
+        $stage=Join-Path $archive ('stage-'+$name)
+        $bytes=[IO.File]::ReadAllBytes($source)
+        $stream=[IO.FileStream]::new($stage,'CreateNew','Write','None')
+        try{$stream.Write($bytes);$stream.Flush($true)}finally{$stream.Dispose()}
+        [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name),[NullString]::Value)
+        Assert-CommissionHash (Join-Path $Context.WorkRoot $name) (Get-FileHash $source).Hash
+    }
+    foreach($name in $names[3..13]){Remove-Item -LiteralPath (Join-Path $Context.WorkRoot $name)}
+    Write-CommissionOperatorReceipt $archiveContext 'completed' @{IntentSha256=(Get-FileHash (Join-Path $archive 'intent.json')).Hash;RestoredContextSha256=$handoff.OriginalContextSha256;InstallerExecutedAgain=$false}
+    $original=Get-Content (Join-Path $Context.WorkRoot 'context.json') -Raw|ConvertFrom-Json -AsHashtable
+    $Context.IdentitySha256=$handoff.OriginalContextSha256;$Context.OperatorIdentity=$original.OperatorIdentity
+    Assert-CommissionAclHandoff $Context
+    Assert-CommissionInstallerSettled $Context
 }
 
 function Publish-CommissionAclHandoff {
@@ -349,10 +435,21 @@ function Wait-CommissionReadiness {
         Start-Sleep -Milliseconds 100
     }
     $ready=Read-CommissionOperatorReceipt $Context $Name
-    $process=Get-CimInstance Win32_Process -Filter "ProcessId=$($ready.Process.ProcessId)"
-    if($null -eq $process -or $process.ExecutablePath -ine 'C:\Program Files\PowerShell\7\pwsh.exe' -or
-        $process.CreationDate.ToUniversalTime() -ne ([DateTimeOffset]$ready.Process.StartedUtc).UtcDateTime -or
-        (Invoke-CimMethod -InputObject $process -MethodName GetOwnerSid).Sid -ne 'S-1-5-18'){throw 'Readiness is not the bound native SYSTEM process.'}
+    $held=Get-Process -Id $ready.Process.ProcessId -ErrorAction SilentlyContinue
+    if($null -eq $held){throw 'Readiness is not the bound native SYSTEM process.'}
+    try {
+        # Hold the native lifetime while CIM supplies owner metadata. CreationDate
+        # truncates 100ns native ticks and cannot establish exact process identity.
+        $null=$held.SafeHandle
+        if($held.HasExited){throw 'Readiness is not the bound native SYSTEM process.'}
+        $actual=Get-VaultFixtureProcessIdentity $held
+        if($actual.Executable -ine 'C:\Program Files\PowerShell\7\pwsh.exe' -or $actual.Executable -ine $ready.Process.Executable -or
+            ([DateTimeOffset]$actual.StartedUtc).UtcDateTime -ne ([DateTimeOffset]$ready.Process.StartedUtc).UtcDateTime){throw 'Readiness is not the bound native SYSTEM process.'}
+        $process=Get-CimInstance Win32_Process -Filter "ProcessId=$($ready.Process.ProcessId)"
+        if($null -eq $process -or $process.ExecutablePath -ine $actual.Executable){throw 'Readiness is not the bound native SYSTEM process.'}
+        $owner=Invoke-CimMethod -InputObject $process -MethodName GetOwnerSid
+        if($owner.ReturnValue -ne 0 -or $owner.Sid -cne 'S-1-5-18' -or $held.HasExited){throw 'Readiness is not the bound native SYSTEM process.'}
+    }finally{$held.Dispose()}
     return $ready
 }
 

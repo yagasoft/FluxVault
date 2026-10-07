@@ -22,6 +22,8 @@ internal static class ProtectionDraftUiFixture
     internal static int Render(string scratch, bool interactive = false, int inventoryCount = 0)
     {
         if(inventoryCount is < 0 or > 50_000)throw new ArgumentOutOfRangeException(nameof(inventoryCount));
+        // Exercise the same process-local renderer as the normal desktop App.
+        RenderOptions.ProcessRenderMode=System.Windows.Interop.RenderMode.SoftwareOnly;
         using var process=System.Diagnostics.Process.GetCurrentProcess();
         File.WriteAllText(Path.Combine(scratch,"ui-process.json"),JsonSerializer.Serialize(new
             {ProcessId=process.Id,StartedUtc=process.StartTime.ToUniversalTime().ToString("o"),Executable=process.MainModule!.FileName}));
@@ -81,7 +83,7 @@ internal static class ProtectionDraftUiFixture
                     {Interactive=true,Joined=true,client.Backups,client.Saves,model.ProtectionSaveMessage,model.LocalProtectionDraftMessage,
                         model.RepositoryPath,SaveState=model.ProtectionSaveState.ToString(),InventoryCount=inventoryCount,
                         LoadedFileCount=model.FileBrowser.Files.Count,RealisedFileRows=realisedFileRows,LastFileRealised=lastFileRealised,
-                        RefreshMilliseconds=refreshMilliseconds,LastFileMilliseconds=lastFileMilliseconds,PeakWorkingSetBytes=process.PeakWorkingSet64}));
+                        EffectiveRenderMode=RenderOptions.ProcessRenderMode.ToString(),RefreshMilliseconds=refreshMilliseconds,LastFileMilliseconds=lastFileMilliseconds,PeakWorkingSetBytes=process.PeakWorkingSet64}));
                 }
                 catch(Exception exception){failure=exception;}
                 finally
@@ -124,7 +126,7 @@ internal static class ProtectionDraftUiFixture
                     {LocalAndServiceStatesVisible=true,StatusDoesNotOverlap=true,OptionsDelayVisible=true,client.Backups,client.Saves,model.ProtectionSaveMessage,model.LocalProtectionDraftMessage,
                         InventoryCount=inventoryCount,LoadedFileCount=model.FileBrowser.Files.Count,RealisedFileRows=realisedFileRows,
                         LastFileRealised=lastFileRealised,RefreshMilliseconds=refreshMilliseconds,LastFileMilliseconds=lastFileMilliseconds,
-                        PeakWorkingSetBytes=process.PeakWorkingSet64}));
+                        EffectiveRenderMode=RenderOptions.ProcessRenderMode.ToString(),PeakWorkingSetBytes=process.PeakWorkingSet64}));
             }
             catch(Exception exception){failure=exception;}
             finally

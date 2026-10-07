@@ -37,7 +37,7 @@
   "PendingBootstrapPath": "C:\\ProgramData\\FluxVault\\installation.json.provisioning",
   "ProcedureFiles": [
     {
-      "Sha256": "14EAB6EA7E61C35A15E8E16F7FB8CC6262FF7F52E6780599B638C5F21F7477DE",
+      "Sha256": "6BAD4C58086FBBCA4CD2E8760D1AF5C77032BCFB5E50084EAD07C3501D4FC290",
       "Name": "commission-installation.ps1"
     },
     {
@@ -81,7 +81,7 @@
       "Name": "installation-ticket.template.json"
     },
     {
-      "Sha256": "6F3C94AF016D289EF8579D50BAE1478C0F4B1E455D44B1A1071A47D752E78FC3",
+      "Sha256": "5B372D3DBB13B1B6A4701AEF59C9145EE26016F69FCF396A5BAAE23E8D89D0F5",
       "Name": "continue-after-acl-verification.ps1"
     }
   ],
@@ -97,22 +97,34 @@
   "RollbackInstallerSha256": "DD4C47DC6B20C0B348691289481965002466ACDF373CEA26E5D823AB9AF84F61",
   "ExpectedRolloutMode": "Install",
   "RemainingGates": [
-    "S05 installed setup/authentication/filesystem boundary and live save/backup/history/verified recovery, including visible UI/UX states",
-    "G01 final installed/live evidence and cleanup acceptance"
+    "Prepare and review exact1.0.6 MSI update/checked rollback; record its operational decision",
+    "Validate full workflow through exact installed corrected candidate",
+    "G01 final independent acceptance and cleanup"
   ],
   "DesktopEvidence": [
     "../2026-10-05-next002-desktop-observation/desktop-attempt-22adaf2210cd47a6b234694e56818794/ui-result.json",
     "../2026-10-05-next002-desktop-observation/desktop-attempt-808cdedaca1a4609b94d62c2201237b2/ui-result.json"
   ],
   "DeferredByUser": "7 October: accessibility and theme testing/remediation only; other UI/UX acceptance remains required. Observed contrast defect retained in existing desktop record; no pass claimed.",
-  "TechnicalReview": "Independent Astra accepts the concrete ACL comparison/handoff/checkpoint continuation after inspection of read-only normal preflight and all12 procedure hashes. Conditional affected combined run passes135 with zero failures/skips/warnings and joined exit0. Installed S05/live UI/UX, independently verified recovery and final cleanup remain required.",
+  "TechnicalReview": "Independent Astra accepts held-native lifetime correction and exact B933 file-only reset/continuation after focused11 passing checks, normal reset preflight and all12 procedure hashes. Combined146 pass/join satisfies its pre-effects condition. After reset run existing Check before Continue; next attempt must obtain its own real administrator baseline and successful retirement. Installed S05/live workflow/G01 outstanding.",
   "SupersededCandidateId": "289c59630be846cb90f9a623c4ab0d1c",
   "ResponseCorrectionVerified": true,
   "ReplacementPreparedUtc": "2026-10-05T15:57:24.3735775+03:00",
   "ReplacementTicketValidatedUtc": "2026-10-05T15:58:43.7612146+03:00",
   "ProcedureCombinedChecks": "installation-procedure-final-combined.trx",
   "ActualReplacementMsiCheck": "actual-replacement-candidate-msi.trx",
-  "RolloutState": "Installer and exact raw ancestor ACLs completed; concrete guarded continuation independently accepted, 135 affected combined checks pass and join. Proceeding under unchanged exact user approval.",
+  "RolloutState": "Normal commissioning and S05 pass. Staged corrected App completes actual UI save of two folders -> backup4files -> history8 -> independently hash-verified folder recovery4files, sources unchanged. Original1.0.5 installed binaries unchanged. Corrected native10k175/200/restored175 proof passes. Revised1.0.6 deployment, exact installed-candidate validation and final review/cleanup remain.",
   "PreAclCorrectionProcedureSha256": "B0E55ADA1124877CC939B7FFC50F8C173C3750EF0B425C635CE9996DAD790C67",
-  "OriginalCommissionContextSha256": "FCCE1B56966471D65A5E62410B99207D1B943FF8EE8F902837EDB2FE5324A963"
+  "OriginalCommissionContextSha256": "FCCE1B56966471D65A5E62410B99207D1B943FF8EE8F902837EDB2FE5324A963",
+  "InstalledReceipts": [
+    "normal-installed-installation-completed.json",
+    "normal-installed-cleanup-completed.json",
+    "normal-installed-user-database-probes.json",
+    "normal-installed-file-access.json",
+    "normal-installed-postconditions.json",
+    "normal-live-corrected-recovery-hashes.json",
+    "normal-live-corrected-cleanup.json",
+    "normal-ui-corrected-desktop-observations.json",
+    "../2026-10-05-next002-desktop-observation/desktop-attempt-3933ed80a46e43f88f3a8765272b9d0c/cleanup.json"
+  ]
 }

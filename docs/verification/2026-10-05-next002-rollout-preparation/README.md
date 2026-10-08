@@ -14,17 +14,17 @@ creator confirmation succeed. FluxVaultService is running. Normal PostgreSQL
 retains its original process lifetime. The earlier failed checkpoints below are
 historical evidence, not the current installation state.
 
-Current critical path, 8 October: installed database and ordinary-user filesystem
-boundary probes pass. The independently captured native presentation failure is
-corrected by process-local SoftwareOnly rendering. The actual staged App, without
-a harness override, saves two synthetic folders through the commissioned service,
-backs up four files, displays eight history rows and recovers both folders to new
-destinations. Independent SHA-256 checks match all four originals; sources remain
-unchanged. The installed 1.0.5 binaries remain unchanged, so this staged capability
-does not complete installed-candidate acceptance. Package the correction as 1.0.6,
-review the concrete update/rollback, obtain its operational decision, then validate
-the installed candidate and close G01/cleanup. Only accessibility and theme work
-is deferred.
+Current status, 8 October: the commissioned single vault is installed as1.0.7.0.
+The actual installed App completes save → backup → history → verified recovery,
+with two fresh independently hash-matched files and earlier sources/recoveries
+preserved. Options closes safely with and without an acknowledged save, without
+manual refresh. All208 installed payloads, sole registration, service policy,
+creator boundary, final authentication and original PostgreSQL lifetime match.
+The489 App and343 ordinary Integration cases pass; unchanged Core563/Windows154
+and named native identity/integrity/interruption/scale proofs remain applicable.
+Final independent acceptance closes G01; Git handoff is being completed. Accessibility
+and theme alone are deferred; synthetic formats do not establish native
+Office/CAD/Adobe application fidelity.
 Historical status entries below retain their original context.
 
 The [read-only preflight](staging-preflight.json), produced by
@@ -679,7 +679,7 @@ read probe confirms its own source control is readable while installed state,
 repository marker and bootstrap return access denied. The initial probe expected
 bootstrap readability incorrectly; actual SYSTEM/Administrators-only policy was
 inspected and the expectation corrected without changing ACLs or product code.
-The fresh `normal-installed-postconditions.json` matches all208 installed hashes,
+The fresh `normal-installed-postconditions.json` matches all 208 installed hashes,
 final authentication, original postmaster lifetime and preserved legacy config;
 125 recorded temporary identities, owned jobs and scheduled tasks are absent.
 The intentional running SCM service is not temporary.
@@ -747,7 +747,7 @@ steady-state CPU claim is inferred from the transition interval.
 The fixture gracefully flushes/joins and exits zero; its exact scratch root is
 removed. Both Settings processes exit, and the original175% scale is restored.
 The [fresh postconditions](normal-live-corrected-postconditions.json) confirm
-all208 original installed payload hashes, bootstrap/authentication and normal
+all 208 original installed payload hashes, bootstrap/authentication and normal
 postmaster lifetime unchanged, service49676 running, and no temporary desktop,
 test-host, dotnet, MSBuild or compiler actors remaining.
 
@@ -871,7 +871,7 @@ installed hashes and sole product registration confirmed, service running, with
 commissioned identity, bootstrap, authentication, ACLs and PostgreSQL unchanged.
 The actual installed App saved a third synthetic folder, captured its two files,
 listed history and restored both through the native folder dialogue. Independent
-SHA-256/length checks match the99-byte text and8MiB file; the four earlier sources
+SHA-256/length checks match the99-byte text and 8MiB file; the four earlier sources
 also remain unchanged. See installed-presentation receipts and installed-live
 observations/recovery/cleanup. These are successful workflow evidence, not final
 acceptance of a known UI defect.
@@ -888,3 +888,42 @@ relaxed. The remaining D01 proof is the corrected installed close/reopen and ful
 workflow. A1.0.7 package is necessary because the MSI significant version must
 increase; the retained1.0.6 package is the rollback target. No provisioning,
 authentication, ACL or PostgreSQL change is added.
+
+## Installed 1.0.7 completion evidence
+
+The plan-wide authorised update completes with MSI exit0 joined and sole product
+{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}. No database/schema/configuration,
+authentication or ACL change is included in the update. FluxVault alone is
+stopped/replaced/started; normal PostgreSQL remains PID10660 with its original
+6October start. The final installed postconditions verify208 exact hashes,
+LocalSystem/delayed-auto service and 86400-second failure reset with two 60000ms
+restarts. Native installer/SCM/App identities are checked absent after joining.
+Unrelated concurrent development/build processes are preserved.
+
+The exact installed UI saves a new recursive folder, acknowledges configuration,
+captures 2 files, displays 16 retained history rows and restores latest folder
+01a11a1c091c744db0faf752313bb93c into the fresh Final acceptance-Recovered folder.
+Independent SHA-256/length checks match 99 bytes and 8MiB. All earlier six sources
+and recoveries are preserved. Options is opened/closed unchanged, reopened,
+saved with existing values and closed; backup/Options restore their expected
+states without manual Refresh. Activity shows 2 Captured and 6 SkippedUnchanged.
+See final-live-ui-observations.json, final-live-independent-recovery.json,
+final-earlier-data-preservation.json and final-installed-postconditions.json.
+A transient inventory-unavailable status during recovery clears on completion;
+no version/selection is lost. Synthetic data and fixture timing limits remain.
+
+Current operator Check/Update/Rollback uses protected retained packages under
+C:\ProgramData\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\retained-candidates.
+Original manifest bytes and package hashes are verified unchanged for 5, 6 and 7.
+The fixed procedure now resolves pinned installer basenames there, so worktree
+cleanup cannot break rollback. Check verifies whichever one reviewed6/7 product
+is installed; it has no effects. final-retained-readonly-check.json verifies the
+actual installed7 and both real sealed MSIs. Rollback removes7 if present,
+reinstalls6 if needed, verifies208 hashes/preservation and restores service policy;
+it restores6's known Options race. Never run rollback while installer completion
+is uncertain. The native rollback effect is not exercised on this normal vault;
+retained packages/tables, actual interface guard cases and scoped earlier native
+restoration proofs provide its stated evidence. No extra approval is required
+for routine deployment in the same user-approved plan; technical review remains.
+
+Final independent branch/live acceptance approves the agreed scope with no blocking findings; see [acceptance](architecture-review.md#final-branch-and-installed-acceptance-8october). C01–C03, S01–S02, S04–S08, applicable D01 and G01 are closed; S03 is retired. Theme/accessibility remain deferred. All product acceptance work is complete.

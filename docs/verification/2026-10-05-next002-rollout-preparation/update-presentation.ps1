@@ -1,4 +1,4 @@
-# Fixed 1.0.5 -> 1.0.6 operator procedure. Check has no installation effects.
+# Fixed 1.0.6 -> 1.0.7 operator procedure. Check has no installation effects.
 # Update/Rollback require recorded operational approval and the independent review.
 #Requires -Version 7.2
 param([ValidateSet('Check','Update','Rollback')][string]$Mode='Check',
@@ -49,8 +49,8 @@ function Get-PresentationRegistration {
     try {
         $related=$wi.RelatedProducts('{4B89B6E7-D41E-49E6-BE42-09C10D6570D6}')
         $codes=@($related)
-        foreach($code in $codes){if($code -cnotin @('{D8A16B7A-A24A-4DF6-893C-7911916A1ECB}','{1EEE244A-290D-4F25-94FE-E3AA8384F718}')){throw 'Unexpected related product; preserve registration and stop.'}}
-        $old=$wi.ProductState('{D8A16B7A-A24A-4DF6-893C-7911916A1ECB}');$new=$wi.ProductState('{1EEE244A-290D-4F25-94FE-E3AA8384F718}')
+        foreach($code in $codes){if($code -cnotin @('{1EEE244A-290D-4F25-94FE-E3AA8384F718}','{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}')){throw 'Unexpected related product; preserve registration and stop.'}}
+        $old=$wi.ProductState('{1EEE244A-290D-4F25-94FE-E3AA8384F718}');$new=$wi.ProductState('{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}')
         if($old -notin @(-1,5) -or $new -notin @(-1,5)){throw 'Product registration is not settled/installed or absent.'}
         return @{Old=($old -eq 5);New=($new -eq 5);Related=$codes}
     }finally{
@@ -149,32 +149,39 @@ $repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
 Import-Module (Join-Path $repo 'eng/fixtures/vault-windows-fixture.psm1') -Force
 Import-Module (Join-Path $PSScriptRoot 'commission-authentication.psm1') -Force
 Assert-PresentationHash (Join-Path $PSScriptRoot 'normal-installed-context.json') '85DF752EB228EB729523CCEDC04B24A5D2143A0600E7076AC0A67F54F988DC83'
-Assert-PresentationHash (Join-Path $PSScriptRoot 'candidate.json') 'ED4041C62641490AE3744E2F84A57E89A10352B5D0A5B682255609DC9043F3B9'
 $context=Get-Content (Join-Path $PSScriptRoot 'normal-installed-context.json') -Raw|ConvertFrom-Json -AsHashtable -Depth 20
-$context.WorkRoot=Join-Path $context.WorkRoot 'presentation-update-1.0.6'
-$context.Old=Get-Content (Join-Path $PSScriptRoot 'candidate.json') -Raw|ConvertFrom-Json -AsHashtable -Depth 12
-$manifest=Join-Path $repo 'artifacts/staging-single-vault/a39b83ad153a49d0a6779a5098bb02f2/candidate.json'
-Assert-PresentationHash $manifest '6BD79D60D69D6953EA2EB80EF94557AAAA0E0EBFAB4A5F5B473F9C11B670F43A'
+$retainedCandidates=Join-Path $context.WorkRoot 'retained-candidates'
+$context.WorkRoot=Join-Path $context.WorkRoot 'presentation-update-1.0.7'
+$retainedManifest=Join-Path $retainedCandidates 'a39b83ad153a49d0a6779a5098bb02f2/candidate.json'
+Assert-PresentationHash $retainedManifest '6BD79D60D69D6953EA2EB80EF94557AAAA0E0EBFAB4A5F5B473F9C11B670F43A'
+$context.Old=Get-Content $retainedManifest -Raw|ConvertFrom-Json -AsHashtable -Depth 12
+$manifest=Join-Path $retainedCandidates 'c4e807860b1c49e798b2380652ca5926/candidate.json'
+Assert-PresentationHash $manifest '151024FCF7CDA53ED0345A85707E042276A244B80A7FFE71FFB1275276393BE0'
 $context.New=Get-Content -LiteralPath $manifest -Raw|ConvertFrom-Json -AsHashtable -Depth 12
 $identity=[Security.Principal.WindowsIdentity]::GetCurrent()
 try{if($identity.User.Value -cne $context.OperatorSid -or -not ([Security.Principal.WindowsPrincipal]::new($identity)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){throw 'The intended elevated creator/operator is required.'}}finally{$identity.Dispose()}
-if($context.New.CandidateId -cne 'a39b83ad153a49d0a6779a5098bb02f2' -or $context.New.SourceCommit -cne 'da9eb329e8a05ed504bc4a2f2a22e3a7fdddbfda'){throw 'Exact frozen candidate is required.'}
+if($context.New.CandidateId -cne 'c4e807860b1c49e798b2380652ca5926' -or $context.New.SourceCommit -cne 'e3b57294f40088209637c7fe69aa9d47441abd14'){throw 'Exact frozen candidate is required.'}
 $tables=@{}
 foreach($candidate in @($context.Old,$context.New)) {
-    foreach($entry in $candidate.Installer){Assert-PresentationHash $entry.Path $entry.Sha256}
+    # Keep frozen manifest bytes unchanged, but resolve packages outside a disposable checkout.
+    foreach($entry in $candidate.Installer){
+        $entry.Path=Join-Path $retainedCandidates ($candidate.CandidateId+'/installer/'+[IO.Path]::GetFileName($entry.Path))
+        Assert-PresentationHash $entry.Path $entry.Sha256
+    }
     $msi=@($candidate.Installer|Where-Object Path -like '*.msi')[0]
     $tables[$candidate.Version]=Read-PresentationMsi $msi.Path
     $properties=@{};foreach($row in $tables[$candidate.Version].Property){$properties[$row[0]]=$row[1]}
-    $expectedCode=if($candidate.Version -ceq '1.0.5.0'){'{D8A16B7A-A24A-4DF6-893C-7911916A1ECB}'}else{'{1EEE244A-290D-4F25-94FE-E3AA8384F718}'}
+    $expectedCode=if($candidate.Version -ceq '1.0.6.0'){'{1EEE244A-290D-4F25-94FE-E3AA8384F718}'}else{'{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}'}
     if($properties.ProductVersion -cne $candidate.Version -or $properties.ProductCode -cne $expectedCode -or $properties.UpgradeCode -cne '{4B89B6E7-D41E-49E6-BE42-09C10D6570D6}'){throw 'Sealed MSI identity does not match the reviewed upgrade.'}
 }
 Assert-PresentationSettled $context
 Assert-PresentationPreservation $context
 $state=Get-PresentationRegistration
 if($Mode -eq 'Check') {
-    if(-not $state.Old -or $state.New){throw 'Readiness requires exactly the installed 1.0.5 product.'}
-    Assert-PresentationPayload $context.Old
-    @{ReadOnly=$true;NewCandidate=$context.New;OldRegistration=$state;MsiTables=$tables;BootstrapAuthenticationAndAclUnchanged=$true;Postmaster=$context.Postmaster;RollbackRestoresKnownRenderingDefect=$true}|ConvertTo-Json -Depth 14
+    if($state.Old -eq $state.New){throw 'Read-only verification requires exactly one reviewed product installed.'}
+    $installed=if($state.New){$context.New}else{$context.Old}
+    Assert-PresentationPayload $installed
+    @{ReadOnly=$true;InstalledVersion=$installed.Version;NewCandidate=$context.New;Registration=$state;MsiTables=$tables;BootstrapAuthenticationAndAclUnchanged=$true;Postmaster=$context.Postmaster;RollbackRestoresOptionsReloadRace=$true}|ConvertTo-Json -Depth 14
     return
 }
 if(-not $OperationalApprovalRecorded){throw 'Recorded operational approval is required before effects.'}

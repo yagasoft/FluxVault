@@ -1,0 +1,127 @@
+{
+  "CandidateId": "c4e807860b1c49e798b2380652ca5926",
+  "Service": {
+    "State": "Running",
+    "StartMode": "Auto",
+    "StartName": "LocalSystem",
+    "ProcessId": 10384,
+    "PathName": "\"C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe\""
+  },
+  "OwnedProcessIdentityChecks": [
+    {
+      "StartedUtc": "2026-10-08T06:00:53.5984624Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 44468
+    },
+    {
+      "StartedUtc": "2026-10-08T06:00:53.6490717Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 47488
+    },
+    {
+      "StartedUtc": "2026-10-08T06:00:54.0716209Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 46636
+    },
+    {
+      "StartedUtc": "2026-10-08T06:00:59.5226522Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 51136
+    },
+    {
+      "StartedUtc": "2026-10-08T06:00:59.5563522Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 17976
+    },
+    {
+      "StartedUtc": "2026-10-08T06:06:17.3780891Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 42744
+    },
+    {
+      "StartedUtc": "2026-10-08T05:54:38.3628138Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 53336
+    },
+    {
+      "StartedUtc": "2026-10-08T05:54:50.3974626Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 48428
+    },
+    {
+      "StartedUtc": "2026-10-08T05:55:00.9592266Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 40292
+    },
+    {
+      "StartedUtc": "2026-10-08T05:55:06.0445742Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 46084
+    },
+    {
+      "StartedUtc": "2026-10-08T05:55:20.7580839Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 50188
+    },
+    {
+      "StartedUtc": "2026-10-08T05:42:10.4293115Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 46164
+    },
+    {
+      "StartedUtc": "2026-10-08T05:42:10.4733805Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 8268
+    },
+    {
+      "StartedUtc": "2026-10-08T05:42:10.8748615Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 32284
+    },
+    {
+      "StartedUtc": "2026-10-08T05:42:16.0043029Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 12688
+    },
+    {
+      "StartedUtc": "2026-10-08T05:42:16.0352514Z",
+      "SameIdentityAlive": false,
+      "ProcessId": 48564
+    }
+  ],
+  "ObservedUtc": "2026-10-08T06:06:17.7235742+00:00",
+  "NormalPostmasterUnchanged": {
+    "StartedUtc": "2026-10-06T09:31:44.0114872Z",
+    "ProcessId": 10660,
+    "Port": 5432,
+    "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+    "DataDirectory": "D:\\Program Files\\PostgreSQL\\18\\data"
+  },
+  "DelayedAutoStart": 1,
+  "Registration": {
+    "New": true,
+    "Old": false,
+    "Related": [
+      "{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}"
+    ]
+  },
+  "PayloadHashesMatched": 208,
+  "InstalledWorkflowAndIndependentRecoveryObserved": true,
+  "FailurePolicy": {
+    "Error": "",
+    "Process": {
+      "StartedUtc": "2026-10-08T06:06:17.3780891Z",
+      "ProcessId": 42744,
+      "Executable": "C:\\Windows\\System32\\sc.exe"
+    },
+    "Output": "[SC] QueryServiceConfig2 SUCCESS\r\n\r\nSERVICE_NAME: FluxVaultService\r\n        RESET_PERIOD (in seconds)    : 86400\r\n        REBOOT_MESSAGE               : \r\n        COMMAND_LINE                 : \r\n        FAILURE_ACTIONS              : RESTART -- Delay = 60000 milliseconds.\r\n                                       RESTART -- Delay = 60000 milliseconds.\r\n\r\n",
+    "Joined": true,
+    "ExitCode": 0
+  },
+  "BootstrapAuthenticationAndAclUnchanged": true,
+  "Deferred": [
+    "Accessibility",
+    "Theme"
+  ],
+  "Version": "1.0.7.0"
+}

@@ -15,7 +15,7 @@
   "BootstrapPath": "C:\\ProgramData\\FluxVault\\installation.json",
   "InstanceId": "7871ff7f8d1b404db20771f2e742364f",
   "InitialProtectedFolders": 0,
-  "RolloutApproval": "Approved by the user on 7 October in this conversation: When you get to the rollout, it's approved by me. Applies to the unchanged candidate, fixed targets and prepared effects after required technical review/preflight.",
+  "RolloutApproval": "User explicitly approves rollout and clarifies that approval for one deployment applies to all in the same NEXT-002 plan. Independent technical review and preservation gates remain.",
   "CreatorSid": "S-1-5-21-136112424-624261118-1239521417-1001",
   "CreatorCommand": [
     "C:\\Program Files\\FluxVault\\cli\\FluxVault.Cli.exe",
@@ -113,7 +113,7 @@
   "ReplacementTicketValidatedUtc": "2026-10-05T15:58:43.7612146+03:00",
   "ProcedureCombinedChecks": "installation-procedure-final-combined.trx",
   "ActualReplacementMsiCheck": "actual-replacement-candidate-msi.trx",
-  "RolloutState": "Normal commissioning and S05 pass. Staged corrected App completes actual UI save of two folders -> backup4files -> history8 -> independently hash-verified folder recovery4files, sources unchanged. Original1.0.5 installed binaries unchanged. Corrected native10k175/200/restored175 proof passes. Revised1.0.6 deployment, exact installed-candidate validation and final review/cleanup remain.",
+  "RolloutState": "Installed1.0.7 exact208 payload/sole registration pass. Actual installed Options close/save/reopen and save→backup2→history16→independently hash-verified recovery2 pass. Earlier six sources/recoveries and original PostgreSQL lifetime preserved. Final independent branch/live acceptance closes G01; all applicable NEXT-002 gates satisfied. Accessibility/theme deferred.",
   "PreAclCorrectionProcedureSha256": "B0E55ADA1124877CC939B7FFC50F8C173C3750EF0B425C635CE9996DAD790C67",
   "OriginalCommissionContextSha256": "FCCE1B56966471D65A5E62410B99207D1B943FF8EE8F902837EDB2FE5324A963",
   "InstalledReceipts": [
@@ -125,6 +125,20 @@
     "normal-live-corrected-recovery-hashes.json",
     "normal-live-corrected-cleanup.json",
     "normal-ui-corrected-desktop-observations.json",
-    "../2026-10-05-next002-desktop-observation/desktop-attempt-3933ed80a46e43f88f3a8765272b9d0c/cleanup.json"
-  ]
+    "../2026-10-05-next002-desktop-observation/desktop-attempt-3933ed80a46e43f88f3a8765272b9d0c/cleanup.json",
+    "final-installed-Update-verified.json",
+    "final-installed-postconditions.json",
+    "final-live-ui-observations.json",
+    "final-live-independent-recovery.json",
+    "final-earlier-data-preservation.json",
+    "final-live-process-cleanup.json",
+    "retained-candidate-packages.json",
+    "final-retained-readonly-check.json"
+  ],
+  "CurrentInstalledCandidate": {
+    "Version": "1.0.7.0",
+    "ManifestSha256": "151024FCF7CDA53ED0345A85707E042276A244B80A7FFE71FFB1275276393BE0",
+    "SourceCommit": "e3b57294f40088209637c7fe69aa9d47441abd14",
+    "CandidateId": "c4e807860b1c49e798b2380652ca5926"
+  }
 }

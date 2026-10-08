@@ -292,7 +292,7 @@ with no required correction or unresolved technical decision. Its runtime varian
 is not exposed; it does not claim an Astra identity or a model switch. This uses
 the applicable independently capable equivalent permitted by AGENTS.md.
 
-The reviewer independently checks all208 candidate payload hashes, manifest
+The reviewer independently checks all 208 candidate payload hashes, manifest
 `6BD79D60D69D6953EA2EB80EF94557AAAA0E0EBFAB4A5F5B473F9C11B670F43A`,
 MSI `96D80AA626F32A20A9E6703A098F57885EADC2A869E0F8F6375D11CE8D37A555`,
 Setup `3B2BB6F2CE539571131FD148CB4973A91649A392274BA4C6645E26B7D17D6E34`,
@@ -313,3 +313,42 @@ save retention and four independent matching recoveries are reviewed. Synthetic
 format and timing limitations remain explicit. Technical approval does not grant
 operational authority. The exact revised decision has been requested; installed
 corrected-candidate D01 and live postconditions remain required before G01 closes.
+
+## Frozen 1.0.7 technical gate
+
+Independent review accepts the narrow Options reconciliation correction and the
+fixed6→7 procedure, conditional on the running ordinary Integration run passing
+and joining. The full App 489 and protection-save139 cases pass; both real modal
+activation regressions fail before the correction. Shutdown cancellation/draining,
+revision/edit-generation and failed-reload safeguards remain intact.
+Candidate c4e807860b1c49e798b2380652ca5926, source e3b5729, all 208 staged payloads
+and zero-warning joined build logs are independently checked. ManifestSHA-256
+151024FCF7CDA53ED0345A85707E042276A244B80A7FFE71FFB1275276393BE0;
+MSI3C64BE547EE678B6CC6349FE31066A9BBE11EC0E25730E8B063AEA98F0EA693E;
+Setup6286EA314C9B9537E954573AFD4BAEA02FA8D0355B7FF97558ABA02DBB5025AA.
+ProcedureSHA-256D270BBDD11EB054D009DC66B07FD14ABFF958F9661799ECBDBEB6AFC5DEEA42A.
+Retained6 rollback restores its known Options race, preserving fixed rendering.
+Installed7 Options closing/reopening and full verified recovery remain required.
+This is an independent capable equivalent, with exact runtime variant unavailable;
+no model switch is claimed. Plan-wide user rollout authority is recorded separately.
+
+## Final branch and installed acceptance, 8 October
+
+Independent final review approves NEXT-002's agreed technical and live scope;
+no blocking correction remains and G01 closes. It verifies Integration 343/343,
+retained-package guards 8/8 and App 489/489; unchanged Core 563/Windows 154 and named
+native identity/integrity/interruption/DPI/scale evidence remain applicable.
+The installed 1.0.7 MSI joins successfully,208 payload hashes and sole expected
+registration match, and service/creator/authentication/ACL/normal PostgreSQL
+postconditions are preserved. Native Options close/save/reopen and the full
+installed save → backup → history → restore pass. The reviewer independently
+rehashes both final originals and recovered files and confirms exact lengths.
+
+The final fixed procedure SHA-256 is
+4BB9001B90F8A455A10E0D8D2270B69D117D85AA4789CEBC57E0CAD33C7558F7.
+Retained original manifests, installers and fifteen build logs match outside the
+disposable checkout; the path correction preserves effect ordering and refusal
+guards. C01–C03/S01–S02/S04–S08/applicableD01 are satisfied; S03 remains retired.
+Accessibility/theme are deferred, not passed. Synthetic formats, manual-protection
+baseline and timing limits remain; no general application fidelity or throughput
+certification is claimed. Documentation and authorised Git closeout may proceed.

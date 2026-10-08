@@ -13,6 +13,51 @@ public sealed partial class ProtectionSaveContractTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    public Task Rendered_history_review_survives_unchanged_status_refresh_but_invalidates_changed_inventory(bool inventoryChanges) => RunOnStaAsync(async () =>
+    {
+        using var fixture = new StoreFixture(false);
+        await fixture.Store.SaveAsync(FluxVaultConfiguration.CreateDefault(fixture.Root));
+        var preview = DeletionPreview(fixture.Root);
+        var version = new RepositoryVersionSummary("reviewed-version", preview.Scope.SourcePath,
+            DateTimeOffset.UtcNow, CaptureConsistency.BestEffort, 10, 1);
+        var client = new StoreClient(fixture.Store) { HistoryDeletionPreview = preview, RecentVersions = [version] };
+        var model = CreateViewModel(client, new CancelRemoval());
+        await model.RefreshAsync();
+        model.SelectedWorkspaceIndex = 2;
+        var window = new FluxVault.App.MainWindow(new FileDataGridLayoutStore(Path.Combine(fixture.Root, "layout.json"))) { DataContext = model };
+        try
+        {
+            window.Show();
+            await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            var grid = (System.Windows.Controls.DataGrid)window.FindName("RecentVersionsGrid");
+            grid.SelectedItem = model.RecentVersions.Single();
+            await GetControl(model, "PreviewHistoryDeletionCommand").ExecuteAsync(null);
+            Assert.True(model.CanDeleteHistory);
+            if (inventoryChanges)
+                client.RecentVersions = [version, version with { VersionId = "new-neighbour", SourcePath = Path.Combine(fixture.Root, "neighbour.txt") }];
+            await model.RefreshAsync();
+            await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            Assert.Equal("reviewed-version", model.SelectedVersion?.VersionId);
+            Assert.Equal(model.SelectedVersion, grid.SelectedItem);
+            if (inventoryChanges)
+            {
+                Assert.Null(model.HistoryDeletionPreview);
+                Assert.False(model.CanDeleteHistory);
+            }
+            else
+            {
+                Assert.Same(preview, model.HistoryDeletionPreview);
+                Assert.True(model.CanDeleteHistory);
+                Assert.True(((System.Windows.Controls.Button)window.FindName("DeleteHistoryButton")).IsEnabled);
+            }
+            Assert.DoesNotContain(FluxVaultIpcCommand.DeleteHistory, client.Commands);
+        }
+        finally { window.Close(); }
+    });
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
     public async Task Named_stop_protecting_action_stages_selected_subtree_and_keeps_history_until_non_purging_save(bool driveRoot)
     {
         using var fixture=new StoreFixture(false);

@@ -2591,10 +2591,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
             if (status.HasVersionInventory)
             {
-                RecentVersions.Clear();
-                foreach (var version in status.RecentVersions)
-                {
-                    RecentVersions.Add(new VersionRow(
+                var rows = status.RecentVersions.Select(version => new VersionRow(
                         version.VersionId,
                         version.SourcePath,
                         version.CapturedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss"),
@@ -2602,7 +2599,14 @@ public sealed partial class MainWindowViewModel : ObservableObject
                         version.ChunkCount,
                         FormatLineage(version),
                         version.EntryKind,
-                        version.IsDeleted));
+                        version.IsDeleted)).ToArray();
+                // Clearing a bound WPF grid raises a transient null selection.
+                // Keep identical rows so a routine status poll does not discard
+                // a reviewed scope. Changed inventories still require review.
+                if (!sameInventoryIdentity || !RecentVersions.SequenceEqual(rows))
+                {
+                    RecentVersions.Clear();
+                    foreach (var row in rows) RecentVersions.Add(row);
                 }
 
                 lastAppliedVersionInventoryIdentity = inventoryIdentity;

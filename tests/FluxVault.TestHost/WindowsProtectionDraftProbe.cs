@@ -116,13 +116,17 @@ internal static class WindowsProtectionDraftProbe
             await reopened.RefreshAsync();
             var captured=await client.SendAsync(FluxVaultIpcRequest.ListVersions() with {VaultId=status.VaultId},token);
             var folder=captured.Versions!.Where(v=>v.SourcePath==retired && v.EntryKind==RepositoryEntryKind.Folder).OrderByDescending(v=>v.CapturedAtUtc).First();
-            reopened.SelectedVersion=new(folder.VersionId,folder.SourcePath,"native",folder.Consistency,folder.ChunkCount,EntryKind:folder.EntryKind);
+            reopened.SelectedVersion=reopened.RecentVersions.Single(value=>value.VersionId==folder.VersionId);
             reopened.SelectedWorkspaceIndex=2; window.UpdateLayout();
             var review=(Button)window.FindName("ReviewHistoryDeletionButton");
             var delete=(Button)window.FindName("DeleteHistoryButton");
             await ((IAsyncRelayCommand)review.Command).ExecuteAsync(null); window.UpdateLayout();
             Check(reopened.HistoryDeletionPreview is {CanDelete:false,IsComplete:true} && !delete.IsEnabled && observed.DeleteCount==0,
                 "native WPF complete preview refuses currently protected history without deletion");
+            var protectedReview=reopened.HistoryDeletionPreview;
+            await reopened.RefreshAsync(); await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            Check(ReferenceEquals(protectedReview,reopened.HistoryDeletionPreview) && reopened.SelectedVersion?.VersionId==folder.VersionId,
+                "native rendered history selection and protected review survive unchanged authenticated status refresh");
             reopened.SelectedWorkspaceIndex=1;
             reopened.FileBrowser.SelectedFolder=new(retired,"owned retired folder",true,null); window.UpdateLayout();
             var stop=(Button)window.FindName("StopProtectingKeepHistoryButton");
@@ -136,6 +140,10 @@ internal static class WindowsProtectionDraftProbe
             await ((IAsyncRelayCommand)review.Command).ExecuteAsync(null); window.UpdateLayout();
             Check(reopened.HistoryDeletionPreview is {CanDelete:true,IsComplete:true} && delete.IsEnabled,
                 "native WPF offers deliberate deletion only after a complete unprotected scope review");
+            var unprotectedReview=reopened.HistoryDeletionPreview;
+            await reopened.RefreshAsync(); await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            Check(ReferenceEquals(unprotectedReview,reopened.HistoryDeletionPreview) && delete.IsEnabled,
+                "native rendered deletion remains available after unchanged authenticated status refresh");
             await ((IAsyncRelayCommand)delete.Command).ExecuteAsync(null);
             Check(confirmation.Calls==1 && observed.DeleteCount==0 && saves.Read() is null,
                 "native WPF cancelled confirmation admits no operation and deletes no history");

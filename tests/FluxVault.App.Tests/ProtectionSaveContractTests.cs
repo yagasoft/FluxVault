@@ -2411,6 +2411,7 @@ public sealed partial class ProtectionSaveContractTests
         public bool LoseProtectionStateAcknowledgement { get; set; }
         public bool LoseHistoryDeletionAcknowledgement { get; set; }
         public RepositoryHistoryDeletionPreview? HistoryDeletionPreview { get; set; }
+        public IReadOnlyList<RepositoryVersionSummary> RecentVersions { get; set; } = [];
         public Action<FluxVaultIpcRequest>? DeletionDispatchCheck { get; set; }
         private readonly Dictionary<Guid, FluxVaultIpcResponse> deletionReceipts = [];
         public Action<FluxVaultIpcRequest>? ReceiptDispatchCheck { get; set; }
@@ -2494,7 +2495,7 @@ public sealed partial class ProtectionSaveContractTests
                     if (StatusCancelled) throw new OperationCanceledException("Fixture status reload cancelled");
                     if (StatusFails) return FluxVaultIpcResponse.Failure("Fixture status unavailable");
                     return Envelope(FluxVaultIpcResponse.WithStatus(new FluxVaultServiceStatus(true, await store.LoadAsync(cancellationToken),
-                        "Fixture idle", null, [], [])));
+                        "Fixture idle", null, [], RecentVersions)));
                 case FluxVaultIpcCommand.SaveConfiguration:
                     SaveDispatchCheck?.Invoke(request);
                     if (SaveDispatchHandler is not null) return await SaveDispatchHandler(request, cancellationToken);

@@ -15,7 +15,8 @@ public sealed class FileCaptureResult : IAsyncDisposable, IDisposable
         Func<ValueTask>? cleanup,
         long? sourceLength = null,
         DateTimeOffset? sourceLastWriteUtc = null,
-        Func<CancellationToken, ValueTask>? sourceVerification = null)
+        Func<CancellationToken, ValueTask>? sourceVerification = null,
+        string? sourceObservation = null)
     {
         Success = success;
         Content = content;
@@ -25,6 +26,7 @@ public sealed class FileCaptureResult : IAsyncDisposable, IDisposable
         SourceLength = sourceLength;
         SourceLastWriteUtc = sourceLastWriteUtc;
         this.sourceVerification = sourceVerification;
+        SourceObservation = sourceObservation;
     }
 
     public bool Success { get; }
@@ -37,6 +39,7 @@ public sealed class FileCaptureResult : IAsyncDisposable, IDisposable
 
     public long? SourceLength { get; }
     public DateTimeOffset? SourceLastWriteUtc { get; }
+    public string? SourceObservation { get; }
 
     public ValueTask VerifySourceUnchangedAsync(CancellationToken cancellationToken = default)
     {
@@ -53,10 +56,11 @@ public sealed class FileCaptureResult : IAsyncDisposable, IDisposable
         Func<ValueTask>? cleanup = null,
         long? sourceLength = null,
         DateTimeOffset? sourceLastWriteUtc = null,
-        Func<CancellationToken, ValueTask>? sourceVerification = null)
+        Func<CancellationToken, ValueTask>? sourceVerification = null,
+        string? sourceObservation = null)
     {
         ArgumentNullException.ThrowIfNull(content);
-        return new FileCaptureResult(true, content, consistency, message, cleanup, sourceLength, sourceLastWriteUtc, sourceVerification);
+        return new FileCaptureResult(true, content, consistency, message, cleanup, sourceLength, sourceLastWriteUtc, sourceVerification, sourceObservation);
     }
 
     public static FileCaptureResult Failed(string message)

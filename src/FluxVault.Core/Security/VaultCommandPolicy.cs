@@ -40,7 +40,8 @@ public static class VaultCommandPolicy
             FluxVaultIpcCommand.SetVaultAccess => new(VaultPermission.ManageAccess),
             FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview or
             FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.RunRestoreSelection => new(VaultPermission.Recover),
-            FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.RunBackupNow or FluxVaultIpcCommand.SetProtectionPaused => new(VaultPermission.ManageProtection),
+            FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.RunBackupNow or FluxVaultIpcCommand.SetProtectionPaused or
+            FluxVaultIpcCommand.SetAutomaticProtection => new(VaultPermission.ManageProtection),
             FluxVaultIpcCommand.ResolveConflict => new(VaultPermission.ManageProtection | VaultPermission.Recover | VaultPermission.DeleteHistory),
             FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.RunMirrorRebalance or FluxVaultIpcCommand.RunRepositoryScrub or
             FluxVaultIpcCommand.RunRestoreRehearsal or FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair => new(VaultPermission.Maintain),

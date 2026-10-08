@@ -175,6 +175,7 @@ internal static class VaultCatalogueProbe
             using (var ungrantedToggleCaller = new PolicyCaller("S-1-5-21-111-222-333-9876"))
                 await VaultProtectionStateProbe.RunAsync(store, owner, ungrantedToggleCaller, checks);
             await VaultHistoryDeletionProbe.RunAsync(store,owner,administrator,other,checks);
+            await VaultAutomaticProtectionProbe.RunAsync(store,dataSource,owner,administrator,other,checks);
             if(fixture.RunPredecessorReadTests)
                 await PredecessorCompatibilityProbe.RunAsync(connection,(await store.AdmitAsync(owner,FluxVaultIpcRequest.GetStatus())).Vault,fixture,checks);
             var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one) : null;

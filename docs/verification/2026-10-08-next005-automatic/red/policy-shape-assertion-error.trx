@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="61d4d8d4-91ba-4fce-b6a3-7580291228c7" name="os008@OS008-HOME 2026-10-08 18:12:44" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T18:12:44.4247142+03:00" queuing="2026-10-08T18:12:44.4247142+03:00" start="2026-10-08T18:12:43.7305186+03:00" finish="2026-10-08T18:12:44.6993234+03:00" />
+  <TestSettings name="default" id="76784552-e96b-4625-95b5-d624550ace3e">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_18_12_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6ef99f55-e4d3-4e60-ae3c-4250d025e6d5" testId="0c82642b-3db9-3ab3-c57e-1fa5c0970d88" testName="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests.Child_regex_rules_are_additive_with_inherited_parent_rules" computerName="OS008-HOME" duration="00:00:00.0011105" startTime="2026-10-08T18:12:44.3773278+03:00" endTime="2026-10-08T18:12:44.3773550+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6ef99f55-e4d3-4e60-ae3c-4250d025e6d5" />
+    <UnitTestResult executionId="b8005144-2850-403f-8aee-4be6105ebfd1" testId="b8e13fde-049a-67d6-76a7-8815e42c7a4c" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.Rejected_publication_keeps_previous_good_version_and_publishes_no_reserved_result" computerName="OS008-HOME" duration="00:00:00.0544872" startTime="2026-10-08T18:12:44.5906031+03:00" endTime="2026-10-08T18:12:44.6452682+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b8005144-2850-403f-8aee-4be6105ebfd1" />
+    <UnitTestResult executionId="8be729c8-522e-44fc-9dae-8a40e0fbd3ef" testId="9c97c158-3b1b-63b5-d532-e9c481f4d711" testName="FluxVault.Core.Tests.AutomaticProtectionPolicyTests.Policy_defaults_off_and_does_not_change_predecessor_configuration_shape" computerName="OS008-HOME" duration="00:00:00.1606412" startTime="2026-10-08T18:12:44.3771976+03:00" endTime="2026-10-08T18:12:44.5340019+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8be729c8-522e-44fc-9dae-8a40e0fbd3ef">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found&#xD;
+                                ↓ (pos 1226)&#xD;
+String: ···"VersionCount":3,"RunAutomatically":false}"···&#xD;
+Found:  "automatic"</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AutomaticProtectionPolicyTests.Policy_defaults_off_and_does_not_change_predecessor_configuration_shape() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticProtectionPolicyTests.cs:line 29&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="16d6ac8b-1ce8-4fff-9e5d-22c72e8ac00f" testId="58beaa3f-1e01-ef54-dfd8-9b6e4401f189" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.A_reserved_identity_cannot_overwrite_an_acknowledged_version" computerName="OS008-HOME" duration="00:00:00.1366842" startTime="2026-10-08T18:12:44.4149592+03:00" endTime="2026-10-08T18:12:44.5543815+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="16d6ac8b-1ce8-4fff-9e5d-22c72e8ac00f" />
+    <UnitTestResult executionId="b523e6bc-a826-4455-b8cc-f1cf94872f46" testId="bd818020-b9ce-c76f-fb0c-4670f4f29b83" testName="FluxVault.Core.Tests.ProtectionSelectionCompilerTests.Compile_groups_selected_files_by_parent_folder" computerName="OS008-HOME" duration="00:00:00.0013270" startTime="2026-10-08T18:12:44.4012848+03:00" endTime="2026-10-08T18:12:44.4013099+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b523e6bc-a826-4455-b8cc-f1cf94872f46" />
+    <UnitTestResult executionId="4e202661-228a-44da-800e-dc18c88c8329" testId="4c191187-cc80-5fff-6291-5286674e820a" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;../../outside&quot;)" computerName="OS008-HOME" duration="00:00:00.0059209" startTime="2026-10-08T18:12:44.4031872+03:00" endTime="2026-10-08T18:12:44.4090758+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e202661-228a-44da-800e-dc18c88c8329" />
+    <UnitTestResult executionId="0f2efa6f-c9b7-41ac-8739-e0b58ceb7ede" testId="b278c544-7097-5cd7-6144-97c3d2780008" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.Reserved_capture_identity_is_published_and_independently_recoverable" computerName="OS008-HOME" duration="00:00:00.0345526" startTime="2026-10-08T18:12:44.5556681+03:00" endTime="2026-10-08T18:12:44.5904881+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f2efa6f-c9b7-41ac-8739-e0b58ceb7ede" />
+    <UnitTestResult executionId="0bcdc7b4-9a56-4a78-ad36-3e979a9fcd0b" testId="1143e7f6-ef06-5a00-b7bb-31d8e279f860" testName="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests.Regex_scope_rules_apply_to_protected_descendants_without_selecting_parent_folder" computerName="OS008-HOME" duration="00:00:00.0001314" startTime="2026-10-08T18:12:44.3775203+03:00" endTime="2026-10-08T18:12:44.3775471+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0bcdc7b4-9a56-4a78-ad36-3e979a9fcd0b" />
+    <UnitTestResult executionId="0d6818fb-eca0-4034-bcf0-821b22f1936b" testId="272d2b1f-d346-5da6-8e10-bc3849a47097" testName="FluxVault.Core.Tests.AutomaticProtectionPolicyTests.Automatic_preference_has_a_distinct_mutating_command_and_protection_permission" computerName="OS008-HOME" duration="00:00:00.0069679" startTime="2026-10-08T18:12:44.3542917+03:00" endTime="2026-10-08T18:12:44.3700417+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0d6818fb-eca0-4034-bcf0-821b22f1936b" />
+    <UnitTestResult executionId="73540461-edd2-4646-9a3d-dd05beb69ede" testId="f5a24df0-a574-a41b-e85e-aea316f72157" testName="FluxVault.Core.Tests.ProtectionSelectionCompilerTests.Compile_emits_recursive_folder_rule_as_recursive_watched_folder" computerName="OS008-HOME" duration="00:00:00.0002840" startTime="2026-10-08T18:12:44.4011892+03:00" endTime="2026-10-08T18:12:44.4012159+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73540461-edd2-4646-9a3d-dd05beb69ede" />
+    <UnitTestResult executionId="c903be7a-1a48-4b72-93ba-956fc315ca4d" testId="5f2d53e3-1864-a884-7be2-77aff86c4f53" testName="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests.Scoped_exact_exclusion_blocks_inherited_recursive_file" computerName="OS008-HOME" duration="00:00:00.0069427" startTime="2026-10-08T18:12:44.3523252+03:00" endTime="2026-10-08T18:12:44.3661513+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c903be7a-1a48-4b72-93ba-956fc315ca4d" />
+    <UnitTestResult executionId="1b895027-d652-4554-b932-a2213b7f59dd" testId="dd3ade28-8390-35a1-f2d4-76678e67e099" testName="FluxVault.Core.Tests.AutomaticProtectionPolicyTests.Omitted_automatic_field_preserves_legacy_request_fingerprint_shape" computerName="OS008-HOME" duration="00:00:00.0670898" startTime="2026-10-08T18:12:44.5398066+03:00" endTime="2026-10-08T18:12:44.6006424+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1b895027-d652-4554-b932-a2213b7f59dd" />
+    <UnitTestResult executionId="2f188923-1e85-419a-84e9-f46928c8014f" testId="dd0c49f2-5304-19be-96f9-987cd9a94ded" testName="FluxVault.Core.Tests.ProtectionSelectionCompilerTests.Compile_emits_immediate_files_rule_as_non_recursive_watched_folder" computerName="OS008-HOME" duration="00:00:00.0180029" startTime="2026-10-08T18:12:44.3542711+03:00" endTime="2026-10-08T18:12:44.3790723+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f188923-1e85-419a-84e9-f46928c8014f" />
+    <UnitTestResult executionId="c5288486-8a2e-48e4-9d9b-48b7dcad6017" testId="c8c41de9-3306-3f14-a077-4b4bdfe4afe1" testName="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests.Immediate_folder_regex_applies_only_to_direct_files" computerName="OS008-HOME" duration="00:00:00.0002216" startTime="2026-10-08T18:12:44.3774249+03:00" endTime="2026-10-08T18:12:44.3774510+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c5288486-8a2e-48e4-9d9b-48b7dcad6017" />
+    <UnitTestResult executionId="6f42e0e1-2f79-4dfa-ae6c-b986a08ffdc8" testId="48bfea88-0b51-5999-35be-46ccc1a1bbcd" testName="FluxVault.Core.Tests.ProtectionSelectionCompilerTests.Compile_suppresses_child_rules_when_recursive_parent_covers_them" computerName="OS008-HOME" duration="00:00:00.0005550" startTime="2026-10-08T18:12:44.4007858+03:00" endTime="2026-10-08T18:12:44.4008253+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6f42e0e1-2f79-4dfa-ae6c-b986a08ffdc8" />
+    <UnitTestResult executionId="9fd9f5fa-ce99-4eef-b455-de580314e490" testId="565c24d6-bcad-f19f-8058-fcf5fba955ed" testName="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests.Recursive_folder_regex_applies_to_descendant_files" computerName="OS008-HOME" duration="00:00:00.0002464" startTime="2026-10-08T18:12:44.3771831+03:00" endTime="2026-10-08T18:12:44.3772432+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9fd9f5fa-ce99-4eef-b455-de580314e490" />
+    <UnitTestResult executionId="77c533a6-abd7-4ef4-9d93-e0c3bde8a519" testId="65202611-a7d9-6877-408d-4ced5596c55f" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;00000000000000000000000000000000&quot;)" computerName="OS008-HOME" duration="00:00:00.0057637" startTime="2026-10-08T18:12:44.4091705+03:00" endTime="2026-10-08T18:12:44.4148563+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="77c533a6-abd7-4ef4-9d93-e0c3bde8a519" />
+    <UnitTestResult executionId="58526de2-a514-4ef3-85da-5a5e71f541db" testId="95704f3d-9ecb-dec0-821e-9494c7a6e890" testName="FluxVault.Core.Tests.ProtectionSelectionCompilerTests.Compile_ignores_regex_scope_rules_as_watched_folders" computerName="OS008-HOME" duration="00:00:00.0001654" startTime="2026-10-08T18:12:44.4010843+03:00" endTime="2026-10-08T18:12:44.4011135+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="58526de2-a514-4ef3-85da-5a5e71f541db" />
+    <UnitTestResult executionId="ff44514e-92f4-481e-ac4a-8523417d08c2" testId="6c36e7cb-542c-0bd4-d989-324b3ddaf411" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;not-a-reserved-version&quot;)" computerName="OS008-HOME" duration="00:00:00.0463764" startTime="2026-10-08T18:12:44.3535863+03:00" endTime="2026-10-08T18:12:44.4031102+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ff44514e-92f4-481e-ac4a-8523417d08c2" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.A_reserved_identity_cannot_overwrite_an_acknowledged_version" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="58beaa3f-1e01-ef54-dfd8-9b6e4401f189">
+      <Execution id="16d6ac8b-1ce8-4fff-9e5d-22c72e8ac00f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="A_reserved_identity_cannot_overwrite_an_acknowledged_version" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;not-a-reserved-version&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="6c36e7cb-542c-0bd4-d989-324b3ddaf411">
+      <Execution id="ff44514e-92f4-481e-ac4a-8523417d08c2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="Invalid_reserved_identity_is_refused_without_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests.Immediate_folder_regex_applies_only_to_direct_files" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="c8c41de9-3306-3f14-a077-4b4bdfe4afe1">
+      <Execution id="c5288486-8a2e-48e4-9d9b-48b7dcad6017" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests" name="Immediate_folder_regex_applies_only_to_direct_files" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSelectionCompilerTests.Compile_emits_recursive_folder_rule_as_recursive_watched_folder" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="f5a24df0-a574-a41b-e85e-aea316f72157">
+      <Execution id="73540461-edd2-4646-9a3d-dd05beb69ede" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSelectionCompilerTests" name="Compile_emits_recursive_folder_rule_as_recursive_watched_folder" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests.Scoped_exact_exclusion_blocks_inherited_recursive_file" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="5f2d53e3-1864-a884-7be2-77aff86c4f53">
+      <Execution id="c903be7a-1a48-4b72-93ba-956fc315ca4d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests" name="Scoped_exact_exclusion_blocks_inherited_recursive_file" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;../../outside&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="4c191187-cc80-5fff-6291-5286674e820a">
+      <Execution id="4e202661-228a-44da-800e-dc18c88c8329" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="Invalid_reserved_identity_is_refused_without_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSelectionCompilerTests.Compile_groups_selected_files_by_parent_folder" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="bd818020-b9ce-c76f-fb0c-4670f4f29b83">
+      <Execution id="b523e6bc-a826-4455-b8cc-f1cf94872f46" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSelectionCompilerTests" name="Compile_groups_selected_files_by_parent_folder" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests.Regex_scope_rules_apply_to_protected_descendants_without_selecting_parent_folder" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="1143e7f6-ef06-5a00-b7bb-31d8e279f860">
+      <Execution id="0bcdc7b4-9a56-4a78-ad36-3e979a9fcd0b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests" name="Regex_scope_rules_apply_to_protected_descendants_without_selecting_parent_folder" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticProtectionPolicyTests.Omitted_automatic_field_preserves_legacy_request_fingerprint_shape" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="dd3ade28-8390-35a1-f2d4-76678e67e099">
+      <Execution id="1b895027-d652-4554-b932-a2213b7f59dd" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticProtectionPolicyTests" name="Omitted_automatic_field_preserves_legacy_request_fingerprint_shape" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticProtectionPolicyTests.Automatic_preference_has_a_distinct_mutating_command_and_protection_permission" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="272d2b1f-d346-5da6-8e10-bc3849a47097">
+      <Execution id="0d6818fb-eca0-4034-bcf0-821b22f1936b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticProtectionPolicyTests" name="Automatic_preference_has_a_distinct_mutating_command_and_protection_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.Rejected_publication_keeps_previous_good_version_and_publishes_no_reserved_result" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="b8e13fde-049a-67d6-76a7-8815e42c7a4c">
+      <Execution id="b8005144-2850-403f-8aee-4be6105ebfd1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="Rejected_publication_keeps_previous_good_version_and_publishes_no_reserved_result" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSelectionCompilerTests.Compile_suppresses_child_rules_when_recursive_parent_covers_them" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="48bfea88-0b51-5999-35be-46ccc1a1bbcd">
+      <Execution id="6f42e0e1-2f79-4dfa-ae6c-b986a08ffdc8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSelectionCompilerTests" name="Compile_suppresses_child_rules_when_recursive_parent_covers_them" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests.Recursive_folder_regex_applies_to_descendant_files" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="565c24d6-bcad-f19f-8058-fcf5fba955ed">
+      <Execution id="9fd9f5fa-ce99-4eef-b455-de580314e490" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests" name="Recursive_folder_regex_applies_to_descendant_files" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests.Child_regex_rules_are_additive_with_inherited_parent_rules" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="0c82642b-3db9-3ab3-c57e-1fa5c0970d88">
+      <Execution id="6ef99f55-e4d3-4e60-ae3c-4250d025e6d5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSelectionRegexMatcherTests" name="Child_regex_rules_are_additive_with_inherited_parent_rules" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSelectionCompilerTests.Compile_emits_immediate_files_rule_as_non_recursive_watched_folder" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="dd0c49f2-5304-19be-96f9-987cd9a94ded">
+      <Execution id="2f188923-1e85-419a-84e9-f46928c8014f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSelectionCompilerTests" name="Compile_emits_immediate_files_rule_as_non_recursive_watched_folder" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticProtectionPolicyTests.Policy_defaults_off_and_does_not_change_predecessor_configuration_shape" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="9c97c158-3b1b-63b5-d532-e9c481f4d711">
+      <Execution id="8be729c8-522e-44fc-9dae-8a40e0fbd3ef" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticProtectionPolicyTests" name="Policy_defaults_off_and_does_not_change_predecessor_configuration_shape" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;00000000000000000000000000000000&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="65202611-a7d9-6877-408d-4ced5596c55f">
+      <Execution id="77c533a6-abd7-4ef4-9d93-e0c3bde8a519" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="Invalid_reserved_identity_is_refused_without_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSelectionCompilerTests.Compile_ignores_regex_scope_rules_as_watched_folders" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="95704f3d-9ecb-dec0-821e-9494c7a6e890">
+      <Execution id="58526de2-a514-4ef3-85da-5a5e71f541db" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSelectionCompilerTests" name="Compile_ignores_regex_scope_rules_as_watched_folders" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.Reserved_capture_identity_is_published_and_independently_recoverable" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="b278c544-7097-5cd7-6144-97c3d2780008">
+      <Execution id="0f2efa6f-c9b7-41ac-8739-e0b58ceb7ede" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="Reserved_capture_identity_is_published_and_independently_recoverable" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0c82642b-3db9-3ab3-c57e-1fa5c0970d88" executionId="6ef99f55-e4d3-4e60-ae3c-4250d025e6d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b8e13fde-049a-67d6-76a7-8815e42c7a4c" executionId="b8005144-2850-403f-8aee-4be6105ebfd1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9c97c158-3b1b-63b5-d532-e9c481f4d711" executionId="8be729c8-522e-44fc-9dae-8a40e0fbd3ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="58beaa3f-1e01-ef54-dfd8-9b6e4401f189" executionId="16d6ac8b-1ce8-4fff-9e5d-22c72e8ac00f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bd818020-b9ce-c76f-fb0c-4670f4f29b83" executionId="b523e6bc-a826-4455-b8cc-f1cf94872f46" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4c191187-cc80-5fff-6291-5286674e820a" executionId="4e202661-228a-44da-800e-dc18c88c8329" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b278c544-7097-5cd7-6144-97c3d2780008" executionId="0f2efa6f-c9b7-41ac-8739-e0b58ceb7ede" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1143e7f6-ef06-5a00-b7bb-31d8e279f860" executionId="0bcdc7b4-9a56-4a78-ad36-3e979a9fcd0b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="272d2b1f-d346-5da6-8e10-bc3849a47097" executionId="0d6818fb-eca0-4034-bcf0-821b22f1936b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f5a24df0-a574-a41b-e85e-aea316f72157" executionId="73540461-edd2-4646-9a3d-dd05beb69ede" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f2d53e3-1864-a884-7be2-77aff86c4f53" executionId="c903be7a-1a48-4b72-93ba-956fc315ca4d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dd3ade28-8390-35a1-f2d4-76678e67e099" executionId="1b895027-d652-4554-b932-a2213b7f59dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dd0c49f2-5304-19be-96f9-987cd9a94ded" executionId="2f188923-1e85-419a-84e9-f46928c8014f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c8c41de9-3306-3f14-a077-4b4bdfe4afe1" executionId="c5288486-8a2e-48e4-9d9b-48b7dcad6017" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="48bfea88-0b51-5999-35be-46ccc1a1bbcd" executionId="6f42e0e1-2f79-4dfa-ae6c-b986a08ffdc8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="565c24d6-bcad-f19f-8058-fcf5fba955ed" executionId="9fd9f5fa-ce99-4eef-b455-de580314e490" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="65202611-a7d9-6877-408d-4ced5596c55f" executionId="77c533a6-abd7-4ef4-9d93-e0c3bde8a519" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95704f3d-9ecb-dec0-821e-9494c7a6e890" executionId="58526de2-a514-4ef3-85da-5a5e71f541db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c36e7cb-542c-0bd4-d989-324b3ddaf411" executionId="ff44514e-92f4-481e-ac4a-8523417d08c2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="19" executed="19" passed="18" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.42]       Assert.DoesNotContain() Failure: Sub-string found&#xD;
+[xUnit.net 00:00:00.42]                                       ↓ (pos 1226)&#xD;
+[xUnit.net 00:00:00.42]       String: ···"VersionCount":3,"RunAutomatically":false}"···&#xD;
+[xUnit.net 00:00:00.42]       Found:  "automatic"&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticProtectionPolicyTests.cs(29,0): at FluxVault.Core.Tests.AutomaticProtectionPolicyTests.Policy_defaults_off_and_does_not_change_predecessor_configuration_shape()&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.53]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T18:12:44.5362172+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.Core.Tests.AutomaticProtectionPolicyTests.Policy_defaults_off_and_does_not_change_predecessor_configuration_shape [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

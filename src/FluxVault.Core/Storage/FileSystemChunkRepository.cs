@@ -36,15 +36,23 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
     private readonly IReadOnlyList<MirrorNodeConfiguration> configuredMirrorNodes;
     private IReadOnlyList<MirrorNodeConfiguration> leasedMirrorNodes = [];
     private List<FileVersionManifest>? mutationManifestCache;
+    private readonly Func<CancellationToken,ValueTask>? runtimeFence;
 
     private async ValueTask<RepositoryLeaseSet> AcquireLeaseAsync(MirrorLeaseMode mode, CancellationToken cancellationToken)
     {
         if (binding is not null && metadataStore is PostgreSqlRepositoryMetadataStore boundStore)
             await boundStore.VerifyBindingAsync(cancellationToken).ConfigureAwait(false);
         var lease = await RepositoryLeaseSet.AcquireAsync(rootPath, configuredMirrorNodes.Select(node => node.Path).ToArray(), mode, cancellationToken, binding: binding).ConfigureAwait(false);
-        foreach (var node in configuredMirrorNodes) lease.LabelMirror(StorageOwnership.Canonical(node.Path), node.Label);
-        leasedMirrorNodes = configuredMirrorNodes.Where(node => lease.MirrorRoots.Contains(StorageOwnership.Canonical(node.Path), StringComparer.OrdinalIgnoreCase)).ToArray();
-        return lease;
+        try
+        {
+            // A replacement can publish its fence only after draining this same
+            // lease. Every new operation checks ownership while holding it.
+            if (runtimeFence is not null) await runtimeFence(cancellationToken).ConfigureAwait(false);
+            foreach (var node in configuredMirrorNodes) lease.LabelMirror(StorageOwnership.Canonical(node.Path), node.Label);
+            leasedMirrorNodes = configuredMirrorNodes.Where(node => lease.MirrorRoots.Contains(StorageOwnership.Canonical(node.Path), StringComparer.OrdinalIgnoreCase)).ToArray();
+            return lease;
+        }
+        catch { await lease.DisposeAsync().ConfigureAwait(false); throw; }
     }
 
     public FileSystemChunkRepository(
@@ -81,12 +89,14 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
 
     internal FileSystemChunkRepository(string rootPath, FastCdcChunker chunker, Blake3ContentHasher hasher,
         ZstdChunkCodec codec, MirrorSetConfiguration? mirrorSet, IRepositoryMetadataStore? metadataStore,
-        RepositoryIntegrityLimits? integrityLimits, RepositoryFaults? faults, VaultBinding? binding = null)
+        RepositoryIntegrityLimits? integrityLimits, RepositoryFaults? faults, VaultBinding? binding = null,
+        Func<CancellationToken,ValueTask>? runtimeFence = null)
     {
         binding?.Validate();
         if (binding is not null && !string.Equals(StorageOwnership.Canonical(rootPath), StorageOwnership.Canonical(binding.RepositoryPath), StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException("The repository root must match the immutable vault binding.", nameof(binding));
         this.binding = binding;
+        this.runtimeFence = runtimeFence;
         this.rootPath = rootPath;
         streamingChunker = new StreamingFastCdcChunker(chunker.Options);
         this.hasher = hasher;
@@ -111,8 +121,8 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
 
     public FileSystemChunkRepository(VaultBinding binding, FastCdcChunker chunker, Blake3ContentHasher hasher,
         ZstdChunkCodec codec, MirrorSetConfiguration? mirrorSet, PostgreSqlRepositoryMetadataStore metadataStore,
-        RepositoryIntegrityLimits? integrityLimits = null)
-        : this(binding.RepositoryPath, chunker, hasher, codec, mirrorSet, metadataStore, integrityLimits, null, binding)
+        RepositoryIntegrityLimits? integrityLimits = null, Func<CancellationToken,ValueTask>? runtimeFence = null)
+        : this(binding.RepositoryPath, chunker, hasher, codec, mirrorSet, metadataStore, integrityLimits, null, binding, runtimeFence)
     {
         if (metadataStore.Binding != binding) throw new ArgumentException("The service repository requires its exact bound PostgreSQL metadata store.", nameof(metadataStore));
     }

@@ -1,0 +1,73 @@
+{
+  "ObservedUtc": "2026-10-08T18:27:44.0314201+03:00",
+  "Services": [],
+  "Features": [
+    {
+      "FeatureName": "VirtualMachinePlatform",
+      "State": "Disabled"
+    },
+    {
+      "FeatureName": "HypervisorPlatform",
+      "State": "Disabled"
+    },
+    {
+      "FeatureName": "Microsoft-Hyper-V-All",
+      "State": "Disabled"
+    },
+    {
+      "FeatureName": "Microsoft-Hyper-V",
+      "State": "Disabled"
+    },
+    {
+      "FeatureName": "Microsoft-Hyper-V-Tools-All",
+      "State": "Disabled"
+    },
+    {
+      "FeatureName": "Microsoft-Hyper-V-Management-PowerShell",
+      "State": "Disabled"
+    },
+    {
+      "FeatureName": "Microsoft-Hyper-V-Hypervisor",
+      "State": "Disabled"
+    },
+    {
+      "FeatureName": "Microsoft-Hyper-V-Services",
+      "State": "Disabled"
+    },
+    {
+      "FeatureName": "Microsoft-Hyper-V-Management-Clients",
+      "State": "Disabled"
+    },
+    {
+      "FeatureName": "Containers-DisposableClientVM",
+      "State": "Disabled"
+    }
+  ],
+  "OperatorSessionId": 1,
+  "OnlyOperatorInteractiveSessionObserved": true,
+  "SessionInventoryObservedUtc": "2026-10-08T18:28:58.2968186+03:00",
+  "InteractiveSessionListing": [
+    " USERNAME              SESSIONNAME        ID  STATE   IDLE TIME  LOGON TIME",
+    ">os008                 console             1  Active      none   2026-10-06 12:31 PM"
+  ],
+  "Tools": [
+    {
+      "Name": "Get-VM",
+      "Available": false
+    },
+    {
+      "Name": "VBoxManage",
+      "Available": false
+    },
+    {
+      "Name": "vmrun",
+      "Available": false
+    },
+    {
+      "Name": "vmware",
+      "Available": false
+    }
+  ],
+  "Products": [],
+  "ToolInventoryObservedUtc": "2026-10-08T15:42:07.0933885+00:00"
+}

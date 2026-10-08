@@ -1,0 +1,119 @@
+{
+  "FixtureId": "8010737dbf154dbf8ef94b9ef13e7790",
+  "Observations": [
+    {
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "8010737dbf154dbf8ef94b9ef13e7790",
+            "ProbeId": "ec1e12783ced44f683f47667a9d622a9",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql"
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "Kind": "ACL"
+        }
+      ],
+      "RunId": "0d1550f699f1443290d1335408d1e997",
+      "Complete": true,
+      "ServerLogStart": 897,
+      "ServerLogEnd": 2307
+    },
+    {
+      "Results": [
+        {
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 58502 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ProbeId": "7a0d0df0a2af49be8e96bdb3778c0d6f",
+          "ExitCode": 2,
+          "Host": "127.0.0.1",
+          "Kind": "libpq",
+          "Output": ""
+        },
+        {
+          "Kind": "ACL",
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "RunId": "e579c6df673e476ebf2fecaaf7c44501",
+      "Actor": "System",
+      "ServerLogStart": 2307,
+      "ServerLogEnd": 3012
+    },
+    {
+      "RunId": "96b0949c85ca4456977a4b90a7b885b9",
+      "Complete": true,
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "8010737dbf154dbf8ef94b9ef13e7790",
+            "ProbeId": "8a13792927ff4eff953d0d455a2683e9",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Kind": "Npgsql",
+          "Host": "::1"
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "Kind": "ACL"
+        }
+      ],
+      "ServerLogStart": 3012,
+      "ServerLogEnd": 4400
+    },
+    {
+      "RunId": "6d741840f6924af39fc0f42dd258c9cc",
+      "Complete": true,
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "Results": [
+        {
+          "Error": "psql: error: connection to server at \"::1\", port 58502 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ExitCode": 2,
+          "Kind": "libpq",
+          "Host": "::1",
+          "ProbeId": "d15159e4431448c4944dda7596937d12",
+          "Output": ""
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "Kind": "ACL"
+        }
+      ],
+      "ServerLogStart": 4400,
+      "ServerLogEnd": 5094
+    }
+  ],
+  "FailureLocation": "at Read-ActorResult, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 498\r\nat Invoke-SystemActor, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 630\r\nat Invoke-CorrelatedActor, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 913\r\nat <ScriptBlock>, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 1318",
+  "Failure": "Actor probe incomplete: Npgsql probe failed before its result: {\"error\":\"Automatic catalogue contract did not refuse: automatic work refuses unlogged persistence rather than claiming durable pending work\",\"code\":null,\"detail\":\"System.InvalidOperationException: Automatic catalogue contract did not refuse: automatic work refuses unlogged persistence rather than claiming durable pending work\\r\\n   at FluxVault.TestHost.VaultAutomaticProtectionProbe.\\u003C\\u003Ec__DisplayClass0_0.\\u003C\\u003CRunAsync\\u003Eg__Reject|5\\u003Ed.MoveNext() in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultAutomaticProtectionProbe.cs:line 169\\r\\n--- End of stack trace from previous location ---\\r\\n   at FluxVault.TestHost.VaultAutomaticProtectionProbe.RunAsync(PostgreSqlVaultCatalogue original, NpgsqlDataSource source, FluxVaultCallerContext creator, FluxVaultCallerContext administrator, FluxVaultCallerContext other, List\\u00601 checks) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultAutomaticProtectionProbe.cs:line 127\\r\\n   at FluxVault.TestHost.VaultAutomaticProtectionProbe.RunAsync(PostgreSqlVaultCatalogue original, NpgsqlDataSource source, FluxVaultCallerContext creator, FluxVaultCallerContext administrator, FluxVaultCallerContext other, List\\u00601 checks) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultAutomaticProtectionProbe.cs:line 133\\r\\n   at FluxVault.TestHost.VaultAutomaticProtectionProbe.RunAsync(PostgreSqlVaultCatalogue original, NpgsqlDataSource source, FluxVaultCallerContext creator, FluxVaultCallerContext administrator, FluxVaultCallerContext other, List\\u00601 checks) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultAutomaticProtectionProbe.cs:line 133\\r\\n   at FluxVault.TestHost.VaultAutomaticProtectionProbe.RunAsync(PostgreSqlVaultCatalogue original, NpgsqlDataSource source, FluxVaultCallerContext creator, FluxVaultCallerContext administrator, FluxVaultCallerContext other, List\\u00601 checks) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultAutomaticProtectionProbe.cs:line 133\\r\\n   at FluxVault.TestHost.VaultAutomaticProtectionProbe.RunAsync(PostgreSqlVaultCatalogue original, NpgsqlDataSource source, FluxVaultCallerContext creator, FluxVaultCallerContext administrator, FluxVaultCallerContext other, List\\u00601 checks) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultAutomaticProtectionProbe.cs:line 160\\r\\n   at FluxVault.TestHost.VaultAutomaticProtectionProbe.RunAsync(PostgreSqlVaultCatalogue original, NpgsqlDataSource source, FluxVaultCallerContext creator, FluxVaultCallerContext administrator, FluxVaultCallerContext other, List\\u00601 checks) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultAutomaticProtectionProbe.cs:line 160\\r\\n   at FluxVault.TestHost.VaultAutomaticProtectionProbe.RunAsync(PostgreSqlVaultCatalogue original, NpgsqlDataSource source, FluxVaultCallerContext creator, FluxVaultCallerContext administrator, FluxVaultCallerContext other, List\\u00601 checks) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultAutomaticProtectionProbe.cs:line 160\\r\\n   at FluxVault.TestHost.VaultAutomaticProtectionProbe.RunAsync(PostgreSqlVaultCatalogue original, NpgsqlDataSource source, FluxVaultCallerContext creator, FluxVaultCallerContext administrator, FluxVaultCallerContext other, List\\u00601 checks) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultAutomaticProtectionProbe.cs:line 160\\r\\n   at FluxVault.TestHost.VaultAutomaticProtectionProbe.RunAsync(PostgreSqlVaultCatalogue original, NpgsqlDataSource source, FluxVaultCallerContext creator, FluxVaultCallerContext administrator, FluxVaultCallerContext other, List\\u00601 checks) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultAutomaticProtectionProbe.cs:line 160\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 178\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 183\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture)\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 194\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 194\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 194\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 194\\r\\n   at FluxVault.Testing.WindowsDatabaseProbe.RunAsync(String configurationPath, String host, String actor, Guid probeId, Func\\u00603 catalogueProbe) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsDatabaseProbe.cs:line 95\\r\\n   at FluxVault.Testing.WindowsDatabaseProbe.RunAsync(String configurationPath, String host, String actor, Guid probeId, Func\\u00603 catalogueProbe) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsDatabaseProbe.cs:line 99\\r\\n   at FluxVault.TestHost.Program.Main(String[] arguments) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\Program.cs:line 64\"}\r\n"
+}

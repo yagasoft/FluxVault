@@ -1,6 +1,6 @@
 # NEXT-005 signed-in automatic protection: design and implementation plan
 
-**Status, 8 October 2026:** a separate following slice; planning only. Do not implement or deploy until the owner's explicit model-switch resume. Deliver [NEXT-004](2026-10-08-next004-protection-controls.md) independently first. Its baseline, evidence-reuse rules, fixed architecture, post-resume authority and deployment/cleanup requirements also apply here.
+**Status, 8 October 2026:** the owner explicitly resumed after the model-switch pause. This separate slice is in implementation; no automatic runtime is deployed or claimed. [NEXT-004](2026-10-08-next004-protection-controls.md) is independently live-accepted as 1.0.9 and merged through PR #35 at `41222b6`. Its baseline, evidence-reuse rules, fixed architecture, post-resume authority and deployment/cleanup requirements also apply here.
 
 **Goal:** with the creator signed in, save a supported file → durable automatic capture → restart FluxVault → find its version → independently verify recovery, without keeping the desktop open.
 
@@ -94,11 +94,30 @@ ship together after NEXT-004's separate installed acceptance.
 
 **Effort checkpoint:** after two substantive batches, the private real-service/DB/UI round trip and restart result must exist. If not, identify the exact authority/durability blocker and reduce the affected path, without spending another batch on broad fixture conversion or UI scaffolding. Do not enable an unsafe shortcut to produce a demonstration.
 
+The current checkpoint identifies a native source-authority environment blocker:
+the existing token fixture cannot prove real WTS sign-out/replacement without
+affecting the operator's session. The [verification ledger](../../verification/2026-10-08-next005-automatic/README.md#native-authority-gate)
+records the independent assessment, host inventory and pending isolated-Windows
+environment decision. Complete only the bounded unexposed foundation corrections
+already under review; runtime composition/exposure and deployment wait for that
+decision and the required native proof. This does not waive signed-in acceptance
+or move logged-off/reboot work into this slice.
+
 Extend existing `ProtectionLoopUsnTests`, cadence/checkpoint tests, native caller source tests, service lifetime tests, repository process/PostgreSQL integrity cases and actual VM contracts. Add focused real-store tests for each distinct new durability, consent, concurrency and migration invariant. Use barriers/crash points at admission, publication, completion and shutdown; component fakes alone cannot close these gates. The existing resource-intent journal, isolated authenticated PostgreSQL fixtures and native creator/ungranted-user probes remain the tooling boundary. Join every temporary process; do not ask the owner to perform validation.
 
 ## Migration, release and recovery
 
 Ship separately after NEXT-004 acceptance, with its own source commit/version/candidate manifest, independent architecture/concurrency/migration review and pre-deployment candidate/rollback review. Add versioned, transactional, idempotent extension tables in the installed vault's existing database. Preserve the predecessor-readable base configuration shape and control identity schema version 1: `PostgreSqlVaultCatalogue` currently uses `JsonUnmappedMemberHandling.Disallow` and pins that identity version. New optional fields alone are not backwards compatibility. Give the automatic-policy/consent/work extension its own version record; unsupported extension versions block automatic operation without changing the base binding or preventing manual recovery. Leave unrelated databases and normal PostgreSQL service untouched.
+
+Verify all five extension relations are permanent, ordinary tables owned only by
+the service role before evaluating the extension identity record. General outbox
+draining must also reconcile pre-existing pending version exports whose version
+has already been deleted. Retire obsolete work and select live work in a bounded,
+short metadata transaction under the existing mutation lock; hold the repository
+lease before that transaction and through export/acknowledgement. Preserve
+unrelated pending records and already exported journal files. These are the two
+bounded foundation corrections from independent integrity review, not a new
+migration framework or portable-recovery contract.
 
 Keep automatic protection off through migration and until explicit creator consent. Preserve pending work and source-approval records across compatible updates; restart reclaims work only after owning/reconciling its generation. Before rollback, disable/quiesce the new runtime and transactionally mark the extension as requiring renewed creator approval, retaining the saved preference and all work/history/receipts. Then restore the immediately previous accepted NEXT-004 release. Its base configuration reads/saves must succeed while leaving extension records untouched. On re-upgrade, retain the queue but dispatch nothing until fresh creator approval of the current scope; old work outside that scope is reconciled as superseded, never captured under stale consent. A scope-fingerprint mismatch also blocks dispatch independently of the rollback marker.
 

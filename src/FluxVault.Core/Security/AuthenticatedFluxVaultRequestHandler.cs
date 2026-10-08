@@ -16,11 +16,12 @@ public interface IAuthorisedVaultCommandExecutor
 }
 
 public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalogue, IAuthorisedVaultCommandExecutor executor,
-    ILogger<AuthenticatedFluxVaultRequestHandler>? logger = null, FluxVaultIpcLimits? limits = null) : IAuthenticatedFluxVaultRequestHandler
+    ILogger<AuthenticatedFluxVaultRequestHandler>? logger = null, FluxVaultIpcLimits? limits = null,
+    SemaphoreSlim? sharedMutationGate = null) : IAuthenticatedFluxVaultRequestHandler
 {
     // One installation owns one vault. Admission remains inside its mutation gate
     // so a queued command never carries an earlier configuration snapshot.
-    private readonly SemaphoreSlim mutationGate = CreateMutationGate(limits ?? new());
+    private readonly SemaphoreSlim mutationGate = sharedMutationGate ?? CreateMutationGate(limits ?? new());
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request,
         CancellationToken cancellationToken = default)
@@ -51,7 +52,7 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
             cancellationToken.ThrowIfCancellationRequested();
             admissionStarted = true;
             catalogueMutationStarted = request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess or
-                FluxVaultIpcCommand.SetProtectionPaused;
+                FluxVaultIpcCommand.SetProtectionPaused or FluxVaultIpcCommand.SetAutomaticProtection;
             var admission = request.Command switch
             {
                 FluxVaultIpcCommand.SaveConfiguration => await catalogue.SaveConfigurationAsync(caller, request, cancellationToken),

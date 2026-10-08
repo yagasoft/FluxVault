@@ -37,6 +37,7 @@ public sealed class WindowsCallerCaptureProvider : IFileCaptureProvider
             return FileCaptureResult.Captured(opened.TakeStream(), CaptureConsistency.BestEffort,
                 "Captured from the caller's live readable file.", sourceLength: observation.Length,
                 sourceLastWriteUtc: DateTimeOffset.FromFileTime(observation.LastWriteTime).ToUniversalTime(),
+                sourceObservation: FormattableString.Invariant($"{observation.Identity:X16}:{observation.Length:X16}:{observation.LastWriteTime:X16}:{observation.ChangeTime:X16}"),
                 sourceVerification: async ct =>
                 {
                     ct.ThrowIfCancellationRequested();

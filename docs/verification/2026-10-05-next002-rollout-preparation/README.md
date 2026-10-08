@@ -854,3 +854,37 @@ Independent pre-deployment review now approves the exact candidate/procedure;
 see [technical gate](architecture-review.md#frozen-106-pre-deployment-technical-gate).
 The revised operational decision has been requested in the conversation. No
 update effects have been performed and no installed-candidate pass is claimed.
+
+## Plan-wide rollout authority clarified
+
+The user explicitly clarifies: “Approval for one deployment applied to all in the
+same plan.” This covers the reviewed1.0.6 candidate, its fixed installation target,
+checked rollback and remaining live validation within NEXT-002. No renewed
+routine approval is required for deployments in this agreed plan. Existing
+security, integrity, preservation, independent review and cleanup gates remain.
+No PostgreSQL restart or unrelated operational effect is included.
+
+## Installed workflow and narrow Options close correction
+
+The approved1.0.6 update completed on8October: MSI exit0 joined, exact208
+installed hashes and sole product registration confirmed, service running, with
+commissioned identity, bootstrap, authentication, ACLs and PostgreSQL unchanged.
+The actual installed App saved a third synthetic folder, captured its two files,
+listed history and restored both through the native folder dialogue. Independent
+SHA-256/length checks match the99-byte text and8MiB file; the four earlier sources
+also remain unchanged. See installed-presentation receipts and installed-live
+observations/recovery/cleanup. These are successful workflow evidence, not final
+acceptance of a known UI defect.
+
+Closing Options reproducibly disabled backup until a manual Refresh. The actual
+App activation handler starts an owner refresh on closing the modal dialogue;
+Options reconciliation then used the nonblocking refresh gate and skipped its
+mandatory reload. Two new real-WPF/real-store cases reproduce the race with and
+without an Options save (both fail before the correction). Only the mandatory
+Options reload now waits for the active refresh, using the existing cancellation
+and shutdown lifetime. The139 protection-save contract cases pass, including
+stale-baseline and failure guards. No binding/revision or failed-save gate is
+relaxed. The remaining D01 proof is the corrected installed close/reopen and full
+workflow. A1.0.7 package is necessary because the MSI significant version must
+increase; the retained1.0.6 package is the rollback target. No provisioning,
+authentication, ACL or PostgreSQL change is added.

@@ -22,7 +22,7 @@ $staging=Join-Path $candidateRoot 'installer'
 [IO.Directory]::CreateDirectory($staging) | Out-Null
 $dotnetPath=(Get-Command dotnet -CommandType Application).Source
 $launches=[Collections.Generic.List[object]]::new()
-$candidateResult=@{CandidateId=$CandidateId;SourceCommit=$sourceCommit;Root=$candidateRoot;Version='1.0.6.0';Launches=$launches;Failure=$null}
+$candidateResult=@{CandidateId=$CandidateId;SourceCommit=$sourceCommit;Root=$candidateRoot;Version='1.0.7.0';Launches=$launches;Failure=$null}
 
 function Invoke-CandidateBuild([string]$Step,[string[]]$Arguments){
     $start=[Diagnostics.ProcessStartInfo]::new($dotnetPath)
@@ -62,7 +62,7 @@ try{
         Invoke-CandidateBuild -Step ('build-'+$project.ToLowerInvariant()) -Arguments @('build',
             (Join-Path $candidateRepo ('installer/wix/FluxVault.'+$project+'/FluxVault.'+$project+'.wixproj')),
             '-c','Release','--disable-build-servers','-nodeReuse:false','-p:UseSharedCompilation=false',
-            ('-p:PublishRoot='+$publish),'-p:ProductVersion=1.0.6.0',('-p:ReleasePackageRoot='+$staging),
+            ('-p:PublishRoot='+$publish),'-p:ProductVersion=1.0.7.0',('-p:ReleasePackageRoot='+$staging),
             ('-p:OutputPath='+$staging+'\'),('-p:BaseIntermediateOutputPath='+(Join-Path $candidateRoot ('obj-'+$project.ToLowerInvariant()))+'\'))
     }
     $payload=@(Get-ChildItem -LiteralPath $publish -Recurse -File | Sort-Object FullName | ForEach-Object {

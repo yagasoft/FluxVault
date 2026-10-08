@@ -2193,6 +2193,84 @@ public sealed class ProtectionSaveContractTests
         CompressionPreference.Zstd, ResourceProfile.Balanced, IsEnabled: true);
 
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public Task Options_close_waits_for_owner_activation_refresh_before_reloading_saved_settings(bool saveOptions) => RunOnStaAsync(async () =>
+    {
+        using var fixture = new StoreFixture(true);
+        await fixture.Store.SaveAsync(NonDefaultConfiguration(fixture.Root));
+        var client = new StoreClient(fixture.Store);
+        var viewModel = CreateViewModel(client);
+        await viewModel.RefreshAsync();
+        var window = new MainWindow(new FileDataGridLayoutStore(Path.Combine(fixture.Root, "layout.json"))) { DataContext = viewModel };
+        Task? activationRefresh = null;
+        Task? openOptions = null;
+        var closingOptions = false;
+        window.Activated += (_, _) =>
+        {
+            if (closingOptions) activationRefresh = viewModel.RefreshAsync();
+        };
+        var closedOptions = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) };
+        timer.Tick += async (_, _) =>
+        {
+            var options = window.OwnedWindows.OfType<OptionsWindow>().SingleOrDefault();
+            if (options?.DataContext is not OptionsViewModel optionsViewModel || optionsViewModel.StatusText != "Options loaded.") return;
+            timer.Stop();
+            try
+            {
+                if (saveOptions)
+                {
+                    optionsViewModel.MinimumVersionsPerFile = 17;
+                    await optionsViewModel.SaveCommand.ExecuteAsync(null);
+                }
+                client.HoldStatus = true;
+                closingOptions = true;
+                options.Close();
+                closedOptions.TrySetResult();
+            }
+            catch (Exception exception) { closedOptions.TrySetException(exception); options.Close(); }
+        };
+        try
+        {
+            window.Show();
+            window.Activate();
+            timer.Start();
+            openOptions = window.OpenOptionsAsync();
+            await closedOptions.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            await client.StatusEntered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.NotNull(activationRefresh);
+            Assert.False(openOptions.IsCompleted);
+            Assert.False(viewModel.CanSaveProtection);
+            Assert.False(viewModel.CanOpenOptions);
+            Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+            client.ReleaseStatus.TrySetResult();
+            await activationRefresh.WaitAsync(TimeSpan.FromSeconds(10));
+            await openOptions.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.True(viewModel.CanSaveProtection);
+            Assert.True(viewModel.CanOpenOptions);
+            Assert.DoesNotContain("could not be reloaded", viewModel.ProtectionSaveMessage);
+            var selection = Selection(fixture.Root, "after-options-project");
+            viewModel.FileBrowser.ReplaceSelectionRule(selection);
+            await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
+            var saved = await fixture.Reopen().LoadAsync();
+            Assert.Equal(saveOptions ? 17 : NonDefaultConfiguration(fixture.Root).RetentionPolicy.MinimumVersionsPerFile,
+                saved.RetentionPolicy.MinimumVersionsPerFile);
+            Assert.Equal(selection.Path, Assert.Single(saved.SelectionRules).Path);
+            Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
+        }
+        finally
+        {
+            client.ReleaseStatus.TrySetResult(); timer.Stop();
+            if (activationRefresh is not null) await activationRefresh;
+            if (openOptions is not null) await openOptions;
+            closingOptions = false;
+            foreach (Window owned in window.OwnedWindows) owned.Close();
+            window.Close();
+        }
+    });
+
+    [Theory]
     [InlineData(false, true)]
     [InlineData(true, true)]
     [InlineData(false, false)]

@@ -124,7 +124,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         try
         {
             var applied = await RefreshAsync(isAutomatic: false, forceConfigurationReload: !hasLocalConfigurationChanges,
-                expectedEditGeneration: configurationEditGeneration).ConfigureAwait(true);
+                expectedEditGeneration: configurationEditGeneration, waitForActiveRefresh: true).ConfigureAwait(true);
             if (!applied)
             {
                 ProtectionSaveMessage = "Options could not be reloaded. Protection saving is unavailable until saved settings are reloaded. Your pending edits are kept; refresh, or review them and use Discard changes to reload.";
@@ -585,7 +585,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
         bool forceConfigurationReload = false,
         long? expectedEditGeneration = null,
         bool validateDiscardReview = false,
-        PendingConfigurationSave? discardReview = null)
+        PendingConfigurationSave? discardReview = null,
+        bool waitForActiveRefresh = false)
     {
         var reconcileOptions = requiresOptionsReconciliation;
         var refresh = BeginRepositoryRefresh(cancellationToken);
@@ -593,7 +594,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
         cancellationToken = refresh.Token;
         try
         {
-            if (!await refreshGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
+            // Closing Options activates its owner and can start another refresh first.
+            // Its required reload must run after that refresh, not be silently skipped.
+            if (!await refreshGate.WaitAsync(waitForActiveRefresh ? Timeout.Infinite : 0, cancellationToken).ConfigureAwait(true))
             {
                 return false;
             }

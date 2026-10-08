@@ -2645,6 +2645,46 @@ public sealed class WindowsFixtureToolingTests
     }
 
     [Theory]
+    [InlineData("stops",true)]
+    [InlineData("stuck",false)]
+    [InlineData("ownership",false)]
+    [InlineData("scheduler-error",false)]
+    [InlineData("not-created",true)]
+    public async Task Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(string scenario,bool success)
+    {
+        using var fixture=new ScriptFixture();
+        var result=await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'docs/verification/2026-10-08-next004-controls/update-controls.ps1')
+            $script:events=[Collections.Generic.List[string]]::new();$script:stopped=$false
+            $job=[pscustomobject]@{}
+            $job|Add-Member -MemberType ScriptMethod -Name StopAndJoin -Value {$script:events.Add('job-joined')}
+            $job|Add-Member -MemberType ScriptMethod -Name Dispose -Value {$script:events.Add('job-disposed')}
+            function Export-ScheduledTask {param($TaskName) 'owned'}
+            function Get-ScheduledTask {param($TaskName)
+                if($script:stopped -and 'SCENARIO' -eq 'stops'){$script:events.Add('task-exited');@{State='Ready'}}else{@{State='Running'}}
+            }
+            function Stop-ScheduledTask {param($TaskName) $script:events.Add('task-stop');if('SCENARIO' -eq 'scheduler-error'){throw 'Scheduler failed.'};$script:stopped=$true}
+            function Unregister-ScheduledTask {param($TaskName,$Confirm) $script:events.Add('task-removed')}
+            $hash=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes('owned')))
+            if('SCENARIO' -eq 'ownership'){$hash='changed'}
+            $failure=$null;$cleanup=$null
+            try{$cleanup=Complete-ControlsInspection $job 'owned-task' ('SCENARIO' -ne 'not-created') $hash 150}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Cleanup=$cleanup;Events=$script:events}|ConvertTo-Json -Compress
+            """.Replace("SCENARIO",scenario,StringComparison.Ordinal));
+        Assert.Equal(success,result.GetProperty("Failure").ValueKind==JsonValueKind.Null);
+        var events=result.GetProperty("Events").EnumerateArray().Select(item=>item.GetString()).ToArray();
+        Assert.Equal(["job-joined","job-disposed"],events.TakeLast(2));
+        Assert.Equal(success && scenario!="not-created",events.Contains("task-removed"));
+        if(success)
+        {
+            if(scenario!="not-created")Assert.True(Array.IndexOf(events,"task-exited")<Array.IndexOf(events,"task-removed"));
+            Assert.True(result.GetProperty("Cleanup").GetProperty("OwnedJobJoined").GetBoolean());
+        }
+        else Assert.Equal(JsonValueKind.Null,result.GetProperty("Cleanup").ValueKind);
+    }
+
+    [Theory]
     [InlineData("intent")]
     [InlineData("uncertain")]
     [InlineData("reboot")]

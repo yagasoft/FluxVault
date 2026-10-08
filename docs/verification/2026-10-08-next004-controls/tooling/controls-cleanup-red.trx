@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="7b1e3037-a8ce-408f-830f-5dc3b164129f" name="os008@OS008-HOME 2026-10-08 16:30:17" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T16:30:17.9300902+03:00" queuing="2026-10-08T16:30:17.9300903+03:00" start="2026-10-08T16:30:16.0495048+03:00" finish="2026-10-08T16:30:19.3343482+03:00" />
+  <TestSettings name="default" id="1800ed02-7cfe-4536-9976-6514f98321c5">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_16_30_17" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6cfc2216-18c3-448a-abee-8aebde8035f0" testId="7f7bd1e8-30a6-14b9-f408-9690358c9e52" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: &quot;scheduler-error&quot;, success: False)" computerName="OS008-HOME" duration="00:00:00.6750877" startTime="2026-10-08T16:30:16.6537591+03:00" endTime="2026-10-08T16:30:17.3434535+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6cfc2216-18c3-448a-abee-8aebde8035f0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+                       ↓ (pos 0)&#xD;
+Expected: &lt;generated&gt; ["job-joined", "job-disposed"]&#xD;
+Actual:   string[]    []</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(String scenario, Boolean success) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2676&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3983ccff-6e19-4721-a4ee-82ba71fe1f2e" testId="85d187c2-9eab-1feb-c17f-b7811acba4cb" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: &quot;stuck&quot;, success: False)" computerName="OS008-HOME" duration="00:00:00.6532633" startTime="2026-10-08T16:30:17.9953016+03:00" endTime="2026-10-08T16:30:18.6478125+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3983ccff-6e19-4721-a4ee-82ba71fe1f2e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+                       ↓ (pos 0)&#xD;
+Expected: &lt;generated&gt; ["job-joined", "job-disposed"]&#xD;
+Actual:   string[]    []</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(String scenario, Boolean success) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2676&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b918390a-f8f7-404d-ae2a-76741242db81" testId="64264c37-1de5-9ccc-7931-bfc9e5dfad5f" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: &quot;ownership&quot;, success: False)" computerName="OS008-HOME" duration="00:00:00.6172784" startTime="2026-10-08T16:30:18.6485900+03:00" endTime="2026-10-08T16:30:19.2658355+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b918390a-f8f7-404d-ae2a-76741242db81">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+                       ↓ (pos 0)&#xD;
+Expected: &lt;generated&gt; ["job-joined", "job-disposed"]&#xD;
+Actual:   string[]    []</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(String scenario, Boolean success) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2676&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0d723661-3a16-43e1-890d-7b4ec1f4e413" testId="5220905c-721d-85a4-4179-de54db5c6303" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: &quot;stops&quot;, success: True)" computerName="OS008-HOME" duration="00:00:00.6489101" startTime="2026-10-08T16:30:17.3552676+03:00" endTime="2026-10-08T16:30:17.9939343+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0d723661-3a16-43e1-890d-7b4ec1f4e413">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(String scenario, Boolean success) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2674&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: &quot;stops&quot;, success: True)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5220905c-721d-85a4-4179-de54db5c6303">
+      <Execution id="0d723661-3a16-43e1-890d-7b4ec1f4e413" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: &quot;scheduler-error&quot;, success: False)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="7f7bd1e8-30a6-14b9-f408-9690358c9e52">
+      <Execution id="6cfc2216-18c3-448a-abee-8aebde8035f0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: &quot;ownership&quot;, success: False)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="64264c37-1de5-9ccc-7931-bfc9e5dfad5f">
+      <Execution id="b918390a-f8f7-404d-ae2a-76741242db81" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: &quot;stuck&quot;, success: False)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="85d187c2-9eab-1feb-c17f-b7811acba4cb">
+      <Execution id="3983ccff-6e19-4721-a4ee-82ba71fe1f2e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7f7bd1e8-30a6-14b9-f408-9690358c9e52" executionId="6cfc2216-18c3-448a-abee-8aebde8035f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="85d187c2-9eab-1feb-c17f-b7811acba4cb" executionId="3983ccff-6e19-4721-a4ee-82ba71fe1f2e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="64264c37-1de5-9ccc-7931-bfc9e5dfad5f" executionId="b918390a-f8f7-404d-ae2a-76741242db81" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5220905c-721d-85a4-4179-de54db5c6303" executionId="0d723661-3a16-43e1-890d-7b4ec1f4e413" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.91]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:00.91]                              ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.91]       Expected: &lt;generated&gt; ["job-joined", "job-disposed"]&#xD;
+[xUnit.net 00:00:00.91]       Actual:   string[]    []&#xD;
+[xUnit.net 00:00:00.91]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.91]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2676,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(String scenario, Boolean success)&#xD;
+[xUnit.net 00:00:00.91]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.56]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.56]       Expected: True&#xD;
+[xUnit.net 00:00:01.56]       Actual:   False&#xD;
+[xUnit.net 00:00:01.56]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.56]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2674,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(String scenario, Boolean success)&#xD;
+[xUnit.net 00:00:01.56]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.21]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:02.21]                              ↓ (pos 0)&#xD;
+[xUnit.net 00:00:02.21]       Expected: &lt;generated&gt; ["job-joined", "job-disposed"]&#xD;
+[xUnit.net 00:00:02.21]       Actual:   string[]    []&#xD;
+[xUnit.net 00:00:02.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.21]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2676,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(String scenario, Boolean success)&#xD;
+[xUnit.net 00:00:02.21]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.83]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:02.83]                              ↓ (pos 0)&#xD;
+[xUnit.net 00:00:02.83]       Expected: &lt;generated&gt; ["job-joined", "job-disposed"]&#xD;
+[xUnit.net 00:00:02.83]       Actual:   string[]    []&#xD;
+[xUnit.net 00:00:02.83]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.83]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2676,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(String scenario, Boolean success)&#xD;
+[xUnit.net 00:00:02.83]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.84]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T16:30:17.3459186+03:00">
+        <Text>[xUnit.net 00:00:00.91]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: "scheduler-error", success: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T16:30:17.9943363+03:00">
+        <Text>[xUnit.net 00:00:01.56]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: "stops", success: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T16:30:18.6484723+03:00">
+        <Text>[xUnit.net 00:00:02.21]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: "stuck", success: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T16:30:19.2662050+03:00">
+        <Text>[xUnit.net 00:00:02.83]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(scenario: "ownership", success: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

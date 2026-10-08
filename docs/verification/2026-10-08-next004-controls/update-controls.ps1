@@ -41,17 +41,17 @@ function Invoke-ControlsRollbackInspection($Context) {
     Assert-CommissionPostgresqlPath $Context $Context.PsqlPath
     Import-VaultFixtureJobType
     $kernel='Global\FluxVault.NEXT002.'+$runId
+    $taskCreated=$false;$definitionHash=$null;$name=$null
     $job=[FluxVault.Fixtures.OwnedWindowsJob]::Create($kernel,'S-1-5-18')
-    $inspection=@{WorkRoot=$root;KernelName=$kernel;OperatorSid=$Context.OperatorSid;PsqlPath=$Context.PsqlPath;
-        ServiceConnection=$Context.ServiceConnection;Postmaster=$Context.Postmaster;DataDirectory=$Context.DataDirectory;
-        Port=$Context.Port;ApplicationName=$Context.ApplicationName;NormalInstallation=$true;EmptyPasswordFile=(Join-Path $root 'empty.pgpass')}
-    [IO.File]::WriteAllText($inspection.EmptyPasswordFile,'')
-    $contextPath=Join-Path $root 'context.json'
-    $inspection|ConvertTo-Json -Depth 12|Set-Content -LiteralPath $contextPath
-    $hash=(Get-FileHash -LiteralPath $contextPath).Hash
-    $name='FluxVault-NEXT004-Read-'+$runId
-    $taskCreated=$false;$definitionHash=$null
     try {
+        $inspection=@{WorkRoot=$root;KernelName=$kernel;OperatorSid=$Context.OperatorSid;PsqlPath=$Context.PsqlPath;
+            ServiceConnection=$Context.ServiceConnection;Postmaster=$Context.Postmaster;DataDirectory=$Context.DataDirectory;
+            Port=$Context.Port;ApplicationName=$Context.ApplicationName;NormalInstallation=$true;EmptyPasswordFile=(Join-Path $root 'empty.pgpass')}
+        [IO.File]::WriteAllText($inspection.EmptyPasswordFile,'')
+        $contextPath=Join-Path $root 'context.json'
+        $inspection|ConvertTo-Json -Depth 12|Set-Content -LiteralPath $contextPath
+        $hash=(Get-FileHash -LiteralPath $contextPath).Hash
+        $name='FluxVault-NEXT004-Read-'+$runId
         if(Get-ScheduledTask -TaskName $name -ErrorAction SilentlyContinue){throw 'Inspection task collision.'}
         $arguments='-NoProfile -NonInteractive -File "'+(Join-Path $root 'inspect-rollback-worker.ps1')+'" -ContextPath "'+$contextPath+'" -ContextSha256 '+$hash
         $action=New-ScheduledTaskAction -Execute 'C:\Program Files\PowerShell\7\pwsh.exe' -Argument $arguments
@@ -73,16 +73,32 @@ function Invoke-ControlsRollbackInspection($Context) {
         if(-not $result.ReadOnly -or -not $result.Tool.Joined -or $result.Tool.ExitCode -ne 0){throw 'Inspection evidence is incomplete.'}
         return $result
     }finally{
-        $job.StopAndJoin();$job.Dispose()
-        if($taskCreated){
-            $actualHash=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes((Export-ScheduledTask $name))))
-            if($actualHash -cne $definitionHash){throw 'Inspection task ownership changed; do not remove it.'}
-            $task=Get-ScheduledTask -TaskName $name
-            if($task.State -in @('Running','Queued')){Stop-ScheduledTask $name}
-            Unregister-ScheduledTask -TaskName $name -Confirm:$false
-        }
-        @{OwnedJobJoined=$true;TaskRemoved=$taskCreated;RunId=$runId}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $root 'cleanup.json')
+        $cleanup=Complete-ControlsInspection $job $name $taskCreated $definitionHash
+        $cleanup.RunId=$runId
+        $cleanup|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $root 'cleanup.json')
     }
+}
+
+function Complete-ControlsInspection($Job,[string]$TaskName,[bool]$TaskCreated,[string]$DefinitionHash,
+    [ValidateRange(1,10000)][int]$TimeoutMilliseconds=10000) {
+    $removed=$false
+    try {
+        if($TaskCreated){
+            $actualHash=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes((Export-ScheduledTask $TaskName))))
+            if($actualHash -cne $DefinitionHash){throw 'Inspection task ownership changed; do not remove it.'}
+            if((Get-ScheduledTask -TaskName $TaskName).State -in @('Running','Queued')){Stop-ScheduledTask -TaskName $TaskName}
+            $timer=[Diagnostics.Stopwatch]::StartNew()
+            while((Get-ScheduledTask -TaskName $TaskName).State -in @('Running','Queued')){
+                if($timer.ElapsedMilliseconds -ge $TimeoutMilliseconds){throw 'Owned inspection task did not exit; do not claim cleanup.'}
+                Start-Sleep -Milliseconds 100
+            }
+            Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
+            $removed=$true
+        }
+    }finally{
+        try{$Job.StopAndJoin()}finally{$Job.Dispose()}
+    }
+    return @{OwnedJobJoined=$true;TaskRemoved=$removed}
 }
 
 function Restore-ControlsProduct($Context) {

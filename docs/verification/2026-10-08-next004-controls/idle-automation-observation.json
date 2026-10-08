@@ -1,0 +1,20 @@
+[
+  {
+    "ProcessId": 38228,
+    "WallSeconds": 652.9327,
+    "CpuSeconds": 404.90625,
+    "MachineCpuPercent": 2.5838947490300304,
+    "LogicalProcessors": 24,
+    "ValidIdleSample": false,
+    "Reason": "UI Automation remained attached; a bounded CPU trace observes provider/dispatcher and finalizer activity. Repeat in a fresh process without UI Automation capture. Original calculation mixed automatic JSON DateTime conversion with strings; corrected from preserved UTC timestamp strings."
+  },
+  {
+    "ProcessId": 27768,
+    "WallSeconds": 652.9294318,
+    "CpuSeconds": 0.90625,
+    "MachineCpuPercent": 0.005783230901778851,
+    "LogicalProcessors": 24,
+    "ValidIdleSample": false,
+    "Reason": "UI Automation remained attached; a bounded CPU trace observes provider/dispatcher and finalizer activity. Repeat in a fresh process without UI Automation capture. Original calculation mixed automatic JSON DateTime conversion with strings; corrected from preserved UTC timestamp strings."
+  }
+]

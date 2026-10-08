@@ -44,13 +44,20 @@ function Read-PresentationMsi([string]$Path) {
     return $result
 }
 
-function Get-PresentationRegistration {
+function Get-PresentationRegistration([hashtable]$Context) {
+    $oldCode='{1EEE244A-290D-4F25-94FE-E3AA8384F718}';$newCode='{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}'
+    if($null -ne $Context -and $Context.ContainsKey('OldProductCode')){$oldCode=[string]$Context.OldProductCode}
+    if($null -ne $Context -and $Context.ContainsKey('NewProductCode')){$newCode=[string]$Context.NewProductCode}
+    foreach($code in @($oldCode,$newCode)){
+        if($code -cnotmatch '^\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\}$' -or [guid]$code -eq [guid]::Empty){throw 'A canonical frozen product identity is required.'}
+    }
+    if($oldCode -ceq $newCode){throw 'Upgrade and rollback product identities must differ.'}
     $wi=New-Object -ComObject WindowsInstaller.Installer;$related=$null
     try {
         $related=$wi.RelatedProducts('{4B89B6E7-D41E-49E6-BE42-09C10D6570D6}')
         $codes=@($related)
-        foreach($code in $codes){if($code -cnotin @('{1EEE244A-290D-4F25-94FE-E3AA8384F718}','{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}')){throw 'Unexpected related product; preserve registration and stop.'}}
-        $old=$wi.ProductState('{1EEE244A-290D-4F25-94FE-E3AA8384F718}');$new=$wi.ProductState('{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}')
+        foreach($code in $codes){if($code -cnotin @($oldCode,$newCode)){throw 'Unexpected related product; preserve registration and stop.'}}
+        $old=$wi.ProductState($oldCode);$new=$wi.ProductState($newCode)
         if($old -notin @(-1,5) -or $new -notin @(-1,5)){throw 'Product registration is not settled/installed or absent.'}
         return @{Old=($old -eq 5);New=($new -eq 5);Related=$codes}
     }finally{
@@ -94,13 +101,13 @@ function Invoke-PresentationMsi($Context,[string]$Phase) {
 
 function Restore-PresentationProduct($Context) {
     Assert-PresentationSettled $Context
-    $state=Get-PresentationRegistration
+    $state=Get-PresentationRegistration $Context
     if($state.Old -and $state.New){throw 'Unexpected parallel products; preserve and reconcile before rollback.'}
     if($state.New){Invoke-PresentationMsi $Context 'UninstallNew'}
-    $state=Get-PresentationRegistration
+    $state=Get-PresentationRegistration $Context
     if($state.New){throw 'New product remains registered; no downgrade installation is allowed.'}
     if(-not $state.Old){Invoke-PresentationMsi $Context 'InstallOld'}
-    $state=Get-PresentationRegistration
+    $state=Get-PresentationRegistration $Context
     if(-not $state.Old -or $state.New){throw 'Old product registration was not restored.'}
 }
 

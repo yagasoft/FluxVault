@@ -49,8 +49,9 @@ public sealed partial class MainWindowViewModel
             if (draft is null) return;
             var pending = await Task.Run(saveOperationStore.Read).ConfigureAwait(true);
             var linked = pending is not null && IsLinkedLocalDraft(draft,pending);
+            var independentDeletion = pending is { Origin: ConfigurationSaveOrigin.HistoryDeletion } && pending.RepositoryId == draft.RepositoryId;
             if (draft.RepositoryId != acceptedVaultId.Value.Value ||
-                (pending is not null ? !linked : draft.BaselineRevision != acceptedConfigurationRevision ||
+                (pending is not null && !independentDeletion ? !linked : draft.BaselineRevision != acceptedConfigurationRevision ||
                     draft.BaselineFingerprint != PendingProtectionDraft.Fingerprint(acceptedConfiguration) || draft.SaveOperationId is not null))
             {
                 RequireLocalDraftReview("The local protection draft does not match the verified saved baseline or has an outstanding save. Its record and your edits are kept; review before saving or backing up.");
@@ -109,7 +110,7 @@ public sealed partial class MainWindowViewModel
                 throw new InvalidOperationException("Newer edits or a changed saved baseline arrived before save preparation. Review and save again.");
             await PersistCurrentLocalDraftAsync().ConfigureAwait(true);
             var draft = localProtectionDraft!;
-            pending = (pending with { Configuration=draft.Configuration, ProtectionDraftId=draft.DraftId,
+            pending = (pending with { Configuration=pending.IsProtectionPaused is null ? draft.Configuration : pending.Configuration, ProtectionDraftId=draft.DraftId,
                 ProtectionDraftBaselineFingerprint=draft.BaselineFingerprint }).Freeze();
             saveOperationStore.Reserve(pending);
             SetPendingConfigurationSave(pending);

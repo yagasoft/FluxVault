@@ -2,6 +2,35 @@
 
 Scope revision, 4 October 2026: exactly one logical vault per Windows installation. These completed concepts are preserved as historical evidence; vault selectors, discovery, creation and duplication are superseded. Further multi-vault concept exploration is stopped. The retained single-vault journey must use the actual binding/revision/save/backup/recovery state contracts; creator ownership and explicit access grants remain.
 
+## Bounded NEXT-007 exploration, 8 October 2026
+
+Compare a compact overview with a guided first-protection entry within the same
+single-vault Overview → Protect → Recover journey. This is design exploration;
+NEXT-004/005 do not implement a shell rewrite. Existing concept images remain
+historical references, including their superseded vault selectors.
+
+| Destination | Compact direction | Guided direction | Actual contract and boundary |
+| --- | --- | --- | --- |
+| Overview | Saved scopes, latest captured version and one actionable issue beside Protect/Recover shortcuts. | First-use Protect a folder entry; after the first verified recovery, use the same summary. | `GetStatus`, configuration revision, capture/history and actual restore result. A saved selection is not captured data; last capture and verified recovery are separate. |
+| Protect | Existing scope editor with a contextual pending-change review. | Choose scope → review effective selection → Save, returning to the retained draft on failure. | `SaveConfiguration` is non-purging. Explicit `SetProtectionPaused(bool)` retains independent edits. Stop stages removal/exclusion and retains history on Save. Unknown save/control results require their original receipt. |
+| Recover | Search/list retained versions with a destination review beside the selection. | Choose version → review destination → Restore → verified result. | Existing paged history and restore commands. Removed scopes remain discoverable. Paused capture does not block permitted recovery. Separate reviewed deletion refuses protected overlap or outside references. |
+
+Both directions show disconnected, stale, denied and outcome-uncertain states
+without treating them as empty or paused. In NEXT-004 the overview states that
+automatic protection is unavailable. NEXT-005 may show automatic waiting,
+pending/capturing, reconciling, blocked, failed or uncertain only from its real
+typed runtime status and explicit creator consent. Closing WPF is not an
+automatic runtime control. No direction creates another vault or grants access.
+
+Installed NEXT-004 exploration found that a periodic grid rebuild could clear
+the selected version and its deletion review. The 1.0.9 correction preserves
+equal bound rows; changed history still requires a fresh review. This favours a
+stable version selection and a visible review panel in either direction. Assess
+the remaining direction choice with the same protect/recover tasks and current
+rendered screens when the shell slice is commissioned; no visual direction is
+selected by this bounded exercise. Keyboard, layout, navigation and scaling
+checks continue; theme/accessibility work remains deferred.
+
 3 October 2026. Design exploration for the existing roadmap, grounded in the [actual 1 October screenshots and UX review](../../reviews/2026-10-01/ux-review.md). Windows/WPF, FluxVault/Yagasoft identity, local-first operation and multiple independent vaults stay fixed. Mock project names, dates and paths are illustrative, not user files or measured runtime evidence. These images are not an implemented UI.
 
 The [NEXT-002/C specification](../../superpowers/specs/2026-10-03-next002-and-protection-save-design.md) defines the command and state contract. All directions must satisfy it; visual selection cannot relax authorisation, vault isolation or verified recovery.

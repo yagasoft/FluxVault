@@ -324,18 +324,21 @@ the recorded outcome without rewriting caller-edited or deleted output. The
 view-model retains pending settings and requires matching source, destination,
 operation/revision and actual verification before claiming success.
 
-The existing `SetProtectionPaused` service command toggles only the authoritative
-`IsEnabled` field under the catalogue transaction. Its incremented configuration
-revision and completed operation receipt commit together; replay returns that
-historical result before stale-revision checks and cannot toggle again. It
-requires protection-management authority and never runs in the repository
-executor. Save, capture and toggle admission remain in the same mutation gate.
+`SetProtectionPaused(bool)` sets only the authoritative `IsEnabled` field under
+the catalogue transaction. Its incremented configuration revision and completed
+operation receipt commit together; replay returns that historical result before
+stale-revision checks and cannot change state again. An omitted legacy desired
+state is refused for a new operation; existing historical receipts remain
+resolvable. It requires protection-management authority and never runs in the
+repository executor. Save, capture and pause admission remain in the same
+mutation gate. The WPF Pause/Resume actions retain independent unsaved selection
+edits and reconcile their accepted configuration baseline before a later save.
 A disabled backup returns before source inspection, enumeration, capture,
 deletion reconciliation or retention; protected binding/storage checks still
 apply. Status and diagnostics distinguish
 paused manual backup from unavailable automatic protection. The activity pane's
-automatic-protection control remains disabled until background/VSS capture is
-validated; explicit pause/resume UI remains within NEXT-004.
+Pause/Resume controls affect manual capture eligibility; automatic protection
+remains unavailable until the separate NEXT-005 authority/durability gates pass.
 
 `GetSyncStatus` requires history-read authority and returns the existing full
 status/sync snapshot through the protected binding. It creates no mutation
@@ -604,14 +607,27 @@ versions while they are kept. After deleting pruned DB version rows, FluxVault
 garbage-collects only chunks and metadata no remaining DB chunk reference uses.
 Mirror cleanup is best-effort and reported through status and diagnostics.
 
-Confirmed protected-selection purge bypasses retention for the removed scopes.
-`RepositoryPurgeRequest` supports exact file, immediate-folder, and recursive
-folder scopes plus preserve scopes for retained child selections. The repository
-deletes every matching file/folder/deletion manifest and expands the purge to
-remaining manifests that reference purged versions, then deletes primary and
-mirror chunks/metadata only when no remaining manifest or metadata row still
-references the digest. Purge returns purged-version count, deleted-chunk count,
-reclaimed bytes, and non-fatal mirror warnings.
+Saving a removed protection selection retains history. The named Stop action
+stages that change; an acknowledged Save makes it effective. Retained history
+still follows the configured retention policy. New combined save-and-purge
+requests are refused; historical receipts remain resolvable.
+
+Separate `PreviewHistoryDeletion` and `DeleteHistory` commands reuse the leased
+repository purge machinery. A bounded complete preview binds the exact scope,
+vault/revision, candidate versions and reference graph to a fingerprint.
+Execution rechecks it under the repository lease and refuses changed plans,
+currently protected overlaps and dependencies outside the selected scope.
+Only then may it delete reviewed history and unreferenced primary/mirror chunks;
+it never deletes live source files. The existing internal purge helper still
+supports exact file, immediate-folder and recursive scopes for legacy fixtures.
+
+Cancellation before admission has no effects. The desktop durably retains the
+original operation and reviewed fingerprint before dispatch. Lost acknowledgements
+require checking that receipt, including after restart, rather than replaying the
+delete. An admitted unresolved deletion blocks fresh destructive maintenance
+server-side while reads/recovery remain available. Software rollback cannot undo
+deliberate history deletion. Equal history rows for the same vault/storage identity
+survive ordinary WPF refresh; changed inventory invalidates the reviewed plan.
 
 `MirrorSetConfiguration` is the active mirror configuration model. Older
 `mirrorPath` configuration files are loaded for compatibility and normalised

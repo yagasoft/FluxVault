@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="89f6be13-3ee0-46da-9583-40529c51daed" name="os008@OS008-HOME 2026-10-08 14:38:13" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T14:38:13.3250833+03:00" queuing="2026-10-08T14:38:13.3250835+03:00" start="2026-10-08T14:38:12.2976772+03:00" finish="2026-10-08T14:38:13.3289064+03:00" />
+  <TestSettings name="default" id="28c4f102-0fff-4249-a3c6-80133384948a">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_14_38_13" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f3305c42-03d3-43ba-8793-84da3bdae9be" testId="73c68731-7895-123c-a703-336db0bc998b" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Stopping_protection_saves_without_offering_history_deletion" computerName="OS008-HOME" duration="00:00:00.2792609" startTime="2026-10-08T14:38:12.9260509+03:00" endTime="2026-10-08T14:38:13.2200367+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3305c42-03d3-43ba-8793-84da3bdae9be">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 0&#xD;
+Actual:   1</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Stopping_protection_saves_without_offering_history_deletion() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 1614&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Stopping_protection_saves_without_offering_history_deletion" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="73c68731-7895-123c-a703-336db0bc998b">
+      <Execution id="f3305c42-03d3-43ba-8793-84da3bdae9be" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Stopping_protection_saves_without_offering_history_deletion" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="73c68731-7895-123c-a703-336db0bc998b" executionId="f3305c42-03d3-43ba-8793-84da3bdae9be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.52]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.52]       Expected: 0&#xD;
+[xUnit.net 00:00:00.52]       Actual:   1&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(1614,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Stopping_protection_saves_without_offering_history_deletion()&#xD;
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.54]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T14:38:13.2225499+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.App.Tests.ProtectionSaveContractTests.Stopping_protection_saves_without_offering_history_deletion [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

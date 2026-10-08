@@ -97,9 +97,13 @@ internal static class VaultCatalogueProbe
             var purge = Request(permitted.Vault, FluxVaultIpcCommand.SaveConfiguration) with { OperationId = Guid.NewGuid(),
                 Configuration = permitted.Vault.Configuration, PurgeRemovedSelections = true,
                 RemovedSelections = [new(Path.Combine(fixture.Root, "working"), RepositoryPurgeScopeKind.RecursiveFolder)], PreservedSelections = [] };
-            var purgeSaved = await store.SaveConfigurationAsync(other, purge);
-            Check(purgeSaved.Receipt?.RequiredPermissions == (VaultPermission.ManageProtection | VaultPermission.Maintain | VaultPermission.DeleteHistory), "effective purge permissions are durable");
-            await store.CompleteAsync(purgeSaved.Receipt!, FluxVaultIpcResponse.Ok());
+            await Failure(() => store.SaveConfigurationAsync(other,purge),VaultCatalogueFailure.InvalidConfiguration,
+                "new combined save and purge is refused even with full destructive authority");
+            var legacyPurge = await LegacyOperationReceiptFixture.RecordAsync(connection,purge,other.UserSid,permitted.Vault.Revision,
+                VaultPermission.ManageProtection | VaultPermission.Maintain | VaultPermission.DeleteHistory);
+            var purgeSaved = await store.SaveConfigurationAsync(other,purge);
+            Check(purgeSaved.IsReplay && JsonSerializer.Serialize(purgeSaved.Receipt!.Response)==JsonSerializer.Serialize(legacyPurge),
+                "historical combined-save fingerprint and completed receipt remain readable without another deletion");
             var limited = await store.SetAccessAsync(administrator, Request(purgeSaved.Vault, FluxVaultIpcCommand.SetVaultAccess) with { OperationId = Guid.NewGuid(), AccessGrants = [new(other.UserSid, VaultPermission.ManageProtection)] });
             await Denied(() => store.GetReceiptAsync(other, one.Id, purge.OperationId!.Value), "partial revocation denies purge receipt");
             await Denied(() => store.SaveConfigurationAsync(other, purge), "partial revocation denies purge replay");
@@ -153,6 +157,15 @@ internal static class VaultCatalogueProbe
                 "protection-only caller cannot enable automatic pruning");
             var fresh = (await store.AdmitAsync(owner, Request(ordinaryEdit.Vault, FluxVaultIpcCommand.GetStatus))).Vault;
             Check(fresh.Revision == ordinaryEdit.Vault.Revision && !fresh.Configuration.RetentionPolicy.IsEnabled, "denied retention edit preserves authoritative configuration and revision");
+            var legacySave = Request(fresh,FluxVaultIpcCommand.SaveConfiguration) with { OperationId=Guid.NewGuid(),Configuration=fresh.Configuration };
+            await LegacyOperationReceiptFixture.RecordAsync(connection,legacySave,owner.UserSid,fresh.Revision,VaultPermission.ManageProtection);
+            Check((await store.SaveConfigurationAsync(owner,legacySave)).IsReplay,
+                "historical ordinary-save fingerprint remains compatible with the extended request");
+            var legacyToggle = FluxVaultIpcRequest.SetProtectionPaused() with
+                { VaultId=one.Id,ExpectedVaultRevision=fresh.Revision,OperationId=Guid.NewGuid() };
+            var historicalState = await LegacyOperationReceiptFixture.RecordAsync(connection,legacyToggle,owner.UserSid,fresh.Revision,VaultPermission.ManageProtection);
+            Check(JsonSerializer.Serialize((await store.AdmitAsync(owner,legacyToggle)).Receipt!.Response)==JsonSerializer.Serialize(historicalState),
+                "historical toggle fingerprint and receipt remain compatible without repeating a toggle");
             Check(await acl.ExecuteScalarAsync() is false, "PUBLIC has no control schema access");
             await using var durability = new NpgsqlCommand("SELECT current_setting('fsync') = 'on' AND current_setting('synchronous_commit') = 'on' AND current_setting('full_page_writes') = 'on'", connection);
             Check(await durability.ExecuteScalarAsync() is true, "acknowledgement durability settings");
@@ -161,10 +174,15 @@ internal static class VaultCatalogueProbe
             await VaultMirrorDrainProbe.RunAsync(store, owner, fresh, checks);
             using (var ungrantedToggleCaller = new PolicyCaller("S-1-5-21-111-222-333-9876"))
                 await VaultProtectionStateProbe.RunAsync(store, owner, ungrantedToggleCaller, checks);
+            await VaultHistoryDeletionProbe.RunAsync(store,owner,administrator,other,checks);
+            if(fixture.RunPredecessorReadTests)
+                await PredecessorCompatibilityProbe.RunAsync(connection,(await store.AdmitAsync(owner,FluxVaultIpcRequest.GetStatus())).Vault,fixture,checks);
             var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one) : null;
             var repository = fixture.RunMetadataTests ? await VaultRepositoryProbe.RunAsync(dataSource, one) : null;
             return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true,
                 MirrorDrainCatalogueVerified = true, DiagnosticsCatalogueVerified = true, SelectionCatalogueVerified = true, ProtectionStateCatalogueVerified = true,
+                HistoryDeletionCatalogueVerified = true,
+                PredecessorReadVerified = fixture.RunPredecessorReadTests,
                 StoreHost = host, Metadata = metadata, Repository = repository };
         }
         finally

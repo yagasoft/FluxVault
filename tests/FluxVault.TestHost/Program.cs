@@ -32,6 +32,18 @@ internal static class Program
         try
         {
             var options = Parse(arguments);
+            if(Require(options,"mode")=="installed-control-snapshot")
+            {
+                using var identity=WindowsIdentity.GetCurrent();
+                if(identity.User?.Value!="S-1-5-21-136112424-624261118-1239521417-1001")throw new UnauthorizedAccessException("The installed creator snapshot is bounded to its intended operator.");
+                using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                var client=new NamedPipeFluxVaultClient(WindowsFluxVaultPipeClientFactory.ForService());
+                var response=client.SendAsync(FluxVaultIpcRequest.GetStatus(),timeout.Token).GetAwaiter().GetResult();
+                if(!response.Success || response.Status is null || response.VaultId is null || response.VaultRevision is null)
+                    throw new InvalidDataException("The bound installed status snapshot did not complete.");
+                Console.WriteLine(JsonSerializer.Serialize(response));
+                return 0;
+            }
             if (Require(options, "mode") == "windows-interrupted-effect")
                 return WindowsInterruptedEffectProbe.RunAsync(Require(options, "configuration"), Require(options, "actor"),
                     Require(options, "phase")).GetAwaiter().GetResult();

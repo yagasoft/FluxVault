@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f2ebdb89-22e1-4e1a-b128-d8e05cb40121" name="os008@OS008-HOME 2026-10-08 15:44:20" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T15:44:20.1728503+03:00" queuing="2026-10-08T15:44:20.1728504+03:00" start="2026-10-08T15:44:19.1099728+03:00" finish="2026-10-08T15:44:20.1767288+03:00" />
+  <TestSettings name="default" id="94d64fa7-df4c-4861-9213-cd57f152855f">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_15_44_20" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d7f577a8-9806-4ac0-8a09-0771487488da" testId="3065b148-85d3-e156-f6cb-ec1dc4fdb028" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Named_stop_protecting_action_stages_selected_subtree_and_keeps_history_until_non_purging_save(driveRoot: True)" computerName="OS008-HOME" duration="00:00:00.0065792" startTime="2026-10-08T15:44:20.0726139+03:00" endTime="2026-10-08T15:44:20.0789316+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7f577a8-9806-4ac0-8a09-0771487488da">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection contained 2 items&#xD;
+Collection: [ProtectionSelectionRule { Id = neighbour, Path = Y:\neighbour, Mode = RecursiveFolder, Compression = Zstd, ResourceProfile = Balanced, IsEnabled = True, IncludeRegexRules = FluxVault.Abstractions.Configuration.ProtectionScopedRegexRule[], ExcludeRegexRules = FluxVault.Abstractions.Configuration.ProtectionScopedRegexRule[], WorkloadPreset = GeneralPurpose }, ProtectionSelectionRule { Id = child, Path = Z:\child, Mode = RecursiveFolder, Compression = Zstd, ResourceProfile = Balanced, IsEnabled = True, IncludeRegexRules = FluxVault.Abstractions.Configuration.ProtectionScopedRegexRule[], ExcludeRegexRules = FluxVault.Abstractions.Configuration.ProtectionScopedRegexRule[], WorkloadPreset = GeneralPurpose }]</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Named_stop_protecting_action_stages_selected_subtree_and_keeps_history_until_non_purging_save(Boolean driveRoot) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs:line 30&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="55b4fc67-5896-4392-ae83-0adc16fb42fe" testId="1735fd66-07ab-3f7d-7439-f0b55e6f696a" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Named_stop_protecting_action_stages_selected_subtree_and_keeps_history_until_non_purging_save(driveRoot: False)" computerName="OS008-HOME" duration="00:00:00.3638133" startTime="2026-10-08T15:44:19.6919209+03:00" endTime="2026-10-08T15:44:20.0643606+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="55b4fc67-5896-4392-ae83-0adc16fb42fe" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Named_stop_protecting_action_stages_selected_subtree_and_keeps_history_until_non_purging_save(driveRoot: True)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="3065b148-85d3-e156-f6cb-ec1dc4fdb028">
+      <Execution id="d7f577a8-9806-4ac0-8a09-0771487488da" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Named_stop_protecting_action_stages_selected_subtree_and_keeps_history_until_non_purging_save" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Named_stop_protecting_action_stages_selected_subtree_and_keeps_history_until_non_purging_save(driveRoot: False)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="1735fd66-07ab-3f7d-7439-f0b55e6f696a">
+      <Execution id="55b4fc67-5896-4392-ae83-0adc16fb42fe" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Named_stop_protecting_action_stages_selected_subtree_and_keeps_history_until_non_purging_save" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3065b148-85d3-e156-f6cb-ec1dc4fdb028" executionId="d7f577a8-9806-4ac0-8a09-0771487488da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1735fd66-07ab-3f7d-7439-f0b55e6f696a" executionId="55b4fc67-5896-4392-ae83-0adc16fb42fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="1" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.61]       Assert.Single() Failure: The collection contained 2 items&#xD;
+[xUnit.net 00:00:00.61]       Collection: [ProtectionSelectionRule { Id = neighbour, Path = Y:\neighbour, Mode = RecursiveFolder, Compression = Zstd, ResourceProfile = Balanced, IsEnabled = True, IncludeRegexRules = FluxVault.Abstractions.Configuration.ProtectionScopedRegexRule[], ExcludeRegexRules = FluxVault.Abstractions.Configuration.ProtectionScopedRegexRule[], WorkloadPreset = GeneralPurpose }, ProtectionSelectionRule { Id = child, Path = Z:\child, Mode = RecursiveFolder, Compression = Zstd, ResourceProfile = Balanced, IsEnabled = True, IncludeRegexRules = FluxVault.Abstractions.Configuration.ProtectionScopedRegexRule[], ExcludeRegexRules = FluxVault.Abstractions.Configuration.ProtectionScopedRegexRule[], WorkloadPreset = GeneralPurpose }]&#xD;
+[xUnit.net 00:00:00.61]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.61]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs(30,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Named_stop_protecting_action_stages_selected_subtree_and_keeps_history_until_non_purging_save(Boolean driveRoot)&#xD;
+[xUnit.net 00:00:00.61]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.61]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:44:20.0816387+03:00">
+        <Text>[xUnit.net 00:00:00.61]     FluxVault.App.Tests.ProtectionSaveContractTests.Named_stop_protecting_action_stages_selected_subtree_and_keeps_history_until_non_purging_save(driveRoot: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

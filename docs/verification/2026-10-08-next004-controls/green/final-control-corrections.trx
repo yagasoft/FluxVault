@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="94910814-e5c1-4d0e-893e-bf45848376d1" name="os008@OS008-HOME 2026-10-08 15:59:43" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T15:59:43.6807222+03:00" queuing="2026-10-08T15:59:43.6807222+03:00" start="2026-10-08T15:59:43.0737057+03:00" finish="2026-10-08T15:59:43.6810618+03:00" />
+  <TestSettings name="default" id="ae5a64cf-5728-44b3-ab6a-0324046371d6">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_15_59_43" />
+  </TestSettings>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="0" executed="0" passed="0" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Warning" timestamp="2026-10-08T15:59:43.6290436+03:00">
+        <Text>No test matches the given testcase filter `FullyQualifiedName~HistoryDeletionControlsContractTests|FullyQualifiedName~ProtectionControlsContractTests` in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

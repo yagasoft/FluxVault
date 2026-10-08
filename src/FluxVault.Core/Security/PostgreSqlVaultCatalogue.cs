@@ -231,6 +231,31 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         }
         if (request.ExpectedVaultRevision is not null && request.ExpectedVaultRevision != vault.Revision)
             throw new VaultCatalogueException(VaultCatalogueFailure.StaleRevision);
+        if (modifying && requirement.Permissions.HasFlag(VaultPermission.DeleteHistory))
+        {
+            // Original receipt replay precedes this guard. A new operation must
+            // not destroy further history while an earlier deletion is uncertain,
+            // including backup with retention and retention-policy edits.
+            await using var unresolved = new NpgsqlCommand("""
+                SELECT EXISTS(SELECT 1 FROM fv_control.operations
+                    WHERE vault_id=@id AND command=@command AND state=0)
+                """,connection,transaction);
+            unresolved.Parameters.AddWithValue("id",id.Value);
+            unresolved.Parameters.AddWithValue("command",(int)FluxVaultIpcCommand.DeleteHistory);
+            if (await unresolved.ExecuteScalarAsync(ct) is true)
+                throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration,
+                    "A previous history deletion is still unresolved. Check its original outcome before starting further destructive work. No new operation was admitted.");
+        }
+        if (request.IsProtectionPaused is not null && request.Command != FluxVaultIpcCommand.SetProtectionPaused)
+            throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration, "A pause state belongs only to Pause or Resume protection.");
+        if(request.Command is FluxVaultIpcCommand.PreviewHistoryDeletion or FluxVaultIpcCommand.DeleteHistory)
+        {
+            try {_=HistoryDeletionRequestValidator.Validate(request);}
+            catch(Exception exception) when(exception is ArgumentException or UnauthorizedAccessException or NotSupportedException)
+            {throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration,exception.Message);}
+        }
+        else if(request.HistoryDeletionScope is not null || request.HistoryDeletionFingerprint is not null)
+            throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration,"A history deletion scope belongs only to the separate reviewed deletion commands.");
         if (request.Command is FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.RunRestoreSelection)
         {
             try { _ = RestoreSelectionRequestValidator.Validate(request); }
@@ -256,13 +281,13 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         if (mutation == Mutation.Save)
         {
             if (request.Configuration is null) throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);
-            if (request.PurgeRemovedSelections && (request.RemovedSelections is not { Count: > 0 } ||
-                request.PreservedSelections is null || !ValidPurgeScopes(request.RemovedSelections) || !ValidPurgeScopes(request.PreservedSelections)))
-                throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);
+            if (request.PurgeRemovedSelections)
+                throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration,
+                    "Saving protection settings retains history. Use the separate reviewed history deletion command.");
             var configuration = Normalize(vault.Binding, request.Configuration);
             ValidateBindingConfiguration(vault.Binding, configuration);
             if (!SameInfrastructure(vault.Configuration, configuration)) throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);
-            // Combined save/purge is completed by the dispatcher only after its repository effect is known.
+            // Legacy combined save/purge receipts remain replayable above; new saves never delete history.
             vault = vault with { Revision = checked(vault.Revision + 1), Configuration = configuration };
         }
         else if (mutation == Mutation.Access)
@@ -271,18 +296,18 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
             var access = new VaultAccessPolicy(vault.Access.OwnerSid, request.AccessGrants);
             vault = vault with { Revision = checked(vault.Revision + 1), Access = access };
         }
-        var toggling = request.Command == FluxVaultIpcCommand.SetProtectionPaused;
-        if (toggling)
+        var settingProtectionState = request.Command == FluxVaultIpcCommand.SetProtectionPaused;
+        if (settingProtectionState)
         {
-            if (request.Configuration is not null || request.AccessGrants is not null || request.PurgeRemovedSelections ||
-                request.RemovedSelections is not null || request.PreservedSelections is not null)
+            if (request.IsProtectionPaused is null || request != (FluxVaultIpcRequest.SetProtectionPaused(request.IsProtectionPaused.Value) with
+                { VaultId=request.VaultId, ExpectedVaultRevision=request.ExpectedVaultRevision, OperationId=request.OperationId }))
                 throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration,
-                    "A protection toggle cannot save other settings, change access or remove history.");
-            // Toggle the authoritative full record under the catalogue lock, never a caller snapshot.
+                    "Choose an explicit Pause or Resume state without other settings, access changes or history deletion.");
+            // Set the desired state on the authoritative full record, never a caller snapshot.
             vault = vault with { Revision = checked(vault.Revision + 1),
-                Configuration = vault.Configuration with { IsEnabled = !vault.Configuration.IsEnabled } };
+                Configuration = vault.Configuration with { IsEnabled = !request.IsProtectionPaused.Value } };
         }
-        if (mutation != Mutation.Admit || toggling)
+        if (mutation != Mutation.Admit || settingProtectionState)
         {
             await using var update = new NpgsqlCommand("UPDATE fv_control.vault SET revision=@revision, configuration=@configuration, grants=@grants WHERE singleton=true AND vault_id=@id", connection, transaction);
             update.Parameters.AddWithValue("revision", vault.Revision);
@@ -294,7 +319,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         VaultOperationReceipt? recorded = null;
         if (modifying)
         {
-            var completed = toggling || mutation == Mutation.Access || (mutation == Mutation.Save && !request.PurgeRemovedSelections);
+            var completed = settingProtectionState || mutation == Mutation.Access || (mutation == Mutation.Save && !request.PurgeRemovedSelections);
             var response = completed ? FluxVaultIpcResponse.Ok() with { VaultId = id, VaultRevision = vault.Revision, OperationId = request.OperationId } : null;
             recorded = new(request.OperationId!.Value, id, caller.UserSid, request.Command, fingerprint,
                 completed ? VaultOperationState.Completed : VaultOperationState.Admitted, vault.Revision, response, requirement.Permissions);
@@ -547,6 +572,6 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         FluxVaultIpcCommand.GetActivity or FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.GetSyncStatus or
         FluxVaultIpcCommand.GetRepositoryHealth or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.PreviewRetention or
         FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.PreviewMirrorDrain or
-        FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.GetOperationStatus);
+        FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.GetOperationStatus or FluxVaultIpcCommand.PreviewHistoryDeletion);
     public ValueTask DisposeAsync() => dataSource.DisposeAsync();
 }

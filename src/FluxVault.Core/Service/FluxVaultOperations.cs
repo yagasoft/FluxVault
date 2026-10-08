@@ -925,10 +925,10 @@ public sealed class FluxVaultOperations(
             .ToArray();
     }
 
-    public async Task SetProtectionPausedAsync(CancellationToken cancellationToken = default)
+    public async Task SetProtectionPausedAsync(bool isPaused, CancellationToken cancellationToken = default)
     {
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
-        var updated = configuration with { IsEnabled = !configuration.IsEnabled };
+        var updated = configuration with { IsEnabled = !isPaused };
         await configurationStore.SaveAsync(updated, cancellationToken).ConfigureAwait(false);
         lastMessage = updated.IsEnabled ? "Protection resumed." : "Protection paused.";
     }
@@ -1583,7 +1583,8 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.RunRetentionNow => FluxVaultIpcResponse.WithRetentionResult(await RunRetentionNowAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.GetActivity => FluxVaultIpcResponse.WithActivity(GetActivity()),
             FluxVaultIpcCommand.ListBlockedFiles => FluxVaultIpcResponse.WithBlockedFiles(ListBlockedFiles()),
-            FluxVaultIpcCommand.SetProtectionPaused => await SetProtectionPausedResponseAsync(cancellationToken).ConfigureAwait(false),
+            FluxVaultIpcCommand.SetProtectionPaused => await SetProtectionPausedResponseAsync(request, cancellationToken).ConfigureAwait(false),
+            FluxVaultIpcCommand.PreviewHistoryDeletion or FluxVaultIpcCommand.DeleteHistory => await HistoryDeletionResponseAsync(request,cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.GetRepositoryHealth => FluxVaultIpcResponse.WithRepositoryHealth(await GetRepositoryHealthAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunRepositoryScrub => FluxVaultIpcResponse.WithRepositoryScrub(await RunRepositoryScrubAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RunRestoreRehearsal => FluxVaultIpcResponse.WithRestoreRehearsal(await RunRestoreRehearsalAsync(cancellationToken).ConfigureAwait(false)),
@@ -1612,7 +1613,41 @@ public sealed class FluxVaultOperations(
             or FluxVaultIpcCommand.ListCurrentEntriesPage
             or FluxVaultIpcCommand.InspectVersion
             or FluxVaultIpcCommand.GetRepositoryHealth
-            or FluxVaultIpcCommand.PreviewRestoreSelection;
+            or FluxVaultIpcCommand.PreviewRestoreSelection
+            or FluxVaultIpcCommand.PreviewHistoryDeletion;
+    }
+
+    private async Task<FluxVaultIpcResponse> HistoryDeletionResponseAsync(FluxVaultIpcRequest request,CancellationToken cancellationToken)
+    {
+        var scope=HistoryDeletionRequestValidator.Validate(request);
+        if(request.VaultId is not {IsValid:true} vault || request.ExpectedVaultRevision is not >0)
+            return FluxVaultIpcResponse.Failure("A verified vault and configuration revision are required.") with {ErrorCode=FluxVaultIpcErrorCode.InvalidRequest};
+        var configuration=await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        // Derive protection from the accepted server configuration. Regex exclusions
+        // do not grant deletion inside an otherwise protected root in this bounded slice.
+        var selectionScopes=(configuration.SelectionRules ?? []).Where(rule=>rule.IsEnabled &&
+            rule.Mode is ProtectionSelectionMode.File or ProtectionSelectionMode.ImmediateFiles or ProtectionSelectionMode.RecursiveFolder)
+            .Select(rule=>new RepositoryPurgeScope(rule.Path,rule.Mode switch
+            {ProtectionSelectionMode.File=>RepositoryPurgeScopeKind.File,ProtectionSelectionMode.ImmediateFiles=>RepositoryPurgeScopeKind.ImmediateFiles,_=>RepositoryPurgeScopeKind.RecursiveFolder})).ToArray();
+        IReadOnlyList<RepositoryPurgeScope> preserved=selectionScopes.Length>0 ? selectionScopes : configuration.WatchedFolders.Where(folder=>folder.IsEnabled)
+            .Select(folder=>new RepositoryPurgeScope(folder.Path,folder.Recursive ? RepositoryPurgeScopeKind.RecursiveFolder : RepositoryPurgeScopeKind.ImmediateFiles)).ToArray();
+        var purgeRequest=new RepositoryPurgeRequest([scope],preserved,new(vault,request.ExpectedVaultRevision.Value,request.HistoryDeletionFingerprint));
+        var repository=CreateRepository(configuration);
+        if(request.Command==FluxVaultIpcCommand.PreviewHistoryDeletion)
+            return FluxVaultIpcResponse.Ok() with {HistoryDeletionPreview=await repository.PreviewHistoryDeletionAsync(purgeRequest,cancellationToken).ConfigureAwait(false)};
+        try
+        {
+            var result=await repository.PurgeAsync(purgeRequest,cancellationToken).ConfigureAwait(false);
+            InvalidateRecentVersionStatusCache();
+            lastMirrorWarnings=result.MirrorWarnings;
+            return FluxVaultIpcResponse.Ok() with {Purge=result};
+        }
+        catch(RepositoryHistoryChangedException)
+        {return FluxVaultIpcResponse.Failure("History or protection changed after review. Nothing was deleted; preview again.") with {ErrorCode=FluxVaultIpcErrorCode.HistoryChanged};}
+        catch(RepositoryHistoryDeletionRefusedException exception)
+        {return FluxVaultIpcResponse.Failure(exception.Message) with {ErrorCode=FluxVaultIpcErrorCode.InvalidRequest};}
+        // Other failures may follow metadata or object deletion. Leave the admitted
+        // receipt uncertain; never label a partial effect as a definite refusal.
     }
 
     private async Task<FluxVaultIpcResponse> SaveConfigurationResponseAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
@@ -1818,9 +1853,11 @@ public sealed class FluxVaultOperations(
         return string.IsNullOrWhiteSpace(safe) ? "preview" : safe;
     }
 
-    private async Task<FluxVaultIpcResponse> SetProtectionPausedResponseAsync(CancellationToken cancellationToken)
+    private async Task<FluxVaultIpcResponse> SetProtectionPausedResponseAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
     {
-        await SetProtectionPausedAsync(cancellationToken).ConfigureAwait(false);
+        if (request.IsProtectionPaused is null)
+            return FluxVaultIpcResponse.Failure("Choose an explicit Pause or Resume protection state.") with { ErrorCode = FluxVaultIpcErrorCode.InvalidRequest };
+        await SetProtectionPausedAsync(request.IsProtectionPaused.Value, cancellationToken).ConfigureAwait(false);
         return FluxVaultIpcResponse.Ok();
     }
 

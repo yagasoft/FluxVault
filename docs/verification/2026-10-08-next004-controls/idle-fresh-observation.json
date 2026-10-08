@@ -1,0 +1,27 @@
+{
+  "ObservedUtc": "2026-10-08T14:15:31.4117013+00:00",
+  "WallSeconds": 620.3692565,
+  "LogicalProcessors": 24,
+  "Candidate": "3da720718ab04b99afdf43455222e0cf",
+  "SkyWindowStateCapturesDuringWindow": 0,
+  "ExternalAutomationIsolationProven": false,
+  "CorpusRetainedVersions": 20,
+  "Workload": "No FluxVault input or window snapshots; concurrent document/source inspection",
+  "App": {
+    "WorkingSetBytes": 225320960,
+    "Handles": 594,
+    "MachineCpuPercent": 1.5398465147829257,
+    "CpuSecondsDelta": 229.265625,
+    "Id": 51352,
+    "StartedUtc": "2026-10-08T14:04:44.5548489Z"
+  },
+  "Service": {
+    "WorkingSetBytes": 119783424,
+    "Handles": 893,
+    "MachineCpuPercent": 0.01689601914264643,
+    "CpuSecondsDelta": 2.515625,
+    "Id": 26864,
+    "StartedUtc": "2026-10-08T13:59:27.9714390Z"
+  },
+  "Limit": "Observed quiet process on this workstation; does not prove absence of external UI Automation clients or a regression against the predecessor."
+}

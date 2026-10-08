@@ -30,6 +30,9 @@ public interface IChunkRepository
 
     Task<RepositoryPurgeResult> PurgeAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken = default);
 
+    Task<RepositoryHistoryDeletionPreview> PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("This repository cannot preview deliberate history deletion.");
+
     Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default);
 
     Task<RepositoryRestoreResult> RestoreAsync(string versionId, string outputPath, CancellationToken cancellationToken = default);

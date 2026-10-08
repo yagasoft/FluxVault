@@ -71,8 +71,12 @@
             <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Run backup now" Command="{Binding RunBackupNowCommand}" Padding="12,6" Margin="0,0,8,0"
                         ToolTip="Ask the service to scan all watched folders immediately." />
-                <Button Content="Pause protection" Command="{Binding PauseProtectionCommand}" Padding="12,6" IsEnabled="False"
-                        ToolTip="Automatic protection is unavailable in this build; manual backup remains available." />
+                <Button Content="Pause protection" Command="{Binding Dashboard.PauseProtectionCommand}" Padding="12,6"
+                        IsEnabled="{Binding Dashboard.CanPauseProtection}"
+                        ToolTip="Stop new captures safely; retain history and recovery." />
+                <Button Content="Resume protection" Command="{Binding Dashboard.ResumeProtectionCommand}" Padding="12,6"
+                        IsEnabled="{Binding Dashboard.CanResumeProtection}"
+                        ToolTip="Allow new captures using the saved settings." />
             </StackPanel>
         </Grid>
     </Border>

@@ -1293,6 +1293,42 @@ public sealed class WindowsFixtureToolingTests
     }
 
     [Fact]
+    public async Task Installation_snapshot_preserves_current_bootstrap_and_detects_creation_of_legacy_configuration()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $runner=Join-Path (Split-Path (Split-Path $module)) 'test-windows-database-boundary.ps1'
+            $ast=[Management.Automation.Language.Parser]::ParseFile($runner,[ref]$null,[ref]$null)
+            $definition=$ast.Find({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Get-InstallationSnapshot'},$true)
+            Invoke-Expression $definition.Extent.Text
+            function Get-CimInstance {param($ClassName,$Filter) @{State='Running';ProcessId=$PID;StartName='Preserved';PathName='Preserved'}}
+            $script:legacyExists=$false;$script:bootstrapHash='B'*64
+            function Test-Path {
+                param($LiteralPath)
+                if($LiteralPath -eq 'C:\ProgramData\FluxVault\config.json'){return $script:legacyExists}
+                if($LiteralPath -eq 'C:\ProgramData\FluxVault\installation.json'){return $true}
+                throw 'Unexpected snapshot existence check.'
+            }
+            function Get-FileHash {
+                param($LiteralPath,$Algorithm)
+                if($LiteralPath -eq 'C:\ProgramData\FluxVault\config.json' -and -not $script:legacyExists){throw 'Legacy configuration is absent.'}
+                @{Hash=$(if($LiteralPath.EndsWith('installation.json')){$script:bootstrapHash}else{'A'*64})}
+            }
+            $RunPackagedIdentityTests=$false;$fixtureJournal=$null;$fixtureBefore=$null
+            $before=Get-InstallationSnapshot
+            $same=Test-VaultFixtureInstallationUnchanged $before (Get-InstallationSnapshot)
+            $script:bootstrapHash='C'*64
+            $changedBootstrap=Test-VaultFixtureInstallationUnchanged $before (Get-InstallationSnapshot)
+            $script:bootstrapHash='B'*64;$script:legacyExists=$true
+            $createdLegacy=Test-VaultFixtureInstallationUnchanged $before (Get-InstallationSnapshot)
+            @{Same=$same;ChangedBootstrap=$changedBootstrap;CreatedLegacy=$createdLegacy}|ConvertTo-Json -Compress
+            """);
+        Assert.True(result.GetProperty("Same").GetBoolean());
+        Assert.False(result.GetProperty("ChangedBootstrap").GetBoolean());
+        Assert.False(result.GetProperty("CreatedLegacy").GetBoolean());
+    }
+
+    [Fact]
     public async Task Machine_trust_interrupted_before_profile_intents_retains_reopened_boundary_verification()
     {
         var result = await RunMachineTrustCaseAsync("""
@@ -1303,9 +1339,17 @@ public sealed class WindowsFixtureToolingTests
             # Native machine/store checks are substituted. Run the actual snapshot
             # function over the real reopened baseline and ownership journal.
             function Get-CimInstance {param($ClassName,$Filter) @{State='Running';ProcessId=$PID;StartName='Preserved';PathName='Preserved'}}
+            function Test-Path {
+                param($LiteralPath,$Path)
+                # This is an ordinary orchestration test, including on a clean
+                # hosted runner. Its installation is synthetic like its services.
+                if($LiteralPath -eq 'C:\ProgramData\FluxVault\installation.json'){return $true}
+                if($LiteralPath -eq 'C:\ProgramData\FluxVault\config.json'){return $false}
+                Microsoft.PowerShell.Management\Test-Path @PSBoundParameters
+            }
             function Get-FileHash {
                 param($LiteralPath,$Algorithm='SHA256')
-                if($LiteralPath -in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf','C:\ProgramData\FluxVault\config.json')){@{Hash='A'*64}}
+                if($LiteralPath -in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf','C:\ProgramData\FluxVault\config.json','C:\ProgramData\FluxVault\installation.json')){@{Hash='A'*64}}
                 else {Microsoft.PowerShell.Utility\Get-FileHash -LiteralPath $LiteralPath -Algorithm $Algorithm}
             }
             function Get-ChildItem {
@@ -2531,6 +2575,123 @@ public sealed class WindowsFixtureToolingTests
         }
     }
 
+    [Fact]
+    public async Task Presentation_rollback_passes_the_frozen_old_and_new_candidate_identity_to_every_registration_check()
+    {
+        using var fixture=new ScriptFixture();
+        var result=await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/update-presentation.ps1')
+            $script:oldInstalled=$false;$script:newInstalled=$true;$script:checks=0
+            $context=@{OldProductCode='{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}';NewProductCode='{00000000-0000-0000-0000-000000000008}'}
+            function Assert-PresentationSettled {param($Context)}
+            function Get-PresentationRegistration {param($Context)
+                if($null -eq $Context -or $Context.OldProductCode -cne '{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}' -or
+                    $Context.NewProductCode -cne '{00000000-0000-0000-0000-000000000008}'){throw 'Rollback lost the frozen candidate identity.'}
+                $script:checks++;@{Old=$script:oldInstalled;New=$script:newInstalled}
+            }
+            function Invoke-PresentationMsi {param($Context,$Phase)
+                if($Phase -eq 'UninstallNew'){$script:newInstalled=$false}
+                elseif($Phase -eq 'InstallOld'){$script:oldInstalled=$true}
+                else{throw 'Unexpected rollback effect.'}
+            }
+            $failure=$null;try{Restore-PresentationProduct $context}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Checks=$script:checks;Old=$script:oldInstalled;New=$script:newInstalled}|ConvertTo-Json -Compress
+            """);
+        Assert.Equal(JsonValueKind.Null,result.GetProperty("Failure").ValueKind);
+        Assert.Equal(3,result.GetProperty("Checks").GetInt32());
+        Assert.True(result.GetProperty("Old").GetBoolean());
+        Assert.False(result.GetProperty("New").GetBoolean());
+    }
+
+    [Theory]
+    [InlineData("0", true)]
+    [InlineData("1", false)]
+    [InlineData("unknown", false)]
+    public async Task Controls_downgrade_requires_joined_service_and_no_unresolved_deletion(string outcome,bool expectedRestore)
+    {
+        using var fixture=new ScriptFixture();
+        var result=await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'docs/verification/2026-10-08-next004-controls/update-controls.ps1')
+            $script:events=[Collections.Generic.List[string]]::new()
+            function Get-Service {param($Name) @{Status='Running'}}
+            function Stop-ControlsServiceJoined {param($Context) $script:events.Add('joined')}
+            function Invoke-ControlsRollbackInspection {param($Context)
+                if($script:events.Count -ne 1 -or $script:events[0] -ne 'joined'){throw 'Inspection ran before quiescence.'}
+                $script:events.Add('inspect')
+                if('OUTCOME' -eq 'unknown'){throw 'Read-only inspection failed.'}
+                @{PendingHistoryDeletions=[int]'OUTCOME';OwnerSid='creator';GrantCount=0}
+            }
+            function Assert-ControlsClientRecordsResolved {param($StateRoot) $script:events.Add('client-records')}
+            function Restore-PresentationProduct {param($Context) $script:events.Add('restore')}
+            $failure=$null;try{Restore-ControlsProduct @{OperatorSid='creator'}}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Events=$script:events}|ConvertTo-Json -Compress
+            """.Replace("OUTCOME",outcome,StringComparison.Ordinal));
+        Assert.Equal(expectedRestore,result.GetProperty("Failure").ValueKind==JsonValueKind.Null);
+        Assert.Equal(expectedRestore ? ["joined","inspect","client-records","restore"] : ["joined","inspect"],
+            result.GetProperty("Events").EnumerateArray().Select(item=>item.GetString()).ToArray());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Controls_downgrade_preserves_and_refuses_every_pending_client_record(bool recordExists)
+    {
+        using var fixture=new ScriptFixture();
+        var result=await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'docs/verification/2026-10-08-next004-controls/update-controls.ps1')
+            $path=Join-Path $root 'pending-protection-save.json'
+            if(RECORD){Set-Content -LiteralPath $path -Value '{"origin":2,"historyDeletionFingerprint":"preserve even malformed records"}'}
+            $before=if(RECORD){(Get-FileHash -LiteralPath $path).Hash}else{$null}
+            $failure=$null;try{Assert-ControlsClientRecordsResolved $root}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Preserved=if(RECORD){(Get-FileHash -LiteralPath $path).Hash -ceq $before}else{-not(Test-Path -LiteralPath $path)}}|ConvertTo-Json -Compress
+            """.Replace("RECORD",recordExists ? "$true" : "$false",StringComparison.Ordinal));
+        Assert.Equal(!recordExists,result.GetProperty("Failure").ValueKind==JsonValueKind.Null);
+        Assert.True(result.GetProperty("Preserved").GetBoolean());
+    }
+
+    [Theory]
+    [InlineData("stops",true)]
+    [InlineData("stuck",false)]
+    [InlineData("ownership",false)]
+    [InlineData("scheduler-error",false)]
+    [InlineData("not-created",true)]
+    public async Task Controls_inspection_cleanup_waits_for_task_exit_and_always_joins_and_disposes_its_job(string scenario,bool success)
+    {
+        using var fixture=new ScriptFixture();
+        var result=await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'docs/verification/2026-10-08-next004-controls/update-controls.ps1')
+            $script:events=[Collections.Generic.List[string]]::new();$script:stopped=$false
+            $job=[pscustomobject]@{}
+            $job|Add-Member -MemberType ScriptMethod -Name StopAndJoin -Value {$script:events.Add('job-joined')}
+            $job|Add-Member -MemberType ScriptMethod -Name Dispose -Value {$script:events.Add('job-disposed')}
+            function Export-ScheduledTask {param($TaskName) 'owned'}
+            function Get-ScheduledTask {param($TaskName)
+                if($script:stopped -and 'SCENARIO' -eq 'stops'){$script:events.Add('task-exited');@{State='Ready'}}else{@{State='Running'}}
+            }
+            function Stop-ScheduledTask {param($TaskName) $script:events.Add('task-stop');if('SCENARIO' -eq 'scheduler-error'){throw 'Scheduler failed.'};$script:stopped=$true}
+            function Unregister-ScheduledTask {param($TaskName,$Confirm) $script:events.Add('task-removed')}
+            $hash=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes('owned')))
+            if('SCENARIO' -eq 'ownership'){$hash='changed'}
+            $failure=$null;$cleanup=$null
+            try{$cleanup=Complete-ControlsInspection $job 'owned-task' ('SCENARIO' -ne 'not-created') $hash 150}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Cleanup=$cleanup;Events=$script:events}|ConvertTo-Json -Compress
+            """.Replace("SCENARIO",scenario,StringComparison.Ordinal));
+        Assert.Equal(success,result.GetProperty("Failure").ValueKind==JsonValueKind.Null);
+        var events=result.GetProperty("Events").EnumerateArray().Select(item=>item.GetString()).ToArray();
+        Assert.Equal(["job-joined","job-disposed"],events.TakeLast(2));
+        Assert.Equal(success && scenario!="not-created",events.Contains("task-removed"));
+        if(success)
+        {
+            if(scenario!="not-created")Assert.True(Array.IndexOf(events,"task-exited")<Array.IndexOf(events,"task-removed"));
+            Assert.True(result.GetProperty("Cleanup").GetProperty("OwnedJobJoined").GetBoolean());
+        }
+        else Assert.Equal(JsonValueKind.Null,result.GetProperty("Cleanup").ValueKind);
+    }
+
     [Theory]
     [InlineData("intent")]
     [InlineData("uncertain")]
@@ -2606,7 +2767,9 @@ public sealed class WindowsFixtureToolingTests
             var error = process.StandardError.ReadToEndAsync();
             try
             {
-                await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(20));
+                // A cold PowerShell/module launch competes with native filesystem
+                // tests on hosted Windows. This bounds orchestration, not performance.
+                await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60));
                 Assert.True(process.ExitCode == 0, await error);
                 using var result = JsonDocument.Parse(await output);
                 return result.RootElement.Clone();

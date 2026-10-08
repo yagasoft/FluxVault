@@ -1,0 +1,23 @@
+{
+  "ObservedUtc": "2026-10-08T16:31:40.505444+03:00",
+  "GrantCount": 0,
+  "PendingHistoryDeletions": 0,
+  "ReadOnly": true,
+  "Tool": {
+    "Process": {
+      "ProcessId": 47276,
+      "StartedUtc": "2026-10-08T13:31:40.4432072Z",
+      "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe"
+    },
+    "ExitCode": 0,
+    "Output": "{\"PendingHistoryDeletions\" : 0, \"OwnerSid\" : \"S-1-5-21-136112424-624261118-1239521417-1001\", \"GrantCount\" : 0}\r\n",
+    "Error": "",
+    "Joined": true
+  },
+  "OwnerSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+  "Worker": {
+    "ProcessId": 38424,
+    "StartedUtc": "2026-10-08T13:31:38.9335266Z",
+    "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+  }
+}

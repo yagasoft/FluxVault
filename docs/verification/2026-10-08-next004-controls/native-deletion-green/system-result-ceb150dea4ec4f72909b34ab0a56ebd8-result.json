@@ -1,0 +1,30 @@
+{
+  "Results": [
+    {
+      "Host": "127.0.0.1",
+      "Result": {
+        "FixtureId": "d7e3c9062d214d81a37018b3c4186146",
+        "ProbeId": "50f6d21ea5d4439f8f275d42c6e46ae4",
+        "Actor": "System",
+        "WindowsSid": "S-1-5-18",
+        "Host": "127.0.0.1",
+        "Authenticated": false,
+        "FixtureVerified": false,
+        "SqlState": "28000",
+        "ErrorKind": "PostgreSQL",
+        "Catalogue": null
+      },
+      "Kind": "Npgsql"
+    },
+    {
+      "WriteRuntime": true,
+      "ReadProtected": true,
+      "WindowsSid": "S-1-5-18",
+      "Kind": "ACL"
+    }
+  ],
+  "RunId": "ceb150dea4ec4f72909b34ab0a56ebd8",
+  "WindowsSid": "S-1-5-18",
+  "Complete": true,
+  "Actor": "System"
+}

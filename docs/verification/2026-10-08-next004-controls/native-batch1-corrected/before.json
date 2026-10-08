@@ -1,0 +1,42 @@
+{
+  "Services": [
+    {
+      "Identity": {
+        "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+        "StartedUtc": "2026-10-06T09:31:43.1964555Z",
+        "ProcessId": 8600
+      },
+      "StartName": "NT AUTHORITY\\NetworkService",
+      "Name": "postgresql-x64-18",
+      "PathName": "\"D:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe\" runservice -N \"postgresql-x64-18\" -D \"D:\\Program Files\\PostgreSQL\\18\\data\" -w"
+    },
+    {
+      "Identity": {
+        "Executable": "C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe",
+        "StartedUtc": "2026-10-08T06:00:59.5839502Z",
+        "ProcessId": 10384
+      },
+      "StartName": "LocalSystem",
+      "Name": "FluxVaultService",
+      "PathName": "\"C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe\""
+    }
+  ],
+  "Files": [
+    {
+      "Sha256": "83F8A4844E68DCF26C6F068890794D2327F83544DFDA1E8BF95FB9321628E40E",
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_hba.conf"
+    },
+    {
+      "Sha256": "DD710C85E5064576F4108CDD6862B1A2FAA077D611ED23E31D76CDB56C40E2B3",
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_ident.conf"
+    },
+    {
+      "Sha256": null,
+      "Path": "C:\\ProgramData\\FluxVault\\config.json"
+    },
+    {
+      "Sha256": "1EC27A382AD49190A7EE67630510E49594807251229702B59EA870B4FB4ED617",
+      "Path": "C:\\ProgramData\\FluxVault\\installation.json"
+    }
+  ]
+}

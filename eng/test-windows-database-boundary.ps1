@@ -6,6 +6,7 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$ValidatePreparedAuthentication,
     [ValidateSet('Admission','MidWrite','BeforeTruncate')][string]$AuthenticationInterruption='Admission',
     [switch]$RunCatalogueTests,
+    [switch]$RunPredecessorReadTests,
     [switch]$RunMetadataTests,
     [switch]$RunCallerFileTests,
     [switch]$RunSingleVaultTests,
@@ -23,6 +24,7 @@ if($RunInterruptedEffectTests -and (-not $RunSingleVaultTests -or $RunRestartTes
     throw 'Interrupted-effect proof requires an exclusive single-vault extension within the existing resource bound.'
 }
 if($RunMetadataTests -and -not $RunCatalogueTests){throw 'Metadata proof requires the catalogue contracts.'}
+if($RunPredecessorReadTests -and -not $RunCatalogueTests){throw 'Predecessor-read proof requires the owned catalogue contracts.'}
 if($RunCallerFileTests -and $RunSingleVaultTests){throw 'Select one native file workflow per fresh fixture.'}
 if($RunIntegrityTests -and ($RunCallerFileTests -or $RunSingleVaultTests)){throw 'Run the integrity suite in its own fresh fixture.'}
 if($RunNativeAccessTests -and -not $RunSingleVaultTests){throw 'Native access proof requires the single-vault product workflow.'}
@@ -72,9 +74,19 @@ function Get-InstallationSnapshot {
         $process = Get-Process -Id $service.ProcessId
         try { @{ Name=$name; StartName=$service.StartName; PathName=$service.PathName; Identity=(Get-VaultFixtureProcessIdentity $process) } } finally { $process.Dispose() }
     }
-    $files = foreach ($path in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf','C:\ProgramData\FluxVault\config.json')) {
+    $files = @(foreach ($path in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf')) {
         @{ Path=$path; Sha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash }
+    })
+    # The commissioned single-vault installation uses installation.json. Keep
+    # legacy absence explicit so the fixture cannot create or remove either file.
+    $productFiles = @(foreach($path in @('C:\ProgramData\FluxVault\config.json','C:\ProgramData\FluxVault\installation.json')) {
+        $exists=Test-Path -LiteralPath $path
+        @{Path=$path;Sha256=$(if($exists){(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash}else{$null})}
+    })
+    if(-not @($productFiles | Where-Object {$null -ne $_.Sha256}).Count) {
+        throw 'Neither legacy configuration nor the installed single-vault bootstrap exists.'
     }
+    $files += $productFiles
     $snapshot=@{Services=@($services);Files=@($files)}
     if($RunPackagedIdentityTests -or
         ($null -ne $fixtureBefore -and $null -ne $fixtureBefore.PSObject.Properties['PackageBoundary']) -or
@@ -1216,7 +1228,7 @@ try {
     }
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
-    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;PackageTrustMode=$fixturePackageTrustMode;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
+    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;PackageTrustMode=$fixturePackageTrustMode;RunCatalogueTests=[bool]$RunCatalogueTests;RunPredecessorReadTests=[bool]$RunPredecessorReadTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
     @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds;ValidatePreparedAuthentication=[bool]$ValidatePreparedAuthentication} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     if($RunPackagedIdentityTests) {
         $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure() -TrustMode $fixturePackageTrustMode
@@ -1310,9 +1322,10 @@ host all all ::1/128 reject
             if($RunCatalogueTests -and ($null -eq $probe.Result.Catalogue -or $probe.Result.Catalogue.Passed -lt 40 -or
                 -not $probe.Result.Catalogue.PolicyActorsAreDoubles -or -not $probe.Result.Catalogue.MirrorDrainCatalogueVerified -or
                 -not $probe.Result.Catalogue.DiagnosticsCatalogueVerified -or -not $probe.Result.Catalogue.SelectionCatalogueVerified -or
-                -not $probe.Result.Catalogue.ProtectionStateCatalogueVerified)) {
+                -not $probe.Result.Catalogue.ProtectionStateCatalogueVerified -or -not $probe.Result.Catalogue.HistoryDeletionCatalogueVerified)) {
                 throw 'Required current catalogue/drain contracts did not complete; rebuild the Release test host before running.'
             }
+            if($RunPredecessorReadTests -and -not $probe.Result.Catalogue.PredecessorReadVerified){throw 'Required actual predecessor-read proof did not complete.'}
             # Multi-vault collision/coexistence cases are retired. Retain all single-repository binding/integrity contracts.
             if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Metadata -or $probe.Result.Catalogue.Metadata.Passed -lt 18 -or
                 -not $probe.Result.Catalogue.Metadata.RecentVersionsVerified -or -not $probe.Result.Catalogue.Metadata.HistoryPagingVerified -or
@@ -1352,7 +1365,8 @@ host all all ::1/128 reject
                 -not $creatorProof[0].Result.SelectionCommandsVerified -or -not $proof[0].Result.SelectionOutputCleaned -or
                 -not $creatorProof[0].Result.ProtectionStateCommandsVerified -or -not $creatorProof[0].Result.HistoryPagingVerified -or -not $creatorProof[0].Result.CurrentPagingVerified -or
                 -not $creatorProof[0].Result.LocalProtectionDraftVerified -or -not $creatorProof[0].Result.LockedSourceBoundaryVerified -or -not $creatorProof[0].Result.ProvisioningSetupVerified -or -not $creatorProof[0].Result.CreatorCliConfirmed -or
-                $deniedProof.Count -ne 1 -or $deniedProof[0].Result.MaintenanceDenied -ne 19 -or -not $proof[0].Result.DiagnosticsOutputCleaned -or
+                -not $creatorProof[0].Result.HistoryDeletionCommandsVerified -or
+                $deniedProof.Count -ne 1 -or $deniedProof[0].Result.MaintenanceDenied -ne 21 -or -not $proof[0].Result.DiagnosticsOutputCleaned -or
                 -not $proof[0].Result.ProtectedRehearsalOutputCleaned -or -not $proof[0].Result.DrainEffectVerified) {
                 throw 'Required current maintenance proof is missing; rebuild the Release test host before running.'
             }

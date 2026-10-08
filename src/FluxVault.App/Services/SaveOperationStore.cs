@@ -8,13 +8,15 @@ using System.Text.Json.Serialization;
 
 namespace FluxVault.App.Services;
 
-public enum ConfigurationSaveOrigin { Protect, Options }
+public enum ConfigurationSaveOrigin { Protect, Options, HistoryDeletion }
 
 public sealed record PendingConfigurationSave(Guid RepositoryId, Guid OperationId, long Revision,
     FluxVaultConfiguration Configuration, bool PurgeRemovedSelections,
     IReadOnlyList<RepositoryPurgeScope> RemovedSelections, IReadOnlyList<RepositoryPurgeScope> PreservedSelections,
     ConfigurationSaveOrigin Origin = ConfigurationSaveOrigin.Protect, Guid? ProtectionDraftId = null,
-    string? ProtectionDraftBaselineFingerprint = null)
+    string? ProtectionDraftBaselineFingerprint = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] bool? IsProtectionPaused = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? HistoryDeletionFingerprint = null)
 {
     internal void Validate()
     {
@@ -24,14 +26,25 @@ public sealed record PendingConfigurationSave(Guid RepositoryId, Guid OperationI
         if (!Enum.IsDefined(Origin) || Origin == ConfigurationSaveOrigin.Options &&
             (PurgeRemovedSelections || RemovedSelections.Count != 0 || PreservedSelections.Count != 0))
             throw new InvalidDataException("The pending save has an invalid origin or incompatible purge intent. It has been preserved.");
+        if (IsProtectionPaused is { } paused && (Origin != ConfigurationSaveOrigin.Protect ||
+            Configuration.IsEnabled == paused || PurgeRemovedSelections || RemovedSelections.Count != 0 || PreservedSelections.Count != 0))
+            throw new InvalidDataException("The pending protection control has incompatible settings or deletion intent. It has been preserved.");
+        if(Origin==ConfigurationSaveOrigin.HistoryDeletion ? PurgeRemovedSelections || IsProtectionPaused is not null ||
+            RemovedSelections.Count!=1 || PreservedSelections.Count!=0 || HistoryDeletionFingerprint is not {Length:64} ||
+            !HistoryDeletionFingerprint.All(Uri.IsHexDigit) : HistoryDeletionFingerprint is not null)
+            throw new InvalidDataException("The pending history deletion requires its exact scope and reviewed fingerprint. Its record has been preserved.");
         if (ProtectionDraftId is null != (ProtectionDraftBaselineFingerprint is null) || ProtectionDraftId == Guid.Empty ||
             ProtectionDraftBaselineFingerprint is not null &&
             (ProtectionDraftBaselineFingerprint.Length != 64 || !ProtectionDraftBaselineFingerprint.All(Uri.IsHexDigit)) ||
             Origin != ConfigurationSaveOrigin.Protect && ProtectionDraftId is not null)
             throw new InvalidDataException("Only a protection save may reference a valid local editing draft. Its record has been preserved.");
     }
-    internal FluxVaultIpcRequest Request => FluxVaultIpcRequest.SaveConfiguration(Configuration,
-        purgeRemovedSelections: PurgeRemovedSelections, removedSelections: RemovedSelections, preservedSelections: PreservedSelections) with
+    internal FluxVaultIpcRequest Request => (Origin==ConfigurationSaveOrigin.HistoryDeletion
+        ? FluxVaultIpcRequest.DeleteHistory(RemovedSelections.Single(),HistoryDeletionFingerprint!)
+        : IsProtectionPaused is { } paused
+        ? FluxVaultIpcRequest.SetProtectionPaused(paused)
+        : FluxVaultIpcRequest.SaveConfiguration(Configuration,
+            purgeRemovedSelections: PurgeRemovedSelections, removedSelections: RemovedSelections, preservedSelections: PreservedSelections)) with
         { VaultId = new VaultId(RepositoryId), OperationId = OperationId, ExpectedVaultRevision = Revision };
     internal PendingConfigurationSave Freeze()
     {
@@ -95,7 +108,7 @@ public sealed class FileConfigurationSaveOperationStore(string path) : IConfigur
             {
                 ValidateJson(bytes);
                 using var document = JsonDocument.Parse(bytes, new() { MaxDepth = 32 });
-                if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Count() is not (7 or 8 or 9 or 10) ||
+                if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Count() is not (7 or 8 or 9 or 10 or 11 or 12) ||
                     new[] { "repositoryId", "operationId", "revision", "configuration", "purgeRemovedSelections", "removedSelections", "preservedSelections" }
                         .Any(name => !document.RootElement.TryGetProperty(name, out _)))
                     throw new InvalidDataException("The pending save has missing fields. It has been preserved.");

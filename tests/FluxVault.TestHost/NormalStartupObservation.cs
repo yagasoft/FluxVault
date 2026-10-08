@@ -28,6 +28,18 @@ internal static class NormalStartupObservation
         File.WriteAllText(Path.Combine(scratch, "ui-process.json"), JsonSerializer.Serialize(new
             { ProcessId = process.Id, StartedUtc = process.StartTime.ToUniversalTime().ToString("o"), Executable = process.MainModule!.FileName }));
         var app = new FluxVault.App.App();
+        var dispatcherStarts = new Dictionary<DispatcherOperation, long>();
+        var dispatcherDurations = new List<double>();
+        DateTimeOffset? loadedAtUtc = null, contentRenderedAtUtc = null;
+        DispatcherHookEventHandler operationStarted = (_, args) => dispatcherStarts[args.Operation] = Stopwatch.GetTimestamp();
+        DispatcherHookEventHandler operationFinished = (_, args) =>
+        {
+            if (dispatcherStarts.Remove(args.Operation, out var start) && dispatcherDurations.Count < 100_000)
+                dispatcherDurations.Add(Stopwatch.GetElapsedTime(start).TotalMilliseconds);
+        };
+        app.Dispatcher.Hooks.OperationStarted += operationStarted;
+        app.Dispatcher.Hooks.OperationCompleted += operationFinished;
+        app.Dispatcher.Hooks.OperationAborted += operationFinished;
         var rendering = 0;
         DateTimeOffset? firstRendering = null, lastRendering = null;
         var loaded = false;
@@ -45,7 +57,8 @@ internal static class NormalStartupObservation
         {
             if (sender is not FluxVault.App.MainWindow window) return;
             loaded = true;
-            window.ContentRendered += (_, _) => contentRendered = true;
+            loadedAtUtc = DateTimeOffset.UtcNow;
+            window.ContentRendered += (_, _) => { contentRendered = true; contentRenderedAtUtc = DateTimeOffset.UtcNow; };
         };
         EventManager.RegisterClassHandler(typeof(FluxVault.App.MainWindow), FrameworkElement.LoadedEvent, onLoaded);
         CompositionTarget.Rendering += render;
@@ -70,6 +83,14 @@ internal static class NormalStartupObservation
                 {
                     StartupObserved = true, SoftwareRendering = softwareRendering, EffectiveRenderMode = RenderOptions.ProcessRenderMode.ToString(),
                     Loaded = loaded, ContentRendered = contentRendered, ApplicationIdle = idle,
+                    ProcessFresh = true, CacheState = "Uncontrolled; prior product and build activity. No cache flush.",
+                    LoadedMillisecondsFromProcessStart = loadedAtUtc is null ? (double?)null : (loadedAtUtc.Value.UtcDateTime - process.StartTime.ToUniversalTime()).TotalMilliseconds,
+                    ContentRenderedMillisecondsFromProcessStart = contentRenderedAtUtc is null ? (double?)null : (contentRenderedAtUtc.Value.UtcDateTime - process.StartTime.ToUniversalTime()).TotalMilliseconds,
+                    DispatcherOperationCount = dispatcherDurations.Count,
+                    DispatcherMaximumMilliseconds = dispatcherDurations.Count == 0 ? (double?)null : dispatcherDurations.Max(),
+                    DispatcherOver100Milliseconds = dispatcherDurations.Count(value => value > 100),
+                    DispatcherSlowestMilliseconds = dispatcherDurations.OrderDescending().Take(10).ToArray(),
+                    ProcessCpuSeconds = process.TotalProcessorTime.TotalSeconds, WorkingSetBytes = process.WorkingSet64, HandleCount = process.HandleCount,
                     RenderingEvents = rendering, FirstRendering = firstRendering, LastRendering = lastRendering,
                     Window = window is null ? null : new { window.ActualWidth, window.ActualHeight, window.Visibility, window.IsVisible, window.IsEnabled, window.IsMeasureValid, window.IsArrangeValid },
                     Root = root is null ? null : new { root.ActualWidth, root.ActualHeight, root.Visibility, root.IsVisible, root.IsEnabled, root.IsMeasureValid, root.IsArrangeValid },
@@ -88,7 +109,14 @@ internal static class NormalStartupObservation
                 Write("ui-startup-joined", new { Joined = true });
             }
             catch (Exception exception) { Write("ui-startup-error", new { Error = exception.ToString() }); }
-            finally { CompositionTarget.Rendering -= render; app.Shutdown(); }
+            finally
+            {
+                CompositionTarget.Rendering -= render;
+                app.Dispatcher.Hooks.OperationStarted -= operationStarted;
+                app.Dispatcher.Hooks.OperationCompleted -= operationFinished;
+                app.Dispatcher.Hooks.OperationAborted -= operationFinished;
+                app.Shutdown();
+            }
         };
         app.Startup += (_, _) =>
         {

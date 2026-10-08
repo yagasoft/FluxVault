@@ -53,7 +53,8 @@ internal static class WindowsSingleVaultProbe
                 FluxVaultIpcCommand.RunMirrorRepair, FluxVaultIpcCommand.PreviewMirrorRebalance, FluxVaultIpcCommand.RunMirrorRebalance,
                 FluxVaultIpcCommand.PreviewMirrorDrain, FluxVaultIpcCommand.RunMirrorDrain, FluxVaultIpcCommand.ExportDiagnostics,
                 FluxVaultIpcCommand.PreviewRestoreSelection, FluxVaultIpcCommand.RunRestoreSelection,
-                FluxVaultIpcCommand.SetProtectionPaused, FluxVaultIpcCommand.GetSyncStatus, FluxVaultIpcCommand.ListHistoryPage, FluxVaultIpcCommand.GetSnapshotPage, FluxVaultIpcCommand.ListCurrentEntriesPage };
+                FluxVaultIpcCommand.SetProtectionPaused, FluxVaultIpcCommand.GetSyncStatus, FluxVaultIpcCommand.ListHistoryPage, FluxVaultIpcCommand.GetSnapshotPage, FluxVaultIpcCommand.ListCurrentEntriesPage,
+                FluxVaultIpcCommand.PreviewHistoryDeletion, FluxVaultIpcCommand.DeleteHistory };
             foreach (var command in commands)
             {
                 var response = await client.SendAsync(new(command, null, null, null, Path.Combine(fixture.Root, "output-B"), MirrorNodeId: "first",
@@ -65,7 +66,7 @@ internal static class WindowsSingleVaultProbe
                     response.VaultId is { } disclosed && disclosed.Value != Guid.ParseExact(fixture.FixtureId, "N") ||
                     response.RepositoryHealth is not null || response.RepositoryScrub is not null || response.RestoreRehearsal is not null ||
                     response.MirrorRepair is not null || response.MirrorRebalance is not null || response.RetentionPreview is not null || response.RetentionResult is not null ||
-                    response.DiagnosticsExport is not null || response.OutputPath is not null || response.RestoreResult is not null || response.RestoreSelection is not null || response.Status is not null || response.HistoryPage is not null || response.SnapshotPage is not null || response.CurrentEntriesPage is not null)
+                    response.DiagnosticsExport is not null || response.OutputPath is not null || response.RestoreResult is not null || response.RestoreSelection is not null || response.Status is not null || response.HistoryPage is not null || response.SnapshotPage is not null || response.CurrentEntriesPage is not null || response.HistoryDeletionPreview is not null)
                     throw new InvalidOperationException("Ungrant user received maintenance data or admission.");
             }
             Console.WriteLine(JsonSerializer.Serialize(new { Actor = actor, Denied = true, NoIdentityOrHistory = true, MaintenanceDenied = commands.Length }));
@@ -195,17 +196,23 @@ internal static class WindowsSingleVaultProbe
                 noReceipt.ErrorCode == FluxVaultIpcErrorCode.Denied,
                 "malformed purge scopes are refused before configuration CAS and receipt admission");
         }
-        var purged = await Send(purgeRequest);
-        Check(purged.Purge is { Success: true, PurgedVersionCount: > 0 } && purged.VaultRevision == revision + 1,
-            "combined save commits once and removes only confirmed CAD history");
-        revision = purged.VaultRevision!.Value;
-        var purgeReplay = await Send(purgeRequest);
-        var purgeReceipt = await Send(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null, VaultId: id, OperationId: purgeRequest.OperationId));
-        Check(JsonSerializer.Serialize(purged) == JsonSerializer.Serialize(purgeReplay) && JsonSerializer.Serialize(purged) == JsonSerializer.Serialize(purgeReceipt),
-            "save-purge replay and receipt lookup return the original retained result");
+        var rejectedCombinedSave = await client.SendAsync(purgeRequest,deadline.Token);
+        var purgeReceipt = await client.SendAsync(new(FluxVaultIpcCommand.GetOperationStatus, null, null, null, null, VaultId: id, OperationId: purgeRequest.OperationId),deadline.Token);
+        Check(!rejectedCombinedSave.Success && rejectedCombinedSave.ErrorCode==FluxVaultIpcErrorCode.InvalidRequest &&
+            purgeReceipt.ErrorCode==FluxVaultIpcErrorCode.Denied,
+            "new combined save and deletion is refused without receipt admission");
+        var stopped = await Send(Bind(FluxVaultIpcRequest.SaveConfiguration(officeOnly)));
+        Check(stopped.Success && stopped.Purge is null && stopped.VaultRevision==revision+1,
+            "stopping CAD protection saves once without deleting history");
+        revision=stopped.VaultRevision!.Value;
         var remaining = await Send(Bind(FluxVaultIpcRequest.ListVersions()));
-        Check(!remaining.Versions!.Any(version => version.SourcePath == drawing) && remaining.Versions!.Any(version => version.VersionId == fileVersion.VersionId),
-            "CAD history is gone and preserved Office history remains");
+        var retainedCad=remaining.Versions!.First(version=>version.SourcePath==drawing);
+        Check(remaining.Versions!.Any(version => version.VersionId == fileVersion.VersionId),
+            "stopping protection retains CAD and Office history");
+        var recoveredCad=Path.Combine(destination,"after-stop-protecting.dwg");
+        var cadRecovery=await Send(Bind(FluxVaultIpcRequest.RestoreVersion(retainedCad.VersionId,recoveredCad)));
+        Check(cadRecovery.RestoreResult?.VerifiedLogicalBytes==new FileInfo(drawing).Length && Hash(drawing)==Hash(recoveredCad),
+            "stopped CAD history remains independently recoverable");
         var recoveredAfterPurge = Path.Combine(destination, "after-purge.docx");
         var verifiedAfterPurge = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(fileVersion.VersionId, recoveredAfterPurge)));
         Check(verifiedAfterPurge.RestoreResult?.VerifiedLogicalBytes == new FileInfo(file).Length && Hash(file) == Hash(recoveredAfterPurge),
@@ -225,14 +232,13 @@ internal static class WindowsSingleVaultProbe
         var conflicting = Bind(FluxVaultIpcRequest.SaveConfiguration(officeOnly, purgeRemovedSelections: true,
             removedSelections: [new(cad, RepositoryPurgeScopeKind.RecursiveFolder)],
             preservedSelections: [new(source, RepositoryPurgeScopeKind.RecursiveFolder)]));
-        var refusedPurge = await Send(conflicting);
-        Check(refusedPurge.Purge is { Success: false } && refusedPurge.Purge.ErrorMessage!.Contains("preserved", StringComparison.OrdinalIgnoreCase) &&
-            refusedPurge.VaultRevision == revision + 1, "preservation conflict reports saved configuration and failed purge");
-        revision = refusedPurge.VaultRevision!.Value;
+        var refusedPurge = await client.SendAsync(conflicting,deadline.Token);
+        Check(!refusedPurge.Success && refusedPurge.ErrorCode==FluxVaultIpcErrorCode.InvalidRequest,
+            "combined save cannot bypass deliberate deletion or retained-reference checks");
         var afterRefusal = await Send(Bind(FluxVaultIpcRequest.ListVersions()));
         Check(beforeRefusal.Versions!.Select(version => version.VersionId).Order().SequenceEqual(afterRefusal.Versions!.Select(version => version.VersionId).Order()),
             "preservation refusal leaves all PostgreSQL history unchanged");
-        var refusedReplay = await Send(conflicting);
+        var refusedReplay = await client.SendAsync(conflicting,deadline.Token);
         Check(JsonSerializer.Serialize(refusedReplay) == JsonSerializer.Serialize(refusedPurge), "failed purge replay never executes the destructive effect again");
         var copyRecovered = Path.Combine(destination, "preserved-copy.docx");
         var copyRecovery = await Send(Bind(FluxVaultIpcRequest.RestoreVersion(copyVersion.VersionId, copyRecovered)));
@@ -383,6 +389,7 @@ internal static class WindowsSingleVaultProbe
             CallerCanEditPublished = true, IndependentSha256 = true, ActualCatalogueAndExecutor = true,
             MaintenanceCommandsVerified = true, DrainCommandsVerified = true, DiagnosticsCommandsVerified = true, SelectionCommandsVerified = true,
             ProtectionStateCommandsVerified = true, HistoryPagingVerified = true, CurrentPagingVerified = true, LocalProtectionDraftVerified = true,
+            HistoryDeletionCommandsVerified = true,
             LockedSourceBoundaryVerified = true, ProvisioningSetupVerified = true, CreatorCliConfirmed = true }));
         return 0;
 

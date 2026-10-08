@@ -2,6 +2,7 @@ using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Sync;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Abstractions.Security;
+using System.Text.Json.Serialization;
 
 namespace FluxVault.Abstractions.Ipc;
 
@@ -31,9 +32,18 @@ public sealed record FluxVaultIpcRequest(
     IReadOnlyList<VaultAccessGrant>? AccessGrants = null,
     RepositoryHistoryQuery? HistoryQuery = null,
     RepositorySnapshotQuery? SnapshotQuery = null,
-    RepositoryCurrentEntriesQuery? CurrentEntriesQuery = null)
+    RepositoryCurrentEntriesQuery? CurrentEntriesQuery = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] bool? IsProtectionPaused = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RepositoryPurgeScope? HistoryDeletionScope = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? HistoryDeletionFingerprint = null)
 {
     public string? DestinationPath => OutputPath;
+
+    public static FluxVaultIpcRequest PreviewHistoryDeletion(RepositoryPurgeScope scope) =>
+        new(FluxVaultIpcCommand.PreviewHistoryDeletion,null,null,null,null,HistoryDeletionScope:scope);
+
+    public static FluxVaultIpcRequest DeleteHistory(RepositoryPurgeScope scope,string fingerprint) =>
+        new(FluxVaultIpcCommand.DeleteHistory,null,null,null,null,HistoryDeletionScope:scope,HistoryDeletionFingerprint:fingerprint);
 
     public static FluxVaultIpcRequest GetStatus(
         string? profileId = null,
@@ -171,6 +181,12 @@ public sealed record FluxVaultIpcRequest(
     public static FluxVaultIpcRequest SetProtectionPaused()
     {
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.SetProtectionPaused, null, null, null, null);
+    }
+
+    public static FluxVaultIpcRequest SetProtectionPaused(bool isPaused)
+    {
+        return new FluxVaultIpcRequest(FluxVaultIpcCommand.SetProtectionPaused, null, null, null, null,
+            IsProtectionPaused: isPaused);
     }
 
     public static FluxVaultIpcRequest GetRepositoryHealth()

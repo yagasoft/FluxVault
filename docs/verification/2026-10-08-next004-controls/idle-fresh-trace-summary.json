@@ -1,0 +1,70 @@
+{
+  "TraceDurationSeconds": 15,
+  "TracerExitCode": 0,
+  "TracerJoined": true,
+  "TargetProcessId": 51352,
+  "NoSkyWindowStateCaptureBeforeOrDuringTrace": true,
+  "Frames": [
+    {
+      "StackOpenCount": 902,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ElementUtil.Invoke(class System.Windows.Automation.Peers.AutomationPeer,class System.Windows.Threading.DispatcherOperationCallback,class System.Object)"
+    },
+    {
+      "StackOpenCount": 227,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ElementProxy.get_ProviderOptions()"
+    },
+    {
+      "StackOpenCount": 141,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ElementProxy.Navigate(value class System.Windows.Automation.Provider.NavigateDirection)"
+    },
+    {
+      "StackOpenCount": 110,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ElementProxy.get_HostRawElementProvider()"
+    },
+    {
+      "StackOpenCount": 64,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ElementProxy.GetRuntimeId()"
+    },
+    {
+      "StackOpenCount": 43,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ElementProxy.get_FragmentRoot()"
+    },
+    {
+      "StackOpenCount": 42,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ElementProxy.get_BoundingRectangle()"
+    },
+    {
+      "StackOpenCount": 17,
+      "Frame": "PresentationCore.il!System.Windows.Automation.Peers.AutomationPeer.UpdateSubtree()"
+    },
+    {
+      "StackOpenCount": 15,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ValueProviderWrapper.get_Value()"
+    },
+    {
+      "StackOpenCount": 14,
+      "Frame": "UIAutomationProvider.il!System.Windows.Automation.Provider.AutomationInteropProvider.HostProviderFromHandle(int)"
+    },
+    {
+      "StackOpenCount": 12,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ValueProviderWrapper.get_IsReadOnly()"
+    },
+    {
+      "StackOpenCount": 10,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ElementUtil+<>c__DisplayClass11_0.<Invoke>b__0(class System.Object)"
+    },
+    {
+      "StackOpenCount": 8,
+      "Frame": "PresentationCore.il!MS.Internal.Automation.ElementProxy.InContextBoundingRectangle()"
+    },
+    {
+      "StackOpenCount": 8,
+      "Frame": "PresentationCore.il!System.Windows.Automation.Peers.UIElementAutomationPeer.GetBoundingRectangleCore()"
+    },
+    {
+      "StackOpenCount": 8,
+      "Frame": "PresentationCore.il!System.Windows.Automation.Peers.AutomationPeer.GetBoundingRectangle()"
+    }
+  ],
+  "Interpretation": "Sampled stack appearances, not CPU percentages. External Automation proxies remain observed despite no window capture in this fresh process. Isolation and causality are not established."
+}

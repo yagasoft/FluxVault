@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ccce00bc-cf1c-4ccb-90fe-2ced9e4650af" name="os008@OS008-HOME 2026-10-08 15:25:00" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T15:25:00.3303366+03:00" queuing="2026-10-08T15:25:00.3303367+03:00" start="2026-10-08T15:24:59.1099881+03:00" finish="2026-10-08T15:25:00.3352626+03:00" />
+  <TestSettings name="default" id="8cee562d-708c-431f-ac69-a174458996d3">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_15_25_00" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="35b9b7c6-5784-4d2d-a463-199220655da8" testId="41194914-7fc5-bf14-6da6-d1ac78958c5e" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Changed_history_selection_invalidates_the_preview_and_never_retargets_deletion" computerName="OS008-HOME" duration="00:00:00.0050494" startTime="2026-10-08T15:25:00.2157701+03:00" endTime="2026-10-08T15:25:00.2206397+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35b9b7c6-5784-4d2d-a463-199220655da8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsAssignableFrom() Failure: Value is null&#xD;
+Expected: typeof(CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.GetControl(MainWindowViewModel model, String name) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionControlsContractTests.cs:line 81&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Changed_history_selection_invalidates_the_preview_and_never_retargets_deletion() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs:line 113&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="20e788d1-5301-4f76-853b-f00378d40bae" testId="10d73e7a-9c2e-e825-8100-96e1087f4750" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: False)" computerName="OS008-HOME" duration="00:00:00.0052274" startTime="2026-10-08T15:25:00.2106706+03:00" endTime="2026-10-08T15:25:00.2152288+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="20e788d1-5301-4f76-853b-f00378d40bae">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsAssignableFrom() Failure: Value is null&#xD;
+Expected: typeof(CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.GetControl(MainWindowViewModel model, String name) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionControlsContractTests.cs:line 81&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(Boolean malformedAcknowledgement) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs:line 82&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="76416373-265f-4609-9c09-100dd3bd85fa" testId="80e1fbaa-47c4-dfe4-299a-495de96f4ff2" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: True)" computerName="OS008-HOME" duration="00:00:00.2278444" startTime="2026-10-08T15:24:59.9928536+03:00" endTime="2026-10-08T15:25:00.2096772+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76416373-265f-4609-9c09-100dd3bd85fa">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsAssignableFrom() Failure: Value is null&#xD;
+Expected: typeof(CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.GetControl(MainWindowViewModel model, String name) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionControlsContractTests.cs:line 81&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(Boolean malformedAcknowledgement) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs:line 82&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f93af14f-1241-4904-b617-f02576b12fef" testId="3259db02-4917-5a8d-b389-d795f5ed1aff" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Confirmed_history_deletion_reserves_exact_review_before_dispatch_without_saving_edits" computerName="OS008-HOME" duration="00:00:00.2562227" startTime="2026-10-08T15:24:59.7084189+03:00" endTime="2026-10-08T15:24:59.9797518+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f93af14f-1241-4904-b617-f02576b12fef">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsAssignableFrom() Failure: Value is null&#xD;
+Expected: typeof(CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.GetControl(MainWindowViewModel model, String name) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionControlsContractTests.cs:line 81&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Confirmed_history_deletion_reserves_exact_review_before_dispatch_without_saving_edits() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs:line 55&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ea3dc449-42c2-4caf-869d-f87cb84331f6" testId="38814c17-27e9-1720-357e-9d940fbec2c1" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_history_confirmation_keeps_history_configuration_and_independent_edits" computerName="OS008-HOME" duration="00:00:00.0050974" startTime="2026-10-08T15:25:00.2211618+03:00" endTime="2026-10-08T15:25:00.2261592+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea3dc449-42c2-4caf-869d-f87cb84331f6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsAssignableFrom() Failure: Value is null&#xD;
+Expected: typeof(CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.GetControl(MainWindowViewModel model, String name) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionControlsContractTests.cs:line 81&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_history_confirmation_keeps_history_configuration_and_independent_edits() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs:line 25&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_history_confirmation_keeps_history_configuration_and_independent_edits" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="38814c17-27e9-1720-357e-9d940fbec2c1">
+      <Execution id="ea3dc449-42c2-4caf-869d-f87cb84331f6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Cancelled_history_confirmation_keeps_history_configuration_and_independent_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: False)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="10d73e7a-9c2e-e825-8100-96e1087f4750">
+      <Execution id="20e788d1-5301-4f76-853b-f00378d40bae" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: True)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="80e1fbaa-47c4-dfe4-299a-495de96f4ff2">
+      <Execution id="76416373-265f-4609-9c09-100dd3bd85fa" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Changed_history_selection_invalidates_the_preview_and_never_retargets_deletion" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="41194914-7fc5-bf14-6da6-d1ac78958c5e">
+      <Execution id="35b9b7c6-5784-4d2d-a463-199220655da8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Changed_history_selection_invalidates_the_preview_and_never_retargets_deletion" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Confirmed_history_deletion_reserves_exact_review_before_dispatch_without_saving_edits" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="3259db02-4917-5a8d-b389-d795f5ed1aff">
+      <Execution id="f93af14f-1241-4904-b617-f02576b12fef" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Confirmed_history_deletion_reserves_exact_review_before_dispatch_without_saving_edits" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="41194914-7fc5-bf14-6da6-d1ac78958c5e" executionId="35b9b7c6-5784-4d2d-a463-199220655da8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10d73e7a-9c2e-e825-8100-96e1087f4750" executionId="20e788d1-5301-4f76-853b-f00378d40bae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="80e1fbaa-47c4-dfe4-299a-495de96f4ff2" executionId="76416373-265f-4609-9c09-100dd3bd85fa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3259db02-4917-5a8d-b389-d795f5ed1aff" executionId="f93af14f-1241-4904-b617-f02576b12fef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="38814c17-27e9-1720-357e-9d940fbec2c1" executionId="ea3dc449-42c2-4caf-869d-f87cb84331f6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="0" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.50]       Assert.IsAssignableFrom() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.50]       Expected: typeof(CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)&#xD;
+[xUnit.net 00:00:00.50]       Actual:   null&#xD;
+[xUnit.net 00:00:00.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionControlsContractTests.cs(81,0): at FluxVault.App.Tests.ProtectionSaveContractTests.GetControl(MainWindowViewModel model, String name)&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs(55,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Confirmed_history_deletion_reserves_exact_review_before_dispatch_without_saving_edits()&#xD;
+[xUnit.net 00:00:00.50]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.72]       Assert.IsAssignableFrom() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.72]       Expected: typeof(CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)&#xD;
+[xUnit.net 00:00:00.72]       Actual:   null&#xD;
+[xUnit.net 00:00:00.72]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.72]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionControlsContractTests.cs(81,0): at FluxVault.App.Tests.ProtectionSaveContractTests.GetControl(MainWindowViewModel model, String name)&#xD;
+[xUnit.net 00:00:00.72]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs(82,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(Boolean malformedAcknowledgement)&#xD;
+[xUnit.net 00:00:00.72]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.73]       Assert.IsAssignableFrom() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.73]       Expected: typeof(CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)&#xD;
+[xUnit.net 00:00:00.73]       Actual:   null&#xD;
+[xUnit.net 00:00:00.73]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.73]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionControlsContractTests.cs(81,0): at FluxVault.App.Tests.ProtectionSaveContractTests.GetControl(MainWindowViewModel model, String name)&#xD;
+[xUnit.net 00:00:00.73]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs(82,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(Boolean malformedAcknowledgement)&#xD;
+[xUnit.net 00:00:00.73]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.73]       Assert.IsAssignableFrom() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.73]       Expected: typeof(CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)&#xD;
+[xUnit.net 00:00:00.73]       Actual:   null&#xD;
+[xUnit.net 00:00:00.73]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.73]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionControlsContractTests.cs(81,0): at FluxVault.App.Tests.ProtectionSaveContractTests.GetControl(MainWindowViewModel model, String name)&#xD;
+[xUnit.net 00:00:00.73]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs(113,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Changed_history_selection_invalidates_the_preview_and_never_retargets_deletion()&#xD;
+[xUnit.net 00:00:00.73]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.74]       Assert.IsAssignableFrom() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.74]       Expected: typeof(CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)&#xD;
+[xUnit.net 00:00:00.74]       Actual:   null&#xD;
+[xUnit.net 00:00:00.74]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.74]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\ProtectionControlsContractTests.cs(81,0): at FluxVault.App.Tests.ProtectionSaveContractTests.GetControl(MainWindowViewModel model, String name)&#xD;
+[xUnit.net 00:00:00.74]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs(25,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_history_confirmation_keeps_history_configuration_and_independent_edits()&#xD;
+[xUnit.net 00:00:00.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.75]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:24:59.9824433+03:00">
+        <Text>[xUnit.net 00:00:00.49]     FluxVault.App.Tests.ProtectionSaveContractTests.Confirmed_history_deletion_reserves_exact_review_before_dispatch_without_saving_edits [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:25:00.2100104+03:00">
+        <Text>[xUnit.net 00:00:00.72]     FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:25:00.2153820+03:00">
+        <Text>[xUnit.net 00:00:00.73]     FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:25:00.2207718+03:00">
+        <Text>[xUnit.net 00:00:00.73]     FluxVault.App.Tests.ProtectionSaveContractTests.Changed_history_selection_invalidates_the_preview_and_never_retargets_deletion [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:25:00.2263121+03:00">
+        <Text>[xUnit.net 00:00:00.74]     FluxVault.App.Tests.ProtectionSaveContractTests.Cancelled_history_confirmation_keeps_history_configuration_and_independent_edits [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

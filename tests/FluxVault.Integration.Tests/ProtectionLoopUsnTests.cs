@@ -268,7 +268,10 @@ public sealed class ProtectionLoopUsnTests
             NoChangedFiles(watched));
         var loop = CreateLoop(workspace, operations, reader);
 
-        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(6));
+        // Thirty durable publications contend with the hosted runner's other
+        // filesystem tests. Keep a bounded correctness deadline; this is not
+        // a workstation throughput requirement.
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         var loopTask = loop.RunAsync(cancellation.Token);
         try
         {

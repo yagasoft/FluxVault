@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a783a8ee-c178-4930-832e-7a9142ffaf30" name="os008@OS008-HOME 2026-10-08 15:58:33" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T15:58:33.0993280+03:00" queuing="2026-10-08T15:58:33.0993281+03:00" start="2026-10-08T15:58:31.7904302+03:00" finish="2026-10-08T15:58:33.1030725+03:00" />
+  <TestSettings name="default" id="b705b978-a335-4195-b070-f5fa9b16f1c1">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_15_58_33" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b3e3ac46-44ac-4bc7-8136-186f02094f61" testId="7b176456-02d8-7a4f-b062-2fd03ad03179" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Presentation_rollback_passes_the_frozen_old_and_new_candidate_identity_to_every_registration_check" computerName="OS008-HOME" duration="00:00:00.6025676" startTime="2026-10-08T15:58:32.3763158+03:00" endTime="2026-10-08T15:58:32.9973854+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b3e3ac46-44ac-4bc7-8136-186f02094f61">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Null&#xD;
+Actual:   String</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Presentation_rollback_passes_the_frozen_old_and_new_candidate_identity_to_every_registration_check() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2593&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Presentation_rollback_passes_the_frozen_old_and_new_candidate_identity_to_every_registration_check" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="7b176456-02d8-7a4f-b062-2fd03ad03179">
+      <Execution id="b3e3ac46-44ac-4bc7-8136-186f02094f61" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Presentation_rollback_passes_the_frozen_old_and_new_candidate_identity_to_every_registration_check" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7b176456-02d8-7a4f-b062-2fd03ad03179" executionId="b3e3ac46-44ac-4bc7-8136-186f02094f61" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.83]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.84]       Expected: Null&#xD;
+[xUnit.net 00:00:00.84]       Actual:   String&#xD;
+[xUnit.net 00:00:00.84]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.84]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2593,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Presentation_rollback_passes_the_frozen_old_and_new_candidate_identity_to_every_registration_check()&#xD;
+[xUnit.net 00:00:00.84]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.85]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:58:33.0000159+03:00">
+        <Text>[xUnit.net 00:00:00.83]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Presentation_rollback_passes_the_frozen_old_and_new_candidate_identity_to_every_registration_check [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

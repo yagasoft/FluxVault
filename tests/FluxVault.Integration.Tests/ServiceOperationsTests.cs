@@ -778,7 +778,7 @@ public sealed class ServiceOperationsTests
     }
 
     [Fact]
-    public async Task Set_protection_paused_toggles_enabled_state()
+    public async Task Set_protection_paused_sets_explicit_enabled_state()
     {
         using var workspace = TemporaryWorkspace.Create();
         var watched = Path.Combine(workspace.RootPath, "watched");
@@ -787,9 +787,9 @@ public sealed class ServiceOperationsTests
         var operations = CreateOperations(workspace, configuration);
         await operations.SaveConfigurationAsync(configuration);
 
-        await operations.SetProtectionPausedAsync();
+        await operations.SetProtectionPausedAsync(true);
         var paused = await operations.GetStatusAsync();
-        await operations.SetProtectionPausedAsync();
+        await operations.SetProtectionPausedAsync(false);
         var resumed = await operations.GetStatusAsync();
 
         Assert.False(paused.Configuration.IsEnabled);

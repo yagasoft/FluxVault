@@ -1,0 +1,22 @@
+{
+  "Complete": true,
+  "Actor": "System",
+  "Results": [
+    {
+      "Kind": "libpq",
+      "ExitCode": 2,
+      "Output": "",
+      "ProbeId": "5486951148cc462b8638bb41e7987bd9",
+      "Error": "psql: error: connection to server at \"::1\", port 63270 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+      "Host": "::1"
+    },
+    {
+      "ReadProtected": true,
+      "Kind": "ACL",
+      "WindowsSid": "S-1-5-18",
+      "WriteRuntime": true
+    }
+  ],
+  "WindowsSid": "S-1-5-18",
+  "RunId": "135edd386ff9426b9832a6c7de11eb31"
+}

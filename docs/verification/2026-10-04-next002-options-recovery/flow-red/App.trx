@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3872cdeb-0404-4272-8578-da68f0613c54" name="os008@OS008-HOME 2026-10-04 15:05:56" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T15:05:56.1998804+03:00" queuing="2026-10-04T15:05:56.1998805+03:00" start="2026-10-04T15:05:55.1979251+03:00" finish="2026-10-04T15:05:56.2335475+03:00" />
+  <TestSettings name="default" id="75789cba-046d-41e5-8b5b-30a642adc2e8">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_15_05_56" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="bc6af79b-59fc-4433-b42c-b71377e976cd" testId="8ba1c583-3521-d6f0-0766-fe49fbfe225f" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Pending_Options_recovery_opens_without_erasing_protection_edits_on_close" computerName="OS008-HOME" duration="00:00:00.2481353" startTime="2026-10-04T15:05:55.8159943+03:00" endTime="2026-10-04T15:05:56.0828530+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bc6af79b-59fc-4433-b42c-b71377e976cd">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Pending_Options_recovery_opens_without_erasing_protection_edits_on_close() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 879&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7b369a3f-b100-4b44-951c-23ed0a60b83b" testId="b69eeb76-4944-89b9-56ae-8af6ef9920c9" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(error: Denied)" computerName="OS008-HOME" duration="00:00:00.0036663" startTime="2026-10-04T15:05:56.1193367+03:00" endTime="2026-10-04T15:05:56.1234625+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7b369a3f-b100-4b44-951c-23ed0a60b83b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(FluxVaultIpcErrorCode error) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 814&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d4bb10a4-a813-4217-972b-3513917fba4a" testId="4432c06e-ccce-08a4-6d6a-e508eb870134" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(error: OutcomeUnknown)" computerName="OS008-HOME" duration="00:00:00.0075025" startTime="2026-10-04T15:05:56.1120546+03:00" endTime="2026-10-04T15:05:56.1192367+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d4bb10a4-a813-4217-972b-3513917fba4a" />
+    <UnitTestResult executionId="ab361961-7bcc-4518-9bbb-ef583635f766" testId="8a2a8e00-72b3-0747-fe0a-8dd937dcae53" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(error: Unavailable)" computerName="OS008-HOME" duration="00:00:00.0292947" startTime="2026-10-04T15:05:56.0875075+03:00" endTime="2026-10-04T15:05:56.1114487+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ab361961-7bcc-4518-9bbb-ef583635f766">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(FluxVaultIpcErrorCode error) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 814&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="832833fb-b068-4377-a6cf-8e2a7976eb7d" testId="142d57f1-da35-071c-2ebb-34205d2bf83f" testName="FluxVault.App.Tests.SaveOperationStoreTests.Existing_record_without_origin_keeps_its_filename_and_defaults_to_protection" computerName="OS008-HOME" duration="00:00:00.2473885" startTime="2026-10-04T15:05:55.8173153+03:00" endTime="2026-10-04T15:05:56.0697476+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="832833fb-b068-4377-a6cf-8e2a7976eb7d" />
+    <UnitTestResult executionId="633aecb8-27a5-41c3-ab44-e67c2484811c" testId="1ba32a36-378a-a6e1-cac3-a3691ba54bd6" testName="FluxVault.App.Tests.SaveOperationStoreTests.Unknown_origin_and_options_purge_intent_are_refused_before_reservation(origin: 1, purge: True)" computerName="OS008-HOME" duration="00:00:00.0007689" startTime="2026-10-04T15:05:56.0808831+03:00" endTime="2026-10-04T15:05:56.0809178+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="633aecb8-27a5-41c3-ab44-e67c2484811c" />
+    <UnitTestResult executionId="4f6d83ef-4150-4bdb-b361-5316061b01e5" testId="af95b5ce-96c4-982e-63b4-83e13487d047" testName="FluxVault.App.Tests.SaveOperationStoreTests.Unknown_origin_and_options_purge_intent_are_refused_before_reservation(origin: 987, purge: False)" computerName="OS008-HOME" duration="00:00:00.0013177" startTime="2026-10-04T15:05:56.0802115+03:00" endTime="2026-10-04T15:05:56.0802775+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f6d83ef-4150-4bdb-b361-5316061b01e5" />
+    <UnitTestResult executionId="2417bf56-366b-4edb-a671-6ee50f690066" testId="c90ba204-6e55-2e1d-478e-91a2a4df19b9" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_historical_receipt_requires_review_when_current_settings_differ" computerName="OS008-HOME" duration="00:00:00.0070080" startTime="2026-10-04T15:05:56.1747595+03:00" endTime="2026-10-04T15:05:56.1748117+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2417bf56-366b-4edb-a671-6ee50f690066">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Options_historical_receipt_requires_review_when_current_settings_differ() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 835&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0a27082c-5974-4905-b703-6cfcc17e7dd5" testId="0611b45f-a2e2-2d01-e4b3-b62fb2206e1f" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(profileStore: True)" computerName="OS008-HOME" duration="00:00:00.0196070" startTime="2026-10-04T15:05:56.1315110+03:00" endTime="2026-10-04T15:05:56.1511511+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0a27082c-5974-4905-b703-6cfcc17e7dd5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsType() Failure: Value is null&#xD;
+Expected: typeof(FluxVault.App.Services.PendingConfigurationSave)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass29_0.&lt;Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt&gt;b__0(FluxVaultIpcRequest request) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 770&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 1880&#xD;
+   at FluxVault.App.ViewModels.OptionsViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs:line 344&#xD;
+   at FluxVault.App.ViewModels.OptionsViewModel.SaveAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs:line 292&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(Boolean profileStore) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 778&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="707221a8-b466-4e03-8a3a-6acae6a9a3c5" testId="208e6cc8-6eb2-359b-a922-4356f44c7a59" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_never_adopts_or_clears_a_protection_origin_record" computerName="OS008-HOME" duration="00:00:00.0074179" startTime="2026-10-04T15:05:56.1753776+03:00" endTime="2026-10-04T15:05:56.1754105+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="707221a8-b466-4e03-8a3a-6acae6a9a3c5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Options_never_adopts_or_clears_a_protection_origin_record() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 859&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c398d5e7-843c-4456-bc74-805a9fa7d4d8" testId="09090660-b261-e5cf-40f1-a99f67b85b9e" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(profileStore: False)" computerName="OS008-HOME" duration="00:00:00.0063062" startTime="2026-10-04T15:05:56.1239527+03:00" endTime="2026-10-04T15:05:56.1308231+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c398d5e7-843c-4456-bc74-805a9fa7d4d8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsType() Failure: Value is null&#xD;
+Expected: typeof(FluxVault.App.Services.PendingConfigurationSave)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass29_0.&lt;Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt&gt;b__0(FluxVaultIpcRequest request) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 770&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 1880&#xD;
+   at FluxVault.App.ViewModels.OptionsViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs:line 344&#xD;
+   at FluxVault.App.ViewModels.OptionsViewModel.SaveAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs:line 292&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(Boolean profileStore) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 778&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_never_adopts_or_clears_a_protection_origin_record" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="208e6cc8-6eb2-359b-a922-4356f44c7a59">
+      <Execution id="707221a8-b466-4e03-8a3a-6acae6a9a3c5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_never_adopts_or_clears_a_protection_origin_record" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(profileStore: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="09090660-b261-e5cf-40f1-a99f67b85b9e">
+      <Execution id="c398d5e7-843c-4456-bc74-805a9fa7d4d8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Existing_record_without_origin_keeps_its_filename_and_defaults_to_protection" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="142d57f1-da35-071c-2ebb-34205d2bf83f">
+      <Execution id="832833fb-b068-4377-a6cf-8e2a7976eb7d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Existing_record_without_origin_keeps_its_filename_and_defaults_to_protection" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(profileStore: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="0611b45f-a2e2-2d01-e4b3-b62fb2206e1f">
+      <Execution id="0a27082c-5974-4905-b703-6cfcc17e7dd5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_historical_receipt_requires_review_when_current_settings_differ" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="c90ba204-6e55-2e1d-478e-91a2a4df19b9">
+      <Execution id="2417bf56-366b-4edb-a671-6ee50f690066" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_historical_receipt_requires_review_when_current_settings_differ" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Pending_Options_recovery_opens_without_erasing_protection_edits_on_close" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="8ba1c583-3521-d6f0-0766-fe49fbfe225f">
+      <Execution id="bc6af79b-59fc-4433-b42c-b71377e976cd" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Pending_Options_recovery_opens_without_erasing_protection_edits_on_close" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(error: Unavailable)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="8a2a8e00-72b3-0747-fe0a-8dd937dcae53">
+      <Execution id="ab361961-7bcc-4518-9bbb-ef583635f766" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_failed_receipt_never_releases_the_pending_snapshot" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(error: OutcomeUnknown)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="4432c06e-ccce-08a4-6d6a-e508eb870134">
+      <Execution id="d4bb10a4-a813-4217-972b-3513917fba4a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_failed_receipt_never_releases_the_pending_snapshot" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Unknown_origin_and_options_purge_intent_are_refused_before_reservation(origin: 987, purge: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="af95b5ce-96c4-982e-63b4-83e13487d047">
+      <Execution id="4f6d83ef-4150-4bdb-b361-5316061b01e5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Unknown_origin_and_options_purge_intent_are_refused_before_reservation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Unknown_origin_and_options_purge_intent_are_refused_before_reservation(origin: 1, purge: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="1ba32a36-378a-a6e1-cac3-a3691ba54bd6">
+      <Execution id="633aecb8-27a5-41c3-ab44-e67c2484811c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Unknown_origin_and_options_purge_intent_are_refused_before_reservation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(error: Denied)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="b69eeb76-4944-89b9-56ae-8af6ef9920c9">
+      <Execution id="7b369a3f-b100-4b44-951c-23ed0a60b83b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_failed_receipt_never_releases_the_pending_snapshot" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="8ba1c583-3521-d6f0-0766-fe49fbfe225f" executionId="bc6af79b-59fc-4433-b42c-b71377e976cd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b69eeb76-4944-89b9-56ae-8af6ef9920c9" executionId="7b369a3f-b100-4b44-951c-23ed0a60b83b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4432c06e-ccce-08a4-6d6a-e508eb870134" executionId="d4bb10a4-a813-4217-972b-3513917fba4a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8a2a8e00-72b3-0747-fe0a-8dd937dcae53" executionId="ab361961-7bcc-4518-9bbb-ef583635f766" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="142d57f1-da35-071c-2ebb-34205d2bf83f" executionId="832833fb-b068-4377-a6cf-8e2a7976eb7d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1ba32a36-378a-a6e1-cac3-a3691ba54bd6" executionId="633aecb8-27a5-41c3-ab44-e67c2484811c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="af95b5ce-96c4-982e-63b4-83e13487d047" executionId="4f6d83ef-4150-4bdb-b361-5316061b01e5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c90ba204-6e55-2e1d-478e-91a2a4df19b9" executionId="2417bf56-366b-4edb-a671-6ee50f690066" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0611b45f-a2e2-2d01-e4b3-b62fb2206e1f" executionId="0a27082c-5974-4905-b703-6cfcc17e7dd5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="208e6cc8-6eb2-359b-a922-4356f44c7a59" executionId="707221a8-b466-4e03-8a3a-6acae6a9a3c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09090660-b261-e5cf-40f1-a99f67b85b9e" executionId="c398d5e7-843c-4456-bc74-805a9fa7d4d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="11" executed="11" passed="4" failed="7" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.48]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.48]       Expected: True&#xD;
+[xUnit.net 00:00:00.48]       Actual:   False&#xD;
+[xUnit.net 00:00:00.49]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(879,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Pending_Options_recovery_opens_without_erasing_protection_edits_on_close()&#xD;
+[xUnit.net 00:00:00.49]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.51]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.51]       Expected: True&#xD;
+[xUnit.net 00:00:00.51]       Actual:   False&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(814,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(FluxVaultIpcErrorCode error)&#xD;
+[xUnit.net 00:00:00.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.52]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.52]       Expected: True&#xD;
+[xUnit.net 00:00:00.52]       Actual:   False&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(814,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(FluxVaultIpcErrorCode error)&#xD;
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.53]       Assert.IsType() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.53]       Expected: typeof(FluxVault.App.Services.PendingConfigurationSave)&#xD;
+[xUnit.net 00:00:00.53]       Actual:   null&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(770,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass29_0.&lt;Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt&gt;b__0(FluxVaultIpcRequest request)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(1880,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs(344,0): at FluxVault.App.ViewModels.OptionsViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs(292,0): at FluxVault.App.ViewModels.OptionsViewModel.SaveAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(778,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(Boolean profileStore)&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.55]       Assert.IsType() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.55]       Expected: typeof(FluxVault.App.Services.PendingConfigurationSave)&#xD;
+[xUnit.net 00:00:00.55]       Actual:   null&#xD;
+[xUnit.net 00:00:00.55]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.55]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(770,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass29_0.&lt;Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt&gt;b__0(FluxVaultIpcRequest request)&#xD;
+[xUnit.net 00:00:00.55]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(1880,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.55]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs(344,0): at FluxVault.App.ViewModels.OptionsViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.55]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs(292,0): at FluxVault.App.ViewModels.OptionsViewModel.SaveAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.55]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(778,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(Boolean profileStore)&#xD;
+[xUnit.net 00:00:00.55]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.57]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.57]       Expected: True&#xD;
+[xUnit.net 00:00:00.57]       Actual:   False&#xD;
+[xUnit.net 00:00:00.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(835,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Options_historical_receipt_requires_review_when_current_settings_differ()&#xD;
+[xUnit.net 00:00:00.57]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.57]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.57]       Expected: True&#xD;
+[xUnit.net 00:00:00.57]       Actual:   False&#xD;
+[xUnit.net 00:00:00.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(859,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Options_never_adopts_or_clears_a_protection_origin_record()&#xD;
+[xUnit.net 00:00:00.57]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.58]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:05:56.0852839+03:00">
+        <Text>[xUnit.net 00:00:00.48]     FluxVault.App.Tests.ProtectionSaveContractTests.Pending_Options_recovery_opens_without_erasing_protection_edits_on_close [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:05:56.1118309+03:00">
+        <Text>[xUnit.net 00:00:00.51]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(error: Unavailable) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:05:56.1237733+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_failed_receipt_never_releases_the_pending_snapshot(error: Denied) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:05:56.1310462+03:00">
+        <Text>[xUnit.net 00:00:00.53]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(profileStore: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:05:56.1514830+03:00">
+        <Text>[xUnit.net 00:00:00.55]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_restart_keeps_the_full_dispatched_snapshot_and_original_receipt(profileStore: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:05:56.2053713+03:00">
+        <Text>[xUnit.net 00:00:00.57]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_historical_receipt_requires_review_when_current_settings_differ [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T15:05:56.2054094+03:00">
+        <Text>[xUnit.net 00:00:00.57]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_never_adopts_or_clears_a_protection_origin_record [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

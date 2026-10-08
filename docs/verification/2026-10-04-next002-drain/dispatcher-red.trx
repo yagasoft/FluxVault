@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d7b3200d-0264-4d45-8aec-2f15629f96e3" name="os008@OS008-HOME 2026-10-04 17:50:49" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T17:50:49.6599792+03:00" queuing="2026-10-04T17:50:49.6599793+03:00" start="2026-10-04T17:50:48.9205266+03:00" finish="2026-10-04T17:50:49.6652401+03:00" />
+  <TestSettings name="default" id="72697d28-1724-48fd-8e58-16ad0698c3d1">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_17_50_49" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="451490c3-56b5-4d33-a09c-2078411f4397" testId="9c7b3d5c-131e-f2ad-b804-3281f0009076" testName="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Read_requests_remain_available_during_an_admitted_backup(command: GetPerformance)" computerName="OS008-HOME" duration="00:00:00.0010168" startTime="2026-10-04T17:50:49.5560704+03:00" endTime="2026-10-04T17:50:49.5561062+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="451490c3-56b5-4d33-a09c-2078411f4397" />
+    <UnitTestResult executionId="7fc7db57-65e2-490f-907f-0fb18033ef0c" testId="f349a47b-4ea8-8cbe-3a32-02f27089bfee" testName="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(incomplete: True)" computerName="OS008-HOME" duration="00:00:00.0007649" startTime="2026-10-04T17:50:49.5666974+03:00" endTime="2026-10-04T17:50:49.5667454+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7fc7db57-65e2-490f-907f-0fb18033ef0c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(Boolean incomplete) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultSequencingTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="210c41cc-8af6-4f05-93b3-e8e181785a48" testId="c0f74c64-a1a0-0d69-ae8e-e67601e587eb" testName="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Cancelled_queued_mutation_touches_neither_catalogue_nor_executor_and_releases_its_wait" computerName="OS008-HOME" duration="00:00:00.0230784" startTime="2026-10-04T17:50:49.5145621+03:00" endTime="2026-10-04T17:50:49.5462157+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="210c41cc-8af6-4f05-93b3-e8e181785a48" />
+    <UnitTestResult executionId="e182c20e-a935-48f3-9fd0-b633fe124098" testId="f447f04f-ac73-f4e1-816e-6e6cb8105172" testName="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Save_cannot_replace_configuration_while_an_admitted_backup_is_running" computerName="OS008-HOME" duration="00:00:00.0011616" startTime="2026-10-04T17:50:49.5555252+03:00" endTime="2026-10-04T17:50:49.5555824+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e182c20e-a935-48f3-9fd0-b633fe124098" />
+    <UnitTestResult executionId="f0c6d42f-c9dd-4a02-9233-198d6468ee19" testId="b4a2e9a2-7cc6-ae0e-52cc-bfbd346d7344" testName="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Mutation_order_includes_the_durable_completion_acknowledgement" computerName="OS008-HOME" duration="00:00:00.0014937" startTime="2026-10-04T17:50:49.5665837+03:00" endTime="2026-10-04T17:50:49.5666184+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f0c6d42f-c9dd-4a02-9233-198d6468ee19" />
+    <UnitTestResult executionId="7bcdad47-529c-411b-9241-5649a4cf6a5f" testId="05590b7f-0a45-eab0-e1c7-7137611d4575" testName="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_holds_the_mutation_gate_until_configuration_and_receipt_completion" computerName="OS008-HOME" duration="00:00:00.0015944" startTime="2026-10-04T17:50:49.5675770+03:00" endTime="2026-10-04T17:50:49.5676045+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7bcdad47-529c-411b-9241-5649a4cf6a5f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_holds_the_mutation_gate_until_configuration_and_receipt_completion() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultSequencingTests.cs:line 50&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6968cdea-d897-4b8c-8557-f4267ba0f55c" testId="415c3c70-6789-2544-4cd4-54f2d1e2fefd" testName="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(incomplete: False)" computerName="OS008-HOME" duration="00:00:00.0002147" startTime="2026-10-04T17:50:49.5671524+03:00" endTime="2026-10-04T17:50:49.5671796+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6968cdea-d897-4b8c-8557-f4267ba0f55c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(Boolean incomplete) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultSequencingTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e1055075-9843-440a-8fd0-6948aa0b5502" testId="59b698e0-cec2-638c-0108-b26f07c6e061" testName="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_completion_failure_after_repository_effect_is_unknown_and_does_not_report_a_configuration_change" computerName="OS008-HOME" duration="00:00:00.0035669" startTime="2026-10-04T17:50:49.5562570+03:00" endTime="2026-10-04T17:50:49.5619760+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1055075-9843-440a-8fd0-6948aa0b5502">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 1&#xD;
+Actual:   0</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_completion_failure_after_repository_effect_is_unknown_and_does_not_report_a_configuration_change() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultSequencingTests.cs:line 35&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f2a029f2-3d0c-4832-9815-dac0bab22258" testId="4d61684b-f1ff-a509-340f-97dc8e5d7fda" testName="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Read_requests_remain_available_during_an_admitted_backup(command: GetStatus)" computerName="OS008-HOME" duration="00:00:00.0006611" startTime="2026-10-04T17:50:49.5561642+03:00" endTime="2026-10-04T17:50:49.5561913+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f2a029f2-3d0c-4832-9815-dac0bab22258" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_completion_failure_after_repository_effect_is_unknown_and_does_not_report_a_configuration_change" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="59b698e0-cec2-638c-0108-b26f07c6e061">
+      <Execution id="e1055075-9843-440a-8fd0-6948aa0b5502" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests" name="Drain_completion_failure_after_repository_effect_is_unknown_and_does_not_report_a_configuration_change" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(incomplete: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="415c3c70-6789-2544-4cd4-54f2d1e2fefd">
+      <Execution id="6968cdea-d897-4b8c-8557-f4267ba0f55c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests" name="Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(incomplete: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="f349a47b-4ea8-8cbe-3a32-02f27089bfee">
+      <Execution id="7fc7db57-65e2-490f-907f-0fb18033ef0c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests" name="Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Read_requests_remain_available_during_an_admitted_backup(command: GetStatus)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="4d61684b-f1ff-a509-340f-97dc8e5d7fda">
+      <Execution id="f2a029f2-3d0c-4832-9815-dac0bab22258" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests" name="Read_requests_remain_available_during_an_admitted_backup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Read_requests_remain_available_during_an_admitted_backup(command: GetPerformance)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="9c7b3d5c-131e-f2ad-b804-3281f0009076">
+      <Execution id="451490c3-56b5-4d33-a09c-2078411f4397" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests" name="Read_requests_remain_available_during_an_admitted_backup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Mutation_order_includes_the_durable_completion_acknowledgement" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="b4a2e9a2-7cc6-ae0e-52cc-bfbd346d7344">
+      <Execution id="f0c6d42f-c9dd-4a02-9233-198d6468ee19" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests" name="Mutation_order_includes_the_durable_completion_acknowledgement" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Cancelled_queued_mutation_touches_neither_catalogue_nor_executor_and_releases_its_wait" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="c0f74c64-a1a0-0d69-ae8e-e67601e587eb">
+      <Execution id="210c41cc-8af6-4f05-93b3-e8e181785a48" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests" name="Cancelled_queued_mutation_touches_neither_catalogue_nor_executor_and_releases_its_wait" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Save_cannot_replace_configuration_while_an_admitted_backup_is_running" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="f447f04f-ac73-f4e1-816e-6e6cb8105172">
+      <Execution id="e182c20e-a935-48f3-9fd0-b633fe124098" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests" name="Save_cannot_replace_configuration_while_an_admitted_backup_is_running" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_holds_the_mutation_gate_until_configuration_and_receipt_completion" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\debug\net10.0\fluxvault.core.tests.dll" id="05590b7f-0a45-eab0-e1c7-7137611d4575">
+      <Execution id="7bcdad47-529c-411b-9241-5649a4cf6a5f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Debug\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultSequencingTests" name="Drain_holds_the_mutation_gate_until_configuration_and_receipt_completion" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9c7b3d5c-131e-f2ad-b804-3281f0009076" executionId="451490c3-56b5-4d33-a09c-2078411f4397" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f349a47b-4ea8-8cbe-3a32-02f27089bfee" executionId="7fc7db57-65e2-490f-907f-0fb18033ef0c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c0f74c64-a1a0-0d69-ae8e-e67601e587eb" executionId="210c41cc-8af6-4f05-93b3-e8e181785a48" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f447f04f-ac73-f4e1-816e-6e6cb8105172" executionId="e182c20e-a935-48f3-9fd0-b633fe124098" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b4a2e9a2-7cc6-ae0e-52cc-bfbd346d7344" executionId="f0c6d42f-c9dd-4a02-9233-198d6468ee19" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05590b7f-0a45-eab0-e1c7-7137611d4575" executionId="7bcdad47-529c-411b-9241-5649a4cf6a5f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="415c3c70-6789-2544-4cd4-54f2d1e2fefd" executionId="6968cdea-d897-4b8c-8557-f4267ba0f55c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="59b698e0-cec2-638c-0108-b26f07c6e061" executionId="e1055075-9843-440a-8fd0-6948aa0b5502" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d61684b-f1ff-a509-340f-97dc8e5d7fda" executionId="f2a029f2-3d0c-4832-9815-dac0bab22258" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="9" executed="9" passed="5" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.27]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.27]       Expected: 1&#xD;
+[xUnit.net 00:00:00.27]       Actual:   0&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultSequencingTests.cs(35,0): at FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_completion_failure_after_repository_effect_is_unknown_and_does_not_report_a_configuration_change()&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.27]       Expected: True&#xD;
+[xUnit.net 00:00:00.27]       Actual:   False&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultSequencingTests.cs(20,0): at FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(Boolean incomplete)&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.27]       Expected: True&#xD;
+[xUnit.net 00:00:00.27]       Actual:   False&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultSequencingTests.cs(20,0): at FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(Boolean incomplete)&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.27]       Expected: True&#xD;
+[xUnit.net 00:00:00.27]       Actual:   False&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultSequencingTests.cs(50,0): at FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_holds_the_mutation_gate_until_configuration_and_receipt_completion()&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T17:50:49.5645232+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_completion_failure_after_repository_effect_is_unknown_and_does_not_report_a_configuration_change [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T17:50:49.5670376+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(incomplete: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T17:50:49.5673129+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_returns_the_atomic_catalogue_acknowledgement_and_original_bound_request(incomplete: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T17:50:49.5677816+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Core.Tests.AuthenticatedVaultSequencingTests.Drain_holds_the_mutation_gate_until_configuration_and_receipt_completion [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

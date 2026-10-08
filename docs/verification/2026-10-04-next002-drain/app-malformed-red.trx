@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f1400d55-312d-4ed6-a66a-d7d355333b8f" name="os008@OS008-HOME 2026-10-04 17:57:11" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T17:57:11.8903524+03:00" queuing="2026-10-04T17:57:11.8903526+03:00" start="2026-10-04T17:57:10.7946391+03:00" finish="2026-10-04T17:57:11.8953229+03:00" />
+  <TestSettings name="default" id="3c289c9f-b40f-4364-a667-a2c05c92c135">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_17_57_11" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="8400946f-c322-4316-80d3-8f0f367da1e4" testId="0a8fcfb6-0022-9b23-a7c9-218632627d5a" testName="FluxVault.App.Tests.MirrorDrainContractTests.Completed_drain_rebases_only_the_disabled_mirror_and_revision_preserving_pending_protection_edits" computerName="OS008-HOME" duration="00:00:00.0875917" startTime="2026-10-04T17:57:11.6953179+03:00" endTime="2026-10-04T17:57:11.7827515+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8400946f-c322-4316-80d3-8f0f367da1e4" />
+    <UnitTestResult executionId="4225920e-2638-4b0d-a51f-27a13203a1bb" testId="315dbcf5-97e0-1484-2446-cc39c4ecd8fc" testName="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: NullActions)" computerName="OS008-HOME" duration="00:00:00.0033508" startTime="2026-10-04T17:57:11.6897235+03:00" endTime="2026-10-04T17:57:11.6939457+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4225920e-2638-4b0d-a51f-27a13203a1bb">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NullReferenceException : Object reference not set to an instance of an object.</Message>
+          <StackTrace>   at FluxVault.Abstractions.Storage.MirrorRebalancePreviewReport.get_IsCompletedDrain() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\Storage\MirrorRebalanceReports.cs:line 56&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1111&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunMirrorDrainCoreAsync(Boolean isPreview, String mirrorNodeId) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2217&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunSelectedMirrorDrainAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2204&#xD;
+   at FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(DrainOutcome outcome) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\MirrorDrainContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c7fea83c-d7e5-4d58-96f4-31ef64475799" testId="2e42a76b-8ac0-1fa8-e278-19c6fe35c0c1" testName="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: Unknown)" computerName="OS008-HOME" duration="00:00:00.0050228" startTime="2026-10-04T17:57:11.6674142+03:00" endTime="2026-10-04T17:57:11.6674735+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c7fea83c-d7e5-4d58-96f4-31ef64475799" />
+    <UnitTestResult executionId="54291d58-366a-4de7-ad34-c96143aadb27" testId="43b82e84-0158-709e-5d03-bc0bb2bc64b2" testName="FluxVault.App.Tests.MirrorDrainContractTests.Delayed_drain_acknowledgement_cannot_overwrite_a_newer_accepted_configuration_or_draft" computerName="OS008-HOME" duration="00:00:00.0113087" startTime="2026-10-04T17:57:11.7829742+03:00" endTime="2026-10-04T17:57:11.7944079+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="54291d58-366a-4de7-ad34-c96143aadb27" />
+    <UnitTestResult executionId="50ee150d-ea87-4fe0-ab57-8848274bf2b6" testId="56aa8212-6ad2-f5c9-1164-7474c55be514" testName="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: NullNodes)" computerName="OS008-HOME" duration="00:00:00.0038418" startTime="2026-10-04T17:57:11.6685961+03:00" endTime="2026-10-04T17:57:11.6805211+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="50ee150d-ea87-4fe0-ab57-8848274bf2b6">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentNullException : Value cannot be null. (Parameter 'source')</Message>
+          <StackTrace>   at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)&#xD;
+   at System.Linq.Enumerable.TryGetFirst[TSource](IEnumerable`1 source, Func`2 predicate, Boolean&amp; found)&#xD;
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source, Func`2 predicate)&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.ApplyMirrorPlacementToNodes(MirrorRebalancePreviewReport report) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 3023&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.ApplyRepositoryHealth(RepositoryHealthSnapshot health) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2914&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunMirrorDrainCoreAsync(Boolean isPreview, String mirrorNodeId) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2247&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunSelectedMirrorDrainAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2204&#xD;
+   at FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(DrainOutcome outcome) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\MirrorDrainContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="01ffe2f0-e3e3-4374-af63-aac3c5ad8cf1" testId="73fdae55-9814-521b-1d13-f6a7a3137f26" testName="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: Incomplete)" computerName="OS008-HOME" duration="00:00:00.2721513" startTime="2026-10-04T17:57:11.3782007+03:00" endTime="2026-10-04T17:57:11.6587198+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="01ffe2f0-e3e3-4374-af63-aac3c5ad8cf1" />
+    <UnitTestResult executionId="411ffe04-7771-4c0d-8829-1b886410ce05" testId="73d9e2da-35ef-ea7b-632c-2ab2edf3591c" testName="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: WrongRevision)" computerName="OS008-HOME" duration="00:00:00.0093483" startTime="2026-10-04T17:57:11.6850691+03:00" endTime="2026-10-04T17:57:11.6896405+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="411ffe04-7771-4c0d-8829-1b886410ce05" />
+    <UnitTestResult executionId="720cca25-b41e-41a7-a224-e55d7bf9826b" testId="05a7c76f-1abc-2244-f537-12a610224208" testName="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: WrongSelector)" computerName="OS008-HOME" duration="00:00:00.0035322" startTime="2026-10-04T17:57:11.6680198+03:00" endTime="2026-10-04T17:57:11.6685245+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="720cca25-b41e-41a7-a224-e55d7bf9826b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Completed_drain_rebases_only_the_disabled_mirror_and_revision_preserving_pending_protection_edits" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="0a8fcfb6-0022-9b23-a7c9-218632627d5a">
+      <Execution id="8400946f-c322-4316-80d3-8f0f367da1e4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Completed_drain_rebases_only_the_disabled_mirror_and_revision_preserving_pending_protection_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: WrongRevision)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="73d9e2da-35ef-ea7b-632c-2ab2edf3591c">
+      <Execution id="411ffe04-7771-4c0d-8829-1b886410ce05" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: Unknown)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="2e42a76b-8ac0-1fa8-e278-19c6fe35c0c1">
+      <Execution id="c7fea83c-d7e5-4d58-96f4-31ef64475799" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: NullActions)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="315dbcf5-97e0-1484-2446-cc39c4ecd8fc">
+      <Execution id="4225920e-2638-4b0d-a51f-27a13203a1bb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: NullNodes)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="56aa8212-6ad2-f5c9-1164-7474c55be514">
+      <Execution id="50ee150d-ea87-4fe0-ab57-8848274bf2b6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: Incomplete)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="73fdae55-9814-521b-1d13-f6a7a3137f26">
+      <Execution id="01ffe2f0-e3e3-4374-af63-aac3c5ad8cf1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Delayed_drain_acknowledgement_cannot_overwrite_a_newer_accepted_configuration_or_draft" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="43b82e84-0158-709e-5d03-bc0bb2bc64b2">
+      <Execution id="54291d58-366a-4de7-ad34-c96143aadb27" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Delayed_drain_acknowledgement_cannot_overwrite_a_newer_accepted_configuration_or_draft" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: WrongSelector)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="05a7c76f-1abc-2244-f537-12a610224208">
+      <Execution id="720cca25-b41e-41a7-a224-e55d7bf9826b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.MirrorDrainContractTests" name="Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0a8fcfb6-0022-9b23-a7c9-218632627d5a" executionId="8400946f-c322-4316-80d3-8f0f367da1e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="315dbcf5-97e0-1484-2446-cc39c4ecd8fc" executionId="4225920e-2638-4b0d-a51f-27a13203a1bb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e42a76b-8ac0-1fa8-e278-19c6fe35c0c1" executionId="c7fea83c-d7e5-4d58-96f4-31ef64475799" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="43b82e84-0158-709e-5d03-bc0bb2bc64b2" executionId="54291d58-366a-4de7-ad34-c96143aadb27" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="56aa8212-6ad2-f5c9-1164-7474c55be514" executionId="50ee150d-ea87-4fe0-ab57-8848274bf2b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="73fdae55-9814-521b-1d13-f6a7a3137f26" executionId="01ffe2f0-e3e3-4374-af63-aac3c5ad8cf1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="73d9e2da-35ef-ea7b-632c-2ab2edf3591c" executionId="411ffe04-7771-4c0d-8829-1b886410ce05" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05a7c76f-1abc-2244-f537-12a610224208" executionId="720cca25-b41e-41a7-a224-e55d7bf9826b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="6" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.51]       System.ArgumentNullException : Value cannot be null. (Parameter 'source')&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]            at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)&#xD;
+[xUnit.net 00:00:00.52]            at System.Linq.Enumerable.TryGetFirst[TSource](IEnumerable`1 source, Func`2 predicate, Boolean&amp; found)&#xD;
+[xUnit.net 00:00:00.52]            at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source, Func`2 predicate)&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(3023,0): at FluxVault.App.ViewModels.MainWindowViewModel.ApplyMirrorPlacementToNodes(MirrorRebalancePreviewReport report)&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2914,0): at FluxVault.App.ViewModels.MainWindowViewModel.ApplyRepositoryHealth(RepositoryHealthSnapshot health)&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2247,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunMirrorDrainCoreAsync(Boolean isPreview, String mirrorNodeId)&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2204,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunSelectedMirrorDrainAsync()&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\MirrorDrainContractTests.cs(52,0): at FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(DrainOutcome outcome)&#xD;
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.53]       System.NullReferenceException : Object reference not set to an instance of an object.&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\Storage\MirrorRebalanceReports.cs(56,0): at FluxVault.Abstractions.Storage.MirrorRebalancePreviewReport.get_IsCompletedDrain()&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1111,0): at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2217,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunMirrorDrainCoreAsync(Boolean isPreview, String mirrorNodeId)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2204,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunSelectedMirrorDrainAsync()&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\MirrorDrainContractTests.cs(52,0): at FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(DrainOutcome outcome)&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.63]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T17:57:11.6828676+03:00">
+        <Text>[xUnit.net 00:00:00.51]     FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: NullNodes) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T17:57:11.6941925+03:00">
+        <Text>[xUnit.net 00:00:00.53]     FluxVault.App.Tests.MirrorDrainContractTests.Unconfirmed_or_incomplete_drain_keeps_enabled_mirror_and_pending_edits(outcome: NullActions) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

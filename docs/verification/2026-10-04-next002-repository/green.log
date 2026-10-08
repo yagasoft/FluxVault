@@ -1,0 +1,21 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Core.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.26]     FluxVault.Core.Tests.VaultRepositoryBindingTests.Foreign_mirror_marker_rejects_capture_before_content_publication [FAIL]
+  Failed FluxVault.Core.Tests.VaultRepositoryBindingTests.Foreign_mirror_marker_rejects_capture_before_content_publication [46 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Required mirror 'E:\Temp\AppData\Local\Temp\FluxVault.Tests\a6b7afa3174349e2991c83a96c38658a\mirror' is unavailable; maintenance was not started.
+  Stack Trace:
+     at FluxVault.Core.Storage.Integrity.RepositoryLeaseSet.AcquireAsync(String primaryRoot, IReadOnlyList`1 mirrorRoots, MirrorLeaseMode mirrorMode, CancellationToken cancellationToken, Action`1 validateVolume, VaultBinding binding, Boolean provision) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\Integrity\RepositoryLeaseSet.cs:line 59
+   at FluxVault.Core.Storage.Integrity.RepositoryLeaseSet.AcquireAsync(String primaryRoot, IReadOnlyList`1 mirrorRoots, MirrorLeaseMode mirrorMode, CancellationToken cancellationToken, Action`1 validateVolume, VaultBinding binding, Boolean provision) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\Integrity\RepositoryLeaseSet.cs:line 89
+   at FluxVault.Core.Storage.FileSystemChunkRepository.ProvisionVaultStorageAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 125
+   at FluxVault.Core.Tests.VaultRepositoryBindingTests.Foreign_mirror_marker_rejects_capture_before_content_publication() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultRepositoryBindingTests.cs:line 111
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-repository\green\repository-binding-green.trx
+
+Failed!  - Failed:     1, Passed:    10, Skipped:     0, Total:    11, Duration: 507 ms - FluxVault.Core.Tests.dll (net10.0)

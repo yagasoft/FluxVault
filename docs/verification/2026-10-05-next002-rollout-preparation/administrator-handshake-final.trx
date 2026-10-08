@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="28ac0027-3cfa-441c-88e8-19ec16be82f8" name="os008@OS008-HOME 2026-10-05 11:22:44" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T11:22:44.1745800+03:00" queuing="2026-10-05T11:22:44.1745801+03:00" start="2026-10-05T11:22:40.8101341+03:00" finish="2026-10-05T11:22:54.9728134+03:00" />
+  <TestSettings name="default" id="e96a37b7-d8db-45ed-9db8-c75fe6238812">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_11_22_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0f99bdac-32ae-4eb4-8fcd-e6973d2b8a4e" testId="b26b202c-baa3-7026-e3b7-7ad830c4a1ff" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;sql-failure&quot;)" computerName="OS008-HOME" duration="00:00:01.5478011" startTime="2026-10-05T11:22:53.3579805+03:00" endTime="2026-10-05T11:22:54.9055712+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f99bdac-32ae-4eb4-8fcd-e6973d2b8a4e" />
+    <UnitTestResult executionId="c2c49c05-2384-4acb-83b0-d161081f48d3" testId="0d3c1c63-22fd-00d0-b999-df957aff11df" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled-after-open&quot;)" computerName="OS008-HOME" duration="00:00:01.7736613" startTime="2026-10-05T11:22:47.9772408+03:00" endTime="2026-10-05T11:22:49.7514425+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2c49c05-2384-4acb-83b0-d161081f48d3">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.Json.JsonReaderException : 'S' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+   at System.Text.Json.Utf8JsonReader.Read()&#xD;
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb&amp; database, StackRowStack&amp; stack)&#xD;
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter, Boolean allowDuplicateProperties)&#xD;
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)&#xD;
+   at System.Text.Json.JsonDocument.Parse(String json, JsonDocumentOptions options)&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1219&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1226&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 21&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="19be5729-60d0-4cdf-b332-c01d667ff024" testId="8ee94c8e-66da-b3a2-81ec-c6cfe2bcb070" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;missing-backend&quot;)" computerName="OS008-HOME" duration="00:00:02.9388568" startTime="2026-10-05T11:22:50.4183922+03:00" endTime="2026-10-05T11:22:53.3574090+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19be5729-60d0-4cdf-b332-c01d667ff024" />
+    <UnitTestResult executionId="f508e3b7-773a-4a50-aae8-de6e5c4c151d" testId="7f97e196-6596-0d46-b3d5-d5363b344592" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;success&quot;)" computerName="OS008-HOME" duration="00:00:01.5891334" startTime="2026-10-05T11:22:46.3879006+03:00" endTime="2026-10-05T11:22:47.9769619+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f508e3b7-773a-4a50-aae8-de6e5c4c151d" />
+    <UnitTestResult executionId="e9cfa7c3-86fd-41de-a13f-e34fbcee491a" testId="93dac4d0-7b03-c71a-a296-84a523a9ffa1" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;wrong-binding&quot;)" computerName="OS008-HOME" duration="00:00:01.5286187" startTime="2026-10-05T11:22:43.4193359+03:00" endTime="2026-10-05T11:22:44.9366694+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e9cfa7c3-86fd-41de-a13f-e34fbcee491a" />
+    <UnitTestResult executionId="ed0c1e71-1265-4ec4-a108-6d0016f4c8e9" testId="59d4d14d-95ab-f865-deca-e043f49db8fc" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled-after-effect&quot;)" computerName="OS008-HOME" duration="00:00:02.0135774" startTime="2026-10-05T11:22:41.3769002+03:00" endTime="2026-10-05T11:22:43.4067738+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed0c1e71-1265-4ec4-a108-6d0016f4c8e9">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.Json.JsonReaderException : 'S' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+   at System.Text.Json.Utf8JsonReader.Read()&#xD;
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb&amp; database, StackRowStack&amp; stack)&#xD;
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter, Boolean allowDuplicateProperties)&#xD;
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)&#xD;
+   at System.Text.Json.JsonDocument.Parse(String json, JsonDocumentOptions options)&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1219&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1226&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 21&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="41dc663e-ab0b-4d31-885e-6a858ead5c57" testId="79f76824-365e-c0fb-229c-c49d5e58a806" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled&quot;)" computerName="OS008-HOME" duration="00:00:00.6664281" startTime="2026-10-05T11:22:49.7528970+03:00" endTime="2026-10-05T11:22:50.4181918+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="41dc663e-ab0b-4d31-885e-6a858ead5c57" />
+    <UnitTestResult executionId="a23c72cf-9cc7-47b2-8b38-21ec2a8faeb3" testId="6a71e3d0-0332-6b68-cab2-e1fd6addf1e1" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;publication-failure&quot;)" computerName="OS008-HOME" duration="00:00:01.4507923" startTime="2026-10-05T11:22:44.9384094+03:00" endTime="2026-10-05T11:22:46.3874874+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a23c72cf-9cc7-47b2-8b38-21ec2a8faeb3" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;success&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="7f97e196-6596-0d46-b3d5-d5363b344592">
+      <Execution id="f508e3b7-773a-4a50-aae8-de6e5c4c151d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="79f76824-365e-c0fb-229c-c49d5e58a806">
+      <Execution id="41dc663e-ab0b-4d31-885e-6a858ead5c57" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;publication-failure&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="6a71e3d0-0332-6b68-cab2-e1fd6addf1e1">
+      <Execution id="a23c72cf-9cc7-47b2-8b38-21ec2a8faeb3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;missing-backend&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="8ee94c8e-66da-b3a2-81ec-c6cfe2bcb070">
+      <Execution id="19be5729-60d0-4cdf-b332-c01d667ff024" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled-after-effect&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="59d4d14d-95ab-f865-deca-e043f49db8fc">
+      <Execution id="ed0c1e71-1265-4ec4-a108-6d0016f4c8e9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;cancelled-after-open&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="0d3c1c63-22fd-00d0-b999-df957aff11df">
+      <Execution id="c2c49c05-2384-4acb-83b0-d161081f48d3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;wrong-binding&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="93dac4d0-7b03-c71a-a296-84a523a9ffa1">
+      <Execution id="e9cfa7c3-86fd-41de-a13f-e34fbcee491a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: &quot;sql-failure&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="b26b202c-baa3-7026-e3b7-7ad830c4a1ff">
+      <Execution id="0f99bdac-32ae-4eb4-8fcd-e6973d2b8a4e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b26b202c-baa3-7026-e3b7-7ad830c4a1ff" executionId="0f99bdac-32ae-4eb4-8fcd-e6973d2b8a4e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d3c1c63-22fd-00d0-b999-df957aff11df" executionId="c2c49c05-2384-4acb-83b0-d161081f48d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ee94c8e-66da-b3a2-81ec-c6cfe2bcb070" executionId="19be5729-60d0-4cdf-b332-c01d667ff024" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f97e196-6596-0d46-b3d5-d5363b344592" executionId="f508e3b7-773a-4a50-aae8-de6e5c4c151d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="93dac4d0-7b03-c71a-a296-84a523a9ffa1" executionId="e9cfa7c3-86fd-41de-a13f-e34fbcee491a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="59d4d14d-95ab-f865-deca-e043f49db8fc" executionId="ed0c1e71-1265-4ec4-a108-6d0016f4c8e9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79f76824-365e-c0fb-229c-c49d5e58a806" executionId="41dc663e-ab0b-4d31-885e-6a858ead5c57" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6a71e3d0-0332-6b68-cab2-e1fd6addf1e1" executionId="a23c72cf-9cc7-47b2-8b38-21ec2a8faeb3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="6" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:02.23]       System.Text.Json.JsonReaderException : 'S' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.&#xD;
+[xUnit.net 00:00:02.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.23]            at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+[xUnit.net 00:00:02.23]            at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)&#xD;
+[xUnit.net 00:00:02.23]            at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)&#xD;
+[xUnit.net 00:00:02.23]            at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+[xUnit.net 00:00:02.23]            at System.Text.Json.Utf8JsonReader.Read()&#xD;
+[xUnit.net 00:00:02.23]            at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb&amp; database, StackRowStack&amp; stack)&#xD;
+[xUnit.net 00:00:02.23]            at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter, Boolean allowDuplicateProperties)&#xD;
+[xUnit.net 00:00:02.23]            at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)&#xD;
+[xUnit.net 00:00:02.23]            at System.Text.Json.JsonDocument.Parse(String json, JsonDocumentOptions options)&#xD;
+[xUnit.net 00:00:02.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(1219,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:02.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(1226,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:02.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(21,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(String scenario)&#xD;
+[xUnit.net 00:00:02.23]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.57]       System.Text.Json.JsonReaderException : 'S' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.&#xD;
+[xUnit.net 00:00:08.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.57]            at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+[xUnit.net 00:00:08.57]            at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)&#xD;
+[xUnit.net 00:00:08.57]            at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)&#xD;
+[xUnit.net 00:00:08.57]            at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+[xUnit.net 00:00:08.57]            at System.Text.Json.Utf8JsonReader.Read()&#xD;
+[xUnit.net 00:00:08.57]            at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb&amp; database, StackRowStack&amp; stack)&#xD;
+[xUnit.net 00:00:08.57]            at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter, Boolean allowDuplicateProperties)&#xD;
+[xUnit.net 00:00:08.57]            at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)&#xD;
+[xUnit.net 00:00:08.57]            at System.Text.Json.JsonDocument.Parse(String json, JsonDocumentOptions options)&#xD;
+[xUnit.net 00:00:08.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(1219,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:08.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(1226,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:08.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(21,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(String scenario)&#xD;
+[xUnit.net 00:00:08.57]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.73]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T11:22:43.4096774+03:00">
+        <Text>[xUnit.net 00:00:02.23]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: "cancelled-after-effect") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T11:22:49.7518925+03:00">
+        <Text>[xUnit.net 00:00:08.57]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: "cancelled-after-open") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="5e597697-43ad-4178-b4b2-2e68a7c1e587" name="os008@OS008-HOME 2026-10-04 13:48:43" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T13:48:43.4866380+03:00" queuing="2026-10-04T13:48:43.4866382+03:00" start="2026-10-04T13:48:42.8008499+03:00" finish="2026-10-04T13:48:43.4910937+03:00" />
+  <TestSettings name="default" id="837585e2-b5b4-4562-abe4-2f814655f457">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_13_48_43" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ceecb749-0849-4af1-83b1-1dae99648e67" testId="433b223e-9990-2ea5-66c5-7a3dbbf4378d" testName="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Cleanup_refuses_hard_linked_files_and_preserves_the_other_name" computerName="OS008-HOME" duration="00:00:00.0004685" startTime="2026-10-04T13:48:43.3926747+03:00" endTime="2026-10-04T13:48:43.3927245+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ceecb749-0849-4af1-83b1-1dae99648e67">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsUserPreviewCache.Allocate(String sourcePath, VersionPreviewPolicy policy) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsUserPreviewCache.cs:line 13&#xD;
+   at FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Cleanup_refuses_hard_linked_files_and_preserves_the_other_name() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsUserPreviewCacheTests.cs:line 46&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="65378bfd-4ce1-4d6c-8b12-5ee093687d5e" testId="344aa6eb-bc6e-1cc5-620e-5f6a62cca4d2" testName="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Retention_removes_only_expired_preview_files_and_never_traverses_directories" computerName="OS008-HOME" duration="00:00:00.0031802" startTime="2026-10-04T13:48:43.3637275+03:00" endTime="2026-10-04T13:48:43.3785167+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="65378bfd-4ce1-4d6c-8b12-5ee093687d5e">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsUserPreviewCache.Allocate(String sourcePath, VersionPreviewPolicy policy) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsUserPreviewCache.cs:line 13&#xD;
+   at FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Retention_removes_only_expired_preview_files_and_never_traverses_directories() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsUserPreviewCacheTests.cs:line 27&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="db9e43fc-e088-462c-a8e7-c3b6b509bd5a" testId="4e9ff476-3fd0-a926-8966-1b9a29c61326" testName="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Allocations_are_distinct_keep_extensions_and_become_read_only" computerName="OS008-HOME" duration="00:00:00.0003732" startTime="2026-10-04T13:48:43.3916298+03:00" endTime="2026-10-04T13:48:43.3917074+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db9e43fc-e088-462c-a8e7-c3b6b509bd5a">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsUserPreviewCache.Allocate(String sourcePath, VersionPreviewPolicy policy) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsUserPreviewCache.cs:line 13&#xD;
+   at FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Allocations_are_distinct_keep_extensions_and_become_read_only() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsUserPreviewCacheTests.cs:line 12&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Allocations_are_distinct_keep_extensions_and_become_read_only" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="4e9ff476-3fd0-a926-8966-1b9a29c61326">
+      <Execution id="db9e43fc-e088-462c-a8e7-c3b6b509bd5a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests" name="Allocations_are_distinct_keep_extensions_and_become_read_only" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Retention_removes_only_expired_preview_files_and_never_traverses_directories" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="344aa6eb-bc6e-1cc5-620e-5f6a62cca4d2">
+      <Execution id="65378bfd-4ce1-4d6c-8b12-5ee093687d5e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests" name="Retention_removes_only_expired_preview_files_and_never_traverses_directories" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Cleanup_refuses_hard_linked_files_and_preserves_the_other_name" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="433b223e-9990-2ea5-66c5-7a3dbbf4378d">
+      <Execution id="ceecb749-0849-4af1-83b1-1dae99648e67" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests" name="Cleanup_refuses_hard_linked_files_and_preserves_the_other_name" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="433b223e-9990-2ea5-66c5-7a3dbbf4378d" executionId="ceecb749-0849-4af1-83b1-1dae99648e67" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="344aa6eb-bc6e-1cc5-620e-5f6a62cca4d2" executionId="65378bfd-4ce1-4d6c-8b12-5ee093687d5e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e9ff476-3fd0-a926-8966-1b9a29c61326" executionId="db9e43fc-e088-462c-a8e7-c3b6b509bd5a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.15]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.19]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.19]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.19]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsUserPreviewCache.cs(13,0): at FluxVault.Windows.Security.WindowsUserPreviewCache.Allocate(String sourcePath, VersionPreviewPolicy policy)&#xD;
+[xUnit.net 00:00:00.19]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsUserPreviewCacheTests.cs(27,0): at FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Retention_removes_only_expired_preview_files_and_never_traverses_directories()&#xD;
+[xUnit.net 00:00:00.19]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.19]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.20]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsUserPreviewCache.cs(13,0): at FluxVault.Windows.Security.WindowsUserPreviewCache.Allocate(String sourcePath, VersionPreviewPolicy policy)&#xD;
+[xUnit.net 00:00:00.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsUserPreviewCacheTests.cs(12,0): at FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Allocations_are_distinct_keep_extensions_and_become_read_only()&#xD;
+[xUnit.net 00:00:00.20]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.20]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.20]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsUserPreviewCache.cs(13,0): at FluxVault.Windows.Security.WindowsUserPreviewCache.Allocate(String sourcePath, VersionPreviewPolicy policy)&#xD;
+[xUnit.net 00:00:00.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsUserPreviewCacheTests.cs(46,0): at FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Cleanup_refuses_hard_linked_files_and_preserves_the_other_name()&#xD;
+[xUnit.net 00:00:00.20]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.20]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.21]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:48:43.3814757+03:00">
+        <Text>[xUnit.net 00:00:00.19]     FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Retention_removes_only_expired_preview_files_and_never_traverses_directories [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:48:43.3919482+03:00">
+        <Text>[xUnit.net 00:00:00.20]     FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Allocations_are_distinct_keep_extensions_and_become_read_only [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:48:43.3928635+03:00">
+        <Text>[xUnit.net 00:00:00.20]     FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Cleanup_refuses_hard_linked_files_and_preserves_the_other_name [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

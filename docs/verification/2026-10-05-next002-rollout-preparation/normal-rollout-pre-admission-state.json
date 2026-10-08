@@ -1,0 +1,32 @@
+{
+  "Authentication": [
+    {
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_hba.conf",
+      "Hash": "C37D219F5AEE60D710ABCD9628A1F3D6C94F5C9861B4E31A52290DE995D97379"
+    },
+    {
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_ident.conf",
+      "Hash": "2151E28F0BF5A8BB69109F91DBE61EBFFE48C6F9B71620F6A7B0B02B410E7DE5"
+    }
+  ],
+  "ObservedUtc": "2026-10-07T20:21:21.4403690Z",
+  "ParentExitCode": 1,
+  "Status": "no admission effects; watchdog retirement unconfirmed",
+  "Actors": [],
+  "Postgres": [
+    {
+      "Id": 8600,
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+      "StartedUtc": "2026-10-06T09:31:43.1964555Z"
+    },
+    {
+      "Id": 10660,
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+      "StartedUtc": "2026-10-06T09:31:44.0114872Z"
+    }
+  ],
+  "Tasks": [],
+  "NoActiveVault": true,
+  "ParentJoined": true,
+  "NoFailedVault": true
+}

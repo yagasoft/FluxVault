@@ -1,0 +1,66 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Core.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.46]     FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Late_corruption_never_publishes_partially_written_tree [FAIL]
+[xUnit.net 00:00:00.48]     FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Cancellation_after_staging_prevents_publication_and_disposes_owned_target [FAIL]
+[xUnit.net 00:00:00.52]     FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Invalid_folder_graph_is_rejected_before_staging_and_releases_target [FAIL]
+[xUnit.net 00:00:00.57]     FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes [FAIL]
+[xUnit.net 00:00:00.60]     FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Verified_file_uses_only_owned_target_and_reports_published_permission_warning [FAIL]
+  Failed FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Late_corruption_never_publishes_partially_written_tree [210 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.IO.IOException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Late_corruption_never_publishes_partially_written_tree() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 50
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 473
+   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.<>c__DisplayClass2_0.<Late_corruption_never_publishes_partially_written_tree>b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 50
+  Failed FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Cancellation_after_staging_prevents_publication_and_disposes_owned_target [21 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.OperationCanceledException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Cancellation_after_staging_prevents_publication_and_disposes_owned_target() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 76
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 473
+   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.<>c__DisplayClass4_0.<Cancellation_after_staging_prevents_publication_and_disposes_owned_target>b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 76
+  Failed FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Invalid_folder_graph_is_rejected_before_staging_and_releases_target [36 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.IO.IOException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Invalid_folder_graph_is_rejected_before_staging_and_releases_target() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 64
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 473
+   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.<>c__DisplayClass3_0.<Invalid_folder_graph_is_rejected_before_staging_and_releases_target>b__1() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 64
+  Failed FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes [57 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 473
+   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 31
+--- End of stack trace from previous location ---
+  Failed FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Verified_file_uses_only_owned_target_and_reports_published_permission_warning [22 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 473
+   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Verified_file_uses_only_owned_target_and_reports_published_permission_warning() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 16
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-output\target-red\target-red.trx
+
+Failed!  - Failed:     5, Passed:     0, Skipped:     0, Total:     5, Duration: 368 ms - FluxVault.Core.Tests.dll (net10.0)

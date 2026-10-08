@@ -1,0 +1,270 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e0e5a36c-f30c-4890-a355-1ed30731b829" name="os008@OS008-HOME 2026-10-07 23:18:44" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-07T23:18:44.8811539+03:00" queuing="2026-10-07T23:18:44.8811540+03:00" start="2026-10-07T23:18:41.3256367+03:00" finish="2026-10-07T23:19:07.2325987+03:00" />
+  <TestSettings name="default" id="6d236f47-2d29-401e-a709-3d9bfb948abf">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-07_23_18_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="453eb481-a4ca-4ee4-aae4-0f64de2d51af" testId="6dea4707-8d31-a514-2a0e-18ae2f4e0c94" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;changed-archive&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:03.0662602" startTime="2026-10-07T23:18:47.8658370+03:00" endTime="2026-10-07T23:18:50.9304858+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="453eb481-a4ca-4ee4-aae4-0f64de2d51af">
+      <Output>
+        <ErrorInfo>
+          <Message>ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+Line |&#xD;
+ 308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2500&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2509&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 59&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b7419939-d95a-433a-a60f-3bd5e8fae651" testId="dbf1624f-c88a-4df4-b3c3-e5ae535aecb0" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;after-context&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:03.0121218" startTime="2026-10-07T23:18:44.8678616+03:00" endTime="2026-10-07T23:18:47.8635972+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7419939-d95a-433a-a60f-3bd5e8fae651">
+      <Output>
+        <ErrorInfo>
+          <Message>ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+Line |&#xD;
+ 308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2500&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2509&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 59&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9f45e18b-9b39-4e0e-8509-76c26d7b3327" testId="03c43583-cad0-4940-ac97-8f335bdedd33" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(scenario: &quot;cim-precision&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:01.4237361" startTime="2026-10-07T23:19:02.9582533+03:00" endTime="2026-10-07T23:19:04.3822181+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f45e18b-9b39-4e0e-8509-76c26d7b3327" />
+    <UnitTestResult executionId="3e8b70df-d0a9-4ebc-a3ee-b911e47b4325" testId="bc96456f-a14f-d089-2664-a575ac703fee" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(scenario: &quot;wrong-owner&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.4068352" startTime="2026-10-07T23:19:05.7731816+03:00" endTime="2026-10-07T23:19:07.1802724+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e8b70df-d0a9-4ebc-a3ee-b911e47b4325" />
+    <UnitTestResult executionId="06a9cf75-1387-449f-9a21-5272f8e544bb" testId="cac33153-abbc-8773-c64d-8687baa514c8" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;after-receipts&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:03.0043827" startTime="2026-10-07T23:18:53.9781615+03:00" endTime="2026-10-07T23:18:56.9820318+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06a9cf75-1387-449f-9a21-5272f8e544bb">
+      <Output>
+        <ErrorInfo>
+          <Message>ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+Line |&#xD;
+ 308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2500&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2509&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 59&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0e84fc6a-28fb-43c0-bd57-cc5e31f66df0" testId="d17f8b15-adfd-27a0-ffc1-2604e2f6d3b5" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(scenario: &quot;exited-during-owner&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.3904219" startTime="2026-10-07T23:19:04.3823746+03:00" endTime="2026-10-07T23:19:05.7730306+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0e84fc6a-28fb-43c0-bd57-cc5e31f66df0" />
+    <UnitTestResult executionId="d2813cd8-c1e0-4923-abf9-2584f53da8ef" testId="a0bf0491-2c27-17a4-40a9-21909f2b0d02" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;intent-only&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:02.8645372" startTime="2026-10-07T23:18:41.9694716+03:00" endTime="2026-10-07T23:18:44.8500866+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2813cd8-c1e0-4923-abf9-2584f53da8ef">
+      <Output>
+        <ErrorInfo>
+          <Message>ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+Line |&#xD;
+ 308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2500&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2509&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 59&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6617325e-7eed-41be-9822-ee67dc598352" testId="1dac2d7e-08f9-9b9c-e643-bdd8980dfbf2" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(scenario: &quot;wrong-native-lifetime&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.5976278" startTime="2026-10-07T23:18:59.9675301+03:00" endTime="2026-10-07T23:19:01.5649077+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6617325e-7eed-41be-9822-ee67dc598352" />
+    <UnitTestResult executionId="600f7bb1-2bad-419b-9dc6-8a133dddbd71" testId="1cdd736a-465d-2f8e-234b-647ec34724ee" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;before-completion&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:03.0458428" startTime="2026-10-07T23:18:50.9316257+03:00" endTime="2026-10-07T23:18:53.9769369+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="600f7bb1-2bad-419b-9dc6-8a133dddbd71">
+      <Output>
+        <ErrorInfo>
+          <Message>ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+Line |&#xD;
+ 308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2500&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2509&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 59&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2a3577d2-6a8f-41eb-850f-ac8f17557f51" testId="089549c4-d6b8-3583-572e-8d4f1f1b3e72" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;complete&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:02.9827829" startTime="2026-10-07T23:18:56.9834514+03:00" endTime="2026-10-07T23:18:59.9654652+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a3577d2-6a8f-41eb-850f-ac8f17557f51">
+      <Output>
+        <ErrorInfo>
+          <Message>ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+Line |&#xD;
+ 308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2500&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2509&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 59&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="de21bb1d-ae0d-4c38-8c77-05566e5d084b" testId="3d25e319-dbd3-dca4-4087-ca4b4466feb0" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(scenario: &quot;wrong-image&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.3930156" startTime="2026-10-07T23:19:01.5660308+03:00" endTime="2026-10-07T23:19:02.9580866+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de21bb1d-ae0d-4c38-8c77-05566e5d084b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(scenario: &quot;wrong-image&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="3d25e319-dbd3-dca4-4087-ca4b4466feb0">
+      <Execution id="de21bb1d-ae0d-4c38-8c77-05566e5d084b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(scenario: &quot;wrong-owner&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="bc96456f-a14f-d089-2664-a575ac703fee">
+      <Execution id="3e8b70df-d0a9-4ebc-a3ee-b911e47b4325" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(scenario: &quot;wrong-native-lifetime&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="1dac2d7e-08f9-9b9c-e643-bdd8980dfbf2">
+      <Execution id="6617325e-7eed-41be-9822-ee67dc598352" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;intent-only&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="a0bf0491-2c27-17a4-40a9-21909f2b0d02">
+      <Execution id="d2813cd8-c1e0-4923-abf9-2584f53da8ef" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;changed-archive&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="6dea4707-8d31-a514-2a0e-18ae2f4e0c94">
+      <Execution id="453eb481-a4ca-4ee4-aae4-0f64de2d51af" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;after-receipts&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="cac33153-abbc-8773-c64d-8687baa514c8">
+      <Execution id="06a9cf75-1387-449f-9a21-5272f8e544bb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;after-context&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="dbf1624f-c88a-4df4-b3c3-e5ae535aecb0">
+      <Execution id="b7419939-d95a-433a-a60f-3bd5e8fae651" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(scenario: &quot;exited-during-owner&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="d17f8b15-adfd-27a0-ffc1-2604e2f6d3b5">
+      <Execution id="0e84fc6a-28fb-43c0-bd57-cc5e31f66df0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity(scenario: &quot;cim-precision&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="03c43583-cad0-4940-ac97-8f335bdedd33">
+      <Execution id="9f45e18b-9b39-4e0e-8509-76c26d7b3327" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Commission_readiness_uses_the_held_native_lifetime_and_refuses_changed_identity" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;complete&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="089549c4-d6b8-3583-572e-8d4f1f1b3e72">
+      <Execution id="2a3577d2-6a8f-41eb-850f-ac8f17557f51" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: &quot;before-completion&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\debug\net10.0-windows\fluxvault.integration.tests.dll" id="1cdd736a-465d-2f8e-234b-647ec34724ee">
+      <Execution id="600f7bb1-2bad-419b-9dc6-8a133dddbd71" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Debug\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6dea4707-8d31-a514-2a0e-18ae2f4e0c94" executionId="453eb481-a4ca-4ee4-aae4-0f64de2d51af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbf1624f-c88a-4df4-b3c3-e5ae535aecb0" executionId="b7419939-d95a-433a-a60f-3bd5e8fae651" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="03c43583-cad0-4940-ac97-8f335bdedd33" executionId="9f45e18b-9b39-4e0e-8509-76c26d7b3327" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc96456f-a14f-d089-2664-a575ac703fee" executionId="3e8b70df-d0a9-4ebc-a3ee-b911e47b4325" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cac33153-abbc-8773-c64d-8687baa514c8" executionId="06a9cf75-1387-449f-9a21-5272f8e544bb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d17f8b15-adfd-27a0-ffc1-2604e2f6d3b5" executionId="0e84fc6a-28fb-43c0-bd57-cc5e31f66df0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a0bf0491-2c27-17a4-40a9-21909f2b0d02" executionId="d2813cd8-c1e0-4923-abf9-2584f53da8ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1dac2d7e-08f9-9b9c-e643-bdd8980dfbf2" executionId="6617325e-7eed-41be-9822-ee67dc598352" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1cdd736a-465d-2f8e-234b-647ec34724ee" executionId="600f7bb1-2bad-419b-9dc6-8a133dddbd71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="089549c4-d6b8-3583-572e-8d4f1f1b3e72" executionId="2a3577d2-6a8f-41eb-850f-ac8f17557f51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3d25e319-dbd3-dca4-4087-ca4b4466feb0" executionId="de21bb1d-ae0d-4c38-8c77-05566e5d084b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="11" executed="11" passed="5" failed="6" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.22]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:03.12]       ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+[xUnit.net 00:00:03.12]       Line |&#xD;
+[xUnit.net 00:00:03.12]        308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+[xUnit.net 00:00:03.12]            |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:03.12]            | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+[xUnit.net 00:00:03.12]       &#xD;
+[xUnit.net 00:00:03.12]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.12]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2500,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:03.12]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2509,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:03.12]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(59,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:03.12]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.13]       ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+[xUnit.net 00:00:06.13]       Line |&#xD;
+[xUnit.net 00:00:06.13]        308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+[xUnit.net 00:00:06.13]            |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:06.13]            | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+[xUnit.net 00:00:06.13]       &#xD;
+[xUnit.net 00:00:06.13]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.13]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2500,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:06.13]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2509,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:06.13]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(59,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:06.13]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.20]       ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+[xUnit.net 00:00:09.20]       Line |&#xD;
+[xUnit.net 00:00:09.20]        308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+[xUnit.net 00:00:09.20]            |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:09.20]            | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+[xUnit.net 00:00:09.20]       &#xD;
+[xUnit.net 00:00:09.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2500,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:09.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2509,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:09.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(59,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:09.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.24]       ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+[xUnit.net 00:00:12.24]       Line |&#xD;
+[xUnit.net 00:00:12.24]        308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+[xUnit.net 00:00:12.24]            |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:12.24]            | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+[xUnit.net 00:00:12.24]       &#xD;
+[xUnit.net 00:00:12.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.24]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2500,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:12.24]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2509,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:12.24]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(59,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:12.24]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:15.25]       ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+[xUnit.net 00:00:15.25]       Line |&#xD;
+[xUnit.net 00:00:15.25]        308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+[xUnit.net 00:00:15.25]            |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:15.25]            | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+[xUnit.net 00:00:15.25]       &#xD;
+[xUnit.net 00:00:15.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:15.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2500,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:15.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2509,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:15.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(59,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:15.25]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:18.23]       ParentContainsErrorRecordException: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1:308&#xD;
+[xUnit.net 00:00:18.23]       Line |&#xD;
+[xUnit.net 00:00:18.23]        308 |          [IO.File]::Replace($stage,(Join-Path $Context.WorkRoot $name) .&#xD;
+[xUnit.net 00:00:18.23]            |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:18.23]            | Exception calling "Replace" with "3" argument(s): "The path is empty. (Parameter 'path')"&#xD;
+[xUnit.net 00:00:18.23]       &#xD;
+[xUnit.net 00:00:18.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:18.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2500,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:18.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2509,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:18.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(59,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:18.23]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.45]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:18:44.8527240+03:00">
+        <Text>[xUnit.net 00:00:03.12]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: "intent-only", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:18:47.8642694+03:00">
+        <Text>[xUnit.net 00:00:06.13]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: "after-context", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:18:50.9309059+03:00">
+        <Text>[xUnit.net 00:00:09.20]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: "changed-archive", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:18:53.9773446+03:00">
+        <Text>[xUnit.net 00:00:12.24]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: "before-completion", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:18:56.9824913+03:00">
+        <Text>[xUnit.net 00:00:15.25]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: "after-receipts", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:18:59.9657940+03:00">
+        <Text>[xUnit.net 00:00:18.23]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Pre_admission_reset_preserves_failed_evidence_and_blocks_interrupted_recovery(scenario: "complete", accepted: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

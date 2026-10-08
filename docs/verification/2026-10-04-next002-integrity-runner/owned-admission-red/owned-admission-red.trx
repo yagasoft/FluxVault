@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="abfefec7-b866-4df1-9145-17edb0a7be7e" name="os008@OS008-HOME 2026-10-04 12:40:20" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T12:40:20.4968261+03:00" queuing="2026-10-04T12:40:20.4968262+03:00" start="2026-10-04T12:40:19.8173118+03:00" finish="2026-10-04T12:40:20.5016996+03:00" />
+  <TestSettings name="default" id="d079549c-d4aa-4f90-9b1f-08fe43d73a6f">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_12_40_20" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d9fec746-e990-4b0d-8021-b49f1f9747ea" testId="21296868-accb-c12a-925c-43a55bd4135a" testName="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: &quot;fv_test_abcd\&quot;;DROP DATABASE other;--&quot;)" computerName="OS008-HOME" duration="00:00:00.0004754" startTime="2026-10-04T12:40:20.4103084+03:00" endTime="2026-10-04T12:40:20.4103683+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9fec746-e990-4b0d-8021-b49f1f9747ea">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentException)</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(String database) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs:line 19&#xD;
+   at InvokeStub_OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="362ce545-769a-4d9e-832b-f7e631358ce4" testId="bca45046-f335-0d3b-0dd3-d2305c339cf5" testName="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: &quot;fv_test_bad&quot;)" computerName="OS008-HOME" duration="00:00:00.0001674" startTime="2026-10-04T12:40:20.4111420+03:00" endTime="2026-10-04T12:40:20.4111755+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="362ce545-769a-4d9e-832b-f7e631358ce4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentException)</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(String database) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs:line 19&#xD;
+   at InvokeStub_OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="80b22ae1-f0ce-46ea-8782-2e6eca5e89e7" testId="b786b7fb-e7e7-52c8-9865-4cd63359ccea" testName="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: &quot;fv_test_00000000000000000000000000000000&quot;)" computerName="OS008-HOME" duration="00:00:00.0001541" startTime="2026-10-04T12:40:20.4119502+03:00" endTime="2026-10-04T12:40:20.4119852+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="80b22ae1-f0ce-46ea-8782-2e6eca5e89e7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentException)</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(String database) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs:line 19&#xD;
+   at InvokeStub_OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="664d39c2-0305-4412-ad6f-8967cbfa86b9" testId="da01f30c-fc2e-773f-d5e0-b76f8e3f06ea" testName="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: &quot;postgres&quot;)" computerName="OS008-HOME" duration="00:00:00.0001619" startTime="2026-10-04T12:40:20.4115526+03:00" endTime="2026-10-04T12:40:20.4115872+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="664d39c2-0305-4412-ad6f-8967cbfa86b9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentException)</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(String database) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs:line 19&#xD;
+   at InvokeStub_OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="468899c4-dad1-432d-be30-41470b04389f" testId="72e76ea8-d42f-99ba-eab6-ed42f572cc22" testName="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_repository_connections_require_the_fixed_SSPI_account" computerName="OS008-HOME" duration="00:00:00.0023793" startTime="2026-10-04T12:40:20.4130188+03:00" endTime="2026-10-04T12:40:20.4130574+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="468899c4-dad1-432d-be30-41470b04389f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+              ↓ (pos 3)&#xD;
+Expected: "fv_gate_service"&#xD;
+Actual:   "fv_test"&#xD;
+              ↑ (pos 3)</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_repository_connections_require_the_fixed_SSPI_account() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs:line 28&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b79d33c6-5f70-4251-9e1c-69f6e95034e1" testId="63ab1bcb-f9ca-53b0-11ec-3a628a1a6c5c" testName="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: &quot;template1&quot;)" computerName="OS008-HOME" duration="00:00:00.0284788" startTime="2026-10-04T12:40:20.3590901+03:00" endTime="2026-10-04T12:40:20.3983621+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b79d33c6-5f70-4251-9e1c-69f6e95034e1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentException)</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(String database) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs:line 19&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: &quot;postgres&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="da01f30c-fc2e-773f-d5e0-b76f8e3f06ea">
+      <Execution id="664d39c2-0305-4412-ad6f-8967cbfa86b9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests" name="Owned_connections_refuse_unrelated_or_invalid_database_names" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: &quot;template1&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="63ab1bcb-f9ca-53b0-11ec-3a628a1a6c5c">
+      <Execution id="b79d33c6-5f70-4251-9e1c-69f6e95034e1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests" name="Owned_connections_refuse_unrelated_or_invalid_database_names" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: &quot;fv_test_abcd\&quot;;DROP DATABASE other;--&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="21296868-accb-c12a-925c-43a55bd4135a">
+      <Execution id="d9fec746-e990-4b0d-8021-b49f1f9747ea" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests" name="Owned_connections_refuse_unrelated_or_invalid_database_names" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_repository_connections_require_the_fixed_SSPI_account" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="72e76ea8-d42f-99ba-eab6-ed42f572cc22">
+      <Execution id="468899c4-dad1-432d-be30-41470b04389f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests" name="Owned_repository_connections_require_the_fixed_SSPI_account" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: &quot;fv_test_bad&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="bca45046-f335-0d3b-0dd3-d2305c339cf5">
+      <Execution id="362ce545-769a-4d9e-832b-f7e631358ce4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests" name="Owned_connections_refuse_unrelated_or_invalid_database_names" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: &quot;fv_test_00000000000000000000000000000000&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="b786b7fb-e7e7-52c8-9865-4cd63359ccea">
+      <Execution id="80b22ae1-f0ce-46ea-8782-2e6eca5e89e7" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests" name="Owned_connections_refuse_unrelated_or_invalid_database_names" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="21296868-accb-c12a-925c-43a55bd4135a" executionId="d9fec746-e990-4b0d-8021-b49f1f9747ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bca45046-f335-0d3b-0dd3-d2305c339cf5" executionId="362ce545-769a-4d9e-832b-f7e631358ce4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b786b7fb-e7e7-52c8-9865-4cd63359ccea" executionId="80b22ae1-f0ce-46ea-8782-2e6eca5e89e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da01f30c-fc2e-773f-d5e0-b76f8e3f06ea" executionId="664d39c2-0305-4412-ad6f-8967cbfa86b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72e76ea8-d42f-99ba-eab6-ed42f572cc22" executionId="468899c4-dad1-432d-be30-41470b04389f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63ab1bcb-f9ca-53b0-11ec-3a628a1a6c5c" executionId="b79d33c6-5f70-4251-9e1c-69f6e95034e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="6" passed="0" failed="6" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.22]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.22]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.22]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs(19,0): at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(String database)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.23]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.23]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs(19,0): at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(String database)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.23]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.23]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs(19,0): at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(String database)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.23]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.23]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs(19,0): at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(String database)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.23]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.23]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs(19,0): at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(String database)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.23]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.23]                     ↓ (pos 3)&#xD;
+[xUnit.net 00:00:00.23]       Expected: "fv_gate_service"&#xD;
+[xUnit.net 00:00:00.23]       Actual:   "fv_test"&#xD;
+[xUnit.net 00:00:00.23]                     ↑ (pos 3)&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\OwnedPostgreSqlAdmissionTests.cs(28,0): at FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_repository_connections_require_the_fixed_SSPI_account()&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.24]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:40:20.4010320+03:00">
+        <Text>[xUnit.net 00:00:00.22]     FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: "template1") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:40:20.4105239+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: "fv_test_abcd\";DROP DATABASE other;--") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:40:20.4113039+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: "fv_test_bad") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:40:20.4117004+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: "postgres") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:40:20.4121026+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_connections_refuse_unrelated_or_invalid_database_names(database: "fv_test_00000000000000000000000000000000") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T12:40:20.4131703+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Integration.Tests.OwnedPostgreSqlAdmissionTests.Owned_repository_connections_require_the_fixed_SSPI_account [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

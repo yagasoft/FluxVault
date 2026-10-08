@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b2b494bd-a252-4c89-898e-5203b44d4b74" name="os008@OS008-HOME 2026-10-04 14:01:36" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T14:01:36.8014576+03:00" queuing="2026-10-04T14:01:36.8014577+03:00" start="2026-10-04T14:01:36.0984429+03:00" finish="2026-10-04T14:01:36.8063920+03:00" />
+  <TestSettings name="default" id="3a6dfede-b4dc-4747-a9c7-475c80f7f49b">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_14_01_36" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="77b72083-57a6-4002-aede-7af51bcd419d" testId="1da172a9-e956-902e-1e65-726e6d85da8c" testName="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Product_default_cache_allocates_for_the_current_windows_user" computerName="OS008-HOME" duration="00:00:00.0174986" startTime="2026-10-04T14:01:36.6550144+03:00" endTime="2026-10-04T14:01:36.6781282+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="77b72083-57a6-4002-aede-7af51bcd419d" />
+    <UnitTestResult executionId="3eac8e7e-f61e-441c-a9ee-72dafb6bcabf" testId="3dec0ce7-ca67-c76f-088c-18ef5b5a12a6" testName="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Existing_shared_cache_is_refused_without_adopting_its_permissions_or_files" computerName="OS008-HOME" duration="00:00:00.0024917" startTime="2026-10-04T14:01:36.6927532+03:00" endTime="2026-10-04T14:01:36.6945588+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3eac8e7e-f61e-441c-a9ee-72dafb6bcabf" />
+    <UnitTestResult executionId="4dd8a92e-ba70-460d-914c-59dfe37c97d1" testId="344aa6eb-bc6e-1cc5-620e-5f6a62cca4d2" testName="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Retention_removes_only_expired_preview_files_and_never_traverses_directories" computerName="OS008-HOME" duration="00:00:00.0134537" startTime="2026-10-04T14:01:36.6880831+03:00" endTime="2026-10-04T14:01:36.6920181+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4dd8a92e-ba70-460d-914c-59dfe37c97d1" />
+    <UnitTestResult executionId="e7380f82-e1a4-4d23-b000-a05f44047610" testId="4e9ff476-3fd0-a926-8966-1b9a29c61326" testName="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Allocations_are_distinct_keep_extensions_and_become_read_only" computerName="OS008-HOME" duration="00:00:00.0065771" startTime="2026-10-04T14:01:36.6946991+03:00" endTime="2026-10-04T14:01:36.7012136+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e7380f82-e1a4-4d23-b000-a05f44047610" />
+    <UnitTestResult executionId="3fb4be1a-cc27-4398-b3ac-0c861aa6d77d" testId="710dc8e2-c0ab-7f5b-ea16-85b0810b6e4d" testName="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Reparse_cache_root_is_refused_and_its_target_is_preserved" computerName="OS008-HOME" duration="00:00:00.0029116" startTime="2026-10-04T14:01:36.7014026+03:00" endTime="2026-10-04T14:01:36.7041644+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3fb4be1a-cc27-4398-b3ac-0c861aa6d77d" />
+    <UnitTestResult executionId="6e9015a5-3b0b-4447-bc49-11075fb01e64" testId="433b223e-9990-2ea5-66c5-7a3dbbf4378d" testName="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Cleanup_refuses_hard_linked_files_and_preserves_the_other_name" computerName="OS008-HOME" duration="00:00:00.0041407" startTime="2026-10-04T14:01:36.7043106+03:00" endTime="2026-10-04T14:01:36.7083620+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e9015a5-3b0b-4447-bc49-11075fb01e64" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Existing_shared_cache_is_refused_without_adopting_its_permissions_or_files" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="3dec0ce7-ca67-c76f-088c-18ef5b5a12a6">
+      <Execution id="3eac8e7e-f61e-441c-a9ee-72dafb6bcabf" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests" name="Existing_shared_cache_is_refused_without_adopting_its_permissions_or_files" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Allocations_are_distinct_keep_extensions_and_become_read_only" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="4e9ff476-3fd0-a926-8966-1b9a29c61326">
+      <Execution id="e7380f82-e1a4-4d23-b000-a05f44047610" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests" name="Allocations_are_distinct_keep_extensions_and_become_read_only" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Retention_removes_only_expired_preview_files_and_never_traverses_directories" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="344aa6eb-bc6e-1cc5-620e-5f6a62cca4d2">
+      <Execution id="4dd8a92e-ba70-460d-914c-59dfe37c97d1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests" name="Retention_removes_only_expired_preview_files_and_never_traverses_directories" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Product_default_cache_allocates_for_the_current_windows_user" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="1da172a9-e956-902e-1e65-726e6d85da8c">
+      <Execution id="77b72083-57a6-4002-aede-7af51bcd419d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests" name="Product_default_cache_allocates_for_the_current_windows_user" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Reparse_cache_root_is_refused_and_its_target_is_preserved" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="710dc8e2-c0ab-7f5b-ea16-85b0810b6e4d">
+      <Execution id="3fb4be1a-cc27-4398-b3ac-0c861aa6d77d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests" name="Reparse_cache_root_is_refused_and_its_target_is_preserved" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests.Cleanup_refuses_hard_linked_files_and_preserves_the_other_name" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="433b223e-9990-2ea5-66c5-7a3dbbf4378d">
+      <Execution id="6e9015a5-3b0b-4447-bc49-11075fb01e64" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsUserPreviewCacheTests" name="Cleanup_refuses_hard_linked_files_and_preserves_the_other_name" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1da172a9-e956-902e-1e65-726e6d85da8c" executionId="77b72083-57a6-4002-aede-7af51bcd419d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3dec0ce7-ca67-c76f-088c-18ef5b5a12a6" executionId="3eac8e7e-f61e-441c-a9ee-72dafb6bcabf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="344aa6eb-bc6e-1cc5-620e-5f6a62cca4d2" executionId="4dd8a92e-ba70-460d-914c-59dfe37c97d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e9ff476-3fd0-a926-8966-1b9a29c61326" executionId="e7380f82-e1a4-4d23-b000-a05f44047610" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="710dc8e2-c0ab-7f5b-ea16-85b0810b6e4d" executionId="3fb4be1a-cc27-4398-b3ac-0c861aa6d77d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="433b223e-9990-2ea5-66c5-7a3dbbf4378d" executionId="6e9015a5-3b0b-4447-bc49-11075fb01e64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="6" executed="6" passed="6" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.24]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

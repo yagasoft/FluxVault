@@ -6,6 +6,20 @@ namespace FluxVault.Core.Tests;
 public sealed class PostgreSqlMetadataStoreTests
 {
     [Fact]
+    public void Direct_metadata_connections_require_SSPI_without_password_credentials()
+    {
+        var configuration = FluxVault.Abstractions.Configuration.MetadataStoreConfiguration.CreateDefault(Path.GetTempPath());
+        using var connection = PostgreSqlMetadataConnectionFactory.CreateConnection(configuration);
+        var settings = new Npgsql.NpgsqlConnectionStringBuilder(connection.ConnectionString);
+        Assert.Equal("SSPI", settings.RequireAuth);
+        Assert.Equal("pg_catalog", settings.SearchPath);
+        Assert.Null(settings.Password);
+        Assert.Null(settings.Passfile);
+        Assert.Equal(configuration.DatabaseName, settings.Database);
+        Assert.Equal(configuration.Username, settings.Username);
+    }
+
+    [Fact]
     public void Schema_contains_core_whole_pc_metadata_tables()
     {
         var sql = PostgreSqlMetadataSchema.CreateSchemaSql;
@@ -19,7 +33,7 @@ public sealed class PostgreSqlMetadataStoreTests
         Assert.Contains("CREATE TABLE IF NOT EXISTS fluxvault.metadata_outbox", sql);
         Assert.Contains("CREATE TABLE IF NOT EXISTS fluxvault.peer_operations", sql);
         Assert.Contains("CREATE INDEX IF NOT EXISTS ix_versions_source_path_captured", sql);
-        Assert.Contains("CREATE UNIQUE INDEX IF NOT EXISTS ux_current_entries_path_kind", sql);
+        Assert.Contains("path_id bigint PRIMARY KEY REFERENCES fluxvault.paths(path_id)", sql);
     }
 
     [Fact]

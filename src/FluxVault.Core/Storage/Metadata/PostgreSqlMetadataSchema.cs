@@ -2,9 +2,45 @@ namespace FluxVault.Core.Storage.Metadata;
 
 public static class PostgreSqlMetadataSchema
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 4;
+
+    public static string ForVault(FluxVault.Abstractions.Security.VaultId vaultId) =>
+        CreateSchemaSql.Replace("fluxvault", '"' + vaultId.MetadataNamespace + '"', StringComparison.Ordinal);
 
     public const string CreateSchemaSql = """
+        -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+        DO $fv_schema_guard$
+        BEGIN
+            IF to_regnamespace('fluxvault') IS NOT NULL THEN
+                IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+                    RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+                END IF;
+                IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 4 OR to_regclass('fluxvault.history_state') IS NULL OR NOT EXISTS (
+                    SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+                      AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+                      AND attnotnull AND NOT attisdropped
+                ) THEN
+                    RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+                END IF;
+                IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+                    FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+                    OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+                        WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+                    OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+                        WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.paths') AND c.conkey=ARRAY[a.attnum])
+                    OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+                        WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.versions') AND c.conkey=ARRAY[a.attnum]) THEN
+                    RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+                END IF;
+                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.history_state')
+                    AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+                    OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM fluxvault.history_state) IS DISTINCT FROM true THEN
+                    RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+                END IF;
+            END IF;
+        END
+        $fv_schema_guard$;
+
         CREATE SCHEMA IF NOT EXISTS fluxvault;
 
         CREATE TABLE IF NOT EXISTS fluxvault.schema_version (
@@ -13,8 +49,14 @@ public static class PostgreSqlMetadataSchema
         );
 
         INSERT INTO fluxvault.schema_version (version)
-        VALUES (1)
+        VALUES (4)
         ON CONFLICT (version) DO NOTHING;
+
+        CREATE TABLE IF NOT EXISTS fluxvault.history_state (
+            singleton boolean PRIMARY KEY CHECK (singleton),
+            generation bigint NOT NULL CHECK (generation >= 0)
+        );
+        INSERT INTO fluxvault.history_state(singleton,generation) VALUES(true,0) ON CONFLICT(singleton) DO NOTHING;
 
         CREATE TABLE IF NOT EXISTS fluxvault.paths (
             path_id bigserial PRIMARY KEY,
@@ -41,6 +83,7 @@ public static class PostgreSqlMetadataSchema
             entry_kind text NOT NULL,
             watched_folder_id text NOT NULL,
             captured_at_utc timestamptz NOT NULL,
+            captured_at_ticks bigint NOT NULL,
             consistency text NOT NULL,
             logical_length bigint NOT NULL,
             operation_type text NOT NULL,
@@ -64,6 +107,12 @@ public static class PostgreSqlMetadataSchema
 
         CREATE INDEX IF NOT EXISTS ix_versions_source_path_captured
             ON fluxvault.versions (source_path, entry_kind, captured_at_utc DESC, version_id DESC);
+
+        CREATE INDEX IF NOT EXISTS ix_versions_recent_ticks
+            ON fluxvault.versions (captured_at_ticks DESC, version_id COLLATE "C" DESC);
+
+        CREATE INDEX IF NOT EXISTS ix_versions_path_ticks
+            ON fluxvault.versions (path_id, captured_at_ticks DESC, version_id COLLATE "C" DESC);
 
         CREATE INDEX IF NOT EXISTS ix_versions_content_signature
             ON fluxvault.versions (content_signature)
@@ -102,16 +151,14 @@ public static class PostgreSqlMetadataSchema
         );
 
         CREATE TABLE IF NOT EXISTS fluxvault.current_entries (
+            path_id bigint PRIMARY KEY REFERENCES fluxvault.paths(path_id),
             source_path text NOT NULL,
             entry_kind text NOT NULL,
             version_id text NOT NULL REFERENCES fluxvault.versions(version_id),
             captured_at_utc timestamptz NOT NULL,
-            is_deleted boolean NOT NULL,
-            PRIMARY KEY (source_path, entry_kind)
+            captured_at_ticks bigint NOT NULL,
+            is_deleted boolean NOT NULL
         );
-
-        CREATE UNIQUE INDEX IF NOT EXISTS ux_current_entries_path_kind
-            ON fluxvault.current_entries (source_path, entry_kind);
 
         CREATE TABLE IF NOT EXISTS fluxvault.mirror_nodes (
             node_id text PRIMARY KEY,

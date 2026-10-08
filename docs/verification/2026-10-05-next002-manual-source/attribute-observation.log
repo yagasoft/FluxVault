@@ -1,0 +1,21 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Windows.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.23]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Exclusive_working_file_lock_reports_unavailable_and_releases_failed_capture_pins [FAIL]
+  Failed FluxVault.Windows.Tests.WindowsProtectionSourceTests.Exclusive_working_file_lock_reports_unavailable_and_releases_failed_capture_pins [43 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Unavailable
+Actual:   Present
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Exclusive_working_file_lock_reports_unavailable_and_releases_failed_capture_pins() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 67
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Exclusive_working_file_lock_reports_unavailable_and_releases_failed_capture_pins() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 69
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-manual-source\source-focused.trx
+
+Failed!  - Failed:     1, Passed:    11, Skipped:     0, Total:    12, Duration: 604 ms - FluxVault.Windows.Tests.dll (net10.0)

@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="98423573-602e-4998-a032-59fcf9a579ad" name="os008@OS008-HOME 2026-10-05 02:09:21" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T02:09:21.1551932+03:00" queuing="2026-10-05T02:09:21.1551933+03:00" start="2026-10-05T02:09:20.2557661+03:00" finish="2026-10-05T02:09:21.1596950+03:00" />
+  <TestSettings name="default" id="5c04d3a0-61a7-46bd-8f17-4300e94564df">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_02_09_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="97217fae-b989-4fec-881d-a31026dddb2f" testId="81ab0248-530f-7ba2-030b-a2fa1c753c33" testName="FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(failure: &quot;missing_identity&quot;)" computerName="OS008-HOME" duration="00:00:00.2256424" startTime="2026-10-05T02:09:20.8185870+03:00" endTime="2026-10-05T02:09:21.0549095+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="97217fae-b989-4fec-881d-a31026dddb2f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.IO.InvalidDataException)</Message>
+          <StackTrace>   at FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs:line 51&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a5c378d1-7dfc-43ee-a706-7a31179bf434" testId="b24f433b-12a9-de1f-ab5c-08bd758341ea" testName="FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(failure: &quot;missing_fingerprint&quot;)" computerName="OS008-HOME" duration="00:00:00.0035121" startTime="2026-10-05T02:09:21.0667789+03:00" endTime="2026-10-05T02:09:21.0668390+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5c378d1-7dfc-43ee-a706-7a31179bf434">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.IO.InvalidDataException)</Message>
+          <StackTrace>   at FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs:line 51&#xD;
+   at InvokeStub_SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="26a388e2-bc05-44df-b9be-ec2994f49f05" testId="5d8d569d-6d6d-7fa6-68e3-96eef2eab2bc" testName="FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(failure: &quot;invalid_fingerprint&quot;)" computerName="OS008-HOME" duration="00:00:00.0027383" startTime="2026-10-05T02:09:21.0676029+03:00" endTime="2026-10-05T02:09:21.0676338+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="26a388e2-bc05-44df-b9be-ec2994f49f05">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.IO.InvalidDataException)</Message>
+          <StackTrace>   at FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs:line 51&#xD;
+   at InvokeStub_SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(failure: &quot;missing_identity&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="81ab0248-530f-7ba2-030b-a2fa1c753c33">
+      <Execution id="97217fae-b989-4fec-881d-a31026dddb2f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Incomplete_local_draft_correlation_cannot_be_reserved" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(failure: &quot;missing_fingerprint&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="b24f433b-12a9-de1f-ab5c-08bd758341ea">
+      <Execution id="a5c378d1-7dfc-43ee-a706-7a31179bf434" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Incomplete_local_draft_correlation_cannot_be_reserved" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(failure: &quot;invalid_fingerprint&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="5d8d569d-6d6d-7fa6-68e3-96eef2eab2bc">
+      <Execution id="26a388e2-bc05-44df-b9be-ec2994f49f05" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Incomplete_local_draft_correlation_cannot_be_reserved" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="81ab0248-530f-7ba2-030b-a2fa1c753c33" executionId="97217fae-b989-4fec-881d-a31026dddb2f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b24f433b-12a9-de1f-ab5c-08bd758341ea" executionId="a5c378d1-7dfc-43ee-a706-7a31179bf434" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d8d569d-6d6d-7fa6-68e3-96eef2eab2bc" executionId="26a388e2-bc05-44df-b9be-ec2994f49f05" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.45]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.45]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs(51,0): at FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(String failure)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.46]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.46]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs(51,0): at FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(String failure)&#xD;
+[xUnit.net 00:00:00.46]            at InvokeStub_SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.46]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.46]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs(51,0): at FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(String failure)&#xD;
+[xUnit.net 00:00:00.46]            at InvokeStub_SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.46]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T02:09:21.0578335+03:00">
+        <Text>[xUnit.net 00:00:00.45]     FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(failure: "missing_identity") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T02:09:21.0670128+03:00">
+        <Text>[xUnit.net 00:00:00.46]     FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(failure: "missing_fingerprint") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T02:09:21.0677900+03:00">
+        <Text>[xUnit.net 00:00:00.46]     FluxVault.App.Tests.SaveOperationStoreTests.Incomplete_local_draft_correlation_cannot_be_reserved(failure: "invalid_fingerprint") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

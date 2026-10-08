@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="62b052ee-70a9-4986-8e33-56e731429a63" name="os008@OS008-HOME 2026-10-04 04:32:49" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T04:32:49.9370424+03:00" queuing="2026-10-04T04:32:49.9370425+03:00" start="2026-10-04T04:32:48.0554844+03:00" finish="2026-10-04T04:33:03.7220198+03:00" />
+  <TestSettings name="default" id="ff71760e-b4f8-4684-9353-04f74208e2f3">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_04_32_49" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="350ca0fe-f8a0-4e6d-9cad-eaa656f276c7" testId="0eb5ab2f-60c9-f640-c50e-96ade3b7ad4e" testName="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Served_anchor_is_reusable_and_retains_the_name_between_requests" computerName="OS008-HOME" duration="00:00:05.0159018" startTime="2026-10-04T04:32:48.6380575+03:00" endTime="2026-10-04T04:32:53.6434656+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="350ca0fe-f8a0-4e6d-9cad-eaa656f276c7">
+      <Output>
+        <ErrorInfo>
+          <Message>System.OperationCanceledException : The operation was canceled.</Message>
+          <StackTrace>   at System.IO.Pipes.PipeStream.PipeValueTaskSource.GetResult(Int16 token)&#xD;
+   at System.IO.Pipes.PipeStream.PipeValueTaskSource.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)&#xD;
+   at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Served_anchor_is_reusable_and_retains_the_name_between_requests() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs:line 83&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4908833f-3ef4-4b02-b189-caf748eb9e3a" testId="809f599f-938e-66be-2721-660b854c053d" testName="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Identification_only_client_is_refused_instead_of_using_server_identity" computerName="OS008-HOME" duration="00:00:05.0081566" startTime="2026-10-04T04:32:53.6517032+03:00" endTime="2026-10-04T04:32:58.6599767+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4908833f-3ef4-4b02-b189-caf748eb9e3a">
+      <Output>
+        <ErrorInfo>
+          <Message>System.OperationCanceledException : The operation was canceled.</Message>
+          <StackTrace>   at System.IO.Pipes.PipeStream.PipeValueTaskSource.GetResult(Int16 token)&#xD;
+   at System.IO.Pipes.PipeStream.PipeValueTaskSource.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)&#xD;
+   at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Identification_only_client_is_refused_instead_of_using_server_identity() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs:line 136&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="391369f6-d881-40f5-b01c-071dded3ea6f" testId="a5dc0635-e22a-84b2-34ee-42c1ee2b7865" testName="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Client_refuses_a_pipe_that_allows_untrusted_instance_creation" computerName="OS008-HOME" duration="00:00:00.0054177" startTime="2026-10-04T04:32:53.6455212+03:00" endTime="2026-10-04T04:32:53.6511901+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="391369f6-d881-40f5-b01c-071dded3ea6f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.UnauthorizedAccessException)</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Client_refuses_a_pipe_that_allows_untrusted_instance_creation() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs:line 64&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a042febd-a00a-4f18-b1e6-72f0ea2e47fd" testId="aac1e61f-4489-4df0-d8dd-a5785eb3aa73" testName="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.First_listener_refuses_an_existing_server" computerName="OS008-HOME" duration="00:00:00.0005024" startTime="2026-10-04T04:32:58.6610038+03:00" endTime="2026-10-04T04:32:58.6610981+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a042febd-a00a-4f18-b1e6-72f0ea2e47fd">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.IO.IOException)</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.First_listener_refuses_an_existing_server() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs:line 29&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d74eaf5a-b0b6-4754-9350-d32e19d1b7b0" testId="7e2aba05-70be-db34-ec5f-9b8815df7cf8" testName="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(name: &quot;FluxVault.Service&quot;)" computerName="OS008-HOME" duration="00:00:00.0049382" startTime="2026-10-04T04:32:48.6050799+03:00" endTime="2026-10-04T04:32:48.6228873+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d74eaf5a-b0b6-4754-9350-d32e19d1b7b0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentException)</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(String name) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs:line 18&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="031da7bf-3425-4af1-97e6-a5049b6f4484" testId="996d3bd2-238c-333e-2d19-948501c9cfb7" testName="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(name: &quot;FluxVault.Tests.not-a-guid&quot;)" computerName="OS008-HOME" duration="00:00:00.0000392" startTime="2026-10-04T04:32:48.6367520+03:00" endTime="2026-10-04T04:32:48.6367932+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="031da7bf-3425-4af1-97e6-a5049b6f4484">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentException)</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(String name) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs:line 18&#xD;
+   at InvokeStub_WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="86b55faf-cc59-4a87-b61b-19eb40ea091f" testId="91a1a321-4cda-ab23-099d-6bbc08d5ec6b" testName="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Captured_caller_token_outlives_the_connection_and_flows_across_await" computerName="OS008-HOME" duration="00:00:05.0061600" startTime="2026-10-04T04:32:58.6616148+03:00" endTime="2026-10-04T04:33:03.6672840+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86b55faf-cc59-4a87-b61b-19eb40ea091f">
+      <Output>
+        <ErrorInfo>
+          <Message>System.OperationCanceledException : The operation was canceled.</Message>
+          <StackTrace>   at System.IO.Pipes.PipeStream.PipeValueTaskSource.GetResult(Int16 token)&#xD;
+   at System.IO.Pipes.PipeStream.PipeValueTaskSource.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)&#xD;
+   at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Captured_caller_token_outlives_the_connection_and_flows_across_await() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs:line 107&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="36d91c8e-7131-4c8b-9314-cf59d99a1bcf" testId="154460ff-3e14-0c75-9dfd-8deb7d3e9cf6" testName="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(name: &quot;remote\\FluxVault.Tests.01234567890123456789012345&quot;···)" computerName="OS008-HOME" duration="00:00:00.0001729" startTime="2026-10-04T04:32:48.6357916+03:00" endTime="2026-10-04T04:32:48.6358552+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="36d91c8e-7131-4c8b-9314-cf59d99a1bcf">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentException)</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(String name) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs:line 18&#xD;
+   at InvokeStub_WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0fa9f1c9-e215-4d57-83f9-284c18c56609" testId="1f8ce187-4171-c7d4-e3ec-5f2d0a55e616" testName="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Connected_handle_verification_precedes_any_request_bytes" computerName="OS008-HOME" duration="00:00:00.0022757" startTime="2026-10-04T04:33:03.6682020+03:00" endTime="2026-10-04T04:33:03.6701751+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0fa9f1c9-e215-4d57-83f9-284c18c56609">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.UnauthorizedAccessException)</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Connected_handle_verification_precedes_any_request_bytes() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(name: &quot;FluxVault.Tests.not-a-guid&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="996d3bd2-238c-333e-2d19-948501c9cfb7">
+      <Execution id="031da7bf-3425-4af1-97e6-a5049b6f4484" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsPipeBoundaryTests" name="Private_fixture_cannot_open_an_installed_or_unbounded_name" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Client_refuses_a_pipe_that_allows_untrusted_instance_creation" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="a5dc0635-e22a-84b2-34ee-42c1ee2b7865">
+      <Execution id="391369f6-d881-40f5-b01c-071dded3ea6f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsPipeBoundaryTests" name="Client_refuses_a_pipe_that_allows_untrusted_instance_creation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Served_anchor_is_reusable_and_retains_the_name_between_requests" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="0eb5ab2f-60c9-f640-c50e-96ade3b7ad4e">
+      <Execution id="350ca0fe-f8a0-4e6d-9cad-eaa656f276c7" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsPipeBoundaryTests" name="Served_anchor_is_reusable_and_retains_the_name_between_requests" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Connected_handle_verification_precedes_any_request_bytes" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="1f8ce187-4171-c7d4-e3ec-5f2d0a55e616">
+      <Execution id="0fa9f1c9-e215-4d57-83f9-284c18c56609" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsPipeBoundaryTests" name="Connected_handle_verification_precedes_any_request_bytes" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(name: &quot;remote\\FluxVault.Tests.01234567890123456789012345&quot;···)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="154460ff-3e14-0c75-9dfd-8deb7d3e9cf6">
+      <Execution id="36d91c8e-7131-4c8b-9314-cf59d99a1bcf" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsPipeBoundaryTests" name="Private_fixture_cannot_open_an_installed_or_unbounded_name" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Identification_only_client_is_refused_instead_of_using_server_identity" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="809f599f-938e-66be-2721-660b854c053d">
+      <Execution id="4908833f-3ef4-4b02-b189-caf748eb9e3a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsPipeBoundaryTests" name="Identification_only_client_is_refused_instead_of_using_server_identity" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Captured_caller_token_outlives_the_connection_and_flows_across_await" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="91a1a321-4cda-ab23-099d-6bbc08d5ec6b">
+      <Execution id="86b55faf-cc59-4a87-b61b-19eb40ea091f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsPipeBoundaryTests" name="Captured_caller_token_outlives_the_connection_and_flows_across_await" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(name: &quot;FluxVault.Service&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="7e2aba05-70be-db34-ec5f-9b8815df7cf8">
+      <Execution id="d74eaf5a-b0b6-4754-9350-d32e19d1b7b0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsPipeBoundaryTests" name="Private_fixture_cannot_open_an_installed_or_unbounded_name" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsPipeBoundaryTests.First_listener_refuses_an_existing_server" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="aac1e61f-4489-4df0-d8dd-a5785eb3aa73">
+      <Execution id="a042febd-a00a-4f18-b1e6-72f0ea2e47fd" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsPipeBoundaryTests" name="First_listener_refuses_an_existing_server" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0eb5ab2f-60c9-f640-c50e-96ade3b7ad4e" executionId="350ca0fe-f8a0-4e6d-9cad-eaa656f276c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="809f599f-938e-66be-2721-660b854c053d" executionId="4908833f-3ef4-4b02-b189-caf748eb9e3a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5dc0635-e22a-84b2-34ee-42c1ee2b7865" executionId="391369f6-d881-40f5-b01c-071dded3ea6f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aac1e61f-4489-4df0-d8dd-a5785eb3aa73" executionId="a042febd-a00a-4f18-b1e6-72f0ea2e47fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7e2aba05-70be-db34-ec5f-9b8815df7cf8" executionId="d74eaf5a-b0b6-4754-9350-d32e19d1b7b0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="996d3bd2-238c-333e-2d19-948501c9cfb7" executionId="031da7bf-3425-4af1-97e6-a5049b6f4484" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="91a1a321-4cda-ab23-099d-6bbc08d5ec6b" executionId="86b55faf-cc59-4a87-b61b-19eb40ea091f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="154460ff-3e14-0c75-9dfd-8deb7d3e9cf6" executionId="36d91c8e-7131-4c8b-9314-cf59d99a1bcf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f8ce187-4171-c7d4-e3ec-5f2d0a55e616" executionId="0fa9f1c9-e215-4d57-83f9-284c18c56609" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="9" executed="9" passed="0" failed="9" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.14]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.18]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.18]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.18]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.19]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs(18,0): at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(String name)&#xD;
+[xUnit.net 00:00:00.19]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.19]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.19]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.19]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.19]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.19]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs(18,0): at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(String name)&#xD;
+[xUnit.net 00:00:00.19]            at InvokeStub_WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.19]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.20]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.20]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs(18,0): at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(String name)&#xD;
+[xUnit.net 00:00:00.20]            at InvokeStub_WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.20]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:05.20]       System.OperationCanceledException : The operation was canceled.&#xD;
+[xUnit.net 00:00:05.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.20]            at System.IO.Pipes.PipeStream.PipeValueTaskSource.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:05.20]            at System.IO.Pipes.PipeStream.PipeValueTaskSource.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:05.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs(83,0): at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Served_anchor_is_reusable_and_retains_the_name_between_requests()&#xD;
+[xUnit.net 00:00:05.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.21]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:05.21]       Expected: typeof(System.UnauthorizedAccessException)&#xD;
+[xUnit.net 00:00:05.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.21]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs(64,0): at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Client_refuses_a_pipe_that_allows_untrusted_instance_creation()&#xD;
+[xUnit.net 00:00:05.21]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.22]       System.OperationCanceledException : The operation was canceled.&#xD;
+[xUnit.net 00:00:10.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.22]            at System.IO.Pipes.PipeStream.PipeValueTaskSource.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:10.22]            at System.IO.Pipes.PipeStream.PipeValueTaskSource.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:10.22]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs(136,0): at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Identification_only_client_is_refused_instead_of_using_server_identity()&#xD;
+[xUnit.net 00:00:10.22]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.22]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:10.22]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:10.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.22]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs(29,0): at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.First_listener_refuses_an_existing_server()&#xD;
+[xUnit.net 00:00:10.22]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:10.22]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:15.23]       System.OperationCanceledException : The operation was canceled.&#xD;
+[xUnit.net 00:00:15.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:15.23]            at System.IO.Pipes.PipeStream.PipeValueTaskSource.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:15.23]            at System.IO.Pipes.PipeStream.PipeValueTaskSource.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:15.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs(107,0): at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Captured_caller_token_outlives_the_connection_and_flows_across_await()&#xD;
+[xUnit.net 00:00:15.23]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:15.23]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:15.23]       Expected: typeof(System.UnauthorizedAccessException)&#xD;
+[xUnit.net 00:00:15.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:15.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsPipeBoundaryTests.cs(43,0): at FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Connected_handle_verification_precedes_any_request_bytes()&#xD;
+[xUnit.net 00:00:15.23]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:15.23]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:32:48.6253503+03:00">
+        <Text>[xUnit.net 00:00:00.18]     FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(name: "FluxVault.Service") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:32:48.6360123+03:00">
+        <Text>[xUnit.net 00:00:00.19]     FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(name: "remote\\FluxVault.Tests.01234567890123456789012345"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:32:48.6369332+03:00">
+        <Text>[xUnit.net 00:00:00.20]     FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Private_fixture_cannot_open_an_installed_or_unbounded_name(name: "FluxVault.Tests.not-a-guid") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:32:53.6439887+03:00">
+        <Text>[xUnit.net 00:00:05.20]     FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Served_anchor_is_reusable_and_retains_the_name_between_requests [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:32:53.6513520+03:00">
+        <Text>[xUnit.net 00:00:05.21]     FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Client_refuses_a_pipe_that_allows_untrusted_instance_creation [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:32:58.6603676+03:00">
+        <Text>[xUnit.net 00:00:10.22]     FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Identification_only_client_is_refused_instead_of_using_server_identity [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:32:58.6616007+03:00">
+        <Text>[xUnit.net 00:00:10.22]     FluxVault.Windows.Tests.WindowsPipeBoundaryTests.First_listener_refuses_an_existing_server [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:33:03.6676375+03:00">
+        <Text>[xUnit.net 00:00:15.23]     FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Captured_caller_token_outlives_the_connection_and_flows_across_await [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:33:03.6703114+03:00">
+        <Text>[xUnit.net 00:00:15.23]     FluxVault.Windows.Tests.WindowsPipeBoundaryTests.Connected_handle_verification_precedes_any_request_bytes [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

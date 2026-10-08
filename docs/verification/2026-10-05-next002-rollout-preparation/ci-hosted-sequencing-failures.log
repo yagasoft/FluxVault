@@ -1,0 +1,83 @@
+build-test	Ordinary tests (excludes required native installation gates)	﻿2026-10-08T06:41:34.6364609Z ##[group]Run dotnet test --configuration Release --no-build -m:1 --filter "Category!=RequiresPostgreSql&Category!=RequiresPreparedWindowsInstallation"
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:34.6365879Z ^[[36;1mdotnet test --configuration Release --no-build -m:1 --filter "Category!=RequiresPostgreSql&Category!=RequiresPreparedWindowsInstallation"^[[0m
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:34.6443197Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:34.6443589Z env:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:34.6443787Z   DOTNET_ROOT: C:\Program Files\dotnet
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:34.6444044Z ##[endgroup]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:36.3365909Z Test run for D:\a\FluxVault\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:37.5352654Z A total of 1 test files matched the specified pattern.
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:51.3155951Z 
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:51.3220765Z Passed!  - Failed:     0, Passed:   489, Skipped:     0, Total:   489, Duration: 12 s - FluxVault.App.Tests.dll (net10.0)
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:51.3842137Z Test run for D:\a\FluxVault\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:41:51.6350909Z A total of 1 test files matched the specified pattern.
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:42:39.8819963Z 
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:42:39.8870520Z Passed!  - Failed:     0, Passed:   563, Skipped:     0, Total:   563, Duration: 46 s - FluxVault.Core.Tests.dll (net10.0)
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:42:39.9757955Z Test run for D:\a\FluxVault\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:42:40.2191161Z A total of 1 test files matched the specified pattern.
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:13.9672659Z [xUnit.net 00:00:33.18]     FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_App_startup_uses_safe_presentation_without_a_harness_override_and_joins_reads [FAIL]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1102019Z   Failed FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_App_startup_uses_safe_presentation_without_a_harness_override_and_joins_reads [5 s]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1104221Z   Error Message:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1105021Z    Assert.True() Failure
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1105663Z Expected: True
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1106198Z Actual:   False
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1106707Z   Stack Trace:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1109325Z      at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_App_startup_uses_safe_presentation_without_a_harness_override_and_joins_reads() in /_/tests/FluxVault.Integration.Tests/DesktopObservationFixtureTests.cs:line 26
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1114244Z    at FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_App_startup_uses_safe_presentation_without_a_harness_override_and_joins_reads() in /_/tests/FluxVault.Integration.Tests/DesktopObservationFixtureTests.cs:line 32
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1117776Z --- End of stack trace from previous location ---
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1118396Z   Standard Output Messages:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1125121Z  {"StartupObserved":true,"SoftwareRendering":false,"EffectiveRenderMode":"SoftwareOnly","Loaded":true,"ContentRendered":true,"ApplicationIdle":false,"RenderingEvents":6,"FirstRendering":"2026-10-08T06:43:10.3811052+00:00","LastRendering":"2026-10-08T06:43:13.7770486+00:00","Window":{"ActualWidth":1080,"ActualHeight":760,"Visibility":0,"IsVisible":true,"IsEnabled":true,"IsMeasureValid":true,"IsArrangeValid":true},"Root":{"ActualWidth":1020,"ActualHeight":677,"Visibility":0,"IsVisible":true,"IsEnabled":true,"IsMeasureValid":true,"IsArrangeValid":true},"Hwnd":1245486,"HasPresentationSource":true,"HasCompositionTarget":true,"NativeVisible":true,"Dpi":{"DpiScaleX":1,"DpiScaleY":1,"PixelsPerDip":1,"PixelsPerInchX":96,"PixelsPerInchY":96},"HasNativeRect":true,"NativeRect":{"Left":26,"Top":26,"Right":1106,"Bottom":786},"RepositoryTextBox":{"Bounds":"211,206,735,34","Offscreen":false}}
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1130190Z 
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:43:15.1130213Z 
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:44:58.9232941Z [xUnit.net 00:02:18.14]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: "success", accepted: True) [FAIL]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:44:59.2459856Z   Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: "success", accepted: True) [957 ms]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:44:59.2466940Z   Error Message:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:44:59.2468279Z    Assert.Equal() Failure: Values differ
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:44:59.2469169Z Expected: True
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:44:59.2469808Z Actual:   False
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:44:59.2470480Z   Stack Trace:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:44:59.2472937Z      at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(String scenario, Boolean accepted) in /_/tests/FluxVault.Integration.Tests/WindowsFixtureToolingTests.cs:line 364
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:44:59.2475553Z --- End of stack trace from previous location ---
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:44:59.7169606Z [xUnit.net 00:02:18.93]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: "setup-failed", accepted: False) [FAIL]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.5302613Z [xUnit.net 00:02:19.74]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: "binding-mismatch", accepted: False) [FAIL]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7467467Z   Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: "setup-failed", accepted: False) [788 ms]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7473631Z   Error Message:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7475480Z    Assert.Equal() Failure: Values differ
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7477001Z Expected: True
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7479168Z Actual:   False
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7480909Z   Stack Trace:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7494095Z      at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(String scenario, Boolean accepted) in /_/tests/FluxVault.Integration.Tests/WindowsFixtureToolingTests.cs:line 364
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7510902Z --- End of stack trace from previous location ---
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7513258Z   Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(scenario: "binding-mismatch", accepted: False) [816 ms]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7515497Z   Error Message:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7516507Z    Assert.Equal() Failure: Values differ
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7517374Z Expected: True
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7518103Z Actual:   False
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7518790Z   Stack Trace:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7521285Z      at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Setup_launcher_requires_retired_admission_and_joined_verified_publication(String scenario, Boolean accepted) in /_/tests/FluxVault.Integration.Tests/WindowsFixtureToolingTests.cs:line 364
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:45:00.7524792Z --- End of stack trace from previous location ---
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:26.7840768Z [xUnit.net 00:03:46.00]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Identity_package_owns_its_logo_and_preserves_cloned_runtime_assets [FAIL]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:27.7452206Z   Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Identity_package_owns_its_logo_and_preserves_cloned_runtime_assets [1 s]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:27.7453532Z   Error Message:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:27.7453983Z    Assert.Equal() Failure: Strings differ
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:27.7455522Z            ↓ (pos 0)
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:27.7455945Z Expected: "Reached bounded packaging boundary."
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:27.7456526Z Actual:   "Fixture component has an untrusted owner."
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:27.7457570Z            ↑ (pos 0)
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:27.7458232Z   Stack Trace:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:27.7460409Z      at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Identity_package_owns_its_logo_and_preserves_cloned_runtime_assets() in /_/tests/FluxVault.Integration.Tests/WindowsFixtureToolingTests.cs:line 1615
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:27.7463726Z --- End of stack trace from previous location ---
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:39.9552048Z 
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:39.9599719Z Failed!  - Failed:     5, Passed:   330, Skipped:     0, Total:   335, Duration: 3 m 58 s - FluxVault.Integration.Tests.dll (net10.0)
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:40.0124719Z Test run for D:\a\FluxVault\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll (.NETCoreApp,Version=v10.0)
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:40.2305597Z A total of 1 test files matched the specified pattern.
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:43.9774280Z [xUnit.net 00:00:03.18]     FluxVault.Windows.Tests.NamedPipeResourceBoundaryTests.Stalled_response_or_missing_receipt_retires_native_token_and_allows_later_work(readFrame: True) [FAIL]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:44.8265318Z   Failed FluxVault.Windows.Tests.NamedPipeResourceBoundaryTests.Stalled_response_or_missing_receipt_retires_native_token_and_allows_later_work(readFrame: True) [2 s]
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:44.8267495Z   Error Message:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:44.8268460Z    System.TimeoutException : The operation has timed out.
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:44.8269157Z   Stack Trace:
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:44.8271258Z      at FluxVault.Windows.Tests.NamedPipeResourceBoundaryTests.Stalled_response_or_missing_receipt_retires_native_token_and_allows_later_work(Boolean readFrame) in /_/tests/FluxVault.Windows.Tests/NamedPipeResourceBoundaryTests.cs:line 107
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:44.8275397Z    at FluxVault.Windows.Tests.NamedPipeResourceBoundaryTests.Stalled_response_or_missing_receipt_retires_native_token_and_allows_later_work(Boolean readFrame) in /_/tests/FluxVault.Windows.Tests/NamedPipeResourceBoundaryTests.cs:line 119
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:44.8277692Z --- End of stack trace from previous location ---
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:45.4766982Z 
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:45.4812053Z Failed!  - Failed:     1, Passed:   153, Skipped:     0, Total:   154, Duration: 4 s - FluxVault.Windows.Tests.dll (net10.0)
+build-test	Ordinary tests (excludes required native installation gates)	2026-10-08T06:46:45.9245744Z ##[error]Process completed with exit code 1.

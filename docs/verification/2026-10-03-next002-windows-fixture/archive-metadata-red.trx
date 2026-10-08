@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="0001e9c8-bc10-49f1-84da-33b6196eff06" name="os008@OS008-HOME 2026-10-04 01:58:14" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T01:58:14.5807986+03:00" queuing="2026-10-04T01:58:14.5807987+03:00" start="2026-10-04T01:58:13.1120559+03:00" finish="2026-10-04T01:58:14.5844480+03:00" />
+  <TestSettings name="default" id="771abdc1-0b0e-4977-bb8d-7636b6142839">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_01_58_14" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f8f3e59a-2366-4581-8f07-c44ef0c310d3" testId="1233f956-210a-5ac9-cf51-403346bbdc85" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Reference_archive_bounds_metadata_and_selects_only_safe_server_payload" computerName="OS008-HOME" duration="00:00:00.8244720" startTime="2026-10-04T01:58:13.6417400+03:00" endTime="2026-10-04T01:58:14.4805726+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f8f3e59a-2366-4581-8f07-c44ef0c310d3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Reference_archive_bounds_metadata_and_selects_only_safe_server_payload() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 34&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Reference_archive_bounds_metadata_and_selects_only_safe_server_payload" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="1233f956-210a-5ac9-cf51-403346bbdc85">
+      <Execution id="f8f3e59a-2366-4581-8f07-c44ef0c310d3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Reference_archive_bounds_metadata_and_selects_only_safe_server_payload" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1233f956-210a-5ac9-cf51-403346bbdc85" executionId="f8f3e59a-2366-4581-8f07-c44ef0c310d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.02]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:01.02]       Expected: True&#xD;
+[xUnit.net 00:00:01.02]       Actual:   False&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(34,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Reference_archive_bounds_metadata_and_selects_only_safe_server_payload()&#xD;
+[xUnit.net 00:00:01.02]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.03]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T01:58:14.4833876+03:00">
+        <Text>[xUnit.net 00:00:01.02]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Reference_archive_bounds_metadata_and_selects_only_safe_server_payload [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

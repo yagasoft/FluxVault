@@ -4,22 +4,29 @@ using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Content;
+using FluxVault.Core.Ipc;
 using FluxVault.Core.Storage;
 using FluxVault.Core.Storage.Metadata;
+using FluxVault.Windows.Security;
 
 namespace FluxVault.Cli;
 
 public static class FluxVaultCli
 {
-    public static async Task<CliResult> RunAsync(IReadOnlyList<string> args)
+    public static async Task<CliResult> RunAsync(IReadOnlyList<string> args, CancellationToken cancellationToken = default)
     {
         using var standardOutput = new StringWriter();
         using var standardError = new StringWriter();
-        var exitCode = await RunAsync(args, standardOutput, standardError).ConfigureAwait(false);
+        var exitCode = await RunAsync(args, standardOutput, standardError, cancellationToken).ConfigureAwait(false);
         return new CliResult(exitCode, standardOutput.ToString(), standardError.ToString());
     }
 
-    public static async Task<int> RunAsync(IReadOnlyList<string> args, TextWriter standardOutput, TextWriter standardError)
+    public static Task<int> RunAsync(IReadOnlyList<string> args, TextWriter standardOutput, TextWriter standardError,
+        CancellationToken cancellationToken = default) =>
+        RunAsync(args, standardOutput, standardError, CreateSetupClient, cancellationToken);
+
+    internal static async Task<int> RunAsync(IReadOnlyList<string> args, TextWriter standardOutput, TextWriter standardError,
+        Func<IFluxVaultServiceClient> setupClientFactory, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(args);
         ArgumentNullException.ThrowIfNull(standardOutput);
@@ -34,6 +41,9 @@ public static class FluxVaultCli
         try
         {
             var command = args[0].ToLowerInvariant();
+            if (command == "setup-confirm")
+                return await SetupConfirmationCommand.RunAsync(args.Skip(1).ToArray(), standardOutput, standardError,
+                    setupClientFactory, cancellationToken).ConfigureAwait(false);
             var options = ParseOptions(args.Skip(1).ToArray());
 
             return command switch
@@ -70,6 +80,12 @@ public static class FluxVaultCli
             await standardError.WriteLineAsync(ex.Message).ConfigureAwait(false);
             return 3;
         }
+    }
+
+    private static IFluxVaultServiceClient CreateSetupClient()
+    {
+        if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Setup requires Windows.");
+        return new NamedPipeFluxVaultClient(WindowsFluxVaultPipeClientFactory.ForSetup());
     }
 
     private static async Task<int> BackupAsync(
@@ -273,11 +289,8 @@ public static class FluxVaultCli
             : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "FluxVault");
         var profileSetStore = new FileFluxVaultProfileSetStore(Path.Combine(programDataPath, "config.json"), programDataPath);
         var profileSet = await profileSetStore.LoadAsync().ConfigureAwait(false);
-        var profile = options.TryGetValue("profile", out var profileId)
-            ? profileSet.Profiles.FirstOrDefault(value => string.Equals(value.Id, profileId, StringComparison.OrdinalIgnoreCase))
-                ?? throw new ArgumentException($"Profile not found: {profileId}.")
-            : profileSet.ActiveProfile;
-        var configuration = profile.Configuration;
+        if (options.ContainsKey("profile")) throw new ArgumentException("Vault/profile selection has been removed. One vault is supported per installation.");
+        var configuration = profileSet.ActiveProfile.Configuration;
         if (options.TryGetValue("repository", out var repositoryPath) && !string.IsNullOrWhiteSpace(repositoryPath))
         {
             configuration = configuration with { RepositoryPath = Path.GetFullPath(repositoryPath) };

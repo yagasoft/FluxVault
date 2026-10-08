@@ -1,0 +1,68 @@
+{
+  "ObservedUtc": "2026-10-07T19:49:52.8970253Z",
+  "Acls": [
+    {
+      "Path": "D:\\Program Files",
+      "Native": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;;FA;;;BA)(A;OICIIO;GA;;;BA)(A;;FA;;;SY)(A;OICIIO;GA;;;SY)(A;;0x1201bf;;;AU)(A;OICIIO;SDGXGWGR;;;AU)(A;;0x1200a9;;;BU)(A;OICIIO;GXGR;;;BU)",
+      "Managed": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;OICIIO;SDGXGWGR;;;AU)(A;;0x1201bf;;;AU)(A;;FA;;;SY)(A;OICIIO;GA;;;SY)(A;OICIIO;GA;;;BA)(A;;FA;;;BA)(A;;0x1200a9;;;BU)(A;OICIIO;GXGR;;;BU)",
+      "Reviewed": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;;FA;;;BA)(A;OICIIO;GA;;;BA)(A;;FA;;;SY)(A;OICIIO;GA;;;SY)(A;;0x1201bf;;;AU)(A;OICIIO;SDGXGWGR;;;AU)(A;;0x1200a9;;;BU)(A;OICIIO;GXGR;;;BU)",
+      "NormalisedReviewed": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;OICIIO;SDGXGWGR;;;AU)(A;;0x1201bf;;;AU)(A;;FA;;;SY)(A;OICIIO;GA;;;SY)(A;OICIIO;GA;;;BA)(A;;FA;;;BA)(A;;0x1200a9;;;BU)(A;OICIIO;GXGR;;;BU)",
+      "NativeExact": true,
+      "ManagedNormalisedExact": true
+    },
+    {
+      "Path": "D:\\Program Files\\PostgreSQL",
+      "Native": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;;FA;;;BA)(A;OICIIO;GA;;;BA)(A;;FA;;;SY)(A;OICIIO;GA;;;SY)(A;;0x1201bf;;;AU)(A;OICIIO;SDGXGWGR;;;AU)(A;;0x1200a9;;;BU)(A;OICIIO;GXGR;;;BU)",
+      "Managed": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;OICIIO;SDGXGWGR;;;AU)(A;;0x1201bf;;;AU)(A;;FA;;;SY)(A;OICIIO;GA;;;SY)(A;OICIIO;GA;;;BA)(A;;FA;;;BA)(A;;0x1200a9;;;BU)(A;OICIIO;GXGR;;;BU)",
+      "Reviewed": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;;FA;;;BA)(A;OICIIO;GA;;;BA)(A;;FA;;;SY)(A;OICIIO;GA;;;SY)(A;;0x1201bf;;;AU)(A;OICIIO;SDGXGWGR;;;AU)(A;;0x1200a9;;;BU)(A;OICIIO;GXGR;;;BU)",
+      "NormalisedReviewed": "O:BAG:S-1-5-21-136112424-624261118-1239521417-1001D:P(A;OICIIO;SDGXGWGR;;;AU)(A;;0x1201bf;;;AU)(A;;FA;;;SY)(A;OICIIO;GA;;;SY)(A;OICIIO;GA;;;BA)(A;;FA;;;BA)(A;;0x1200a9;;;BU)(A;OICIIO;GXGR;;;BU)",
+      "NativeExact": true,
+      "ManagedNormalisedExact": true
+    }
+  ],
+  "Children": [
+    {
+      "Identity": {
+        "StartedUtc": "2026-10-07T19:45:13.5592464Z",
+        "ProcessId": 37336,
+        "Executable": "C:\\Windows\\System32\\sc.exe"
+      },
+      "Absent": true
+    },
+    {
+      "Identity": {
+        "StartedUtc": "2026-10-07T19:45:13.6012689Z",
+        "ProcessId": 49064,
+        "Executable": "C:\\Windows\\System32\\sc.exe"
+      },
+      "Absent": true
+    },
+    {
+      "Identity": {
+        "StartedUtc": "2026-10-07T19:45:14.2431536Z",
+        "ProcessId": 51752,
+        "Executable": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\artifacts\\staging-single-vault\\51b103b3c75645dfaa36600e2cbe07a5\\installer\\FluxVault.Setup.exe"
+      },
+      "Absent": true
+    },
+    {
+      "Identity": {
+        "StartedUtc": "2026-10-07T19:45:26.1457886Z",
+        "ProcessId": 40248,
+        "Executable": "C:\\Windows\\System32\\sc.exe"
+      },
+      "Absent": true
+    },
+    {
+      "Identity": {
+        "StartedUtc": "2026-10-07T19:45:26.1775635Z",
+        "ProcessId": 45536,
+        "Executable": "C:\\Windows\\System32\\sc.exe"
+      },
+      "Absent": true
+    }
+  ],
+  "AuthenticationUnchanged": true,
+  "SetupNotStarted": true,
+  "ServiceStopped": true
+}

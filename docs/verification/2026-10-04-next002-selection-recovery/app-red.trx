@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="17cd8594-2574-4a93-8b60-4fb51422ecfc" name="os008@OS008-HOME 2026-10-04 19:19:56" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T19:19:56.8885265+03:00" queuing="2026-10-04T19:19:56.8885271+03:00" start="2026-10-04T19:19:56.0540849+03:00" finish="2026-10-04T19:19:56.9198094+03:00" />
+  <TestSettings name="default" id="4eea49e8-db5d-4e7f-9d08-b57c8900cc70">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_19_19_56" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="88c114c6-e641-4023-abc8-b76531575dcc" testId="e2412fae-94fe-9c2f-d4cb-8c07a2b194a2" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongResultDestination)" computerName="OS008-HOME" duration="00:00:00.0009877" startTime="2026-10-04T19:19:56.8431312+03:00" endTime="2026-10-04T19:19:56.8431577+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="88c114c6-e641-4023-abc8-b76531575dcc">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found&#xD;
+         ↓ (pos 0)&#xD;
+String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+Found:  "Restored and verified"</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bf83b944-7d6e-46f2-9717-7b6f3ff29eb4" testId="7001aac3-d72e-d521-4e18-232fa57b269d" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.New_file_destination_does_not_authorise_overwriting_a_late_entry" computerName="OS008-HOME" duration="00:00:00.0035141" startTime="2026-10-04T19:19:56.8663555+03:00" endTime="2026-10-04T19:19:56.8663840+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf83b944-7d6e-46f2-9717-7b6f3ff29eb4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.New_file_destination_does_not_authorise_overwriting_a_late_entry() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b1a95e82-e2c0-43b4-a9ec-77eb8fb12add" testId="d039279d-ff2f-aa32-0793-e6fdf53c2f77" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongDestination)" computerName="OS008-HOME" duration="00:00:00.0009908" startTime="2026-10-04T19:19:56.8438757+03:00" endTime="2026-10-04T19:19:56.8439024+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b1a95e82-e2c0-43b4-a9ec-77eb8fb12add">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found&#xD;
+         ↓ (pos 0)&#xD;
+String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+Found:  "Restored and verified"</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="953cdd44-37f6-41ee-a6b2-78285043dd78" testId="72d05332-19fe-8ccc-4bdd-b4cb0e1d55cf" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongSource)" computerName="OS008-HOME" duration="00:00:00.0011284" startTime="2026-10-04T19:19:56.8423665+03:00" endTime="2026-10-04T19:19:56.8424005+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="953cdd44-37f6-41ee-a6b2-78285043dd78">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found&#xD;
+         ↓ (pos 0)&#xD;
+String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+Found:  "Restored and verified"</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="82de63ed-5041-4c36-81b3-b9b6e5baf081" testId="b80085b3-c461-7b30-ba86-61ac63710058" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NullFailures)" computerName="OS008-HOME" duration="00:00:00.0013297" startTime="2026-10-04T19:19:56.8419707+03:00" endTime="2026-10-04T19:19:56.8420031+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="82de63ed-5041-4c36-81b3-b9b6e5baf081">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NullReferenceException : Object reference not set to an instance of an object.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.MainWindowViewModel.RestoreBrowserSelectionAsync(String sourcePath, Boolean isDirectory, RestoreSelectionDestinationMode destinationMode, String destinationPath, Boolean overwriteConfirmed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1877&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RestoreSelectedBrowserItemElsewhereAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1738&#xD;
+   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 39&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a7e33430-7736-444e-aaf6-b6c8ac9a3730" testId="f8c19ab4-c8b0-be33-3c5e-d54cdc26ef8f" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Refresh_failure_preserves_the_verified_result_and_publication_warning" computerName="OS008-HOME" duration="00:00:00.0016291" startTime="2026-10-04T19:19:56.8667457+03:00" endTime="2026-10-04T19:19:56.8667731+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a7e33430-7736-444e-aaf6-b6c8ac9a3730">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+Not found: "Status refresh failed"</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Refresh_failure_preserves_the_verified_result_and_publication_warning() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 54&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5ea0cb04-938f-4510-9288-fa3cde4ec6ea" testId="7ca177b8-55f3-b496-03fc-1bb0cab03d91" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongCount)" computerName="OS008-HOME" duration="00:00:00.0010088" startTime="2026-10-04T19:19:56.8652542+03:00" endTime="2026-10-04T19:19:56.8653010+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ea0cb04-938f-4510-9288-fa3cde4ec6ea">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found&#xD;
+         ↓ (pos 0)&#xD;
+String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+Found:  "Restored and verified"</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c6313f77-52f5-4b5b-b21b-27754721fb5d" testId="d08b8b01-1460-a3a5-b9bb-c68417797fce" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: Cancelled)" computerName="OS008-HOME" duration="00:00:00.0007702" startTime="2026-10-04T19:19:56.8658198+03:00" endTime="2026-10-04T19:19:56.8658500+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c6313f77-52f5-4b5b-b21b-27754721fb5d">
+      <Output>
+        <ErrorInfo>
+          <Message>System.OperationCanceledException : The operation was canceled.</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Client.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 118&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1112&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RestoreBrowserSelectionAsync(String sourcePath, Boolean isDirectory, RestoreSelectionDestinationMode destinationMode, String destinationPath, Boolean overwriteConfirmed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1857&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RestoreSelectedBrowserItemElsewhereAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1738&#xD;
+   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 39&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e942fa52-6be2-48c1-8429-418fa42224e2" testId="70c6f8e5-4f20-8867-56ed-b984ac8b2d27" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Concurrent_selection_command_is_refused_while_recovery_is_running" computerName="OS008-HOME" duration="00:00:00.1968231" startTime="2026-10-04T19:19:56.6186926+03:00" endTime="2026-10-04T19:19:56.8288719+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e942fa52-6be2-48c1-8429-418fa42224e2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Concurrent_selection_command_is_refused_while_recovery_is_running() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 65&#xD;
+   at FluxVault.App.Tests.SelectionRecoveryContractTests.Concurrent_selection_command_is_refused_while_recovery_is_running() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 69&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8c6f520b-34b0-4d66-a346-42fd1b18b00b" testId="9d1c4ab9-cd18-5119-58d4-7597d4922a37" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: Lost)" computerName="OS008-HOME" duration="00:00:00.0010062" startTime="2026-10-04T19:19:56.8442433+03:00" endTime="2026-10-04T19:19:56.8442708+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c6f520b-34b0-4d66-a346-42fd1b18b00b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Service connection: restore failed (Ackno"···&#xD;
+Not found: "could not be confirmed"</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 41&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9975eb6c-d47c-4f3a-bbcd-b100721cc3c3" testId="e301251f-4802-f59a-f8b1-db6e4659781d" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NegativeBytes)" computerName="OS008-HOME" duration="00:00:00.0009826" startTime="2026-10-04T19:19:56.8427531+03:00" endTime="2026-10-04T19:19:56.8427798+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9975eb6c-d47c-4f3a-bbcd-b100721cc3c3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found&#xD;
+         ↓ (pos 0)&#xD;
+String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+Found:  "Restored and verified"</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f5fbda6f-8dce-4f02-b7e9-8f0415f08319" testId="07b3d852-8264-fbb7-e50d-8d5ea91ef512" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NoVerification)" computerName="OS008-HOME" duration="00:00:00.0038691" startTime="2026-10-04T19:19:56.8411120+03:00" endTime="2026-10-04T19:19:56.8411730+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5fbda6f-8dce-4f02-b7e9-8f0415f08319">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found&#xD;
+         ↓ (pos 0)&#xD;
+String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+Found:  "Restored and verified"</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ec5cfdcc-e31e-4109-9072-b5a688c283cb" testId="0af93fb5-59c6-f9d1-6785-046ee3551aab" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NullWarnings)" computerName="OS008-HOME" duration="00:00:00.0009858" startTime="2026-10-04T19:19:56.8435037+03:00" endTime="2026-10-04T19:19:56.8435308+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ec5cfdcc-e31e-4109-9072-b5a688c283cb">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found&#xD;
+         ↓ (pos 0)&#xD;
+String: "Restored and verified 1 of 1 file(s)."&#xD;
+Found:  "Restored and verified"</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NullFailures)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="b80085b3-c461-7b30-ba86-61ac63710058">
+      <Execution id="82de63ed-5041-4c36-81b3-b9b6e5baf081" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NoVerification)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="07b3d852-8264-fbb7-e50d-8d5ea91ef512">
+      <Execution id="f5fbda6f-8dce-4f02-b7e9-8f0415f08319" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongDestination)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="d039279d-ff2f-aa32-0793-e6fdf53c2f77">
+      <Execution id="b1a95e82-e2c0-43b4-a9ec-77eb8fb12add" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: Cancelled)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="d08b8b01-1460-a3a5-b9bb-c68417797fce">
+      <Execution id="c6313f77-52f5-4b5b-b21b-27754721fb5d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Concurrent_selection_command_is_refused_while_recovery_is_running" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="70c6f8e5-4f20-8867-56ed-b984ac8b2d27">
+      <Execution id="e942fa52-6be2-48c1-8429-418fa42224e2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Concurrent_selection_command_is_refused_while_recovery_is_running" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongResultDestination)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="e2412fae-94fe-9c2f-d4cb-8c07a2b194a2">
+      <Execution id="88c114c6-e641-4023-abc8-b76531575dcc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Refresh_failure_preserves_the_verified_result_and_publication_warning" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="f8c19ab4-c8b0-be33-3c5e-d54cdc26ef8f">
+      <Execution id="a7e33430-7736-444e-aaf6-b6c8ac9a3730" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Refresh_failure_preserves_the_verified_result_and_publication_warning" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NegativeBytes)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="e301251f-4802-f59a-f8b1-db6e4659781d">
+      <Execution id="9975eb6c-d47c-4f3a-bbcd-b100721cc3c3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongSource)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="72d05332-19fe-8ccc-4bdd-b4cb0e1d55cf">
+      <Execution id="953cdd44-37f6-41ee-a6b2-78285043dd78" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: Lost)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="9d1c4ab9-cd18-5119-58d4-7597d4922a37">
+      <Execution id="8c6f520b-34b0-4d66-a346-42fd1b18b00b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NullWarnings)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="0af93fb5-59c6-f9d1-6785-046ee3551aab">
+      <Execution id="ec5cfdcc-e31e-4109-9072-b5a688c283cb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongCount)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7ca177b8-55f3-b496-03fc-1bb0cab03d91">
+      <Execution id="5ea0cb04-938f-4510-9288-fa3cde4ec6ea" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.New_file_destination_does_not_authorise_overwriting_a_late_entry" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7001aac3-d72e-d521-4e18-232fa57b269d">
+      <Execution id="bf83b944-7d6e-46f2-9717-7b6f3ff29eb4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="New_file_destination_does_not_authorise_overwriting_a_late_entry" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e2412fae-94fe-9c2f-d4cb-8c07a2b194a2" executionId="88c114c6-e641-4023-abc8-b76531575dcc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7001aac3-d72e-d521-4e18-232fa57b269d" executionId="bf83b944-7d6e-46f2-9717-7b6f3ff29eb4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d039279d-ff2f-aa32-0793-e6fdf53c2f77" executionId="b1a95e82-e2c0-43b4-a9ec-77eb8fb12add" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72d05332-19fe-8ccc-4bdd-b4cb0e1d55cf" executionId="953cdd44-37f6-41ee-a6b2-78285043dd78" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b80085b3-c461-7b30-ba86-61ac63710058" executionId="82de63ed-5041-4c36-81b3-b9b6e5baf081" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f8c19ab4-c8b0-be33-3c5e-d54cdc26ef8f" executionId="a7e33430-7736-444e-aaf6-b6c8ac9a3730" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ca177b8-55f3-b496-03fc-1bb0cab03d91" executionId="5ea0cb04-938f-4510-9288-fa3cde4ec6ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d08b8b01-1460-a3a5-b9bb-c68417797fce" executionId="c6313f77-52f5-4b5b-b21b-27754721fb5d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="70c6f8e5-4f20-8867-56ed-b984ac8b2d27" executionId="e942fa52-6be2-48c1-8429-418fa42224e2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9d1c4ab9-cd18-5119-58d4-7597d4922a37" executionId="8c6f520b-34b0-4d66-a346-42fd1b18b00b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e301251f-4802-f59a-f8b1-db6e4659781d" executionId="9975eb6c-d47c-4f3a-bbcd-b100721cc3c3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="07b3d852-8264-fbb7-e50d-8d5ea91ef512" executionId="f5fbda6f-8dce-4f02-b7e9-8f0415f08319" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0af93fb5-59c6-f9d1-6785-046ee3551aab" executionId="ec5cfdcc-e31e-4109-9072-b5a688c283cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="0" failed="13" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.41]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.41]       Expected: False&#xD;
+[xUnit.net 00:00:00.41]       Actual:   True&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(65,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Concurrent_selection_command_is_refused_while_recovery_is_running()&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(69,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Concurrent_selection_command_is_refused_while_recovery_is_running()&#xD;
+[xUnit.net 00:00:00.41]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.42]       Assert.DoesNotContain() Failure: Sub-string found&#xD;
+[xUnit.net 00:00:00.42]                ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.42]       String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+[xUnit.net 00:00:00.42]       Found:  "Restored and verified"&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(40,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.42]       System.NullReferenceException : Object reference not set to an instance of an object.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1877,0): at FluxVault.App.ViewModels.MainWindowViewModel.RestoreBrowserSelectionAsync(String sourcePath, Boolean isDirectory, RestoreSelectionDestinationMode destinationMode, String destinationPath, Boolean overwriteConfirmed)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1738,0): at FluxVault.App.ViewModels.MainWindowViewModel.RestoreSelectedBrowserItemElsewhereAsync()&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(39,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.42]       Assert.DoesNotContain() Failure: Sub-string found&#xD;
+[xUnit.net 00:00:00.42]                ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.42]       String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+[xUnit.net 00:00:00.42]       Found:  "Restored and verified"&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(40,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.42]       Assert.DoesNotContain() Failure: Sub-string found&#xD;
+[xUnit.net 00:00:00.42]                ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.42]       String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+[xUnit.net 00:00:00.42]       Found:  "Restored and verified"&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(40,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.42]       Assert.DoesNotContain() Failure: Sub-string found&#xD;
+[xUnit.net 00:00:00.42]                ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.42]       String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+[xUnit.net 00:00:00.42]       Found:  "Restored and verified"&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(40,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.42]       Assert.DoesNotContain() Failure: Sub-string found&#xD;
+[xUnit.net 00:00:00.42]                ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.42]       String: "Restored and verified 1 of 1 file(s)."&#xD;
+[xUnit.net 00:00:00.42]       Found:  "Restored and verified"&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(40,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.42]       Assert.DoesNotContain() Failure: Sub-string found&#xD;
+[xUnit.net 00:00:00.42]                ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.42]       String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+[xUnit.net 00:00:00.42]       Found:  "Restored and verified"&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(40,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.42]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.42]       String:    "Service connection: restore failed (Ackno"···&#xD;
+[xUnit.net 00:00:00.42]       Not found: "could not be confirmed"&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(41,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.44]       Assert.DoesNotContain() Failure: Sub-string found&#xD;
+[xUnit.net 00:00:00.44]                ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.44]       String: "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+[xUnit.net 00:00:00.44]       Found:  "Restored and verified"&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(40,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.45]       System.OperationCanceledException : The operation was canceled.&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(118,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Client.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1112,0): at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1857,0): at FluxVault.App.ViewModels.MainWindowViewModel.RestoreBrowserSelectionAsync(String sourcePath, Boolean isDirectory, RestoreSelectionDestinationMode destinationMode, String destinationPath, Boolean overwriteConfirmed)&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1738,0): at FluxVault.App.ViewModels.MainWindowViewModel.RestoreSelectedBrowserItemElsewhereAsync()&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(39,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.45]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.45]       Expected: False&#xD;
+[xUnit.net 00:00:00.45]       Actual:   True&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(20,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.New_file_destination_does_not_authorise_overwriting_a_late_entry()&#xD;
+[xUnit.net 00:00:00.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.45]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.45]       String:    "Restored and verified 1 of 1 file(s). Pub"···&#xD;
+[xUnit.net 00:00:00.45]       Not found: "Status refresh failed"&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(54,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Refresh_failure_preserves_the_verified_result_and_publication_warning()&#xD;
+[xUnit.net 00:00:00.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.45]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8315778+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.App.Tests.SelectionRecoveryContractTests.Concurrent_selection_command_is_refused_while_recovery_is_running [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8413413+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NoVerification) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8421294+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NullFailures) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8425177+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongSource) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8428831+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NegativeBytes) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8433897+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongResultDestination) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8436399+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NullWarnings) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8440204+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongDestination) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8443816+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: Lost) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8941320+03:00">
+        <Text>[xUnit.net 00:00:00.44]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongCount) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8941853+03:00">
+        <Text>[xUnit.net 00:00:00.45]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: Cancelled) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8942256+03:00">
+        <Text>[xUnit.net 00:00:00.45]     FluxVault.App.Tests.SelectionRecoveryContractTests.New_file_destination_does_not_authorise_overwriting_a_late_entry [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:19:56.8942597+03:00">
+        <Text>[xUnit.net 00:00:00.45]     FluxVault.App.Tests.SelectionRecoveryContractTests.Refresh_failure_preserves_the_verified_result_and_publication_warning [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

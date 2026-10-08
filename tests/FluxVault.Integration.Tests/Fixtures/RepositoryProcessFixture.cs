@@ -17,8 +17,8 @@ internal sealed class RepositoryProcessFixture : IDisposable
 
     internal FixtureProcess Start(string mode, params string[] args)
     {
-        var start = new ProcessStartInfo("dotnet")
-        { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
+        var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("FLUXVAULT_TEST_DOTNET") ?? "dotnet")
+        { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true, WorkingDirectory = Root };
         start.ArgumentList.Add(HostPath());
         foreach (var argument in new[] { "--mode", mode, "--scratch", Root }.Concat(args)) start.ArgumentList.Add(argument);
         return new FixtureProcess(Process.Start(start) ?? throw new IOException("Fixture process did not start."));

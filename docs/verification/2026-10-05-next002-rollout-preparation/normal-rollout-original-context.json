@@ -1,0 +1,88 @@
+{
+  "AdminMap": "fv_bootstrap_7871ff7f8d1b404db20771f2e742364f",
+  "LogPath": "D:\\Program Files\\PostgreSQL\\18\\data\\log\\postgresql-2026-10-07_000000.log",
+  "Connection": "host=127.0.0.1 port=5432 dbname=postgres user=postgres connect_timeout=3 require_auth=sspi",
+  "LegacySetupPath": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\legacy-setup.exe",
+  "RollbackRoot": "C:\\ProgramData\\FluxVault.Rollback.7871ff7f8d1b404db20771f2e742364f",
+  "LegacyConfigSha256": "6C52FAFC7325B1C194DE6D4F510441DC6197CB6833A75E9A5570713CD982794F",
+  "LegacyRole": "fluxvault",
+  "ApplicationName": "FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f",
+  "WorkRoot": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f",
+  "SqlSha256": "DA258197F8308B476084A212BFAC7656BC8049C27383F0B5AB0505565BA743B7",
+  "SqlPath": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\create.sql",
+  "ActiveRoot": "C:\\ProgramData\\FluxVault",
+  "Parent": "C:\\ProgramData",
+  "PsqlPath": "D:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+  "WorkerJob": {
+    "KernelName": "Global\\FluxVault.NEXT002.620851e919e54e2292d4ec841ea3cd3a",
+    "OwnerSid": "S-1-5-21-136112424-624261118-1239521417-1001"
+  },
+  "Role": "postgres",
+  "Postmaster": {
+    "StartedUtc": "2026-10-06T09:31:44.0114872Z",
+    "ProcessId": 10660,
+    "Port": 5432,
+    "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+    "DataDirectory": "D:\\Program Files\\PostgreSQL\\18\\data"
+  },
+  "Database": "postgres",
+  "ServiceConnection": "host=127.0.0.1 port=5432 dbname=fluxvault_single user=fluxvault_service connect_timeout=3 require_auth=sspi",
+  "LegacyConnection": "host=127.0.0.1 port=5432 dbname=fluxvault_metadata user=fluxvault connect_timeout=3 require_auth=none",
+  "ParentInputHashes": {
+    "Candidate": "42062FB555B9D04FA1BC1A4D7C64875A14FE927F7FC387699D9F37AE6E2264C1",
+    "Baseline": "6871464555763CE407CB3050DB5D7E3FF528A0CEF8427C5D6E3846508248D05C"
+  },
+  "EmptyPasswordFile": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\empty.pgpass",
+  "ServiceDatabase": "fluxvault_single",
+  "InstallationId": "7871ff7f8d1b404db20771f2e742364f",
+  "SetupJob": {
+    "KernelName": "Global\\FluxVault.NEXT002.bf6e4bf28a9644988ac0c18e04852b39",
+    "OwnerSid": "S-1-5-21-136112424-624261118-1239521417-1001"
+  },
+  "PgCtlPath": "D:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+  "Setup": {
+    "ServiceExe": "C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe",
+    "ServiceExeSha256": "3FC0B64674A58D6ED3D814D89C5DCBD12B240D270F9461265A535DB4482379AA",
+    "TicketSha256": "8DEAAA406C027C361E20C32C90F4C9AFD7ADDA76A72528E4D5E1E2936CA2DDE4",
+    "TicketPath": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\installation-ticket.template.json"
+  },
+  "NormalInstallation": true,
+  "OriginalHashes": {
+    "pg_ident.conf": "2151E28F0BF5A8BB69109F91DBE61EBFFE48C6F9B71620F6A7B0B02B410E7DE5",
+    "pg_hba.conf": "C37D219F5AEE60D710ABCD9628A1F3D6C94F5C9861B4E31A52290DE995D97379"
+  },
+  "OperatorSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+  "Prepared": {
+    "TemporaryHba": {
+      "Sha256": "08AA5DB675E5112DE605DF235B6B73CCD37516CC17DB129F4E3C0ECCECADC946",
+      "Path": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\temporary-pg_hba.conf"
+    },
+    "ProbeIdent": {
+      "Sha256": "94850BE9C661F3644FED12DBED68D4BA0FB192B32099E67CAE7FF1B4349DDA41",
+      "Path": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\probe-pg_ident.conf"
+    },
+    "FinalHba": {
+      "Sha256": "83F8A4844E68DCF26C6F068890794D2327F83544DFDA1E8BF95FB9321628E40E",
+      "Path": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\final-pg_hba.conf"
+    },
+    "TemporaryIdent": {
+      "Sha256": "71EA5A61F5913FFA3E93523902839F50FB38C115E573F7D477FD86B965717E56",
+      "Path": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\temporary-pg_ident.conf"
+    },
+    "FinalIdent": {
+      "Sha256": "DD710C85E5064576F4108CDD6862B1A2FAA077D611ED23E31D76CDB56C40E2B3",
+      "Path": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\final-pg_ident.conf"
+    }
+  },
+  "DataDirectory": "D:\\Program Files\\PostgreSQL\\18\\data",
+  "Port": 5432,
+  "InstallerUncertain": false,
+  "FailedRoot": "C:\\ProgramData\\FluxVault.Failed.7871ff7f8d1b404db20771f2e742364f",
+  "ServiceRole": "fluxvault_service",
+  "OperatorIdentity": {
+    "StartedUtc": "2026-10-07T19:44:45.1465215Z",
+    "ProcessId": 36708,
+    "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+  },
+  "CleanupRequired": true
+}

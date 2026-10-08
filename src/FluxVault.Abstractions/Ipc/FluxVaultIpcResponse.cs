@@ -1,4 +1,5 @@
 using FluxVault.Abstractions.Storage;
+using FluxVault.Abstractions.Security;
 
 namespace FluxVault.Abstractions.Ipc;
 
@@ -22,7 +23,15 @@ public sealed record FluxVaultIpcResponse(
     RestoreSelectionSummary? RestoreSelection = null,
     RepositoryPurgeResult? Purge = null,
     PerformanceTelemetryStatus? Performance = null,
-    RepositoryRestoreResult? RestoreResult = null)
+    RepositoryRestoreResult? RestoreResult = null,
+    VaultId? VaultId = null,
+    long? VaultRevision = null,
+    Guid? OperationId = null,
+    FluxVaultIpcErrorCode? ErrorCode = null,
+    DiagnosticsExportResult? DiagnosticsExport = null,
+    RepositoryHistoryPage? HistoryPage = null,
+    RepositorySnapshotPage? SnapshotPage = null,
+    RepositoryCurrentEntriesPage? CurrentEntriesPage = null)
 {
     public static FluxVaultIpcResponse Ok()
     {
@@ -186,3 +195,5 @@ public sealed record FluxVaultIpcResponse(
         return new FluxVaultIpcResponse(false, errorMessage, null, null, null, null, null);
     }
 }
+
+public enum FluxVaultIpcErrorCode { Denied, StaleRevision, Unavailable, InvalidRequest, OperationConflict, OutcomeUnknown, HistoryChanged }

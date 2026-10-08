@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="eaa0b1d4-e924-4851-9cdc-a93d93999660" name="os008@OS008-HOME 2026-10-05 08:23:58" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T08:23:58.7789717+03:00" queuing="2026-10-05T08:23:58.7789718+03:00" start="2026-10-05T08:23:57.5032892+03:00" finish="2026-10-05T08:23:58.7831220+03:00" />
+  <TestSettings name="default" id="2c363de6-e74e-4c16-af04-2d4a08b40f94">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_08_23_58" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="be74c754-3f33-4c28-a3bc-931eac3f31cb" testId="87f75ada-4470-8daa-e3aa-084047c1483d" testName="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests.Denied_or_malformed_requests_do_not_end_the_host_before_the_authorised_attempt" computerName="OS008-HOME" duration="00:00:00.0070771" startTime="2026-10-05T08:23:58.6818220+03:00" endTime="2026-10-05T08:23:58.6890619+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be74c754-3f33-4c28-a3bc-931eac3f31cb" />
+    <UnitTestResult executionId="a80d5503-9e4b-441b-9bf4-82adf3f4be27" testId="8c238cf3-c7d4-ff63-415d-992c4f882b7e" testName="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests.Terminal_transport_requires_serial_admission_and_dispatch(pending: 2, concurrency: 2)" computerName="OS008-HOME" duration="00:00:00.0002118" startTime="2026-10-05T08:23:58.6815795+03:00" endTime="2026-10-05T08:23:58.6817204+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a80d5503-9e4b-441b-9bf4-82adf3f4be27" />
+    <UnitTestResult executionId="4d745e13-3054-4c14-a595-f6fb7d940952" testId="2e7b0d9b-ceb4-a8e1-52a1-0f67f864ef53" testName="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests.Terminal_transport_requires_serial_admission_and_dispatch(pending: 1, concurrency: 2)" computerName="OS008-HOME" duration="00:00:00.0004592" startTime="2026-10-05T08:23:58.6810121+03:00" endTime="2026-10-05T08:23:58.6814891+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4d745e13-3054-4c14-a595-f6fb7d940952" />
+    <UnitTestResult executionId="f9254324-994c-4275-9663-4d959ad3c813" testId="6efe05cb-a2e6-3f1a-084b-282987efa673" testName="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests.Terminal_handler_keeps_anchor_and_native_caller_until_response_receipt_then_joins" computerName="OS008-HOME" duration="00:00:00.0022954" startTime="2026-10-05T08:23:58.6892018+03:00" endTime="2026-10-05T08:23:58.6915879+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9254324-994c-4275-9663-4d959ad3c813" />
+    <UnitTestResult executionId="bb7868ec-1a7d-4941-9af9-6bb9b1e68919" testId="8d25f44b-a733-d3e4-f9d9-da1ac7a1454d" testName="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests.Missing_receipt_releases_terminal_host_at_the_bounded_deadline_without_peer_disconnect" computerName="OS008-HOME" duration="00:00:00.6364415" startTime="2026-10-05T08:23:58.0361515+03:00" endTime="2026-10-05T08:23:58.6797887+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bb7868ec-1a7d-4941-9af9-6bb9b1e68919" />
+    <UnitTestResult executionId="4a31e8d9-d77b-4279-a1dc-5e0ffa123c29" testId="aea0c99c-f370-37a7-be1d-a2f769db5cd0" testName="FluxVault.Windows.Tests.WindowsSingleVaultProvisioningTests.Ordinary_process_cannot_open_provisioning_intent_or_own_the_fixed_setup_pipe" computerName="OS008-HOME" duration="00:00:00.0078145" startTime="2026-10-05T08:23:58.0375712+03:00" endTime="2026-10-05T08:23:58.0507080+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a31e8d9-d77b-4279-a1dc-5e0ffa123c29" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests.Terminal_transport_requires_serial_admission_and_dispatch(pending: 2, concurrency: 2)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\debug\net10.0\fluxvault.windows.tests.dll" id="8c238cf3-c7d4-ff63-415d-992c4f882b7e">
+      <Execution id="a80d5503-9e4b-441b-9bf4-82adf3f4be27" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Debug\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests" name="Terminal_transport_requires_serial_admission_and_dispatch" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsSingleVaultProvisioningTests.Ordinary_process_cannot_open_provisioning_intent_or_own_the_fixed_setup_pipe" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\debug\net10.0\fluxvault.windows.tests.dll" id="aea0c99c-f370-37a7-be1d-a2f769db5cd0">
+      <Execution id="4a31e8d9-d77b-4279-a1dc-5e0ffa123c29" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Debug\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsSingleVaultProvisioningTests" name="Ordinary_process_cannot_open_provisioning_intent_or_own_the_fixed_setup_pipe" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests.Denied_or_malformed_requests_do_not_end_the_host_before_the_authorised_attempt" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\debug\net10.0\fluxvault.windows.tests.dll" id="87f75ada-4470-8daa-e3aa-084047c1483d">
+      <Execution id="be74c754-3f33-4c28-a3bc-931eac3f31cb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Debug\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests" name="Denied_or_malformed_requests_do_not_end_the_host_before_the_authorised_attempt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests.Missing_receipt_releases_terminal_host_at_the_bounded_deadline_without_peer_disconnect" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\debug\net10.0\fluxvault.windows.tests.dll" id="8d25f44b-a733-d3e4-f9d9-da1ac7a1454d">
+      <Execution id="bb7868ec-1a7d-4941-9af9-6bb9b1e68919" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Debug\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests" name="Missing_receipt_releases_terminal_host_at_the_bounded_deadline_without_peer_disconnect" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests.Terminal_handler_keeps_anchor_and_native_caller_until_response_receipt_then_joins" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\debug\net10.0\fluxvault.windows.tests.dll" id="6efe05cb-a2e6-3f1a-084b-282987efa673">
+      <Execution id="f9254324-994c-4275-9663-4d959ad3c813" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Debug\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests" name="Terminal_handler_keeps_anchor_and_native_caller_until_response_receipt_then_joins" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests.Terminal_transport_requires_serial_admission_and_dispatch(pending: 1, concurrency: 2)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\debug\net10.0\fluxvault.windows.tests.dll" id="2e7b0d9b-ceb4-a8e1-52a1-0f67f864ef53">
+      <Execution id="4d745e13-3054-4c14-a595-f6fb7d940952" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Debug\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.NamedPipeTerminalLifetimeTests" name="Terminal_transport_requires_serial_admission_and_dispatch" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="87f75ada-4470-8daa-e3aa-084047c1483d" executionId="be74c754-3f33-4c28-a3bc-931eac3f31cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8c238cf3-c7d4-ff63-415d-992c4f882b7e" executionId="a80d5503-9e4b-441b-9bf4-82adf3f4be27" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e7b0d9b-ceb4-a8e1-52a1-0f67f864ef53" executionId="4d745e13-3054-4c14-a595-f6fb7d940952" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6efe05cb-a2e6-3f1a-084b-282987efa673" executionId="f9254324-994c-4275-9663-4d959ad3c813" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d25f44b-a733-d3e4-f9d9-da1ac7a1454d" executionId="bb7868ec-1a7d-4941-9af9-6bb9b1e68919" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aea0c99c-f370-37a7-be1d-a2f769db5cd0" executionId="4a31e8d9-d77b-4279-a1dc-5e0ffa123c29" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="6" executed="6" passed="6" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.84]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

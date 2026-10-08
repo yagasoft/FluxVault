@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1ad726da-892e-4447-99c8-1ac56aac285c" name="os008@OS008-HOME 2026-10-05 00:23:05" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T00:23:05.8141856+03:00" queuing="2026-10-05T00:23:05.8141857+03:00" start="2026-10-05T00:23:04.7450928+03:00" finish="2026-10-05T00:23:05.8187845+03:00" />
+  <TestSettings name="default" id="ad0feb8c-3933-41f9-89dc-7b647bb3aa2e">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_00_23_05" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="fa6f8215-740e-487e-91d8-7bca2c8d9ab3" testId="ccf858f7-222f-c960-9216-dfa2119cbbb6" testName="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot" computerName="OS008-HOME" duration="00:00:00.1714137" startTime="2026-10-05T00:23:05.5613101+03:00" endTime="2026-10-05T00:23:05.7180510+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa6f8215-740e-487e-91d8-7bca2c8d9ab3">
+      <Output>
+        <ErrorInfo>
+          <Message>System.UnauthorizedAccessException : Access to the path is denied.</Message>
+          <StackTrace>   at System.IO.FileSystem.MoveFile(String sourceFullPath, String destFullPath, Boolean overwrite)&#xD;
+   at FluxVault.Core.Configuration.FileFluxVaultConfigurationStore.SaveAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Configuration\FileFluxVaultConfigurationStore.cs:line 47&#xD;
+   at FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationSnapshotConcurrencyTests.cs:line 43&#xD;
+   at FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationSnapshotConcurrencyTests.cs:line 48&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="07c9e724-c8cd-42ba-a63e-5643be98259a" testId="7e7f09f9-f6fd-e2ba-bbb0-febe377f8ac1" testName="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Failed_or_cancelled_publication_keeps_configuration_and_removes_its_owned_temporary_file(cancel: True)" computerName="OS008-HOME" duration="00:00:00.0030880" startTime="2026-10-05T00:23:05.5592264+03:00" endTime="2026-10-05T00:23:05.5595208+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="07c9e724-c8cd-42ba-a63e-5643be98259a" />
+    <UnitTestResult executionId="0bf415c1-a66b-4037-8d31-cbfd3115a94a" testId="771c4bee-21d5-9593-44df-b4fc7147cb01" testName="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Failed_or_cancelled_publication_keeps_configuration_and_removes_its_owned_temporary_file(cancel: False)" computerName="OS008-HOME" duration="00:00:00.1724743" startTime="2026-10-05T00:23:05.3537581+03:00" endTime="2026-10-05T00:23:05.5408465+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0bf415c1-a66b-4037-8d31-cbfd3115a94a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Empty() Failure: Collection was not empty&#xD;
+Collection: ["E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Tests\\3"···]</Message>
+          <StackTrace>   at FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Failed_or_cancelled_publication_keeps_configuration_and_removes_its_owned_temporary_file(Boolean cancel) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationSnapshotConcurrencyTests.cs:line 24&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Failed_or_cancelled_publication_keeps_configuration_and_removes_its_owned_temporary_file(cancel: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="7e7f09f9-f6fd-e2ba-bbb0-febe377f8ac1">
+      <Execution id="07c9e724-c8cd-42ba-a63e-5643be98259a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests" name="Failed_or_cancelled_publication_keeps_configuration_and_removes_its_owned_temporary_file" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Failed_or_cancelled_publication_keeps_configuration_and_removes_its_owned_temporary_file(cancel: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="771c4bee-21d5-9593-44df-b4fc7147cb01">
+      <Execution id="0bf415c1-a66b-4037-8d31-cbfd3115a94a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests" name="Failed_or_cancelled_publication_keeps_configuration_and_removes_its_owned_temporary_file" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ccf858f7-222f-c960-9216-dfa2119cbbb6">
+      <Execution id="fa6f8215-740e-487e-91d8-7bca2c8d9ab3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests" name="Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ccf858f7-222f-c960-9216-dfa2119cbbb6" executionId="fa6f8215-740e-487e-91d8-7bca2c8d9ab3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7e7f09f9-f6fd-e2ba-bbb0-febe377f8ac1" executionId="07c9e724-c8cd-42ba-a63e-5643be98259a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="771c4bee-21d5-9593-44df-b4fc7147cb01" executionId="0bf415c1-a66b-4037-8d31-cbfd3115a94a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="1" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.42]       Assert.Empty() Failure: Collection was not empty&#xD;
+[xUnit.net 00:00:00.42]       Collection: ["E:\\Temp\\AppData\\Local\\Temp\\FluxVault.Tests\\3"···]&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationSnapshotConcurrencyTests.cs(24,0): at FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Failed_or_cancelled_publication_keeps_configuration_and_removes_its_owned_temporary_file(Boolean cancel)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.60]       System.UnauthorizedAccessException : Access to the path is denied.&#xD;
+[xUnit.net 00:00:00.60]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.60]            at System.IO.FileSystem.MoveFile(String sourceFullPath, String destFullPath, Boolean overwrite)&#xD;
+[xUnit.net 00:00:00.60]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Configuration\FileFluxVaultConfigurationStore.cs(47,0): at FluxVault.Core.Configuration.FileFluxVaultConfigurationStore.SaveAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.60]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationSnapshotConcurrencyTests.cs(43,0): at FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot()&#xD;
+[xUnit.net 00:00:00.60]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationSnapshotConcurrencyTests.cs(48,0): at FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot()&#xD;
+[xUnit.net 00:00:00.60]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.60]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T00:23:05.5432560+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Failed_or_cancelled_publication_keeps_configuration_and_removes_its_owned_temporary_file(cancel: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T00:23:05.7184279+03:00">
+        <Text>[xUnit.net 00:00:00.60]     FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a4cd2663-0dbb-43a7-9d94-4cbb2e93d5e0" name="os008@OS008-HOME 2026-10-04 09:44:04" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T09:44:04.4586649+03:00" queuing="2026-10-04T09:44:04.4586652+03:00" start="2026-10-04T09:44:03.2962694+03:00" finish="2026-10-04T09:44:04.4628002+03:00" />
+  <TestSettings name="default" id="55000ad8-65b3-437e-afc4-ff53d4263bcf">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_09_44_04" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="96e24b45-6edd-47d1-b465-21ac3fdaad1b" testId="2d748927-19a0-7c5e-d6da-1d4a1850e52c" testName="FluxVault.Core.Tests.ProtectionSourceAccessTests.Renamed_real_protection_root_fails_without_tombstoning_its_history(targeted: True)" computerName="OS008-HOME" duration="00:00:00.3809479" startTime="2026-10-04T09:44:03.9018324+03:00" endTime="2026-10-04T09:44:04.2979712+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96e24b45-6edd-47d1-b465-21ac3fdaad1b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.ProtectionSourceAccessTests.Renamed_real_protection_root_fails_without_tombstoning_its_history(Boolean targeted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProtectionSourceAccessTests.cs:line 29&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="480e0768-ddee-47a8-83a3-093339f80938" testId="3f6289f7-3dad-82fc-607e-a2c9b1645831" testName="FluxVault.Core.Tests.ProtectionSourceAccessTests.Renamed_real_protection_root_fails_without_tombstoning_its_history(targeted: False)" computerName="OS008-HOME" duration="00:00:00.0622736" startTime="2026-10-04T09:44:04.3095234+03:00" endTime="2026-10-04T09:44:04.3615741+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="480e0768-ddee-47a8-83a3-093339f80938">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 0&#xD;
+Actual:   1</Message>
+          <StackTrace>   at FluxVault.Core.Tests.ProtectionSourceAccessTests.Renamed_real_protection_root_fails_without_tombstoning_its_history(Boolean targeted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProtectionSourceAccessTests.cs:line 29&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSourceAccessTests.Renamed_real_protection_root_fails_without_tombstoning_its_history(targeted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="3f6289f7-3dad-82fc-607e-a2c9b1645831">
+      <Execution id="480e0768-ddee-47a8-83a3-093339f80938" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSourceAccessTests" name="Renamed_real_protection_root_fails_without_tombstoning_its_history" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ProtectionSourceAccessTests.Renamed_real_protection_root_fails_without_tombstoning_its_history(targeted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="2d748927-19a0-7c5e-d6da-1d4a1850e52c">
+      <Execution id="96e24b45-6edd-47d1-b465-21ac3fdaad1b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ProtectionSourceAccessTests" name="Renamed_real_protection_root_fails_without_tombstoning_its_history" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2d748927-19a0-7c5e-d6da-1d4a1850e52c" executionId="96e24b45-6edd-47d1-b465-21ac3fdaad1b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3f6289f7-3dad-82fc-607e-a2c9b1645831" executionId="480e0768-ddee-47a8-83a3-093339f80938" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.61]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.61]       Expected: False&#xD;
+[xUnit.net 00:00:00.61]       Actual:   True&#xD;
+[xUnit.net 00:00:00.61]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProtectionSourceAccessTests.cs(29,0): at FluxVault.Core.Tests.ProtectionSourceAccessTests.Renamed_real_protection_root_fails_without_tombstoning_its_history(Boolean targeted)&#xD;
+[xUnit.net 00:00:00.62]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.68]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.68]       Expected: 0&#xD;
+[xUnit.net 00:00:00.68]       Actual:   1&#xD;
+[xUnit.net 00:00:00.68]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.68]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ProtectionSourceAccessTests.cs(29,0): at FluxVault.Core.Tests.ProtectionSourceAccessTests.Renamed_real_protection_root_fails_without_tombstoning_its_history(Boolean targeted)&#xD;
+[xUnit.net 00:00:00.68]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.68]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:44:04.3003987+03:00">
+        <Text>[xUnit.net 00:00:00.61]     FluxVault.Core.Tests.ProtectionSourceAccessTests.Renamed_real_protection_root_fails_without_tombstoning_its_history(targeted: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:44:04.3620473+03:00">
+        <Text>[xUnit.net 00:00:00.68]     FluxVault.Core.Tests.ProtectionSourceAccessTests.Renamed_real_protection_root_fails_without_tombstoning_its_history(targeted: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

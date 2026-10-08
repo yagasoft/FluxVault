@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f43922fd-9939-4161-8622-b563fc4d550f" name="os008@OS008-HOME 2026-10-04 09:24:47" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T09:24:47.3337482+03:00" queuing="2026-10-04T09:24:47.3337483+03:00" start="2026-10-04T09:24:46.1993151+03:00" finish="2026-10-04T09:24:47.3388421+03:00" />
+  <TestSettings name="default" id="b061a51b-777f-4f94-8992-cb8853b176c9">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_09_24_47" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="3f547e18-5201-4c86-b417-fee9568f728c" testId="7bb29203-22d9-49d9-7c67-c734370e1442" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_directory_listing_throws_instead_of_returning_an_empty_scan" computerName="OS008-HOME" duration="00:00:00.0051954" startTime="2026-10-04T09:24:47.2329098+03:00" endTime="2026-10-04T09:24:47.2380462+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3f547e18-5201-4c86-b417-fee9568f728c">
+      <Output>
+        <ErrorInfo>
+          <Message>System.UnauthorizedAccessException : Access to the path '\\?\C:\Users\os008\FluxVault.Tests\70720b5d36fe448ab5eb0c7504426d60' is denied.</Message>
+          <StackTrace>   at System.IO.FileSystem.RemoveDirectoryRecursive(String fullPath, WIN32_FIND_DATA&amp; findData, Boolean topLevel)&#xD;
+   at System.IO.FileSystem.RemoveDirectory(String fullPath, Boolean recursive)&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Workspace.Dispose() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 124&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_directory_listing_throws_instead_of_returning_an_empty_scan() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 85&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5b02fb12-7e21-407d-83bf-87b90a90e4c6" testId="ecb6ec27-6914-aee7-5899-18905500d175" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_metadata_is_unavailable_and_not_missing" computerName="OS008-HOME" duration="00:00:00.0033115" startTime="2026-10-04T09:24:47.2388021+03:00" endTime="2026-10-04T09:24:47.2417623+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b02fb12-7e21-407d-83bf-87b90a90e4c6">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsProtectionSourceAccess.Inspect(String protectionRoot, String path, RepositoryEntryKind kind, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs:line 12&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_metadata_is_unavailable_and_not_missing() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="52f58961-7404-42f5-ba60-0cbe198659c7" testId="11d5a462-c6c2-e385-da0c-d11a649beb76" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Lazy_scan_pins_the_directory_until_disposal_and_releases_it_after_cancellation" computerName="OS008-HOME" duration="00:00:00.0273125" startTime="2026-10-04T09:24:46.7194248+03:00" endTime="2026-10-04T09:24:46.7614860+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="52f58961-7404-42f5-ba60-0cbe198659c7">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsProtectionSourceAccess.EnumerateDirectory(String protectionRoot, String directory, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs:line 15&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Lazy_scan_pins_the_directory_until_disposal_and_releases_it_after_cancellation() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 95&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="137d966d-d262-4b50-b20d-db3b7fbd8a64" testId="22a38260-3163-91d8-b119-9eb7b4f6a492" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent" computerName="OS008-HOME" duration="00:00:00.0049725" startTime="2026-10-04T09:24:46.7751028+03:00" endTime="2026-10-04T09:24:46.7751705+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="137d966d-d262-4b50-b20d-db3b7fbd8a64">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsProtectionSourceAccess.Inspect(String protectionRoot, String path, RepositoryEntryKind kind, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs:line 12&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 54&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7dc38c23-4a37-4838-b4dc-118937731f64" testId="828c9442-07c4-e380-3ba9-ee497ddb319e" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Metadata_is_read_from_a_caller_opened_handle_and_has_no_data_read_requirement" computerName="OS008-HOME" duration="00:00:00.0048356" startTime="2026-10-04T09:24:47.2276113+03:00" endTime="2026-10-04T09:24:47.2322630+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7dc38c23-4a37-4838-b4dc-118937731f64">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsProtectionSourceAccess.Inspect(String protectionRoot, String path, RepositoryEntryKind kind, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs:line 12&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Metadata_is_read_from_a_caller_opened_handle_and_has_no_data_read_requirement() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 24&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0be50000-1a6f-43c3-af57-64370a15bbcb" testId="448b9fa2-82e9-6a5f-2b53-c005fb2e5465" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Reparse_and_outside_roots_are_unavailable_even_if_the_leaf_is_missing" computerName="OS008-HOME" duration="00:00:00.0036166" startTime="2026-10-04T09:24:46.7761262+03:00" endTime="2026-10-04T09:24:46.7761649+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0be50000-1a6f-43c3-af57-64370a15bbcb">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsProtectionSourceAccess.Inspect(String protectionRoot, String path, RepositoryEntryKind kind, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs:line 12&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Reparse_and_outside_roots_are_unavailable_even_if_the_leaf_is_missing() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 72&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="06e663b9-bb24-4c82-bd60-6cda50dafa5b" testId="1bef19cf-b192-895c-3188-136d4f100c33" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Multiple_native_batches_preserve_every_unicode_candidate_and_child_kind" computerName="OS008-HOME" duration="00:00:00.4538892" startTime="2026-10-04T09:24:46.7765763+03:00" endTime="2026-10-04T09:24:47.2269223+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06e663b9-bb24-4c82-bd60-6cda50dafa5b">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Windows.Security.WindowsProtectionSourceAccess.EnumerateDirectory(String protectionRoot, String directory, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs:line 15&#xD;
+   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Multiple_native_batches_preserve_every_unicode_candidate_and_child_kind() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 114&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Multiple_native_batches_preserve_every_unicode_candidate_and_child_kind" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="1bef19cf-b192-895c-3188-136d4f100c33">
+      <Execution id="06e663b9-bb24-4c82-bd60-6cda50dafa5b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Multiple_native_batches_preserve_every_unicode_candidate_and_child_kind" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Reparse_and_outside_roots_are_unavailable_even_if_the_leaf_is_missing" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="448b9fa2-82e9-6a5f-2b53-c005fb2e5465">
+      <Execution id="0be50000-1a6f-43c3-af57-64370a15bbcb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Reparse_and_outside_roots_are_unavailable_even_if_the_leaf_is_missing" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="22a38260-3163-91d8-b119-9eb7b4f6a492">
+      <Execution id="137d966d-d262-4b50-b20d-db3b7fbd8a64" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Lazy_scan_pins_the_directory_until_disposal_and_releases_it_after_cancellation" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="11d5a462-c6c2-e385-da0c-d11a649beb76">
+      <Execution id="52f58961-7404-42f5-ba60-0cbe198659c7" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Lazy_scan_pins_the_directory_until_disposal_and_releases_it_after_cancellation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_directory_listing_throws_instead_of_returning_an_empty_scan" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="7bb29203-22d9-49d9-7c67-c734370e1442">
+      <Execution id="3f547e18-5201-4c86-b417-fee9568f728c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Denied_directory_listing_throws_instead_of_returning_an_empty_scan" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Metadata_is_read_from_a_caller_opened_handle_and_has_no_data_read_requirement" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="828c9442-07c4-e380-3ba9-ee497ddb319e">
+      <Execution id="7dc38c23-4a37-4838-b4dc-118937731f64" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Metadata_is_read_from_a_caller_opened_handle_and_has_no_data_read_requirement" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_metadata_is_unavailable_and_not_missing" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="ecb6ec27-6914-aee7-5899-18905500d175">
+      <Execution id="5b02fb12-7e21-407d-83bf-87b90a90e4c6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Denied_metadata_is_unavailable_and_not_missing" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7bb29203-22d9-49d9-7c67-c734370e1442" executionId="3f547e18-5201-4c86-b417-fee9568f728c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ecb6ec27-6914-aee7-5899-18905500d175" executionId="5b02fb12-7e21-407d-83bf-87b90a90e4c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11d5a462-c6c2-e385-da0c-d11a649beb76" executionId="52f58961-7404-42f5-ba60-0cbe198659c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22a38260-3163-91d8-b119-9eb7b4f6a492" executionId="137d966d-d262-4b50-b20d-db3b7fbd8a64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="828c9442-07c4-e380-3ba9-ee497ddb319e" executionId="7dc38c23-4a37-4838-b4dc-118937731f64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="448b9fa2-82e9-6a5f-2b53-c005fb2e5465" executionId="0be50000-1a6f-43c3-af57-64370a15bbcb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1bef19cf-b192-895c-3188-136d4f100c33" executionId="06e663b9-bb24-4c82-bd60-6cda50dafa5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="0" failed="7" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.14]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.20]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs(15,0): at FluxVault.Windows.Security.WindowsProtectionSourceAccess.EnumerateDirectory(String protectionRoot, String directory, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.20]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(95,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Lazy_scan_pins_the_directory_until_disposal_and_releases_it_after_cancellation()&#xD;
+[xUnit.net 00:00:00.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.21]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.21]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs(12,0): at FluxVault.Windows.Security.WindowsProtectionSourceAccess.Inspect(String protectionRoot, String path, RepositoryEntryKind kind, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.21]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(54,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent()&#xD;
+[xUnit.net 00:00:00.21]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.21]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.21]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs(12,0): at FluxVault.Windows.Security.WindowsProtectionSourceAccess.Inspect(String protectionRoot, String path, RepositoryEntryKind kind, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.21]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(72,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Reparse_and_outside_roots_are_unavailable_even_if_the_leaf_is_missing()&#xD;
+[xUnit.net 00:00:00.21]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.66]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.66]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.66]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs(15,0): at FluxVault.Windows.Security.WindowsProtectionSourceAccess.EnumerateDirectory(String protectionRoot, String directory, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.66]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(114,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Multiple_native_batches_preserve_every_unicode_candidate_and_child_kind()&#xD;
+[xUnit.net 00:00:00.66]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.67]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.67]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.67]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs(12,0): at FluxVault.Windows.Security.WindowsProtectionSourceAccess.Inspect(String protectionRoot, String path, RepositoryEntryKind kind, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.67]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(24,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Metadata_is_read_from_a_caller_opened_handle_and_has_no_data_read_requirement()&#xD;
+[xUnit.net 00:00:00.67]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.67]       System.UnauthorizedAccessException : Access to the path '\\?\C:\Users\os008\FluxVault.Tests\70720b5d36fe448ab5eb0c7504426d60' is denied.&#xD;
+[xUnit.net 00:00:00.67]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.67]            at System.IO.FileSystem.RemoveDirectoryRecursive(String fullPath, WIN32_FIND_DATA&amp; findData, Boolean topLevel)&#xD;
+[xUnit.net 00:00:00.67]            at System.IO.FileSystem.RemoveDirectory(String fullPath, Boolean recursive)&#xD;
+[xUnit.net 00:00:00.67]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(124,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Workspace.Dispose()&#xD;
+[xUnit.net 00:00:00.67]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(85,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_directory_listing_throws_instead_of_returning_an_empty_scan()&#xD;
+[xUnit.net 00:00:00.67]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.68]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.68]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.68]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsProtectionSourceAccess.cs(12,0): at FluxVault.Windows.Security.WindowsProtectionSourceAccess.Inspect(String protectionRoot, String path, RepositoryEntryKind kind, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.68]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(43,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_metadata_is_unavailable_and_not_missing()&#xD;
+[xUnit.net 00:00:00.68]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.68]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:24:46.7641062+03:00">
+        <Text>[xUnit.net 00:00:00.20]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Lazy_scan_pins_the_directory_until_disposal_and_releases_it_after_cancellation [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:24:46.7754341+03:00">
+        <Text>[xUnit.net 00:00:00.21]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Confirmed_missing_leaf_and_component_are_distinct_from_denied_parent [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:24:46.7762843+03:00">
+        <Text>[xUnit.net 00:00:00.21]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Reparse_and_outside_roots_are_unavailable_even_if_the_leaf_is_missing [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:24:47.2273537+03:00">
+        <Text>[xUnit.net 00:00:00.66]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Multiple_native_batches_preserve_every_unicode_candidate_and_child_kind [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:24:47.2324593+03:00">
+        <Text>[xUnit.net 00:00:00.67]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Metadata_is_read_from_a_caller_opened_handle_and_has_no_data_read_requirement [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:24:47.2382135+03:00">
+        <Text>[xUnit.net 00:00:00.67]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_directory_listing_throws_instead_of_returning_an_empty_scan [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:24:47.2419136+03:00">
+        <Text>[xUnit.net 00:00:00.68]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Denied_metadata_is_unavailable_and_not_missing [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="71644cf3-b96d-444e-808e-1afdcb8bf15a" name="os008@OS008-HOME 2026-10-05 13:47:28" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T13:47:28.5873102+03:00" queuing="2026-10-05T13:47:28.5873105+03:00" start="2026-10-05T13:47:25.2161844+03:00" finish="2026-10-05T13:47:35.5569277+03:00" />
+  <TestSettings name="default" id="72a5e001-ade1-4acc-a9b7-279744dee34b">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_13_47_28" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="70f85263-443f-4951-bfdc-67b3190aba80" testId="fc5d2494-51c4-5958-5ff0-b8793735677b" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;final&quot;, canActivate: True)" computerName="OS008-HOME" duration="00:00:01.3837659" startTime="2026-10-05T13:47:30.0444165+03:00" endTime="2026-10-05T13:47:31.4281679+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70f85263-443f-4951-bfdc-67b3190aba80" />
+    <UnitTestResult executionId="1d8621b8-4a90-41b4-9ace-46a5352a312d" testId="be4f558f-3090-98dd-d9ac-a5b663227347" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;before-truncate&quot;, canActivate: False)" computerName="OS008-HOME" duration="00:00:01.5870979" startTime="2026-10-05T13:47:25.8190319+03:00" endTime="2026-10-05T13:47:27.4208449+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d8621b8-4a90-41b4-9ace-46a5352a312d">
+      <Output>
+        <ErrorInfo>
+          <Message>{"Hba":"temporary-pg_hba.conf","Failure":"Authentication has unaccounted bytes; preserve them and keep runtime blocked.","JoinedBeforeFallback":true,"PartialStateRetained":true,"Completed":false,"Ident":"final-pg_ident.confconf","Reply":null}</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(String scenario, Boolean canActivate) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 81&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bbd5d1aa-2b8c-4f9e-a94d-d4f0c68acb07" testId="56ced5cd-ed5d-2e71-cd76-e9e344ed372e" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;administrator-survives&quot;, canActivate: False)" computerName="OS008-HOME" duration="00:00:01.3659067" startTime="2026-10-05T13:47:28.6795908+03:00" endTime="2026-10-05T13:47:30.0440284+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bbd5d1aa-2b8c-4f9e-a94d-d4f0c68acb07" />
+    <UnitTestResult executionId="c1343522-5f72-4052-b039-bae5864da854" testId="bcfcbfa7-4cdf-f413-4b16-855ca0b97e47" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;torn-write&quot;, canActivate: False)" computerName="OS008-HOME" duration="00:00:01.3289238" startTime="2026-10-05T13:47:34.1701642+03:00" endTime="2026-10-05T13:47:35.4996658+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c1343522-5f72-4052-b039-bae5864da854">
+      <Output>
+        <ErrorInfo>
+          <Message>{"JoinedBeforeFallback":true,"Hba":"temporary-pg_hba.conf","Ident":"final-pgy-pg_ident.conf","PartialStateRetained":true,"Failure":"Authentication has unaccounted bytes; preserve them and keep runtime blocked.","Completed":false,"Reply":null}</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(String scenario, Boolean canActivate) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 81&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="db92a36c-ffe5-47f5-b46f-35b0eadcc3a9" testId="fcd012cd-a1e4-1449-b0d0-d149194f4ba9" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;temporary&quot;, canActivate: False)" computerName="OS008-HOME" duration="00:00:01.4112352" startTime="2026-10-05T13:47:32.7584459+03:00" endTime="2026-10-05T13:47:34.1699430+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db92a36c-ffe5-47f5-b46f-35b0eadcc3a9" />
+    <UnitTestResult executionId="e34c2785-cdde-4e07-a4f2-f5c1fbcda127" testId="1c398760-8035-d415-6014-b95dc622fea3" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;final-unconfirmed&quot;, canActivate: False)" computerName="OS008-HOME" duration="00:00:01.3297003" startTime="2026-10-05T13:47:31.4283709+03:00" endTime="2026-10-05T13:47:32.7582508+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e34c2785-cdde-4e07-a4f2-f5c1fbcda127" />
+    <UnitTestResult executionId="dd3f18ad-e547-49d4-ac15-16ea4019a86a" testId="7622d98b-255f-71f3-96d0-751e5ccc1c6a" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;unknown-bytes&quot;, canActivate: False)" computerName="OS008-HOME" duration="00:00:01.2558443" startTime="2026-10-05T13:47:27.4324026+03:00" endTime="2026-10-05T13:47:28.6780190+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dd3f18ad-e547-49d4-ac15-16ea4019a86a" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;before-truncate&quot;, canActivate: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="be4f558f-3090-98dd-d9ac-a5b663227347">
+      <Execution id="1d8621b8-4a90-41b4-9ace-46a5352a312d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;final-unconfirmed&quot;, canActivate: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="1c398760-8035-d415-6014-b95dc622fea3">
+      <Execution id="e34c2785-cdde-4e07-a4f2-f5c1fbcda127" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;final&quot;, canActivate: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="fc5d2494-51c4-5958-5ff0-b8793735677b">
+      <Execution id="70f85263-443f-4951-bfdc-67b3190aba80" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;unknown-bytes&quot;, canActivate: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="7622d98b-255f-71f3-96d0-751e5ccc1c6a">
+      <Execution id="dd3f18ad-e547-49d4-ac15-16ea4019a86a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;temporary&quot;, canActivate: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="fcd012cd-a1e4-1449-b0d0-d149194f4ba9">
+      <Execution id="db92a36c-ffe5-47f5-b46f-35b0eadcc3a9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;torn-write&quot;, canActivate: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="bcfcbfa7-4cdf-f413-4b16-855ca0b97e47">
+      <Execution id="c1343522-5f72-4052-b039-bae5864da854" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: &quot;administrator-survives&quot;, canActivate: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="56ced5cd-ed5d-2e71-cd76-e9e344ed372e">
+      <Execution id="bbd5d1aa-2b8c-4f9e-a94d-d4f0c68acb07" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="fc5d2494-51c4-5958-5ff0-b8793735677b" executionId="70f85263-443f-4951-bfdc-67b3190aba80" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be4f558f-3090-98dd-d9ac-a5b663227347" executionId="1d8621b8-4a90-41b4-9ace-46a5352a312d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="56ced5cd-ed5d-2e71-cd76-e9e344ed372e" executionId="bbd5d1aa-2b8c-4f9e-a94d-d4f0c68acb07" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bcfcbfa7-4cdf-f413-4b16-855ca0b97e47" executionId="c1343522-5f72-4052-b039-bae5864da854" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fcd012cd-a1e4-1449-b0d0-d149194f4ba9" executionId="db92a36c-ffe5-47f5-b46f-35b0eadcc3a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c398760-8035-d415-6014-b95dc622fea3" executionId="e34c2785-cdde-4e07-a4f2-f5c1fbcda127" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7622d98b-255f-71f3-96d0-751e5ccc1c6a" executionId="dd3f18ad-e547-49d4-ac15-16ea4019a86a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="5" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.82]       {"Hba":"temporary-pg_hba.conf","Failure":"Authentication has unaccounted bytes; preserve them and keep runtime blocked.","JoinedBeforeFallback":true,"PartialStateRetained":true,"Completed":false,"Ident":"final-pg_ident.confconf","Reply":null}&#xD;
+[xUnit.net 00:00:01.82]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.82]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(81,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(String scenario, Boolean canActivate)&#xD;
+[xUnit.net 00:00:01.82]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.90]       {"JoinedBeforeFallback":true,"Hba":"temporary-pg_hba.conf","Ident":"final-pgy-pg_ident.conf","PartialStateRetained":true,"Failure":"Authentication has unaccounted bytes; preserve them and keep runtime blocked.","Completed":false,"Reply":null}&#xD;
+[xUnit.net 00:00:09.90]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.90]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(81,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(String scenario, Boolean canActivate)&#xD;
+[xUnit.net 00:00:09.90]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.91]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T13:47:27.4232722+03:00">
+        <Text>[xUnit.net 00:00:01.82]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: "before-truncate", canActivate: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T13:47:35.5000795+03:00">
+        <Text>[xUnit.net 00:00:09.90]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Independent_authentication_cleanup_joins_its_real_job_and_preserves_successful_final_state(scenario: "torn-write", canActivate: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

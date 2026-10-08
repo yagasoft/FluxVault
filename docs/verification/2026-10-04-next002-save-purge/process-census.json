@@ -1,0 +1,107 @@
+{
+  "CheckedUtc": "2026-10-04T13:26:33.4899370Z",
+  "ThisChatsTemporaryBuildTestAndCliProcessesAbsent": true,
+  "Unattributed": [],
+  "AttributedOtherChatWorkerCount": 7,
+  "PreservedOtherChatWorkers": [
+    {
+      "ProcessId": 33660,
+      "Name": "dotnet.exe",
+      "StartedUtc": "2026-10-04T12:45:04.7676050Z",
+      "DifferentChatConfirmed": true,
+      "Preserved": true
+    },
+    {
+      "ProcessId": 12912,
+      "Name": "dotnet.exe",
+      "StartedUtc": "2026-10-04T12:53:22.4881700Z",
+      "DifferentChatConfirmed": true,
+      "Preserved": true
+    },
+    {
+      "ProcessId": 29976,
+      "Name": "dotnet.exe",
+      "StartedUtc": "2026-10-04T12:53:22.4881880Z",
+      "DifferentChatConfirmed": true,
+      "Preserved": true
+    },
+    {
+      "ProcessId": 24096,
+      "Name": "dotnet.exe",
+      "StartedUtc": "2026-10-04T12:53:22.4881730Z",
+      "DifferentChatConfirmed": true,
+      "Preserved": true
+    },
+    {
+      "ProcessId": 35288,
+      "Name": "dotnet.exe",
+      "StartedUtc": "2026-10-04T12:53:22.4882010Z",
+      "DifferentChatConfirmed": true,
+      "Preserved": true
+    },
+    {
+      "ProcessId": 25404,
+      "Name": "dotnet.exe",
+      "StartedUtc": "2026-10-04T12:53:22.4908770Z",
+      "DifferentChatConfirmed": true,
+      "Preserved": true
+    }
+  ],
+  "AttributionMethod": "Read-only native process environment inspection; CODEX_THREAD_ID differs from this chat for every preserved worker. Only task identity and no-reuse control fields were inspected for output.",
+  "NormalServices": [
+    {
+      "Name": "postgresql-x64-18",
+      "State": "Running",
+      "ProcessId": 7296
+    },
+    {
+      "Name": "FluxVaultService",
+      "State": "Running",
+      "ProcessId": 40216
+    }
+  ],
+  "NormalProcesses": [
+    {
+      "Id": 40216,
+      "Name": "FluxVault.Service",
+      "StartedUtc": "2026-10-02T07:02:21.5434164Z",
+      "Unchanged": true
+    },
+    {
+      "Id": 7296,
+      "Name": "pg_ctl",
+      "StartedUtc": "2026-10-01T13:38:16.1935068Z",
+      "Unchanged": true
+    }
+  ],
+  "PreservedHashes": [
+    {
+      "Path": "C:\\ProgramData\\FluxVault\\config.json",
+      "Hash": "6C52FAFC7325B1C194DE6D4F510441DC6197CB6833A75E9A5570713CD982794F",
+      "Unchanged": true
+    },
+    {
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_hba.conf",
+      "Hash": "C37D219F5AEE60D710ABCD9628A1F3D6C94F5C9861B4E31A52290DE995D97379",
+      "Unchanged": true
+    },
+    {
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_ident.conf",
+      "Hash": "2151E28F0BF5A8BB69109F91DBE61EBFFE48C6F9B71620F6A7B0B02B410E7DE5",
+      "Unchanged": true
+    },
+    {
+      "Path": "E:\\Drive\\Work (1)\\Code\\FluxVault\\scripts\\fluxvault-index.json",
+      "Hash": "9752DDF184A20EF4C574BB462083265C2FD3126153F73F8C2783F6A5FD1A5911",
+      "Unchanged": true
+    },
+    {
+      "Path": "E:\\Drive\\Work (1)\\Code\\FluxVault\\scripts\\fluxvault-index.ps1",
+      "Hash": "19BDE2B0593DA98696FC768F0DD0A68C08AE939D718B08B57891511E35F1CFE0",
+      "Unchanged": true
+    }
+  ],
+  "HashesUnchanged": true,
+  "NormalProcessesUnchanged": true,
+  "NormalSnapshotVerifiedUtc": "2026-10-04T13:19:04.0686618Z"
+}

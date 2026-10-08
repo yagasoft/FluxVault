@@ -8,6 +8,35 @@ namespace FluxVault.Core.Tests;
 
 public sealed class ConfigurationStoreTests
 {
+    [Theory]
+    [InlineData(null,500)]
+    [InlineData(0,100)]
+    [InlineData(2300,2300)]
+    [InlineData(10000,5000)]
+    public async Task Protection_draft_delay_is_defaultable_and_bounded_by_the_real_store(int? requested,int expected)
+    {
+        using var workspace=TemporaryWorkspace.Create();
+        var path=Path.Combine(workspace.RootPath,"config.json");
+        var store=new FileFluxVaultConfigurationStore(path,workspace.RootPath);
+        var config=FluxVaultConfiguration.CreateDefault(workspace.RootPath) with{ProtectionDraft=requested is null ? null! : new(requested.Value)};
+        await store.SaveAsync(config);
+        Assert.Equal(expected,(await new FileFluxVaultConfigurationStore(path,workspace.RootPath).LoadAsync()).ProtectionDraft.SaveDelayMilliseconds);
+    }
+
+    [Theory]
+    [InlineData(null, 100)]
+    [InlineData(0, 1)]
+    [InlineData(37, 37)]
+    [InlineData(1000, 256)]
+    public async Task Recovery_browse_policy_is_defaultable_and_bounded_by_the_real_configuration_store(int? requested, int expected)
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var path = Path.Combine(workspace.RootPath, "config.json");
+        var store = new FileFluxVaultConfigurationStore(path, workspace.RootPath);
+        var config = FluxVaultConfiguration.CreateDefault(workspace.RootPath) with { RepositoryBrowse = requested is null ? null! : new(requested.Value) };
+        await store.SaveAsync(config);
+        Assert.Equal(expected, (await new FileFluxVaultConfigurationStore(path, workspace.RootPath).LoadAsync()).RepositoryBrowse.ItemsPerPage);
+    }
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         WriteIndented = true,
@@ -97,7 +126,7 @@ public sealed class ConfigurationStoreTests
     }
 
     [Fact]
-    public async Task Profile_configuration_store_saves_only_selected_profile()
+    public async Task Legacy_configuration_with_multiple_records_is_refused_without_changing_existing_data()
     {
         using var workspace = TemporaryWorkspace.Create();
         var configPath = Path.Combine(workspace.RootPath, "config.json");
@@ -111,15 +140,11 @@ public sealed class ConfigurationStoreTests
             {
                 RepositoryPath = Path.Combine(workspace.RootPath, "archive-repository")
             });
-        await profileSetStore.SaveAsync(new FluxVaultProfileSetConfiguration(first.Id, [first, second]));
-        var selectedStore = new FluxVaultProfileConfigurationStore(profileSetStore, "archive");
-        var updated = second.Configuration with { RepositoryPath = Path.Combine(workspace.RootPath, "archive-repository-2") };
-
-        await selectedStore.SaveAsync(updated);
-
-        var loaded = await profileSetStore.LoadAsync();
-        Assert.Equal(first.Configuration.RepositoryPath, loaded.Profiles.Single(profile => profile.Id == first.Id).Configuration.RepositoryPath);
-        Assert.Equal(updated.RepositoryPath, loaded.Profiles.Single(profile => profile.Id == "archive").Configuration.RepositoryPath);
+        Directory.CreateDirectory(workspace.RootPath);
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(new { ActiveProfileId = first.Id, Profiles = new[] { first, second } }, JsonOptions);
+        await File.WriteAllBytesAsync(configPath, bytes);
+        await Assert.ThrowsAsync<InvalidDataException>(() => profileSetStore.LoadAsync());
+        Assert.Equal(bytes, await File.ReadAllBytesAsync(configPath));
     }
 
     [Fact]

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="c00c74cc-097e-48a8-a996-1c813becb78a" name="os008@OS008-HOME 2026-10-04 09:44:10" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T09:44:10.2088739+03:00" queuing="2026-10-04T09:44:10.2088741+03:00" start="2026-10-04T09:44:09.4240623+03:00" finish="2026-10-04T09:44:10.2136954+03:00" />
+  <TestSettings name="default" id="f2fea767-4923-42ea-b90c-7dc70fd4ec6e">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_09_44_10" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="73eadd45-9f8e-4548-86f9-90045f5f8e13" testId="c4927af5-b598-753b-472d-f9a6c1f69703" testName="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Missing_selected_root_is_missing_for_status_but_unavailable_for_child_reconciliation" computerName="OS008-HOME" duration="00:00:00.0494494" startTime="2026-10-04T09:44:10.0264736+03:00" endTime="2026-10-04T09:44:10.1014004+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73eadd45-9f8e-4548-86f9-90045f5f8e13">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Unavailable&#xD;
+Actual:   Missing</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Missing_selected_root_is_missing_for_status_but_unavailable_for_child_reconciliation() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs:line 22&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6acfdb89-2c42-497d-92d5-46090397d0df" testId="c882a0e6-1992-e8d9-387a-f36d9f9cfabe" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Ordinary_case_variant_resolves_the_same_selected_root" computerName="OS008-HOME" duration="00:00:00.0511166" startTime="2026-10-04T09:44:10.0250697+03:00" endTime="2026-10-04T09:44:10.0934641+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6acfdb89-2c42-497d-92d5-46090397d0df">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Missing&#xD;
+Actual:   Unavailable</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsCallerSourceTests.Ordinary_case_variant_resolves_the_same_selected_root() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 24&#xD;
+   at FluxVault.Windows.Tests.WindowsCallerSourceTests.Ordinary_case_variant_resolves_the_same_selected_root() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 24&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsProtectionSourceTests.Missing_selected_root_is_missing_for_status_but_unavailable_for_child_reconciliation" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="c4927af5-b598-753b-472d-f9a6c1f69703">
+      <Execution id="73eadd45-9f8e-4548-86f9-90045f5f8e13" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsProtectionSourceTests" name="Missing_selected_root_is_missing_for_status_but_unavailable_for_child_reconciliation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Ordinary_case_variant_resolves_the_same_selected_root" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="c882a0e6-1992-e8d9-387a-f36d9f9cfabe">
+      <Execution id="6acfdb89-2c42-497d-92d5-46090397d0df" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Ordinary_case_variant_resolves_the_same_selected_root" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c4927af5-b598-753b-472d-f9a6c1f69703" executionId="73eadd45-9f8e-4548-86f9-90045f5f8e13" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c882a0e6-1992-e8d9-387a-f36d9f9cfabe" executionId="6acfdb89-2c42-497d-92d5-46090397d0df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.26]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.26]       Expected: Missing&#xD;
+[xUnit.net 00:00:00.26]       Actual:   Unavailable&#xD;
+[xUnit.net 00:00:00.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs(24,0): at FluxVault.Windows.Tests.WindowsCallerSourceTests.Ordinary_case_variant_resolves_the_same_selected_root()&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs(24,0): at FluxVault.Windows.Tests.WindowsCallerSourceTests.Ordinary_case_variant_resolves_the_same_selected_root()&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.26]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.26]       Expected: Unavailable&#xD;
+[xUnit.net 00:00:00.26]       Actual:   Missing&#xD;
+[xUnit.net 00:00:00.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsProtectionSourceTests.cs(22,0): at FluxVault.Windows.Tests.WindowsProtectionSourceTests.Missing_selected_root_is_missing_for_status_but_unavailable_for_child_reconciliation()&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:44:10.0963533+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Ordinary_case_variant_resolves_the_same_selected_root [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T09:44:10.1016197+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Windows.Tests.WindowsProtectionSourceTests.Missing_selected_root_is_missing_for_status_but_unavailable_for_child_reconciliation [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

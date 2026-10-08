@@ -1,0 +1,31 @@
+{
+  "AllMatch": true,
+  "RecoveredFiles": [
+    {
+      "Length": 99,
+      "ExpectedSha256": "447DC63503079705DDE331F11877CE0F44BBDF01BCE26CE1FB8CCA5D4F7235F3",
+      "RecoveredSha256": "447DC63503079705DDE331F11877CE0F44BBDF01BCE26CE1FB8CCA5D4F7235F3",
+      "Recovered": "C:\\Users\\os008\\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\\Recovered\\Installed candidate proof-Recovered\\Completion.txt",
+      "SourceSha256": "447DC63503079705DDE331F11877CE0F44BBDF01BCE26CE1FB8CCA5D4F7235F3",
+      "Matches": true,
+      "SourceUnchanged": true,
+      "Source": "C:\\Users\\os008\\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\\Installed candidate proof\\Completion.txt"
+    },
+    {
+      "Length": 8388608,
+      "ExpectedSha256": "747376B50F31F63866810EDD86679B6DD0E20897F2FA832159EFF31B281BD74B",
+      "RecoveredSha256": "747376B50F31F63866810EDD86679B6DD0E20897F2FA832159EFF31B281BD74B",
+      "Recovered": "C:\\Users\\os008\\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\\Recovered\\Installed candidate proof-Recovered\\Working file.psd",
+      "SourceSha256": "747376B50F31F63866810EDD86679B6DD0E20897F2FA832159EFF31B281BD74B",
+      "Matches": true,
+      "SourceUnchanged": true,
+      "Source": "C:\\Users\\os008\\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\\Installed candidate proof\\Working file.psd"
+    }
+  ],
+  "ObservedUtc": "2026-10-08T05:45:56.8068581+00:00",
+  "FreshOutputUsed": true,
+  "ExistingFourSourcesUnchanged": true,
+  "CandidateId": "a39b83ad153a49d0a6779a5098bb02f2",
+  "IndependentTool": "PowerShell Get-FileHash SHA256",
+  "VersionId": "01a11a0a476c728daa2ebf0391c752cc"
+}

@@ -2,32 +2,69 @@
 
 ## Verified recovery lane
 
-The [October 2026 acceptance record](verification/2026-10-01-verified-recovery/README.md)
-is the source for observed results. A passing non-database run is not the full
-integrity gate. For quick checks without a disposable server:
+The [current NEXT-002 acceptance record](verification/2026-10-05-next002-rollout-preparation/README.md)
+and [owned integrity fixture](verification/2026-10-04-next002-integrity-runner/README.md)
+contain the observed results and native prerequisites. A passing non-database
+run is not the full integrity gate. For ordinary checks without that fixture:
 
 ```powershell
-dotnet test FluxVault.slnx -c Release --filter "Category!=RequiresPostgreSql"
+dotnet test FluxVault.slnx -c Release -m:1 --filter "Category!=RequiresPostgreSql&Category!=RequiresPreparedWindowsInstallation"
 ```
 
-For the complete suite, supply an existing PostgreSQL server binary directory:
+The required native PostgreSQL lane runs only on the authorised Windows
+installation, with its approved test identities, scoped package/certificate
+registration and protected fixture prerequisites. Use a fresh approved fixture
+identifier and evidence directory:
 
 ```powershell
-./eng/test-repository-integrity.ps1 -PostgreSqlBinPath '<existing bin directory>' -RunFullSuite
+./eng/test-repository-integrity.ps1 -FixtureId '<fresh approved 32-hex fixture id>' -EvidenceDirectory '<evidence directory>'
 ```
 
-The runner initialises a fresh GUID data directory under TEMP, uses a free
-loopback port other than 5432, starts only its owned hidden child process and
-retains version/log/TRX evidence. It does not install PostgreSQL, use the normal
-service/database or stop another server. Explicit database-test selection without
-this owned environment fails with an actionable prerequisite message; no tests
-silently skip. CI now calls this runner using installed server binaries; hosted
-execution is still unverified until the SQL gate passes.
+The runner uses protected owned resources under
+`C:\ProgramData\FluxVault.Tests\NEXT002`, authenticated SSPI access to a private
+cluster, protected test binaries and bounded SYSTEM jobs. It records process
+identities and checks teardown while preserving normal service, authentication
+and data state. It never restarts normal PostgreSQL. Missing ownership or
+authentication prerequisites fail visibly; no database case silently skips.
+
+Hosted CI builds the solution and explicitly runs ordinary tests excluding
+`RequiresPostgreSql` and `RequiresPreparedWindowsInstallation`, with assemblies
+run sequentially to avoid contention between deadline-sensitive checks. The 40
+PostgreSQL cases and applicable S01–S08 native
+security gates remain required through the approved Windows fixtures and their
+retained evidence. They are not run or established by hosted CI. Relevant code,
+dependency, configuration or environment changes require fresh affected native
+proof before acceptance; unchanged evidence may be reused.
+
+The eight `RequiresPreparedWindowsInstallation` cases also remain required on
+the approved Windows installation: seven fixed-target PostgreSQL ACL cases and
+one persisted native CNG-key recovery. They depend on actual reviewed installation
+ancestors or the admitted native key profile, and retain the accepted local
+343-case Integration evidence. They are not hosted passes or skips. To select
+them on that installation, with its approved prerequisites:
+
+```powershell
+dotnet test tests/FluxVault.Integration.Tests/FluxVault.Integration.Tests.csproj -c Release --filter "Category=RequiresPreparedWindowsInstallation"
+```
+
+Portable orchestration tests model only their declared direct-administrator and
+SDK-snapshot prerequisites; real descriptor, hash, receipt, asset and refusal
+assertions remain. Synthetic SSPI input uses PostgreSQL's observed LF log format.
+These substitutions do not establish real account membership or signed SDK
+admission, which remain covered by the separate native gates.
+Setup/packaging orchestration uses protected owned copies of current assemblies,
+unchanged fixture modules and the actual logo, rather than workstation candidate
+paths or hosted-checkout ownership. Normal-startup observation uses the existing
+ten-second window and retains idle/render/join assertions; it is not a three-second
+startup target. The stalled-output/missing-receipt resource test configures a
+two-second frame deadline with finite five-second observation waits. Short-input
+deadline coverage and production settings remain unchanged.
 
 `FluxVault.TestHost` is test-only and excluded from installer/publish projects.
-Its child-process root must be a generated TEMP GUID. The private named pipe is
-current-user-only and has a generated name; fixture commands and paths are
-restricted. PostgreSQL fixtures confirm the owned process, server data directory,
+Ordinary process helpers use generated disposable roots and private pipes;
+privileged native checks use the approved protected fixture and its explicit
+identity boundary. Fixture commands and paths are restricted. PostgreSQL
+fixtures confirm the owned process, server data directory,
 instance marker, user and port before accessing generated databases, and check
 their ownership comment before dropping them. No arbitrary endpoint is accepted.
 
@@ -373,12 +410,12 @@ Benchmark 1 GB, 10 GB, and 100 GB patterns:
 
 ## Verified-recovery live lane
 
-Run `eng/test-repository-integrity.ps1 -PostgreSqlBinPath '<existing bin directory>' -RunFullSuite` on Windows. It uses `pg_ctl start` with PostgreSQL's restricted token, an owned GUID data directory and a non-standard loopback port. Its finally block stops owned UI/server children and the identified postmaster and verifies exit, including startup failures. It never uses or stops the installed PostgreSQL service. The `-InspectUi` mode opens the real WPF window on a private fixture pipe and ends on its generated `stop-ui.signal`, window exit or a bounded timeout.
+Run `eng/test-repository-integrity.ps1 -FixtureId '<fresh approved 32-hex fixture id>' -EvidenceDirectory '<evidence directory>'` only with the [approved native prerequisites](verification/2026-10-04-next002-integrity-runner/README.md). The owned SSPI cluster and protected SYSTEM jobs provide the required database lane; bounded teardown verifies owned children, server, accounts, tasks and resources have retired. Normal PostgreSQL is not restarted. Actual desktop validation uses the installed WPF app and the owned desktop fixture described in the [current acceptance record](verification/2026-10-05-next002-rollout-preparation/README.md); the integrity entry point has no `-InspectUi` mode.
 
 The PostgreSQL family proves immutable descriptor/reference transactions, same-version replay/refusal, digest canonicalisation, affected-only retirement (including chunk locations), barrier-controlled record/delete ordering, cancellation and rollback, and actual process loss after a committed transaction. Private IPC tests include capture/list/verified restore, corruption refusal and responsive status while content is leased. Missing ownership prerequisites fail visibly.
 
-The parameterised [setup rehearsal](verification/2026-10-01-verified-recovery/setup-rehearsal.ps1) takes an owned cluster marker and the existing binary directory. It substitutes a fixture-only service lookup, denies service start/restart, and runs the real provisioning script against that disposable cluster with ordinary SCRAM authentication. It checks schema initialisation, runtime access after temporary-admin removal, credential-free administrator denial, collision refusal and exact preservation of rejected non-ASCII authentication bytes. Its owned cluster listens on IPv4 only; the normal installed-state check separately probes both loopback addresses.
+The historical [1 October setup rehearsal](verification/2026-10-01-verified-recovery/setup-rehearsal.ps1) used an owned cluster marker and existing binary directory. It substituted a fixture-only service lookup, denied service start/restart, and ran the provisioning script against that disposable cluster with SCRAM authentication. It checked schema initialisation, runtime access after temporary-admin removal, credential-free administrator denial, collision refusal and exact preservation of rejected non-ASCII authentication bytes. This retained evidence is not the current SSPI provisioning procedure.
 
 `FolderPublicationOrderingTests` and `PostgreSqlFolderPublicationOrderingTests` cover reversed, equal and submicrosecond file capture times, subsequent nested updates, root/nested folder deletion, sibling preservation and SQL `current_entries`. Overflow refuses acknowledgement. Deletion-version recovery continues to follow the retained predecessor.
 
-The current staging v1.0.4 [evidence](verification/2026-10-01-verified-recovery/README.md) contains the full 687-test run, native fixture folder results, installed service/CLI/UI hash recovery and six measured published-CLI trials. Resumed desktop validation proved selection and inventory survive service cache invalidation, and recovery through the native dialogue produced the expected hash. Fault injection stays in owned fixtures. `eng/release-package.ps1` rebuilds both WiX projects to avoid stale incremental payloads; extracted MSI version and every embedded/published/installed file hash are checked before treating installation as validated. Preview cleanup tests require expired empty directories to be removed and fresh writer directories to survive. All temporary processes exited; normal PostgreSQL was not restarted.
+The historical staging v1.0.4 [evidence](verification/2026-10-01-verified-recovery/README.md) contains its 687-test run, native fixture folder results, installed service/CLI/UI hash recovery and six measured published-CLI trials. The [current installed v1.0.7 acceptance](verification/2026-10-05-next002-rollout-preparation/README.md) records the single-vault save → backup → history → independently verified recovery, Options reconciliation and retained security/integrity/interruption results. Fault injection stays in owned fixtures. `eng/release-package.ps1` rebuilds both WiX projects to avoid stale incremental payloads; extracted MSI version and every embedded/published/installed file hash are checked before treating installation as validated. Preview cleanup tests require expired empty directories to be removed and fresh writer directories to survive. Both records verify temporary-process cleanup without restarting normal PostgreSQL.

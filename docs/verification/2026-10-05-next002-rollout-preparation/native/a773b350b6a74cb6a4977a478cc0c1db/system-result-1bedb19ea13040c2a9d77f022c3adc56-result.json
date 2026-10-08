@@ -1,0 +1,72 @@
+{
+  "Complete": true,
+  "Actor": "System",
+  "WindowsSid": "S-1-5-18",
+  "Results": [
+    {
+      "Kind": "CallerFiles",
+      "Result": {
+        "Passed": 163,
+        "NativeCallerTokens": true,
+        "SingleVault": true,
+        "ProtectedProductComposition": true,
+        "ActualCatalogueAndExecutor": true,
+        "ProtectedRehearsalOutputCleaned": true,
+        "DrainEffectVerified": true,
+        "DiagnosticsOutputCleaned": true,
+        "SelectionOutputCleaned": true,
+        "CreatorVerified": true,
+        "UngrantDenied": true,
+        "ExactInstalledBinding": "a773b350-b6a7-4cb6-a497-7a478cc0c1db",
+        "ProvisioningProductVerified": true,
+        "SetupRequestsJoined": true,
+        "SetupRegressionCount": 36,
+        "SetupChecks": [
+          "wrong native actor/correlation causes no storage effect and does not end setup",
+          "wrong native actor/correlation causes no storage effect and does not end setup",
+          "actual native B refusal precedes actual native A provisioning",
+          "existing-empty produces a terminal, explained unavailable result",
+          "existing-empty is refused before any other root or namespace is created",
+          "existing-file produces a terminal, explained unavailable result",
+          "existing-file is refused before any other root or namespace is created",
+          "pre-existing file bytes are untouched",
+          "metadata-namespace produces a terminal, explained unavailable result",
+          "metadata-namespace is refused before any other root or namespace is created",
+          "control-namespace produces a terminal, explained unavailable result",
+          "control-namespace is refused before any other root or namespace is created",
+          "creation-race produces a terminal, explained unavailable result",
+          "creation-race cannot publish a partial installation",
+          "exclusive native creation refuses a race target without adopting or hardening it",
+          "cancel-publication produces a terminal, explained unavailable result",
+          "cancel-publication cannot publish a partial installation",
+          "cancel-publication preserves attributable partial storage and both real namespaces",
+          "cancel-publication cannot restart partial provisioning in the same lifetime",
+          "cancel-publication cannot adopt partial state in a reopened setup lifetime",
+          "cancel-publication keeps normal product startup closed",
+          "failed-publication produces a terminal, explained unavailable result",
+          "failed-publication cannot publish a partial installation",
+          "failed-publication preserves attributable partial storage and both real namespaces",
+          "failed-publication cannot restart partial provisioning in the same lifetime",
+          "failed-publication cannot adopt partial state in a reopened setup lifetime",
+          "failed-publication keeps normal product startup closed",
+          "activation-collision produces a terminal, explained unavailable result",
+          "require-new publication cannot replace an existing activation file",
+          "activation-collision preserves attributable partial storage and both real namespaces",
+          "activation-collision cannot restart partial provisioning in the same lifetime",
+          "activation-collision cannot adopt partial state in a reopened setup lifetime",
+          "activation-collision keeps normal product startup closed",
+          "real setup publishes the exact bootstrap only after bound catalogue metadata and repository creation",
+          "same-lifetime replay returns the recorded setup result without another effect",
+          "reopened setup refuses the installed target and preserves its activation bytes"
+        ]
+      }
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "WriteRuntime": true,
+      "Kind": "ACL",
+      "ReadProtected": true
+    }
+  ],
+  "RunId": "1bedb19ea13040c2a9d77f022c3adc56"
+}

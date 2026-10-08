@@ -1,0 +1,7 @@
+{
+  "Description": "FluxVault exact staging commissioning B933D862C7489D72111E5FC8F416CBB647E54BFB25EE071823CE0909264483E9",
+  "ContextSha256": "B933D862C7489D72111E5FC8F416CBB647E54BFB25EE071823CE0909264483E9",
+  "Name": "FV-NEXT002-7871ff7f8d1b404db20771f2e742364f-cleanup",
+  "Execute": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "Arguments": "-NoProfile -NonInteractive -File \"C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\commission-authentication-cleanup.ps1\" -ContextPath \"C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\context.json\" -ContextSha256 B933D862C7489D72111E5FC8F416CBB647E54BFB25EE071823CE0909264483E9"
+}

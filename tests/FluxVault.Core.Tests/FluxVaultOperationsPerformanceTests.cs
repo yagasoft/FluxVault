@@ -687,9 +687,87 @@ public sealed class FluxVaultOperationsPerformanceTests
         }
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task History_cached_during_purge_is_invalidated_after_success_or_partial_failure(bool fails)
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        Directory.CreateDirectory(workspace.RepositoryPath);
+        var durable = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        await durable.SaveAsync(FluxVaultConfiguration.CreateDefault(workspace.RootPath) with { RepositoryPath = workspace.RepositoryPath });
+        var committed = await durable.LoadAsync();
+        IReadOnlyList<RepositoryVersionSummary> inventory = [new("old", Path.Combine(workspace.RootPath, "removed.txt"), DateTimeOffset.UtcNow, CaptureConsistency.BestEffort, 1, 1)];
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var repository = new ThrowingPurgeRepository(() => Task.FromResult(inventory), () => Task.FromResult(inventory), async () =>
+        {
+            entered.SetResult();
+            await release.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            inventory = [];
+            if (fails) throw new IOException("partial purge interrupted after deletion");
+            return new(1, 0, 0, []);
+        });
+        var operations = new FluxVaultOperations(durable, new CountingCaptureProvider(),
+            metadataStoreFactory: _ => new InMemoryRepositoryMetadataStore(), repositoryFactory: _ => repository);
+        var purging = operations.ApplyCommittedConfigurationAsync(committed, true,
+            [new(inventory[0].SourcePath, RepositoryPurgeScopeKind.File)], []);
+        try
+        {
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            Assert.Single((await operations.GetStatusAsync()).RecentVersions);
+        }
+        finally { release.TrySetResult(); }
+        var result = await purging;
+        Assert.Equal(!fails, result!.Success);
+        var after = await operations.GetStatusAsync();
+        Assert.Empty(after.RecentVersions);
+        Assert.Empty(after.TrackedEntries!);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(bool cancelled)
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        Directory.CreateDirectory(workspace.RepositoryPath);
+        var durable = new FileFluxVaultConfigurationStore(Path.Combine(workspace.RootPath, "config.json"), workspace.RootPath);
+        await durable.SaveAsync(FluxVaultConfiguration.CreateDefault(workspace.RootPath) with { RepositoryPath = workspace.RepositoryPath });
+        IReadOnlyList<RepositoryVersionSummary> inventory = [new("old", Path.Combine(workspace.RootPath, "old.txt"), DateTimeOffset.UtcNow, CaptureConsistency.BestEffort, 1, 1)];
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var cancellation = new CancellationTokenSource();
+        var repository = new ThrowingPurgeRepository(() => Task.FromResult(inventory), () => Task.FromResult(inventory), retention: async token =>
+        {
+            entered.SetResult();
+            await release.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            inventory = [];
+            if (cancelled) { cancellation.Cancel(); throw new OperationCanceledException(token); }
+            throw new IOException("retention interrupted after deletion");
+        });
+        var operations = new FluxVaultOperations(durable, new CountingCaptureProvider(),
+            metadataStoreFactory: _ => new InMemoryRepositoryMetadataStore(), repositoryFactory: _ => repository);
+        Assert.Single((await operations.GetStatusAsync()).RecentVersions);
+        var running = operations.RunRetentionNowAsync(cancellation.Token);
+        try
+        {
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            Assert.Single((await operations.GetStatusAsync()).RecentVersions);
+        }
+        finally { release.TrySetResult(); }
+        if (cancelled) await Assert.ThrowsAnyAsync<OperationCanceledException>(() => running);
+        else await Assert.ThrowsAsync<IOException>(() => running);
+        var after = await operations.GetStatusAsync();
+        Assert.Empty(after.RecentVersions);
+        Assert.Empty(after.TrackedEntries!);
+    }
+
     private sealed class ThrowingPurgeRepository(
         Func<Task<IReadOnlyList<RepositoryVersionSummary>>>? listVersions = null,
-        Func<Task<IReadOnlyList<RepositoryVersionSummary>>>? listEntries = null) : IChunkRepository
+        Func<Task<IReadOnlyList<RepositoryVersionSummary>>>? listEntries = null,
+        Func<Task<RepositoryPurgeResult>>? purge = null,
+        Func<CancellationToken, Task<RepositoryRetentionResult>>? retention = null) : IChunkRepository
     {
         public Task<FileCommitResult> CommitAsync(FileCommitRequest request, CancellationToken cancellationToken = default)
         {
@@ -713,7 +791,7 @@ public sealed class FluxVaultOperationsPerformanceTests
 
         public Task<RepositoryPurgeResult> PurgeAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken = default)
         {
-            throw new InvalidOperationException("metadata offline");
+            return purge?.Invoke() ?? throw new InvalidOperationException("metadata offline");
         }
 
         public Task<RepositoryInspection> InspectAsync(string versionId, CancellationToken cancellationToken = default)
@@ -784,7 +862,7 @@ public sealed class FluxVaultOperationsPerformanceTests
             DateTimeOffset nowUtc,
             CancellationToken cancellationToken = default)
         {
-            throw new NotSupportedException();
+            return retention?.Invoke(cancellationToken) ?? throw new NotSupportedException();
         }
     }
 }

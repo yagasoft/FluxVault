@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="19a0c90a-5b44-4e78-a928-019206369488" name="os008@OS008-HOME 2026-10-05 09:21:29" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T09:21:29.9768310+03:00" queuing="2026-10-05T09:21:29.9768311+03:00" start="2026-10-05T09:21:28.0664730+03:00" finish="2026-10-05T09:21:31.4001004+03:00" />
+  <TestSettings name="default" id="7b9bcdad-2662-472a-b78c-04ff53a368ab">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_09_21_29" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6602a059-1748-40b9-8005-853112e5b9be" testId="0c2f3cfd-fdf2-0ee0-31a4-6b2a03d42e94" testName="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;native-failure&quot;)" computerName="OS008-HOME" duration="00:00:00.6329681" startTime="2026-10-05T09:21:30.7135762+03:00" endTime="2026-10-05T09:21:31.3466525+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6602a059-1748-40b9-8005-853112e5b9be" />
+    <UnitTestResult executionId="a28aebb0-ecce-4b2b-b11b-ddb55f586fb2" testId="3a0dea06-f5b2-058e-585d-7a68b0d8ce45" testName="FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning" computerName="OS008-HOME" duration="00:00:01.5875217" startTime="2026-10-05T09:21:28.7098662+03:00" endTime="2026-10-05T09:21:30.3010456+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a28aebb0-ecce-4b2b-b11b-ddb55f586fb2" />
+    <UnitTestResult executionId="6162e260-6844-474c-8302-cb85349bacdc" testId="f2f4e07b-a21f-33ac-4cb8-ab686039ac31" testName="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;existing&quot;)" computerName="OS008-HOME" duration="00:00:00.6577090" startTime="2026-10-05T09:21:28.7083791+03:00" endTime="2026-10-05T09:21:29.3757856+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6162e260-6844-474c-8302-cb85349bacdc" />
+    <UnitTestResult executionId="e36a1c28-0b51-4ec8-8698-be8c6d797a46" testId="00f1f4fd-7d52-5d42-5fe3-35a1f7076338" testName="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;success&quot;)" computerName="OS008-HOME" duration="00:00:00.6360393" startTime="2026-10-05T09:21:29.3849497+03:00" endTime="2026-10-05T09:21:30.0129163+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e36a1c28-0b51-4ec8-8698-be8c6d797a46" />
+    <UnitTestResult executionId="ef0fb962-3f8f-4ef2-9d17-d8a2a73eb8ea" testId="78807178-852b-784b-ca03-a0b737fd6207" testName="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;unsafe&quot;)" computerName="OS008-HOME" duration="00:00:00.7001330" startTime="2026-10-05T09:21:30.0137183+03:00" endTime="2026-10-05T09:21:30.7133661+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ef0fb962-3f8f-4ef2-9d17-d8a2a73eb8ea" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;success&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="00f1f4fd-7d52-5d42-5fe3-35a1f7076338">
+      <Execution id="e36a1c28-0b51-4ec8-8698-be8c6d797a46" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests" name="Registration_refuses_unsafe_changes_and_never_starts_runtime" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="3a0dea06-f5b2-058e-585d-7a68b0d8ce45">
+      <Execution id="a28aebb0-ecce-4b2b-b11b-ddb55f586fb2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.InstallerCommissioningContractTests" name="Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;existing&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="f2f4e07b-a21f-33ac-4cb8-ab686039ac31">
+      <Execution id="6162e260-6844-474c-8302-cb85349bacdc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests" name="Registration_refuses_unsafe_changes_and_never_starts_runtime" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;unsafe&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="78807178-852b-784b-ca03-a0b737fd6207">
+      <Execution id="ef0fb962-3f8f-4ef2-9d17-d8a2a73eb8ea" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests" name="Registration_refuses_unsafe_changes_and_never_starts_runtime" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;native-failure&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="0c2f3cfd-fdf2-0ee0-31a4-6b2a03d42e94">
+      <Execution id="6602a059-1748-40b9-8005-853112e5b9be" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests" name="Registration_refuses_unsafe_changes_and_never_starts_runtime" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0c2f3cfd-fdf2-0ee0-31a4-6b2a03d42e94" executionId="6602a059-1748-40b9-8005-853112e5b9be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a0dea06-f5b2-058e-585d-7a68b0d8ce45" executionId="a28aebb0-ecce-4b2b-b11b-ddb55f586fb2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f2f4e07b-a21f-33ac-4cb8-ab686039ac31" executionId="6162e260-6844-474c-8302-cb85349bacdc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00f1f4fd-7d52-5d42-5fe3-35a1f7076338" executionId="e36a1c28-0b51-4ec8-8698-be8c6d797a46" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78807178-852b-784b-ca03-a0b737fd6207" executionId="ef0fb962-3f8f-4ef2-9d17-d8a2a73eb8ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:02.87]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -447,6 +447,41 @@ public sealed class RepositoryReviewRegressionTests
         Assert.False(Directory.Exists(output));
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Preserved_reference_closure_is_refused_before_metadata_primary_or_mirror_deletion(bool folderReference)
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var inner = new InMemoryRepositoryMetadataStore();
+        var store = new ReadInterceptor(inner);
+        var mirrors = MirrorSetConfiguration.FromLegacyPath(Path.Combine(workspace.RootPath, "mirror"));
+        var repo = new FileSystemChunkRepository(workspace.RepositoryPath, new FastCdcChunker(new ChunkingOptions(128, 256, 512)),
+            new Blake3ContentHasher(), new ZstdChunkCodec(), mirrors, store);
+        var office = Path.Combine(workspace.RootPath, "office");
+        var removed = await repo.CommitAsync(RepositoryIntegrityTests.Request("protected bytes") with
+        {
+            SourcePath = Path.Combine(workspace.RootPath, folderReference ? "office" : "cad", "nested", "removed.txt"),
+            WatchedFolderPath = folderReference ? office : null
+        });
+        if (!folderReference)
+            await repo.CommitAsync(RepositoryIntegrityTests.Request("protected bytes") with { SourcePath = Path.Combine(office, "copy.docx") });
+        var before = (await inner.ListVersionsAsync()).Select(version => version.VersionId).Order().ToArray();
+        var files = new[] { workspace.RepositoryPath, mirrors.EnabledNodes[0].Path }
+            .SelectMany(root => Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories)).ToDictionary(path => path, File.ReadAllBytes);
+
+        await Assert.ThrowsAsync<RepositoryIntegrityException>(() => repo.PurgeAsync(new(
+            [new(removed.Manifest.SourcePath, RepositoryPurgeScopeKind.File)],
+            [new(office, folderReference ? RepositoryPurgeScopeKind.ImmediateFiles : RepositoryPurgeScopeKind.RecursiveFolder)])));
+
+        Assert.Equal(0, store.DeleteCalls);
+        Assert.Equal(before, (await inner.ListVersionsAsync()).Select(version => version.VersionId).Order().ToArray());
+        foreach (var (path, bytes) in files) Assert.Equal(bytes, await File.ReadAllBytesAsync(path));
+        var recovered = Path.Combine(workspace.RootPath, "still-recoverable.txt");
+        await repo.RestoreAsync(removed.Manifest.VersionId, recovered);
+        Assert.Equal("protected bytes", await File.ReadAllTextAsync(recovered));
+    }
+
     private static FileSystemChunkRepository Create(string root, IRepositoryMetadataStore store) => new(root,
         new FastCdcChunker(new ChunkingOptions(128, 256, 512)), new Blake3ContentHasher(), new ZstdChunkCodec(), null, store);
 

@@ -1,0 +1,31 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Windows.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+  Failed FluxVault.Windows.Tests.MaintenanceExecutorTests.Supported_maintenance_commands_reach_the_protected_storage_boundary(command: GetSyncStatus) [< 1 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+[xUnit.net 00:00:00.28]     FluxVault.Windows.Tests.MaintenanceExecutorTests.Supported_maintenance_commands_reach_the_protected_storage_boundary(command: GetSyncStatus) [FAIL]
+Actual:   False
+  Stack Trace:
+     at FluxVault.Windows.Tests.MaintenanceExecutorTests.Supported_maintenance_commands_reach_the_protected_storage_boundary(FluxVaultIpcCommand command) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\MaintenanceExecutorTests.cs:line 36
+   at FluxVault.Windows.Tests.MaintenanceExecutorTests.Supported_maintenance_commands_reach_the_protected_storage_boundary(FluxVaultIpcCommand command) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\MaintenanceExecutorTests.cs:line 41
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:00.28]     FluxVault.Windows.Tests.MaintenanceExecutorTests.Pause_support_requires_catalogue_completion_and_never_toggles_an_admitted_snapshot_in_the_executor [FAIL]
+  Failed FluxVault.Windows.Tests.MaintenanceExecutorTests.Pause_support_requires_catalogue_completion_and_never_toggles_an_admitted_snapshot_in_the_executor [< 1 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at FluxVault.Windows.Tests.MaintenanceExecutorTests.Pause_support_requires_catalogue_completion_and_never_toggles_an_admitted_snapshot_in_the_executor() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\MaintenanceExecutorTests.cs:line 77
+   at FluxVault.Windows.Tests.MaintenanceExecutorTests.Pause_support_requires_catalogue_completion_and_never_toggles_an_admitted_snapshot_in_the_executor() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\MaintenanceExecutorTests.cs:line 82
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-pause-sync\windows-red.trx
+
+Failed!  - Failed:     2, Passed:    28, Skipped:     0, Total:    30, Duration: 96 ms - FluxVault.Windows.Tests.dll (net10.0)

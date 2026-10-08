@@ -18,6 +18,10 @@ records 687 passing tests, native fixture recovery, and installed service/CLI/UI
 recovery with independent hashes. Desktop validation also proved inventory and
 selection survive service cache invalidation. All temporary processes exited;
 the installed service remains healthy with no watched test folders. The UI rebuild has not started.
+The bounded [protection-save repair](docs/protection-saves.md) preserves unrelated
+settings and stops dependent backup after an unsuccessful save. Its isolated
+[verification](docs/verification/2026-10-03-protection-save/README.md) does not
+establish NEXT-002 security or installed release readiness.
 Fresh owned local NTFS storage is required; existing unmarked non-empty roots
 are preserved and refused. Unrestricted use with working files remains outside
 this slice's verified scope.
@@ -66,7 +70,7 @@ FluxVault now has a developer-usable MVP loop:
   captures without matching writer coverage are crash-consistent.
 - Version list, inspect, restore, diagnostics export, local repository, and a
   `MirrorSet` for optional mirrors. Version previews open through a temporary
-  FluxVault-owned copy and do not write restore-lineage hints.
+  copy private to the requesting Windows user and do not write restore-lineage hints.
 - Append-only version lineage in manifests. Same-path captures record parent
   versions, restores leave a pending lineage hint for the next capture, and
   identical copied files become visible inherited versions without re-uploading
@@ -75,9 +79,10 @@ FluxVault now has a developer-usable MVP loop:
   validates referenced manifests and chunks, repairs only from a healthy
   primary/mirror counterpart, and restore rehearsal verifies recent versions in
   FluxVault-owned temporary output.
-- Conservative automatic retention and manual-first repository maintenance, with a
-  WPF Options dialog for previewing retention, running retention, editing
-  maintenance cadence, and opting into automatic mirror repair/rehearsal runs.
+- Conservative automatic retention and manual repository maintenance, with a
+  WPF Options dialog for previewing/running retention and configuring manual
+  mirror repair and restore rehearsal. Automatic maintenance is unavailable
+  in the single-vault build; saved scheduling preferences are preserved.
 - Dedicated Mirrors workspace for adding and editing mirror node label, path,
   enabled state, capacity budget, and priority through an explicit dialog,
   while placement profile and minimum mirror copies remain workspace-level
@@ -296,6 +301,17 @@ FluxVault temporary state folder, verifies logical length, records pass/fail
 results, then removes the temporary output without creating repository versions
 or restore-lineage hints.
 
+**Export diagnostics** asks for a local
+folder and cancels without dispatching an operation if you dismiss the picker.
+The protected service creates a new `fluxvault-diagnostics-<operation-id>.json`
+report through your Windows file permissions. The versioned report contains the
+admitted repository identity, configuration revision and current status, including
+any unavailable runtime capability. Publication warnings remain visible. An
+unconfirmed acknowledgement explains that a report may already exist; inspect
+the selected folder before another export. Replaying an operation returns its
+recorded result without overwriting an edited report or recreating a deleted one.
+Export preserves pending protection edits and does not start backup.
+
 Open **Options** > **Advanced** > **Diagnostics** to control bounded service
 file logging and performance telemetry. Service JSONL logs are enabled by
 default at `Warning` level under `C:\ProgramData\FluxVault\logs`, with a 25 MB
@@ -333,7 +349,10 @@ workspace. **Drain selected** copies required chunk/metadata artefacts from the
 healthy primary repository to remaining target mirrors first, then deletes the
 selected mirror's chunk/metadata copies only when those required copies are
 satisfied. A successful drain disables the selected mirror node in
-configuration. Ordinary **Remove from configuration** remains a separate
+configuration. The protected service requires another enabled destination and
+publishes the disablement, revision and retained result together. An incomplete
+drain keeps the destination enabled and explains the remaining work; pending
+protection edits are retained. Ordinary **Remove from configuration** remains a separate
 unsaved configuration edit and does not move or clean existing mirror data.
 Editing an existing mirror's path, enabled state, capacity, or priority marks
 the mirror as needing explicit migration work; saving persists configuration
@@ -400,15 +419,70 @@ scanning manifest files, and metadata outbox rows export to replayable
 clean PostgreSQL bootstrap, legacy import, backup/restore recovery,
 large-vault performance, and release smoke coverage.
 
-Open **Options** to review retention, scheduled maintenance, and the default
+Open **Options** to review retention, manual maintenance, and the default
 workload preset assigned to newly protected folders/files. The MVP
 retention defaults keep every version for 24 hours, keep one version per hour
 for 30 days, keep one version per day for 180 days, and always keep at least
 the latest 20 versions per source file. Retention is enabled by default and
 runs after successful service backups; the dialog can preview reclaimable
 repository space and run retention immediately. Maintenance is enabled by
-default, runs every 24 hours, repairs from a healthy mirror when possible, and
-rehearses the newest three versions unless changed in Options.
+default, repairs from a healthy mirror when possible, and rehearses the newest
+three versions during manual checks unless changed in Options. The single-vault
+service does not schedule maintenance. Options displays its saved automatic
+preference and exact interval as unavailable controls; unrelated saves preserve
+these fields and the maintenance enabled state exactly.
+
+The single-vault recovery browser loads bounded history pages. **Older** and
+**Newer** browse the selected path's history; **Refresh** starts again from the
+latest page if capture or pruning changed that history. Errors retain the
+displayed page and explain that a new page could not be confirmed. An unavailable
+initial service binding does not open an empty history window.
+
+Selecting a recorded folder loads its recorded children on demand. **More
+entries**, **First entries** and **Selected version** browse that immutable
+snapshot. Recovering a child uses its recorded version identity, even when that
+version is outside the displayed history page. A missing or pruned child is
+reported; it is not replaced by the latest live file.
+
+**Options** > **Advanced** > **Items per recovery page** controls history and
+recorded-folder page size. It defaults to 100 and normalises to 1–256. The service
+may return fewer rows to keep the response within its size limit. The typed
+`repositoryBrowse.itemsPerPage` setting survives full-record protection saves.
+
+**Options** > **Advanced** > **Keep preview copies (days)** controls expiry of
+temporary file previews. The default is 2 days; the supported range is 1–365.
+Expired copies are removed on a later preview request in a bounded pass; files
+held open by a viewer remain for a later attempt. The single-vault service
+publishes verified bytes to a fresh caller-authorised destination, never
+replaces an existing preview, and refuses folder previews. The dashboard makes
+the copy read-only and opens it as the requesting user. Publication warnings
+remain visible even if opening fails. Read-only attributes discourage accidental
+editing; the copy's owner can still edit it deliberately.
+
+The single-vault dashboard retains a protection save's full submitted snapshot
+and original operation identity before dispatch. If its acknowledgement is lost,
+reopening shows **Check save outcome**. Refreshing settings alone does not prove
+that save completed, and checking its receipt never starts a backup. Missing or
+mismatched receipts keep the snapshot blocked. A confirmed purge failure or a
+historical save followed by different current settings requires review and an
+explicit **Discard changes** reload before continuing. Unreadable records are
+preserved.
+
+Options uses the same pending-save record. Reopening restores its submitted
+settings after verified repository binding, and **Check save outcome** checks
+the original receipt and current saved configuration. Denied, unavailable or
+mismatched receipts keep the save blocked. A confirmed historical save with
+different current settings requires review and an explicit **Reload saved
+options** action. Failed reloads, concurrent record changes and newer edits
+retain the pending record and edits. Closing Options preserves protection drafts;
+different saved settings require review before protection can continue. Neither
+receipt checks nor reloads start backup. Edits that have never been submitted
+are not yet persisted across restart.
+
+Unsupported commands refused before admission report a definite failure for
+that attempt. Your edits remain available for review or discard, and a failed
+save cannot start its dependent backup. Uncertain outcomes after admission or
+execution keep their pending records.
 
 The **Advanced** options page controls capture cadence and compression. It also
 edits the skip-extension list used to avoid compressing formats such as archives

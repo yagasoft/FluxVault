@@ -1,0 +1,31 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.TestHost -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\bin\Release\net10.0-windows\FluxVault.TestHost.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Cli -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Cli\bin\Release\net10.0\FluxVault.Cli.dll
+  FluxVault.Service -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Service\bin\Release\net10.0-windows\FluxVault.Service.dll
+  FluxVault.Integration.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.98]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Manifest_snapshot_verifies_pinned_provenance_before_publishing_installed_bytes [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Manifest_snapshot_verifies_pinned_provenance_before_publishing_installed_bytes [783 ms]
+  Error Message:
+   New-VaultFixtureSnapshotFromManifest: C:\Users\os008\FluxVault.WindowsFixtureTools.4c68002bfbd04a01afd02df103a47a50\case-dc47f7f7292f4110b8fea60a28b25a8c.ps1:18
+Line |
+  18 |  $bin=New-VaultFixtureSnapshotFromManifest $root $installed $manifest  .
+     |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | The term 'New-VaultFixtureSnapshotFromManifest' is not recognized as a name of a cmdlet, function, script file,
+     | or executable program. Check the spelling of the name, or if a path was included, verify that the path is
+     | correct and try again.
+
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 535
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 543
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Manifest_snapshot_verifies_pinned_provenance_before_publishing_installed_bytes() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 13
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-03-next002-windows-fixture\pinned-manifest-red.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 798 ms - FluxVault.Integration.Tests.dll (net10.0)

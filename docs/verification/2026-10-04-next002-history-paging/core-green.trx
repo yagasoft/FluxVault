@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="c3d30d84-658c-42dd-8b21-de5189e54f85" name="os008@OS008-HOME 2026-10-04 22:22:55" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T22:22:55.4298108+03:00" queuing="2026-10-04T22:22:55.4298110+03:00" start="2026-10-04T22:22:54.7013609+03:00" finish="2026-10-04T22:22:55.4334196+03:00" />
+  <TestSettings name="default" id="ccf5b278-6ae5-4d3f-8ccd-e1eb4d2f90f4">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_22_22_55" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="12c341a9-21c2-4cd1-b65f-b8eb346ca582" testId="b9780c8e-3277-e250-1f39-babbf00d9884" testName="FluxVault.Core.Tests.RepositoryHistoryPagingTests.Snapshot_pages_are_bound_to_recorded_immutable_version_and_not_latest_child" computerName="OS008-HOME" duration="00:00:00.0089055" startTime="2026-10-04T22:22:55.3403448+03:00" endTime="2026-10-04T22:22:55.3404054+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="12c341a9-21c2-4cd1-b65f-b8eb346ca582" />
+    <UnitTestResult executionId="84394a4a-b2ac-445f-a0f8-96c85e7b5f0a" testId="ad0efa96-4c08-f9ab-4b1b-b824cbbe406d" testName="FluxVault.Core.Tests.RepositoryHistoryPagingTests.Pages_preserve_exact_ties_scope_and_bidirectional_navigation_then_refuse_changed_history" computerName="OS008-HOME" duration="00:00:00.0280063" startTime="2026-10-04T22:22:55.2965403+03:00" endTime="2026-10-04T22:22:55.3304169+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84394a4a-b2ac-445f-a0f8-96c85e7b5f0a" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.RepositoryHistoryPagingTests.Snapshot_pages_are_bound_to_recorded_immutable_version_and_not_latest_child" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="b9780c8e-3277-e250-1f39-babbf00d9884">
+      <Execution id="12c341a9-21c2-4cd1-b65f-b8eb346ca582" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.RepositoryHistoryPagingTests" name="Snapshot_pages_are_bound_to_recorded_immutable_version_and_not_latest_child" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.RepositoryHistoryPagingTests.Pages_preserve_exact_ties_scope_and_bidirectional_navigation_then_refuse_changed_history" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ad0efa96-4c08-f9ab-4b1b-b824cbbe406d">
+      <Execution id="84394a4a-b2ac-445f-a0f8-96c85e7b5f0a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.RepositoryHistoryPagingTests" name="Pages_preserve_exact_ties_scope_and_bidirectional_navigation_then_refuse_changed_history" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b9780c8e-3277-e250-1f39-babbf00d9884" executionId="12c341a9-21c2-4cd1-b65f-b8eb346ca582" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ad0efa96-4c08-f9ab-4b1b-b824cbbe406d" executionId="84394a4a-b2ac-445f-a0f8-96c85e7b5f0a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="2" executed="2" passed="2" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

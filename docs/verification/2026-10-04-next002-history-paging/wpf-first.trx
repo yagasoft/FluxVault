@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d89bb543-c884-44f5-b96a-59b5e7460647" name="os008@OS008-HOME 2026-10-04 22:47:06" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T22:47:06.6955137+03:00" queuing="2026-10-04T22:47:06.6955138+03:00" start="2026-10-04T22:47:05.2463918+03:00" finish="2026-10-04T22:47:06.6993841+03:00" />
+  <TestSettings name="default" id="b37c1205-ce05-4df3-81a4-4e923d8edcb8">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_22_47_06" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="4bd3db17-98da-4b5b-8bf8-f69d384f9baf" testId="9dfc977f-6199-64ce-8979-1db5f8c13509" testName="FluxVault.App.Tests.HistoryWindowRenderingTests.History_controls_render_at_minimum_size_and_close_after_reads_join" computerName="OS008-HOME" duration="00:00:00.6636161" startTime="2026-10-04T22:47:05.8271709+03:00" endTime="2026-10-04T22:47:06.5031693+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4bd3db17-98da-4b5b-8bf8-f69d384f9baf">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Empty() Failure: Collection was not empty&#xD;
+Collection: [System.InvalidOperationException: Cannot set Visibility to Visible or call Show, ShowDialog, Close, or WindowInteropHelper.EnsureHandle while a Window is closing.&#xD;
+   at System.Windows.Window.VerifyNotClosing()&#xD;
+   at System.Windows.Window.InternalClose(Boolean shutdown, Boolean ignoreCancel)&#xD;
+   at FluxVault.App.ProtectedFolderVersionsWindow.&lt;&gt;c__DisplayClass0_0.&lt;&lt;-ctor&gt;b__0&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ProtectedFolderVersionsWindow.xaml.cs:line 23&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;ThrowAsync&gt;b__124_0(Object state)&#xD;
+   at System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)&#xD;
+   at System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)]</Message>
+          <StackTrace>   at FluxVault.App.Tests.HistoryWindowRenderingTests.&lt;&gt;c.&lt;&lt;History_controls_render_at_minimum_size_and_close_after_reads_join&gt;b__0_0&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryWindowRenderingTests.cs:line 61&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.HistoryWindowRenderingTests.&lt;&gt;c.&lt;&lt;History_controls_render_at_minimum_size_and_close_after_reads_join&gt;b__0_0&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryWindowRenderingTests.cs:line 64&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.HistoryWindowRenderingTests.&lt;&gt;c__DisplayClass2_1.&lt;&lt;RunSta&gt;b__1&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryWindowRenderingTests.cs:line 84&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at FluxVault.App.Tests.HistoryWindowRenderingTests.RunSta(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryWindowRenderingTests.cs:line 91&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.HistoryWindowRenderingTests.History_controls_render_at_minimum_size_and_close_after_reads_join" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="9dfc977f-6199-64ce-8979-1db5f8c13509">
+      <Execution id="4bd3db17-98da-4b5b-8bf8-f69d384f9baf" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.HistoryWindowRenderingTests" name="History_controls_render_at_minimum_size_and_close_after_reads_join" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9dfc977f-6199-64ce-8979-1db5f8c13509" executionId="4bd3db17-98da-4b5b-8bf8-f69d384f9baf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.89]       Assert.Empty() Failure: Collection was not empty&#xD;
+[xUnit.net 00:00:00.89]       Collection: [System.InvalidOperationException: Cannot set Visibility to Visible or call Show, ShowDialog, Close, or WindowInteropHelper.EnsureHandle while a Window is closing.&#xD;
+[xUnit.net 00:00:00.89]          at System.Windows.Window.VerifyNotClosing()&#xD;
+[xUnit.net 00:00:00.89]          at System.Windows.Window.InternalClose(Boolean shutdown, Boolean ignoreCancel)&#xD;
+[xUnit.net 00:00:00.89]          at FluxVault.App.ProtectedFolderVersionsWindow.&lt;&gt;c__DisplayClass0_0.&lt;&lt;-ctor&gt;b__0&gt;d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ProtectedFolderVersionsWindow.xaml.cs:line 23&#xD;
+[xUnit.net 00:00:00.89]       --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.89]          at System.Threading.Tasks.Task.&lt;&gt;c.&lt;ThrowAsync&gt;b__124_0(Object state)&#xD;
+[xUnit.net 00:00:00.89]          at System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)&#xD;
+[xUnit.net 00:00:00.89]          at System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)]&#xD;
+[xUnit.net 00:00:00.89]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.89]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryWindowRenderingTests.cs(61,0): at FluxVault.App.Tests.HistoryWindowRenderingTests.&lt;&gt;c.&lt;&lt;History_controls_render_at_minimum_size_and_close_after_reads_join&gt;b__0_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:00.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.89]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryWindowRenderingTests.cs(64,0): at FluxVault.App.Tests.HistoryWindowRenderingTests.&lt;&gt;c.&lt;&lt;History_controls_render_at_minimum_size_and_close_after_reads_join&gt;b__0_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:00.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.89]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryWindowRenderingTests.cs(84,0): at FluxVault.App.Tests.HistoryWindowRenderingTests.&lt;&gt;c__DisplayClass2_1.&lt;&lt;RunSta&gt;b__1&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:00.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.89]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryWindowRenderingTests.cs(91,0): at FluxVault.App.Tests.HistoryWindowRenderingTests.RunSta(Func`1 action)&#xD;
+[xUnit.net 00:00:00.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.90]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T22:47:06.5062384+03:00">
+        <Text>[xUnit.net 00:00:00.89]     FluxVault.App.Tests.HistoryWindowRenderingTests.History_controls_render_at_minimum_size_and_close_after_reads_join [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

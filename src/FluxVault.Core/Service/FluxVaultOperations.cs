@@ -7,6 +7,7 @@ using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
+using FluxVault.Core.Capture;
 using FluxVault.Core.Cloud;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Content;
@@ -17,6 +18,7 @@ using FluxVault.Core.Storage;
 using FluxVault.Core.Storage.Metadata;
 using FluxVault.Core.Storage.Integrity;
 using FluxVault.Core.Sync;
+using FluxVault.Core.Security;
 
 namespace FluxVault.Core.Service;
 
@@ -29,8 +31,13 @@ public sealed class FluxVaultOperations(
     Func<FluxVaultConfiguration, IChunkRepository>? repositoryFactory = null,
     ProtectionRuntimeCoordinator? runtimeCoordinator = null,
     TelemetryCollector? telemetryCollector = null,
-    Func<LogRuntimeStatus>? logStatusFactory = null) : IFluxVaultRequestHandler
+    Func<LogRuntimeStatus>? logStatusFactory = null,
+    IProtectionSourceAccess? sourceAccess = null,
+    FluxVaultOperationsRuntimeState? runtimeState = null,
+    bool pageCurrentEntriesForStatus = false) : IFluxVaultRequestHandler
 {
+    private readonly FluxVaultOperationsRuntimeState runtimeState = runtimeState ?? new();
+    private readonly IProtectionSourceAccess sourceAccess = sourceAccess ?? new FileSystemProtectionSourceAccess();
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
     private readonly IRepositoryMaintenanceStateStore repositoryMaintenanceStateStore =
         repositoryMaintenanceStateStore ?? new InMemoryRepositoryMaintenanceStateStore();
@@ -38,8 +45,10 @@ public sealed class FluxVaultOperations(
         metadataStoreFactory ?? CreateMetadataStore;
     private readonly Func<FluxVaultConfiguration, IChunkRepository> repositoryFactory =
         repositoryFactory ?? (configuration => CreateRepository(configuration, (metadataStoreFactory ?? CreateMetadataStore)(configuration)));
-    private readonly ProtectionRuntimeCoordinator protectionRuntimeCoordinator = runtimeCoordinator ?? new ProtectionRuntimeCoordinator();
-    private readonly TelemetryCollector telemetryCollector = telemetryCollector ?? new TelemetryCollector(TimeProvider.System);
+    private readonly ProtectionRuntimeCoordinator? suppliedRuntimeCoordinator = runtimeCoordinator;
+    private readonly TelemetryCollector? suppliedTelemetryCollector = telemetryCollector;
+    private ProtectionRuntimeCoordinator protectionRuntimeCoordinator => suppliedRuntimeCoordinator ?? this.runtimeState.Coordinator;
+    private TelemetryCollector telemetryCollector => suppliedTelemetryCollector ?? this.runtimeState.Telemetry;
     private readonly Func<LogRuntimeStatus>? logStatusFactory = logStatusFactory;
     private readonly string restoreRehearsalRoot = Path.Combine(
         maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
@@ -48,47 +57,30 @@ public sealed class FluxVaultOperations(
         maintenanceStateRoot ?? Path.Combine(Path.GetTempPath(), "FluxVault"),
         "version-preview");
     private bool versionPreviewCleanupQueued;
-    private DateTimeOffset? lastCaptureUtc;
-    private string lastMessage = "Ready";
-    private IReadOnlyList<string> lastMirrorWarnings = [];
-    private DurableChangeRuntimeStatus? durableChange;
-    private RepositoryRetentionResult? lastRetention;
-    private readonly Lock runtimeGate = new();
-    private readonly Lock activeCaptureGate = new();
-    private readonly Dictionary<string, CaptureRuntimeStatus> captureStatuses = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, WatcherRuntimeStatus> watcherStatuses = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, CancellationTokenSource> activeCaptureTokens = new(StringComparer.OrdinalIgnoreCase);
-    private readonly HashSet<string> removedCapturePaths = new(StringComparer.OrdinalIgnoreCase);
-    private readonly SemaphoreSlim mutatingOperationGate = new(1, 1);
-    private readonly SemaphoreSlim backupOperationGate = new(1, 1);
+    private DateTimeOffset? lastCaptureUtc { get { lock (runtimeGate) return this.runtimeState.LastCaptureUtc; } set { lock (runtimeGate) this.runtimeState.LastCaptureUtc = value; } }
+    private string lastMessage { get => this.runtimeState.LastMessage; set => this.runtimeState.LastMessage = value; }
+    private IReadOnlyList<string> lastMirrorWarnings { get => this.runtimeState.LastMirrorWarnings; set => this.runtimeState.LastMirrorWarnings = value; }
+    private DurableChangeRuntimeStatus? durableChange { get => this.runtimeState.DurableChange; set => this.runtimeState.DurableChange = value; }
+    private RepositoryRetentionResult? lastRetention { get => this.runtimeState.LastRetention; set => this.runtimeState.LastRetention = value; }
+    private Lock runtimeGate => this.runtimeState.RuntimeGate;
+    private Lock activeCaptureGate => this.runtimeState.ActiveCaptureGate;
+    private Dictionary<string, CaptureRuntimeStatus> captureStatuses => this.runtimeState.CaptureStatuses;
+    private Dictionary<string, WatcherRuntimeStatus> watcherStatuses => this.runtimeState.WatcherStatuses;
+    private Dictionary<string, CancellationTokenSource> activeCaptureTokens => this.runtimeState.ActiveCaptureTokens;
+    private HashSet<string> removedCapturePaths => this.runtimeState.RemovedCapturePaths;
+    private SemaphoreSlim mutatingOperationGate => this.runtimeState.MutatingOperationGate;
+    private SemaphoreSlim backupOperationGate => this.runtimeState.BackupOperationGate;
     private readonly TimeSpan recentVersionStatusCacheDuration = TimeSpan.FromSeconds(15);
-    private IReadOnlyList<RepositoryVersionSummary>? recentVersionStatusCache;
-    private DateTimeOffset recentVersionStatusCacheUtc;
-    private (string RepositoryPath, MetadataStoreConfiguration MetadataStore)? recentVersionStatusCacheIdentity;
-    private IReadOnlyList<RepositoryVersionSummary>? trackedEntryStatusCache;
-    private DateTimeOffset trackedEntryStatusCacheUtc;
-    private (string RepositoryPath, MetadataStoreConfiguration MetadataStore)? trackedEntryStatusCacheIdentity;
-    private long repositoryStatusCacheGeneration;
+    private IReadOnlyList<RepositoryVersionSummary>? recentVersionStatusCache { get => this.runtimeState.RecentVersionStatusCache; set => this.runtimeState.RecentVersionStatusCache = value; }
+    private DateTimeOffset recentVersionStatusCacheUtc { get => this.runtimeState.RecentVersionStatusCacheUtc; set => this.runtimeState.RecentVersionStatusCacheUtc = value; }
+    private (string RepositoryPath, MetadataStoreConfiguration MetadataStore)? recentVersionStatusCacheIdentity { get => this.runtimeState.RecentVersionStatusCacheIdentity; set => this.runtimeState.RecentVersionStatusCacheIdentity = value; }
+    private IReadOnlyList<RepositoryVersionSummary>? trackedEntryStatusCache { get => this.runtimeState.TrackedEntryStatusCache; set => this.runtimeState.TrackedEntryStatusCache = value; }
+    private DateTimeOffset trackedEntryStatusCacheUtc { get => this.runtimeState.TrackedEntryStatusCacheUtc; set => this.runtimeState.TrackedEntryStatusCacheUtc = value; }
+    private (string RepositoryPath, MetadataStoreConfiguration MetadataStore)? trackedEntryStatusCacheIdentity { get => this.runtimeState.TrackedEntryStatusCacheIdentity; set => this.runtimeState.TrackedEntryStatusCacheIdentity = value; }
+    private long repositoryStatusCacheGeneration { get => this.runtimeState.RepositoryStatusCacheGeneration; set => this.runtimeState.RepositoryStatusCacheGeneration = value; }
     private FluxVaultConfiguration? currentConfiguration;
-    private BackupRuntimeStatus backupRuntime = new(
-        IsRunning: false,
-        Phase: "Idle",
-        Trigger: null,
-        StartedAtUtc: null,
-        CompletedAtUtc: null,
-        EnumeratedFileCount: 0,
-        CapturedFileCount: 0,
-        SkippedUnchangedFileCount: 0,
-        FailedFileCount: 0,
-        RecordedDeletionCount: 0,
-        ActiveWorkers: 0,
-        EffectiveWorkerCount: 0);
-    private BackgroundWorkRuntimeStatus repositoryMaintenanceRuntime = new(
-        "Repository maintenance",
-        "Waiting",
-        0,
-        0,
-        "No maintenance running");
+    private BackupRuntimeStatus backupRuntime { get => this.runtimeState.BackupRuntime; set => this.runtimeState.BackupRuntime = value; }
+    private BackgroundWorkRuntimeStatus repositoryMaintenanceRuntime { get => this.runtimeState.RepositoryMaintenanceRuntime; set => this.runtimeState.RepositoryMaintenanceRuntime = value; }
 
     public async Task<RepositoryPurgeResult?> SaveConfigurationAsync(
         FluxVaultConfiguration configuration,
@@ -103,24 +95,36 @@ public sealed class FluxVaultOperations(
         var effectivePreservedSelections = preservedSelections
             ?? GetProtectedSelectionScopes(configuration.SelectionRules);
         await configurationStore.SaveAsync(configuration, cancellationToken).ConfigureAwait(false);
+        return await ApplyCommittedConfigurationAsync(configuration, purgeRemovedSelections,
+            effectiveRemovedSelections, effectivePreservedSelections, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Applies an already durable configuration; never writes it a second time.</summary>
+    public async Task<RepositoryPurgeResult?> ApplyCommittedConfigurationAsync(
+        FluxVaultConfiguration configuration,
+        bool purgeRemovedSelections,
+        IReadOnlyList<RepositoryPurgeScope> removedSelections,
+        IReadOnlyList<RepositoryPurgeScope> preservedSelections,
+        CancellationToken cancellationToken = default)
+    {
         SetCurrentConfiguration(configuration);
-        if (effectiveRemovedSelections.Count > 0)
+        if (removedSelections.Count > 0)
         {
-            protectionRuntimeCoordinator.NotifyConfigurationChanged(effectiveRemovedSelections);
-            CancelActiveCapturesForRemovedScopes(effectiveRemovedSelections);
+            protectionRuntimeCoordinator.NotifyConfigurationChanged(removedSelections);
+            CancelActiveCapturesForRemovedScopes(removedSelections);
         }
 
-        ClearRuntimeStateForRemovedScopes(effectiveRemovedSelections);
+        ClearRuntimeStateForRemovedScopes(removedSelections);
         InvalidateRecentVersionStatusCache();
         lastMirrorWarnings = [];
         RepositoryPurgeResult? purge = null;
-        if (purgeRemovedSelections && effectiveRemovedSelections.Count > 0)
+        if (purgeRemovedSelections && removedSelections.Count > 0)
         {
             try
             {
                 var repository = CreateRepository(configuration);
                 purge = await repository.PurgeAsync(
-                        new RepositoryPurgeRequest(effectiveRemovedSelections, effectivePreservedSelections),
+                        new RepositoryPurgeRequest(removedSelections, preservedSelections),
                         cancellationToken)
                     .ConfigureAwait(false);
                 lastMirrorWarnings = purge.MirrorWarnings;
@@ -141,12 +145,18 @@ public sealed class FluxVaultOperations(
                     ErrorMessage: errorMessage);
                 lastMirrorWarnings = [$"Repository purge failed: {errorMessage}"];
             }
+            finally
+            {
+                // A concurrent status read may have cached history while purge ran.
+                // Failed/cancelled purges can also have removed some history.
+                InvalidateRecentVersionStatusCache();
+            }
         }
 
         lastMessage = purge switch
         {
             null => "Configuration saved.",
-            { Success: false } => $"Configuration saved, but purge failed: {purge.ErrorMessage}. Backup history may remain until retry.",
+            { Success: false } => $"Configuration saved, but purge failed: {purge.ErrorMessage}. History may be partially removed; review it before retrying.",
             _ => $"Configuration saved. Purged {purge.PurgedVersionCount} version(s) and {purge.DeletedChunkCount} chunk(s)."
         };
         return purge;
@@ -177,7 +187,7 @@ public sealed class FluxVaultOperations(
         var latestByPath = BuildLatestFileLookup(latestEntries);
         var (captured, captureFailed, enumerated, skipped, captureMessages, mirrorWarnings) = await CaptureTargetsAsync(
                 repository,
-                EnumerateBackupTargets(configuration, messages, () => failed++),
+                EnumerateBackupTargets(configuration, messages, () => failed++, cancellationToken),
                 effectiveWorkers,
                 latestByPath,
                 configuration.CaptureCadencePolicy.SourceDeepVerificationInterval,
@@ -245,15 +255,19 @@ public sealed class FluxVaultOperations(
         BeginBackup("Targeted backup", "Enumerating", started, effectiveWorkers);
         var latestEntries = await GetTrackedEntriesForBackupAsync(repository, cancellationToken).ConfigureAwait(false);
         var latestByPath = BuildLatestFileLookup(latestEntries);
+        var sourceMessages = new List<string>();
+        var sourceFailures = 0;
         var (captured, failed, enumerated, skipped, messages, mirrorWarnings) = await CaptureTargetsAsync(
                 repository,
-                EnumerateBackupTargets(configuration, requestedPaths, cancellationToken),
+                EnumerateBackupTargets(configuration, requestedPaths, sourceMessages, () => sourceFailures++, cancellationToken),
                 effectiveWorkers,
                 latestByPath,
                 configuration.CaptureCadencePolicy.SourceDeepVerificationInterval,
                 allowUnchangedSkip: true,
                 cancellationToken)
             .ConfigureAwait(false);
+        failed += sourceFailures;
+        messages = messages.Concat(sourceMessages).ToArray();
         var deletionSummary = await RecordTargetedDeletionsAsync(repository, configuration, requestedPaths, latestEntries, cancellationToken)
             .ConfigureAwait(false);
         failed += deletionSummary.Failed;
@@ -313,6 +327,15 @@ public sealed class FluxVaultOperations(
         return result;
     }
 
+    public async Task<RepositoryRestoreResult> RestoreVersionAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
+    {
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var result = await CreateRepository(configuration).RestoreAsync(versionId, target, cancellationToken).ConfigureAwait(false);
+        InvalidateRecentVersionStatusCache();
+        lastMessage = $"Restored and verified {result.RestoredFileCount} file(s) to {result.OutputPath}. {string.Join(" ", result.Warnings)}".TrimEnd();
+        return result;
+    }
+
     public async Task<RestoreSelectionSummary> PreviewRestoreSelectionAsync(
         string sourcePath,
         bool isDirectory,
@@ -329,6 +352,48 @@ public sealed class FluxVaultOperations(
                 execute: false,
                 cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    public async Task<FluxVaultIpcResponse> HandleRestoreSelectionAsync(FluxVaultIpcRequest request,
+        IRestoreSelectionOutputAccess outputAccess, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(outputAccess);
+        var (source, destination, mode) = RestoreSelectionRequestValidator.Validate(request);
+        var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
+        var repository = CreateRepository(configuration);
+        var versions = await repository.ListVersionsAsync(cancellationToken).ConfigureAwait(false);
+        var kind = request.IsDirectory ? RepositoryEntryKind.Folder : RepositoryEntryKind.File;
+        var exact = versions.Where(version => version.EntryKind == kind &&
+                string.Equals(TrimPath(version.SourcePath), TrimPath(source), StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(version => version.CapturedAtUtc).ThenByDescending(version => version.VersionId, StringComparer.Ordinal).FirstOrDefault();
+        var fallback = exact is null ? versions.Where(version => version.EntryKind == RepositoryEntryKind.File &&
+                SourcePathMatchesSelection(version.SourcePath, source, request.IsDirectory))
+            .GroupBy(version => Path.GetFullPath(version.SourcePath), StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.OrderByDescending(version => version.CapturedAtUtc).ThenByDescending(version => version.VersionId, StringComparer.Ordinal).First())
+            .Where(version => !version.IsDeleted).OrderBy(version => version.SourcePath, StringComparer.OrdinalIgnoreCase).ToArray() : [];
+        var fileCount = exact is null ? fallback.Length : CountRestorableFiles(exact, versions);
+        if (exact is null && fallback.Length == 0)
+            return Refused("No recoverable history exists for this selection.", 0);
+        // Counts are advisory; output is inspected only through caller authority, without creating anything.
+        var exists = await outputAccess.ExistsAsync(destination, kind, cancellationToken).ConfigureAwait(false);
+        var conflicts = exists ? Math.Max(1, fileCount) : 0;
+        if (request.Command == FluxVaultIpcCommand.PreviewRestoreSelection)
+            return FluxVaultIpcResponse.WithRestoreSelection(new(source, request.IsDirectory, mode, destination, fileCount, conflicts, 0, [], []));
+        if (exists && (request.IsDirectory || !request.OverwriteConfirmed))
+            return Refused(request.IsDirectory ? "Choose a new recovery folder. Existing entries cannot be merged." :
+                "The destination already exists. Confirm overwrite before recovery.", conflicts);
+        await using var target = await outputAccess.CreateAsync(destination, kind, request.OverwriteConfirmed, cancellationToken).ConfigureAwait(false);
+        var result = exact is not null
+            ? await repository.RestoreAsync(exact.VersionId, target, cancellationToken).ConfigureAwait(false)
+            : await repository.RestoreFilesAsync(fallback.Select(version => new RepositoryRestoreFileSelection(version.VersionId,
+                Path.GetRelativePath(source, Path.GetFullPath(version.SourcePath)))).ToArray(), target, cancellationToken).ConfigureAwait(false);
+        InvalidateRecentVersionStatusCache();
+        lastMessage = $"Restored and verified {result.RestoredFileCount} file(s) to {result.OutputPath}.";
+        return FluxVaultIpcResponse.WithRestoreSelection(new(source, request.IsDirectory, mode, result.OutputPath,
+            result.RestoredFileCount, conflicts, result.RestoredFileCount, [], result.Warnings)) with { OutputPath = result.OutputPath, RestoreResult = result };
+
+        FluxVaultIpcResponse Refused(string message, int conflictCount) => FluxVaultIpcResponse.Failure(message) with
+        { ErrorCode = FluxVaultIpcErrorCode.InvalidRequest, RestoreSelection = new(source, request.IsDirectory, mode, destination, fileCount, conflictCount, 0, [], []) };
     }
 
     public async Task<RestoreSelectionSummary> RunRestoreSelectionAsync(
@@ -621,13 +686,17 @@ public sealed class FluxVaultOperations(
     public async Task<RepositoryRetentionResult> RunRetentionNowAsync(CancellationToken cancellationToken = default)
     {
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
-        var result = await CreateRepository(configuration)
-            .ApplyRetentionAsync(configuration.RetentionPolicy, DateTimeOffset.UtcNow, cancellationToken)
-            .ConfigureAwait(false);
         InvalidateRecentVersionStatusCache();
-        lastRetention = result;
-        lastMessage = FormatRetentionSummary(result);
-        return result;
+        try
+        {
+            var result = await CreateRepository(configuration)
+                .ApplyRetentionAsync(configuration.RetentionPolicy, DateTimeOffset.UtcNow, cancellationToken)
+                .ConfigureAwait(false);
+            lastRetention = result;
+            lastMessage = FormatRetentionSummary(result);
+            return result;
+        }
+        finally { InvalidateRecentVersionStatusCache(); }
     }
 
     public async Task<RepositoryHealthSnapshot> GetRepositoryHealthAsync(CancellationToken cancellationToken = default)
@@ -758,16 +827,27 @@ public sealed class FluxVaultOperations(
         return report;
     }
 
-    public async Task<MirrorRebalancePreviewReport> RunMirrorDrainAsync(
+    public Task<MirrorRebalancePreviewReport> RunMirrorDrainAsync(
         string mirrorNodeId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) => RunMirrorDrainCoreAsync(mirrorNodeId, saveConfiguration: true, cancellationToken);
+
+    public async Task<MirrorRebalancePreviewReport> RunMirrorDrainRepositoryEffectsAsync(
+        string mirrorNodeId, CancellationToken cancellationToken = default)
+    {
+        await mutatingOperationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try { return await RunMirrorDrainCoreAsync(mirrorNodeId, saveConfiguration: false, cancellationToken).ConfigureAwait(false); }
+        finally { mutatingOperationGate.Release(); }
+    }
+
+    private async Task<MirrorRebalancePreviewReport> RunMirrorDrainCoreAsync(
+        string mirrorNodeId, bool saveConfiguration, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(mirrorNodeId);
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         var report = await CreateRepository(configuration)
             .RunMirrorDrainAsync(mirrorNodeId, cancellationToken)
             .ConfigureAwait(false);
-        if (IsDrainComplete(report))
+        if (saveConfiguration && report.IsCompletedDrain)
         {
             await configurationStore.SaveAsync(DisableMirrorNode(configuration, mirrorNodeId), cancellationToken)
                 .ConfigureAwait(false);
@@ -776,6 +856,30 @@ public sealed class FluxVaultOperations(
         await SaveRepositoryMaintenanceResultAsync(null, null, null, report, cancellationToken).ConfigureAwait(false);
         lastMessage = FormatMirrorRebalanceSummary(report);
         return report;
+    }
+
+    public async Task<DiagnosticsExportResult> ExportDiagnosticsAsync(IRepositoryRestoreTarget target,
+        FluxVault.Abstractions.Security.VaultId vaultId, long configurationRevision,
+        CancellationToken cancellationToken = default, string? runtimeNotice = null)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        await using (target.ConfigureAwait(false))
+        {
+            if (!vaultId.IsValid || configurationRevision <= 0) throw new ArgumentException("A verified repository identity and revision are required.");
+            cancellationToken.ThrowIfCancellationRequested();
+            var status = await GetStatusAsync(cancellationToken).ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(runtimeNotice)) status = status with { LastMessage = runtimeNotice + status.LastMessage };
+            var document = new DiagnosticsExportDocument(1, DateTimeOffset.UtcNow, vaultId, configurationRevision, status);
+            await target.PrepareAsync(RepositoryEntryKind.File, cancellationToken).ConfigureAwait(false);
+            await using (var file = await target.CreateFileAsync(string.Empty, cancellationToken).ConfigureAwait(false))
+            {
+                await JsonSerializer.SerializeAsync(file, document, JsonOptions, cancellationToken).ConfigureAwait(false);
+                await target.FlushFileAsync(file, cancellationToken).ConfigureAwait(false);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            var warnings = await target.PublishAsync(cancellationToken).ConfigureAwait(false);
+            return new(target.OutputPath, warnings);
+        }
     }
 
     public async Task<string> ExportDiagnosticsAsync(string exportPath, CancellationToken cancellationToken = default)
@@ -962,7 +1066,6 @@ public sealed class FluxVaultOperations(
         }
 
         return configuration.IsEnabled
-               && File.Exists(target.Path)
                && TryFindIncludedFolder(configuration, target.Path, out _);
     }
 
@@ -1254,8 +1357,7 @@ public sealed class FluxVaultOperations(
             }
         }
 
-        var versions = (await CreateRepository(configuration).ListVersionsAsync(cancellationToken).ConfigureAwait(false))
-            .Take(50)
+        var versions = (await CreateRepository(configuration).ListRecentVersionsAsync(50, cancellationToken).ConfigureAwait(false))
             .ToArray();
         lock (runtimeGate)
         {
@@ -1319,6 +1421,7 @@ public sealed class FluxVaultOperations(
         lock (runtimeGate)
         {
             repositoryStatusCacheGeneration++;
+            this.runtimeState.RepositoryInventoryEpoch = Guid.NewGuid();
             recentVersionStatusCache = null;
             recentVersionStatusCacheUtc = default;
             recentVersionStatusCacheIdentity = null;
@@ -1369,11 +1472,16 @@ public sealed class FluxVaultOperations(
         var configuration = await configurationStore.LoadAsync(cancellationToken).ConfigureAwait(false);
         var isFast = detailLevel == FluxVaultStatusDetailLevel.Fast;
         long inventoryGeneration;
-        lock (runtimeGate) inventoryGeneration = repositoryStatusCacheGeneration;
+        Guid inventoryEpoch;
+        lock (runtimeGate)
+        {
+            inventoryGeneration = repositoryStatusCacheGeneration;
+            inventoryEpoch = this.runtimeState.RepositoryInventoryEpoch;
+        }
         var versions = isFast
             ? GetCachedRecentVersionsForFastStatus(configuration)
             : await GetRecentVersionsForStatusAsync(configuration, cancellationToken).ConfigureAwait(false);
-        var trackedEntries = isFast
+        var trackedEntries = isFast || pageCurrentEntriesForStatus
             ? null
             : await GetTrackedEntriesForStatusAsync(configuration, cancellationToken).ConfigureAwait(false);
 
@@ -1383,13 +1491,22 @@ public sealed class FluxVaultOperations(
             LastMessage: lastMessage,
             LastCaptureUtc: lastCaptureUtc,
             WatchedFolders: configuration.WatchedFolders
-                .Select(folder => new WatchedFolderRuntimeStatus(
+                .Select(folder =>
+                {
+                    var source = sourceAccess.Inspect(folder.Path, folder.Path, RepositoryEntryKind.Folder, cancellationToken);
+                    return new WatchedFolderRuntimeStatus(
                     folder.Id,
                     folder.Path,
-                    Directory.Exists(folder.Path),
+                    source.Availability == ProtectionSourceAvailability.Present,
                     folder.IsEnabled,
-                    Directory.Exists(folder.Path) ? "Ready" : "Folder missing",
-                    durableChange?.Status ?? "Using reconciliation scan"))
+                    source.Availability switch
+                    {
+                        ProtectionSourceAvailability.Present => "Ready",
+                        ProtectionSourceAvailability.Missing => "Folder missing",
+                        _ => $"Source unavailable: {source.FailureReason ?? "Source inspection failed."}"
+                    },
+                    durableChange?.Status ?? "Using reconciliation scan");
+                })
                 .ToArray(),
             RecentVersions: versions?.Take(50).ToArray() ?? [],
             LastRetention: lastRetention,
@@ -1411,7 +1528,9 @@ public sealed class FluxVaultOperations(
                 ? null
                 : await GetMetadataStoreStatusAsync(configuration, cancellationToken).ConfigureAwait(false),
             HasVersionInventory: IsRepositoryStatusGenerationCurrent(inventoryGeneration)
-                && versions is not null && (isFast || trackedEntries is not null));
+                && versions is not null && (isFast || pageCurrentEntriesForStatus || trackedEntries is not null),
+            UsesPagedCurrentEntries: pageCurrentEntriesForStatus,
+            RepositoryInventoryEpoch: pageCurrentEntriesForStatus ? inventoryEpoch : null);
     }
 
     public async Task<PerformanceTelemetryStatus> GetPerformanceAsync(CancellationToken cancellationToken = default)
@@ -1451,6 +1570,9 @@ public sealed class FluxVaultOperations(
             FluxVaultIpcCommand.SaveConfiguration => await SaveConfigurationResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.RunBackupNow => FluxVaultIpcResponse.WithBackup(await RunBackupNowAsync(cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.ListVersions => FluxVaultIpcResponse.WithVersions(await ListRepositoryHistoryAsync(cancellationToken).ConfigureAwait(false)),
+            FluxVaultIpcCommand.ListHistoryPage => await HistoryPageResponseAsync(request, cancellationToken).ConfigureAwait(false),
+            FluxVaultIpcCommand.GetSnapshotPage => await SnapshotPageResponseAsync(request, cancellationToken).ConfigureAwait(false),
+            FluxVaultIpcCommand.ListCurrentEntriesPage => await CurrentEntriesPageResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.InspectVersion => FluxVaultIpcResponse.WithInspection(await InspectVersionAsync(Require(request.VersionId, "version id"), cancellationToken).ConfigureAwait(false)),
             FluxVaultIpcCommand.RestoreVersion => await RestoreVersionResponseAsync(request, cancellationToken).ConfigureAwait(false),
             FluxVaultIpcCommand.RestoreVersionPreview => await RestoreVersionPreviewResponseAsync(request, cancellationToken).ConfigureAwait(false),
@@ -1485,6 +1607,9 @@ public sealed class FluxVaultOperations(
             or FluxVaultIpcCommand.GetActivity
             or FluxVaultIpcCommand.ListBlockedFiles
             or FluxVaultIpcCommand.ListVersions
+            or FluxVaultIpcCommand.ListHistoryPage
+            or FluxVaultIpcCommand.GetSnapshotPage
+            or FluxVaultIpcCommand.ListCurrentEntriesPage
             or FluxVaultIpcCommand.InspectVersion
             or FluxVaultIpcCommand.GetRepositoryHealth
             or FluxVaultIpcCommand.PreviewRestoreSelection;
@@ -1505,6 +1630,26 @@ public sealed class FluxVaultOperations(
                 cancellationToken)
             .ConfigureAwait(false);
         return purge is null ? FluxVaultIpcResponse.Ok() : FluxVaultIpcResponse.WithPurge(purge);
+    }
+
+    private async Task<FluxVaultIpcResponse> CurrentEntriesPageResponseAsync(FluxVaultIpcRequest request, CancellationToken token)
+    {
+        var configuration = await configurationStore.LoadAsync(token).ConfigureAwait(false);
+        var page = await CreateRepository(configuration).ListCurrentEntriesPageAsync(request.CurrentEntriesQuery ?? throw new ArgumentException("Missing current-entry query."), token).ConfigureAwait(false);
+        return FluxVaultIpcResponse.Ok() with { CurrentEntriesPage = page };
+    }
+
+    private async Task<FluxVaultIpcResponse> HistoryPageResponseAsync(FluxVaultIpcRequest request, CancellationToken token)
+    {
+        var configuration = await configurationStore.LoadAsync(token).ConfigureAwait(false);
+        var page = await CreateRepository(configuration).ListHistoryPageAsync(request.HistoryQuery ?? throw new ArgumentException("Missing history query."), token).ConfigureAwait(false);
+        return FluxVaultIpcResponse.Ok() with { HistoryPage = page };
+    }
+    private async Task<FluxVaultIpcResponse> SnapshotPageResponseAsync(FluxVaultIpcRequest request, CancellationToken token)
+    {
+        var configuration = await configurationStore.LoadAsync(token).ConfigureAwait(false);
+        var page = await CreateRepository(configuration).GetSnapshotPageAsync(request.SnapshotQuery ?? throw new ArgumentException("Missing snapshot query."), token).ConfigureAwait(false);
+        return FluxVaultIpcResponse.Ok() with { SnapshotPage = page };
     }
 
     private async Task<FluxVaultIpcResponse> RestoreVersionResponseAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)
@@ -1884,15 +2029,6 @@ public sealed class FluxVaultOperations(
         return $"{operation} {phase} completed: {report.ActionCount} action(s), copy {FormatBytes(report.EstimatedCopyBytes)}, delete {FormatBytes(report.EstimatedDeleteBytes)}.";
     }
 
-    private static bool IsDrainComplete(MirrorRebalancePreviewReport report)
-    {
-        return report.Operation == MirrorRebalanceOperation.Drain
-               && !report.IsPreview
-               && report.HealthState == RepositoryHealthState.Healthy
-               && report.ActionCount == 0
-               && !string.IsNullOrWhiteSpace(report.RequestedMirrorNodeId);
-    }
-
     private static FluxVaultConfiguration DisableMirrorNode(
         FluxVaultConfiguration configuration,
         string mirrorNodeId)
@@ -2085,6 +2221,7 @@ public sealed class FluxVaultOperations(
             .ThenByDescending(entry => entry.EntryKind)
             .ToArray();
         var deletedFolders = new List<string>();
+        var roots = new Dictionary<string, ProtectionSourceInspection>(StringComparer.OrdinalIgnoreCase);
         var recorded = 0;
         var failed = 0;
         var messages = new List<string>();
@@ -2103,10 +2240,24 @@ public sealed class FluxVaultOperations(
                 continue;
             }
 
-            var missing = entry.EntryKind == RepositoryEntryKind.Folder
-                ? !Directory.Exists(entry.SourcePath)
-                : !File.Exists(entry.SourcePath);
-            if (!missing)
+            if (!roots.TryGetValue(folder.Path, out var root))
+            {
+                root = sourceAccess.Inspect(folder.Path, folder.Path, RepositoryEntryKind.Folder, cancellationToken);
+                roots.Add(folder.Path, root);
+                if (root.Availability != ProtectionSourceAvailability.Present)
+                { failed++; messages.Add($"{folder.Path}: Protection root is unavailable; history was retained. {root.FailureReason}"); }
+            }
+            if (root.Availability != ProtectionSourceAvailability.Present) continue;
+            var observation = sourceAccess.Inspect(folder.Path, entry.SourcePath, entry.EntryKind, cancellationToken);
+            if (observation.Availability == ProtectionSourceAvailability.Missing &&
+                string.Equals(TrimPath(entry.SourcePath), TrimPath(folder.Path), StringComparison.OrdinalIgnoreCase))
+            { failed++; messages.Add($"{folder.Path}: Protection root disappeared; history was retained."); continue; }
+            if (observation.Availability == ProtectionSourceAvailability.Unavailable)
+            {
+                failed++; messages.Add($"{entry.SourcePath}: {observation.FailureReason ?? "Source inspection is unavailable."}");
+                continue;
+            }
+            if (observation.Availability != ProtectionSourceAvailability.Missing)
             {
                 continue;
             }
@@ -2132,10 +2283,8 @@ public sealed class FluxVaultOperations(
         IReadOnlyList<RepositoryVersionSummary> latestEntries,
         CancellationToken cancellationToken)
     {
-        var missingPaths = requestedPaths
-            .Where(path => !File.Exists(path) && !Directory.Exists(path))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+        var missingPaths = requestedPaths.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        var roots = new Dictionary<string, ProtectionSourceInspection>(StringComparer.OrdinalIgnoreCase);
         if (missingPaths.Length == 0)
         {
             return DeletionRecordSummary.Empty;
@@ -2160,6 +2309,25 @@ public sealed class FluxVaultOperations(
             {
                 continue;
             }
+
+            if (!roots.TryGetValue(folder.Path, out var root))
+            {
+                root = sourceAccess.Inspect(folder.Path, folder.Path, RepositoryEntryKind.Folder, cancellationToken);
+                roots.Add(folder.Path, root);
+                if (root.Availability != ProtectionSourceAvailability.Present)
+                { failed++; messages.Add($"{folder.Path}: Protection root is unavailable; history was retained. {root.FailureReason}"); }
+            }
+            if (root.Availability != ProtectionSourceAvailability.Present) continue;
+            var observation = sourceAccess.Inspect(folder.Path, path, entry.EntryKind, cancellationToken);
+            if (observation.Availability == ProtectionSourceAvailability.Missing &&
+                string.Equals(TrimPath(path), TrimPath(folder.Path), StringComparison.OrdinalIgnoreCase))
+            { failed++; messages.Add($"{folder.Path}: Protection root disappeared; history was retained."); continue; }
+            if (observation.Availability == ProtectionSourceAvailability.Unavailable)
+            {
+                failed++; messages.Add($"{path}: {observation.FailureReason ?? "Source inspection is unavailable."}");
+                continue;
+            }
+            if (observation.Availability != ProtectionSourceAvailability.Missing) continue;
 
             var result = await RecordDeletionAsync(repository, folder, entry, cancellationToken).ConfigureAwait(false);
             recorded += result.Recorded;
@@ -2205,7 +2373,7 @@ public sealed class FluxVaultOperations(
         RepositoryVersionSummary entry,
         out WatchedFolderConfiguration folder)
     {
-        foreach (var candidate in configuration.WatchedFolders.Where(folder => folder.IsEnabled && Directory.Exists(folder.Path)))
+        foreach (var candidate in configuration.WatchedFolders.Where(folder => folder.IsEnabled))
         {
             if (!PathEqualsOrUnder(entry.SourcePath, candidate.Path))
             {
@@ -2321,33 +2489,45 @@ public sealed class FluxVaultOperations(
         return Math.Clamp(configuredMaximum, 1, 64);
     }
 
-    private static IEnumerable<FileBackupTarget> EnumerateBackupTargets(
+    private IEnumerable<FileBackupTarget> EnumerateBackupTargets(
         FluxVaultConfiguration configuration,
         List<string> messages,
-        Action addFailure)
+        Action addFailure,
+        CancellationToken cancellationToken)
     {
         foreach (var folder in configuration.WatchedFolders.Where(folder => folder.IsEnabled))
         {
-            if (!Directory.Exists(folder.Path))
+            cancellationToken.ThrowIfCancellationRequested();
+            var root = sourceAccess.Inspect(folder.Path, folder.Path, RepositoryEntryKind.Folder, cancellationToken);
+            if (root.Availability != ProtectionSourceAvailability.Present)
             {
                 addFailure();
-                messages.Add($"Watched folder does not exist: {folder.Path}");
+                messages.Add(root.Availability == ProtectionSourceAvailability.Missing ? $"Watched folder does not exist: {folder.Path}" :
+                    $"Watched folder is unavailable: {folder.Path}: {root.FailureReason ?? "Source inspection failed."}");
                 continue;
             }
 
-            foreach (var file in EnumerateIncludedFiles(folder, configuration))
+            using var enumerator = EnumerateIncludedFiles(folder, configuration, cancellationToken).GetEnumerator();
+            while (true)
             {
-                if (TryCreateTarget(configuration, folder, file, out var target))
+                string file;
+                try { if (!enumerator.MoveNext()) break; file = enumerator.Current; }
+                catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+                { addFailure(); messages.Add($"{folder.Path}: Source enumeration is unavailable: {exception.Message}"); break; }
+                if (TryCreateTarget(configuration, folder, file, out var target, out var failure, cancellationToken))
                 {
                     yield return target;
                 }
+                else if (failure is not null) { addFailure(); messages.Add($"{file}: {failure}"); }
             }
         }
     }
 
-    private static IEnumerable<FileBackupTarget> EnumerateBackupTargets(
+    private IEnumerable<FileBackupTarget> EnumerateBackupTargets(
         FluxVaultConfiguration configuration,
         IEnumerable<string> filePaths,
+        List<string> messages,
+        Action addFailure,
         CancellationToken cancellationToken)
     {
         foreach (var path in filePaths
@@ -2356,16 +2536,12 @@ public sealed class FluxVaultOperations(
                      .Distinct(StringComparer.OrdinalIgnoreCase))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!File.Exists(path))
-            {
-                continue;
-            }
-
-            if (TryFindIncludedFolder(configuration, path, out var folder)
-                && TryCreateTarget(configuration, folder, path, out var target))
+            if (!TryFindIncludedFolder(configuration, path, out var folder)) continue;
+            if (TryCreateTarget(configuration, folder, path, out var target, out var failure, cancellationToken))
             {
                 yield return target;
             }
+            else if (failure is not null) { addFailure(); messages.Add($"{path}: {failure}"); }
         }
     }
 
@@ -2568,11 +2744,12 @@ public sealed class FluxVaultOperations(
         }
     }
 
-    private static IEnumerable<string> EnumerateIncludedFiles(
+    private IEnumerable<string> EnumerateIncludedFiles(
         WatchedFolderConfiguration folder,
-        FluxVaultConfiguration configuration)
+        FluxVaultConfiguration configuration,
+        CancellationToken cancellationToken)
     {
-        foreach (var file in EnumerateCandidateFiles(folder.Path, folder.Recursive, configuration))
+        foreach (var file in EnumerateCandidateFiles(folder.Path, folder.Path, folder.Recursive, configuration, cancellationToken))
         {
             var name = Path.GetFileName(file);
             var included = folder.IncludePatterns.Count == 0
@@ -2593,7 +2770,7 @@ public sealed class FluxVaultOperations(
         string filePath,
         out WatchedFolderConfiguration folder)
     {
-        foreach (var candidate in configuration.WatchedFolders.Where(folder => folder.IsEnabled && Directory.Exists(folder.Path)))
+        foreach (var candidate in configuration.WatchedFolders.Where(folder => folder.IsEnabled))
         {
             if (IsUnderWatchedFolder(candidate, filePath)
                 && MatchesPatterns(candidate, filePath)
@@ -2636,30 +2813,26 @@ public sealed class FluxVaultOperations(
         return included && !excluded;
     }
 
-    private static IEnumerable<string> EnumerateCandidateFiles(
+    private IEnumerable<string> EnumerateCandidateFiles(
+        string protectionRoot,
         string folderPath,
         bool recursive,
-        FluxVaultConfiguration configuration)
+        FluxVaultConfiguration configuration,
+        CancellationToken cancellationToken)
     {
-        foreach (var file in Directory.EnumerateFiles(folderPath, "*", SearchOption.TopDirectoryOnly))
+        foreach (var candidate in sourceAccess.EnumerateDirectory(protectionRoot, folderPath, cancellationToken))
         {
-            yield return file;
-        }
-
-        if (!recursive)
-        {
-            yield break;
-        }
-
-        foreach (var childFolder in Directory.EnumerateDirectories(folderPath))
-        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (candidate.Kind == RepositoryEntryKind.File) { yield return candidate.Path; continue; }
+            if (!recursive) continue;
+            var childFolder = candidate.Path;
             if (ProtectionExclusionMatcher.IsFolderExcluded(childFolder, configuration.ExclusionRules)
                 || ProtectionSelectionRegexMatcher.IsFolderExcluded(childFolder, configuration.SelectionRules))
             {
                 continue;
             }
 
-            foreach (var file in EnumerateCandidateFiles(childFolder, recursive: true, configuration: configuration))
+            foreach (var file in EnumerateCandidateFiles(protectionRoot, childFolder, recursive: true, configuration, cancellationToken))
             {
                 yield return file;
             }
@@ -2689,7 +2862,7 @@ public sealed class FluxVaultOperations(
     {
         return new FileSystemChunkRepository(
             configuration.RepositoryPath,
-            new FastCdcChunker(new ChunkingOptions(64 * 1024, 256 * 1024, 1024 * 1024)),
+            new FastCdcChunker(new ChunkingOptions()),
             new Blake3ContentHasher(),
             new ZstdChunkCodec(),
             configuration.MirrorSet,
@@ -2703,28 +2876,30 @@ public sealed class FluxVaultOperations(
             : value;
     }
 
-    private static bool TryCreateTarget(
+    private bool TryCreateTarget(
         FluxVaultConfiguration configuration,
         WatchedFolderConfiguration folder,
         string path,
-        out FileBackupTarget target)
+        out FileBackupTarget target,
+        out string? failure,
+        CancellationToken cancellationToken)
     {
-        FileInfo fileInfo;
-        try
+        target = null!; failure = null;
+        var source = sourceAccess.Inspect(folder.Path, path, RepositoryEntryKind.File, cancellationToken);
+        if (source.Availability != ProtectionSourceAvailability.Present)
         {
-            fileInfo = new FileInfo(path);
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            target = null!;
+            if (source.Availability == ProtectionSourceAvailability.Unavailable)
+                failure = source.FailureReason ?? "Source metadata is unavailable.";
             return false;
         }
+        if (source.Kind != RepositoryEntryKind.File || source.Length is null or < 0 || source.LastWriteUtc is null)
+        { failure = "Source metadata could not be validated."; return false; }
 
         var resolved = WorkloadPolicyResolver.Resolve(
             configuration,
             folder,
             path,
-            fileInfo.Length,
+            source.Length.Value,
             isHotFile: false);
         if (resolved.IsExcluded)
         {
@@ -2735,8 +2910,8 @@ public sealed class FluxVaultOperations(
         target = new FileBackupTarget(
             folder,
             Path.GetFullPath(path),
-            fileInfo.Length,
-            new DateTimeOffset(fileInfo.LastWriteTimeUtc, TimeSpan.Zero),
+            source.Length.Value,
+            source.LastWriteUtc.Value,
             resolved.Compression,
             resolved.MinimumCompressionBytes);
         return true;

@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="dc99a4e7-cbb5-4ced-9a1e-f059aa67b00b" name="os008@OS008-HOME 2026-10-04 14:38:53" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T14:38:53.8313299+03:00" queuing="2026-10-04T14:38:53.8313301+03:00" start="2026-10-04T14:38:52.6541776+03:00" finish="2026-10-04T14:38:53.8369509+03:00" />
+  <TestSettings name="default" id="a1e90b45-1e0a-473a-8437-c7cb2d0ffb36">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_14_38_53" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e2e7e361-7f97-4338-9e42-a639447eab9f" testId="50358199-5a32-9f66-15b5-946e8ee67e67" testName="FluxVault.App.Tests.SaveOperationStoreTests.Case_variant_nested_fields_are_refused_without_reinterpreting_the_snapshot" computerName="OS008-HOME" duration="00:00:00.2675410" startTime="2026-10-04T14:38:53.4196244+03:00" endTime="2026-10-04T14:38:53.7006960+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e2e7e361-7f97-4338-9e42-a639447eab9f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.IO.InvalidDataException)</Message>
+          <StackTrace>   at FluxVault.App.Tests.SaveOperationStoreTests.Case_variant_nested_fields_are_refused_without_reinterpreting_the_snapshot() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs:line 18&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="57d2dc2b-45d6-45f7-8c33-19ed8724d4a3" testId="8545d843-bdd8-3e0a-dc5b-58a016e7c905" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Save_reserved_by_another_session_during_discard_keeps_the_original_draft_and_operation" computerName="OS008-HOME" duration="00:00:00.0269481" startTime="2026-10-04T14:38:53.7161381+03:00" endTime="2026-10-04T14:38:53.7296474+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="57d2dc2b-45d6-45f7-8c33-19ed8724d4a3">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NullReferenceException : Object reference not set to an instance of an object.</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Save_reserved_by_another_session_during_discard_keeps_the_original_draft_and_operation() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 44&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="56e53d5e-29f3-48a3-a450-c4700f044fc4" testId="3ccf90be-67fa-75a2-66ed-565da148fadb" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_entry_rechecks_a_save_reserved_since_the_previous_refresh" computerName="OS008-HOME" duration="00:00:00.2705538" startTime="2026-10-04T14:38:53.4179615+03:00" endTime="2026-10-04T14:38:53.7086138+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56e53d5e-29f3-48a3-a450-c4700f044fc4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Options_entry_rechecks_a_save_reserved_since_the_previous_refresh() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 63&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Save_reserved_by_another_session_during_discard_keeps_the_original_draft_and_operation" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="8545d843-bdd8-3e0a-dc5b-58a016e7c905">
+      <Execution id="57d2dc2b-45d6-45f7-8c33-19ed8724d4a3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Save_reserved_by_another_session_during_discard_keeps_the_original_draft_and_operation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_entry_rechecks_a_save_reserved_since_the_previous_refresh" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="3ccf90be-67fa-75a2-66ed-565da148fadb">
+      <Execution id="56e53d5e-29f3-48a3-a450-c4700f044fc4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_entry_rechecks_a_save_reserved_since_the_previous_refresh" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Case_variant_nested_fields_are_refused_without_reinterpreting_the_snapshot" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="50358199-5a32-9f66-15b5-946e8ee67e67">
+      <Execution id="e2e7e361-7f97-4338-9e42-a639447eab9f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Case_variant_nested_fields_are_refused_without_reinterpreting_the_snapshot" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="50358199-5a32-9f66-15b5-946e8ee67e67" executionId="e2e7e361-7f97-4338-9e42-a639447eab9f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8545d843-bdd8-3e0a-dc5b-58a016e7c905" executionId="57d2dc2b-45d6-45f7-8c33-19ed8724d4a3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3ccf90be-67fa-75a2-66ed-565da148fadb" executionId="56e53d5e-29f3-48a3-a450-c4700f044fc4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.10]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.22]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.25]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.57]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.57]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs(18,0): at FluxVault.App.Tests.SaveOperationStoreTests.Case_variant_nested_fields_are_refused_without_reinterpreting_the_snapshot()&#xD;
+[xUnit.net 00:00:00.57]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.57]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.57]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.57]       Expected: False&#xD;
+[xUnit.net 00:00:00.57]       Actual:   True&#xD;
+[xUnit.net 00:00:00.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(63,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Options_entry_rechecks_a_save_reserved_since_the_previous_refresh()&#xD;
+[xUnit.net 00:00:00.57]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.59]       System.NullReferenceException : Object reference not set to an instance of an object.&#xD;
+[xUnit.net 00:00:00.59]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.59]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(44,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Save_reserved_by_another_session_during_discard_keeps_the_original_draft_and_operation()&#xD;
+[xUnit.net 00:00:00.59]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.60]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T14:38:53.7036751+03:00">
+        <Text>[xUnit.net 00:00:00.57]     FluxVault.App.Tests.SaveOperationStoreTests.Case_variant_nested_fields_are_refused_without_reinterpreting_the_snapshot [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T14:38:53.7088503+03:00">
+        <Text>[xUnit.net 00:00:00.57]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_entry_rechecks_a_save_reserved_since_the_previous_refresh [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T14:38:53.7300234+03:00">
+        <Text>[xUnit.net 00:00:00.59]     FluxVault.App.Tests.ProtectionSaveContractTests.Save_reserved_by_another_session_during_discard_keeps_the_original_draft_and_operation [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="0d8bbd4a-2f96-44b8-8127-954969bfcace" name="os008@OS008-HOME 2026-10-04 00:38:29" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T00:38:29.2618483+03:00" queuing="2026-10-04T00:38:29.2618485+03:00" start="2026-10-04T00:38:27.4154224+03:00" finish="2026-10-04T00:38:29.8012964+03:00" />
+  <TestSettings name="default" id="616c7192-f65e-4f09-9020-30d3dd110c78">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_00_38_29" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="68b74a2b-f9d7-45a4-b096-fb03bcfa5db9" testId="f2a7fc22-87bc-5db7-c068-17cf9c2f9a92" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Privileged_runtime_refuses_standard_user_write_or_ancestor_replacement_rights" computerName="OS008-HOME" duration="00:00:00.6168318" startTime="2026-10-04T00:38:29.1422086+03:00" endTime="2026-10-04T00:38:29.7478070+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68b74a2b-f9d7-45a4-b096-fb03bcfa5db9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Privileged_runtime_refuses_standard_user_write_or_ancestor_replacement_rights() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 24&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="81e0d43a-91f3-4d2a-8e43-11ea5ec530df" testId="170e692f-9f3c-c194-eac0-61bbd0dde319" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Owned_process_tree_cleanup_joins_both_parent_and_child" computerName="OS008-HOME" duration="00:00:01.1689080" startTime="2026-10-04T00:38:27.9458685+03:00" endTime="2026-10-04T00:38:29.1287382+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="81e0d43a-91f3-4d2a-8e43-11ea5ec530df">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 2&#xD;
+Actual:   1</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Owned_process_tree_cleanup_joins_both_parent_and_child() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 56&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Owned_process_tree_cleanup_joins_both_parent_and_child" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="170e692f-9f3c-c194-eac0-61bbd0dde319">
+      <Execution id="81e0d43a-91f3-4d2a-8e43-11ea5ec530df" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Owned_process_tree_cleanup_joins_both_parent_and_child" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Privileged_runtime_refuses_standard_user_write_or_ancestor_replacement_rights" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="f2a7fc22-87bc-5db7-c068-17cf9c2f9a92">
+      <Execution id="68b74a2b-f9d7-45a4-b096-fb03bcfa5db9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Privileged_runtime_refuses_standard_user_write_or_ancestor_replacement_rights" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f2a7fc22-87bc-5db7-c068-17cf9c2f9a92" executionId="68b74a2b-f9d7-45a4-b096-fb03bcfa5db9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="170e692f-9f3c-c194-eac0-61bbd0dde319" executionId="81e0d43a-91f3-4d2a-8e43-11ea5ec530df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.36]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.36]       Expected: 2&#xD;
+[xUnit.net 00:00:01.36]       Actual:   1&#xD;
+[xUnit.net 00:00:01.36]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.36]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(56,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Owned_process_tree_cleanup_joins_both_parent_and_child()&#xD;
+[xUnit.net 00:00:01.36]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.98]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:01.98]       Expected: True&#xD;
+[xUnit.net 00:00:01.98]       Actual:   False&#xD;
+[xUnit.net 00:00:01.98]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.98]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(24,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Privileged_runtime_refuses_standard_user_write_or_ancestor_replacement_rights()&#xD;
+[xUnit.net 00:00:01.98]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.98]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T00:38:29.1316588+03:00">
+        <Text>[xUnit.net 00:00:01.36]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Owned_process_tree_cleanup_joins_both_parent_and_child [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T00:38:29.7482938+03:00">
+        <Text>[xUnit.net 00:00:01.98]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Privileged_runtime_refuses_standard_user_write_or_ancestor_replacement_rights [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

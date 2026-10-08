@@ -1,0 +1,22 @@
+{
+  "Complete": true,
+  "Results": [
+    {
+      "ExitCode": 2,
+      "Error": "psql: error: connection to server at \"127.0.0.1\", port 64766 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+      "ProbeId": "8c2201c917a04c94bc1102f4386bbf67",
+      "Host": "127.0.0.1",
+      "Output": "",
+      "Kind": "libpq"
+    },
+    {
+      "Kind": "ACL",
+      "ReadProtected": true,
+      "WriteRuntime": true,
+      "WindowsSid": "S-1-5-18"
+    }
+  ],
+  "Actor": "System",
+  "RunId": "871da314e69f449692f03ef18b330e68",
+  "WindowsSid": "S-1-5-18"
+}

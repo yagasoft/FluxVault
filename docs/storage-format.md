@@ -25,6 +25,24 @@ JSON manifest layout remains importable and available through explicit
 developer diagnostics, but normal large-vault query paths read PostgreSQL
 tables instead of scanning `manifests/*.json`.
 
+The isolated single-vault NEXT-002 staging implementation creates fresh metadata
+schema version 4. Exact UTC capture ticks and ordinal version IDs provide stable
+history ordering; a transactional history generation invalidates a cursor after
+capture or pruning. History responses project bounded headers before transfer,
+while folder contents are read separately from the exact immutable manifest.
+Current entries use the existing canonical path/kind identity as their primary
+key. The winning version supplies display casing and deletion state; pruning
+rebuilds affected pointers from retained history, including tombstones, within
+the deletion transaction. Reads refuse mismatched pointers, paths and ticks.
+Current-file transport uses ascending path-identity keysets with the same
+transactional generation guard. Headers omit chunks, recorded folder children
+and parent IDs. SQL limits header transfer before decoding; the authenticated
+wire envelope has the same 2 MiB budget as history pages. A shortened page
+continues from its last emitted path identity, so byte limits do not skip entries.
+Existing unsupported schemas are refused without automatic upgrade or adoption.
+Retain the v1.0.4 installation and its original database/storage assets for
+existing-data recovery; do not point old binaries at new staging metadata.
+
 Developer machines can run `eng/setup-fluxvault-postgresql.ps1` to install and
 prepare the local PostgreSQL metadata store with FluxVault defaults.
 

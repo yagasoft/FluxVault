@@ -1,0 +1,24 @@
+{
+  "WindowsSid": "S-1-5-18",
+  "RunId": "07dffd506e764497987d9f3f316cb44e",
+  "Actor": "System",
+  "Results": [
+    {
+      "Kind": "Restart",
+      "Result": {
+        "Actor": "System",
+        "NativeRestartServer": true,
+        "ExistingBootstrapOpened": true,
+        "RepositoryId": "2b3ee620-d806-4a03-a953-7f36c1fb79af",
+        "RequestsJoined": true
+      }
+    },
+    {
+      "Kind": "ACL",
+      "WindowsSid": "S-1-5-18",
+      "ReadProtected": true,
+      "WriteRuntime": true
+    }
+  ],
+  "Complete": true
+}

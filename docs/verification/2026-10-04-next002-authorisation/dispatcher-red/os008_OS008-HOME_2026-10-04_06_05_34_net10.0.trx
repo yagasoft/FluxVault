@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="cc501798-8daf-4a12-b299-6af94ef9d531" name="os008@OS008-HOME 2026-10-04 06:05:34" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T06:05:34.7832964+03:00" queuing="2026-10-04T06:05:34.7832966+03:00" start="2026-10-04T06:05:34.0900148+03:00" finish="2026-10-04T06:05:34.7888802+03:00" />
+  <TestSettings name="default" id="56f7a601-256c-4228-9a6c-0ae0d3ba64a4">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_06_05_34" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="daf32f45-c6c0-4783-ad5c-658d59fda574" testId="11fca94f-770b-6a00-d7ac-0bcc1082f87e" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes(completed: True)" computerName="OS008-HOME" duration="00:00:00.0045871" startTime="2026-10-04T06:05:34.6924422+03:00" endTime="2026-10-04T06:05:34.6924872+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="daf32f45-c6c0-4783-ad5c-658d59fda574">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: a6792e4e-1d4d-4c5e-b7a9-239966fe9183&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes(Boolean completed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 62&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a6faaf57-c003-4a1f-849c-69f8f0fa0540" testId="44414941-e999-a612-0d76-65e9af7dcf67" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unknown_command_and_unusable_caller_touch_neither_catalogue_nor_repository" computerName="OS008-HOME" duration="00:00:00.0013014" startTime="2026-10-04T06:05:34.6937036+03:00" endTime="2026-10-04T06:05:34.6937323+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6faaf57-c003-4a1f-849c-69f8f0fa0540">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Denied&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unknown_command_and_unusable_caller_touch_neither_catalogue_nor_repository() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 27&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="69773984-7f39-4617-a417-2d3500c76727" testId="064ed806-96e7-a044-3dbe-434765399d13" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Admission_outage_explains_unavailability_without_repository_access_or_endpoint_disclosure" computerName="OS008-HOME" duration="00:00:00.0090593" startTime="2026-10-04T06:05:34.6570898+03:00" endTime="2026-10-04T06:05:34.6777449+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="69773984-7f39-4617-a417-2d3500c76727">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Admission_outage_explains_unavailability_without_repository_access_or_endpoint_disclosure() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 83&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a3226c38-e40b-443b-ad4a-dfd3681a1522" testId="1f950db2-e23b-cc77-6c33-2d9223d44826" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Allowed_command_passes_exact_admission_target_and_owned_caller_to_executor" computerName="OS008-HOME" duration="00:00:00.0023404" startTime="2026-10-04T06:05:34.6945947+03:00" endTime="2026-10-04T06:05:34.6946220+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3226c38-e40b-443b-ad4a-dfd3681a1522">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: b0234b44-7b49-47df-96b9-8018997caba1&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Allowed_command_passes_exact_admission_target_and_owned_caller_to_executor() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="63144387-4a2f-451e-9026-d8ac8e5e2673" testId="8c4377a6-d604-9103-a5ff-0844c204e2d4" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Omitted_or_unknown_target_is_denied_without_repository_materialisation(unknown: False)" computerName="OS008-HOME" duration="00:00:00.0005565" startTime="2026-10-04T06:05:34.6929515+03:00" endTime="2026-10-04T06:05:34.6929807+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="63144387-4a2f-451e-9026-d8ac8e5e2673">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Omitted_or_unknown_target_is_denied_without_repository_materialisation(Boolean unknown) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 17&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4934ea3f-1e63-451c-acaa-4a31a8f77958" testId="5160199d-aa0a-8768-f2e3-59b6dcac314c" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Omitted_or_unknown_target_is_denied_without_repository_materialisation(unknown: True)" computerName="OS008-HOME" duration="00:00:00.0001639" startTime="2026-10-04T06:05:34.6933207+03:00" endTime="2026-10-04T06:05:34.6933482+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4934ea3f-1e63-451c-acaa-4a31a8f77958">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Omitted_or_unknown_target_is_denied_without_repository_materialisation(Boolean unknown) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 17&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c8873ed0-79a9-444b-bae8-91c6b32efe89" testId="be80ee4f-d114-dfb9-5787-470fb0fa7eed" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes(completed: False)" computerName="OS008-HOME" duration="00:00:00.0045172" startTime="2026-10-04T06:05:34.6913969+03:00" endTime="2026-10-04T06:05:34.6914692+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c8873ed0-79a9-444b-bae8-91c6b32efe89">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes(Boolean completed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 59&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="877a5cf1-802c-41d9-8692-6e41c20088ad" testId="50a47766-597d-b360-cca5-075665f1bc7d" testName="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Plain_save_commits_through_catalogue_without_repository_execution" computerName="OS008-HOME" duration="00:00:00.0007326" startTime="2026-10-04T06:05:34.6942014+03:00" endTime="2026-10-04T06:05:34.6942290+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="877a5cf1-802c-41d9-8692-6e41c20088ad">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 1&#xD;
+Actual:   0</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Plain_save_commits_through_catalogue_without_repository_execution() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs:line 72&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes(completed: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="11fca94f-770b-6a00-d7ac-0bcc1082f87e">
+      <Execution id="daf32f45-c6c0-4783-ad5c-658d59fda574" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes(completed: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="be80ee4f-d114-dfb9-5787-470fb0fa7eed">
+      <Execution id="c8873ed0-79a9-444b-bae8-91c6b32efe89" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unknown_command_and_unusable_caller_touch_neither_catalogue_nor_repository" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="44414941-e999-a612-0d76-65e9af7dcf67">
+      <Execution id="a6faaf57-c003-4a1f-849c-69f8f0fa0540" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Unknown_command_and_unusable_caller_touch_neither_catalogue_nor_repository" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Allowed_command_passes_exact_admission_target_and_owned_caller_to_executor" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="1f950db2-e23b-cc77-6c33-2d9223d44826">
+      <Execution id="a3226c38-e40b-443b-ad4a-dfd3681a1522" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Allowed_command_passes_exact_admission_target_and_owned_caller_to_executor" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Omitted_or_unknown_target_is_denied_without_repository_materialisation(unknown: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="8c4377a6-d604-9103-a5ff-0844c204e2d4">
+      <Execution id="63144387-4a2f-451e-9026-d8ac8e5e2673" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Omitted_or_unknown_target_is_denied_without_repository_materialisation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Admission_outage_explains_unavailability_without_repository_access_or_endpoint_disclosure" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="064ed806-96e7-a044-3dbe-434765399d13">
+      <Execution id="69773984-7f39-4617-a417-2d3500c76727" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Admission_outage_explains_unavailability_without_repository_access_or_endpoint_disclosure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Omitted_or_unknown_target_is_denied_without_repository_materialisation(unknown: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="5160199d-aa0a-8768-f2e3-59b6dcac314c">
+      <Execution id="4934ea3f-1e63-451c-acaa-4a31a8f77958" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Omitted_or_unknown_target_is_denied_without_repository_materialisation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Plain_save_commits_through_catalogue_without_repository_execution" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="50a47766-597d-b360-cca5-075665f1bc7d">
+      <Execution id="877a5cf1-802c-41d9-8692-6e41c20088ad" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests" name="Plain_save_commits_through_catalogue_without_repository_execution" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="11fca94f-770b-6a00-d7ac-0bcc1082f87e" executionId="daf32f45-c6c0-4783-ad5c-658d59fda574" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44414941-e999-a612-0d76-65e9af7dcf67" executionId="a6faaf57-c003-4a1f-849c-69f8f0fa0540" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="064ed806-96e7-a044-3dbe-434765399d13" executionId="69773984-7f39-4617-a417-2d3500c76727" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f950db2-e23b-cc77-6c33-2d9223d44826" executionId="a3226c38-e40b-443b-ad4a-dfd3681a1522" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8c4377a6-d604-9103-a5ff-0844c204e2d4" executionId="63144387-4a2f-451e-9026-d8ac8e5e2673" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5160199d-aa0a-8768-f2e3-59b6dcac314c" executionId="4934ea3f-1e63-451c-acaa-4a31a8f77958" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be80ee4f-d114-dfb9-5787-470fb0fa7eed" executionId="c8873ed0-79a9-444b-bae8-91c6b32efe89" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50a47766-597d-b360-cca5-075665f1bc7d" executionId="877a5cf1-802c-41d9-8692-6e41c20088ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="0" failed="8" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.23]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.23]       Expected: False&#xD;
+[xUnit.net 00:00:00.23]       Actual:   True&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(83,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Admission_outage_explains_unavailability_without_repository_access_or_endpoint_disclosure()&#xD;
+[xUnit.net 00:00:00.23]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.24]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.24]       Expected: False&#xD;
+[xUnit.net 00:00:00.24]       Actual:   True&#xD;
+[xUnit.net 00:00:00.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.24]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(59,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes(Boolean completed)&#xD;
+[xUnit.net 00:00:00.24]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.24]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.24]       Expected: a6792e4e-1d4d-4c5e-b7a9-239966fe9183&#xD;
+[xUnit.net 00:00:00.24]       Actual:   null&#xD;
+[xUnit.net 00:00:00.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.24]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(62,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes(Boolean completed)&#xD;
+[xUnit.net 00:00:00.24]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.24]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.24]       Expected: False&#xD;
+[xUnit.net 00:00:00.24]       Actual:   True&#xD;
+[xUnit.net 00:00:00.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.24]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(17,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Omitted_or_unknown_target_is_denied_without_repository_materialisation(Boolean unknown)&#xD;
+[xUnit.net 00:00:00.24]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.24]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.24]       Expected: False&#xD;
+[xUnit.net 00:00:00.24]       Actual:   True&#xD;
+[xUnit.net 00:00:00.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.24]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(17,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Omitted_or_unknown_target_is_denied_without_repository_materialisation(Boolean unknown)&#xD;
+[xUnit.net 00:00:00.24]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.24]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.24]       Expected: Denied&#xD;
+[xUnit.net 00:00:00.24]       Actual:   null&#xD;
+[xUnit.net 00:00:00.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.24]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(27,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unknown_command_and_unusable_caller_touch_neither_catalogue_nor_repository()&#xD;
+[xUnit.net 00:00:00.24]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.24]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.24]       Expected: 1&#xD;
+[xUnit.net 00:00:00.24]       Actual:   0&#xD;
+[xUnit.net 00:00:00.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.24]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(72,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Plain_save_commits_through_catalogue_without_repository_execution()&#xD;
+[xUnit.net 00:00:00.24]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.24]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.24]       Expected: b0234b44-7b49-47df-96b9-8018997caba1&#xD;
+[xUnit.net 00:00:00.24]       Actual:   null&#xD;
+[xUnit.net 00:00:00.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.24]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthenticatedVaultDispatcherTests.cs(40,0): at FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Allowed_command_passes_exact_admission_target_and_owned_caller_to_executor()&#xD;
+[xUnit.net 00:00:00.24]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.24]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T06:05:34.6805849+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Admission_outage_explains_unavailability_without_repository_access_or_endpoint_disclosure [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T06:05:34.6916578+03:00">
+        <Text>[xUnit.net 00:00:00.24]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes(completed: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T06:05:34.6926413+03:00">
+        <Text>[xUnit.net 00:00:00.24]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Duplicate_mutation_returns_receipt_or_unknown_and_never_reexecutes(completed: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T06:05:34.6930771+03:00">
+        <Text>[xUnit.net 00:00:00.24]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Omitted_or_unknown_target_is_denied_without_repository_materialisation(unknown: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T06:05:34.6934302+03:00">
+        <Text>[xUnit.net 00:00:00.24]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Omitted_or_unknown_target_is_denied_without_repository_materialisation(unknown: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T06:05:34.6938984+03:00">
+        <Text>[xUnit.net 00:00:00.24]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Unknown_command_and_unusable_caller_touch_neither_catalogue_nor_repository [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T06:05:34.6943067+03:00">
+        <Text>[xUnit.net 00:00:00.24]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Plain_save_commits_through_catalogue_without_repository_execution [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T06:05:34.6947382+03:00">
+        <Text>[xUnit.net 00:00:00.24]     FluxVault.Core.Tests.AuthenticatedVaultDispatcherTests.Allowed_command_passes_exact_admission_target_and_owned_caller_to_executor [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

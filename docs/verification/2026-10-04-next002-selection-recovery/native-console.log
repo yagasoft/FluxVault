@@ -1,0 +1,12 @@
+waiting for server to start.... done
+server started
+Exception: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\eng\test-windows-database-boundary.ps1:645
+Line |
+ 645 |  if($null -ne $fixtureFailure){throw $fixtureFailure}
+     |                                ~~~~~~~~~~~~~~~~~~~~~
+     | Actor probe incomplete: Native caller file proof failed: {"error":"Selection recovery contract failed: folder
+     | selection preview creates no directory or staging","code":null,"detail":"System.InvalidOperationException:
+     | Selection recovery contract failed: folder selection preview creates no directory or staging\r\n   at
+     | FluxVault.TestHost.WindowsSelectionRecoveryProbe.\u003CRunAsync\u003Eg__Check|2_0(Boolean value, String name,
+     | \u003C\u003Ec__DisplayClass2_0\u0026) in
+     | C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\tests\\FluxVault.TestHost\\WindowsSelectionRecoveryProbe.cs:line 73\r\n   at FluxVault.TestHost.WindowsSelectionRecoveryProbe.RunAsync(NamedPipeFluxVaultClient client, Func\u00602 bind, Func\u00602 send, String output, List\u00601 checks, CancellationToken token) in C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\tests\\FluxVault.TestHost\\WindowsSelectionRecoveryProbe.cs:line 42\r\n   at FluxVault.TestHost.WindowsSingleVaultProbe.RunAsync(String configurationPath, String actor) in C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\tests\\FluxVault.TestHost\\WindowsSingleVaultProbe.cs:line 349\r\n   at FluxVault.TestHost.Program.Main(String[] arguments) in C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\tests\\FluxVault.TestHost\\Program.cs:line 36"}

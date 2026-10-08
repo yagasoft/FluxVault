@@ -5,6 +5,7 @@ using FluxVault.Abstractions.Storage;
 using FluxVault.App.Services;
 using FluxVault.App.ViewModels;
 using FluxVault.Core.Ipc;
+using FluxVault.Abstractions.Security;
 
 namespace FluxVault.App.Tests;
 
@@ -116,7 +117,7 @@ public sealed class OptionsViewModelTests
     }
 
     [Fact]
-    public async Task Save_persists_repository_maintenance_policy()
+    public async Task Save_applies_manual_maintenance_settings_and_preserves_the_unavailable_schedule()
     {
         var client = new FakeFluxVaultServiceClient(StatusWithPolicy(RetentionPolicy.CreateDefault()));
         var viewModel = new OptionsViewModel(client);
@@ -130,8 +131,8 @@ public sealed class OptionsViewModelTests
 
         var saved = Assert.Single(client.SavedConfigurations);
         Assert.True(saved.RepositoryMaintenancePolicy.IsEnabled);
-        Assert.True(saved.RepositoryMaintenancePolicy.RunAutomatically);
-        Assert.Equal(TimeSpan.FromHours(1), saved.RepositoryMaintenancePolicy.Interval);
+        Assert.False(saved.RepositoryMaintenancePolicy.RunAutomatically);
+        Assert.Equal(TimeSpan.FromHours(24), saved.RepositoryMaintenancePolicy.Interval);
         Assert.False(saved.RepositoryMaintenancePolicy.AutoRepairFromMirror);
         Assert.Equal(0, saved.RepositoryMaintenancePolicy.RestoreRehearsalVersionCount);
     }
@@ -438,14 +439,16 @@ public sealed class OptionsViewModelTests
         RepositoryRetentionPreview? preview = null,
         RepositoryRetentionResult? result = null) : IFluxVaultServiceClient
     {
+        private readonly VaultId identity = VaultId.New();
+        private long revision = 1;
         public List<FluxVaultIpcCommand> Commands { get; } = [];
 
         public List<FluxVaultConfiguration> SavedConfigurations { get; } = [];
 
-        public Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
+        public async Task<FluxVaultIpcResponse> SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
         {
             Commands.Add(request.Command);
-            return request.Command switch
+            var response = await (request.Command switch
             {
                 FluxVaultIpcCommand.GetStatus => Task.FromResult(FluxVaultIpcResponse.WithStatus(status)),
                 FluxVaultIpcCommand.SaveConfiguration => SaveConfigurationAsync(request),
@@ -454,12 +457,14 @@ public sealed class OptionsViewModelTests
                 FluxVaultIpcCommand.RunRetentionNow => Task.FromResult(FluxVaultIpcResponse.WithRetentionResult(
                     result ?? new RepositoryRetentionResult([], 0, 0, 0, 0, 0, []))),
                 _ => Task.FromResult(FluxVaultIpcResponse.Failure($"Unexpected command {request.Command}"))
-            };
+            });
+            return response with { VaultId = identity, VaultRevision = revision, OperationId = request.OperationId };
         }
 
         private Task<FluxVaultIpcResponse> SaveConfigurationAsync(FluxVaultIpcRequest request)
         {
             SavedConfigurations.Add(request.Configuration ?? throw new InvalidOperationException("Missing configuration."));
+            revision++;
             return Task.FromResult(FluxVaultIpcResponse.Ok());
         }
     }

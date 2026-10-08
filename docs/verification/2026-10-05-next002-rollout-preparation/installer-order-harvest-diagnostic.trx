@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="404c26c2-5082-4a1b-8acd-78f0020d21c0" name="os008@OS008-HOME 2026-10-05 09:15:12" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T09:15:12.0180056+03:00" queuing="2026-10-05T09:15:12.0180056+03:00" start="2026-10-05T09:15:10.1646185+03:00" finish="2026-10-05T09:15:12.0217148+03:00" />
+  <TestSettings name="default" id="4a4d01bb-4b86-4078-accd-8a215d9446eb">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_09_15_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c1531a86-8a58-4c46-9228-3a0498063195" testId="3a0dea06-f5b2-058e-585d-7a68b0d8ce45" testName="FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning" computerName="OS008-HOME" duration="00:00:01.1902715" startTime="2026-10-05T09:15:10.7124571+03:00" endTime="2026-10-05T09:15:11.9177007+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c1531a86-8a58-4c46-9228-3a0498063195">
+      <Output>
+        <ErrorInfo>
+          <Message>  Determining projects to restore...&#xD;
+  Restored C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj (in 262 ms).&#xD;
+C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(36): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(43): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(83): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+&#xD;
+Build FAILED.&#xD;
+&#xD;
+C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(36): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(43): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(83): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+    0 Warning(s)&#xD;
+    3 Error(s)&#xD;
+&#xD;
+Time Elapsed 00:00:00.95&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\InstallerCommissioningContractTests.cs:line 42&#xD;
+   at FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\InstallerCommissioningContractTests.cs:line 48&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="3a0dea06-f5b2-058e-585d-7a68b0d8ce45">
+      <Execution id="c1531a86-8a58-4c46-9228-3a0498063195" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.InstallerCommissioningContractTests" name="Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3a0dea06-f5b2-058e-585d-7a68b0d8ce45" executionId="c1531a86-8a58-4c46-9228-3a0498063195" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.40]         Determining projects to restore...&#xD;
+[xUnit.net 00:00:01.40]         Restored C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj (in 262 ms).&#xD;
+[xUnit.net 00:00:01.40]       C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(36): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+[xUnit.net 00:00:01.40]       C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(43): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+[xUnit.net 00:00:01.40]       C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(83): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+[xUnit.net 00:00:01.40]       &#xD;
+[xUnit.net 00:00:01.40]       Build FAILED.&#xD;
+[xUnit.net 00:00:01.40]       &#xD;
+[xUnit.net 00:00:01.40]       C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(36): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+[xUnit.net 00:00:01.40]       C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(43): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+[xUnit.net 00:00:01.40]       C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\Package.wxs(83): error WIX8600: Inclusions and exclusions resulted in zero files harvested. Unless that is expected, you should verify paths, inclusions, and exclusions on Files or Payloads for accuracy. [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\installer\wix\FluxVault.Installer\FluxVault.Installer.wixproj]&#xD;
+[xUnit.net 00:00:01.40]           0 Warning(s)&#xD;
+[xUnit.net 00:00:01.40]           3 Error(s)&#xD;
+[xUnit.net 00:00:01.40]       &#xD;
+[xUnit.net 00:00:01.40]       Time Elapsed 00:00:00.95&#xD;
+[xUnit.net 00:00:01.40]       &#xD;
+[xUnit.net 00:00:01.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.40]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\InstallerCommissioningContractTests.cs(42,0): at FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning()&#xD;
+[xUnit.net 00:00:01.40]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\InstallerCommissioningContractTests.cs(48,0): at FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning()&#xD;
+[xUnit.net 00:00:01.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.41]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T09:15:11.9206592+03:00">
+        <Text>[xUnit.net 00:00:01.40]     FluxVault.Integration.Tests.InstallerCommissioningContractTests.Compiled_msi_leaves_runtime_stopped_and_creates_no_vault_state_before_commissioning [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

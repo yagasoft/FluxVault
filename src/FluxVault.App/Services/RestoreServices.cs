@@ -41,7 +41,7 @@ public sealed class SaveFileRestoreDestinationPicker : IRestoreDestinationPicker
         var initialName = Path.GetFileName(Path.TrimEndingDirectorySeparator(sourcePath)) + "-Recovered";
         while (true)
         {
-            var name = new ProfileDialogService().PromptForProfileName("Name the new recovery folder", initialName);
+            var name = new NamePromptService().PromptForName("Name the new recovery folder", initialName);
             if (name is null) return null;
             var destination = Path.Combine(dialog.SelectedPath, name);
             if (name.IndexOfAny(Path.GetInvalidFileNameChars()) < 0 && name is not "." and not ".." &&
@@ -105,7 +105,7 @@ public sealed class ShellVersionPreviewLauncher : IVersionPreviewLauncher
 {
     public void OpenFile(string filePath)
     {
-        Process.Start(new ProcessStartInfo
+        using var process = Process.Start(new ProcessStartInfo
         {
             FileName = filePath,
             UseShellExecute = true

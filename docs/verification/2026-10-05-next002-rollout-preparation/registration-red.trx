@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="7a01c381-bbdc-456a-a76e-60c13c04c40e" name="os008@OS008-HOME 2026-10-05 09:19:59" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T09:19:59.0489904+03:00" queuing="2026-10-05T09:19:59.0489905+03:00" start="2026-10-05T09:19:57.1949811+03:00" finish="2026-10-05T09:20:00.2428425+03:00" />
+  <TestSettings name="default" id="eedc5cec-04bc-44d6-984a-b8932288f07b">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_09_19_59" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="4df2c22b-3240-4c0d-82e7-504d68e1a741" testId="0c2f3cfd-fdf2-0ee0-31a4-6b2a03d42e94" testName="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;native-failure&quot;)" computerName="OS008-HOME" duration="00:00:00.5906265" startTime="2026-10-05T09:19:59.5981010+03:00" endTime="2026-10-05T09:20:00.1882608+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4df2c22b-3240-4c0d-82e7-504d68e1a741">
+      <Output>
+        <ErrorInfo>
+          <Message>Exception: E:\Temp\AppData\Local\Temp\FluxVaultRegistrationTests\3f689c7b333045caa7368af1dc7bafae\test.ps1:8&#xD;
+Line |&#xD;
+   8 |  . rAction SilentlyContinue)){throw 'No safe registration flow exists.'}&#xD;
+     |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | No safe registration flow exists.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs:line 54&#xD;
+   at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs:line 80&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fee9ffce-4483-4bba-b968-90dc6d22346f" testId="f2f4e07b-a21f-33ac-4cb8-ab686039ac31" testName="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;existing&quot;)" computerName="OS008-HOME" duration="00:00:00.6260746" startTime="2026-10-05T09:19:57.7639810+03:00" endTime="2026-10-05T09:19:58.4050785+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fee9ffce-4483-4bba-b968-90dc6d22346f">
+      <Output>
+        <ErrorInfo>
+          <Message>Exception: E:\Temp\AppData\Local\Temp\FluxVaultRegistrationTests\fe8e67d7302e454187e781e5b6a4f6dd\test.ps1:8&#xD;
+Line |&#xD;
+   8 |  . rAction SilentlyContinue)){throw 'No safe registration flow exists.'}&#xD;
+     |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | No safe registration flow exists.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs:line 54&#xD;
+   at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs:line 80&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ecd4e940-133a-4d47-acc0-c05ef2a052e9" testId="78807178-852b-784b-ca03-a0b737fd6207" testName="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;unsafe&quot;)" computerName="OS008-HOME" duration="00:00:00.5992151" startTime="2026-10-05T09:19:58.9989619+03:00" endTime="2026-10-05T09:19:59.5971501+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ecd4e940-133a-4d47-acc0-c05ef2a052e9">
+      <Output>
+        <ErrorInfo>
+          <Message>Exception: E:\Temp\AppData\Local\Temp\FluxVaultRegistrationTests\d072dc15c3104448b5a277c20399b0fa\test.ps1:8&#xD;
+Line |&#xD;
+   8 |  . rAction SilentlyContinue)){throw 'No safe registration flow exists.'}&#xD;
+     |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | No safe registration flow exists.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs:line 54&#xD;
+   at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs:line 80&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9ed7362a-74cd-40fb-9e82-a3e082841c3d" testId="00f1f4fd-7d52-5d42-5fe3-35a1f7076338" testName="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;success&quot;)" computerName="OS008-HOME" duration="00:00:00.5911366" startTime="2026-10-05T09:19:58.4171016+03:00" endTime="2026-10-05T09:19:58.9974561+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9ed7362a-74cd-40fb-9e82-a3e082841c3d">
+      <Output>
+        <ErrorInfo>
+          <Message>Exception: E:\Temp\AppData\Local\Temp\FluxVaultRegistrationTests\36936381281745ae9136494255a197e3\test.ps1:8&#xD;
+Line |&#xD;
+   8 |  . rAction SilentlyContinue)){throw 'No safe registration flow exists.'}&#xD;
+     |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | No safe registration flow exists.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs:line 54&#xD;
+   at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs:line 80&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;success&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="00f1f4fd-7d52-5d42-5fe3-35a1f7076338">
+      <Execution id="9ed7362a-74cd-40fb-9e82-a3e082841c3d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests" name="Registration_refuses_unsafe_changes_and_never_starts_runtime" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;existing&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="f2f4e07b-a21f-33ac-4cb8-ab686039ac31">
+      <Execution id="fee9ffce-4483-4bba-b968-90dc6d22346f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests" name="Registration_refuses_unsafe_changes_and_never_starts_runtime" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;unsafe&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="78807178-852b-784b-ca03-a0b737fd6207">
+      <Execution id="ecd4e940-133a-4d47-acc0-c05ef2a052e9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests" name="Registration_refuses_unsafe_changes_and_never_starts_runtime" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: &quot;native-failure&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="0c2f3cfd-fdf2-0ee0-31a4-6b2a03d42e94">
+      <Execution id="4df2c22b-3240-4c0d-82e7-504d68e1a741" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DeveloperServiceRegistrationTests" name="Registration_refuses_unsafe_changes_and_never_starts_runtime" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0c2f3cfd-fdf2-0ee0-31a4-6b2a03d42e94" executionId="4df2c22b-3240-4c0d-82e7-504d68e1a741" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f2f4e07b-a21f-33ac-4cb8-ab686039ac31" executionId="fee9ffce-4483-4bba-b968-90dc6d22346f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78807178-852b-784b-ca03-a0b737fd6207" executionId="ecd4e940-133a-4d47-acc0-c05ef2a052e9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00f1f4fd-7d52-5d42-5fe3-35a1f7076338" executionId="9ed7362a-74cd-40fb-9e82-a3e082841c3d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.85]       Exception: E:\Temp\AppData\Local\Temp\FluxVaultRegistrationTests\fe8e67d7302e454187e781e5b6a4f6dd\test.ps1:8&#xD;
+[xUnit.net 00:00:00.85]       Line |&#xD;
+[xUnit.net 00:00:00.85]          8 |  . rAction SilentlyContinue)){throw 'No safe registration flow exists.'}&#xD;
+[xUnit.net 00:00:00.85]            |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:00.85]            | No safe registration flow exists.&#xD;
+[xUnit.net 00:00:00.85]       &#xD;
+[xUnit.net 00:00:00.85]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs(54,0): at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario)&#xD;
+[xUnit.net 00:00:00.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs(80,0): at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario)&#xD;
+[xUnit.net 00:00:00.85]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.44]       Exception: E:\Temp\AppData\Local\Temp\FluxVaultRegistrationTests\36936381281745ae9136494255a197e3\test.ps1:8&#xD;
+[xUnit.net 00:00:01.44]       Line |&#xD;
+[xUnit.net 00:00:01.44]          8 |  . rAction SilentlyContinue)){throw 'No safe registration flow exists.'}&#xD;
+[xUnit.net 00:00:01.44]            |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:01.44]            | No safe registration flow exists.&#xD;
+[xUnit.net 00:00:01.44]       &#xD;
+[xUnit.net 00:00:01.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs(54,0): at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario)&#xD;
+[xUnit.net 00:00:01.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs(80,0): at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario)&#xD;
+[xUnit.net 00:00:01.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.04]       Exception: E:\Temp\AppData\Local\Temp\FluxVaultRegistrationTests\d072dc15c3104448b5a277c20399b0fa\test.ps1:8&#xD;
+[xUnit.net 00:00:02.04]       Line |&#xD;
+[xUnit.net 00:00:02.04]          8 |  . rAction SilentlyContinue)){throw 'No safe registration flow exists.'}&#xD;
+[xUnit.net 00:00:02.04]            |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:02.04]            | No safe registration flow exists.&#xD;
+[xUnit.net 00:00:02.04]       &#xD;
+[xUnit.net 00:00:02.04]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.04]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs(54,0): at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario)&#xD;
+[xUnit.net 00:00:02.04]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs(80,0): at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario)&#xD;
+[xUnit.net 00:00:02.04]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.63]       Exception: E:\Temp\AppData\Local\Temp\FluxVaultRegistrationTests\3f689c7b333045caa7368af1dc7bafae\test.ps1:8&#xD;
+[xUnit.net 00:00:02.63]       Line |&#xD;
+[xUnit.net 00:00:02.63]          8 |  . rAction SilentlyContinue)){throw 'No safe registration flow exists.'}&#xD;
+[xUnit.net 00:00:02.63]            |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:02.63]            | No safe registration flow exists.&#xD;
+[xUnit.net 00:00:02.63]       &#xD;
+[xUnit.net 00:00:02.63]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.63]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs(54,0): at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario)&#xD;
+[xUnit.net 00:00:02.63]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\DeveloperServiceRegistrationTests.cs(80,0): at FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(String scenario)&#xD;
+[xUnit.net 00:00:02.63]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.64]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T09:19:58.4077501+03:00">
+        <Text>[xUnit.net 00:00:00.85]     FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: "existing") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T09:19:58.9979328+03:00">
+        <Text>[xUnit.net 00:00:01.44]     FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: "success") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T09:19:59.5976967+03:00">
+        <Text>[xUnit.net 00:00:02.04]     FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: "unsafe") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T09:20:00.1886141+03:00">
+        <Text>[xUnit.net 00:00:02.63]     FluxVault.Integration.Tests.DeveloperServiceRegistrationTests.Registration_refuses_unsafe_changes_and_never_starts_runtime(scenario: "native-failure") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

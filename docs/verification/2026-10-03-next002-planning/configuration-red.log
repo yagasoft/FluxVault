@@ -1,0 +1,90 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.App.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.50]     FluxVault.App.Tests.ProtectionSaveContractTests.Saving_protection_selection_preserves_every_untouched_setting_through_real_store(profileStore: False) [FAIL]
+[xUnit.net 00:00:00.53]     FluxVault.App.Tests.ProtectionSaveContractTests.Saving_protection_selection_preserves_every_untouched_setting_through_real_store(profileStore: True) [FAIL]
+[xUnit.net 00:00:00.54]     FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(failure: Timeout) [FAIL]
+[xUnit.net 00:00:00.56]     FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(failure: Denied) [FAIL]
+[xUnit.net 00:00:00.56]     FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(failure: Rejected) [FAIL]
+[xUnit.net 00:00:00.57]     FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(failure: Cancelled) [FAIL]
+[xUnit.net 00:00:00.57]     FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(failure: Io) [FAIL]
+[xUnit.net 00:00:00.59]     FluxVault.App.Tests.ProtectionSaveContractTests.Cancelling_removal_confirmation_keeps_edits_and_sends_neither_save_nor_backup [FAIL]
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Saving_protection_selection_preserves_every_untouched_setting_through_real_store(profileStore: False) [285 ms]
+  Error Message:
+   Assert.Empty() Failure: Collection was not empty
+Collection: ["IsEnabled", "RepositoryMaintenancePolicy", "Sync", "MetadataStore", "DiagnosticsPolicy"]
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.Saving_protection_selection_preserves_every_untouched_setting_through_real_store(Boolean profileStore) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 45
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Saving_protection_selection_preserves_every_untouched_setting_through_real_store(profileStore: True) [25 ms]
+  Error Message:
+   Assert.Empty() Failure: Collection was not empty
+Collection: ["IsEnabled", "RepositoryMaintenancePolicy", "Sync", "MetadataStore", "DiagnosticsPolicy"]
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.Saving_protection_selection_preserves_every_untouched_setting_through_real_store(Boolean profileStore) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 45
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(failure: Timeout) [15 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Item found in collection
+                                           ↓ (pos 2)
+Collection: [GetStatus, SaveConfiguration, RunBackupNow, GetStatus, GetStatus]
+Found:      RunBackupNow
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(SaveFailure failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 76
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(failure: Denied) [13 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Item found in collection
+                                           ↓ (pos 2)
+Collection: [GetStatus, SaveConfiguration, RunBackupNow, GetStatus, GetStatus]
+Found:      RunBackupNow
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(SaveFailure failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 76
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(failure: Rejected) [5 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Item found in collection
+                                           ↓ (pos 2)
+Collection: [GetStatus, SaveConfiguration, RunBackupNow, GetStatus, GetStatus]
+Found:      RunBackupNow
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(SaveFailure failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 76
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(failure: Cancelled) [5 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   System.OperationCanceledException: Fixture save cancelled
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 207
+   at FluxVault.App.ViewModels.MainWindowViewModel.SaveConfigurationCoreAsync(Boolean refreshAfterSave, String successStatus) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 720
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1229
+   at Xunit.Record.ExceptionAsync(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 76
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(SaveFailure failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 75
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(failure: Io) [4 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Item found in collection
+                                           ↓ (pos 2)
+Collection: [GetStatus, SaveConfiguration, RunBackupNow, GetStatus, GetStatus]
+Found:      RunBackupNow
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.Failed_or_cancelled_save_keeps_draft_explains_failure_and_never_starts_backup(SaveFailure failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 76
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Cancelling_removal_confirmation_keeps_edits_and_sends_neither_save_nor_backup [10 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Item found in collection
+                        ↓ (pos 1)
+Collection: [GetStatus, RunBackupNow, GetStatus]
+Found:      RunBackupNow
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.Cancelling_removal_confirmation_keeps_edits_and_sends_neither_save_nor_backup() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 108
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-03-next002-planning\configuration-red.trx
+
+Failed!  - Failed:     8, Passed:     1, Skipped:     0, Total:     9, Duration: 402 ms - FluxVault.App.Tests.dll (net10.0)

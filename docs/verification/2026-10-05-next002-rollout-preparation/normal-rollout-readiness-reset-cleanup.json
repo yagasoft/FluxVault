@@ -1,0 +1,49 @@
+{
+  "Services": [
+    {
+      "Name": "postgresql-x64-18",
+      "State": "Running",
+      "StartMode": "Auto",
+      "ProcessId": 8600
+    },
+    {
+      "Name": "FluxVaultService",
+      "State": "Stopped",
+      "StartMode": "Manual",
+      "ProcessId": 0
+    }
+  ],
+  "FixtureToolingChildrenAbsent": true,
+  "CapturedTestProcessesAbsent": true,
+  "ResetApplied": false,
+  "NativeCommissionIdentitiesAbsent": 102,
+  "OwnedJobNamesAbsent": [
+    "Global\\FluxVault.NEXT002.620851e919e54e2292d4ec841ea3cd3a",
+    "Global\\FluxVault.NEXT002.bf6e4bf28a9644988ac0c18e04852b39"
+  ],
+  "OwnedTasksAbsent": true,
+  "Failed": 0,
+  "Postmaster": [
+    {
+      "Id": 10660,
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+      "StartedUtc": "2026-10-06T09:31:44.0114872Z"
+    }
+  ],
+  "Authentication": [
+    {
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_hba.conf",
+      "Hash": "C37D219F5AEE60D710ABCD9628A1F3D6C94F5C9861B4E31A52290DE995D97379"
+    },
+    {
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_ident.conf",
+      "Hash": "2151E28F0BF5A8BB69109F91DBE61EBFFE48C6F9B71620F6A7B0B02B410E7DE5"
+    }
+  ],
+  "ObservedUtc": "2026-10-07T20:25:12.1655594Z",
+  "VerificationExitCode": 0,
+  "Skipped": 0,
+  "VerificationJoined": true,
+  "CombinedPassed": 146,
+  "ContextSha256": "B933D862C7489D72111E5FC8F416CBB647E54BFB25EE071823CE0909264483E9"
+}

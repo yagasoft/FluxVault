@@ -1,0 +1,38 @@
+{
+  "FixtureId": "0a5e0b41e2964dc5a1975a917f4a233b",
+  "FailureLocation": "at Read-ActorResult, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 107\r\nat Invoke-SystemActor, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 143\r\nat Invoke-CorrelatedActor, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 206\r\nat <ScriptBlock>, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 452",
+  "Failure": "Actor deadline exceeded.",
+  "Observations": [
+    {
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "0a5e0b41e2964dc5a1975a917f4a233b",
+            "ProbeId": "085dd89fb1444e61a9c529cd88eb76bf",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL"
+          }
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WriteRuntime": true
+        }
+      ],
+      "RunId": "f13c1543e26f4ec7a52838273b16332d",
+      "ServerLogStart": 896,
+      "ServerLogEnd": 2301
+    }
+  ]
+}

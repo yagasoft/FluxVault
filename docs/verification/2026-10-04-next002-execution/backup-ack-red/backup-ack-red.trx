@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="610923dd-b55d-4b5c-a078-455f9958efdd" name="os008@OS008-HOME 2026-10-04 11:49:08" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T11:49:08.6383955+03:00" queuing="2026-10-04T11:49:08.6383960+03:00" start="2026-10-04T11:49:07.6210660+03:00" finish="2026-10-04T11:49:08.6434598+03:00" />
+  <TestSettings name="default" id="656c45c9-8e0d-42c2-95d3-5aa345fd155c">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_11_49_08" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ad3213ac-7c8d-4dd1-932b-c4eee782d24b" testId="99ad46c6-48d9-3da8-b201-0d8319d5afa1" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(failure: Cancelled)" computerName="OS008-HOME" duration="00:00:00.2792230" startTime="2026-10-04T11:49:08.2050111+03:00" endTime="2026-10-04T11:49:08.4948074+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad3213ac-7c8d-4dd1-932b-c4eee782d24b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Null() Failure: Value is not null&#xD;
+Expected: null&#xD;
+Actual:   System.OperationCanceledException: Backup acknowledgement cancelled&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 923&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 889&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1324&#xD;
+   at Xunit.Record.ExceptionAsync(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 76</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(SaveFailure failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 36&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cea3f56c-7684-41e8-a3cb-b664b6c33df0" testId="2e45d694-41e3-e2e7-4980-0da3ba0bf25b" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(failure: Io)" computerName="OS008-HOME" duration="00:00:00.0075020" startTime="2026-10-04T11:49:08.5167822+03:00" endTime="2026-10-04T11:49:08.5168645+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cea3f56c-7684-41e8-a3cb-b664b6c33df0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Null() Failure: Value is not null&#xD;
+Expected: null&#xD;
+Actual:   System.IO.IOException: Disconnected after backup execution&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 921&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 889&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1324&#xD;
+   at Xunit.Record.ExceptionAsync(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 76</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(SaveFailure failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 36&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="23dd70a2-a514-41d5-b5bf-a96463926577" testId="6154cfef-0b92-8bdb-7eee-a29f74985ae3" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(failure: Timeout)" computerName="OS008-HOME" duration="00:00:00.0153712" startTime="2026-10-04T11:49:08.5180339+03:00" endTime="2026-10-04T11:49:08.5194271+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="23dd70a2-a514-41d5-b5bf-a96463926577">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Null() Failure: Value is not null&#xD;
+Expected: null&#xD;
+Actual:   System.TimeoutException: Lost backup acknowledgement&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 922&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 889&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1324&#xD;
+   at Xunit.Record.ExceptionAsync(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 76</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(SaveFailure failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 36&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(failure: Cancelled)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="99ad46c6-48d9-3da8-b201-0d8319d5afa1">
+      <Execution id="ad3213ac-7c8d-4dd1-932b-c4eee782d24b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(failure: Timeout)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="6154cfef-0b92-8bdb-7eee-a29f74985ae3">
+      <Execution id="23dd70a2-a514-41d5-b5bf-a96463926577" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(failure: Io)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="2e45d694-41e3-e2e7-4980-0da3ba0bf25b">
+      <Execution id="cea3f56c-7684-41e8-a3cb-b664b6c33df0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="99ad46c6-48d9-3da8-b201-0d8319d5afa1" executionId="ad3213ac-7c8d-4dd1-932b-c4eee782d24b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e45d694-41e3-e2e7-4980-0da3ba0bf25b" executionId="cea3f56c-7684-41e8-a3cb-b664b6c33df0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6154cfef-0b92-8bdb-7eee-a29f74985ae3" executionId="23dd70a2-a514-41d5-b5bf-a96463926577" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.49]       Assert.Null() Failure: Value is not null&#xD;
+[xUnit.net 00:00:00.49]       Expected: null&#xD;
+[xUnit.net 00:00:00.49]       Actual:   System.OperationCanceledException: Backup acknowledgement cancelled&#xD;
+[xUnit.net 00:00:00.49]          at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 923&#xD;
+[xUnit.net 00:00:00.49]          at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 889&#xD;
+[xUnit.net 00:00:00.49]          at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1324&#xD;
+[xUnit.net 00:00:00.49]          at Xunit.Record.ExceptionAsync(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 76&#xD;
+[xUnit.net 00:00:00.49]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(36,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(SaveFailure failure)&#xD;
+[xUnit.net 00:00:00.49]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.51]       Assert.Null() Failure: Value is not null&#xD;
+[xUnit.net 00:00:00.51]       Expected: null&#xD;
+[xUnit.net 00:00:00.51]       Actual:   System.IO.IOException: Disconnected after backup execution&#xD;
+[xUnit.net 00:00:00.51]          at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 921&#xD;
+[xUnit.net 00:00:00.51]          at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 889&#xD;
+[xUnit.net 00:00:00.51]          at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1324&#xD;
+[xUnit.net 00:00:00.51]          at Xunit.Record.ExceptionAsync(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 76&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(36,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(SaveFailure failure)&#xD;
+[xUnit.net 00:00:00.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.51]       Assert.Null() Failure: Value is not null&#xD;
+[xUnit.net 00:00:00.51]       Expected: null&#xD;
+[xUnit.net 00:00:00.51]       Actual:   System.TimeoutException: Lost backup acknowledgement&#xD;
+[xUnit.net 00:00:00.51]          at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 922&#xD;
+[xUnit.net 00:00:00.51]          at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 889&#xD;
+[xUnit.net 00:00:00.51]          at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1324&#xD;
+[xUnit.net 00:00:00.51]          at Xunit.Record.ExceptionAsync(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 76&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(36,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(SaveFailure failure)&#xD;
+[xUnit.net 00:00:00.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.52]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T11:49:08.4975229+03:00">
+        <Text>[xUnit.net 00:00:00.49]     FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(failure: Cancelled) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T11:49:08.5173414+03:00">
+        <Text>[xUnit.net 00:00:00.51]     FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(failure: Io) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T11:49:08.5196531+03:00">
+        <Text>[xUnit.net 00:00:00.51]     FluxVault.App.Tests.ProtectionSaveContractTests.Lost_backup_acknowledgement_is_handled_and_remains_visible_after_refresh(failure: Timeout) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -4,6 +4,7 @@ using FluxVault.Abstractions.Configuration;
 
 namespace FluxVault.Core.Configuration;
 
+/// <summary>Legacy single-record file bridge retained for recovery and store regressions; never used by the service.</summary>
 public sealed class FileFluxVaultProfileSetStore(string configPath, string programDataPath) : IFluxVaultProfileSetStore
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
@@ -62,6 +63,8 @@ public sealed class FileFluxVaultProfileSetStore(string configPath, string progr
 
     private FluxVaultProfileSetConfiguration Normalise(FluxVaultProfileSetConfiguration configuration)
     {
+        if (configuration.Profiles is { Count: > 1 })
+            throw new InvalidDataException("Multiple legacy vault records require the retained staging recovery tools. This installation supports one vault and has not changed the file.");
         var profiles = (configuration.Profiles ?? [])
             .Select(NormaliseProfile)
             .ToArray();
@@ -70,17 +73,9 @@ public sealed class FileFluxVaultProfileSetStore(string configPath, string progr
             profiles = [FluxVaultProfileConfiguration.CreateDefault(programDataPath)];
         }
 
-        var activeProfileId = string.IsNullOrWhiteSpace(configuration.ActiveProfileId)
-            ? (profiles.FirstOrDefault(profile => profile.IsEnabled)?.Id ?? profiles[0].Id)
-            : configuration.ActiveProfileId.Trim();
-        if (!profiles.Any(profile => string.Equals(profile.Id, activeProfileId, StringComparison.OrdinalIgnoreCase)))
-        {
-            activeProfileId = profiles.FirstOrDefault(profile => profile.IsEnabled)?.Id ?? profiles[0].Id;
-        }
-
         return configuration with
         {
-            ActiveProfileId = activeProfileId,
+            ActiveProfileId = profiles[0].Id,
             Profiles = profiles
         };
     }
@@ -93,24 +88,18 @@ public sealed class FileFluxVaultProfileSetStore(string configPath, string progr
         var displayName = string.IsNullOrWhiteSpace(profile.DisplayName)
             ? id
             : profile.DisplayName.Trim();
-        var profileProgramDataPath = ProfileProgramDataPath(id);
-        var configuration = profile.Configuration ?? FluxVaultConfiguration.CreateDefault(profileProgramDataPath);
+        var configuration = profile.Configuration ?? FluxVaultConfiguration.CreateDefault(programDataPath);
         return profile with
         {
             Id = id,
             DisplayName = displayName,
-            Configuration = NormaliseConfiguration(configuration, profileProgramDataPath)
+            Configuration = NormaliseConfiguration(configuration)
         };
     }
 
     private FluxVaultConfiguration NormaliseConfiguration(FluxVaultConfiguration configuration)
     {
         return new FileFluxVaultConfigurationStore(configPath, programDataPath).Normalise(configuration);
-    }
-
-    private FluxVaultConfiguration NormaliseConfiguration(FluxVaultConfiguration configuration, string profileProgramDataPath)
-    {
-        return new FileFluxVaultConfigurationStore(configPath, profileProgramDataPath).Normalise(configuration);
     }
 
     private static void Validate(FluxVaultProfileSetConfiguration configuration)
@@ -137,10 +126,4 @@ public sealed class FileFluxVaultProfileSetStore(string configPath, string progr
         }
     }
 
-    private string ProfileProgramDataPath(string profileId)
-    {
-        return string.Equals(profileId, FluxVaultProfileConfiguration.DefaultProfileId, StringComparison.OrdinalIgnoreCase)
-            ? programDataPath
-            : Path.Combine(programDataPath, "profiles", profileId);
-    }
 }

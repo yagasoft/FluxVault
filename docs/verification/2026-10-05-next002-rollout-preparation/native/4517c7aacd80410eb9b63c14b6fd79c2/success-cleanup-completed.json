@@ -1,0 +1,24 @@
+{
+  "AdmissionRetired": true,
+  "State": {
+    "administrator_absent": true,
+    "admin_pids": [],
+    "legacy_pids": [],
+    "database": "fluxvault_single",
+    "role": "fluxvault_service",
+    "port": 54028
+  },
+  "Postmaster": {
+    "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\4517c7aacd80410eb9b63c14b6fd79c2\\postgresql\\bin\\postgres.exe",
+    "DataDirectory": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\4517c7aacd80410eb9b63c14b6fd79c2\\data",
+    "StartedUtc": "2026-10-05T11:02:13.1966328Z",
+    "Port": 54028,
+    "ProcessId": 57996
+  },
+  "ContextSha256": "36EED1D76F6032DF8E28C775610CB752DF5BDA17DB60DFC7D19B8177D8C11446",
+  "OwnedJobJoined": true,
+  "Version": 1,
+  "ObservedUtc": "2026-10-05T11:02:23.4556184Z",
+  "CanActivate": true,
+  "FinalRetained": true
+}

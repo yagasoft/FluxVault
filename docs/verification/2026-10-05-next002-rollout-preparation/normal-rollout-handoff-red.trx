@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f98284c3-0a02-465a-bda7-1f41df4b550f" name="os008@OS008-HOME 2026-10-07 23:01:13" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-07T23:01:13.5784833+03:00" queuing="2026-10-07T23:01:13.5784834+03:00" start="2026-10-07T23:01:11.7219954+03:00" finish="2026-10-07T23:01:17.5367202+03:00" />
+  <TestSettings name="default" id="0b422870-2c60-4e40-ba8b-219c4de802c8">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-07_23_01_13" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e1ae1549-b574-4bdb-9a11-289bf87f6f64" testId="da43d330-8690-cd15-5e70-a0e642e8af24" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;after-intent&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:00.7181510" startTime="2026-10-07T23:01:15.3008139+03:00" endTime="2026-10-07T23:01:16.0188486+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1ae1549-b574-4bdb-9a11-289bf87f6f64">
+      <Output>
+        <ErrorInfo>
+          <Message>Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.fc813a900ace4485a6a6c2f3c903669a\case-ba1e6006d99f478f9d8854181b3c0380.ps1:18&#xD;
+Line |&#xD;
+  18 |  Publish-CommissionAclHandoff $context&#xD;
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+     | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+     | and try again.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2395&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2403&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8370231b-01b6-4ba4-a62e-ee3ddfe8516e" testId="cd63e943-946c-bf32-4d34-815de2a29d19" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;before-context&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:00.8216719" startTime="2026-10-07T23:01:12.2933338+03:00" endTime="2026-10-07T23:01:13.1306776+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8370231b-01b6-4ba4-a62e-ee3ddfe8516e">
+      <Output>
+        <ErrorInfo>
+          <Message>Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.82e2d39bf76845b2be89dfb2873fe35e\case-7ab98e25d53d4398acf7fe2308e7b520.ps1:18&#xD;
+Line |&#xD;
+  18 |  Publish-CommissionAclHandoff $context&#xD;
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+     | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+     | and try again.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2395&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2403&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7e0c922d-46da-43ff-b1d9-3ce65e842adb" testId="7f0817d3-bc65-5c7a-7b71-32c665d05538" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;before-completion&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:00.7302961" startTime="2026-10-07T23:01:14.5703580+03:00" endTime="2026-10-07T23:01:15.3000062+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e0c922d-46da-43ff-b1d9-3ce65e842adb">
+      <Output>
+        <ErrorInfo>
+          <Message>Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.828839c6b9614885ba07d2aab56b598c\case-39a9a0cc08544a8ea637c8742c61a00b.ps1:18&#xD;
+Line |&#xD;
+  18 |  Publish-CommissionAclHandoff $context&#xD;
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+     | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+     | and try again.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2395&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2403&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f84d0b1d-525a-4afe-8cf1-7d34a37697d3" testId="209a6c5f-4d1a-e220-1259-8349d5d6f0e9" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;complete&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:00.7454305" startTime="2026-10-07T23:01:16.7363725+03:00" endTime="2026-10-07T23:01:17.4817024+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f84d0b1d-525a-4afe-8cf1-7d34a37697d3">
+      <Output>
+        <ErrorInfo>
+          <Message>Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.3a3aada475ca401bb2ce85ba5f53c1ce\case-59b929432bc74da7825c3c004e073718.ps1:18&#xD;
+Line |&#xD;
+  18 |  Publish-CommissionAclHandoff $context&#xD;
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+     | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+     | and try again.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2395&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2403&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3a4cd0cc-f7bf-467d-a2c3-c8bf5c211711" testId="5fb65553-b098-e624-7958-8eb8c92b4b53" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;changed-original&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:00.7295651" startTime="2026-10-07T23:01:13.1438201+03:00" endTime="2026-10-07T23:01:13.8615577+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a4cd0cc-f7bf-467d-a2c3-c8bf5c211711">
+      <Output>
+        <ErrorInfo>
+          <Message>Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.0d5f1e84d73f412e825e598c274f3965\case-fae7357442b74ce6a1ec193928592e39.ps1:18&#xD;
+Line |&#xD;
+  18 |  Publish-CommissionAclHandoff $context&#xD;
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+     | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+     | and try again.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2395&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2403&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3830c4f4-29a9-446d-b03e-ed8bc842efe8" testId="5adb7e37-73e5-6c91-48db-4b95f4635927" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;after-context&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:00.7069601" startTime="2026-10-07T23:01:13.8673534+03:00" endTime="2026-10-07T23:01:14.5690908+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3830c4f4-29a9-446d-b03e-ed8bc842efe8">
+      <Output>
+        <ErrorInfo>
+          <Message>Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.6ced64c4652546bcaefeff2aea76bf31\case-58c42006cfa84470bf8a96b59c709eee.ps1:18&#xD;
+Line |&#xD;
+  18 |  Publish-CommissionAclHandoff $context&#xD;
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+     | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+     | and try again.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2395&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2403&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7f4e5564-3879-4e0a-b7bd-8b86cf16bcbf" testId="4bb388a9-63c3-0ec3-148b-6356d5806c9d" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;changed-context&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:00.7161527" startTime="2026-10-07T23:01:16.0195811+03:00" endTime="2026-10-07T23:01:16.7356647+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f4e5564-3879-4e0a-b7bd-8b86cf16bcbf">
+      <Output>
+        <ErrorInfo>
+          <Message>Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.ea1f14665c3f4dd0b169b213d11ebb5b\case-0f8b206806fe418ca0c832f3795b1d0e.ps1:18&#xD;
+Line |&#xD;
+  18 |  Publish-CommissionAclHandoff $context&#xD;
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+     | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+     | and try again.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2395&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 2403&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 20&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;after-context&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5adb7e37-73e5-6c91-48db-4b95f4635927">
+      <Execution id="3830c4f4-29a9-446d-b03e-ed8bc842efe8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;changed-original&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5fb65553-b098-e624-7958-8eb8c92b4b53">
+      <Execution id="3a4cd0cc-f7bf-467d-a2c3-c8bf5c211711" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;before-completion&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="7f0817d3-bc65-5c7a-7b71-32c665d05538">
+      <Execution id="7e0c922d-46da-43ff-b1d9-3ce65e842adb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;after-intent&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="da43d330-8690-cd15-5e70-a0e642e8af24">
+      <Execution id="e1ae1549-b574-4bdb-9a11-289bf87f6f64" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;changed-context&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="4bb388a9-63c3-0ec3-148b-6356d5806c9d">
+      <Execution id="7f4e5564-3879-4e0a-b7bd-8b86cf16bcbf" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;before-context&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="cd63e943-946c-bf32-4d34-815de2a29d19">
+      <Execution id="8370231b-01b6-4ba4-a62e-ee3ddfe8516e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: &quot;complete&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="209a6c5f-4d1a-e220-1259-8349d5d6f0e9">
+      <Execution id="f84d0b1d-525a-4afe-8cf1-7d34a37697d3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="da43d330-8690-cd15-5e70-a0e642e8af24" executionId="e1ae1549-b574-4bdb-9a11-289bf87f6f64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd63e943-946c-bf32-4d34-815de2a29d19" executionId="8370231b-01b6-4ba4-a62e-ee3ddfe8516e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f0817d3-bc65-5c7a-7b71-32c665d05538" executionId="7e0c922d-46da-43ff-b1d9-3ce65e842adb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="209a6c5f-4d1a-e220-1259-8349d5d6f0e9" executionId="f84d0b1d-525a-4afe-8cf1-7d34a37697d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5fb65553-b098-e624-7958-8eb8c92b4b53" executionId="3a4cd0cc-f7bf-467d-a2c3-c8bf5c211711" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5adb7e37-73e5-6c91-48db-4b95f4635927" executionId="3830c4f4-29a9-446d-b03e-ed8bc842efe8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4bb388a9-63c3-0ec3-148b-6356d5806c9d" executionId="7f4e5564-3879-4e0a-b7bd-8b86cf16bcbf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="0" failed="7" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.05]       Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.82e2d39bf76845b2be89dfb2873fe35e\case-7ab98e25d53d4398acf7fe2308e7b520.ps1:18&#xD;
+[xUnit.net 00:00:01.05]       Line |&#xD;
+[xUnit.net 00:00:01.05]         18 |  Publish-CommissionAclHandoff $context&#xD;
+[xUnit.net 00:00:01.05]            |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:01.05]            | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+[xUnit.net 00:00:01.05]            | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+[xUnit.net 00:00:01.05]            | and try again.&#xD;
+[xUnit.net 00:00:01.05]       &#xD;
+[xUnit.net 00:00:01.05]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.05]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2395,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:01.05]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2403,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:01.05]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(20,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:01.05]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.77]       Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.0d5f1e84d73f412e825e598c274f3965\case-fae7357442b74ce6a1ec193928592e39.ps1:18&#xD;
+[xUnit.net 00:00:01.77]       Line |&#xD;
+[xUnit.net 00:00:01.77]         18 |  Publish-CommissionAclHandoff $context&#xD;
+[xUnit.net 00:00:01.77]            |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:01.77]            | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+[xUnit.net 00:00:01.77]            | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+[xUnit.net 00:00:01.77]            | and try again.&#xD;
+[xUnit.net 00:00:01.77]       &#xD;
+[xUnit.net 00:00:01.77]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.77]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2395,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:01.77]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2403,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:01.77]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(20,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:01.77]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.48]       Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.6ced64c4652546bcaefeff2aea76bf31\case-58c42006cfa84470bf8a96b59c709eee.ps1:18&#xD;
+[xUnit.net 00:00:02.48]       Line |&#xD;
+[xUnit.net 00:00:02.48]         18 |  Publish-CommissionAclHandoff $context&#xD;
+[xUnit.net 00:00:02.48]            |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:02.48]            | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+[xUnit.net 00:00:02.48]            | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+[xUnit.net 00:00:02.48]            | and try again.&#xD;
+[xUnit.net 00:00:02.48]       &#xD;
+[xUnit.net 00:00:02.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.48]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2395,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:02.48]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2403,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:02.48]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(20,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:02.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.21]       Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.828839c6b9614885ba07d2aab56b598c\case-39a9a0cc08544a8ea637c8742c61a00b.ps1:18&#xD;
+[xUnit.net 00:00:03.21]       Line |&#xD;
+[xUnit.net 00:00:03.21]         18 |  Publish-CommissionAclHandoff $context&#xD;
+[xUnit.net 00:00:03.21]            |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:03.21]            | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+[xUnit.net 00:00:03.21]            | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+[xUnit.net 00:00:03.21]            | and try again.&#xD;
+[xUnit.net 00:00:03.21]       &#xD;
+[xUnit.net 00:00:03.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.21]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2395,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:03.21]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2403,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:03.21]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(20,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:03.21]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.93]       Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.fc813a900ace4485a6a6c2f3c903669a\case-ba1e6006d99f478f9d8854181b3c0380.ps1:18&#xD;
+[xUnit.net 00:00:03.93]       Line |&#xD;
+[xUnit.net 00:00:03.93]         18 |  Publish-CommissionAclHandoff $context&#xD;
+[xUnit.net 00:00:03.93]            |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:03.93]            | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+[xUnit.net 00:00:03.93]            | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+[xUnit.net 00:00:03.93]            | and try again.&#xD;
+[xUnit.net 00:00:03.93]       &#xD;
+[xUnit.net 00:00:03.93]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.93]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2395,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:03.93]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2403,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:03.93]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(20,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:03.93]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.65]       Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.ea1f14665c3f4dd0b169b213d11ebb5b\case-0f8b206806fe418ca0c832f3795b1d0e.ps1:18&#xD;
+[xUnit.net 00:00:04.65]       Line |&#xD;
+[xUnit.net 00:00:04.65]         18 |  Publish-CommissionAclHandoff $context&#xD;
+[xUnit.net 00:00:04.65]            |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:04.65]            | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+[xUnit.net 00:00:04.65]            | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+[xUnit.net 00:00:04.65]            | and try again.&#xD;
+[xUnit.net 00:00:04.65]       &#xD;
+[xUnit.net 00:00:04.65]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.65]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2395,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:04.65]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2403,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:04.65]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(20,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:04.65]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.39]       Publish-CommissionAclHandoff: C:\Users\os008\FluxVault.WindowsFixtureTools.3a3aada475ca401bb2ce85ba5f53c1ce\case-59b929432bc74da7825c3c004e073718.ps1:18&#xD;
+[xUnit.net 00:00:05.39]       Line |&#xD;
+[xUnit.net 00:00:05.39]         18 |  Publish-CommissionAclHandoff $context&#xD;
+[xUnit.net 00:00:05.39]            |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:05.39]            | The term 'Publish-CommissionAclHandoff' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+[xUnit.net 00:00:05.39]            | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+[xUnit.net 00:00:05.39]            | and try again.&#xD;
+[xUnit.net 00:00:05.39]       &#xD;
+[xUnit.net 00:00:05.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2395,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:05.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(2403,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:05.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(20,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(String scenario, Boolean accepted)&#xD;
+[xUnit.net 00:00:05.39]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.40]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:01:13.1332423+03:00">
+        <Text>[xUnit.net 00:00:01.05]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: "before-context", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:01:13.8622853+03:00">
+        <Text>[xUnit.net 00:00:01.77]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: "changed-original", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:01:14.5695804+03:00">
+        <Text>[xUnit.net 00:00:02.48]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: "after-context", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:01:15.3002907+03:00">
+        <Text>[xUnit.net 00:00:03.21]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: "before-completion", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:01:16.0191774+03:00">
+        <Text>[xUnit.net 00:00:03.93]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: "after-intent", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:01:16.7359428+03:00">
+        <Text>[xUnit.net 00:00:04.65]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: "changed-context", accepted: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T23:01:17.4819766+03:00">
+        <Text>[xUnit.net 00:00:05.39]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Acl_checkpoint_handoff_preserves_originals_and_refuses_partial_recovery(scenario: "complete", accepted: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="fb37d52f-d168-4e32-8a8a-aaf176e5456d" name="os008@OS008-HOME 2026-10-04 19:43:34" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T19:43:34.8970974+03:00" queuing="2026-10-04T19:43:34.8970975+03:00" start="2026-10-04T19:43:34.0581000+03:00" finish="2026-10-04T19:43:34.9266715+03:00" />
+  <TestSettings name="default" id="3123bafd-1cea-4859-b610-d1da30d24ffd">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_19_43_34" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="5432c56a-bd3a-4139-96a5-8680497a6d8a" testId="d08b8b01-1460-a3a5-b9bb-c68417797fce" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NullWarnings)" computerName="OS008-HOME" duration="00:00:00.0006756" startTime="2026-10-04T19:43:34.8740691+03:00" endTime="2026-10-04T19:43:34.8740957+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5432c56a-bd3a-4139-96a5-8680497a6d8a" />
+    <UnitTestResult executionId="82c92de3-9568-4aa7-9687-42ce2d60b9f4" testId="e2412fae-94fe-9c2f-d4cb-8c07a2b194a2" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongResultDestination)" computerName="OS008-HOME" duration="00:00:00.0007381" startTime="2026-10-04T19:43:34.8532827+03:00" endTime="2026-10-04T19:43:34.8533123+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="82c92de3-9568-4aa7-9687-42ce2d60b9f4" />
+    <UnitTestResult executionId="74f17d0c-bc22-4e90-b2bf-e6c804371c2a" testId="e301251f-4802-f59a-f8b1-db6e4659781d" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: EmptyFileCount)" computerName="OS008-HOME" duration="00:00:00.0023611" startTime="2026-10-04T19:43:34.8419815+03:00" endTime="2026-10-04T19:43:34.8486157+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="74f17d0c-bc22-4e90-b2bf-e6c804371c2a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found&#xD;
+         ↓ (pos 0)&#xD;
+String: "Restored and verified 0 of 0 file(s) to E"···&#xD;
+Found:  "Restored and verified"</Message>
+          <StackTrace>   at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs:line 41&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1e17ca51-7210-4691-8251-9fffb6966812" testId="72d05332-19fe-8ccc-4bdd-b4cb0e1d55cf" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongSource)" computerName="OS008-HOME" duration="00:00:00.0007059" startTime="2026-10-04T19:43:34.8418408+03:00" endTime="2026-10-04T19:43:34.8418651+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1e17ca51-7210-4691-8251-9fffb6966812" />
+    <UnitTestResult executionId="83f72053-072b-4ecb-8268-aab25e891fda" testId="41d070a3-e00e-3c1e-1cbe-854e8ab45c65" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: Lost)" computerName="OS008-HOME" duration="00:00:00.0009024" startTime="2026-10-04T19:43:34.8419121+03:00" endTime="2026-10-04T19:43:34.8419365+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83f72053-072b-4ecb-8268-aab25e891fda" />
+    <UnitTestResult executionId="2f223b10-d1a0-4ebf-b1e2-7a185212acaa" testId="f8c19ab4-c8b0-be33-3c5e-d54cdc26ef8f" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Refresh_failure_preserves_the_verified_result_and_publication_warning" computerName="OS008-HOME" duration="00:00:00.0016630" startTime="2026-10-04T19:43:34.8742704+03:00" endTime="2026-10-04T19:43:34.8742948+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f223b10-d1a0-4ebf-b1e2-7a185212acaa" />
+    <UnitTestResult executionId="c9aa78af-65bb-47f1-bf00-4925c09af9eb" testId="9d1c4ab9-cd18-5119-58d4-7597d4922a37" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: Cancelled)" computerName="OS008-HOME" duration="00:00:00.0007435" startTime="2026-10-04T19:43:34.8737544+03:00" endTime="2026-10-04T19:43:34.8737898+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c9aa78af-65bb-47f1-bf00-4925c09af9eb" />
+    <UnitTestResult executionId="952695c4-542e-441b-81b1-d60ba3d3439e" testId="7001aac3-d72e-d521-4e18-232fa57b269d" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.New_file_destination_does_not_authorise_overwriting_a_late_entry" computerName="OS008-HOME" duration="00:00:00.0049314" startTime="2026-10-04T19:43:34.8741816+03:00" endTime="2026-10-04T19:43:34.8742060+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="952695c4-542e-441b-81b1-d60ba3d3439e" />
+    <UnitTestResult executionId="f10158b1-1dfa-4d8e-a2b4-932a66f106f3" testId="7ca177b8-55f3-b496-03fc-1bb0cab03d91" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongCount)" computerName="OS008-HOME" duration="00:00:00.0007062" startTime="2026-10-04T19:43:34.8739696+03:00" endTime="2026-10-04T19:43:34.8740095+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f10158b1-1dfa-4d8e-a2b4-932a66f106f3" />
+    <UnitTestResult executionId="87eec630-b2d3-4c3a-9c0e-17497e6e1177" testId="07b3d852-8264-fbb7-e50d-8d5ea91ef512" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NoVerification)" computerName="OS008-HOME" duration="00:00:00.0025157" startTime="2026-10-04T19:43:34.8411841+03:00" endTime="2026-10-04T19:43:34.8412385+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87eec630-b2d3-4c3a-9c0e-17497e6e1177" />
+    <UnitTestResult executionId="35723859-ff46-4a8b-9e10-33e21b7d8efa" testId="d039279d-ff2f-aa32-0793-e6fdf53c2f77" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongDestination)" computerName="OS008-HOME" duration="00:00:00.0006911" startTime="2026-10-04T19:43:34.8534365+03:00" endTime="2026-10-04T19:43:34.8534610+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35723859-ff46-4a8b-9e10-33e21b7d8efa" />
+    <UnitTestResult executionId="16084f10-3a3e-4c9d-814b-a6b3281a79dd" testId="70c6f8e5-4f20-8867-56ed-b984ac8b2d27" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Concurrent_selection_command_is_refused_while_recovery_is_running" computerName="OS008-HOME" duration="00:00:00.2052997" startTime="2026-10-04T19:43:34.6192100+03:00" endTime="2026-10-04T19:43:34.8322033+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="16084f10-3a3e-4c9d-814b-a6b3281a79dd" />
+    <UnitTestResult executionId="e92360fd-1ffd-4346-9f21-e127e0a5d504" testId="b80085b3-c461-7b30-ba86-61ac63710058" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NegativeBytes)" computerName="OS008-HOME" duration="00:00:00.0009079" startTime="2026-10-04T19:43:34.8417539+03:00" endTime="2026-10-04T19:43:34.8417846+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e92360fd-1ffd-4346-9f21-e127e0a5d504" />
+    <UnitTestResult executionId="04e1c805-825e-447f-9362-c5e4a91e2732" testId="0af93fb5-59c6-f9d1-6785-046ee3551aab" testName="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NullFailures)" computerName="OS008-HOME" duration="00:00:00.0006926" startTime="2026-10-04T19:43:34.8533652+03:00" endTime="2026-10-04T19:43:34.8533899+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="04e1c805-825e-447f-9362-c5e4a91e2732" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NegativeBytes)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="b80085b3-c461-7b30-ba86-61ac63710058">
+      <Execution id="e92360fd-1ffd-4346-9f21-e127e0a5d504" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NoVerification)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="07b3d852-8264-fbb7-e50d-8d5ea91ef512">
+      <Execution id="87eec630-b2d3-4c3a-9c0e-17497e6e1177" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongDestination)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="d039279d-ff2f-aa32-0793-e6fdf53c2f77">
+      <Execution id="35723859-ff46-4a8b-9e10-33e21b7d8efa" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NullWarnings)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="d08b8b01-1460-a3a5-b9bb-c68417797fce">
+      <Execution id="5432c56a-bd3a-4139-96a5-8680497a6d8a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Concurrent_selection_command_is_refused_while_recovery_is_running" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="70c6f8e5-4f20-8867-56ed-b984ac8b2d27">
+      <Execution id="16084f10-3a3e-4c9d-814b-a6b3281a79dd" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Concurrent_selection_command_is_refused_while_recovery_is_running" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongResultDestination)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="e2412fae-94fe-9c2f-d4cb-8c07a2b194a2">
+      <Execution id="82c92de3-9568-4aa7-9687-42ce2d60b9f4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Refresh_failure_preserves_the_verified_result_and_publication_warning" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="f8c19ab4-c8b0-be33-3c5e-d54cdc26ef8f">
+      <Execution id="2f223b10-d1a0-4ebf-b1e2-7a185212acaa" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Refresh_failure_preserves_the_verified_result_and_publication_warning" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: EmptyFileCount)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="e301251f-4802-f59a-f8b1-db6e4659781d">
+      <Execution id="74f17d0c-bc22-4e90-b2bf-e6c804371c2a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongSource)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="72d05332-19fe-8ccc-4bdd-b4cb0e1d55cf">
+      <Execution id="1e17ca51-7210-4691-8251-9fffb6966812" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: Cancelled)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="9d1c4ab9-cd18-5119-58d4-7597d4922a37">
+      <Execution id="c9aa78af-65bb-47f1-bf00-4925c09af9eb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: NullFailures)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="0af93fb5-59c6-f9d1-6785-046ee3551aab">
+      <Execution id="04e1c805-825e-447f-9362-c5e4a91e2732" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: WrongCount)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="7ca177b8-55f3-b496-03fc-1bb0cab03d91">
+      <Execution id="f10158b1-1dfa-4d8e-a2b4-932a66f106f3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.New_file_destination_does_not_authorise_overwriting_a_late_entry" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="7001aac3-d72e-d521-4e18-232fa57b269d">
+      <Execution id="952695c4-542e-441b-81b1-d60ba3d3439e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="New_file_destination_does_not_authorise_overwriting_a_late_entry" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: Lost)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\debug\net10.0-windows\fluxvault.app.tests.dll" id="41d070a3-e00e-3c1e-1cbe-854e8ab45c65">
+      <Execution id="83f72053-072b-4ecb-8268-aab25e891fda" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Debug\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SelectionRecoveryContractTests" name="Unverified_or_uncertain_result_retains_drafts_without_false_verified_success" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d08b8b01-1460-a3a5-b9bb-c68417797fce" executionId="5432c56a-bd3a-4139-96a5-8680497a6d8a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e2412fae-94fe-9c2f-d4cb-8c07a2b194a2" executionId="82c92de3-9568-4aa7-9687-42ce2d60b9f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e301251f-4802-f59a-f8b1-db6e4659781d" executionId="74f17d0c-bc22-4e90-b2bf-e6c804371c2a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72d05332-19fe-8ccc-4bdd-b4cb0e1d55cf" executionId="1e17ca51-7210-4691-8251-9fffb6966812" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="41d070a3-e00e-3c1e-1cbe-854e8ab45c65" executionId="83f72053-072b-4ecb-8268-aab25e891fda" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f8c19ab4-c8b0-be33-3c5e-d54cdc26ef8f" executionId="2f223b10-d1a0-4ebf-b1e2-7a185212acaa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9d1c4ab9-cd18-5119-58d4-7597d4922a37" executionId="c9aa78af-65bb-47f1-bf00-4925c09af9eb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7001aac3-d72e-d521-4e18-232fa57b269d" executionId="952695c4-542e-441b-81b1-d60ba3d3439e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ca177b8-55f3-b496-03fc-1bb0cab03d91" executionId="f10158b1-1dfa-4d8e-a2b4-932a66f106f3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="07b3d852-8264-fbb7-e50d-8d5ea91ef512" executionId="87eec630-b2d3-4c3a-9c0e-17497e6e1177" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d039279d-ff2f-aa32-0793-e6fdf53c2f77" executionId="35723859-ff46-4a8b-9e10-33e21b7d8efa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="70c6f8e5-4f20-8867-56ed-b984ac8b2d27" executionId="16084f10-3a3e-4c9d-814b-a6b3281a79dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b80085b3-c461-7b30-ba86-61ac63710058" executionId="e92360fd-1ffd-4346-9f21-e127e0a5d504" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0af93fb5-59c6-f9d1-6785-046ee3551aab" executionId="04e1c805-825e-447f-9362-c5e4a91e2732" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="14" executed="14" passed="13" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.44]       Assert.DoesNotContain() Failure: Sub-string found&#xD;
+[xUnit.net 00:00:00.44]                ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.44]       String: "Restored and verified 0 of 0 file(s) to E"···&#xD;
+[xUnit.net 00:00:00.44]       Found:  "Restored and verified"&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SelectionRecoveryContractTests.cs(41,0): at FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(Fault fault)&#xD;
+[xUnit.net 00:00:00.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.46]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:43:34.8510395+03:00">
+        <Text>[xUnit.net 00:00:00.44]     FluxVault.App.Tests.SelectionRecoveryContractTests.Unverified_or_uncertain_result_retains_drafts_without_false_verified_success(fault: EmptyFileCount) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

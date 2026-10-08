@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="553e1c2b-42ba-4e27-ac09-c1490d67dad2" name="os008@OS008-HOME 2026-10-05 21:59:45" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T21:59:45.1591905+03:00" queuing="2026-10-05T21:59:45.1591907+03:00" start="2026-10-05T21:59:41.7729668+03:00" finish="2026-10-05T21:59:52.6237115+03:00" />
+  <TestSettings name="default" id="2bef220d-f517-4016-b8e8-535d032a8910">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_21_59_45" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d2c57883-7657-4d3b-92db-74f4a4091d48" testId="6363b039-c268-5bf9-a93a-117fc4580624" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_recovers_a_lost_import_acknowledgement_from_its_real_ownership_record" computerName="OS008-HOME" duration="00:00:01.4818252" startTime="2026-10-05T21:59:51.0895633+03:00" endTime="2026-10-05T21:59:52.5712487+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2c57883-7657-4d3b-92db-74f4a4091d48">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "Lost import acknowledgement."&#xD;
+Actual:   "Exception calling "Add" with "1" argument"···&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_recovers_a_lost_import_acknowledgement_from_its_real_ownership_record() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1053&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="da094ec2-9a45-49c8-8ac0-2975e5a9aaeb" testId="5ca3e548-b132-e2a7-8760-74a516cdfe90" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refusals_preserve_unowned_certificates(fault: &quot;Collision&quot;, expected: &quot;Existing machine certificate is not owned; no trus&quot;···)" computerName="OS008-HOME" duration="00:00:01.3689700" startTime="2026-10-05T21:59:46.8620048+03:00" endTime="2026-10-05T21:59:48.2311153+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da094ec2-9a45-49c8-8ac0-2975e5a9aaeb" />
+    <UnitTestResult executionId="5c9aebc0-26c6-43c6-8c84-c4a0e42192d9" testId="5843a72c-4303-55f2-9e60-bfb84253bb92" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refuses_private_key_ownership_mismatch_without_publication" computerName="OS008-HOME" duration="00:00:01.6291441" startTime="2026-10-05T21:59:42.3764126+03:00" endTime="2026-10-05T21:59:44.0210430+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5c9aebc0-26c6-43c6-8c84-c4a0e42192d9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "Signing private keys have not been retire"···&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refuses_private_key_ownership_mismatch_without_publication() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1021&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dcb7ea43-e723-4e61-88af-b6f453e24f7a" testId="c7dfb139-ee3f-4e0f-bd01-03cea03ab8f8" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refusals_preserve_unowned_certificates(fault: &quot;Bytes&quot;, expected: &quot;Machine trust public certificate bytes changed.&quot;)" computerName="OS008-HOME" duration="00:00:01.3533396" startTime="2026-10-05T21:59:48.2312968+03:00" endTime="2026-10-05T21:59:49.5848038+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dcb7ea43-e723-4e61-88af-b6f453e24f7a" />
+    <UnitTestResult executionId="1737fc18-9e34-4a2a-b90b-e75de135b23a" testId="742770ad-2859-18e5-d3be-4d3855586605" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refusals_preserve_unowned_certificates(fault: &quot;Approval&quot;, expected: &quot;Explicit machine-certificate scope approval is req&quot;···)" computerName="OS008-HOME" duration="00:00:01.3211075" startTime="2026-10-05T21:59:44.0339414+03:00" endTime="2026-10-05T21:59:45.3444119+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1737fc18-9e34-4a2a-b90b-e75de135b23a" />
+    <UnitTestResult executionId="72646410-9774-4a92-817e-0662bd5d0a0a" testId="6ec194fb-eb0e-c30e-069c-c5c13c272b6e" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_recovery_refuses_reappearance_after_retirement" computerName="OS008-HOME" duration="00:00:01.5032551" startTime="2026-10-05T21:59:49.5851667+03:00" endTime="2026-10-05T21:59:51.0888488+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72646410-9774-4a92-817e-0662bd5d0a0a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "A retired machine certificate reappeared;"···&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_recovery_refuses_reappearance_after_retirement() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1036&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4761023e-e3a5-4b28-86de-14790068a959" testId="af64e4ec-3a84-9bd4-d510-774fd41423f6" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refusals_preserve_unowned_certificates(fault: &quot;RecoveryHash&quot;, expected: &quot;Machine certificate identity changed; preserve it &quot;···)" computerName="OS008-HOME" duration="00:00:01.5173011" startTime="2026-10-05T21:59:45.3456070+03:00" endTime="2026-10-05T21:59:46.8617253+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4761023e-e3a5-4b28-86de-14790068a959" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refusals_preserve_unowned_certificates(fault: &quot;Approval&quot;, expected: &quot;Explicit machine-certificate scope approval is req&quot;···)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="742770ad-2859-18e5-d3be-4d3855586605">
+      <Execution id="1737fc18-9e34-4a2a-b90b-e75de135b23a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Machine_trust_refusals_preserve_unowned_certificates" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_recovery_refuses_reappearance_after_retirement" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="6ec194fb-eb0e-c30e-069c-c5c13c272b6e">
+      <Execution id="72646410-9774-4a92-817e-0662bd5d0a0a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Machine_trust_recovery_refuses_reappearance_after_retirement" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refusals_preserve_unowned_certificates(fault: &quot;Bytes&quot;, expected: &quot;Machine trust public certificate bytes changed.&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="c7dfb139-ee3f-4e0f-bd01-03cea03ab8f8">
+      <Execution id="dcb7ea43-e723-4e61-88af-b6f453e24f7a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Machine_trust_refusals_preserve_unowned_certificates" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refusals_preserve_unowned_certificates(fault: &quot;Collision&quot;, expected: &quot;Existing machine certificate is not owned; no trus&quot;···)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5ca3e548-b132-e2a7-8760-74a516cdfe90">
+      <Execution id="da094ec2-9a45-49c8-8ac0-2975e5a9aaeb" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Machine_trust_refusals_preserve_unowned_certificates" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_recovers_a_lost_import_acknowledgement_from_its_real_ownership_record" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="6363b039-c268-5bf9-a93a-117fc4580624">
+      <Execution id="d2c57883-7657-4d3b-92db-74f4a4091d48" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Machine_trust_recovers_a_lost_import_acknowledgement_from_its_real_ownership_record" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refuses_private_key_ownership_mismatch_without_publication" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5843a72c-4303-55f2-9e60-bfb84253bb92">
+      <Execution id="5c9aebc0-26c6-43c6-8c84-c4a0e42192d9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Machine_trust_refuses_private_key_ownership_mismatch_without_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refusals_preserve_unowned_certificates(fault: &quot;RecoveryHash&quot;, expected: &quot;Machine certificate identity changed; preserve it &quot;···)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="af64e4ec-3a84-9bd4-d510-774fd41423f6">
+      <Execution id="4761023e-e3a5-4b28-86de-14790068a959" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Machine_trust_refusals_preserve_unowned_certificates" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6363b039-c268-5bf9-a93a-117fc4580624" executionId="d2c57883-7657-4d3b-92db-74f4a4091d48" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5ca3e548-b132-e2a7-8760-74a516cdfe90" executionId="da094ec2-9a45-49c8-8ac0-2975e5a9aaeb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5843a72c-4303-55f2-9e60-bfb84253bb92" executionId="5c9aebc0-26c6-43c6-8c84-c4a0e42192d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7dfb139-ee3f-4e0f-bd01-03cea03ab8f8" executionId="dcb7ea43-e723-4e61-88af-b6f453e24f7a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="742770ad-2859-18e5-d3be-4d3855586605" executionId="1737fc18-9e34-4a2a-b90b-e75de135b23a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ec194fb-eb0e-c30e-069c-c5c13c272b6e" executionId="72646410-9774-4a92-817e-0662bd5d0a0a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="af64e4ec-3a84-9bd4-d510-774fd41423f6" executionId="4761023e-e3a5-4b28-86de-14790068a959" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="4" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.85]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:01.85]       Expected: "Signing private keys have not been retire"···&#xD;
+[xUnit.net 00:00:01.85]       Actual:   null&#xD;
+[xUnit.net 00:00:01.85]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.86]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(1021,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refuses_private_key_ownership_mismatch_without_publication()&#xD;
+[xUnit.net 00:00:01.86]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.92]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:08.92]       Expected: "A retired machine certificate reappeared;"···&#xD;
+[xUnit.net 00:00:08.92]       Actual:   null&#xD;
+[xUnit.net 00:00:08.92]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.92]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(1036,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_recovery_refuses_reappearance_after_retirement()&#xD;
+[xUnit.net 00:00:08.92]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.40]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:10.40]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:10.40]       Expected: "Lost import acknowledgement."&#xD;
+[xUnit.net 00:00:10.40]       Actual:   "Exception calling "Add" with "1" argument"···&#xD;
+[xUnit.net 00:00:10.40]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:10.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.40]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(1053,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_recovers_a_lost_import_acknowledgement_from_its_real_ownership_record()&#xD;
+[xUnit.net 00:00:10.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.41]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T21:59:44.0236394+03:00">
+        <Text>[xUnit.net 00:00:01.85]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_refuses_private_key_ownership_mismatch_without_publication [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T21:59:51.0892749+03:00">
+        <Text>[xUnit.net 00:00:08.92]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_recovery_refuses_reappearance_after_retirement [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T21:59:52.5716117+03:00">
+        <Text>[xUnit.net 00:00:10.40]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Machine_trust_recovers_a_lost_import_acknowledgement_from_its_real_ownership_record [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

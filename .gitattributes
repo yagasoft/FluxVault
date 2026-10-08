@@ -1,0 +1,51 @@
+# These retained evidence files require exact bytes: the manifest has a SHA-256 pin,
+# and PostgreSQL refusal correlation records byte offsets into the server logs.
+docs/verification/2026-10-03-next002-windows-fixture/live/4b7d6d4a3f6a46c3ad7fb15f3a2f3e66/postgresql-provenance.json -text -diff
+docs/verification/2026-10-03-next002-windows-fixture/live/*/postgres.log -text -diff
+docs/verification/2026-10-04-next002-authorisation/*/postgres.log -text -diff
+docs/verification/2026-10-04-next002-metadata/*/postgres.log -text -diff
+docs/verification/2026-10-04-next002-repository/*/postgres.log -text -diff
+docs/verification/2026-10-04-next002-output/*/postgres.log -text -diff
+docs/verification/2026-10-04-next002-source-inventory/*/postgres.log -text -diff
+# Raw diagnostic output may end with intentional blank lines.
+docs/verification/2026-10-04-next002-source-inventory/**/*.log -whitespace
+# Preserve the native creator checkpoint journal/log/ticket bytes for hash and offset verification.
+docs/verification/2026-10-05-next002-rollout-preparation/native/a773b350b6a74cb6a4977a478cc0c1db/** -text
+docs/verification/2026-10-05-next002-rollout-preparation/native/c5784a21b0954b90b07028279896114c/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/f93ec07c21d344a5a49c8e99f1c522a4/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/6b7adef22d504b339065265a940be99e/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/c995fd62a1644145b243c15772ec1e8a/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/10af87c4510d4494ace9f9d729ae5ebf/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/2296118023cf4232b8fbbd9f3c6d1875/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/5a477969f6b54962b10cd909a0955554/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/1ddfdc01f9f848beb004582d7c411551/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/**/*.log -whitespace
+# Proposed normal authentication replacements are approval inputs pinned by exact SHA-256.
+docs/verification/2026-10-05-next002-rollout-preparation/authentication/*.conf -text -whitespace
+
+docs/verification/2026-10-05-next002-rollout-preparation/native/87d0b87935a1469d88c7f6d27d3d794d/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/33b0a465488c47f79be3a2a0cbbf25d3/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/49b70c1f9a06464c9342f1d401328ad6/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/dd8173c048e740028334849bfaab7639/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/2d9f2cc1c78447cca233ff5ecce6e018/** -text -whitespace
+
+docs/verification/2026-10-05-next002-rollout-preparation/native/b0130cdd28604cfb97a9a6669bb2d1d4/** -text -whitespace
+
+docs/verification/2026-10-05-next002-rollout-preparation/native/64a1f146bc6140cf93664918b6b3462a/** -text -whitespace
+
+docs/verification/2026-10-05-next002-rollout-preparation/native/7fa3d78cc3b9492c899d51c1d3b8263e/** -text -whitespace
+
+docs/verification/2026-10-05-next002-rollout-preparation/native/366f7c37c10c46c9a1c9ee7538d2250e/** -text -whitespace
+
+docs/verification/2026-10-05-next002-rollout-preparation/native/4517c7aacd80410eb9b63c14b6fd79c2/** -text -whitespace
+
+docs/verification/2026-10-05-next002-rollout-preparation/native/1ae06b781f444b729ebdcdac1f6d15dc/** -text -whitespace
+
+docs/verification/2026-10-05-next002-rollout-preparation/native/a2754a051b6b4bf9a865c13bd6cf0b81/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/installation-ticket.template.json -text whitespace=cr-at-eol
+docs/verification/2026-10-05-next002-rollout-preparation/commission-*.ps* -text
+docs/verification/2026-10-05-next002-rollout-preparation/native/94b006d0fffc4d00ba30577b9a769fa2/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/c1f7d958c093410490f018e578f2b88c/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/3423b5b4d7b3447eadc358951f3c5ec7/** -text -whitespace
+docs/verification/2026-10-05-next002-rollout-preparation/native/6963785f3a3a4de986548666b636c92a/** -text -whitespace
+docs/verification/2026-10-05-next002-packaged-identity/native/bf4645f9aaba450abb0b822dea68a6c7*/** -text -whitespace

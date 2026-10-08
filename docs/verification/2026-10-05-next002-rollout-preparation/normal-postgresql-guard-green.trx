@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="11e9fbdb-6d9c-47a7-a941-f35e1d538671" name="os008@OS008-HOME 2026-10-05 13:02:27" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T13:02:27.0217171+03:00" queuing="2026-10-05T13:02:27.0217173+03:00" start="2026-10-05T13:02:23.6451876+03:00" finish="2026-10-05T13:02:33.1353644+03:00" />
+  <TestSettings name="default" id="e9da6b4c-2179-4fc1-a993-351e4bc19d7c">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_13_02_27" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b8617c1f-0029-4079-93d8-d5b4d3337760" testId="5d15d3d4-331b-b909-d05a-c6190bc44836" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;creator-owner&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:01.1609602" startTime="2026-10-05T13:02:30.7091895+03:00" endTime="2026-10-05T13:02:31.8703779+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b8617c1f-0029-4079-93d8-d5b4d3337760" />
+    <UnitTestResult executionId="87f91d9f-d46b-4585-9d2c-a34603fcaf71" testId="947883d5-69d4-47b1-696b-866f69947ef4" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;ancestor-delete&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.1768424" startTime="2026-10-05T13:02:29.5320255+03:00" endTime="2026-10-05T13:02:30.7090451+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87f91d9f-d46b-4585-9d2c-a34603fcaf71" />
+    <UnitTestResult executionId="d90ad9fc-a428-4797-a702-125fa38518cd" testId="d5af7b71-ef36-516f-9bc8-01f1721be810" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;ancestor-delete-child&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.2367449" startTime="2026-10-05T13:02:27.0745191+03:00" endTime="2026-10-05T13:02:28.3104182+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d90ad9fc-a428-4797-a702-125fa38518cd" />
+    <UnitTestResult executionId="0399f572-e67c-4bb2-9421-e5a08d4da18c" testId="fd1a5b2f-da13-1af1-8793-9d4bec8b8c81" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;volume-delete&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:01.2094968" startTime="2026-10-05T13:02:31.8705570+03:00" endTime="2026-10-05T13:02:33.0802636+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0399f572-e67c-4bb2-9421-e5a08d4da18c" />
+    <UnitTestResult executionId="0d0b56f7-f21b-4836-8afe-9a7c58aad491" testId="c74bc422-6190-5f94-2c81-6a98c19dbe3a" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;daemon-executable&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.2210380" startTime="2026-10-05T13:02:28.3107870+03:00" endTime="2026-10-05T13:02:29.5318289+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0d0b56f7-f21b-4836-8afe-9a7c58aad491" />
+    <UnitTestResult executionId="67078e8b-ef76-44f9-982b-c323a58dd2fa" testId="5cbe48a2-1782-1684-0540-0e474c35bbad" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;unprotected-template&quot;, accepted: False)" computerName="OS008-HOME" duration="00:00:01.2906308" startTime="2026-10-05T13:02:25.7918390+03:00" endTime="2026-10-05T13:02:27.0732443+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="67078e8b-ef76-44f9-982b-c323a58dd2fa" />
+    <UnitTestResult executionId="5bdca7fe-16ee-4f01-9829-31fedba5965b" testId="d40814be-089b-6b6a-cbad-55a044ef5bf0" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;protected-template&quot;, accepted: True)" computerName="OS008-HOME" duration="00:00:01.5399328" startTime="2026-10-05T13:02:24.2328432+03:00" endTime="2026-10-05T13:02:25.7815452+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5bdca7fe-16ee-4f01-9829-31fedba5965b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;ancestor-delete-child&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="d5af7b71-ef36-516f-9bc8-01f1721be810">
+      <Execution id="d90ad9fc-a428-4797-a702-125fa38518cd" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;unprotected-template&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5cbe48a2-1782-1684-0540-0e474c35bbad">
+      <Execution id="67078e8b-ef76-44f9-982b-c323a58dd2fa" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;creator-owner&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="5d15d3d4-331b-b909-d05a-c6190bc44836">
+      <Execution id="b8617c1f-0029-4079-93d8-d5b4d3337760" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;ancestor-delete&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="947883d5-69d4-47b1-696b-866f69947ef4">
+      <Execution id="87f91d9f-d46b-4585-9d2c-a34603fcaf71" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;protected-template&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="d40814be-089b-6b6a-cbad-55a044ef5bf0">
+      <Execution id="5bdca7fe-16ee-4f01-9829-31fedba5965b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;volume-delete&quot;, accepted: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="fd1a5b2f-da13-1af1-8793-9d4bec8b8c81">
+      <Execution id="0399f572-e67c-4bb2-9421-e5a08d4da18c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths(scenario: &quot;daemon-executable&quot;, accepted: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="c74bc422-6190-5f94-2c81-6a98c19dbe3a">
+      <Execution id="0d0b56f7-f21b-4836-8afe-9a7c58aad491" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Normal_PostgreSql_guard_checks_real_descriptors_without_broadening_other_paths" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5d15d3d4-331b-b909-d05a-c6190bc44836" executionId="b8617c1f-0029-4079-93d8-d5b4d3337760" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="947883d5-69d4-47b1-696b-866f69947ef4" executionId="87f91d9f-d46b-4585-9d2c-a34603fcaf71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5af7b71-ef36-516f-9bc8-01f1721be810" executionId="d90ad9fc-a428-4797-a702-125fa38518cd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd1a5b2f-da13-1af1-8793-9d4bec8b8c81" executionId="0399f572-e67c-4bb2-9421-e5a08d4da18c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c74bc422-6190-5f94-2c81-6a98c19dbe3a" executionId="0d0b56f7-f21b-4836-8afe-9a7c58aad491" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5cbe48a2-1782-1684-0540-0e474c35bbad" executionId="67078e8b-ef76-44f9-982b-c323a58dd2fa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d40814be-089b-6b6a-cbad-55a044ef5bf0" executionId="5bdca7fe-16ee-4f01-9829-31fedba5965b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="7" executed="7" passed="7" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:09.06]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

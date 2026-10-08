@@ -1,0 +1,124 @@
+[44892]  LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+[44892]  LOG:  listening on IPv4 address "127.0.0.1", port 64824
+[44892]  LOG:  listening on IPv6 address "::1", port 64824
+[56740]  LOG:  database system was shut down at 2026-10-04 08:21:53 EEST
+[44892]  LOG:  database system is ready to accept connections
+[54592] [unknown] LOG:  connection received: host=127.0.0.1 port=64830
+[54592] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[54592] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[54592] psql LOG:  connection ready: setup total=41.182 ms, fork=17.798 ms, authentication=10.401 ms
+[44892]  LOG:  received SIGHUP, reloading configuration files
+[32572] [unknown] LOG:  connection received: host=127.0.0.1 port=64833
+[32572] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[32572] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[32572] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[32572] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[35632] [unknown] LOG:  connection received: host=127.0.0.1 port=64834
+[35632] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[35632] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[35632] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[35632] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[19064] [unknown] LOG:  connection received: host=127.0.0.1 port=64836
+[19064] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[19064] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[19064] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[19064] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[21368] [unknown] LOG:  connection received: host=::1 port=64839
+[21368] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[21368] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[21368] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[21368] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[18888] [unknown] LOG:  connection received: host=::1 port=64840
+[18888] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[18888] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[18888] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[18888] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[29556] [unknown] LOG:  connection received: host=::1 port=51290
+[29556] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[29556] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[29556] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[29556] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[44892]  LOG:  received SIGHUP, reloading configuration files
+[57624] [unknown] LOG:  connection received: host=127.0.0.1 port=51389
+[57624] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[57624] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.d8c6e1a95bd946adaa0a1283d555a7ef.System
+[57624] FVGate.d8c6e1a95bd946adaa0a1283d555a7ef.System LOG:  connection ready: setup total=40.249 ms, fork=18.104 ms, authentication=7.417 ms
+[3016] [unknown] LOG:  connection received: host=127.0.0.1 port=51391
+[3016] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[3016] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.11b9b08540794c8f8eb6d47604b2cccb.libpq
+[3016] FVGate.11b9b08540794c8f8eb6d47604b2cccb.libpq LOG:  connection ready: setup total=29.434 ms, fork=17.101 ms, authentication=4.583 ms
+[57900] [unknown] LOG:  connection received: host=::1 port=51395
+[57900] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[57900] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.6a0256ffc383489a8e2be486978c69a0.System
+[57900] FVGate.6a0256ffc383489a8e2be486978c69a0.System LOG:  connection ready: setup total=36.969 ms, fork=18.009 ms, authentication=7.575 ms
+[41224] [unknown] LOG:  connection received: host=::1 port=51397
+[41224] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[41224] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.3953f995e8934eeaa78a72415fcf1e24.libpq
+[41224] FVGate.3953f995e8934eeaa78a72415fcf1e24.libpq LOG:  connection ready: setup total=29.329 ms, fork=16.763 ms, authentication=4.944 ms
+[42372] [unknown] LOG:  connection received: host=127.0.0.1 port=51399
+[42372] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[42372] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[42372] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[42372] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[56824] [unknown] LOG:  connection received: host=127.0.0.1 port=51400
+[56824] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[56824] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[56824] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[56824] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[57712] [unknown] LOG:  connection received: host=127.0.0.1 port=51403
+[57712] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[57712] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[57712] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[57712] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[54956] [unknown] LOG:  connection received: host=::1 port=51404
+[54956] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[54956] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[54956] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[54956] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[59948] [unknown] LOG:  connection received: host=::1 port=51405
+[59948] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[59948] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[59948] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[59948] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[16680] [unknown] LOG:  connection received: host=::1 port=51408
+[16680] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[16680] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[16680] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[16680] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[31584] [unknown] LOG:  connection received: host=127.0.0.1 port=51410
+[31584] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[31584] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[31584] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[31584] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[54692] [unknown] LOG:  connection received: host=127.0.0.1 port=51411
+[54692] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[54692] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[54692] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[54692] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[53712] [unknown] LOG:  connection received: host=127.0.0.1 port=51414
+[53712] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:1)
+[53712] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[53712] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[53712] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[19500] [unknown] LOG:  connection received: host=::1 port=51416
+[19500] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[19500] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[19500] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[19500] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[26204] [unknown] LOG:  connection received: host=::1 port=51417
+[26204] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[26204] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[26204] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[26204] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[59684] [unknown] LOG:  connection received: host=::1 port=51419
+[59684] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf:2)
+[59684] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[59684] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[59684] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/bb141bce7ec54ebc834389ef1a23fbb1/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[44892]  LOG:  received fast shutdown request
+[44892]  LOG:  aborting any active transactions
+[44892]  LOG:  background worker "logical replication launcher" (PID 57284) exited with exit code 1
+[57740]  LOG:  shutting down
+[57740]  LOG:  checkpoint starting: shutdown immediate
+[57740]  LOG:  checkpoint complete: wrote 994 buffers (24.3%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.029 s, sync=0.252 s, total=0.288 s; sync files=310, longest=0.005 s, average=0.001 s; distance=4677 kB, estimate=4677 kB; lsn=0/1C84C90, redo lsn=0/1C84C90
+[44892]  LOG:  database system is shut down

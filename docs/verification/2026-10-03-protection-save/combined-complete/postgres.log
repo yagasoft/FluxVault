@@ -1,0 +1,145 @@
+2026-10-03 23:29:58.949 EEST [48484] LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+2026-10-03 23:29:58.950 EEST [48484] LOG:  listening on IPv4 address "127.0.0.1", port 60321
+2026-10-03 23:29:58.999 EEST [31780] LOG:  database system was shut down at 2026-10-03 23:29:57 EEST
+2026-10-03 23:29:59.005 EEST [48484] LOG:  database system is ready to accept connections
+2026-10-03 23:30:06.539 EEST [23708] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:06.550 EEST [24644] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+
+2026-10-03 23:30:06.643 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:06.809 EEST [25368] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:07.238 EEST [53488] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+
+2026-10-03 23:30:07.311 EEST [20460] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:07.436 EEST [7696] LOG:  checkpoint complete: wrote 1676 buffers (40.9%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.067 s, sync=0.710 s, total=0.793 s; sync files=351, longest=0.006 s, average=0.003 s; distance=15474 kB, estimate=15474 kB; lsn=0/2729BD0, redo lsn=0/270FB48
+2026-10-03 23:30:07.459 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:07.478 EEST [7696] LOG:  checkpoint complete: wrote 2 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.006 s, total=0.020 s; sync files=3, longest=0.003 s, average=0.002 s; distance=104 kB, estimate=13937 kB; lsn=0/2729CA8, redo lsn=0/2729C48
+2026-10-03 23:30:08.463 EEST [54336] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:08.575 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:08.750 EEST [48724] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:08.750 EEST [28048] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:09.326 EEST [7696] LOG:  checkpoint complete: wrote 1814 buffers (44.3%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.055 s, sync=0.683 s, total=0.751 s; sync files=459, longest=0.011 s, average=0.002 s; distance=15484 kB, estimate=15484 kB; lsn=0/367A280, redo lsn=0/3648E00
+2026-10-03 23:30:09.349 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:09.428 EEST [7696] LOG:  checkpoint complete: wrote 66 buffers (1.6%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.062 s, total=0.080 s; sync files=37, longest=0.003 s, average=0.002 s; distance=197 kB, estimate=13955 kB; lsn=0/367B830, redo lsn=0/367A2F8
+2026-10-03 23:30:09.470 EEST [40716] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+
+2026-10-03 23:30:09.552 EEST [45772] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:09.673 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:09.950 EEST [7696] LOG:  checkpoint complete: wrote 194 buffers (4.7%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.011 s, sync=0.180 s, total=0.278 s; sync files=86, longest=0.018 s, average=0.003 s; distance=10 kB, estimate=12561 kB; lsn=0/3A08BD8, redo lsn=0/367CB48
+2026-10-03 23:30:10.570 EEST [11324] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:10.672 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:10.739 EEST [50328] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:10.739 EEST [21840] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:11.400 EEST [7696] LOG:  checkpoint complete: wrote 1895 buffers (46.3%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.059 s, sync=0.655 s, total=0.729 s; sync files=432, longest=0.005 s, average=0.002 s; distance=15484 kB, estimate=15484 kB; lsn=0/45DB4E8, redo lsn=0/459BD30
+2026-10-03 23:30:11.429 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:11.513 EEST [7696] LOG:  checkpoint complete: wrote 78 buffers (1.9%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.068 s, total=0.084 s; sync files=40, longest=0.004 s, average=0.002 s; distance=254 kB, estimate=13961 kB; lsn=0/45DB5C0, redo lsn=0/45DB560
+2026-10-03 23:30:11.656 EEST [55972] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+
+2026-10-03 23:30:11.729 EEST [35420] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:11.841 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:12.270 EEST [49992] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:12.270 EEST [43104] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:12.392 EEST [55152] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:12.496 EEST [7696] LOG:  checkpoint complete: wrote 1457 buffers (35.6%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.050 s, sync=0.597 s, total=0.656 s; sync files=371, longest=0.006 s, average=0.002 s; distance=6086 kB, estimate=13173 kB; lsn=0/5076B50, redo lsn=0/4BCCF50
+2026-10-03 23:30:12.516 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:12.537 EEST [7696] LOG:  checkpoint complete: wrote 3 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.001 s, sync=0.009 s, total=0.021 s; sync files=4, longest=0.003 s, average=0.003 s; distance=4775 kB, estimate=12334 kB; lsn=0/5076C28, redo lsn=0/5076BC8
+2026-10-03 23:30:13.383 EEST [7620] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:13.486 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:13.510 EEST [53612] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:14.302 EEST [46748] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+
+2026-10-03 23:30:14.350 EEST [7696] LOG:  checkpoint complete: wrote 1948 buffers (47.6%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.066 s, sync=0.790 s, total=0.864 s; sync files=398, longest=0.083 s, average=0.002 s; distance=15482 kB, estimate=15482 kB; lsn=0/5FA03E8, redo lsn=0/5F957C0
+2026-10-03 23:30:14.370 EEST [39528] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:14.373 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:14.387 EEST [7696] LOG:  checkpoint complete: wrote 2 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.004 s, total=0.015 s; sync files=3, longest=0.002 s, average=0.002 s; distance=43 kB, estimate=13939 kB; lsn=0/5FA16C0, redo lsn=0/5FA0460
+2026-10-03 23:30:14.387 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:14.397 EEST [7696] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 0 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.010 s; sync files=0, longest=0.000 s, average=0.000 s; distance=4 kB, estimate=12545 kB; lsn=0/5FA1798, redo lsn=0/5FA1738
+2026-10-03 23:30:15.025 EEST [36668] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:15.136 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:15.267 EEST [44920] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:15.718 EEST [7696] LOG:  checkpoint complete: wrote 1968 buffers (48.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.054 s, sync=0.514 s, total=0.582 s; sync files=441, longest=0.023 s, average=0.002 s; distance=15484 kB, estimate=15484 kB; lsn=0/6ECB350, redo lsn=0/6EC0998
+2026-10-03 23:30:15.738 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:15.755 EEST [7696] LOG:  checkpoint complete: wrote 8 buffers (0.2%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.006 s, total=0.018 s; sync files=5, longest=0.002 s, average=0.002 s; distance=42 kB, estimate=13940 kB; lsn=0/6ECB428, redo lsn=0/6ECB3C8
+2026-10-03 23:30:15.777 EEST [7188] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+
+2026-10-03 23:30:15.841 EEST [40120] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:15.945 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:16.317 EEST [7696] LOG:  checkpoint complete: wrote 595 buffers (14.5%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.019 s, sync=0.341 s, total=0.373 s; sync files=273, longest=0.004 s, average=0.002 s; distance=2571 kB, estimate=12803 kB; lsn=0/7848788, redo lsn=0/714E1C0
+2026-10-03 23:30:16.489 EEST [28124] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:16.490 EEST [51472] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:16.602 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:16.640 EEST [38828] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:17.057 EEST [7696] LOG:  checkpoint complete: wrote 1836 buffers (44.8%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.054 s, sync=0.392 s, total=0.456 s; sync files=357, longest=0.011 s, average=0.002 s; distance=12108 kB, estimate=12733 kB; lsn=0/7E75A58, redo lsn=0/7D21238
+2026-10-03 23:30:17.078 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:17.254 EEST [7696] LOG:  checkpoint complete: wrote 236 buffers (5.8%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.009 s, sync=0.157 s, total=0.176 s; sync files=158, longest=0.002 s, average=0.001 s; distance=1362 kB, estimate=11596 kB; lsn=0/7E86EF8, redo lsn=0/7E75AD0
+2026-10-03 23:30:17.831 EEST [30784] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:17.942 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:17.959 EEST [32484] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:18.084 EEST [7696] LOG:  checkpoint complete: wrote 1009 buffers (24.6%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.026 s, sync=0.106 s, total=0.142 s; sync files=105, longest=0.003 s, average=0.001 s; distance=10418 kB, estimate=11478 kB; lsn=0/88B2930, redo lsn=0/88A2350
+2026-10-03 23:30:18.096 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:18.116 EEST [7696] LOG:  checkpoint complete: wrote 11 buffers (0.3%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.009 s, total=0.020 s; sync files=8, longest=0.002 s, average=0.002 s; distance=65 kB, estimate=10337 kB; lsn=0/88B2A08, redo lsn=0/88B29A8
+2026-10-03 23:30:18.205 EEST [4236] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+
+2026-10-03 23:30:18.270 EEST [19312] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:18.383 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:18.662 EEST [39980] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:18.764 EEST [7696] LOG:  checkpoint complete: wrote 987 buffers (24.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.023 s, sync=0.348 s, total=0.382 s; sync files=304, longest=0.003 s, average=0.002 s; distance=4673 kB, estimate=9771 kB; lsn=0/8E22858, redo lsn=0/8D43140
+2026-10-03 23:30:18.774 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:18.788 EEST [7696] LOG:  checkpoint complete: wrote 2 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.004 s, total=0.014 s; sync files=3, longest=0.002 s, average=0.002 s; distance=897 kB, estimate=8883 kB; lsn=0/8E238C0, redo lsn=0/8E23860
+2026-10-03 23:30:19.413 EEST [30188] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:19.527 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:19.965 EEST [7696] LOG:  checkpoint complete: wrote 1060 buffers (25.9%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.026 s, sync=0.401 s, total=0.438 s; sync files=391, longest=0.003 s, average=0.002 s; distance=10293 kB, estimate=10293 kB; lsn=0/983A7E8, redo lsn=0/9830E20
+2026-10-03 23:30:20.512 EEST [54808] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:20.615 EEST [33512] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+
+2026-10-03 23:30:20.622 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:20.642 EEST [7696] LOG:  checkpoint complete: wrote 13 buffers (0.3%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.012 s, total=0.021 s; sync files=10, longest=0.002 s, average=0.002 s; distance=5191 kB, estimate=9783 kB; lsn=0/9D42AC0, redo lsn=0/9D42A68
+2026-10-03 23:30:20.678 EEST [8412] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:20.801 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:20.885 EEST [7696] LOG:  checkpoint complete: wrote 57 buffers (1.4%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.039 s, total=0.084 s; sync files=31, longest=0.003 s, average=0.002 s; distance=11 kB, estimate=8806 kB; lsn=0/9EEF338, redo lsn=0/9D45730
+2026-10-03 23:30:21.210 EEST [11684] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:21.322 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:21.339 EEST [7696] LOG:  checkpoint complete: wrote 3 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.001 s, sync=0.005 s, total=0.017 s; sync files=4, longest=0.002 s, average=0.002 s; distance=5142 kB, estimate=8439 kB; lsn=0/A24B018, redo lsn=0/A24AFC0
+2026-10-03 23:30:21.905 EEST [13360] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:22.019 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:22.035 EEST [7696] LOG:  checkpoint complete: wrote 5 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.007 s, total=0.017 s; sync files=6, longest=0.002 s, average=0.002 s; distance=5163 kB, estimate=8112 kB; lsn=0/A755FA0, redo lsn=0/A755F48
+2026-10-03 23:30:22.585 EEST [53368] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:22.687 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:22.704 EEST [7696] LOG:  checkpoint complete: wrote 5 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.007 s, total=0.017 s; sync files=6, longest=0.002 s, average=0.002 s; distance=5158 kB, estimate=7816 kB; lsn=0/AC5FB60, redo lsn=0/AC5FB08
+2026-10-03 23:30:23.237 EEST [43536] ERROR:  canceling statement due to user request
+2026-10-03 23:30:23.237 EEST [43536] STATEMENT:  SELECT pg_advisory_xact_lock($1)
+2026-10-03 23:30:23.381 EEST [45280] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:23.381 EEST [43536] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:23.486 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:23.504 EEST [7696] LOG:  checkpoint complete: wrote 5 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.002 s, sync=0.007 s, total=0.019 s; sync files=6, longest=0.002 s, average=0.002 s; distance=5158 kB, estimate=7550 kB; lsn=0/B169468, redo lsn=0/B169410
+2026-10-03 23:30:24.041 EEST [12680] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:24.156 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:24.172 EEST [7696] LOG:  checkpoint complete: wrote 5 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.007 s, total=0.017 s; sync files=6, longest=0.002 s, average=0.002 s; distance=5154 kB, estimate=7311 kB; lsn=0/B671CD0, redo lsn=0/B671C78
+2026-10-03 23:30:24.691 EEST [45888] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:24.791 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:24.808 EEST [7696] LOG:  checkpoint complete: wrote 5 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.007 s, total=0.017 s; sync files=6, longest=0.002 s, average=0.002 s; distance=5153 kB, estimate=7095 kB; lsn=0/BB7A2B8, redo lsn=0/BB7A260
+2026-10-03 23:30:25.292 EEST [43084] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:25.401 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:25.420 EEST [7696] LOG:  checkpoint complete: wrote 5 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.001 s, sync=0.007 s, total=0.020 s; sync files=6, longest=0.002 s, average=0.002 s; distance=5154 kB, estimate=6901 kB; lsn=0/C082D50, redo lsn=0/C082CF8
+2026-10-03 23:30:25.860 EEST [44996] ERROR:  fixture transaction failure
+2026-10-03 23:30:25.860 EEST [44996] CONTEXT:  PL/pgSQL function fluxvault.fixture_reject() line 1 at RAISE
+2026-10-03 23:30:25.860 EEST [44996] STATEMENT:  INSERT INTO fluxvault.version_chunks (
+	    version_id, chunk_ordinal, digest, logical_offset, logical_length, stored_length, encoding)
+	SELECT $1, $2, $3, $4, $5, $6, $7
+	WHERE NOT EXISTS (
+	    SELECT 1 FROM fluxvault.version_chunks
+	    WHERE digest = $3 AND (logical_length <> $5 OR stored_length <> $6 OR encoding <> $7))
+	ON CONFLICT (version_id, chunk_ordinal) DO NOTHING
+	RETURNING 1
+2026-10-03 23:30:26.023 EEST [44996] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:26.132 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:26.148 EEST [7696] LOG:  checkpoint complete: wrote 5 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.007 s, total=0.017 s; sync files=6, longest=0.002 s, average=0.002 s; distance=5160 kB, estimate=6727 kB; lsn=0/C58CDF8, redo lsn=0/C58CDA0
+2026-10-03 23:30:26.835 EEST [5028] FATAL:  terminating connection due to administrator command
+2026-10-03 23:30:26.943 EEST [7696] LOG:  checkpoint starting: immediate force wait
+2026-10-03 23:30:26.959 EEST [7696] LOG:  checkpoint complete: wrote 5 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.007 s, total=0.017 s; sync files=6, longest=0.002 s, average=0.002 s; distance=5160 kB, estimate=6570 kB; lsn=0/CA97120, redo lsn=0/CA970C8
+2026-10-03 23:30:27.981 EEST [48484] LOG:  received fast shutdown request
+2026-10-03 23:30:27.984 EEST [48484] LOG:  aborting any active transactions
+2026-10-03 23:30:27.989 EEST [48484] LOG:  background worker "logical replication launcher" (PID 44980) exited with exit code 1
+2026-10-03 23:30:27.989 EEST [7696] LOG:  shutting down
+2026-10-03 23:30:27.991 EEST [7696] LOG:  checkpoint starting: shutdown immediate
+2026-10-03 23:30:28.000 EEST [7696] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.002 s, total=0.011 s; sync files=1, longest=0.002 s, average=0.002 s; distance=0 kB, estimate=5913 kB; lsn=0/CA97238, redo lsn=0/CA97238
+2026-10-03 23:30:28.021 EEST [48484] LOG:  database system is shut down

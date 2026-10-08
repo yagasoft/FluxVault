@@ -1,0 +1,28 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Windows.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.26]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Source_handle_retains_parent_identity_until_disposed [FAIL]
+  Failed FluxVault.Windows.Tests.WindowsCallerSourceTests.Source_handle_retains_parent_identity_until_disposed [5 ms]
+  Error Message:
+   System.UnauthorizedAccessException : The opened object does not match the selected physical path.
+  Stack Trace:
+     at FluxVault.Windows.Security.WindowsCallerFileAccess.Denied(String reason) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 160
+   at FluxVault.Windows.Security.WindowsCallerFileAccess.VerifyHandle(SafeFileHandle handle, String expected, Boolean directory) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 156
+   at FluxVault.Windows.Security.WindowsCallerFileAccess.<>c__DisplayClass3_0.<OpenSourceAsync>b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 55
+   at System.Security.Principal.WindowsIdentity.<>c__DisplayClass68_0`1.<RunImpersonated>b__0()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Security.Principal.WindowsIdentity.RunImpersonatedInternal(SafeAccessTokenHandle token, Action action)
+   at System.Security.Principal.WindowsIdentity.RunImpersonated[T](SafeAccessTokenHandle safeAccessTokenHandle, Func`1 func)
+   at FluxVault.Windows.Security.WindowsFluxVaultCallerContextProvider.OwnedWindowsCallerContext.RunAsCallerAsync[T](Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsFluxVaultCallerContextProvider.cs:line 68
+   at FluxVault.Windows.Tests.WindowsCallerSourceTests.Source_handle_retains_parent_identity_until_disposed() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 22
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-source\green\source-green.trx
+
+Failed!  - Failed:     1, Passed:     9, Skipped:     0, Total:    10, Duration: 130 ms - FluxVault.Windows.Tests.dll (net10.0)

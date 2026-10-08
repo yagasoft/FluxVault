@@ -1,0 +1,455 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="aee732b5-9297-4d54-8364-9797cdbacb82" name="os008@OS008-HOME 2026-10-05 15:46:14" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T15:46:14.5212736+03:00" queuing="2026-10-05T15:46:14.5212737+03:00" start="2026-10-05T15:46:13.1806722+03:00" finish="2026-10-05T15:46:14.5267329+03:00" />
+  <TestSettings name="default" id="9a312556-5ac8-4d18-b190-4392eaa3a5d4">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_15_46_14" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="494b4a5c-64f3-4b68-88ac-67bdcb549e52" testId="48a25a22-1c14-ff02-8c40-ca9c5c9802f9" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(fault: &quot;truncated&quot;)" computerName="OS008-HOME" duration="00:00:00.0211065" startTime="2026-10-05T15:46:14.3765940+03:00" endTime="2026-10-05T15:46:14.3977779+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="494b4a5c-64f3-4b68-88ac-67bdcb549e52">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.InvalidDataException : Incomplete IPC frame.</Message>
+          <StackTrace>   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 33&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 2356&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1172&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1649&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(String fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 109&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="aa0581fb-f0ed-4dca-9d85-725dd769d770" testId="3a59f3a1-bb56-de96-e16c-37725d8b9d59" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(fault: &quot;utf8&quot;)" computerName="OS008-HOME" duration="00:00:00.0135675" startTime="2026-10-05T15:46:14.3983888+03:00" endTime="2026-10-05T15:46:14.4119127+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa0581fb-f0ed-4dca-9d85-725dd769d770">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.DecoderFallbackException : Unable to translate bytes [FF] at index 0 from specified code page to Unicode.</Message>
+          <StackTrace>   at System.Text.DecoderExceptionFallbackBuffer.Throw(Byte[] bytesUnknown, Int32 index)&#xD;
+   at System.Text.DecoderExceptionFallbackBuffer.Fallback(Byte[] bytesUnknown, Int32 index)&#xD;
+   at System.Text.Encoding.GetCharCountWithFallback(ReadOnlySpan`1 bytes, Int32 originalBytesLength, DecoderNLS decoder)&#xD;
+   at System.Text.Encoding.GetCharCountWithFallback(Byte* pBytesOriginal, Int32 originalByteCount, Int32 bytesConsumedSoFar)&#xD;
+   at System.Text.UTF8Encoding.GetCharCount(Byte* bytes, Int32 count)&#xD;
+   at System.String.CreateStringFromEncoding(Byte* bytes, Int32 byteLength, Encoding encoding)&#xD;
+   at System.Text.UTF8Encoding.GetString(Byte[] bytes, Int32 index, Int32 count)&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 39&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 2356&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1172&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1649&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(String fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 109&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9e7e0c64-03a8-4fbf-b18d-1446fc48679f" testId="96b56e47-3527-d29f-8b88-11ff7d98ce4c" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;utf8&quot;, optionsFlow: True)" computerName="OS008-HOME" duration="00:00:00.0101700" startTime="2026-10-05T15:46:14.3515105+03:00" endTime="2026-10-05T15:46:14.3616531+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9e7e0c64-03a8-4fbf-b18d-1446fc48679f">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.DecoderFallbackException : Unable to translate bytes [FF] at index 0 from specified code page to Unicode.</Message>
+          <StackTrace>   at System.Text.DecoderExceptionFallbackBuffer.Throw(Byte[] bytesUnknown, Int32 index)&#xD;
+   at System.Text.DecoderExceptionFallbackBuffer.Fallback(Byte[] bytesUnknown, Int32 index)&#xD;
+   at System.Text.Encoding.GetCharCountWithFallback(ReadOnlySpan`1 bytes, Int32 originalBytesLength, DecoderNLS decoder)&#xD;
+   at System.Text.Encoding.GetCharCountWithFallback(Byte* pBytesOriginal, Int32 originalByteCount, Int32 bytesConsumedSoFar)&#xD;
+   at System.Text.UTF8Encoding.GetCharCount(Byte* bytes, Int32 count)&#xD;
+   at System.String.CreateStringFromEncoding(Byte* bytes, Int32 byteLength, Encoding encoding)&#xD;
+   at System.Text.UTF8Encoding.GetString(Byte[] bytes, Int32 index, Int32 count)&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 39&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 2356&#xD;
+   at FluxVault.App.ViewModels.OptionsViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs:line 500&#xD;
+   at FluxVault.App.ViewModels.OptionsViewModel.SaveAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs:line 299&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f69390d4-7fcd-4537-b3c7-e1a5d28fd499" testId="a417adec-086b-8610-17c8-3253a47c954b" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;truncated&quot;, optionsFlow: False)" computerName="OS008-HOME" duration="00:00:00.0422485" startTime="2026-10-05T15:46:14.3047566+03:00" endTime="2026-10-05T15:46:14.3349235+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f69390d4-7fcd-4537-b3c7-e1a5d28fd499">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.InvalidDataException : Incomplete IPC frame.</Message>
+          <StackTrace>   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 33&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 2356&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1172&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.CheckProtectionSaveOutcomeAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1114&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 76&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="22ccb685-bcd9-4192-b16a-4d058eb948c7" testId="211bba6b-057b-1c8f-d3f7-056f86bafe16" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;truncated&quot;, optionsFlow: True)" computerName="OS008-HOME" duration="00:00:00.0154874" startTime="2026-10-05T15:46:14.3355741+03:00" endTime="2026-10-05T15:46:14.3509387+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22ccb685-bcd9-4192-b16a-4d058eb948c7">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.InvalidDataException : Incomplete IPC frame.</Message>
+          <StackTrace>   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 33&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 2356&#xD;
+   at FluxVault.App.ViewModels.OptionsViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs:line 500&#xD;
+   at FluxVault.App.ViewModels.OptionsViewModel.CheckSaveOutcomeAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs:line 341&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 50&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="14dcc0f3-d29c-4ee6-847f-ab5f2f9e2f80" testId="97d0faec-f91d-2283-ce15-e6b13c4baf13" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;malformed&quot;, optionsFlow: True)" computerName="OS008-HOME" duration="00:00:00.4601886" startTime="2026-10-05T15:46:13.7621651+03:00" endTime="2026-10-05T15:46:14.2364517+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="14dcc0f3-d29c-4ee6-847f-ab5f2f9e2f80">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.Json.JsonException : ']' is an invalid start of a property name. Expected a '"'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.&#xD;
+---- System.Text.Json.JsonReaderException : ']' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 1.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack&amp; state, JsonReaderException ex)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Utf8JsonReader&amp; reader, ReadStack&amp; state)&#xD;
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)&#xD;
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 39&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 2356&#xD;
+   at FluxVault.App.ViewModels.OptionsViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs:line 500&#xD;
+   at FluxVault.App.ViewModels.OptionsViewModel.SaveAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs:line 299&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+   at System.Text.Json.Utf8JsonReader.Read()&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="95f355e0-83b8-4bde-816a-931c731828bc" testId="21097466-004b-db64-48e0-1b3d5ccdc972" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(fault: &quot;malformed&quot;)" computerName="OS008-HOME" duration="00:00:00.0135616" startTime="2026-10-05T15:46:14.4127615+03:00" endTime="2026-10-05T15:46:14.4261400+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="95f355e0-83b8-4bde-816a-931c731828bc">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.Json.JsonException : ']' is an invalid start of a property name. Expected a '"'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.&#xD;
+---- System.Text.Json.JsonReaderException : ']' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 1.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack&amp; state, JsonReaderException ex)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Utf8JsonReader&amp; reader, ReadStack&amp; state)&#xD;
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)&#xD;
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 39&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 2356&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1172&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1649&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(String fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 109&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+   at System.Text.Json.Utf8JsonReader.Read()&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9a7f4814-9794-4146-a65e-7349c4e2d209" testId="21902196-fcb5-b527-c836-9f12d00edd0e" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;utf8&quot;, optionsFlow: False)" computerName="OS008-HOME" duration="00:00:00.0124321" startTime="2026-10-05T15:46:14.3624555+03:00" endTime="2026-10-05T15:46:14.3746927+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a7f4814-9794-4146-a65e-7349c4e2d209">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.DecoderFallbackException : Unable to translate bytes [FF] at index 0 from specified code page to Unicode.</Message>
+          <StackTrace>   at System.Text.DecoderExceptionFallbackBuffer.Throw(Byte[] bytesUnknown, Int32 index)&#xD;
+   at System.Text.DecoderExceptionFallbackBuffer.Fallback(Byte[] bytesUnknown, Int32 index)&#xD;
+   at System.Text.Encoding.GetCharCountWithFallback(ReadOnlySpan`1 bytes, Int32 originalBytesLength, DecoderNLS decoder)&#xD;
+   at System.Text.Encoding.GetCharCountWithFallback(Byte* pBytesOriginal, Int32 originalByteCount, Int32 bytesConsumedSoFar)&#xD;
+   at System.Text.UTF8Encoding.GetCharCount(Byte* bytes, Int32 count)&#xD;
+   at System.String.CreateStringFromEncoding(Byte* bytes, Int32 byteLength, Encoding encoding)&#xD;
+   at System.Text.UTF8Encoding.GetString(Byte[] bytes, Int32 index, Int32 count)&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 39&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 2356&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1172&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.CheckProtectionSaveOutcomeAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1114&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 76&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2accffb3-67d3-44e0-a72b-38a743387c34" testId="7721e4dd-ee84-905a-44a1-1b51a88fb769" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;malformed&quot;, optionsFlow: False)" computerName="OS008-HOME" duration="00:00:00.0537508" startTime="2026-10-05T15:46:14.2502939+03:00" endTime="2026-10-05T15:46:14.2919251+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2accffb3-67d3-44e0-a72b-38a743387c34">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.Json.JsonException : ']' is an invalid start of a property name. Expected a '"'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.&#xD;
+---- System.Text.Json.JsonReaderException : ']' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 1.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack&amp; state, JsonReaderException ex)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Utf8JsonReader&amp; reader, ReadStack&amp; state)&#xD;
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)&#xD;
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 39&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 2356&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1172&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SaveConfigurationCoreAsync(Boolean refreshAfterSave, String successStatus) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 873&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1625&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 68&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+   at System.Text.Json.Utf8JsonReader.Read()&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;malformed&quot;, optionsFlow: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="97d0faec-f91d-2283-ce15-e6b13c4baf13">
+      <Execution id="14dcc0f3-d29c-4ee6-847f-ab5f2f9e2f80" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;utf8&quot;, optionsFlow: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="96b56e47-3527-d29f-8b88-11ff7d98ce4c">
+      <Execution id="9e7e0c64-03a8-4fbf-b18d-1446fc48679f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(fault: &quot;utf8&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="3a59f3a1-bb56-de96-e16c-37725d8b9d59">
+      <Execution id="aa0581fb-f0ed-4dca-9d85-725dd769d770" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;utf8&quot;, optionsFlow: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="21902196-fcb5-b527-c836-9f12d00edd0e">
+      <Execution id="9a7f4814-9794-4146-a65e-7349c4e2d209" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(fault: &quot;truncated&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="48a25a22-1c14-ff02-8c40-ca9c5c9802f9">
+      <Execution id="494b4a5c-64f3-4b68-88ac-67bdcb549e52" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;malformed&quot;, optionsFlow: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7721e4dd-ee84-905a-44a1-1b51a88fb769">
+      <Execution id="2accffb3-67d3-44e0-a72b-38a743387c34" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;truncated&quot;, optionsFlow: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="211bba6b-057b-1c8f-d3f7-056f86bafe16">
+      <Execution id="22ccb685-bcd9-4192-b16a-4d058eb948c7" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: &quot;truncated&quot;, optionsFlow: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="a417adec-086b-8610-17c8-3253a47c954b">
+      <Execution id="f69390d4-7fcd-4537-b3c7-e1a5d28fd499" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(fault: &quot;malformed&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="21097466-004b-db64-48e0-1b3d5ccdc972">
+      <Execution id="95f355e0-83b8-4bde-816a-931c731828bc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="48a25a22-1c14-ff02-8c40-ca9c5c9802f9" executionId="494b4a5c-64f3-4b68-88ac-67bdcb549e52" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a59f3a1-bb56-de96-e16c-37725d8b9d59" executionId="aa0581fb-f0ed-4dca-9d85-725dd769d770" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="96b56e47-3527-d29f-8b88-11ff7d98ce4c" executionId="9e7e0c64-03a8-4fbf-b18d-1446fc48679f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a417adec-086b-8610-17c8-3253a47c954b" executionId="f69390d4-7fcd-4537-b3c7-e1a5d28fd499" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="211bba6b-057b-1c8f-d3f7-056f86bafe16" executionId="22ccb685-bcd9-4192-b16a-4d058eb948c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="97d0faec-f91d-2283-ce15-e6b13c4baf13" executionId="14dcc0f3-d29c-4ee6-847f-ab5f2f9e2f80" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="21097466-004b-db64-48e0-1b3d5ccdc972" executionId="95f355e0-83b8-4bde-816a-931c731828bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="21902196-fcb5-b527-c836-9f12d00edd0e" executionId="9a7f4814-9794-4146-a65e-7349c4e2d209" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7721e4dd-ee84-905a-44a1-1b51a88fb769" executionId="2accffb3-67d3-44e0-a72b-38a743387c34" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="9" executed="9" passed="0" failed="9" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.70]       System.Text.Json.JsonException : ']' is an invalid start of a property name. Expected a '"'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.&#xD;
+[xUnit.net 00:00:00.70]       ---- System.Text.Json.JsonReaderException : ']' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 1.&#xD;
+[xUnit.net 00:00:00.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack&amp; state, JsonReaderException ex)&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Utf8JsonReader&amp; reader, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)&#xD;
+[xUnit.net 00:00:00.70]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(39,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.70]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.70]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.70]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(2356,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.70]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs(500,0): at FluxVault.App.ViewModels.OptionsViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.70]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs(299,0): at FluxVault.App.ViewModels.OptionsViewModel.SaveAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.70]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(43,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow)&#xD;
+[xUnit.net 00:00:00.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.70]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.Utf8JsonReader.Read()&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.70]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.75]       System.Text.Json.JsonException : ']' is an invalid start of a property name. Expected a '"'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.&#xD;
+[xUnit.net 00:00:00.75]       ---- System.Text.Json.JsonReaderException : ']' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 1.&#xD;
+[xUnit.net 00:00:00.76]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack&amp; state, JsonReaderException ex)&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Utf8JsonReader&amp; reader, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)&#xD;
+[xUnit.net 00:00:00.76]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(39,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.76]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.76]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.76]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(2356,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.76]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1172,0): at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.76]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(873,0): at FluxVault.App.ViewModels.MainWindowViewModel.SaveConfigurationCoreAsync(Boolean refreshAfterSave, String successStatus)&#xD;
+[xUnit.net 00:00:00.76]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1625,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync()&#xD;
+[xUnit.net 00:00:00.76]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(68,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow)&#xD;
+[xUnit.net 00:00:00.76]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.76]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.Utf8JsonReader.Read()&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.76]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.79]       System.IO.InvalidDataException : Incomplete IPC frame.&#xD;
+[xUnit.net 00:00:00.79]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.79]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(33,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.79]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.79]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.79]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(2356,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.79]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1172,0): at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.79]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1114,0): at FluxVault.App.ViewModels.MainWindowViewModel.CheckProtectionSaveOutcomeAsync()&#xD;
+[xUnit.net 00:00:00.79]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(76,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow)&#xD;
+[xUnit.net 00:00:00.79]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.81]       System.IO.InvalidDataException : Incomplete IPC frame.&#xD;
+[xUnit.net 00:00:00.81]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.81]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(33,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.81]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.81]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.81]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(2356,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.81]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs(500,0): at FluxVault.App.ViewModels.OptionsViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.81]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs(341,0): at FluxVault.App.ViewModels.OptionsViewModel.CheckSaveOutcomeAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.81]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(50,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow)&#xD;
+[xUnit.net 00:00:00.81]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.82]       System.Text.DecoderFallbackException : Unable to translate bytes [FF] at index 0 from specified code page to Unicode.&#xD;
+[xUnit.net 00:00:00.82]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.82]            at System.Text.DecoderExceptionFallbackBuffer.Throw(Byte[] bytesUnknown, Int32 index)&#xD;
+[xUnit.net 00:00:00.82]            at System.Text.DecoderExceptionFallbackBuffer.Fallback(Byte[] bytesUnknown, Int32 index)&#xD;
+[xUnit.net 00:00:00.82]            at System.Text.Encoding.GetCharCountWithFallback(ReadOnlySpan`1 bytes, Int32 originalBytesLength, DecoderNLS decoder)&#xD;
+[xUnit.net 00:00:00.82]            at System.Text.Encoding.GetCharCountWithFallback(Byte* pBytesOriginal, Int32 originalByteCount, Int32 bytesConsumedSoFar)&#xD;
+[xUnit.net 00:00:00.82]            at System.Text.UTF8Encoding.GetCharCount(Byte* bytes, Int32 count)&#xD;
+[xUnit.net 00:00:00.82]            at System.String.CreateStringFromEncoding(Byte* bytes, Int32 byteLength, Encoding encoding)&#xD;
+[xUnit.net 00:00:00.82]            at System.Text.UTF8Encoding.GetString(Byte[] bytes, Int32 index, Int32 count)&#xD;
+[xUnit.net 00:00:00.82]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(39,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.82]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.82]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.82]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(2356,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.82]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs(500,0): at FluxVault.App.ViewModels.OptionsViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.82]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\OptionsViewModel.cs(299,0): at FluxVault.App.ViewModels.OptionsViewModel.SaveAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.82]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(43,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow)&#xD;
+[xUnit.net 00:00:00.82]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.83]       System.Text.DecoderFallbackException : Unable to translate bytes [FF] at index 0 from specified code page to Unicode.&#xD;
+[xUnit.net 00:00:00.83]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.83]            at System.Text.DecoderExceptionFallbackBuffer.Throw(Byte[] bytesUnknown, Int32 index)&#xD;
+[xUnit.net 00:00:00.83]            at System.Text.DecoderExceptionFallbackBuffer.Fallback(Byte[] bytesUnknown, Int32 index)&#xD;
+[xUnit.net 00:00:00.83]            at System.Text.Encoding.GetCharCountWithFallback(ReadOnlySpan`1 bytes, Int32 originalBytesLength, DecoderNLS decoder)&#xD;
+[xUnit.net 00:00:00.83]            at System.Text.Encoding.GetCharCountWithFallback(Byte* pBytesOriginal, Int32 originalByteCount, Int32 bytesConsumedSoFar)&#xD;
+[xUnit.net 00:00:00.83]            at System.Text.UTF8Encoding.GetCharCount(Byte* bytes, Int32 count)&#xD;
+[xUnit.net 00:00:00.83]            at System.String.CreateStringFromEncoding(Byte* bytes, Int32 byteLength, Encoding encoding)&#xD;
+[xUnit.net 00:00:00.83]            at System.Text.UTF8Encoding.GetString(Byte[] bytes, Int32 index, Int32 count)&#xD;
+[xUnit.net 00:00:00.83]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(39,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.83]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.83]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.83]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(2356,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.83]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1172,0): at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.83]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1114,0): at FluxVault.App.ViewModels.MainWindowViewModel.CheckProtectionSaveOutcomeAsync()&#xD;
+[xUnit.net 00:00:00.83]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(76,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(String fault, Boolean optionsFlow)&#xD;
+[xUnit.net 00:00:00.83]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.85]       System.IO.InvalidDataException : Incomplete IPC frame.&#xD;
+[xUnit.net 00:00:00.85]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(33,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(2356,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1172,0): at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1649,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync()&#xD;
+[xUnit.net 00:00:00.85]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(109,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(String fault)&#xD;
+[xUnit.net 00:00:00.85]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.87]       System.Text.DecoderFallbackException : Unable to translate bytes [FF] at index 0 from specified code page to Unicode.&#xD;
+[xUnit.net 00:00:00.87]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.87]            at System.Text.DecoderExceptionFallbackBuffer.Throw(Byte[] bytesUnknown, Int32 index)&#xD;
+[xUnit.net 00:00:00.87]            at System.Text.DecoderExceptionFallbackBuffer.Fallback(Byte[] bytesUnknown, Int32 index)&#xD;
+[xUnit.net 00:00:00.87]            at System.Text.Encoding.GetCharCountWithFallback(ReadOnlySpan`1 bytes, Int32 originalBytesLength, DecoderNLS decoder)&#xD;
+[xUnit.net 00:00:00.87]            at System.Text.Encoding.GetCharCountWithFallback(Byte* pBytesOriginal, Int32 originalByteCount, Int32 bytesConsumedSoFar)&#xD;
+[xUnit.net 00:00:00.87]            at System.Text.UTF8Encoding.GetCharCount(Byte* bytes, Int32 count)&#xD;
+[xUnit.net 00:00:00.87]            at System.String.CreateStringFromEncoding(Byte* bytes, Int32 byteLength, Encoding encoding)&#xD;
+[xUnit.net 00:00:00.87]            at System.Text.UTF8Encoding.GetString(Byte[] bytes, Int32 index, Int32 count)&#xD;
+[xUnit.net 00:00:00.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(39,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(2356,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1172,0): at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1649,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync()&#xD;
+[xUnit.net 00:00:00.87]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(109,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(String fault)&#xD;
+[xUnit.net 00:00:00.87]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.88]       System.Text.Json.JsonException : ']' is an invalid start of a property name. Expected a '"'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.&#xD;
+[xUnit.net 00:00:00.88]       ---- System.Text.Json.JsonReaderException : ']' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 1.&#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack&amp; state, JsonReaderException ex)&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Utf8JsonReader&amp; reader, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)&#xD;
+[xUnit.net 00:00:00.88]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(39,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.88]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.88]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.88]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(2356,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.88]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1172,0): at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.88]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1649,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync()&#xD;
+[xUnit.net 00:00:00.88]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(109,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(String fault)&#xD;
+[xUnit.net 00:00:00.88]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.88]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.Utf8JsonReader.Read()&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.88]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.89]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:46:14.2394580+03:00">
+        <Text>[xUnit.net 00:00:00.70]     FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: "malformed", optionsFlow: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:46:14.2921932+03:00">
+        <Text>[xUnit.net 00:00:00.75]     FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: "malformed", optionsFlow: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:46:14.3351337+03:00">
+        <Text>[xUnit.net 00:00:00.79]     FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: "truncated", optionsFlow: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:46:14.3511066+03:00">
+        <Text>[xUnit.net 00:00:00.81]     FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: "truncated", optionsFlow: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:46:14.3618094+03:00">
+        <Text>[xUnit.net 00:00:00.82]     FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: "utf8", optionsFlow: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:46:14.3748675+03:00">
+        <Text>[xUnit.net 00:00:00.83]     FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_save_record_and_edits_until_original_receipt_is_confirmed(fault: "utf8", optionsFlow: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:46:14.3979433+03:00">
+        <Text>[xUnit.net 00:00:00.85]     FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(fault: "truncated") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:46:14.4120612+03:00">
+        <Text>[xUnit.net 00:00:00.87]     FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(fault: "utf8") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:46:14.4263123+03:00">
+        <Text>[xUnit.net 00:00:00.88]     FluxVault.App.Tests.ProtectionSaveContractTests.Invalid_response_from_actual_client_keeps_backup_record_and_checks_original_operation_without_retry(fault: "malformed") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

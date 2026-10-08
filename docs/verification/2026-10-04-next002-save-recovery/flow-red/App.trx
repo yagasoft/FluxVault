@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b8843a65-d0b7-4337-8bdb-ff65c1d99e3e" name="os008@OS008-HOME 2026-10-04 14:25:44" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T14:25:44.8699031+03:00" queuing="2026-10-04T14:25:44.8699031+03:00" start="2026-10-04T14:25:43.8672379+03:00" finish="2026-10-04T14:25:44.8747915+03:00" />
+  <TestSettings name="default" id="e500b5c5-447a-4476-82c2-3c20e270150d">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_14_25_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="64a06db8-dac5-4aca-a77c-c185071d1bea" testId="ac134a76-6b36-2391-c902-2df80eb292d2" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt(profileStore: False)" computerName="OS008-HOME" duration="00:00:00.0104003" startTime="2026-10-04T14:25:44.7593267+03:00" endTime="2026-10-04T14:25:44.7594890+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64a06db8-dac5-4aca-a77c-c185071d1bea">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsType() Failure: Value is null&#xD;
+Expected: typeof(FluxVault.App.Services.PendingProtectionSave)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass0_0.&lt;Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt&gt;b__0(FluxVaultIpcRequest request) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 34&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 1477&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 911&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SaveConfigurationCoreAsync(Boolean refreshAfterSave, String successStatus) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 809&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1347&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt(Boolean profileStore) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 42&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="13ca0496-628c-48d7-8d15-081c9d719171" testId="105feecf-2500-97a0-24eb-3174fd8fbf46" testName="FluxVault.App.Tests.ProtectionSaveContractTests.A_pending_save_for_another_repository_never_restores_its_draft_or_sends_a_command" computerName="OS008-HOME" duration="00:00:00.3065606" startTime="2026-10-04T14:25:44.4264354+03:00" endTime="2026-10-04T14:25:44.7464506+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="13ca0496-628c-48d7-8d15-081c9d719171">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.All() Failure: 2 out of 5 items in the collection did not pass.&#xD;
+[1]: Item:  SaveConfiguration&#xD;
+     Error: Assert.Equal() Failure: Values differ&#xD;
+            Expected: GetStatus&#xD;
+            Actual:   SaveConfiguration&#xD;
+[3]: Item:  RunBackupNow&#xD;
+     Error: Assert.Equal() Failure: Values differ&#xD;
+            Expected: GetStatus&#xD;
+            Actual:   RunBackupNow</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.A_pending_save_for_another_repository_never_restores_its_draft_or_sends_a_command() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 75&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2794d157-05c5-4e9e-9718-da0ac71784da" testId="7d37ca3b-9d35-2bd1-d92b-1aed75fcec26" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt(profileStore: True)" computerName="OS008-HOME" duration="00:00:00.0179718" startTime="2026-10-04T14:25:44.7605229+03:00" endTime="2026-10-04T14:25:44.7779930+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2794d157-05c5-4e9e-9718-da0ac71784da">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsType() Failure: Value is null&#xD;
+Expected: typeof(FluxVault.App.Services.PendingProtectionSave)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass0_0.&lt;Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt&gt;b__0(FluxVaultIpcRequest request) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 34&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 1477&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 911&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SaveConfigurationCoreAsync(Boolean refreshAfterSave, String successStatus) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 809&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1347&#xD;
+   at FluxVault.App.Tests.ProtectionSaveContractTests.Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt(Boolean profileStore) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 42&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt(profileStore: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7d37ca3b-9d35-2bd1-d92b-1aed75fcec26">
+      <Execution id="2794d157-05c5-4e9e-9718-da0ac71784da" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt(profileStore: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="ac134a76-6b36-2391-c902-2df80eb292d2">
+      <Execution id="64a06db8-dac5-4aca-a77c-c185071d1bea" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.A_pending_save_for_another_repository_never_restores_its_draft_or_sends_a_command" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="105feecf-2500-97a0-24eb-3174fd8fbf46">
+      <Execution id="13ca0496-628c-48d7-8d15-081c9d719171" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="A_pending_save_for_another_repository_never_restores_its_draft_or_sends_a_command" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ac134a76-6b36-2391-c902-2df80eb292d2" executionId="64a06db8-dac5-4aca-a77c-c185071d1bea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="105feecf-2500-97a0-24eb-3174fd8fbf46" executionId="13ca0496-628c-48d7-8d15-081c9d719171" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7d37ca3b-9d35-2bd1-d92b-1aed75fcec26" executionId="2794d157-05c5-4e9e-9718-da0ac71784da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.51]       Assert.All() Failure: 2 out of 5 items in the collection did not pass.&#xD;
+[xUnit.net 00:00:00.51]       [1]: Item:  SaveConfiguration&#xD;
+[xUnit.net 00:00:00.51]            Error: Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.51]                   Expected: GetStatus&#xD;
+[xUnit.net 00:00:00.51]                   Actual:   SaveConfiguration&#xD;
+[xUnit.net 00:00:00.51]       [3]: Item:  RunBackupNow&#xD;
+[xUnit.net 00:00:00.51]            Error: Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.51]                   Expected: GetStatus&#xD;
+[xUnit.net 00:00:00.51]                   Actual:   RunBackupNow&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(75,0): at FluxVault.App.Tests.ProtectionSaveContractTests.A_pending_save_for_another_repository_never_restores_its_draft_or_sends_a_command()&#xD;
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.52]       Assert.IsType() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.52]       Expected: typeof(FluxVault.App.Services.PendingProtectionSave)&#xD;
+[xUnit.net 00:00:00.52]       Actual:   null&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(34,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass0_0.&lt;Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt&gt;b__0(FluxVaultIpcRequest request)&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(1477,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(911,0): at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(809,0): at FluxVault.App.ViewModels.MainWindowViewModel.SaveConfigurationCoreAsync(Boolean refreshAfterSave, String successStatus)&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1347,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync()&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(42,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt(Boolean profileStore)&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.54]       Assert.IsType() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.54]       Expected: typeof(FluxVault.App.Services.PendingProtectionSave)&#xD;
+[xUnit.net 00:00:00.54]       Actual:   null&#xD;
+[xUnit.net 00:00:00.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(34,0): at FluxVault.App.Tests.ProtectionSaveContractTests.&lt;&gt;c__DisplayClass0_0.&lt;Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt&gt;b__0(FluxVaultIpcRequest request)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(1477,0): at FluxVault.App.Tests.ProtectionSaveContractTests.StoreClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(911,0): at FluxVault.App.ViewModels.MainWindowViewModel.SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(809,0): at FluxVault.App.ViewModels.MainWindowViewModel.SaveConfigurationCoreAsync(Boolean refreshAfterSave, String successStatus)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1347,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync()&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(42,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt(Boolean profileStore)&#xD;
+[xUnit.net 00:00:00.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.55]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T14:25:44.7492396+03:00">
+        <Text>[xUnit.net 00:00:00.51]     FluxVault.App.Tests.ProtectionSaveContractTests.A_pending_save_for_another_repository_never_restores_its_draft_or_sends_a_command [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T14:25:44.7597820+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.App.Tests.ProtectionSaveContractTests.Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt(profileStore: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T14:25:44.7782342+03:00">
+        <Text>[xUnit.net 00:00:00.54]     FluxVault.App.Tests.ProtectionSaveContractTests.Protection_save_reopens_the_full_dispatched_snapshot_and_checks_its_original_receipt(profileStore: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f538a86f-b054-4337-89d4-2f95e4f37de9" name="os008@OS008-HOME 2026-10-05 02:01:29" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T02:01:29.0911923+03:00" queuing="2026-10-05T02:01:29.0911924+03:00" start="2026-10-05T02:01:28.1658932+03:00" finish="2026-10-05T02:01:29.0957275+03:00" />
+  <TestSettings name="default" id="807dc30b-790a-4927-b679-1e18c86b3054">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_02_01_29" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="7c3be6cc-b489-42e6-ac57-658fff5fff2f" testId="5f0e61f5-e1df-20a8-fd38-81b9d52abb8a" testName="FluxVault.App.Tests.SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(options: False)" computerName="OS008-HOME" duration="00:00:00.2285930" startTime="2026-10-05T02:01:28.7319515+03:00" endTime="2026-10-05T02:01:28.9725418+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7c3be6cc-b489-42e6-ac57-658fff5fff2f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.IO.InvalidDataException)</Message>
+          <StackTrace>   at FluxVault.App.Tests.SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(Boolean options) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs:line 18&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="76058ae7-647e-4c9f-9ddf-5b169a824cb1" testId="29ac244d-6908-69e6-2afd-63d74907d29f" testName="FluxVault.App.Tests.SaveOperationStoreTests.Protect_draft_correlation_round_trips_and_older_records_remain_unlinked" computerName="OS008-HOME" duration="00:00:00.0264327" startTime="2026-10-05T02:01:28.9858201+03:00" endTime="2026-10-05T02:01:29.0027134+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76058ae7-647e-4c9f-9ddf-5b169a824cb1" />
+    <UnitTestResult executionId="2d7c57ee-c708-4df8-b490-f0b9e3d38195" testId="7fb96e29-c526-1647-4590-d5cceba65636" testName="FluxVault.App.Tests.SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(options: True)" computerName="OS008-HOME" duration="00:00:00.0031298" startTime="2026-10-05T02:01:28.9842481+03:00" endTime="2026-10-05T02:01:28.9843167+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d7c57ee-c708-4df8-b490-f0b9e3d38195">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.IO.InvalidDataException)</Message>
+          <StackTrace>   at FluxVault.App.Tests.SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(Boolean options) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs:line 18&#xD;
+   at InvokeStub_SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Protect_draft_correlation_round_trips_and_older_records_remain_unlinked" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="29ac244d-6908-69e6-2afd-63d74907d29f">
+      <Execution id="76058ae7-647e-4c9f-9ddf-5b169a824cb1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Protect_draft_correlation_round_trips_and_older_records_remain_unlinked" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(options: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="5f0e61f5-e1df-20a8-fd38-81b9d52abb8a">
+      <Execution id="7c3be6cc-b489-42e6-ac57-658fff5fff2f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(options: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="7fb96e29-c526-1647-4590-d5cceba65636">
+      <Execution id="2d7c57ee-c708-4df8-b490-f0b9e3d38195" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5f0e61f5-e1df-20a8-fd38-81b9d52abb8a" executionId="7c3be6cc-b489-42e6-ac57-658fff5fff2f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="29ac244d-6908-69e6-2afd-63d74907d29f" executionId="76058ae7-647e-4c9f-9ddf-5b169a824cb1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7fb96e29-c526-1647-4590-d5cceba65636" executionId="2d7c57ee-c708-4df8-b490-f0b9e3d38195" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="1" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.45]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.45]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs(18,0): at FluxVault.App.Tests.SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(Boolean options)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.46]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.46]       Expected: typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\SaveOperationStoreTests.cs(18,0): at FluxVault.App.Tests.SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(Boolean options)&#xD;
+[xUnit.net 00:00:00.46]            at InvokeStub_SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.48]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T02:01:28.9751942+03:00">
+        <Text>[xUnit.net 00:00:00.45]     FluxVault.App.Tests.SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(options: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T02:01:28.9844817+03:00">
+        <Text>[xUnit.net 00:00:00.46]     FluxVault.App.Tests.SaveOperationStoreTests.Empty_draft_identity_and_Options_draft_link_are_refused_before_reservation(options: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

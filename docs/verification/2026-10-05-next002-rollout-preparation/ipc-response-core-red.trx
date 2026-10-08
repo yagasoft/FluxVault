@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e3d98385-376a-49ce-bca0-96927c39a559" name="os008@OS008-HOME 2026-10-05 15:45:50" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T15:45:50.1664554+03:00" queuing="2026-10-05T15:45:50.1664555+03:00" start="2026-10-05T15:45:49.1715283+03:00" finish="2026-10-05T15:45:50.1718659+03:00" />
+  <TestSettings name="default" id="f5e4bb28-6c3d-40f1-818d-d5b8385e48fa">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_15_45_50" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="801540f1-7f9b-481a-9ac8-8b8f146f8407" testId="c1b8cefb-63c9-8cab-f263-ac3ffc7f3110" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;truncated&quot;)" computerName="OS008-HOME" duration="00:00:00.1779601" startTime="2026-10-05T15:45:49.7603277+03:00" endTime="2026-10-05T15:45:49.9509089+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="801540f1-7f9b-481a-9ac8-8b8f146f8407">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.IO.InvalidDataException)&#xD;
+---- System.IO.InvalidDataException : Incomplete IPC frame.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 33&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 33&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d9988ccc-ca09-421d-bfdc-4fa0295c5e21" testId="b8efe0ed-c023-a0ad-444c-ec6d4b1d18fc" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;malformed&quot;)" computerName="OS008-HOME" duration="00:00:00.0001037" startTime="2026-10-05T15:45:50.0752989+03:00" endTime="2026-10-05T15:45:50.0753263+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9988ccc-ca09-421d-bfdc-4fa0295c5e21">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.Text.Json.JsonException)&#xD;
+---- System.Text.Json.JsonException : ']' is an invalid start of a property name. Expected a '"'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.&#xD;
+-------- System.Text.Json.JsonReaderException : ']' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 1.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 33&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack&amp; state, JsonReaderException ex)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Utf8JsonReader&amp; reader, ReadStack&amp; state)&#xD;
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)&#xD;
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 39&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+   at System.Text.Json.Utf8JsonReader.Read()&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c1457a5d-a25d-481a-af99-225784154e89" testId="8d2aeb8d-c411-5a6d-7d65-eec5ec9bb887" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;oversized&quot;)" computerName="OS008-HOME" duration="00:00:00.0000740" startTime="2026-10-05T15:45:50.0765799+03:00" endTime="2026-10-05T15:45:50.0766139+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c1457a5d-a25d-481a-af99-225784154e89">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.IO.InvalidDataException)&#xD;
+---- System.IO.InvalidDataException : IPC frame exceeds the supported size.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 33&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 36&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="33ca15e6-0d50-4500-842d-53494c50367e" testId="e5579b67-ef67-75c4-6f45-528919881e8b" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;utf8&quot;)" computerName="OS008-HOME" duration="00:00:00.0001940" startTime="2026-10-05T15:45:50.0772761+03:00" endTime="2026-10-05T15:45:50.0773103+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="33ca15e6-0d50-4500-842d-53494c50367e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.Text.DecoderFallbackException)&#xD;
+---- System.Text.DecoderFallbackException : Unable to translate bytes [FF] at index 0 from specified code page to Unicode.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 33&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.Text.DecoderExceptionFallbackBuffer.Throw(Byte[] bytesUnknown, Int32 index)&#xD;
+   at System.Text.DecoderExceptionFallbackBuffer.Fallback(Byte[] bytesUnknown, Int32 index)&#xD;
+   at System.Text.Encoding.GetCharCountWithFallback(ReadOnlySpan`1 bytes, Int32 originalBytesLength, DecoderNLS decoder)&#xD;
+   at System.Text.Encoding.GetCharCountWithFallback(Byte* pBytesOriginal, Int32 originalByteCount, Int32 bytesConsumedSoFar)&#xD;
+   at System.Text.UTF8Encoding.GetCharCount(Byte* bytes, Int32 count)&#xD;
+   at System.String.CreateStringFromEncoding(Byte* bytes, Int32 byteLength, Encoding encoding)&#xD;
+   at System.Text.UTF8Encoding.GetString(Byte[] bytes, Int32 index, Int32 count)&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 39&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0afb9da3-4838-4ef9-b70c-6b9ac6fe00b9" testId="7cbb6217-c88f-2262-ef5d-b8616113a8dc" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;depth&quot;)" computerName="OS008-HOME" duration="00:00:00.0029322" startTime="2026-10-05T15:45:50.0705825+03:00" endTime="2026-10-05T15:45:50.0728040+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0afb9da3-4838-4ef9-b70c-6b9ac6fe00b9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.Text.Json.JsonException)&#xD;
+---- System.Text.Json.JsonException : The maximum configured depth of 4 has been exceeded. Cannot read next JSON object. Path: $.status.configuration.watchedFolders[0] | LineNumber: 0 | BytePositionInLine: 46.&#xD;
+-------- System.Text.Json.JsonReaderException : The maximum configured depth of 4 has been exceeded. Cannot read next JSON object. LineNumber: 0 | BytePositionInLine: 46.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 33&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack&amp; state, JsonReaderException ex)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Utf8JsonReader&amp; reader, ReadStack&amp; state)&#xD;
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)&#xD;
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 39&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+   at System.Text.Json.Utf8JsonReader.StartObject()&#xD;
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+   at System.Text.Json.Utf8JsonReader.Read()&#xD;
+   at System.Text.Json.Serialization.JsonCollectionConverter`2.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, TCollection&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryReadAsObject(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, Object&amp; value)&#xD;
+   at System.Text.Json.Serialization.Converters.LargeObjectWithParameterizedConstructorConverter`1.ReadAndCacheConstructorArgument(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonParameterInfo jsonParameterInfo)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryReadAsObject(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, Object&amp; value)&#xD;
+   at System.Text.Json.Serialization.Converters.LargeObjectWithParameterizedConstructorConverter`1.ReadAndCacheConstructorArgument(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonParameterInfo jsonParameterInfo)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryReadAsObject(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, Object&amp; value)&#xD;
+   at System.Text.Json.Serialization.Converters.LargeObjectWithParameterizedConstructorConverter`1.ReadAndCacheConstructorArgument(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonParameterInfo jsonParameterInfo)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2794cce5-688b-48ba-b53a-7e14307cdf78" testId="370f96df-cdc6-f357-02c8-2909297fc612" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;null&quot;)" computerName="OS008-HOME" duration="00:00:00.1180950" startTime="2026-10-05T15:45:49.9641468+03:00" endTime="2026-10-05T15:45:50.0692355+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2794cce5-688b-48ba-b53a-7e14307cdf78">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.IO.InvalidDataException)&#xD;
+---- System.IO.InvalidDataException : Empty IPC payload.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 33&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 40&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bee88189-a80c-4049-b4fd-e7fb7eaceb71" testId="2ff0df06-acb0-497d-82d6-0cac00f9198d" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;empty&quot;)" computerName="OS008-HOME" duration="00:00:00.0000679" startTime="2026-10-05T15:45:50.0747012+03:00" endTime="2026-10-05T15:45:50.0747309+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bee88189-a80c-4049-b4fd-e7fb7eaceb71">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.IO.InvalidDataException)&#xD;
+---- System.IO.InvalidDataException : Empty IPC frame.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 33&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs:line 25&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 22&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 32</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;null&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="370f96df-cdc6-f357-02c8-2909297fc612">
+      <Execution id="2794cce5-688b-48ba-b53a-7e14307cdf78" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;empty&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="2ff0df06-acb0-497d-82d6-0cac00f9198d">
+      <Execution id="bee88189-a80c-4049-b4fd-e7fb7eaceb71" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;truncated&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="c1b8cefb-63c9-8cab-f263-ac3ffc7f3110">
+      <Execution id="801540f1-7f9b-481a-9ac8-8b8f146f8407" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;malformed&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="b8efe0ed-c023-a0ad-444c-ec6d4b1d18fc">
+      <Execution id="d9988ccc-ca09-421d-bfdc-4fa0295c5e21" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;depth&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="7cbb6217-c88f-2262-ef5d-b8616113a8dc">
+      <Execution id="0afb9da3-4838-4ef9-b70c-6b9ac6fe00b9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;oversized&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="8d2aeb8d-c411-5a6d-7d65-eec5ec9bb887">
+      <Execution id="c1457a5d-a25d-481a-af99-225784154e89" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: &quot;utf8&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="e5579b67-ef67-75c4-6f45-528919881e8b">
+      <Execution id="33ca15e6-0d50-4500-842d-53494c50367e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Invalid_response_is_transport_uncertainty_and_sends_no_receipt" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c1b8cefb-63c9-8cab-f263-ac3ffc7f3110" executionId="801540f1-7f9b-481a-9ac8-8b8f146f8407" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b8efe0ed-c023-a0ad-444c-ec6d4b1d18fc" executionId="d9988ccc-ca09-421d-bfdc-4fa0295c5e21" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d2aeb8d-c411-5a6d-7d65-eec5ec9bb887" executionId="c1457a5d-a25d-481a-af99-225784154e89" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5579b67-ef67-75c4-6f45-528919881e8b" executionId="33ca15e6-0d50-4500-842d-53494c50367e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7cbb6217-c88f-2262-ef5d-b8616113a8dc" executionId="0afb9da3-4838-4ef9-b70c-6b9ac6fe00b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="370f96df-cdc6-f357-02c8-2909297fc612" executionId="2794cce5-688b-48ba-b53a-7e14307cdf78" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2ff0df06-acb0-497d-82d6-0cac00f9198d" executionId="bee88189-a80c-4049-b4fd-e7fb7eaceb71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="0" failed="7" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.42]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.42]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.42]       Actual:   typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.42]       ---- System.IO.InvalidDataException : Incomplete IPC frame.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(33,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.42]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(33,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.53]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.53]       Actual:   typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.53]       ---- System.IO.InvalidDataException : Empty IPC payload.&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(33,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault)&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.53]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(40,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.53]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.53]       Actual:   typeof(System.Text.Json.JsonException)&#xD;
+[xUnit.net 00:00:00.53]       ---- System.Text.Json.JsonException : The maximum configured depth of 4 has been exceeded. Cannot read next JSON object. Path: $.status.configuration.watchedFolders[0] | LineNumber: 0 | BytePositionInLine: 46.&#xD;
+[xUnit.net 00:00:00.53]       -------- System.Text.Json.JsonReaderException : The maximum configured depth of 4 has been exceeded. Cannot read next JSON object. LineNumber: 0 | BytePositionInLine: 46.&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(33,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault)&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.53]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack&amp; state, JsonReaderException ex)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Utf8JsonReader&amp; reader, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(39,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Utf8JsonReader.StartObject()&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Utf8JsonReader.Read()&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Serialization.JsonCollectionConverter`2.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, TCollection&amp; value)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Serialization.JsonConverter`1.TryReadAsObject(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, Object&amp; value)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Serialization.Converters.LargeObjectWithParameterizedConstructorConverter`1.ReadAndCacheConstructorArgument(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonParameterInfo jsonParameterInfo)&#xD;
+[xUnit.net 00:00:00.53]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.JsonConverter`1.TryReadAsObject(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, Object&amp; value)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.Converters.LargeObjectWithParameterizedConstructorConverter`1.ReadAndCacheConstructorArgument(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonParameterInfo jsonParameterInfo)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.JsonConverter`1.TryReadAsObject(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, Object&amp; value)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.Converters.LargeObjectWithParameterizedConstructorConverter`1.ReadAndCacheConstructorArgument(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonParameterInfo jsonParameterInfo)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.54]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.54]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.54]       Actual:   typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.54]       ---- System.IO.InvalidDataException : Empty IPC frame.&#xD;
+[xUnit.net 00:00:00.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(33,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault)&#xD;
+[xUnit.net 00:00:00.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.54]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(25,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.54]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.54]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.54]       Actual:   typeof(System.Text.Json.JsonException)&#xD;
+[xUnit.net 00:00:00.54]       ---- System.Text.Json.JsonException : ']' is an invalid start of a property name. Expected a '"'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.&#xD;
+[xUnit.net 00:00:00.54]       -------- System.Text.Json.JsonReaderException : ']' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 1.&#xD;
+[xUnit.net 00:00:00.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(33,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault)&#xD;
+[xUnit.net 00:00:00.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.54]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack&amp; state, JsonReaderException ex)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Utf8JsonReader&amp; reader, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(39,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.54]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Utf8JsonReader.Read()&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.54]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.54]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.54]       Actual:   typeof(System.IO.InvalidDataException)&#xD;
+[xUnit.net 00:00:00.54]       ---- System.IO.InvalidDataException : IPC frame exceeds the supported size.&#xD;
+[xUnit.net 00:00:00.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(33,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault)&#xD;
+[xUnit.net 00:00:00.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.54]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(36,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.54]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.54]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.54]       Actual:   typeof(System.Text.DecoderFallbackException)&#xD;
+[xUnit.net 00:00:00.54]       ---- System.Text.DecoderFallbackException : Unable to translate bytes [FF] at index 0 from specified code page to Unicode.&#xD;
+[xUnit.net 00:00:00.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(33,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(String fault)&#xD;
+[xUnit.net 00:00:00.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.54]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.DecoderExceptionFallbackBuffer.Throw(Byte[] bytesUnknown, Int32 index)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.DecoderExceptionFallbackBuffer.Fallback(Byte[] bytesUnknown, Int32 index)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Encoding.GetCharCountWithFallback(ReadOnlySpan`1 bytes, Int32 originalBytesLength, DecoderNLS decoder)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.Encoding.GetCharCountWithFallback(Byte* pBytesOriginal, Int32 originalByteCount, Int32 bytesConsumedSoFar)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.UTF8Encoding.GetCharCount(Byte* bytes, Int32 count)&#xD;
+[xUnit.net 00:00:00.54]            at System.String.CreateStringFromEncoding(Byte* bytes, Int32 byteLength, Encoding encoding)&#xD;
+[xUnit.net 00:00:00.54]            at System.Text.UTF8Encoding.GetString(Byte[] bytes, Int32 index, Int32 count)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\FluxVaultIpcFrame.cs(39,0): at FluxVault.Core.Ipc.FluxVaultIpcFrame.ReadAsync[T](Stream stream, Int32 maximumBytes, Int32 maximumDepth, TimeSpan timeout, CancellationToken cancellationToken, Boolean waitForResponse)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(22,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(32,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.54]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:45:49.9539703+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: "truncated") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:45:50.0697886+03:00">
+        <Text>[xUnit.net 00:00:00.53]     FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: "null") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:45:50.0729932+03:00">
+        <Text>[xUnit.net 00:00:00.53]     FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: "depth") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:45:50.0748162+03:00">
+        <Text>[xUnit.net 00:00:00.54]     FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: "empty") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:45:50.0754156+03:00">
+        <Text>[xUnit.net 00:00:00.54]     FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: "malformed") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:45:50.0767127+03:00">
+        <Text>[xUnit.net 00:00:00.54]     FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: "oversized") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T15:45:50.0774185+03:00">
+        <Text>[xUnit.net 00:00:00.54]     FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Invalid_response_is_transport_uncertainty_and_sends_no_receipt(fault: "utf8") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

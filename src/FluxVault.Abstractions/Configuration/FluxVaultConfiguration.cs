@@ -22,7 +22,10 @@ public sealed record FluxVaultConfiguration(
     SecurityPostureConfiguration SecurityPosture = null!,
     EnterpriseFleetConfiguration Fleet = null!,
     MetadataStoreConfiguration MetadataStore = null!,
-    DiagnosticsPolicy DiagnosticsPolicy = null!)
+    DiagnosticsPolicy DiagnosticsPolicy = null!,
+    VersionPreviewPolicy VersionPreview = null!,
+    RepositoryBrowsePolicy RepositoryBrowse = null!,
+    ProtectionDraftPolicy ProtectionDraft = null!)
 {
     public static FluxVaultConfiguration CreateDefault(string programDataPath)
     {
@@ -47,6 +50,7 @@ public sealed record FluxVaultConfiguration(
             SecurityPosture: SecurityPostureConfiguration.CreateDefault(),
             Fleet: EnterpriseFleetConfiguration.CreateDefault(),
             MetadataStore: MetadataStoreConfiguration.CreateDefault(programDataPath),
-            DiagnosticsPolicy: DiagnosticsPolicy.CreateDefault(programDataPath));
+            DiagnosticsPolicy: DiagnosticsPolicy.CreateDefault(programDataPath),
+            VersionPreview: new(), RepositoryBrowse: new(), ProtectionDraft: new());
     }
 }

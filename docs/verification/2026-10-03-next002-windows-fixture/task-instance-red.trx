@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4d055cf8-c604-474b-8532-d24dbb293abb" name="os008@OS008-HOME 2026-10-04 03:06:58" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T03:06:58.9920201+03:00" queuing="2026-10-04T03:06:58.9920203+03:00" start="2026-10-04T03:06:56.8202469+03:00" finish="2026-10-04T03:06:58.9961401+03:00" />
+  <TestSettings name="default" id="a570968a-1f3a-4b70-90a7-6f9335ae8588">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_03_06_58" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="3c040edb-58bf-4d13-8de2-f4949725aea4" testId="f02f32af-7daf-8f6a-94d7-b6867108ac25" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Task_instance_updates_preserve_the_owned_definition_and_survive_journal_reopen" computerName="OS008-HOME" duration="00:00:01.4794023" startTime="2026-10-04T03:06:57.4109917+03:00" endTime="2026-10-04T03:06:58.9077243+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3c040edb-58bf-4d13-8de2-f4949725aea4">
+      <Output>
+        <ErrorInfo>
+          <Message>Set-VaultFixtureTaskInstance: E:\Temp\AppData\Local\Temp\FluxVault.WindowsFixtureTools.f76bbfa9104845648bc5c911187504d7\case-1a6140fb3bb745e789cf1818dd9a37b3.ps1:9&#xD;
+Line |&#xD;
+   9 |  . rst=[guid]::NewGuid().ToString();Set-VaultFixtureTaskInstance $journa .&#xD;
+     |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | The term 'Set-VaultFixtureTaskInstance' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+     | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+     | and try again.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 637&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 645&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Task_instance_updates_preserve_the_owned_definition_and_survive_journal_reopen() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 13&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Task_instance_updates_preserve_the_owned_definition_and_survive_journal_reopen" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="f02f32af-7daf-8f6a-94d7-b6867108ac25">
+      <Execution id="3c040edb-58bf-4d13-8de2-f4949725aea4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Task_instance_updates_preserve_the_owned_definition_and_survive_journal_reopen" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f02f32af-7daf-8f6a-94d7-b6867108ac25" executionId="3c040edb-58bf-4d13-8de2-f4949725aea4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.70]       Set-VaultFixtureTaskInstance: E:\Temp\AppData\Local\Temp\FluxVault.WindowsFixtureTools.f76bbfa9104845648bc5c911187504d7\case-1a6140fb3bb745e789cf1818dd9a37b3.ps1:9&#xD;
+[xUnit.net 00:00:01.70]       Line |&#xD;
+[xUnit.net 00:00:01.70]          9 |  . rst=[guid]::NewGuid().ToString();Set-VaultFixtureTaskInstance $journa .&#xD;
+[xUnit.net 00:00:01.70]            |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:01.70]            | The term 'Set-VaultFixtureTaskInstance' is not recognized as a name of a cmdlet, function, script file, or&#xD;
+[xUnit.net 00:00:01.70]            | executable program. Check the spelling of the name, or if a path was included, verify that the path is correct&#xD;
+[xUnit.net 00:00:01.70]            | and try again.&#xD;
+[xUnit.net 00:00:01.70]       &#xD;
+[xUnit.net 00:00:01.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.70]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(637,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:01.70]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(645,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:01.70]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(13,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Task_instance_updates_preserve_the_owned_definition_and_survive_journal_reopen()&#xD;
+[xUnit.net 00:00:01.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.71]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T03:06:58.9108181+03:00">
+        <Text>[xUnit.net 00:00:01.70]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Task_instance_updates_preserve_the_owned_definition_and_survive_journal_reopen [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

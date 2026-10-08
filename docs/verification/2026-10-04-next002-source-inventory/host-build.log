@@ -1,0 +1,15 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\WindowsCallerFileProbe.cs(183,17): error CS1739: The best overload for 'FluxVaultOperations' does not have a parameter named 'stateRootPath' [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\FluxVault.TestHost.csproj]
+
+Build FAILED.
+
+C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\WindowsCallerFileProbe.cs(183,17): error CS1739: The best overload for 'FluxVaultOperations' does not have a parameter named 'stateRootPath' [C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\FluxVault.TestHost.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:10.76

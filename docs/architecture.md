@@ -1,5 +1,7 @@
 # Architecture
 
+Scope decision, 4 October 2026: FluxVault supports exactly one logical vault per Windows installation, with multiple protected folders, file types and mirrors. NEXT-002 removes product profile switching/lifecycle/discovery and multiple runtime management. Creator ownership and explicit grants remain; the vault is not automatically shared with all Windows users. Retain one repository identity, immutable physical/metadata binding, revision and receipts for correctness/recovery. The legacy profile behaviour described below records the staging implementation being replaced, not the future product contract. [Current implementation sequence and gates](superpowers/plans/2026-10-03-next002-with-protection-save.md).
+
 ## Overview
 
 FluxVault has five main runtime parts:
@@ -35,6 +37,85 @@ cached runtime summaries, activity, recent versions, and live backup/watcher
 diagnostics without rebuilding the full tracked repository inventory every few
 seconds. Manual refreshes and views that need repository file-browser detail
 request full status.
+
+Overview keeps its existing fifty-version history window. The protected
+PostgreSQL route applies that limit before loading or decoding manifests,
+using an index on exact UTC ticks and ordinal hexadecimal version IDs. Selected
+rows must match both ordering keys in their immutable manifests; size and
+repository-binding checks remain in force. The recovery browser now uses scoped
+bidirectional history pages and lazy recorded-folder contents through authorised
+service reads. Exact recorded child identities remain recoverable outside the
+visible history page; stale generation or unavailable binding is explained
+without presenting authoritative empty history. Reads are cancelled and joined
+before window closure. The protected dashboard also reads current-file inventory
+through forward keyset pages under ReadHistory authority. Status explicitly
+advertises this capability and omits the complete tracked-entry payload; it does
+not build and discard that payload. Recent-history availability remains separate.
+Every page uses the initial status repository/revision and one history generation.
+Only a complete validated sweep replaces browser entries; failures, cancellation
+and concurrent edits retain the previous entries and pending settings. Dashboard
+reads are cancelled and joined before application shutdown.
+Legacy filesystem/developer recent-history repositories retain their fallback;
+the new protected paging routes have no complete-history fallback. Transport is
+bounded, but the dashboard still accumulates the complete current-file inventory
+in memory; large-inventory rendering and resource limits remain open gates. The
+preceding status/recent-history snapshot and current sweep are separate reads.
+
+Protected status supplies a nonempty runtime cache epoch. It is created once in
+the shared installation runtime and changes alongside cache invalidation. The
+dashboard compares it with the epoch of its last applied complete sweep, so
+another client's cache warming cannot hide new repository work. Failed sweeps
+and status-only save reconciliation do not advance the applied epoch. An
+unchanged warm status avoids another complete sweep; manual refresh and a full
+reload after unavailable fast status still fetch current pages. This epoch is an
+invalidation hint, separate from transactional metadata history generation.
+When a sweep is applied, the browser reconciles fresh physical children only
+for previously loaded folders and fresh files for its selected folder. Cached
+live rows cannot hide a newly missing file/folder, restored items become live,
+and changed recovery IDs replace old pointers. Unchanged nodes/rows, loaded
+descendants, expansion, selection, pending rules and typed address are retained.
+
+Protect edits have a separate per-user local draft, alongside the existing
+dispatched-save receipt ledger. It contains the complete editable snapshot,
+repository identity, exact saved revision/fingerprint, stable editing identity
+and fresh publication identity. One coalesced writer flushes an atomic bounded
+record off the dispatcher. `ProtectionDraft.SaveDelayMilliseconds` defaults to
+500 and is constrained to 100–5000 in configuration and Options. Continuous
+typing does not postpone every publication; edits since the last completed
+write remain vulnerable to a crash. The UI distinguishes pending, retained,
+unreadable and failed local retention from a service save.
+
+An explicit Protect save first retains its exact draft, reserves the operation
+receipt and associates that operation before IPC. Failed preparation sends no
+save or dependent backup. Restart reads both local records without replay;
+newer local edits take precedence over an older submitted snapshot. Original
+and acknowledged revision/fingerprint phases remain uncertain until the exact
+authoritative receipt is checked. Acknowledgement retains newer edits at the
+confirmed baseline, or retires the submitted draft, before clearing the receipt.
+Editing identity survives an interrupted receipt retirement; completed discard
+or editing-session retirement prevents its reuse for a new session.
+
+Explicit discard fences the writer and rechecks edits, draft identity and save
+receipt after the current status request. It conditionally retires only the
+reviewed draft before applying saved settings. Bounded unreadable draft bytes
+may be preserved in a unique quarantine after length/hash revalidation;
+unreadable or oversized files and unresolved dispatched receipts remain gated.
+Edits arriving during retirement are retained instead of overwritten. Exit
+fences the editor, refuses outstanding save/receipt work, force-flushes and joins
+the draft writer before joining repository reads. Failed retention stops Exit,
+explains the failure and keeps the window usable. This local record confers no
+server authority and changes neither creator access nor repository binding.
+
+Fresh staging metadata uses schema version 4. Current entries have one row per
+canonical Windows path and entry kind, keyed by the existing path identity.
+Exact UTC ticks and ordinal version IDs select the winner, including tombstones;
+pruning restores the newest retained version in the same transaction. Current
+reads validate the pointer against its canonical path and immutable version.
+The non-null bigint UTC-tick keys and history generation are written in the
+version transaction. Existing unsupported schemas are
+refused before schema changes; no backfill or automatic upgrade occurs. Retain
+the previous installation and its database/storage assets for recovery. Normal
+installation rollout and any migration remain separate reviewed operations.
 
 `HasVersionInventory` distinguishes an authoritative empty repository from a cold,
 invalidated or unavailable inventory snapshot. Fast status reads only a cache
@@ -223,10 +304,61 @@ exported diagnostics can distinguish unable to open volume, unsupported volume,
 journal ID change, journal wrap, checkpoint seeding, file-id path resolution
 failures, and noisy-folder churn such as OneDrive/Office activity.
 
+Protected selection recovery uses the accepted single-repository binding and
+recovery permission. Preview is read-only: caller-owned native handles inspect
+the destination without creating output, permit blind traversal of ancestors,
+and distinguish confirmed absence from unavailable access. Execution rechecks
+through the pinned output target; a new-file request cannot replace a late entry,
+and an existing folder cannot be merged. Original recovery targets only the
+selected source path.
+
+Exact folder history remains preferred. Independent file history falls back to
+one bounded forest plan under one repository lease, with shared manifest,
+metadata, depth, entry and chunk budgets including synthetic directories.
+Latest history is grouped before tombstones are excluded; an explicitly selected
+deleted file can still recover its validated last-good target. All names and
+references are validated before staging, then all verified bytes publish as one
+folder. Failed publication records no lineage hints; post-publication permission
+or lineage warnings retain the output and verified result. Durable replay returns
+the recorded outcome without rewriting caller-edited or deleted output. The
+view-model retains pending settings and requires matching source, destination,
+operation/revision and actual verification before claiming success.
+
+The existing `SetProtectionPaused` service command toggles only the authoritative
+`IsEnabled` field under the catalogue transaction. Its incremented configuration
+revision and completed operation receipt commit together; replay returns that
+historical result before stale-revision checks and cannot toggle again. It
+requires protection-management authority and never runs in the repository
+executor. Save, capture and toggle admission remain in the same mutation gate.
+A disabled backup returns before source inspection, enumeration, capture,
+deletion reconciliation or retention; protected binding/storage checks still
+apply. Status and diagnostics distinguish
+paused manual backup from unavailable automatic protection. The activity pane's
+automatic-protection control remains disabled until background/VSS capture is
+validated; explicit pause/resume UI remains within NEXT-004.
+
+`GetSyncStatus` requires history-read authority and returns the existing full
+status/sync snapshot through the protected binding. It creates no mutation
+receipt, changes no revision and starts no sync, cloud or background work.
+
 ## Service diagnostics and performance telemetry
 
-The service always keeps a bounded in-memory telemetry history for the active
-profile. By default it samples every 5 seconds and retains 4320 samples, which
+Protected diagnostics export requires history-read authority and a bound
+operation/revision. Catalogue admission validates local directory syntax without
+filesystem access. The Windows executor derives a new filename from the admitted
+operation and uses the caller-created, pinned output target through publication;
+it cannot write into a destination denied to that caller or overwrite an existing
+entry. Core streams the versioned status document and owns/disposes the target
+from entry, including status-generation, write and cancellation failures. The
+document records the repository identity and configuration revision; publication
+warnings are retained in the durable response. Exact replay/status returns that
+response without creating output again, even if the caller edited or deleted the
+file. Publication followed by an unconfirmed receipt/acknowledgement remains an
+unknown outcome. The view-model checks both returned paths against its captured
+operation-specific destination and keeps pending protection edits.
+
+The service always keeps a bounded in-memory telemetry history for the
+installation. By default it samples every 5 seconds and retains 4320 samples, which
 is 6 hours of history. The sampler records process CPU, working set, private
 memory, GC heap, collection counts, process threads and handles, ThreadPool
 availability and queue pressure, IPC request counts, loop state, backup/capture
@@ -521,6 +653,15 @@ mirror's chunk/metadata artefacts only for chunks with no unresolved required
 target issue. On a healthy completion the selected mirror node is disabled in
 configuration. Version metadata remains in PostgreSQL and metadata-journal
 exports; drain does not act as a destructive repository purge.
+
+The single-vault protected service admits drain only for an enabled destination
+with another enabled destination remaining. Repository execution does not save
+configuration. Catalogue completion verifies the original request fingerprint,
+durable receipt and admitted revision, then commits only the selected disablement,
+new revision and completed response together. Incomplete/failed results keep the
+destination enabled; unconfirmed effects are reconciled using the retained
+operation identity without automatic re-execution. The UI preserves pending
+protection edits and applies the disablement only to its matching accepted baseline.
 
 ## Whole-PC metadata store
 

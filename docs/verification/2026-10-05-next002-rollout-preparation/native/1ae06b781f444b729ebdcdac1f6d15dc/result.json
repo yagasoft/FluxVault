@@ -1,0 +1,6 @@
+{
+  "Observations": [],
+  "FixtureId": "1ae06b781f444b729ebdcdac1f6d15dc",
+  "Failure": "Invalid fixture resource.",
+  "FailureLocation": "at Assert-FixtureResource, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\fixtures\\vault-windows-fixture.psm1: line 107\r\nat Add-VaultFixtureIntent, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\fixtures\\vault-windows-fixture.psm1: line 154\r\nat Invoke-PreparedAuthenticationTasks, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 166\r\nat Test-PreparedAuthentication, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 361\r\nat <ScriptBlock>, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 1202\r\nat <ScriptBlock>, <No file>: line 2"
+}

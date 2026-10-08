@@ -5,6 +5,7 @@ using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Chunking;
 using FluxVault.Core.Content;
 using FluxVault.Core.Storage;
+using FluxVault.Core.Storage.Integrity;
 
 namespace FluxVault.Core.Tests;
 
@@ -136,6 +137,54 @@ public sealed class RepositoryLineageTests
         Assert.Contains(versions, version => version.VersionId == latestOriginal.Manifest.VersionId);
         Assert.Contains(versions, version => version.VersionId == inherited.Manifest.VersionId);
         Assert.Equal(payload, await File.ReadAllBytesAsync(restorePath));
+    }
+
+    [Fact]
+    public async Task Purge_refuses_lineage_closure_that_would_delete_a_preserved_copy()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        var payload = Encoding.UTF8.GetBytes("retained working bytes");
+        var original = await repository.CommitAsync(NewRequest(payload, Path.Combine(workspace.RootPath, "cad", "drawing.dwg")));
+        var copy = await repository.CommitAsync(NewRequest(payload, Path.Combine(workspace.RootPath, "office", "document.docx")));
+        Assert.Equal(original.Manifest.VersionId, copy.Manifest.InheritedFromVersionId);
+        var before = (await repository.ListVersionsAsync()).Select(version => version.VersionId).Order().ToArray();
+
+        var failure = await Assert.ThrowsAsync<RepositoryIntegrityException>(() => repository.PurgeAsync(new(
+            [new(original.Manifest.SourcePath, RepositoryPurgeScopeKind.File)],
+            [new(copy.Manifest.SourcePath, RepositoryPurgeScopeKind.File)])));
+
+        Assert.Contains("preserved", failure.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(before, (await repository.ListVersionsAsync()).Select(version => version.VersionId).Order().ToArray());
+        foreach (var version in new[] { original.Manifest, copy.Manifest })
+        {
+            var restored = Path.Combine(workspace.RootPath, version.VersionId + ".restore");
+            await repository.RestoreAsync(version.VersionId, restored);
+            Assert.Equal(payload, await File.ReadAllBytesAsync(restored));
+        }
+    }
+
+    [Fact]
+    public async Task Purge_refuses_folder_reference_closure_and_leaves_the_preserved_snapshot_recoverable()
+    {
+        using var workspace = TemporaryWorkspace.Create();
+        var repository = CreateRepository(workspace.RepositoryPath);
+        var source = Path.Combine(workspace.RootPath, "office");
+        var payload = Encoding.UTF8.GetBytes("snapshot child bytes");
+        var child = await repository.CommitAsync(NewRequest(payload, Path.Combine(source, "nested", "document.docx")) with { WatchedFolderPath = source });
+        var snapshots = (await repository.ListVersionsAsync()).Where(version => version.EntryKind == RepositoryEntryKind.Folder).ToArray();
+        var snapshot = snapshots.Single(version => version.SourcePath == source);
+        Assert.Contains(snapshots.SelectMany(version => version.FolderEntries!), entry => entry.VersionId == child.Manifest.VersionId);
+        var before = (await repository.ListVersionsAsync()).Select(version => version.VersionId).Order().ToArray();
+
+        await Assert.ThrowsAsync<RepositoryIntegrityException>(() => repository.PurgeAsync(new(
+            [new(child.Manifest.SourcePath, RepositoryPurgeScopeKind.File)],
+            [new(source, RepositoryPurgeScopeKind.ImmediateFiles)])));
+
+        Assert.Equal(before, (await repository.ListVersionsAsync()).Select(version => version.VersionId).Order().ToArray());
+        var recovered = Path.Combine(workspace.RootPath, "recovered-folder");
+        await repository.RestoreAsync(snapshot.VersionId, recovered);
+        Assert.Equal(payload, await File.ReadAllBytesAsync(Path.Combine(recovered, "nested", "document.docx")));
     }
 
     private static FileSystemChunkRepository CreateRepository(string path)

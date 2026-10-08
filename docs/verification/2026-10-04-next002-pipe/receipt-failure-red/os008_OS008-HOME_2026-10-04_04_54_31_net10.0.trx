@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="092dd6a9-3658-47ef-a1f5-a5c6b1bfe809" name="os008@OS008-HOME 2026-10-04 04:54:31" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T04:54:31.0105393+03:00" queuing="2026-10-04T04:54:31.0105394+03:00" start="2026-10-04T04:54:29.1486451+03:00" finish="2026-10-04T04:54:32.1203973+03:00" />
+  <TestSettings name="default" id="e12a7966-6335-4d9a-8506-62123fccf542">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_04_54_31" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="556d1f88-dd89-4368-b4c7-4a2f2408793b" testId="11a75631-d33d-b384-4b86-d0b9e63442b4" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;cancelled&quot;)" computerName="OS008-HOME" duration="00:00:00.0002395" startTime="2026-10-04T04:54:32.0639552+03:00" endTime="2026-10-04T04:54:32.0640116+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="556d1f88-dd89-4368-b4c7-4a2f2408793b">
+      <Output>
+        <ErrorInfo>
+          <Message>System.OperationCanceledException : Receipt cancelled after response delivery.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.ResponseThenFailedReceipt.WriteAsync(ReadOnlyMemory`1 buffer, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 49&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 25&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 26&#xD;
+   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 19&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="98245be9-976b-4389-b7cd-80a81f564efd" testId="0a0f1ac0-b748-4138-25d3-655870c9eac7" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;closed&quot;)" computerName="OS008-HOME" duration="00:00:00.3113922" startTime="2026-10-04T04:54:29.7201273+03:00" endTime="2026-10-04T04:54:30.0450799+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="98245be9-976b-4389-b7cd-80a81f564efd">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.IOException : Peer closed after delivering the response.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.ResponseThenFailedReceipt.WriteAsync(ReadOnlyMemory`1 buffer, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 48&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 25&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 26&#xD;
+   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 19&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6f012276-a991-473f-a7f3-611ef3f089f1" testId="c49585be-ca6f-2532-1363-174cca81b3ab" testName="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;stalled&quot;)" computerName="OS008-HOME" duration="00:00:02.0139588" startTime="2026-10-04T04:54:30.0576764+03:00" endTime="2026-10-04T04:54:32.0623366+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6f012276-a991-473f-a7f3-611ef3f089f1">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Threading.Tasks.TaskCanceledException : A task was canceled.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.ResponseThenFailedReceipt.WriteAsync(ReadOnlyMemory`1 buffer, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 50&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 25&#xD;
+   at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs:line 26&#xD;
+   at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(String failure) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs:line 19&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;closed&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="0a0f1ac0-b748-4138-25d3-655870c9eac7">
+      <Execution id="98245be9-976b-4389-b7cd-80a81f564efd" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Confirmed_response_survives_a_failed_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;cancelled&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="11a75631-d33d-b384-4b86-d0b9e63442b4">
+      <Execution id="556d1f88-dd89-4368-b4c7-4a2f2408793b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Confirmed_response_survives_a_failed_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: &quot;stalled&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="c49585be-ca6f-2532-1363-174cca81b3ab">
+      <Execution id="6f012276-a991-473f-a7f3-611ef3f089f1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests" name="Confirmed_response_survives_a_failed_receipt" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="11a75631-d33d-b384-4b86-d0b9e63442b4" executionId="556d1f88-dd89-4368-b4c7-4a2f2408793b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a0f1ac0-b748-4138-25d3-655870c9eac7" executionId="98245be9-976b-4389-b7cd-80a81f564efd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c49585be-ca6f-2532-1363-174cca81b3ab" executionId="6f012276-a991-473f-a7f3-611ef3f089f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.52]       System.IO.IOException : Peer closed after delivering the response.&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(48,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.ResponseThenFailedReceipt.WriteAsync(ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(25,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(26,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(19,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(String failure)&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.54]       System.Threading.Tasks.TaskCanceledException : A task was canceled.&#xD;
+[xUnit.net 00:00:02.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(50,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.ResponseThenFailedReceipt.WriteAsync(ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(25,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(26,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(19,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(String failure)&#xD;
+[xUnit.net 00:00:02.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.54]       System.OperationCanceledException : Receipt cancelled after response delivery.&#xD;
+[xUnit.net 00:00:02.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(49,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.ResponseThenFailedReceipt.WriteAsync(ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(25,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Ipc\NamedPipeFluxVaultClient.cs(26,0): at FluxVault.Core.Ipc.NamedPipeFluxVaultClient.SendAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\NamedPipeFluxVaultClientReceiptTests.cs(19,0): at FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(String failure)&#xD;
+[xUnit.net 00:00:02.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.55]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:54:30.0478939+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: "closed") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:54:32.0630496+03:00">
+        <Text>[xUnit.net 00:00:02.54]     FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: "stalled") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T04:54:32.0641795+03:00">
+        <Text>[xUnit.net 00:00:02.54]     FluxVault.Core.Tests.NamedPipeFluxVaultClientReceiptTests.Confirmed_response_survives_a_failed_receipt(failure: "cancelled") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

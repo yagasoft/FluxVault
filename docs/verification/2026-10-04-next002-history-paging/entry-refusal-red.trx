@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="455dec02-9145-4085-91d9-da9bb1d1e522" name="os008@OS008-HOME 2026-10-04 23:02:23" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T23:02:23.2632755+03:00" queuing="2026-10-04T23:02:23.2632758+03:00" start="2026-10-04T23:02:22.4656256+03:00" finish="2026-10-04T23:02:23.2683658+03:00" />
+  <TestSettings name="default" id="fe2ae461-2c37-4e76-ae03-121d5c3efcb1">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_23_02_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="5af51202-f55d-4bb2-830d-788cc8cfce02" testId="a078e6e4-7e5d-0912-fb3f-ca2af416a987" testName="FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: False, denied: False)" computerName="OS008-HOME" duration="00:00:00.0257622" startTime="2026-10-04T23:02:23.1110356+03:00" endTime="2026-10-04T23:02:23.1520017+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5af51202-f55d-4bb2-830d-788cc8cfce02">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Load the vault's verified configuration before browsing history.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.MainWindowViewModel.CreateVersionInventoryForPathAsync(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2006&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.ShowVersionsForPathAsync(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2019&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.ShowSelectedBrowserItemVersionsAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1802&#xD;
+   at FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(Boolean startup, Boolean denied) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryPagingContractTests.cs:line 30&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f266c88f-b7a1-410c-88c0-c14dc9ce854d" testId="dceec5e7-05cf-c8f2-ee55-e8dc88eb6492" testName="FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: True, denied: False)" computerName="OS008-HOME" duration="00:00:00.0013930" startTime="2026-10-04T23:02:23.1660429+03:00" endTime="2026-10-04T23:02:23.1660781+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f266c88f-b7a1-410c-88c0-c14dc9ce854d">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Load the vault's verified configuration before browsing history.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.MainWindowViewModel.CreateVersionInventoryForPathAsync(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2006&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.ShowVersionsForPathAsync(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2019&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.ApplyStartupRequestAsync(AppStartupRequest request) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 539&#xD;
+   at FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(Boolean startup, Boolean denied) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryPagingContractTests.cs:line 29&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="28a6eb79-35b0-4797-a0ec-f6223f1b21d3" testId="ed11ccde-e33c-8d98-9c5e-70c5a87611f0" testName="FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: True, denied: True)" computerName="OS008-HOME" duration="00:00:00.0001370" startTime="2026-10-04T23:02:23.1666150+03:00" endTime="2026-10-04T23:02:23.1666461+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="28a6eb79-35b0-4797-a0ec-f6223f1b21d3">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Load the vault's verified configuration before browsing history.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.MainWindowViewModel.CreateVersionInventoryForPathAsync(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2006&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.ShowVersionsForPathAsync(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2019&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.ApplyStartupRequestAsync(AppStartupRequest request) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 539&#xD;
+   at FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(Boolean startup, Boolean denied) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryPagingContractTests.cs:line 29&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="647c6d52-ca14-4b5c-b2dc-25630738184e" testId="88596015-97fa-f79d-160b-961be08c8906" testName="FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: False, denied: True)" computerName="OS008-HOME" duration="00:00:00.0014675" startTime="2026-10-04T23:02:23.1649136+03:00" endTime="2026-10-04T23:02:23.1649856+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="647c6d52-ca14-4b5c-b2dc-25630738184e">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Load the vault's verified configuration before browsing history.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.MainWindowViewModel.CreateVersionInventoryForPathAsync(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2006&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.ShowVersionsForPathAsync(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 2019&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.ShowSelectedBrowserItemVersionsAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1802&#xD;
+   at FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(Boolean startup, Boolean denied) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryPagingContractTests.cs:line 30&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: True, denied: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="dceec5e7-05cf-c8f2-ee55-e8dc88eb6492">
+      <Execution id="f266c88f-b7a1-410c-88c0-c14dc9ce854d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.HistoryPagingContractTests" name="Initial_unavailable_or_denied_status_does_not_escape_history_entry_points" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: False, denied: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="88596015-97fa-f79d-160b-961be08c8906">
+      <Execution id="647c6d52-ca14-4b5c-b2dc-25630738184e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.HistoryPagingContractTests" name="Initial_unavailable_or_denied_status_does_not_escape_history_entry_points" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: True, denied: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="ed11ccde-e33c-8d98-9c5e-70c5a87611f0">
+      <Execution id="28a6eb79-35b0-4797-a0ec-f6223f1b21d3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.HistoryPagingContractTests" name="Initial_unavailable_or_denied_status_does_not_escape_history_entry_points" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: False, denied: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="a078e6e4-7e5d-0912-fb3f-ca2af416a987">
+      <Execution id="5af51202-f55d-4bb2-830d-788cc8cfce02" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.HistoryPagingContractTests" name="Initial_unavailable_or_denied_status_does_not_escape_history_entry_points" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a078e6e4-7e5d-0912-fb3f-ca2af416a987" executionId="5af51202-f55d-4bb2-830d-788cc8cfce02" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dceec5e7-05cf-c8f2-ee55-e8dc88eb6492" executionId="f266c88f-b7a1-410c-88c0-c14dc9ce854d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ed11ccde-e33c-8d98-9c5e-70c5a87611f0" executionId="28a6eb79-35b0-4797-a0ec-f6223f1b21d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="88596015-97fa-f79d-160b-961be08c8906" executionId="647c6d52-ca14-4b5c-b2dc-25630738184e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.22]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.29]       System.InvalidOperationException : Load the vault's verified configuration before browsing history.&#xD;
+[xUnit.net 00:00:00.29]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.29]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2006,0): at FluxVault.App.ViewModels.MainWindowViewModel.CreateVersionInventoryForPathAsync(String path)&#xD;
+[xUnit.net 00:00:00.29]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2019,0): at FluxVault.App.ViewModels.MainWindowViewModel.ShowVersionsForPathAsync(String path)&#xD;
+[xUnit.net 00:00:00.29]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1802,0): at FluxVault.App.ViewModels.MainWindowViewModel.ShowSelectedBrowserItemVersionsAsync()&#xD;
+[xUnit.net 00:00:00.29]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryPagingContractTests.cs(30,0): at FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(Boolean startup, Boolean denied)&#xD;
+[xUnit.net 00:00:00.29]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.30]       System.InvalidOperationException : Load the vault's verified configuration before browsing history.&#xD;
+[xUnit.net 00:00:00.30]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2006,0): at FluxVault.App.ViewModels.MainWindowViewModel.CreateVersionInventoryForPathAsync(String path)&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2019,0): at FluxVault.App.ViewModels.MainWindowViewModel.ShowVersionsForPathAsync(String path)&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1802,0): at FluxVault.App.ViewModels.MainWindowViewModel.ShowSelectedBrowserItemVersionsAsync()&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryPagingContractTests.cs(30,0): at FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(Boolean startup, Boolean denied)&#xD;
+[xUnit.net 00:00:00.30]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.30]       System.InvalidOperationException : Load the vault's verified configuration before browsing history.&#xD;
+[xUnit.net 00:00:00.30]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2006,0): at FluxVault.App.ViewModels.MainWindowViewModel.CreateVersionInventoryForPathAsync(String path)&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2019,0): at FluxVault.App.ViewModels.MainWindowViewModel.ShowVersionsForPathAsync(String path)&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(539,0): at FluxVault.App.ViewModels.MainWindowViewModel.ApplyStartupRequestAsync(AppStartupRequest request)&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryPagingContractTests.cs(29,0): at FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(Boolean startup, Boolean denied)&#xD;
+[xUnit.net 00:00:00.30]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.30]       System.InvalidOperationException : Load the vault's verified configuration before browsing history.&#xD;
+[xUnit.net 00:00:00.30]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2006,0): at FluxVault.App.ViewModels.MainWindowViewModel.CreateVersionInventoryForPathAsync(String path)&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(2019,0): at FluxVault.App.ViewModels.MainWindowViewModel.ShowVersionsForPathAsync(String path)&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(539,0): at FluxVault.App.ViewModels.MainWindowViewModel.ApplyStartupRequestAsync(AppStartupRequest request)&#xD;
+[xUnit.net 00:00:00.30]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\HistoryPagingContractTests.cs(29,0): at FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(Boolean startup, Boolean denied)&#xD;
+[xUnit.net 00:00:00.30]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.30]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T23:02:23.1547870+03:00">
+        <Text>[xUnit.net 00:00:00.29]     FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: False, denied: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T23:02:23.1653187+03:00">
+        <Text>[xUnit.net 00:00:00.30]     FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: False, denied: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T23:02:23.1662328+03:00">
+        <Text>[xUnit.net 00:00:00.30]     FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: True, denied: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T23:02:23.1667403+03:00">
+        <Text>[xUnit.net 00:00:00.30]     FluxVault.App.Tests.HistoryPagingContractTests.Initial_unavailable_or_denied_status_does_not_escape_history_entry_points(startup: True, denied: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

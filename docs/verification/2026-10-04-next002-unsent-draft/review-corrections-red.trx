@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="7167869e-be07-4be2-827d-2d4754f85deb" name="os008@OS008-HOME 2026-10-05 02:27:16" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T02:27:16.6981489+03:00" queuing="2026-10-05T02:27:16.6981490+03:00" start="2026-10-05T02:27:15.6288381+03:00" finish="2026-10-05T02:27:16.7030207+03:00" />
+  <TestSettings name="default" id="9310d237-9d63-499a-8be0-6eb3577fcd41">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_02_27_16" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="4700e88f-2e1d-4e75-8990-a2825fe03c85" testId="534c86ce-5d1d-68ab-4e9f-ce87a6f4893f" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(malformed: &quot;regex&quot;)" computerName="OS008-HOME" duration="00:00:00.0153680" startTime="2026-10-05T02:27:16.4829862+03:00" endTime="2026-10-05T02:27:16.4860861+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4700e88f-2e1d-4e75-8990-a2825fe03c85">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NullReferenceException : Object reference not set to an instance of an object.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.FileBrowserViewModel.&lt;&gt;c.&lt;FormatRegexSummary&gt;b__100_3(ProtectionScopedRegexRule rule) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs:line 1235&#xD;
+   at System.Linq.Enumerable.IEnumerableWhereSelectIterator`2.ToArray()&#xD;
+   at FluxVault.App.ViewModels.FileBrowserViewModel.FormatRegexSummary(IReadOnlyList`1 rules, String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs:line 1233&#xD;
+   at FluxVault.App.ViewModels.FileBrowserViewModel.RefreshPendingChanges() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs:line 981&#xD;
+   at FluxVault.App.ViewModels.FileBrowserViewModel.AcknowledgeSelectionRules(IReadOnlyList`1 rules) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs:line 176&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RestoreProtectionDraft(FluxVaultConfiguration draft) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1047&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.LoadLocalProtectionDraftAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowProtectionDrafts.cs:line 57&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 669&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 496&#xD;
+   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 226&#xD;
+   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 230&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c0d0ff98-250d-4a70-b8eb-62c03fd73ccd" testId="67b66dc4-051a-a30b-6d2c-9a81299a4354" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(malformed: &quot;selection&quot;)" computerName="OS008-HOME" duration="00:00:00.0053767" startTime="2026-10-05T02:27:16.4874074+03:00" endTime="2026-10-05T02:27:16.4921917+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c0d0ff98-250d-4a70-b8eb-62c03fd73ccd">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NullReferenceException : Object reference not set to an instance of an object.</Message>
+          <StackTrace>   at FluxVault.App.ViewModels.FileBrowserViewModel.Normalise(ProtectionSelectionRule rule) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs:line 1056&#xD;
+   at System.Linq.Enumerable.ListSelectIterator`2.MoveNext()&#xD;
+   at System.Linq.Enumerable.IEnumerableWhereIterator`1.MoveNext()&#xD;
+   at FluxVault.App.ViewModels.FileBrowserViewModel.LoadSelectionRules(IReadOnlyList`1 rules) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs:line 152&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RestoreProtectionDraft(FluxVaultConfiguration draft) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1046&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.LoadLocalProtectionDraftAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowProtectionDrafts.cs:line 57&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 669&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 496&#xD;
+   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 226&#xD;
+   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 230&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fa70f556-60e5-49d1-b844-71001d8dddef" testId="65016cc4-a117-e647-4784-a5055ca0c688" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.A_new_edit_during_discard_retirement_is_durably_retained_without_applying_saved_settings" computerName="OS008-HOME" duration="00:00:00.0179984" startTime="2026-10-05T02:27:16.4938477+03:00" endTime="2026-10-05T02:27:16.5114718+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa70f556-60e5-49d1-b844-71001d8dddef">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NullReferenceException : Object reference not set to an instance of an object.</Message>
+          <StackTrace>   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.A_new_edit_during_discard_retirement_is_durably_retained_without_applying_saved_settings() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 246&#xD;
+   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.A_new_edit_during_discard_retirement_is_durably_retained_without_applying_saved_settings() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 249&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e12458cb-a8af-434c-a1bf-a8cb2332ff52" testId="fb43d7e1-da34-680d-bee5-341dd51f22aa" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(malformed: &quot;mirror&quot;)" computerName="OS008-HOME" duration="00:00:00.2575554" startTime="2026-10-05T02:27:16.1971773+03:00" endTime="2026-10-05T02:27:16.4697023+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e12458cb-a8af-434c-a1bf-a8cb2332ff52">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NullReferenceException : Object reference not set to an instance of an object.</Message>
+          <StackTrace>   at FluxVault.Abstractions.Configuration.MirrorSetConfiguration.NormaliseNode(MirrorNodeConfiguration node) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\Configuration\MirrorSetConfiguration.cs:line 44&#xD;
+   at System.Linq.Enumerable.ListSelectIterator`2.Fill(ReadOnlySpan`1 source, Span`1 destination, Func`2 func)&#xD;
+   at System.Linq.Enumerable.ListSelectIterator`2.ToArray()&#xD;
+   at FluxVault.Abstractions.Configuration.MirrorSetConfiguration.Normalise() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\Configuration\MirrorSetConfiguration.cs:line 36&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RestoreProtectionDraft(FluxVaultConfiguration draft) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1042&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.LoadLocalProtectionDraftAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowProtectionDrafts.cs:line 57&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 669&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 496&#xD;
+   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 226&#xD;
+   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 230&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fa578f3c-6695-4f60-853c-eb5b173a45b7" testId="38194c1e-b867-376c-85da-82b988469134" testName="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Acknowledgement_retains_edits_arriving_during_exact_draft_retirement_before_receipt_release" computerName="OS008-HOME" duration="00:00:00.0921537" startTime="2026-10-05T02:27:16.5118693+03:00" endTime="2026-10-05T02:27:16.6048871+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa578f3c-6695-4f60-853c-eb5b173a45b7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 55608e25-d92b-48cd-8117-ff463a158cb6&#xD;
+Actual:   b8d533fc-d139-4dcc-9762-fc5e59e3e556</Message>
+          <StackTrace>   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.&lt;&gt;c__DisplayClass7_0.&lt;Acknowledgement_retains_edits_arriving_during_exact_draft_retirement_before_receipt_release&gt;b__0(PendingConfigurationSave _) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 195&#xD;
+   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.ObservedSaveStore.Clear(PendingConfigurationSave save) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 477&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.TryClearPendingConfigurationSave(PendingConfigurationSave pending) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1077&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.SaveConfigurationCoreAsync(Boolean refreshAfterSave, String successStatus) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 903&#xD;
+   at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs:line 1606&#xD;
+   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Acknowledgement_retains_edits_arriving_during_exact_draft_retirement_before_receipt_release() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 199&#xD;
+   at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Acknowledgement_retains_edits_arriving_during_exact_draft_retirement_before_receipt_release() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs:line 203&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(malformed: &quot;selection&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="67b66dc4-051a-a30b-6d2c-9a81299a4354">
+      <Execution id="c0d0ff98-250d-4a70-b8eb-62c03fd73ccd" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(malformed: &quot;mirror&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="fb43d7e1-da34-680d-bee5-341dd51f22aa">
+      <Execution id="e12458cb-a8af-434c-a1bf-a8cb2332ff52" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.A_new_edit_during_discard_retirement_is_durably_retained_without_applying_saved_settings" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="65016cc4-a117-e647-4784-a5055ca0c688">
+      <Execution id="fa70f556-60e5-49d1-b844-71001d8dddef" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="A_new_edit_during_discard_retirement_is_durably_retained_without_applying_saved_settings" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Acknowledgement_retains_edits_arriving_during_exact_draft_retirement_before_receipt_release" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="38194c1e-b867-376c-85da-82b988469134">
+      <Execution id="fa578f3c-6695-4f60-853c-eb5b173a45b7" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="Acknowledgement_retains_edits_arriving_during_exact_draft_retirement_before_receipt_release" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(malformed: &quot;regex&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="534c86ce-5d1d-68ab-4e9f-ce87a6f4893f">
+      <Execution id="4700e88f-2e1d-4e75-8990-a2825fe03c85" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.UnsentProtectionDraftContractTests" name="Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="534c86ce-5d1d-68ab-4e9f-ce87a6f4893f" executionId="4700e88f-2e1d-4e75-8990-a2825fe03c85" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="67b66dc4-051a-a30b-6d2c-9a81299a4354" executionId="c0d0ff98-250d-4a70-b8eb-62c03fd73ccd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="65016cc4-a117-e647-4784-a5055ca0c688" executionId="fa70f556-60e5-49d1-b844-71001d8dddef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fb43d7e1-da34-680d-bee5-341dd51f22aa" executionId="e12458cb-a8af-434c-a1bf-a8cb2332ff52" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="38194c1e-b867-376c-85da-82b988469134" executionId="fa578f3c-6695-4f60-853c-eb5b173a45b7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="0" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.49]       System.NullReferenceException : Object reference not set to an instance of an object.&#xD;
+[xUnit.net 00:00:00.49]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\Configuration\MirrorSetConfiguration.cs(44,0): at FluxVault.Abstractions.Configuration.MirrorSetConfiguration.NormaliseNode(MirrorNodeConfiguration node)&#xD;
+[xUnit.net 00:00:00.49]            at System.Linq.Enumerable.ListSelectIterator`2.Fill(ReadOnlySpan`1 source, Span`1 destination, Func`2 func)&#xD;
+[xUnit.net 00:00:00.49]            at System.Linq.Enumerable.ListSelectIterator`2.ToArray()&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\Configuration\MirrorSetConfiguration.cs(36,0): at FluxVault.Abstractions.Configuration.MirrorSetConfiguration.Normalise()&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1042,0): at FluxVault.App.ViewModels.MainWindowViewModel.RestoreProtectionDraft(FluxVaultConfiguration draft)&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowProtectionDrafts.cs(57,0): at FluxVault.App.ViewModels.MainWindowViewModel.LoadLocalProtectionDraftAsync()&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(669,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview)&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(496,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync()&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(226,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed)&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(230,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed)&#xD;
+[xUnit.net 00:00:00.49]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.50]       System.NullReferenceException : Object reference not set to an instance of an object.&#xD;
+[xUnit.net 00:00:00.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs(1235,0): at FluxVault.App.ViewModels.FileBrowserViewModel.&lt;&gt;c.&lt;FormatRegexSummary&gt;b__100_3(ProtectionScopedRegexRule rule)&#xD;
+[xUnit.net 00:00:00.50]            at System.Linq.Enumerable.IEnumerableWhereSelectIterator`2.ToArray()&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs(1233,0): at FluxVault.App.ViewModels.FileBrowserViewModel.FormatRegexSummary(IReadOnlyList`1 rules, String path)&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs(981,0): at FluxVault.App.ViewModels.FileBrowserViewModel.RefreshPendingChanges()&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs(176,0): at FluxVault.App.ViewModels.FileBrowserViewModel.AcknowledgeSelectionRules(IReadOnlyList`1 rules)&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1047,0): at FluxVault.App.ViewModels.MainWindowViewModel.RestoreProtectionDraft(FluxVaultConfiguration draft)&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowProtectionDrafts.cs(57,0): at FluxVault.App.ViewModels.MainWindowViewModel.LoadLocalProtectionDraftAsync()&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(669,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview)&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(496,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync()&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(226,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed)&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(230,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed)&#xD;
+[xUnit.net 00:00:00.50]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.51]       System.NullReferenceException : Object reference not set to an instance of an object.&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs(1056,0): at FluxVault.App.ViewModels.FileBrowserViewModel.Normalise(ProtectionSelectionRule rule)&#xD;
+[xUnit.net 00:00:00.51]            at System.Linq.Enumerable.ListSelectIterator`2.MoveNext()&#xD;
+[xUnit.net 00:00:00.51]            at System.Linq.Enumerable.IEnumerableWhereIterator`1.MoveNext()&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\FileBrowserViewModel.cs(152,0): at FluxVault.App.ViewModels.FileBrowserViewModel.LoadSelectionRules(IReadOnlyList`1 rules)&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1046,0): at FluxVault.App.ViewModels.MainWindowViewModel.RestoreProtectionDraft(FluxVaultConfiguration draft)&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowProtectionDrafts.cs(57,0): at FluxVault.App.ViewModels.MainWindowViewModel.LoadLocalProtectionDraftAsync()&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(669,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync(Boolean isAutomatic, CancellationToken cancellationToken, Boolean forceConfigurationReload, Nullable`1 expectedEditGeneration, Boolean validateDiscardReview, PendingConfigurationSave discardReview)&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(496,0): at FluxVault.App.ViewModels.MainWindowViewModel.RefreshAsync()&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(226,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed)&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(230,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(String malformed)&#xD;
+[xUnit.net 00:00:00.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.53]       System.NullReferenceException : Object reference not set to an instance of an object.&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(246,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.A_new_edit_during_discard_retirement_is_durably_retained_without_applying_saved_settings()&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(249,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.A_new_edit_during_discard_retirement_is_durably_retained_without_applying_saved_settings()&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.62]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.62]       Expected: 55608e25-d92b-48cd-8117-ff463a158cb6&#xD;
+[xUnit.net 00:00:00.62]       Actual:   b8d533fc-d139-4dcc-9762-fc5e59e3e556&#xD;
+[xUnit.net 00:00:00.62]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(195,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.&lt;&gt;c__DisplayClass7_0.&lt;Acknowledgement_retains_edits_arriving_during_exact_draft_retirement_before_receipt_release&gt;b__0(PendingConfigurationSave _)&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(477,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.ObservedSaveStore.Clear(PendingConfigurationSave save)&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1077,0): at FluxVault.App.ViewModels.MainWindowViewModel.TryClearPendingConfigurationSave(PendingConfigurationSave pending)&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(903,0): at FluxVault.App.ViewModels.MainWindowViewModel.SaveConfigurationCoreAsync(Boolean refreshAfterSave, String successStatus)&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\ViewModels\MainWindowViewModel.cs(1606,0): at FluxVault.App.ViewModels.MainWindowViewModel.RunBackupNowAsync()&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(199,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Acknowledgement_retains_edits_arriving_during_exact_draft_retirement_before_receipt_release()&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\UnsentProtectionDraftContractTests.cs(203,0): at FluxVault.App.Tests.UnsentProtectionDraftContractTests.Acknowledgement_retains_edits_arriving_during_exact_draft_retirement_before_receipt_release()&#xD;
+[xUnit.net 00:00:00.62]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.63]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T02:27:16.4726543+03:00">
+        <Text>[xUnit.net 00:00:00.49]     FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(malformed: "mirror") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T02:27:16.4863077+03:00">
+        <Text>[xUnit.net 00:00:00.50]     FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(malformed: "regex") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T02:27:16.4923962+03:00">
+        <Text>[xUnit.net 00:00:00.51]     FluxVault.App.Tests.UnsentProtectionDraftContractTests.Structurally_corrupt_editable_collections_are_preserved_without_partial_UI_application(malformed: "selection") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T02:27:16.5116144+03:00">
+        <Text>[xUnit.net 00:00:00.53]     FluxVault.App.Tests.UnsentProtectionDraftContractTests.A_new_edit_during_discard_retirement_is_durably_retained_without_applying_saved_settings [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T02:27:16.6052111+03:00">
+        <Text>[xUnit.net 00:00:00.62]     FluxVault.App.Tests.UnsentProtectionDraftContractTests.Acknowledgement_retains_edits_arriving_during_exact_draft_retirement_before_receipt_release [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

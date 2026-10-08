@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f5b77b86-1791-4f55-be66-821fa1c227c4" name="os008@OS008-HOME 2026-10-04 13:47:27" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T13:47:27.9092116+03:00" queuing="2026-10-04T13:47:27.9092118+03:00" start="2026-10-04T13:47:26.7574145+03:00" finish="2026-10-04T13:47:27.9135764+03:00" />
+  <TestSettings name="default" id="1fa0ac83-11dd-41de-8a40-36fe8d42e123">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_13_47_27" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="406e24ed-a795-4d04-8c04-2951db507863" testId="f80b8ab0-0ddc-0d2a-6076-1c96a83217c0" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes" computerName="OS008-HOME" duration="00:00:00.0689894" startTime="2026-10-04T13:47:27.6822519+03:00" endTime="2026-10-04T13:47:27.7514560+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="406e24ed-a795-4d04-8c04-2951db507863" />
+    <UnitTestResult executionId="c0427ed7-38c8-4b0f-91b2-6ee3ab05bd77" testId="9da4b0cb-397f-8f55-5003-ce463c969328" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Owned_preview_returns_verified_result_and_publication_warnings" computerName="OS008-HOME" duration="00:00:00.0298863" startTime="2026-10-04T13:47:27.6520486+03:00" endTime="2026-10-04T13:47:27.6821246+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c0427ed7-38c8-4b0f-91b2-6ee3ab05bd77" />
+    <UnitTestResult executionId="a5efc968-c6e2-44d3-8689-60f2f4ca45a2" testId="f014339d-ad9c-4b21-7ded-c218e6b093e7" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Owned_preview_refuses_folder_before_preparing_any_output" computerName="OS008-HOME" duration="00:00:00.0342794" startTime="2026-10-04T13:47:27.7516196+03:00" endTime="2026-10-04T13:47:27.7860296+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5efc968-c6e2-44d3-8689-60f2f4ca45a2" />
+    <UnitTestResult executionId="0ceef9c6-d509-4d88-9379-e23aa6cb03e8" testId="44ae54a0-e4bd-8dc8-a920-2c4d9573a9e5" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Verified_file_uses_only_owned_target_and_reports_published_permission_warning" computerName="OS008-HOME" duration="00:00:00.0285807" startTime="2026-10-04T13:47:27.7861593+03:00" endTime="2026-10-04T13:47:27.8149061+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0ceef9c6-d509-4d88-9379-e23aa6cb03e8" />
+    <UnitTestResult executionId="c396fbf9-f91d-4acb-afd5-eb777a92ff18" testId="46562967-5c93-6cda-c212-b1458318b4e9" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Late_corruption_never_publishes_partially_written_tree" computerName="OS008-HOME" duration="00:00:00.2134549" startTime="2026-10-04T13:47:27.3554929+03:00" endTime="2026-10-04T13:47:27.5772078+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c396fbf9-f91d-4acb-afd5-eb777a92ff18" />
+    <UnitTestResult executionId="0dfa159a-f2f8-4701-b97a-8fcff154275c" testId="bea75406-8686-355a-b102-9babc6586779" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Cancellation_after_staging_prevents_publication_and_disposes_owned_target" computerName="OS008-HOME" duration="00:00:00.0260543" startTime="2026-10-04T13:47:27.5860717+03:00" endTime="2026-10-04T13:47:27.6051991+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0dfa159a-f2f8-4701-b97a-8fcff154275c" />
+    <UnitTestResult executionId="1637c1dd-8356-49dc-bbec-62ff5329c920" testId="7c74920d-482f-7997-e9f8-d75669c9adf5" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Invalid_folder_graph_is_rejected_before_staging_and_releases_target" computerName="OS008-HOME" duration="00:00:00.0464178" startTime="2026-10-04T13:47:27.6057876+03:00" endTime="2026-10-04T13:47:27.6519152+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1637c1dd-8356-49dc-bbec-62ff5329c920" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Owned_preview_refuses_folder_before_preparing_any_output" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="f014339d-ad9c-4b21-7ded-c218e6b093e7">
+      <Execution id="a5efc968-c6e2-44d3-8689-60f2f4ca45a2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Owned_preview_refuses_folder_before_preparing_any_output" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Late_corruption_never_publishes_partially_written_tree" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="46562967-5c93-6cda-c212-b1458318b4e9">
+      <Execution id="c396fbf9-f91d-4acb-afd5-eb777a92ff18" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Late_corruption_never_publishes_partially_written_tree" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Invalid_folder_graph_is_rejected_before_staging_and_releases_target" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="7c74920d-482f-7997-e9f8-d75669c9adf5">
+      <Execution id="1637c1dd-8356-49dc-bbec-62ff5329c920" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Invalid_folder_graph_is_rejected_before_staging_and_releases_target" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="f80b8ab0-0ddc-0d2a-6076-1c96a83217c0">
+      <Execution id="406e24ed-a795-4d04-8c04-2951db507863" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Verified_file_uses_only_owned_target_and_reports_published_permission_warning" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="44ae54a0-e4bd-8dc8-a920-2c4d9573a9e5">
+      <Execution id="0ceef9c6-d509-4d88-9379-e23aa6cb03e8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Verified_file_uses_only_owned_target_and_reports_published_permission_warning" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Owned_preview_returns_verified_result_and_publication_warnings" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="9da4b0cb-397f-8f55-5003-ce463c969328">
+      <Execution id="c0427ed7-38c8-4b0f-91b2-6ee3ab05bd77" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Owned_preview_returns_verified_result_and_publication_warnings" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Cancellation_after_staging_prevents_publication_and_disposes_owned_target" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="bea75406-8686-355a-b102-9babc6586779">
+      <Execution id="0dfa159a-f2f8-4701-b97a-8fcff154275c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Cancellation_after_staging_prevents_publication_and_disposes_owned_target" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f80b8ab0-0ddc-0d2a-6076-1c96a83217c0" executionId="406e24ed-a795-4d04-8c04-2951db507863" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9da4b0cb-397f-8f55-5003-ce463c969328" executionId="c0427ed7-38c8-4b0f-91b2-6ee3ab05bd77" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f014339d-ad9c-4b21-7ded-c218e6b093e7" executionId="a5efc968-c6e2-44d3-8689-60f2f4ca45a2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44ae54a0-e4bd-8dc8-a920-2c4d9573a9e5" executionId="0ceef9c6-d509-4d88-9379-e23aa6cb03e8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="46562967-5c93-6cda-c212-b1458318b4e9" executionId="c396fbf9-f91d-4acb-afd5-eb777a92ff18" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bea75406-8686-355a-b102-9babc6586779" executionId="0dfa159a-f2f8-4701-b97a-8fcff154275c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7c74920d-482f-7997-e9f8-d75669c9adf5" executionId="1637c1dd-8356-49dc-bbec-62ff5329c920" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="7" executed="7" passed="7" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.68]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

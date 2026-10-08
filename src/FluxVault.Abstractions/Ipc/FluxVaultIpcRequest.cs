@@ -1,6 +1,7 @@
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Sync;
 using FluxVault.Abstractions.Storage;
+using FluxVault.Abstractions.Security;
 
 namespace FluxVault.Abstractions.Ipc;
 
@@ -23,7 +24,14 @@ public sealed record FluxVaultIpcRequest(
     FluxVaultStatusDetailLevel StatusDetailLevel = FluxVaultStatusDetailLevel.Full,
     bool PurgeRemovedSelections = false,
     IReadOnlyList<RepositoryPurgeScope>? RemovedSelections = null,
-    IReadOnlyList<RepositoryPurgeScope>? PreservedSelections = null)
+    IReadOnlyList<RepositoryPurgeScope>? PreservedSelections = null,
+    VaultId? VaultId = null,
+    long? ExpectedVaultRevision = null,
+    Guid? OperationId = null,
+    IReadOnlyList<VaultAccessGrant>? AccessGrants = null,
+    RepositoryHistoryQuery? HistoryQuery = null,
+    RepositorySnapshotQuery? SnapshotQuery = null,
+    RepositoryCurrentEntriesQuery? CurrentEntriesQuery = null)
 {
     public string? DestinationPath => OutputPath;
 
@@ -208,61 +216,7 @@ public sealed record FluxVaultIpcRequest(
         return new FluxVaultIpcRequest(FluxVaultIpcCommand.ResolveConflict, null, null, null, null, ConflictId: conflictId, ConflictAction: action);
     }
 
-    public static FluxVaultIpcRequest CreateProfile(string profileId, string displayName, FluxVaultConfiguration? configuration = null)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
-        return new FluxVaultIpcRequest(
-            FluxVaultIpcCommand.CreateProfile,
-            configuration,
-            null,
-            null,
-            null,
-            ProfileId: profileId,
-            ProfileDisplayName: displayName);
-    }
 
-    public static FluxVaultIpcRequest RenameProfile(string profileId, string displayName)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
-        return new FluxVaultIpcRequest(
-            FluxVaultIpcCommand.RenameProfile,
-            null,
-            null,
-            null,
-            null,
-            ProfileId: profileId,
-            ProfileDisplayName: displayName);
-    }
-
-    public static FluxVaultIpcRequest DuplicateProfile(string sourceProfileId, string profileId, string displayName)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(sourceProfileId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
-        return new FluxVaultIpcRequest(
-            FluxVaultIpcCommand.DuplicateProfile,
-            null,
-            null,
-            null,
-            null,
-            ProfileId: profileId,
-            ProfileDisplayName: displayName,
-            SourceProfileId: sourceProfileId);
-    }
-
-    public static FluxVaultIpcRequest DeleteProfile(string profileId)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
-        return new FluxVaultIpcRequest(FluxVaultIpcCommand.DeleteProfile, null, null, null, null, ProfileId: profileId);
-    }
-
-    public static FluxVaultIpcRequest SetActiveProfile(string profileId)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(profileId);
-        return new FluxVaultIpcRequest(FluxVaultIpcCommand.SetActiveProfile, null, null, null, null, ProfileId: profileId);
-    }
 }
 
 public enum FluxVaultStatusDetailLevel

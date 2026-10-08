@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e1f717f4-3fb2-43dd-9625-f75f4860f577" name="os008@OS008-HOME 2026-10-05 00:21:21" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T00:21:21.6285337+03:00" queuing="2026-10-05T00:21:21.6285337+03:00" start="2026-10-05T00:21:20.5804616+03:00" finish="2026-10-05T00:21:21.6330673+03:00" />
+  <TestSettings name="default" id="752a28a4-a581-48f9-9fd1-02896abcfd10">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_00_21_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e35a41be-2e68-4c00-883b-41ba5869b4dc" testId="1d809085-5723-7b9a-e074-d930cc348335" testName="FluxVault.Core.Tests.RecentVersionStatusTests.Overview_status_requests_only_its_existing_fifty_recent_versions_through_the_real_repository" computerName="OS008-HOME" duration="00:00:00.0160715" startTime="2026-10-05T00:21:21.4968561+03:00" endTime="2026-10-05T00:21:21.5130203+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e35a41be-2e68-4c00-883b-41ba5869b4dc" />
+    <UnitTestResult executionId="8cce3f09-2e1c-4071-a034-610f74244a96" testId="82a83547-8989-2790-d0f2-7bf5a9f8430e" testName="FluxVault.Core.Tests.CurrentEntriesPagingTests.Wire_shortening_anchors_the_last_emitted_path_including_terminal_pages" computerName="OS008-HOME" duration="00:00:00.3056339" startTime="2026-10-05T00:21:21.1523724+03:00" endTime="2026-10-05T00:21:21.4617768+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8cce3f09-2e1c-4071-a034-610f74244a96" />
+    <UnitTestResult executionId="7f1ee8d8-6f2d-4a7f-b96b-7789118acd58" testId="3fd744e0-20f9-2b17-6b9e-5cc271e04449" testName="FluxVault.Core.Tests.RecentVersionStatusTests.Protected_status_omits_current_inventory_without_reading_it_and_keeps_recent_availability_separate" computerName="OS008-HOME" duration="00:00:00.3056530" startTime="2026-10-05T00:21:21.2003094+03:00" endTime="2026-10-05T00:21:21.4966448+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f1ee8d8-6f2d-4a7f-b96b-7789118acd58" />
+    <UnitTestResult executionId="fcb2286a-32c2-4d2d-af7f-630b92250184" testId="ccf858f7-222f-c960-9216-dfa2119cbbb6" testName="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot" computerName="OS008-HOME" duration="00:00:00.2974709" startTime="2026-10-05T00:21:21.1510750+03:00" endTime="2026-10-05T00:21:21.4638564+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fcb2286a-32c2-4d2d-af7f-630b92250184">
+      <Output>
+        <ErrorInfo>
+          <Message>System.UnauthorizedAccessException : Access to the path is denied.</Message>
+          <StackTrace>   at System.IO.FileSystem.MoveFile(String sourceFullPath, String destFullPath, Boolean overwrite)&#xD;
+   at FluxVault.Core.Configuration.FileFluxVaultConfigurationStore.SaveAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Configuration\FileFluxVaultConfigurationStore.cs:line 47&#xD;
+   at FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationSnapshotConcurrencyTests.cs:line 25&#xD;
+   at FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationSnapshotConcurrencyTests.cs:line 30&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f89ac358-a574-4431-a563-5428e48adcba" testId="7bae848b-983e-719e-9823-026acfa61d36" testName="FluxVault.Core.Tests.CurrentEntriesPagingTests.One_oversized_current_header_returns_clean_failure_without_a_page" computerName="OS008-HOME" duration="00:00:00.0043426" startTime="2026-10-05T00:21:21.4690936+03:00" endTime="2026-10-05T00:21:21.4704807+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f89ac358-a574-4431-a563-5428e48adcba" />
+    <UnitTestResult executionId="68b0a2fd-de83-4367-a7bf-d81fe69d0dc8" testId="1cd923f0-ac2d-bcd7-5b77-cf8acb9621fc" testName="FluxVault.Core.Tests.CurrentEntriesPagingTests.Current_read_requires_history_authority_and_has_no_mutation_receipt" computerName="OS008-HOME" duration="00:00:00.0022063" startTime="2026-10-05T00:21:21.4626440+03:00" endTime="2026-10-05T00:21:21.4689949+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68b0a2fd-de83-4367-a7bf-d81fe69d0dc8" />
+    <UnitTestResult executionId="cf0d6cb4-63d9-4331-9028-d7b56cab6755" testId="887bd43f-0423-123b-d153-6c20c2ca4ea3" testName="FluxVault.Core.Tests.RecentVersionStatusTests.Legacy_repository_recent_read_does_not_reenter_its_lease_and_obeys_cancellation" computerName="OS008-HOME" duration="00:00:00.0076558" startTime="2026-10-05T00:21:21.5131466+03:00" endTime="2026-10-05T00:21:21.5207421+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf0d6cb4-63d9-4331-9028-d7b56cab6755" />
+    <UnitTestResult executionId="ab03bcaa-a0e4-4334-ad2b-7cf30701d476" testId="fbd10d98-b7b0-d72c-58ac-d7eea67d05b8" testName="FluxVault.Core.Tests.RecentVersionStatusTests.In_memory_recent_versions_preserve_exact_timestamp_and_ordinal_ties" computerName="OS008-HOME" duration="00:00:00.0318457" startTime="2026-10-05T00:21:21.1523346+03:00" endTime="2026-10-05T00:21:21.1903971+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ab03bcaa-a0e4-4334-ad2b-7cf30701d476" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.RecentVersionStatusTests.Legacy_repository_recent_read_does_not_reenter_its_lease_and_obeys_cancellation" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="887bd43f-0423-123b-d153-6c20c2ca4ea3">
+      <Execution id="cf0d6cb4-63d9-4331-9028-d7b56cab6755" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.RecentVersionStatusTests" name="Legacy_repository_recent_read_does_not_reenter_its_lease_and_obeys_cancellation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.RecentVersionStatusTests.Overview_status_requests_only_its_existing_fifty_recent_versions_through_the_real_repository" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="1d809085-5723-7b9a-e074-d930cc348335">
+      <Execution id="e35a41be-2e68-4c00-883b-41ba5869b4dc" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.RecentVersionStatusTests" name="Overview_status_requests_only_its_existing_fifty_recent_versions_through_the_real_repository" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.CurrentEntriesPagingTests.One_oversized_current_header_returns_clean_failure_without_a_page" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="7bae848b-983e-719e-9823-026acfa61d36">
+      <Execution id="f89ac358-a574-4431-a563-5428e48adcba" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.CurrentEntriesPagingTests" name="One_oversized_current_header_returns_clean_failure_without_a_page" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.RecentVersionStatusTests.Protected_status_omits_current_inventory_without_reading_it_and_keeps_recent_availability_separate" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="3fd744e0-20f9-2b17-6b9e-5cc271e04449">
+      <Execution id="7f1ee8d8-6f2d-4a7f-b96b-7789118acd58" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.RecentVersionStatusTests" name="Protected_status_omits_current_inventory_without_reading_it_and_keeps_recent_availability_separate" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.CurrentEntriesPagingTests.Current_read_requires_history_authority_and_has_no_mutation_receipt" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="1cd923f0-ac2d-bcd7-5b77-cf8acb9621fc">
+      <Execution id="68b0a2fd-de83-4367-a7bf-d81fe69d0dc8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.CurrentEntriesPagingTests" name="Current_read_requires_history_authority_and_has_no_mutation_receipt" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.RecentVersionStatusTests.In_memory_recent_versions_preserve_exact_timestamp_and_ordinal_ties" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="fbd10d98-b7b0-d72c-58ac-d7eea67d05b8">
+      <Execution id="ab03bcaa-a0e4-4334-ad2b-7cf30701d476" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.RecentVersionStatusTests" name="In_memory_recent_versions_preserve_exact_timestamp_and_ordinal_ties" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.CurrentEntriesPagingTests.Wire_shortening_anchors_the_last_emitted_path_including_terminal_pages" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="82a83547-8989-2790-d0f2-7bf5a9f8430e">
+      <Execution id="8cce3f09-2e1c-4071-a034-610f74244a96" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.CurrentEntriesPagingTests" name="Wire_shortening_anchors_the_last_emitted_path_including_terminal_pages" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ccf858f7-222f-c960-9216-dfa2119cbbb6">
+      <Execution id="fcb2286a-32c2-4d2d-af7f-630b92250184" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests" name="Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1d809085-5723-7b9a-e074-d930cc348335" executionId="e35a41be-2e68-4c00-883b-41ba5869b4dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82a83547-8989-2790-d0f2-7bf5a9f8430e" executionId="8cce3f09-2e1c-4071-a034-610f74244a96" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3fd744e0-20f9-2b17-6b9e-5cc271e04449" executionId="7f1ee8d8-6f2d-4a7f-b96b-7789118acd58" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ccf858f7-222f-c960-9216-dfa2119cbbb6" executionId="fcb2286a-32c2-4d2d-af7f-630b92250184" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7bae848b-983e-719e-9823-026acfa61d36" executionId="f89ac358-a574-4431-a563-5428e48adcba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1cd923f0-ac2d-bcd7-5b77-cf8acb9621fc" executionId="68b0a2fd-de83-4367-a7bf-d81fe69d0dc8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="887bd43f-0423-123b-d153-6c20c2ca4ea3" executionId="cf0d6cb4-63d9-4331-9028-d7b56cab6755" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fbd10d98-b7b0-d72c-58ac-d7eea67d05b8" executionId="ab03bcaa-a0e4-4334-ad2b-7cf30701d476" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="7" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.53]       System.UnauthorizedAccessException : Access to the path is denied.&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]            at System.IO.FileSystem.MoveFile(String sourceFullPath, String destFullPath, Boolean overwrite)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Configuration\FileFluxVaultConfigurationStore.cs(47,0): at FluxVault.Core.Configuration.FileFluxVaultConfigurationStore.SaveAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationSnapshotConcurrencyTests.cs(25,0): at FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot()&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\ConfigurationSnapshotConcurrencyTests.cs(30,0): at FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot()&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.59]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T00:21:21.4665309+03:00">
+        <Text>[xUnit.net 00:00:00.53]     FluxVault.Core.Tests.ConfigurationSnapshotConcurrencyTests.Atomic_save_can_replace_configuration_while_actual_store_read_retains_its_original_snapshot [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

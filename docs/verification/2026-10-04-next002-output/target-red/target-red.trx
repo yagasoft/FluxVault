@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="84b6f88d-c70d-48aa-b590-f1c6f27c5bc4" name="os008@OS008-HOME 2026-10-04 07:44:12" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T07:44:12.2105747+03:00" queuing="2026-10-04T07:44:12.2105749+03:00" start="2026-10-04T07:44:11.0197659+03:00" finish="2026-10-04T07:44:12.2154497+03:00" />
+  <TestSettings name="default" id="67cf0a57-6cd6-45ce-888c-487b8906e0c6">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_07_44_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="4029b159-46f1-42f1-8708-a9afc9d4dc01" testId="bea75406-8686-355a-b102-9babc6586779" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Cancellation_after_staging_prevents_publication_and_disposes_owned_target" computerName="OS008-HOME" duration="00:00:00.0217362" startTime="2026-10-04T07:44:11.9742428+03:00" endTime="2026-10-04T07:44:11.9855160+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4029b159-46f1-42f1-8708-a9afc9d4dc01">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.OperationCanceledException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Cancellation_after_staging_prevents_publication_and_disposes_owned_target() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 76&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 473&#xD;
+   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.&lt;&gt;c__DisplayClass4_0.&lt;Cancellation_after_staging_prevents_publication_and_disposes_owned_target&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f09cbc75-56f2-4174-a753-05cabb140833" testId="46562967-5c93-6cda-c212-b1458318b4e9" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Late_corruption_never_publishes_partially_written_tree" computerName="OS008-HOME" duration="00:00:00.2101100" startTime="2026-10-04T07:44:11.7349845+03:00" endTime="2026-10-04T07:44:11.9615675+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f09cbc75-56f2-4174-a753-05cabb140833">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Late_corruption_never_publishes_partially_written_tree() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 50&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 473&#xD;
+   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.&lt;&gt;c__DisplayClass2_0.&lt;Late_corruption_never_publishes_partially_written_tree&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 50</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="110f9bfa-1981-41b1-9d95-0d1a82703ae8" testId="44ae54a0-e4bd-8dc8-a920-2c4d9573a9e5" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Verified_file_uses_only_owned_target_and_reports_published_permission_warning" computerName="OS008-HOME" duration="00:00:00.0226661" startTime="2026-10-04T07:44:12.0811985+03:00" endTime="2026-10-04T07:44:12.1037494+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="110f9bfa-1981-41b1-9d95-0d1a82703ae8">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 473&#xD;
+   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Verified_file_uses_only_owned_target_and_reports_published_permission_warning() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 16&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="586210dd-d44c-4a66-8542-9d6bc6ff0c2e" testId="7c74920d-482f-7997-e9f8-d75669c9adf5" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Invalid_folder_graph_is_rejected_before_staging_and_releases_target" computerName="OS008-HOME" duration="00:00:00.0362315" startTime="2026-10-04T07:44:11.9867263+03:00" endTime="2026-10-04T07:44:12.0229496+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="586210dd-d44c-4a66-8542-9d6bc6ff0c2e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Invalid_folder_graph_is_rejected_before_staging_and_releases_target() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 64&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 473&#xD;
+   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.&lt;&gt;c__DisplayClass3_0.&lt;Invalid_folder_graph_is_rejected_before_staging_and_releases_target&gt;b__1() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 64</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4f27b2cb-e979-43eb-a11e-4ae31799b3d2" testId="f80b8ab0-0ddc-0d2a-6076-1c96a83217c0" testName="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes" computerName="OS008-HOME" duration="00:00:00.0570708" startTime="2026-10-04T07:44:12.0240608+03:00" endTime="2026-10-04T07:44:12.0805606+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f27b2cb-e979-43eb-a11e-4ae31799b3d2">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 473&#xD;
+   at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs:line 31&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Late_corruption_never_publishes_partially_written_tree" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="46562967-5c93-6cda-c212-b1458318b4e9">
+      <Execution id="f09cbc75-56f2-4174-a753-05cabb140833" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Late_corruption_never_publishes_partially_written_tree" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Invalid_folder_graph_is_rejected_before_staging_and_releases_target" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="7c74920d-482f-7997-e9f8-d75669c9adf5">
+      <Execution id="586210dd-d44c-4a66-8542-9d6bc6ff0c2e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Invalid_folder_graph_is_rejected_before_staging_and_releases_target" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="f80b8ab0-0ddc-0d2a-6076-1c96a83217c0">
+      <Execution id="4f27b2cb-e979-43eb-a11e-4ae31799b3d2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Verified_file_uses_only_owned_target_and_reports_published_permission_warning" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="44ae54a0-e4bd-8dc8-a920-2c4d9573a9e5">
+      <Execution id="110f9bfa-1981-41b1-9d95-0d1a82703ae8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Verified_file_uses_only_owned_target_and_reports_published_permission_warning" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Cancellation_after_staging_prevents_publication_and_disposes_owned_target" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="bea75406-8686-355a-b102-9babc6586779">
+      <Execution id="4029b159-46f1-42f1-8708-a9afc9d4dc01" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AuthorisedRestoreTargetTests" name="Cancellation_after_staging_prevents_publication_and_disposes_owned_target" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="bea75406-8686-355a-b102-9babc6586779" executionId="4029b159-46f1-42f1-8708-a9afc9d4dc01" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="46562967-5c93-6cda-c212-b1458318b4e9" executionId="f09cbc75-56f2-4174-a753-05cabb140833" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44ae54a0-e4bd-8dc8-a920-2c4d9573a9e5" executionId="110f9bfa-1981-41b1-9d95-0d1a82703ae8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7c74920d-482f-7997-e9f8-d75669c9adf5" executionId="586210dd-d44c-4a66-8542-9d6bc6ff0c2e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f80b8ab0-0ddc-0d2a-6076-1c96a83217c0" executionId="4f27b2cb-e979-43eb-a11e-4ae31799b3d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="0" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.10]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.46]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.46]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.46]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.46]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs(50,0): at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Late_corruption_never_publishes_partially_written_tree()&#xD;
+[xUnit.net 00:00:00.46]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.46]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.46]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(473,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.46]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs(50,0): at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.&lt;&gt;c__DisplayClass2_0.&lt;Late_corruption_never_publishes_partially_written_tree&gt;b__0()&#xD;
+[xUnit.net 00:00:00.48]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.48]       Expected: typeof(System.OperationCanceledException)&#xD;
+[xUnit.net 00:00:00.48]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.48]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs(76,0): at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Cancellation_after_staging_prevents_publication_and_disposes_owned_target()&#xD;
+[xUnit.net 00:00:00.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.48]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.48]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(473,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.48]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs(76,0): at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.&lt;&gt;c__DisplayClass4_0.&lt;Cancellation_after_staging_prevents_publication_and_disposes_owned_target&gt;b__0()&#xD;
+[xUnit.net 00:00:00.52]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.52]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.52]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:00.52]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs(64,0): at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Invalid_folder_graph_is_rejected_before_staging_and_releases_target()&#xD;
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.52]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(473,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs(64,0): at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.&lt;&gt;c__DisplayClass3_0.&lt;Invalid_folder_graph_is_rejected_before_staging_and_releases_target&gt;b__1()&#xD;
+[xUnit.net 00:00:00.57]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(473,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.57]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs(31,0): at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes()&#xD;
+[xUnit.net 00:00:00.57]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.60]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:00.60]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.60]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(473,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreAsync(String versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.60]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\AuthorisedRestoreTargetTests.cs(16,0): at FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Verified_file_uses_only_owned_target_and_reports_published_permission_warning()&#xD;
+[xUnit.net 00:00:00.60]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.60]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T07:44:11.9642384+03:00">
+        <Text>[xUnit.net 00:00:00.46]     FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Late_corruption_never_publishes_partially_written_tree [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T07:44:11.9858930+03:00">
+        <Text>[xUnit.net 00:00:00.48]     FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Cancellation_after_staging_prevents_publication_and_disposes_owned_target [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T07:44:12.0234245+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Invalid_folder_graph_is_rejected_before_staging_and_releases_target [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T07:44:12.0809876+03:00">
+        <Text>[xUnit.net 00:00:00.57]     FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Folder_graph_is_recovered_through_owned_target_without_privileged_path_writes [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T07:44:12.1040564+03:00">
+        <Text>[xUnit.net 00:00:00.60]     FluxVault.Core.Tests.AuthorisedRestoreTargetTests.Verified_file_uses_only_owned_target_and_reports_published_permission_warning [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

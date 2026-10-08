@@ -1,0 +1,85 @@
+Window: "FluxVault disposable local draft verification", App: FluxVault.TestHost.exe.
+	0 window FluxVault disposable local draft verification Secondary Actions: Raise
+		1 title bar (settable, string) Value: FluxVault disposable local draft verification
+			2 menu bar System ID: MenuBar
+				3 menu item System
+			4 button Minimize
+			5 button Restore
+			6 button Close
+		7 text FluxVault
+		8 text Service connection: Save failed (Disposable service rejected the save. Check the selection and try again.). Your changes are kept. Backup has not started for this action.
+		9 button Refresh Description: Refresh dashboard status and version data.
+			10 text ⟳
+			11 text Refresh
+		12 button Stop service Description: Stop the FluxVault Windows service. ID: ServiceControlToggleButton
+			13 text ⚠
+			14 text Stop service
+		15 button Run backup now Description: Run a full scan backup now.
+			16 text ↥
+			17 text Run backup now
+		18 button (disabled) Restore Description: Restore the selected repository version.
+			19 text (disabled) ↙
+			20 text (disabled) Restore
+		21 button (disabled) Options Description: Load configuration, then save or discard pending protection changes before opening Options. ID: OpenOptionsButton
+			22 text (disabled) ⚙
+			23 text (disabled) Options
+		24 button About Description: About FluxVault.
+			25 text ⓘ
+			26 text About
+		27 button Export diagnostics Description: Export local service status, diagnostics, and health details.
+			28 text ▣
+			29 text Export diagnostics
+		30 tab ID: OperationalCockpitWorkspace
+			31 tab item (selectable) 🛡 Protection
+				32 text 🛡 Protection
+				116 edit (settable, string) Repository path Value: C:\FluxVault UI fixture\Pending repository
+				117 button Repository
+					118 text Repository
+				119 text Mirrors: local only
+				120 button Open Mirrors
+					121 text Open Mirrors
+				144 text Save failed (Disposable service rejected the save. Check the selection and try again.). Your changes are kept. Backup has not started for this action.
+				143 text Your newer protection draft is retained locally. It has not been saved to the service.
+				122 datagrid ID: WatchedFoldersGrid
+					123 header ID: PART_ColumnHeadersPresenter
+						124 header item Folder
+							125 text Folder
+							126 thumb ID: PART_RightHeaderGripper
+						127 header item Profile
+							128 text Profile
+							129 thumb ID: PART_LeftHeaderGripper
+							130 thumb ID: PART_RightHeaderGripper
+						131 header item Regex
+							132 text Regex
+							133 thumb ID: PART_LeftHeaderGripper
+							134 thumb ID: PART_RightHeaderGripper
+						135 header item Compression
+							136 text Compression
+							137 thumb ID: PART_LeftHeaderGripper
+							138 thumb ID: PART_RightHeaderGripper
+						139 header item Status
+							140 text Status
+							141 thumb ID: PART_LeftHeaderGripper
+							142 thumb ID: PART_RightHeaderGripper
+			33 tab item (selectable) 📁 File browser
+				34 text 📁 File browser
+			100 tab item (selectable) 🧱 Repository
+				101 text 🧱 Repository
+			102 tab item (selectable) 🪞 Mirrors
+				103 text 🪞 Mirrors
+			104 tab item (selectable) ↯ Activity
+				105 text ↯ Activity
+			106 tab item (selectable) ▥ Performance
+				107 text ▥ Performance
+			108 tab item (selectable) ⚙ Options
+				109 text ⚙ Options
+			110 tab item (selectable) ▣ Diagnostics
+				111 text ▣ Diagnostics
+		112 text USN: reconciliation scan
+		113 text Retention: waiting
+		114 text Mirror: local only
+		115 text Capture: idle
+
+Document text: ```
+C:\FluxVault UI fixture\Pending repository
+```

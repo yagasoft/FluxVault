@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="45d59348-1f0d-4765-8cf4-ff7cf8d2dd4c" name="os008@OS008-HOME 2026-10-04 11:42:56" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T11:42:56.7096294+03:00" queuing="2026-10-04T11:42:56.7096296+03:00" start="2026-10-04T11:42:55.6758618+03:00" finish="2026-10-04T11:42:56.7145263+03:00" />
+  <TestSettings name="default" id="cf189aa9-7723-46a7-8983-92d9b12611e9">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_11_42_56" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1e3444d1-c019-4f20-9576-a407f20b9b56" testId="0a3a985c-10eb-4467-bab8-48278e9384ba" testName="FluxVault.App.Tests.ProtectionSaveContractTests.A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup(fault: WrongRevision)" computerName="OS008-HOME" duration="00:00:00.0120315" startTime="2026-10-04T11:42:56.5872230+03:00" endTime="2026-10-04T11:42:56.5986806+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1e3444d1-c019-4f20-9576-a407f20b9b56">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotEmpty() Failure: Collection was empty</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup(EnvelopeFault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 37&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="72a32fb9-c3a8-477c-bc5b-0ea630f42d89" testId="de85e06c-008a-3254-146c-e5e4357867fa" testName="FluxVault.App.Tests.ProtectionSaveContractTests.A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup(fault: WrongIdentity)" computerName="OS008-HOME" duration="00:00:00.0042494" startTime="2026-10-04T11:42:56.6033485+03:00" endTime="2026-10-04T11:42:56.6034123+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72a32fb9-c3a8-477c-bc5b-0ea630f42d89" />
+    <UnitTestResult executionId="0d060b0b-4d59-463c-9ef4-b7b6906efa9b" testId="be5c6a59-6441-bc9c-0078-ef8f8cc60400" testName="FluxVault.App.Tests.ProtectionSaveContractTests.A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup(fault: MissingOperation)" computerName="OS008-HOME" duration="00:00:00.2825706" startTime="2026-10-04T11:42:56.2868523+03:00" endTime="2026-10-04T11:42:56.5781950+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0d060b0b-4d59-463c-9ef4-b7b6906efa9b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup(fault: WrongIdentity)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="de85e06c-008a-3254-146c-e5e4357867fa">
+      <Execution id="72a32fb9-c3a8-477c-bc5b-0ea630f42d89" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup(fault: MissingOperation)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="be5c6a59-6441-bc9c-0078-ef8f8cc60400">
+      <Execution id="0d060b0b-4d59-463c-9ef4-b7b6906efa9b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup(fault: WrongRevision)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="0a3a985c-10eb-4467-bab8-48278e9384ba">
+      <Execution id="1e3444d1-c019-4f20-9576-a407f20b9b56" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0a3a985c-10eb-4467-bab8-48278e9384ba" executionId="1e3444d1-c019-4f20-9576-a407f20b9b56" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="de85e06c-008a-3254-146c-e5e4357867fa" executionId="72a32fb9-c3a8-477c-bc5b-0ea630f42d89" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be5c6a59-6441-bc9c-0078-ef8f8cc60400" executionId="0d060b0b-4d59-463c-9ef4-b7b6906efa9b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="2" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.52]       Assert.NotEmpty() Failure: Collection was empty&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(37,0): at FluxVault.App.Tests.ProtectionSaveContractTests.A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup(EnvelopeFault fault)&#xD;
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.53]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T11:42:56.6009608+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.App.Tests.ProtectionSaveContractTests.A_committed_save_with_mismatched_acknowledgement_keeps_draft_and_never_starts_backup(fault: WrongRevision) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

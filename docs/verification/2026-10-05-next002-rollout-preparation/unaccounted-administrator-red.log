@@ -1,0 +1,12 @@
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.49]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "extra-administrator") [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(scenario: "extra-administrator") [1 s]
+  Error Message:
+   {"FinalActive":true,"Accepted":true,"OriginalsRestored":false,"Failure":null,"AclsPreserved":true,"Calls":["legacy","reload","admin","reload","ddl","legacy","reload","admin","service"],"Activated":true,"PartialStateRetained":true}
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Authentication_procedure_retires_admission_before_activation_and_restores_exact_originals_on_failure(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 204
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\unaccounted-administrator-red.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - FluxVault.Integration.Tests.dll (net10.0)

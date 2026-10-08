@@ -1,0 +1,22 @@
+{
+  "Complete": true,
+  "RunId": "ab72d16b06ef4b15bd6ff87c21d158f5",
+  "WindowsSid": "S-1-5-18",
+  "Actor": "System",
+  "Results": [
+    {
+      "Error": "",
+      "ExitCode": 0,
+      "Kind": "libpq",
+      "Host": "::1",
+      "ProbeId": "e1ebe2fdae214c9c9cf202afc09f3975",
+      "Output": "d7158ef3f1fe4b958963b2dafbb22286|fv_gate_261003|fv_gate_service"
+    },
+    {
+      "Kind": "ACL",
+      "ReadProtected": true,
+      "WindowsSid": "S-1-5-18",
+      "WriteRuntime": true
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3e39cc9e-d365-475b-94cb-48e35c401d24" name="os008@OS008-HOME 2026-10-05 12:28:21" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T12:28:21.7415281+03:00" queuing="2026-10-05T12:28:21.7415283+03:00" start="2026-10-05T12:28:20.3604277+03:00" finish="2026-10-05T12:28:21.7455766+03:00" />
+  <TestSettings name="default" id="2ed75915-b93d-41f5-a49b-e1dc7b4c6d4f">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-05_12_28_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f12ce3cc-08a8-4b50-8abc-26cda1b67768" testId="af3eaa87-2a28-cb17-a554-f2947684c8e6" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly" computerName="OS008-HOME" duration="00:00:00.6588624" startTime="2026-10-05T12:28:20.9483529+03:00" endTime="2026-10-05T12:28:21.6240658+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f12ce3cc-08a8-4b50-8abc-26cda1b67768">
+      <Output>
+        <ErrorInfo>
+          <Message>Exception: C:\Users\os008\FluxVault.WindowsFixtureTools.19a787ba364f471abb8099c52cbb3309\case-cd5062dbf7ea400ca7e9d338ea20290f.ps1:8&#xD;
+Line |&#xD;
+   8 |  . alPath $source)){throw 'The checked ancestor correction is missing.'}&#xD;
+     |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+     | The checked ancestor correction is missing.&#xD;
+</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1422&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1430&#xD;
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 13&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="af3eaa87-2a28-cb17-a554-f2947684c8e6">
+      <Execution id="f12ce3cc-08a8-4b50-8abc-26cda1b67768" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="af3eaa87-2a28-cb17-a554-f2947684c8e6" executionId="f12ce3cc-08a8-4b50-8abc-26cda1b67768" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.88]       Exception: C:\Users\os008\FluxVault.WindowsFixtureTools.19a787ba364f471abb8099c52cbb3309\case-cd5062dbf7ea400ca7e9d338ea20290f.ps1:8&#xD;
+[xUnit.net 00:00:00.88]       Line |&#xD;
+[xUnit.net 00:00:00.88]          8 |  . alPath $source)){throw 'The checked ancestor correction is missing.'}&#xD;
+[xUnit.net 00:00:00.88]            |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&#xD;
+[xUnit.net 00:00:00.88]            | The checked ancestor correction is missing.&#xD;
+[xUnit.net 00:00:00.88]       &#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.88]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(1422,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:00.88]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(1430,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body)&#xD;
+[xUnit.net 00:00:00.88]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(13,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly()&#xD;
+[xUnit.net 00:00:00.88]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.89]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-05T12:28:21.6270609+03:00">
+        <Text>[xUnit.net 00:00:00.88]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.PostgreSql_ancestor_correction_changes_only_two_descriptors_and_rolls_back_exactly [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

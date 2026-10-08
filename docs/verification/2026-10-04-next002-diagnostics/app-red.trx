@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="cfb389b1-190e-474c-bd1a-c91ce9171dcf" name="os008@OS008-HOME 2026-10-04 18:35:49" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T18:35:49.7353914+03:00" queuing="2026-10-04T18:35:49.7353914+03:00" start="2026-10-04T18:35:48.9018684+03:00" finish="2026-10-04T18:35:54.7633410+03:00" />
+  <TestSettings name="default" id="8e1f821e-77fa-4962-ba6f-e6b3820e5735">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_18_35_49" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="846f8135-c7b7-443a-9494-0fb7b58b57b9" testId="663f90e7-d889-ad86-2f1b-9b149622d7c1" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongRevision)" computerName="OS008-HOME" duration="00:00:00.0007425" startTime="2026-10-04T18:35:49.6875813+03:00" endTime="2026-10-04T18:35:49.6876459+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="846f8135-c7b7-443a-9494-0fb7b58b57b9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Diagnostics are local-only. Use Export di"···&#xD;
+Not found: "could not be confirmed"</Message>
+          <StackTrace>   at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f29c4166-a0b2-4c61-984a-cc4fb6b744c9" testId="cdaf5403-f376-5b13-b461-c57eaced8dc6" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Delayed_acknowledgement_is_checked_against_original_request_despite_newer_status" computerName="OS008-HOME" duration="00:00:05.0188860" startTime="2026-10-04T18:35:49.7130602+03:00" endTime="2026-10-04T18:35:54.7095491+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f29c4166-a0b2-4c61-984a-cc4fb6b744c9">
+      <Output>
+        <ErrorInfo>
+          <Message>System.TimeoutException : The operation has timed out.</Message>
+          <StackTrace>   at FluxVault.App.Tests.DiagnosticsExportContractTests.Delayed_acknowledgement_is_checked_against_original_request_despite_newer_status() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs:line 65&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b071fa3b-f562-43c4-a29e-7eb83009388f" testId="ba4ac901-dbe0-1033-e9a0-a1bda2f5ba4e" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongResultPath)" computerName="OS008-HOME" duration="00:00:00.0003121" startTime="2026-10-04T18:35:49.6903096+03:00" endTime="2026-10-04T18:35:49.6903356+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b071fa3b-f562-43c4-a29e-7eb83009388f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Diagnostics are local-only. Use Export di"···&#xD;
+Not found: "could not be confirmed"</Message>
+          <StackTrace>   at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="71694d95-b52b-402a-ba4b-53a6dd573b1c" testId="29f1ff5e-bc2d-8f33-0e92-462d4504b2e6" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: Cancelled)" computerName="OS008-HOME" duration="00:00:00.1809081" startTime="2026-10-04T18:35:49.4821078+03:00" endTime="2026-10-04T18:35:49.6751293+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71694d95-b52b-402a-ba4b-53a6dd573b1c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Diagnostics are local-only. Use Export di"···&#xD;
+Not found: "could not be confirmed"</Message>
+          <StackTrace>   at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e3b2083b-4e53-4efe-9d86-af885ac14995" testId="fd549706-affe-0bf7-6cc1-a59c1e149a7a" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Cancelled_picker_dispatches_nothing_and_retains_pending_protection_edits" computerName="OS008-HOME" duration="00:00:00.0041720" startTime="2026-10-04T18:35:49.6914358+03:00" endTime="2026-10-04T18:35:49.6917042+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e3b2083b-4e53-4efe-9d86-af885ac14995" />
+    <UnitTestResult executionId="ea0f4aca-de46-4e35-9d12-a7d21fbebbf1" testId="e5b2aed4-4180-72fb-6e12-a2cb6d2e1834" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: NullWarnings)" computerName="OS008-HOME" duration="00:00:00.0003251" startTime="2026-10-04T18:35:49.6888689+03:00" endTime="2026-10-04T18:35:49.6888982+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea0f4aca-de46-4e35-9d12-a7d21fbebbf1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Diagnostics are local-only. Use Export di"···&#xD;
+Not found: "could not be confirmed"</Message>
+          <StackTrace>   at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="67884b9c-6bf5-4702-9622-a04fe622b6a5" testId="07db290d-c19a-cd5d-0a2a-de414665936e" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongOperation)" computerName="OS008-HOME" duration="00:00:00.0003299" startTime="2026-10-04T18:35:49.6899436+03:00" endTime="2026-10-04T18:35:49.6899739+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="67884b9c-6bf5-4702-9622-a04fe622b6a5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Diagnostics are local-only. Use Export di"···&#xD;
+Not found: "could not be confirmed"</Message>
+          <StackTrace>   at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2a8cc4e7-8f74-4e4b-a7f5-694fcf991772" testId="da0e88af-ee7e-f2d9-802b-d641d75d8d62" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: Unknown)" computerName="OS008-HOME" duration="00:00:00.0003107" startTime="2026-10-04T18:35:49.6895838+03:00" endTime="2026-10-04T18:35:49.6896105+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a8cc4e7-8f74-4e4b-a7f5-694fcf991772">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Diagnostics are local-only. Use Export di"···&#xD;
+Not found: "could not be confirmed"</Message>
+          <StackTrace>   at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="87b2e621-7d8e-4822-aa59-dadd47e3cc4f" testId="1dd33b5e-fa30-49df-1914-6a7c491981e9" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Confirmed_export_uses_captured_binding_and_reports_publication_warning_without_saving_drafts" computerName="OS008-HOME" duration="00:00:00.0047634" startTime="2026-10-04T18:35:49.7125483+03:00" endTime="2026-10-04T18:35:49.7125831+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87b2e621-7d8e-4822-aa59-dadd47e3cc4f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection did not contain any matching items&#xD;
+Expected:   (predicate expression)&#xD;
+Collection: [FluxVaultIpcRequest { Command = GetStatus, Configuration = , VersionId = , OutputPath = , ExportPath = , MirrorNodeId = , ConflictId = , ConflictAction = , SourcePath = , IsDirectory = False, DestinationMode = , OverwriteConfirmed = False, ProfileId = , ProfileDisplayName = , SourceProfileId = , StatusDetailLevel = Full, PurgeRemovedSelections = False, RemovedSelections = , PreservedSelections = , VaultId = , ExpectedVaultRevision = , OperationId = , AccessGrants = , DestinationPath =  }]</Message>
+          <StackTrace>   at FluxVault.App.Tests.DiagnosticsExportContractTests.Confirmed_export_uses_captured_binding_and_reports_publication_warning_without_saving_drafts() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs:line 29&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c2106ec7-d7f2-469f-a729-9d99d552ad4b" testId="1fe28a32-f0f5-13fd-a3b6-e11d722ab776" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: Io)" computerName="OS008-HOME" duration="00:00:00.0003256" startTime="2026-10-04T18:35:49.6892258+03:00" endTime="2026-10-04T18:35:49.6892531+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2106ec7-d7f2-469f-a729-9d99d552ad4b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Diagnostics are local-only. Use Export di"···&#xD;
+Not found: "could not be confirmed"</Message>
+          <StackTrace>   at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="de938856-14be-4ee0-8377-3f8442a76cf2" testId="007e56d9-5bba-fcf3-a32d-bd87d4e71756" testName="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongOuterPath)" computerName="OS008-HOME" duration="00:00:00.0003372" startTime="2026-10-04T18:35:49.6884993+03:00" endTime="2026-10-04T18:35:49.6885289+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de938856-14be-4ee0-8377-3f8442a76cf2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Diagnostics are local-only. Use Export di"···&#xD;
+Not found: "could not be confirmed"</Message>
+          <StackTrace>   at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongOuterPath)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="007e56d9-5bba-fcf3-a32d-bd87d4e71756">
+      <Execution id="de938856-14be-4ee0-8377-3f8442a76cf2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Delayed_acknowledgement_is_checked_against_original_request_despite_newer_status" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="cdaf5403-f376-5b13-b461-c57eaced8dc6">
+      <Execution id="f29c4166-a0b2-4c61-984a-cc4fb6b744c9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Delayed_acknowledgement_is_checked_against_original_request_despite_newer_status" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: Unknown)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="da0e88af-ee7e-f2d9-802b-d641d75d8d62">
+      <Execution id="2a8cc4e7-8f74-4e4b-a7f5-694fcf991772" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongRevision)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="663f90e7-d889-ad86-2f1b-9b149622d7c1">
+      <Execution id="846f8135-c7b7-443a-9494-0fb7b58b57b9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: NullWarnings)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="e5b2aed4-4180-72fb-6e12-a2cb6d2e1834">
+      <Execution id="ea0f4aca-de46-4e35-9d12-a7d21fbebbf1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Confirmed_export_uses_captured_binding_and_reports_publication_warning_without_saving_drafts" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="1dd33b5e-fa30-49df-1914-6a7c491981e9">
+      <Execution id="87b2e621-7d8e-4822-aa59-dadd47e3cc4f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Confirmed_export_uses_captured_binding_and_reports_publication_warning_without_saving_drafts" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: Io)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="1fe28a32-f0f5-13fd-a3b6-e11d722ab776">
+      <Execution id="c2106ec7-d7f2-469f-a729-9d99d552ad4b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongOperation)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="07db290d-c19a-cd5d-0a2a-de414665936e">
+      <Execution id="67884b9c-6bf5-4702-9622-a04fe622b6a5" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongResultPath)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="ba4ac901-dbe0-1033-e9a0-a1bda2f5ba4e">
+      <Execution id="b071fa3b-f562-43c4-a29e-7eb83009388f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Cancelled_picker_dispatches_nothing_and_retains_pending_protection_edits" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="fd549706-affe-0bf7-6cc1-a59c1e149a7a">
+      <Execution id="e3b2083b-4e53-4efe-9d86-af885ac14995" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Cancelled_picker_dispatches_nothing_and_retains_pending_protection_edits" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: Cancelled)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="29f1ff5e-bc2d-8f33-0e92-462d4504b2e6">
+      <Execution id="71694d95-b52b-402a-ba4b-53a6dd573b1c" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.DiagnosticsExportContractTests" name="Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="663f90e7-d889-ad86-2f1b-9b149622d7c1" executionId="846f8135-c7b7-443a-9494-0fb7b58b57b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cdaf5403-f376-5b13-b461-c57eaced8dc6" executionId="f29c4166-a0b2-4c61-984a-cc4fb6b744c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ba4ac901-dbe0-1033-e9a0-a1bda2f5ba4e" executionId="b071fa3b-f562-43c4-a29e-7eb83009388f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="29f1ff5e-bc2d-8f33-0e92-462d4504b2e6" executionId="71694d95-b52b-402a-ba4b-53a6dd573b1c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd549706-affe-0bf7-6cc1-a59c1e149a7a" executionId="e3b2083b-4e53-4efe-9d86-af885ac14995" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5b2aed4-4180-72fb-6e12-a2cb6d2e1834" executionId="ea0f4aca-de46-4e35-9d12-a7d21fbebbf1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="07db290d-c19a-cd5d-0a2a-de414665936e" executionId="67884b9c-6bf5-4702-9622-a04fe622b6a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da0e88af-ee7e-f2d9-802b-d641d75d8d62" executionId="2a8cc4e7-8f74-4e4b-a7f5-694fcf991772" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1dd33b5e-fa30-49df-1914-6a7c491981e9" executionId="87b2e621-7d8e-4822-aa59-dadd47e3cc4f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1fe28a32-f0f5-13fd-a3b6-e11d722ab776" executionId="c2106ec7-d7f2-469f-a729-9d99d552ad4b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="007e56d9-5bba-fcf3-a32d-bd87d4e71756" executionId="de938856-14be-4ee0-8377-3f8442a76cf2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="11" executed="11" passed="1" failed="10" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.40]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.40]       String:    "Diagnostics are local-only. Use Export di"···&#xD;
+[xUnit.net 00:00:00.40]       Not found: "could not be confirmed"&#xD;
+[xUnit.net 00:00:00.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.40]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs(52,0): at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault)&#xD;
+[xUnit.net 00:00:00.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.40]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.40]       String:    "Diagnostics are local-only. Use Export di"···&#xD;
+[xUnit.net 00:00:00.40]       Not found: "could not be confirmed"&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs(52,0): at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault)&#xD;
+[xUnit.net 00:00:00.41]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.41]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.41]       String:    "Diagnostics are local-only. Use Export di"···&#xD;
+[xUnit.net 00:00:00.41]       Not found: "could not be confirmed"&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs(52,0): at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault)&#xD;
+[xUnit.net 00:00:00.41]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.41]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.41]       String:    "Diagnostics are local-only. Use Export di"···&#xD;
+[xUnit.net 00:00:00.41]       Not found: "could not be confirmed"&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs(52,0): at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault)&#xD;
+[xUnit.net 00:00:00.41]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.41]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.41]       String:    "Diagnostics are local-only. Use Export di"···&#xD;
+[xUnit.net 00:00:00.41]       Not found: "could not be confirmed"&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs(52,0): at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault)&#xD;
+[xUnit.net 00:00:00.41]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.41]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.41]       String:    "Diagnostics are local-only. Use Export di"···&#xD;
+[xUnit.net 00:00:00.41]       Not found: "could not be confirmed"&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs(52,0): at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault)&#xD;
+[xUnit.net 00:00:00.41]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.41]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.41]       String:    "Diagnostics are local-only. Use Export di"···&#xD;
+[xUnit.net 00:00:00.41]       Not found: "could not be confirmed"&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs(52,0): at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault)&#xD;
+[xUnit.net 00:00:00.41]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.41]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.41]       String:    "Diagnostics are local-only. Use Export di"···&#xD;
+[xUnit.net 00:00:00.41]       Not found: "could not be confirmed"&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs(52,0): at FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(Fault fault)&#xD;
+[xUnit.net 00:00:00.41]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.43]       Assert.Single() Failure: The collection did not contain any matching items&#xD;
+[xUnit.net 00:00:00.43]       Expected:   (predicate expression)&#xD;
+[xUnit.net 00:00:00.43]       Collection: [FluxVaultIpcRequest { Command = GetStatus, Configuration = , VersionId = , OutputPath = , ExportPath = , MirrorNodeId = , ConflictId = , ConflictAction = , SourcePath = , IsDirectory = False, DestinationMode = , OverwriteConfirmed = False, ProfileId = , ProfileDisplayName = , SourceProfileId = , StatusDetailLevel = Full, PurgeRemovedSelections = False, RemovedSelections = , PreservedSelections = , VaultId = , ExpectedVaultRevision = , OperationId = , AccessGrants = , DestinationPath =  }]&#xD;
+[xUnit.net 00:00:00.43]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.43]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs(29,0): at FluxVault.App.Tests.DiagnosticsExportContractTests.Confirmed_export_uses_captured_binding_and_reports_publication_warning_without_saving_drafts()&#xD;
+[xUnit.net 00:00:00.43]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.43]       System.TimeoutException : The operation has timed out.&#xD;
+[xUnit.net 00:00:05.43]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.43]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\DiagnosticsExportContractTests.cs(65,0): at FluxVault.App.Tests.DiagnosticsExportContractTests.Delayed_acknowledgement_is_checked_against_original_request_despite_newer_status()&#xD;
+[xUnit.net 00:00:05.43]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.43]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T18:35:49.6776753+03:00">
+        <Text>[xUnit.net 00:00:00.39]     FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: Cancelled) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T18:35:49.6878217+03:00">
+        <Text>[xUnit.net 00:00:00.40]     FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongRevision) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T18:35:49.6886894+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongOuterPath) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T18:35:49.6890046+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: NullWarnings) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T18:35:49.6893761+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: Io) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T18:35:49.6897171+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: Unknown) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T18:35:49.6900922+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongOperation) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T18:35:49.6904590+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.App.Tests.DiagnosticsExportContractTests.Malformed_or_lost_acknowledgement_never_claims_success_or_dispatches_a_dependent_command(fault: WrongResultPath) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T18:35:49.7402616+03:00">
+        <Text>[xUnit.net 00:00:00.43]     FluxVault.App.Tests.DiagnosticsExportContractTests.Confirmed_export_uses_captured_binding_and_reports_publication_warning_without_saving_drafts [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T18:35:54.7103875+03:00">
+        <Text>[xUnit.net 00:00:05.43]     FluxVault.App.Tests.DiagnosticsExportContractTests.Delayed_acknowledgement_is_checked_against_original_request_despite_newer_status [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

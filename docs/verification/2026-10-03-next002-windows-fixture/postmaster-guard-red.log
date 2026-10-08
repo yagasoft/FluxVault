@@ -1,0 +1,31 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.TestHost -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\bin\Release\net10.0-windows\FluxVault.TestHost.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Cli -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Cli\bin\Release\net10.0\FluxVault.Cli.dll
+  FluxVault.Service -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Service\bin\Release\net10.0-windows\FluxVault.Service.dll
+  FluxVault.Integration.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.87]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Postmaster_guard_accepts_omitted_input_and_refuses_payload_or_another_data_root [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Postmaster_guard_accepts_omitted_input_and_refuses_payload_or_another_data_root [668 ms]
+  Error Message:
+   Assert-VaultFixturePostmasterLaunch: E:\Temp\AppData\Local\Temp\FluxVault.WindowsFixtureTools.0218fb510c9b462a94cab0cf5b0d46c9\case-6831e8ce7a1048949c9fcc6df4d3e25f.ps1:9
+Line |
+   9 |  Assert-VaultFixturePostmasterLaunch -Root $proposed -Executable $exec .
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | The term 'Assert-VaultFixturePostmasterLaunch' is not recognized as a name of a cmdlet, function, script file,
+     | or executable program. Check the spelling of the name, or if a path was included, verify that the path is
+     | correct and try again.
+
+  Stack Trace:
+     at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 555
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 563
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Postmaster_guard_accepts_omitted_input_and_refuses_payload_or_another_data_root() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 13
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-03-next002-windows-fixture\postmaster-guard-red.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 683 ms - FluxVault.Integration.Tests.dll (net10.0)

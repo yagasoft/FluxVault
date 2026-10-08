@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9cebef27-db5b-473f-9d68-b37e32cb7499" name="os008@OS008-HOME 2026-10-04 16:51:05" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T16:51:05.8296030+03:00" queuing="2026-10-04T16:51:05.8296030+03:00" start="2026-10-04T16:51:05.0611587+03:00" finish="2026-10-04T16:51:05.8335073+03:00" />
+  <TestSettings name="default" id="9365084d-7a36-40c6-b283-bcacd2a413f3">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_16_51_05" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="631b0136-6cb6-4df8-a610-d9df7ec7a33e" testId="e8a97768-dec3-1eb5-1765-66b185ac28be" testName="FluxVault.Core.Tests.MaintenanceStateStoreTests.Failed_atomic_publication_removes_its_temporary_file_and_preserves_the_previous_state" computerName="OS008-HOME" duration="00:00:00.0076417" startTime="2026-10-04T16:51:05.7380521+03:00" endTime="2026-10-04T16:51:05.7381077+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="631b0136-6cb6-4df8-a610-d9df7ec7a33e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.UnauthorizedAccessException)&#xD;
+---- System.UnauthorizedAccessException : Access to the path is denied.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.MaintenanceStateStoreTests.Failed_atomic_publication_removes_its_temporary_file_and_preserves_the_previous_state() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\MaintenanceStateStoreTests.cs:line 43&#xD;
+   at FluxVault.Core.Tests.MaintenanceStateStoreTests.Failed_atomic_publication_removes_its_temporary_file_and_preserves_the_previous_state() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\MaintenanceStateStoreTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.IO.FileSystem.MoveFile(String sourceFullPath, String destFullPath, Boolean overwrite)&#xD;
+   at FluxVault.Core.Service.FileRepositoryMaintenanceStateStore.SaveAsync(RepositoryMaintenanceState state, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Service\RepositoryMaintenanceState.cs:line 55</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5fb3fab7-00e1-42ca-b557-9071ff711354" testId="7f2116da-990e-6a49-0312-9ce85f3b177d" testName="FluxVault.Core.Tests.MaintenanceStateStoreTests.Open_snapshot_reader_allows_atomic_publication_and_finishes_with_its_original_state" computerName="OS008-HOME" duration="00:00:00.0898103" startTime="2026-10-04T16:51:05.6208809+03:00" endTime="2026-10-04T16:51:05.7247729+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5fb3fab7-00e1-42ca-b557-9071ff711354">
+      <Output>
+        <ErrorInfo>
+          <Message>System.UnauthorizedAccessException : Access to the path is denied.</Message>
+          <StackTrace>   at System.IO.FileSystem.MoveFile(String sourceFullPath, String destFullPath, Boolean overwrite)&#xD;
+   at FluxVault.Core.Service.FileRepositoryMaintenanceStateStore.SaveAsync(RepositoryMaintenanceState state, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Service\RepositoryMaintenanceState.cs:line 55&#xD;
+   at FluxVault.Core.Tests.MaintenanceStateStoreTests.Open_snapshot_reader_allows_atomic_publication_and_finishes_with_its_original_state() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\MaintenanceStateStoreTests.cs:line 26&#xD;
+   at FluxVault.Core.Tests.MaintenanceStateStoreTests.Open_snapshot_reader_allows_atomic_publication_and_finishes_with_its_original_state() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\MaintenanceStateStoreTests.cs:line 27&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="35d3ef4a-4b06-4b19-a337-ef5454311952" testId="8f795fc2-05ad-9acf-2483-761f7a3735b6" testName="FluxVault.Core.Tests.MaintenanceStateStoreTests.Cancellation_before_publication_cleans_the_owned_temporary_file_and_preserves_the_previous_state" computerName="OS008-HOME" duration="00:00:00.0045813" startTime="2026-10-04T16:51:05.7391681+03:00" endTime="2026-10-04T16:51:05.7404375+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35d3ef4a-4b06-4b19-a337-ef5454311952">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.OperationCanceledException)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.MaintenanceStateStoreTests.Cancellation_before_publication_cleans_the_owned_temporary_file_and_preserves_the_previous_state() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\MaintenanceStateStoreTests.cs:line 63&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.MaintenanceStateStoreTests.Failed_atomic_publication_removes_its_temporary_file_and_preserves_the_previous_state" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="e8a97768-dec3-1eb5-1765-66b185ac28be">
+      <Execution id="631b0136-6cb6-4df8-a610-d9df7ec7a33e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.MaintenanceStateStoreTests" name="Failed_atomic_publication_removes_its_temporary_file_and_preserves_the_previous_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.MaintenanceStateStoreTests.Open_snapshot_reader_allows_atomic_publication_and_finishes_with_its_original_state" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="7f2116da-990e-6a49-0312-9ce85f3b177d">
+      <Execution id="5fb3fab7-00e1-42ca-b557-9071ff711354" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.MaintenanceStateStoreTests" name="Open_snapshot_reader_allows_atomic_publication_and_finishes_with_its_original_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.MaintenanceStateStoreTests.Cancellation_before_publication_cleans_the_owned_temporary_file_and_preserves_the_previous_state" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="8f795fc2-05ad-9acf-2483-761f7a3735b6">
+      <Execution id="35d3ef4a-4b06-4b19-a337-ef5454311952" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.MaintenanceStateStoreTests" name="Cancellation_before_publication_cleans_the_owned_temporary_file_and_preserves_the_previous_state" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e8a97768-dec3-1eb5-1765-66b185ac28be" executionId="631b0136-6cb6-4df8-a610-d9df7ec7a33e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f2116da-990e-6a49-0312-9ce85f3b177d" executionId="5fb3fab7-00e1-42ca-b557-9071ff711354" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8f795fc2-05ad-9acf-2483-761f7a3735b6" executionId="35d3ef4a-4b06-4b19-a337-ef5454311952" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.31]       System.UnauthorizedAccessException : Access to the path is denied.&#xD;
+[xUnit.net 00:00:00.31]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.31]            at System.IO.FileSystem.MoveFile(String sourceFullPath, String destFullPath, Boolean overwrite)&#xD;
+[xUnit.net 00:00:00.31]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Service\RepositoryMaintenanceState.cs(55,0): at FluxVault.Core.Service.FileRepositoryMaintenanceStateStore.SaveAsync(RepositoryMaintenanceState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.31]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\MaintenanceStateStoreTests.cs(26,0): at FluxVault.Core.Tests.MaintenanceStateStoreTests.Open_snapshot_reader_allows_atomic_publication_and_finishes_with_its_original_state()&#xD;
+[xUnit.net 00:00:00.31]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\MaintenanceStateStoreTests.cs(27,0): at FluxVault.Core.Tests.MaintenanceStateStoreTests.Open_snapshot_reader_allows_atomic_publication_and_finishes_with_its_original_state()&#xD;
+[xUnit.net 00:00:00.31]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.32]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.32]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.32]       Actual:   typeof(System.UnauthorizedAccessException)&#xD;
+[xUnit.net 00:00:00.32]       ---- System.UnauthorizedAccessException : Access to the path is denied.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\MaintenanceStateStoreTests.cs(43,0): at FluxVault.Core.Tests.MaintenanceStateStoreTests.Failed_atomic_publication_removes_its_temporary_file_and_preserves_the_previous_state()&#xD;
+[xUnit.net 00:00:00.32]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\MaintenanceStateStoreTests.cs(43,0): at FluxVault.Core.Tests.MaintenanceStateStoreTests.Failed_atomic_publication_removes_its_temporary_file_and_preserves_the_previous_state()&#xD;
+[xUnit.net 00:00:00.32]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.32]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.32]            at System.IO.FileSystem.MoveFile(String sourceFullPath, String destFullPath, Boolean overwrite)&#xD;
+[xUnit.net 00:00:00.32]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Service\RepositoryMaintenanceState.cs(55,0): at FluxVault.Core.Service.FileRepositoryMaintenanceStateStore.SaveAsync(RepositoryMaintenanceState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.33]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.33]       Expected: typeof(System.OperationCanceledException)&#xD;
+[xUnit.net 00:00:00.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.33]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\MaintenanceStateStoreTests.cs(63,0): at FluxVault.Core.Tests.MaintenanceStateStoreTests.Cancellation_before_publication_cleans_the_owned_temporary_file_and_preserves_the_previous_state()&#xD;
+[xUnit.net 00:00:00.33]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.33]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T16:51:05.7275684+03:00">
+        <Text>[xUnit.net 00:00:00.31]     FluxVault.Core.Tests.MaintenanceStateStoreTests.Open_snapshot_reader_allows_atomic_publication_and_finishes_with_its_original_state [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T16:51:05.7383361+03:00">
+        <Text>[xUnit.net 00:00:00.32]     FluxVault.Core.Tests.MaintenanceStateStoreTests.Failed_atomic_publication_removes_its_temporary_file_and_preserves_the_previous_state [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T16:51:05.7405713+03:00">
+        <Text>[xUnit.net 00:00:00.33]     FluxVault.Core.Tests.MaintenanceStateStoreTests.Cancellation_before_publication_cleans_the_owned_temporary_file_and_preserves_the_previous_state [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

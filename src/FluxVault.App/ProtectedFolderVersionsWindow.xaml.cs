@@ -11,7 +11,22 @@ public partial class ProtectedFolderVersionsWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
+        Closing += async (_, args) =>
+        {
+            if (canClose) return;
+            args.Cancel = true;
+            if (closeInProgress) return;
+            closeInProgress = true;
+            IsEnabled = false;
+            await viewModel.DisposeAsync().ConfigureAwait(true);
+            canClose = true;
+            // A synchronous join can finish inside the original Closing event.
+            // Queue the final close after WPF has left that event.
+            await Dispatcher.InvokeAsync(Close);
+        };
     }
+    private bool canClose;
+    private bool closeInProgress;
 
     private async void VersionsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {

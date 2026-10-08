@@ -1,0 +1,51 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Cli -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Cli\bin\Release\net10.0\FluxVault.Cli.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.TestHost -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\bin\Release\net10.0-windows\FluxVault.TestHost.dll
+  FluxVault.Service -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Service\bin\Release\net10.0-windows\FluxVault.Service.dll
+  FluxVault.Integration.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:02.23]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: "cancelled-after-effect") [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: "cancelled-after-effect") [2 s]
+  Error Message:
+   System.Text.Json.JsonReaderException : 'S' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+  Stack Trace:
+     at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb& database, StackRowStack& stack)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter, Boolean allowDuplicateProperties)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)
+   at System.Text.Json.JsonDocument.Parse(String json, JsonDocumentOptions options)
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1219
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1226
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 21
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:08.57]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: "cancelled-after-open") [FAIL]
+  Failed FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(scenario: "cancelled-after-open") [1 s]
+  Error Message:
+   System.Text.Json.JsonReaderException : 'S' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+  Stack Trace:
+     at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb& database, StackRowStack& stack)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, Byte[] extraRentedArrayPoolBytes, PooledByteBufferWriter extraPooledByteBufferWriter, Boolean allowDuplicateProperties)
+   at System.Text.Json.JsonDocument.Parse(ReadOnlyMemory`1 json, JsonDocumentOptions options)
+   at System.Text.Json.JsonDocument.Parse(String json, JsonDocumentOptions options)
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1219
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.ScriptFixture.RunAsync(String body) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 1226
+   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Administrator_withholds_DDL_until_durable_backend_confirmation_and_always_joins(String scenario) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 21
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\administrator-handshake-final.trx
+
+Failed!  - Failed:     2, Passed:     6, Skipped:     0, Total:     8, Duration: 13 s - FluxVault.Integration.Tests.dll (net10.0)

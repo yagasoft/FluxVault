@@ -1,0 +1,24 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.App.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.47]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_session_prevents_Explorer_save_until_the_dialogue_closes [FAIL]
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Options_session_prevents_Explorer_save_until_the_dialogue_closes [1 s]
+  Error Message:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.<>c.<<Options_session_prevents_Explorer_save_until_the_dialogue_closes>b__20_0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 637
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.ProtectionSaveContractTests.<>c__DisplayClass13_1.<<RunOnStaAsync>b__1>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 389
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 397
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-03-protection-save\options-session-red.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - FluxVault.App.Tests.dll (net10.0)

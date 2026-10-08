@@ -8,6 +8,7 @@ using FluxVault.Core.Content;
 using FluxVault.Core.Retention;
 using FluxVault.Core.Storage.Metadata;
 using FluxVault.Core.Storage.Integrity;
+using FluxVault.Core.Security;
 
 namespace FluxVault.Core.Storage;
 
@@ -20,6 +21,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     };
 
     private readonly string rootPath;
+    private readonly VaultBinding? binding;
     private readonly MirrorSetConfiguration mirrorSet;
     private IReadOnlyList<MirrorNodeConfiguration> mirrorNodes => leasedMirrorNodes;
     private readonly MirrorPlacementPlanner mirrorPlacementPlanner = new();
@@ -37,7 +39,9 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     private async ValueTask<RepositoryLeaseSet> AcquireLeaseAsync(MirrorLeaseMode mode, CancellationToken cancellationToken)
     {
-        var lease = await RepositoryLeaseSet.AcquireAsync(rootPath, configuredMirrorNodes.Select(node => node.Path).ToArray(), mode, cancellationToken).ConfigureAwait(false);
+        if (binding is not null && metadataStore is PostgreSqlRepositoryMetadataStore boundStore)
+            await boundStore.VerifyBindingAsync(cancellationToken).ConfigureAwait(false);
+        var lease = await RepositoryLeaseSet.AcquireAsync(rootPath, configuredMirrorNodes.Select(node => node.Path).ToArray(), mode, cancellationToken, binding: binding).ConfigureAwait(false);
         foreach (var node in configuredMirrorNodes) lease.LabelMirror(StorageOwnership.Canonical(node.Path), node.Label);
         leasedMirrorNodes = configuredMirrorNodes.Where(node => lease.MirrorRoots.Contains(StorageOwnership.Canonical(node.Path), StringComparer.OrdinalIgnoreCase)).ToArray();
         return lease;
@@ -77,8 +81,12 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
     internal FileSystemChunkRepository(string rootPath, FastCdcChunker chunker, Blake3ContentHasher hasher,
         ZstdChunkCodec codec, MirrorSetConfiguration? mirrorSet, IRepositoryMetadataStore? metadataStore,
-        RepositoryIntegrityLimits? integrityLimits, RepositoryFaults? faults)
+        RepositoryIntegrityLimits? integrityLimits, RepositoryFaults? faults, VaultBinding? binding = null)
     {
+        binding?.Validate();
+        if (binding is not null && !string.Equals(StorageOwnership.Canonical(rootPath), StorageOwnership.Canonical(binding.RepositoryPath), StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException("The repository root must match the immutable vault binding.", nameof(binding));
+        this.binding = binding;
         this.rootPath = rootPath;
         streamingChunker = new StreamingFastCdcChunker(chunker.Options);
         this.hasher = hasher;
@@ -99,6 +107,23 @@ public sealed class FileSystemChunkRepository : IChunkRepository
     internal async Task InitializeStorageAsync(CancellationToken cancellationToken)
     {
         await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+    }
+
+    public FileSystemChunkRepository(VaultBinding binding, FastCdcChunker chunker, Blake3ContentHasher hasher,
+        ZstdChunkCodec codec, MirrorSetConfiguration? mirrorSet, PostgreSqlRepositoryMetadataStore metadataStore,
+        RepositoryIntegrityLimits? integrityLimits = null)
+        : this(binding.RepositoryPath, chunker, hasher, codec, mirrorSet, metadataStore, integrityLimits, null, binding)
+    {
+        if (metadataStore.Binding != binding) throw new ArgumentException("The service repository requires its exact bound PostgreSQL metadata store.", nameof(metadataStore));
+    }
+
+    public async Task ProvisionVaultStorageAsync(CancellationToken cancellationToken = default)
+    {
+        if (binding is null) throw new InvalidOperationException("Explicit vault binding is required for provisioning.");
+        if (metadataStore is PostgreSqlRepositoryMetadataStore boundStore)
+            await boundStore.VerifyBindingAsync(cancellationToken).ConfigureAwait(false);
+        await using var lease = await RepositoryLeaseSet.AcquireAsync(rootPath, configuredMirrorNodes.Select(node => node.Path).ToArray(),
+            MirrorLeaseMode.Required, cancellationToken, binding: binding, provision: true).ConfigureAwait(false);
     }
 
     public async Task<FileCommitResult> CommitAsync(FileCommitRequest request, CancellationToken cancellationToken = default)
@@ -191,7 +216,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 InheritedFromSourcePath: lineage.InheritedFromSourcePath,
                 ContentSignature: contentSignature,
                 SyncOrigin: request.SyncOrigin,
-                SourceLastWriteUtc: request.SourceLastWriteUtc);
+                SourceLastWriteUtc: request.SourceLastWriteUtc,
+                VaultId: binding?.Id);
 
             var manifestsToRecord = new List<FileVersionManifest> { manifest };
             existingManifests?.Add(manifest);
@@ -242,6 +268,17 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             .ToArray();
     }
 
+    public async Task<IReadOnlyList<RepositoryVersionSummary>> ListRecentVersionsAsync(int maximumCount, CancellationToken cancellationToken = default)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumCount);
+        cancellationToken.ThrowIfCancellationRequested();
+        if (metadataStore is null)
+            return (await ListVersionsAsync(cancellationToken).ConfigureAwait(false)).Take(maximumCount).ToArray();
+
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+        return await metadataStore.ListRecentVersionsAsync(maximumCount, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default)
     {
         await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
@@ -261,6 +298,30 @@ public sealed class FileSystemChunkRepository : IChunkRepository
             .OrderBy(version => version.SourcePath, StringComparer.OrdinalIgnoreCase)
             .ThenByDescending(version => version.EntryKind)
             .ToArray();
+    }
+
+    public async Task<RepositoryCurrentEntriesPage> ListCurrentEntriesPageAsync(RepositoryCurrentEntriesQuery query, CancellationToken cancellationToken = default)
+    {
+        RepositoryCurrentEntriesPaging.Validate(query, binding?.Id);
+        if (metadataStore is null) throw new NotSupportedException("Paged current entries require the authoritative metadata store.");
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+        return await metadataStore.ListCurrentEntriesPageAsync(query, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<RepositoryHistoryPage> ListHistoryPageAsync(RepositoryHistoryQuery query, CancellationToken cancellationToken = default)
+    {
+        RepositoryHistoryPaging.Validate(query, binding?.Id);
+        if (metadataStore is null) throw new NotSupportedException("Paged history requires the authoritative metadata store.");
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+        return await metadataStore.ListHistoryPageAsync(query, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<RepositorySnapshotPage> GetSnapshotPageAsync(RepositorySnapshotQuery query, CancellationToken cancellationToken = default)
+    {
+        RepositoryHistoryPaging.Validate(query, binding?.Id);
+        if (metadataStore is null) throw new NotSupportedException("Paged snapshots require the authoritative metadata store.");
+        await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+        return await metadataStore.GetSnapshotPageAsync(query, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<RepositoryDeletionResult?> RecordDeletionAsync(
@@ -305,7 +366,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 EntryKind: entryKind,
                 IsDeleted: true,
                 FolderEntries: entryKind == RepositoryEntryKind.Folder ? deletedFrom.FolderEntries : null,
-                DeletedFromVersionId: deletedFrom.VersionId);
+                DeletedFromVersionId: deletedFrom.VersionId,
+                VaultId: binding?.Id);
 
             var mirrorWarnings = new List<string>(lease.Warnings);
             var manifestsToRecord = new List<FileVersionManifest> { manifest };
@@ -349,6 +411,10 @@ public sealed class FileSystemChunkRepository : IChunkRepository
 
             var purgeIds = SelectInitialPurgeIds(manifests, scopes, preserveScopes);
             ExpandPurgeReferences(manifests, purgeIds);
+            if (manifests.Any(manifest => purgeIds.Contains(manifest.VersionId) &&
+                preserveScopes.Any(scope => PurgeScopeMatches(scope, manifest))))
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest,
+                    "Purge refused because its lineage or folder references include preserved history. No history was deleted.");
             if (purgeIds.Count == 0)
             {
                 return new RepositoryPurgeResult(0, 0, 0, []);
@@ -440,6 +506,96 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
         var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
         return await RestoreManifestAsync(manifest, outputPath, destinationExisted, writeRestoreHint: true, cancellationToken).ConfigureAwait(false);
+    }
+
+    public Task<RepositoryRestoreResult> RestoreAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
+        => RestoreToTargetAsync(versionId, target, writeRestoreHint: true, cancellationToken);
+
+    public Task<RepositoryRestoreResult> RestorePreviewAsync(string versionId, IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
+        => RestoreToTargetAsync(versionId, target, writeRestoreHint: false, cancellationToken);
+
+    public async Task<RepositoryRestoreResult> RestoreFilesAsync(IReadOnlyList<RepositoryRestoreFileSelection> files,
+        IRepositoryRestoreTarget target, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        await using (target.ConfigureAwait(false))
+        {
+            ArgumentNullException.ThrowIfNull(files);
+            if (files.Count == 0) throw new InvalidDataException("No file history was selected for recovery.");
+            if (files.Count > integrityLimits.MaxExpandedEntries)
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.LimitExceeded, "Restore selection exceeds supported limits.");
+            var outputPath = ValidateOwnedRestoreDestination(target);
+            await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+            var plan = await new RestoreGraphValidator(verifiedReader, integrityLimits, ReadManifestByVersionAsync)
+                .BuildFilesAsync(files, outputPath, cancellationToken).ConfigureAwait(false);
+            return await PublishOwnedRestorePlanAsync(plan, target, outputPath, writeRestoreHint: true, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    private string ValidateOwnedRestoreDestination(IRepositoryRestoreTarget target)
+    {
+        var outputPath = Path.GetFullPath(target.OutputPath);
+        // Native target validation owns user paths; repository code never reopens them.
+        if (new[] { rootPath }.Concat(configuredMirrorNodes.Select(node => node.Path)).Any(root => StorageOwnership.Contains(root, outputPath)))
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Restore destination must be outside repository storage.");
+        return outputPath;
+    }
+
+    private async Task<RepositoryRestoreResult> RestoreToTargetAsync(string versionId, IRepositoryRestoreTarget target,
+        bool writeRestoreHint, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        await using (target.ConfigureAwait(false))
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
+            var outputPath = ValidateOwnedRestoreDestination(target);
+            await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.None, cancellationToken).ConfigureAwait(false);
+            var manifest = await ReadManifestByVersionAsync(versionId, cancellationToken).ConfigureAwait(false);
+            var plan = await new RestoreGraphValidator(verifiedReader, integrityLimits, ReadManifestByVersionAsync)
+                .BuildAsync(manifest, outputPath, cancellationToken).ConfigureAwait(false);
+            if (!writeRestoreHint && plan.Kind != RepositoryEntryKind.File)
+                throw new InvalidDataException("Only file versions can be opened as previews.");
+            return await PublishOwnedRestorePlanAsync(plan, target, outputPath, writeRestoreHint, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    private async Task<RepositoryRestoreResult> PublishOwnedRestorePlanAsync(ValidatedRestorePlan plan,
+        IRepositoryRestoreTarget target, string outputPath, bool writeRestoreHint, CancellationToken cancellationToken)
+    {
+        await target.PrepareAsync(plan.Kind, cancellationToken).ConfigureAwait(false);
+        foreach (var directory in plan.Directories.Where(path => path.Length > 0))
+            await target.CreateDirectoryAsync(directory, cancellationToken).ConfigureAwait(false);
+        foreach (var file in plan.Files)
+        {
+            await using var output = await target.CreateFileAsync(file.RelativePath, cancellationToken).ConfigureAwait(false);
+            foreach (var chunk in file.Manifest.Chunks)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var bytes = await verifiedReader.ReadAsync(rootPath, ChunkDescriptor.FromChunk(chunk), cancellationToken).ConfigureAwait(false);
+                await output.WriteAsync(bytes, cancellationToken).ConfigureAwait(false);
+            }
+            if (output.Length != file.Manifest.LogicalLength)
+                throw new RepositoryIntegrityException(RepositoryIntegrityFailure.CorruptObject, "Restored file length mismatch.");
+            await target.FlushFileAsync(output, cancellationToken).ConfigureAwait(false);
+        }
+        cancellationToken.ThrowIfCancellationRequested();
+        faults?.Hit(RepositoryFaultPoint.BeforeRestorePublication, outputPath);
+        cancellationToken.ThrowIfCancellationRequested();
+        var warnings = new List<string>(await target.PublishAsync(cancellationToken).ConfigureAwait(false));
+        if (writeRestoreHint)
+            foreach (var file in plan.Files)
+            {
+                var restoredPath = plan.Kind == RepositoryEntryKind.Folder ? Path.Combine(outputPath, file.RelativePath) : outputPath;
+                try
+                {
+                    faults?.Hit(RepositoryFaultPoint.AfterRestorePublication, restoredPath);
+                    faults?.Hit(RepositoryFaultPoint.BeforeRestoreHint, restoredPath);
+                    WriteRestoreHint(restoredPath, file.Manifest);
+                }
+                catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or OperationCanceledException)
+                { warnings.Add($"Content was restored and verified, but lineage recording failed for '{restoredPath}': {exception.Message}"); }
+            }
+        return new(outputPath, plan.LogicalBytes, plan.Files.Count, warnings);
     }
 
     public async Task RestorePreviewAsync(string versionId, string outputPath, CancellationToken cancellationToken = default)
@@ -1568,7 +1724,8 @@ public sealed class FileSystemChunkRepository : IChunkRepository
                 ParentVersionIds: parent is null ? [] : [parent.VersionId],
                 ContentSignature: ComputeFolderContentSignature(folderEntries),
                 EntryKind: RepositoryEntryKind.Folder,
-                FolderEntries: folderEntries);
+                FolderEntries: folderEntries,
+                VaultId: binding?.Id);
 
             manifests.Add(folderManifest);
             existingManifests?.Add(folderManifest);
@@ -1648,6 +1805,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         var manifest = metadataStore is not null
             ? await metadataStore.ReadManifestAsync(versionId, cancellationToken).ConfigureAwait(false)
             : await ReadManifestAsync(ManifestPath(rootPath, versionId), cancellationToken).ConfigureAwait(false);
+        ValidateManifestBinding(manifest);
         if (!string.Equals(manifest.VersionId, versionId, StringComparison.OrdinalIgnoreCase))
             throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Manifest identity does not match the requested version.");
         return manifest;
@@ -1664,6 +1822,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         try
         {
             var manifest = JsonSerializer.Deserialize<FileVersionManifest>(bytes, JsonOptions) ?? throw new JsonException("Null manifest.");
+            ValidateManifestBinding(manifest);
             if (!string.Equals(manifest.VersionId, expectedId, StringComparison.OrdinalIgnoreCase))
                 throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Manifest identity disagrees with its stored filename.");
             return (manifest, bytes);
@@ -1672,6 +1831,12 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         {
             throw new RepositoryIntegrityException(RepositoryIntegrityFailure.InvalidManifest, "Manifest is invalid.");
         }
+    }
+
+    private void ValidateManifestBinding(FileVersionManifest manifest)
+    {
+        if (binding is not null && manifest.VaultId != binding.Id)
+            throw new RepositoryIntegrityException(RepositoryIntegrityFailure.OwnershipMismatch, "The manifest does not belong to this vault.");
     }
 
     private async Task<RepositoryRestoreResult> RestoreManifestAsync(FileVersionManifest manifest, string outputPath, bool destinationExisted,

@@ -25,13 +25,14 @@ public sealed record FluxVaultServiceStatus(
     SecurityPostureRuntimeStatus? SecurityPosture = null,
     FleetRuntimeStatus? Fleet = null,
     IReadOnlyList<WatcherRuntimeStatus>? Watchers = null,
-    string? ActiveProfileId = null,
-    IReadOnlyList<FluxVaultProfileRuntimeStatus>? Profiles = null,
     IReadOnlyList<RepositoryVersionSummary>? TrackedEntries = null,
     BackupRuntimeStatus? BackupRuntime = null,
     MetadataStoreRuntimeStatus? MetadataStore = null,
     // False means no authoritative snapshot was supplied, rather than an empty repository.
-    bool HasVersionInventory = true);
+    bool HasVersionInventory = true,
+    bool UsesPagedCurrentEntries = false,
+    // Invalidation hint for shared runtime caches; not a metadata transaction identity.
+    Guid? RepositoryInventoryEpoch = null);
 
 public sealed record MetadataStoreRuntimeStatus(
     MetadataStoreProvider Provider,
@@ -59,15 +60,6 @@ public sealed record WatcherRuntimeStatus(
     DateTimeOffset? LastEventUtc,
     string LastCatchUpSource,
     bool IsBacklogOverflowed);
-
-public sealed record FluxVaultProfileRuntimeStatus(
-    string Id,
-    string DisplayName,
-    bool IsEnabled,
-    bool IsActive,
-    string RepositoryPath,
-    int WatchedFolderCount,
-    int EnabledMirrorCount);
 
 public sealed record BackupRuntimeStatus(
     bool IsRunning,

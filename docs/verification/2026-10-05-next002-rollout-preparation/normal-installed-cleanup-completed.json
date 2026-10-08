@@ -1,0 +1,26 @@
+{
+  "Postmaster": {
+    "StartedUtc": "2026-10-06T09:31:44.0114872Z",
+    "ProcessId": 10660,
+    "Port": 5432,
+    "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+    "DataDirectory": "D:\\Program Files\\PostgreSQL\\18\\data"
+  },
+  "FinalRetained": true,
+  "CanActivate": true,
+  "ContextSha256": "85DF752EB228EB729523CCEDC04B24A5D2143A0600E7076AC0A67F54F988DC83",
+  "AdmissionRetired": true,
+  "OwnedJobJoined": true,
+  "State": {
+    "administrator_absent": true,
+    "admin_pids": [
+      13948
+    ],
+    "legacy_pids": [],
+    "database": "fluxvault_single",
+    "role": "fluxvault_service",
+    "port": 5432
+  },
+  "ObservedUtc": "2026-10-07T20:26:39.5026148Z",
+  "Version": 1
+}

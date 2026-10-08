@@ -1,0 +1,482 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9a4f6b39-0ff0-443d-b4a3-80b4b081d2f0" name="os008@OS008-HOME 2026-10-04 19:07:54" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T19:07:54.4577863+03:00" queuing="2026-10-04T19:07:54.4577868+03:00" start="2026-10-04T19:07:53.4865550+03:00" finish="2026-10-04T19:07:54.5917144+03:00" />
+  <TestSettings name="default" id="85296cc3-1d9b-4efb-98b7-9495b8120934">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_19_07_54" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="bbaac958-54a1-4e55-a21a-b8c566d0d681" testId="46b25d3b-8273-3858-4426-5a03aa1dd036" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;nested/first.txt&quot;, secondPath: &quot;nested&quot;)" computerName="OS008-HOME" duration="00:00:00.0199119" startTime="2026-10-04T19:07:54.2887155+03:00" endTime="2026-10-04T19:07:54.3085714+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bbaac958-54a1-4e55-a21a-b8c566d0d681">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5371f280-6679-43da-8ffc-3ed74d6ca23e" testId="fed25db9-670a-b5a9-7907-8e4616feeeb8" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: &quot;depth&quot;)" computerName="OS008-HOME" duration="00:00:00.0227204" startTime="2026-10-04T19:07:54.4774321+03:00" endTime="2026-10-04T19:07:54.5000277+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5371f280-6679-43da-8ffc-3ed74d6ca23e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(String limit) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 78&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass3_0.&lt;Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories&gt;b__1() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 78</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0c54784f-fd53-46f5-afad-3b44a55423e1" testId="62cb1ef9-f9e8-5508-6371-6dc181360dea" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: &quot;nodes&quot;)" computerName="OS008-HOME" duration="00:00:00.0207108" startTime="2026-10-04T19:07:54.4561976+03:00" endTime="2026-10-04T19:07:54.4768079+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c54784f-fd53-46f5-afad-3b44a55423e1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(String limit) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 78&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass3_0.&lt;Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories&gt;b__1() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 78</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4013ad6d-5773-4ae8-a451-39cbdfcac7f2" testId="f6fa45d8-c25e-e7c0-dc1e-7c8d28044978" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;nested&quot;, secondPath: &quot;nested/second.txt&quot;)" computerName="OS008-HOME" duration="00:00:00.0211336" startTime="2026-10-04T19:07:54.2574872+03:00" endTime="2026-10-04T19:07:54.2675298+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4013ad6d-5773-4ae8-a451-39cbdfcac7f2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3992de5d-192d-4471-a67d-42a1c9e56669" testId="64e12b3d-89c3-3ba5-2e57-11ff98fb0edf" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: &quot;entries&quot;)" computerName="OS008-HOME" duration="00:00:00.0205652" startTime="2026-10-04T19:07:54.4356775+03:00" endTime="2026-10-04T19:07:54.4555614+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3992de5d-192d-4471-a67d-42a1c9e56669">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(String limit) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 78&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass3_0.&lt;Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories&gt;b__1() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 78</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2d838b88-3ede-4418-b4b5-2655557f8760" testId="ccb1fa7e-d94d-3e8e-4252-dcde359e09fa" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;../escape&quot;, secondPath: &quot;second.txt&quot;)" computerName="OS008-HOME" duration="00:00:00.0197121" startTime="2026-10-04T19:07:54.3498517+03:00" endTime="2026-10-04T19:07:54.3695468+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d838b88-3ede-4418-b4b5-2655557f8760">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e31c5dd9-33cb-4b2f-9a4d-2916ccc376f0" testId="1df6e157-b6a0-13f2-d0ec-7bdc045a4146" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;nested//first.txt&quot;, secondPath: &quot;second.txt&quot;)" computerName="OS008-HOME" duration="00:00:00.0196885" startTime="2026-10-04T19:07:54.3297278+03:00" endTime="2026-10-04T19:07:54.3493497+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e31c5dd9-33cb-4b2f-9a4d-2916ccc376f0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7e59693f-19d1-4ebb-a0d1-bf757e63e30a" testId="80f6c54f-ffe2-a917-9ae6-ab8bd236986c" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;First.txt&quot;, secondPath: &quot;first.TXT&quot;)" computerName="OS008-HOME" duration="00:00:00.0201757" startTime="2026-10-04T19:07:54.3091860+03:00" endTime="2026-10-04T19:07:54.3292065+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e59693f-19d1-4ebb-a0d1-bf757e63e30a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="95e2bfbb-042f-46ab-bacc-95a8e0837939" testId="02df4961-3f2c-d6c1-a637-2faac95810f7" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Multiple_verified_roots_publish_one_folder_before_lineage_and_retain_warnings" computerName="OS008-HOME" duration="00:00:00.0367241" startTime="2026-10-04T19:07:54.5006403+03:00" endTime="2026-10-04T19:07:54.5371153+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="95e2bfbb-042f-46ab-bacc-95a8e0837939">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Multiple_verified_roots_publish_one_folder_before_lineage_and_retain_warnings() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 18&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="078e6b7b-a9b9-4ba6-a7b3-58b105f97872" testId="56054d44-83ec-0822-25a7-62a552684b62" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Cancellation_after_verified_staging_prevents_publication_and_hints" computerName="OS008-HOME" duration="00:00:00.0210734" startTime="2026-10-04T19:07:54.3701150+03:00" endTime="2026-10-04T19:07:54.3911592+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="078e6b7b-a9b9-4ba6-a7b3-58b105f97872">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.OperationCanceledException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Cancellation_after_verified_staging_prevents_publication_and_hints() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 91&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass4_0.&lt;Cancellation_after_verified_staging_prevents_publication_and_hints&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 91</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ed2bb226-a60c-4c9f-b12d-42e09e12e530" testId="39ae7ca0-43c1-54e4-f336-191672bad69e" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: &quot;metadata&quot;)" computerName="OS008-HOME" duration="00:00:00.0219806" startTime="2026-10-04T19:07:54.3917352+03:00" endTime="2026-10-04T19:07:54.4137764+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed2bb226-a60c-4c9f-b12d-42e09e12e530">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(String limit) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 78&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass3_0.&lt;Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories&gt;b__1() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 78</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="14d9876c-0079-44a3-8475-aebed1113934" testId="36560599-b1c8-9d33-262e-c2d40e3af83e" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: &quot;chunks&quot;)" computerName="OS008-HOME" duration="00:00:00.0201446" startTime="2026-10-04T19:07:54.4350180+03:00" endTime="2026-10-04T19:07:54.4350559+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="14d9876c-0079-44a3-8475-aebed1113934">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(String limit) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 78&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass3_0.&lt;Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories&gt;b__1() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 78</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="adb78743-bb5d-483b-ac28-0fa8cd10d518" testId="af274ef5-08f5-4031-a1af-a392eba7c64f" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Late_corrupt_root_publishes_no_partial_tree_or_lineage" computerName="OS008-HOME" duration="00:00:00.1603787" startTime="2026-10-04T19:07:54.0696421+03:00" endTime="2026-10-04T19:07:54.2446185+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="adb78743-bb5d-483b-ac28-0fa8cd10d518">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Late_corrupt_root_publishes_no_partial_tree_or_lineage() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 36&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass1_0.&lt;Late_corrupt_root_publishes_no_partial_tree_or_lineage&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 36</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9326d0d3-e888-4eb3-b114-ccb750cb0e29" testId="ab3fbb4d-eb29-7738-49cf-b474293d81fb" testName="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;CON.txt&quot;, secondPath: &quot;second.txt&quot;)" computerName="OS008-HOME" duration="00:00:00.0202404" startTime="2026-10-04T19:07:54.2684871+03:00" endTime="2026-10-04T19:07:54.2882184+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9326d0d3-e888-4eb3-b114-ccb750cb0e29">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.IO.IOException)&#xD;
+Actual:   typeof(System.NotSupportedException)&#xD;
+---- System.NotSupportedException : Owned forest recovery is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 483&#xD;
+   at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs:line 53</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: &quot;depth&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="fed25db9-670a-b5a9-7907-8e4616feeeb8">
+      <Execution id="5371f280-6679-43da-8ffc-3ed74d6ca23e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Cancellation_after_verified_staging_prevents_publication_and_hints" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="56054d44-83ec-0822-25a7-62a552684b62">
+      <Execution id="078e6b7b-a9b9-4ba6-a7b3-58b105f97872" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Cancellation_after_verified_staging_prevents_publication_and_hints" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Multiple_verified_roots_publish_one_folder_before_lineage_and_retain_warnings" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="02df4961-3f2c-d6c1-a637-2faac95810f7">
+      <Execution id="95e2bfbb-042f-46ab-bacc-95a8e0837939" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Multiple_verified_roots_publish_one_folder_before_lineage_and_retain_warnings" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;First.txt&quot;, secondPath: &quot;first.TXT&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="80f6c54f-ffe2-a917-9ae6-ab8bd236986c">
+      <Execution id="7e59693f-19d1-4ebb-a0d1-bf757e63e30a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Unsafe_or_colliding_forest_names_fail_before_preparing_output" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: &quot;metadata&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="39ae7ca0-43c1-54e4-f336-191672bad69e">
+      <Execution id="ed2bb226-a60c-4c9f-b12d-42e09e12e530" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: &quot;entries&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="64e12b3d-89c3-3ba5-2e57-11ff98fb0edf">
+      <Execution id="3992de5d-192d-4471-a67d-42a1c9e56669" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;nested&quot;, secondPath: &quot;nested/second.txt&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="f6fa45d8-c25e-e7c0-dc1e-7c8d28044978">
+      <Execution id="4013ad6d-5773-4ae8-a451-39cbdfcac7f2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Unsafe_or_colliding_forest_names_fail_before_preparing_output" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;nested//first.txt&quot;, secondPath: &quot;second.txt&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="1df6e157-b6a0-13f2-d0ec-7bdc045a4146">
+      <Execution id="e31c5dd9-33cb-4b2f-9a4d-2916ccc376f0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Unsafe_or_colliding_forest_names_fail_before_preparing_output" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;nested/first.txt&quot;, secondPath: &quot;nested&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="46b25d3b-8273-3858-4426-5a03aa1dd036">
+      <Execution id="bbaac958-54a1-4e55-a21a-b8c566d0d681" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Unsafe_or_colliding_forest_names_fail_before_preparing_output" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: &quot;chunks&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="36560599-b1c8-9d33-262e-c2d40e3af83e">
+      <Execution id="14d9876c-0079-44a3-8475-aebed1113934" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;CON.txt&quot;, secondPath: &quot;second.txt&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ab3fbb4d-eb29-7738-49cf-b474293d81fb">
+      <Execution id="9326d0d3-e888-4eb3-b114-ccb750cb0e29" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Unsafe_or_colliding_forest_names_fail_before_preparing_output" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Late_corrupt_root_publishes_no_partial_tree_or_lineage" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="af274ef5-08f5-4031-a1af-a392eba7c64f">
+      <Execution id="adb78743-bb5d-483b-ac28-0fa8cd10d518" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Late_corrupt_root_publishes_no_partial_tree_or_lineage" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: &quot;nodes&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="62cb1ef9-f9e8-5508-6371-6dc181360dea">
+      <Execution id="0c54784f-fd53-46f5-afad-3b44a55423e1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: &quot;../escape&quot;, secondPath: &quot;second.txt&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ccb1fa7e-d94d-3e8e-4252-dcde359e09fa">
+      <Execution id="2d838b88-3ede-4418-b4b5-2655557f8760" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.SelectionForestRecoveryTests" name="Unsafe_or_colliding_forest_names_fail_before_preparing_output" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="46b25d3b-8273-3858-4426-5a03aa1dd036" executionId="bbaac958-54a1-4e55-a21a-b8c566d0d681" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fed25db9-670a-b5a9-7907-8e4616feeeb8" executionId="5371f280-6679-43da-8ffc-3ed74d6ca23e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="62cb1ef9-f9e8-5508-6371-6dc181360dea" executionId="0c54784f-fd53-46f5-afad-3b44a55423e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6fa45d8-c25e-e7c0-dc1e-7c8d28044978" executionId="4013ad6d-5773-4ae8-a451-39cbdfcac7f2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="64e12b3d-89c3-3ba5-2e57-11ff98fb0edf" executionId="3992de5d-192d-4471-a67d-42a1c9e56669" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ccb1fa7e-d94d-3e8e-4252-dcde359e09fa" executionId="2d838b88-3ede-4418-b4b5-2655557f8760" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1df6e157-b6a0-13f2-d0ec-7bdc045a4146" executionId="e31c5dd9-33cb-4b2f-9a4d-2916ccc376f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="80f6c54f-ffe2-a917-9ae6-ab8bd236986c" executionId="7e59693f-19d1-4ebb-a0d1-bf757e63e30a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02df4961-3f2c-d6c1-a637-2faac95810f7" executionId="95e2bfbb-042f-46ab-bacc-95a8e0837939" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="56054d44-83ec-0822-25a7-62a552684b62" executionId="078e6b7b-a9b9-4ba6-a7b3-58b105f97872" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="39ae7ca0-43c1-54e4-f336-191672bad69e" executionId="ed2bb226-a60c-4c9f-b12d-42e09e12e530" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="36560599-b1c8-9d33-262e-c2d40e3af83e" executionId="14d9876c-0079-44a3-8475-aebed1113934" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="af274ef5-08f5-4031-a1af-a392eba7c64f" executionId="adb78743-bb5d-483b-ac28-0fa8cd10d518" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab3fbb4d-eb29-7738-49cf-b474293d81fb" executionId="9326d0d3-e888-4eb3-b114-ccb750cb0e29" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="14" executed="14" passed="0" failed="14" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.39]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.39]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.39]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.39]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(36,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Late_corrupt_root_publishes_no_partial_tree_or_lineage()&#xD;
+[xUnit.net 00:00:00.39]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.39]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(36,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass1_0.&lt;Late_corrupt_root_publishes_no_partial_tree_or_lineage&gt;b__0()&#xD;
+[xUnit.net 00:00:00.41]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.41]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.41]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.41]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath)&#xD;
+[xUnit.net 00:00:00.41]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.41]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.41]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0()&#xD;
+[xUnit.net 00:00:00.43]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.43]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.43]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.43]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.43]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.43]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath)&#xD;
+[xUnit.net 00:00:00.43]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.43]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.43]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.43]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0()&#xD;
+[xUnit.net 00:00:00.45]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.45]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.45]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.45]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath)&#xD;
+[xUnit.net 00:00:00.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.45]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0()&#xD;
+[xUnit.net 00:00:00.47]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.47]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.47]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.47]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath)&#xD;
+[xUnit.net 00:00:00.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.47]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0()&#xD;
+[xUnit.net 00:00:00.49]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.49]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.49]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.49]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.49]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath)&#xD;
+[xUnit.net 00:00:00.49]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.49]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.49]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0()&#xD;
+[xUnit.net 00:00:00.51]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.51]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.51]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.51]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(String firstPath, String secondPath)&#xD;
+[xUnit.net 00:00:00.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.51]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(53,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsafe_or_colliding_forest_names_fail_before_preparing_output&gt;b__0()&#xD;
+[xUnit.net 00:00:00.53]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.53]       Expected: typeof(System.OperationCanceledException)&#xD;
+[xUnit.net 00:00:00.53]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.53]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(91,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Cancellation_after_verified_staging_prevents_publication_and_hints()&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.53]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(91,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass4_0.&lt;Cancellation_after_verified_staging_prevents_publication_and_hints&gt;b__0()&#xD;
+[xUnit.net 00:00:00.55]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.55]       Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+[xUnit.net 00:00:00.55]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.56]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.56]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(78,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(String limit)&#xD;
+[xUnit.net 00:00:00.56]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.56]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.56]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(78,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass3_0.&lt;Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories&gt;b__1()&#xD;
+[xUnit.net 00:00:00.58]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.58]       Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+[xUnit.net 00:00:00.58]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.58]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.58]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.58]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(78,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(String limit)&#xD;
+[xUnit.net 00:00:00.58]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.58]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.58]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.58]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(78,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass3_0.&lt;Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories&gt;b__1()&#xD;
+[xUnit.net 00:00:00.60]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.60]       Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+[xUnit.net 00:00:00.60]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.60]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.60]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.60]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(78,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(String limit)&#xD;
+[xUnit.net 00:00:00.60]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.60]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.60]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.60]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(78,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass3_0.&lt;Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories&gt;b__1()&#xD;
+[xUnit.net 00:00:00.62]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.62]       Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+[xUnit.net 00:00:00.62]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.62]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.62]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(78,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(String limit)&#xD;
+[xUnit.net 00:00:00.62]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.62]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.62]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(78,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass3_0.&lt;Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories&gt;b__1()&#xD;
+[xUnit.net 00:00:00.64]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.64]       Expected: typeof(FluxVault.Core.Storage.Integrity.RepositoryIntegrityException)&#xD;
+[xUnit.net 00:00:00.64]       Actual:   typeof(System.NotSupportedException)&#xD;
+[xUnit.net 00:00:00.64]       ---- System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.64]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.64]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(78,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(String limit)&#xD;
+[xUnit.net 00:00:00.64]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.64]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.64]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.64]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(78,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.&lt;&gt;c__DisplayClass3_0.&lt;Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories&gt;b__1()&#xD;
+[xUnit.net 00:00:00.68]       System.NotSupportedException : Owned forest recovery is not implemented.&#xD;
+[xUnit.net 00:00:00.68]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.68]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs(483,0): at FluxVault.Core.Storage.FileSystemChunkRepository.RestoreFilesAsync(IReadOnlyList`1 files, IRepositoryRestoreTarget target, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.68]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\SelectionForestRecoveryTests.cs(18,0): at FluxVault.Core.Tests.SelectionForestRecoveryTests.Multiple_verified_roots_publish_one_folder_before_lineage_and_retain_warnings()&#xD;
+[xUnit.net 00:00:00.68]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.68]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.2476007+03:00">
+        <Text>[xUnit.net 00:00:00.39]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Late_corrupt_root_publishes_no_partial_tree_or_lineage [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.2677122+03:00">
+        <Text>[xUnit.net 00:00:00.41]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: "nested", secondPath: "nested/second.txt") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.2883657+03:00">
+        <Text>[xUnit.net 00:00:00.43]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: "CON.txt", secondPath: "second.txt") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.3087360+03:00">
+        <Text>[xUnit.net 00:00:00.45]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: "nested/first.txt", secondPath: "nested") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.3293652+03:00">
+        <Text>[xUnit.net 00:00:00.47]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: "First.txt", secondPath: "first.TXT") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.3494946+03:00">
+        <Text>[xUnit.net 00:00:00.49]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: "nested//first.txt", secondPath: "second.txt") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.3696879+03:00">
+        <Text>[xUnit.net 00:00:00.51]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Unsafe_or_colliding_forest_names_fail_before_preparing_output(firstPath: "../escape", secondPath: "second.txt") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.3913332+03:00">
+        <Text>[xUnit.net 00:00:00.53]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Cancellation_after_verified_staging_prevents_publication_and_hints [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.4139485+03:00">
+        <Text>[xUnit.net 00:00:00.55]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: "metadata") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.4632909+03:00">
+        <Text>[xUnit.net 00:00:00.58]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: "chunks") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.4633307+03:00">
+        <Text>[xUnit.net 00:00:00.60]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: "entries") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.4770212+03:00">
+        <Text>[xUnit.net 00:00:00.62]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: "nodes") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.5001855+03:00">
+        <Text>[xUnit.net 00:00:00.64]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Aggregate_limits_apply_to_the_whole_forest_and_synthetic_directories(limit: "depth") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T19:07:54.5372586+03:00">
+        <Text>[xUnit.net 00:00:00.68]     FluxVault.Core.Tests.SelectionForestRecoveryTests.Multiple_verified_roots_publish_one_folder_before_lineage_and_retain_warnings [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

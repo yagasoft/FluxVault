@@ -53,7 +53,23 @@ public interface IRepositoryMetadataStore
 
     Task<IReadOnlyList<RepositoryVersionSummary>> ListVersionsAsync(CancellationToken cancellationToken = default);
 
+    async Task<IReadOnlyList<RepositoryVersionSummary>> ListRecentVersionsAsync(int maximumCount, CancellationToken cancellationToken = default)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumCount);
+        cancellationToken.ThrowIfCancellationRequested();
+        return (await ListVersionsAsync(cancellationToken).ConfigureAwait(false)).Take(maximumCount).ToArray();
+    }
+
     Task<IReadOnlyList<RepositoryVersionSummary>> ListLatestEntriesAsync(CancellationToken cancellationToken = default);
+
+    Task<RepositoryCurrentEntriesPage> ListCurrentEntriesPageAsync(RepositoryCurrentEntriesQuery query, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("This metadata store cannot page current entries.");
+
+    Task<RepositoryHistoryPage> ListHistoryPageAsync(RepositoryHistoryQuery query, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("This metadata store cannot page history.");
+
+    Task<RepositorySnapshotPage> GetSnapshotPageAsync(RepositorySnapshotQuery query, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("This metadata store cannot page snapshot contents.");
 
     Task DeleteVersionsAsync(IReadOnlyCollection<string> versionIds, CancellationToken cancellationToken = default)
     {

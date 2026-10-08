@@ -54,14 +54,175 @@ ordering defects; rejected stale installer payloads were caught before installat
 Resumed desktop validation exposed and corrected inventory availability/cache
 invalidation handling. Installed recovery and selection preservation now pass;
 all temporary processes exited and the service has no watched test folders.
-None of the complete packages below is fully delivered.
+NEXT-002 is delivered under the single-vault scope, with accessibility/theme deferred; the remaining packages retain their listed scope.
+
+Batch C of the [NEXT-002 plan](superpowers/plans/2026-10-03-next002-with-protection-save.md)
+implements the two requested NEXT-004 save fixes in the isolated branch. Its
+[evidence](verification/2026-10-03-protection-save/README.md) records real-store/VM
+regressions, native failure/retry states, independent review and 722 passing
+tests. It is installed and independently accepted within NEXT-002; pause/resume,
+separate history deletion and the remaining NEXT-004 package remain open. Applicable NEXT-002 security gates are closed.
+
+The bounded [authorised maintenance batch](verification/2026-10-04-next002-maintenance/README.md)
+continues NEXT-002 in the isolated branch: health, retention, scrub, protected
+rehearsal, repair/placement and drain preview now use the installed single-vault
+binding and permission/receipt flow. Native creator A passed 56 checks, ungranted
+B was denied ten maintenance commands, all 1,077 ordinary tests passed and the
+Release build has no warnings/errors. Independent review accepted runtime and
+complete cleanup with the normal installation unchanged. The subsequent
+[mirror-drain batch](verification/2026-10-04-next002-drain/README.md) atomically
+publishes disablement, revision and retained result. It passes 73 real-store
+checks per loopback, 63 native creator checks, eleven ungranted-user denials
+and all 1,099 ordinary tests, with verified physical mirror effects and cleanup.
+Pending UI edits survive completion and newer accepted settings cannot regress.
+The [diagnostics export batch](verification/2026-10-04-next002-diagnostics/README.md)
+adds caller-authorised new-file publication, bound status JSON and retained
+warnings/receipts. Invalid directories fail before admission; cancelled selection
+dispatches nothing, and unconfirmed results retain edits without dependent backup.
+It passes 83 real-store checks per loopback, 72 native creator checks, twelve
+ungranted-user denials and 1,118 ordinary tests. The zero-warning build and fresh
+census confirm both fixtures and temporary workers are gone, with normal services
+and data unchanged. Remaining command/background,
+interruption, performance/accessibility, full G01 and rollout gates stay open.
+The [selection-recovery batch](verification/2026-10-04-next002-selection-recovery/README.md)
+adds caller-authorised no-write preview and verified file/folder publication,
+including one bounded tree from independent file history. Real-store admission
+and durable replay retain permissions, binding and warnings; the actual
+view-model preserves drafts and rejects unverified success. It passes 97
+catalogue checks per loopback, 91 creator checks, fourteen ungranted-user
+denials, all 1,168 ordinary tests and forty owned PostgreSQL integrity cases,
+without skips. The zero-warning builds and final census verify all four
+fixtures and 59 captured process identities are gone, with normal services/data
+unchanged. NEXT-002 remains in progress; its remaining commands, background,
+interruption, resource/performance/accessibility, G01 and rollout gates stay open.
+This updates progress without expanding the agreed roadmap.
+
+The bounded [atomic toggle/sync-status batch](verification/2026-10-04-next002-pause-sync/README.md)
+continues NEXT-002 with the existing protection toggle committed together with
+its configuration revision and completed receipt, and read-only sync status.
+Real-store replay, lost/held acknowledgement, cancellation and queued-backup
+checks preserve untouched settings and ordering. Native pause/resume retains
+history while paused and verifies actual capture/recovery after resume. It
+passes 125 catalogue cases per loopback, 102 creator checks, sixteen ungranted
+user denials and all 1,178 ordinary tests. The Release build has no warnings or
+errors; both fixtures and 24 captured process identities are gone, with normal
+services/data unchanged. Explicit pause/resume UI remains within NEXT-004 and
+the activity control remains disabled while automatic capture is unavailable.
+Conflict handling and the remaining NEXT-002/background/interruption/resource,
+performance/accessibility, G01 and separately approved rollout gates stay open.
+
+The bounded [unsent Protect draft batch](verification/2026-10-04-next002-unsent-draft/README.md)
+adds per-user atomic retention before service dispatch, exact draft/receipt
+correlation, conditional reviewed discard and a joined Exit flush. Options
+exposes the defaulted retention delay. Newer edits survive receipt-retirement
+interruption; local preparation failures retain edits and dispatch no backup.
+All 1,313 ordinary tests and forty fresh PostgreSQL integrity cases pass;
+the Release build has zero warnings/errors. The native workflow passes 132
+creator checks and nineteen ungranted-user denials with independent recovery.
+All six private fixtures, 111 captured process identities and 38 database
+intents are removed, preserving the normal installation. This closes bounded
+never-dispatched Protect retention; broader NEXT-002 and rollout gates remain.
+
+The [native access extension](verification/2026-10-05-next002-native-access/README.md)
+passes forty actual elevated-user and ordinary-user checks for user grants,
+group-only replacement, membership, reopened service composition, receipt privacy
+and revocation. The A132/B19 workflow passes and all 27 captured process
+identities and owned resources are removed, with the normal installation
+unchanged. Independent review accepted this bounded verification extension;
+packaged identity and the complete S01/G01/rollout gates remain open.
+
+The [packaged identity preparation](verification/2026-10-05-next002-packaged-identity/README.md)
+passes 56 focused regressions and a zero-warning Release build. Private package
+construction proves authenticated SDK execution and full owned process/root
+cleanup. A reproduced SignTool key-persistence leak is corrected by private
+pre-import intent, silent native recovery and exact fingerprint-verified key
+retirement. Fresh construction and interrupted native import preserve unrelated
+keys; the census proves six fixture keys and 59 captured processes absent. The
+approved integrity refresh passes all forty cases. Independent review accepts
+this bounded preparation and correction. Native per-user
+package registration, temporary public-certificate trust and Windows profiles
+await bounded resource approval; S01/G01 and normal rollout remain open.
+
+The [native pipe resource checks](verification/2026-10-05-next002-resource-boundary/README.md)
+verify saturation recovery, absolute frame deadlines, stalled-output/receipt
+token retirement and joined native I/O shutdown. All 147 Windows tests pass
+without skips; independent review accepts this bounded same-user transport
+milestone. No runtime or installation change was needed. Wider S06/G01 and
+normal rollout gates remain open.
+
+The [native process-replacement checks](verification/2026-10-05-next002-service-restart/README.md)
+prove exact configuration/receipt persistence, retained unknown outcomes without re-execution, replay without duplicate history,
+explicit group access/revocation and old/new independently hashed recovery
+across clean SYSTEM server-process replacement. All 53 added native checks and
+59 focused tooling tests pass; the Release build has zero warnings/errors.
+Independent review accepts runtime and teardown: all four servers, 58 captured
+processes and all 112 owned resources across both rehearsals are retired, with normal installation
+unchanged. Interrupted effects, reboot, packaged identity and full S07/G01 and
+rollout gates remain open.
+
+The [native interrupted-effect extension](verification/2026-10-05-next002-interrupted-effect/README.md)
+adds one controlled in-flight SYSTEM process death after durable admission and
+independently verified recovery publication. A5/A7 verify exact unknown receipts
+after reopen, replay without recreating deleted output, and independently verified
+recovery under a new operation; the existing A132/B19 workflow passes. Independent
+review accepts bounded delivery and complete teardown: all 63 focused checks
+pass, the Release build has zero warnings/errors, 104 captured identities and all
+135 journal resources are retired, with normal services/data unchanged.
+Whole-branch G01, packaged identity and rollout remain separate;
+no overall roadmap or acceptance requirement changes.
+
+The [Protection failure visibility correction](verification/2026-10-05-next002-desktop-observation/README.md)
+shows full save/local-draft explanations and exposes useful primary control
+names. Actual WPF peer/layout regressions reproduce both defects before fixing;
+all 478 App tests pass and the Release build has zero warnings/errors. Two
+joined disposable desktop observations verify retained edits and zero dependent
+backups; native automation confirms the corrected names/messages. Desktop pixel
+capture remains inconsistent and is not counted as visual acceptance. Full
+D01/accessibility/scale, G01 and rollout gates remain open; scope is unchanged.
+
+The [manual maintenance Options correction](verification/2026-10-05-next002-manual-options/README.md)
+disables unavailable scheduling, explains manual operation and preserves the
+saved enabled state, automatic preference and exact interval. Meaningful
+real-store/actual view-model and rendered WPF regressions pass; all 475 App tests
+and the zero-warning Release solution build pass. Independent review accepts
+the bounded correction; normal installation is unchanged and owned workers
+are absent. Remaining NEXT-002 security, interruption, accessibility/scale,
+final G01 and separately approved rollout gates stay open.
+
+The [manual source/startup continuation](verification/2026-10-05-next002-manual-source/README.md)
+supplies the bounded manual-only S04 proof: locked-source failure preserves
+history and cannot execute on replay after unlocking; a new operation captures
+and recovers verified bytes. Enabled service startup without owner requests
+leaves durable state unchanged until explicit manual backup. Native A141/B19,
+restart A9/A19, 148 Windows tests and 63 focused tests pass; Release has zero
+warnings/errors. All 55 captured identities and 56 resources are retired with
+the normal installation unchanged. Scheduling/VSS/reboot are not delivered;
+packaged identity, D01/scale, final G01 and approved rollout remain open.
+
+The [once-only installation checkpoint](verification/2026-10-05-next002-rollout-preparation/README.md)
+now passes actual protected setup → joined host → ordinary product open →
+save/backup/history/hash-verified recovery over the private fixture pipe. Native
+setup36/A143/B19 and Core105/Windows154/tooling63 pass; Release has zero
+warnings/errors and independent review accepts the bounded result. Both attempts
+retire 85 captured identities/80 resources with the normal installation unchanged.
+The shipping creator confirmation command now passes the native private-pipe
+workflow: setup36/A143/B19, with one correlated CLI request, and all 44 captured
+identities/43 resources retired. Seventy-five combined CLI/registration/compiled
+MSI checks pass. Installer tables now leave runtime stopped/demand-start and
+create no provisioning-owned state. One frozen unsigned v1.0.5 candidate now has
+208 verified payload hashes, checked actual MSI tables and joined build processes.
+Exact authentication replacements/creation SQL and fresh rollback inputs are
+prepared without normal mutation. Supervised commissioning and checked restore,
+fixed-path live setup and separately approved rollout remain next;
+packaged identity, D01/scale and final G01 remain applicable. This adds no roadmap
+scope, migration/adoption or additional-vault capability.
 
 | ID | Priority | Capability | Status | Required verification |
 | --- | --- | --- | --- | --- |
 | NEXT-001 | P0 | Protection contract and executable baseline | Partially implemented | Real-interface disposable round trip, meaningful fault regressions, live PostgreSQL harness and benchmark corpus. |
-| NEXT-002 | P0 | Authorised IPC and vault isolation | Planned | Caller/resource denial and authorised success, bounded requests, malicious-path rejection and two-vault isolation. |
+| NEXT-002 | P0 | Authorised IPC and single-vault repository binding | Delivered (accessibility/theme deferred) | [Single-vault product composition](verification/2026-10-04-next002-execution/README.md) proves native creator save → backup → history → verified recovery and ungranted-user refusal. The [owned integrity run](verification/2026-10-04-next002-integrity-runner/README.md) passed all 40 database cases without skips and verified teardown. [Backup restart recovery](verification/2026-10-04-next002-client-recovery/README.md) passed 263 App tests. [Caller-authorised file previews](verification/2026-10-04-next002-preview/README.md) passed the native workflow, 978 ordinary tests and Options retention checks. [Dispatched protection-save recovery](verification/2026-10-04-next002-save-recovery/README.md) passed 296 App tests and preserves durable review gates. [Dispatched Options-save recovery](verification/2026-10-04-next002-options-recovery/README.md) passes 324 App tests and the zero-warning Release build; independent review approved the bounded scope. [Definite pre-admission refusal](verification/2026-10-04-next002-command-refusal/README.md) passed the final 1,042-case ordinary suite and retains edits without creating false uncertainty. [Committed save and selective purge](verification/2026-10-04-next002-save-purge/README.md) passes 32 native creator checks, independently verified recovery, complete teardown and the 1,055-case ordinary suite; preservation conflicts cannot delete retained history and failed purges retain the UI review gate. [Bounded Overview recent history](verification/2026-10-04-next002-recent-status/README.md) passes 1,181 ordinary tests, 33 real metadata checks on each loopback, the native workflow and all forty owned PostgreSQL integrity cases. Fresh v2 metadata preserves exact timestamp/ordinal ordering; unsupported existing schemas are refused without automatic upgrades. All four fixtures and 46 owned process identities are gone; normal installation/data are unchanged. [Recovery-history paging](verification/2026-10-04-next002-history-paging/README.md) adds scoped bidirectional pages, lazy recorded-folder contents, exact child recovery and joined WPF reads; 1,209 ordinary tests and 40 owned integrity cases pass. History paging introduced v3. [Canonical current-entry correctness](verification/2026-10-04-next002-current-projection/README.md) fixes path/kind uniqueness, exact winner ordering and atomic pruning fallback; fresh metadata is now v4 without adoption/upgrades. The 93 metadata checks per loopback, native recovery workflow, 40 integrity cases and 1,209 ordinary tests pass, with all owned resources removed. [Current-file transport paging](verification/2026-10-04-next002-current-paging/README.md) adds generation-bound forward keysets, explicit status omission, complete-sweep dashboard publication and joined shutdown; 1,235 ordinary tests and native creator/current-file checks pass. The owned integrity suite passes 40/40 and all five private fixtures/72 owned processes are removed, with the normal installation unchanged. [Automatic current-file refresh](verification/2026-10-04-next002-auto-inventory/README.md) preserves invalidation across cache warming, retries unconsumed epochs and reconciles real missing/restored browser entries without losing pending or nested state. Its 1,247 ordinary tests, native creator/current workflow and forty fresh integrity cases pass; all four fixtures, 72 owned processes and 38 database intents are removed, with the normal installation unchanged. [Unsent Protect retention](verification/2026-10-04-next002-unsent-draft/README.md) adds atomic per-user drafts, exact receipt correlation and joined Exit; 1,313 ordinary tests, forty fresh integrity cases and the native verified workflow pass, with 111 captured processes and all six fixtures removed. Applicable remaining command/background, other interruption cases, client accumulation/rendering, scale/performance/accessibility and final review/rollout gates remain open. Multi-vault lifecycle/discovery/switching and dedicated gates are removed by the user's 4 October scope decision.  Native SYSTEM commissioning now proves forced operator exit and interrupted-write restoration with final-state retention; 101 combined checks pass. The existing preparation record retains the current exact candidate pins and checked rollback inputs. Whole-branch review identified a response interruption defect; the bounded client correction now retains unknown save/backup/receipt outcomes and newer edits without dependent backup or blind retry. The replacement candidate, affected combined checks and native workflow pass; independent Astra accepts the code/preparation portion of G01. The executable fixed-candidate installation/rollback connects retired authentication, native creator confirmation, joined setup and activation, and blocks unmatched installer intents; native rollback restoration/admin retirement is verified. S01 packaged proof/cleanup and consolidated code/procedure review are accepted. Agent-operated native desktop checks verify failed-save/pending-edit states, keyboard/navigation, 10,000-file interaction and actual DPI with joined cleanup. The user defers accessibility/theme work only; other UI/UX gates remain, including installed successful workflow/status/history/recovery. The exact fixed-path rollout is user-approved and independently accepted. Normal commissioning, administrator retirement, native creator confirmation and installed S05 probes now pass, with legacy state and the original PostgreSQL lifetime preserved. A reproduced native presentation defect is corrected with process-local software rendering. The corrected staged App completes real desktop save of two folders, backup of four files, visible history and independently hash-verified recovery through the commissioned service. Corrected 10,000-item native175%/200% interaction passes with joined cleanup. Approved1.0.6 and1.0.7 updates now complete. Actual installed1.0.7 Options close/save/reopen and save → backup2files → history16 → independently hash-verified recovery2files pass. Earlier sources/recoveries, creator ownership/authentication and the original PostgreSQL lifetime remain unchanged; all launched native installer/UI actors are joined. The actual owner-activation refresh race is fixed with two real-WPF/real-store regressions. App489 and ordinary Integration343 pass; unchanged Core563/Windows154 and named native gates remain applicable. Exact packages and rollback inputs are retained outside the worktree. Final independent branch/live acceptance closes G01 with no blocking findings. Applicable gates are satisfied; accessibility/theme alone are deferred. |
 | NEXT-003 | P0 | Verified publication, restore and safe mirrors | Partially implemented | Bit-flip/missing-payload/last-good-copy cases, validated manifests, bounded decoding and destination preservation. |
-| NEXT-004 | P0 | Correct configuration and user commands | Planned | Preserve all untouched settings, reject stale updates, stop after failed save, explicit pause and separate history deletion. |
+| NEXT-004 | P0 | Correct configuration and user commands | Partially delivered within NEXT-002 | Untouched-setting preservation and stop-after-failed-save are delivered with real-store/actual-VM regressions. Remaining package: explicit pause and separate history deletion, plus its remaining configuration contracts. |
 | NEXT-005 | P0 | Durable work and owned runtime lifecycle | Partially implemented | Journal acknowledgement, fault/stop/restart, watcher recovery, cross-process maintenance/restore and no post-stop writes. |
 | NEXT-006 | P0 | Independent local disaster recovery | Planned | Recover on a fresh environment without source/primary/DB, including replay/deletion and retained-checkpoint consistency. |
 | NEXT-007 | P1 | Modern shell and guided protection | Planned | Working overview/setup journey, truthful states, accessible adaptive layout and observed professional first use. |

@@ -10,10 +10,12 @@ using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Abstractions.Sync;
+using FluxVault.Abstractions.Security;
 using FluxVault.App.Services;
 using FluxVault.Core.Configuration;
 using FluxVault.Core.Ipc;
 using FluxVault.Core.Policies;
+using FluxVault.Core.Security;
 using WinForms = System.Windows.Forms;
 
 namespace FluxVault.App.ViewModels;
@@ -24,31 +26,44 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private const int PerformanceWorkspaceIndex = 5;
     private static readonly JsonSerializerOptions ConfigurationFingerprintJsonOptions = new(JsonSerializerDefaults.Web);
     private readonly IFluxVaultServiceClient client;
+    private readonly IBackupOperationStore backupOperationStore;
+    private readonly IConfigurationSaveOperationStore saveOperationStore;
+    private readonly FluxVault.Windows.Security.WindowsUserPreviewCache previewCache;
     private readonly IFluxVaultWindowsServiceController windowsServiceController;
     private readonly IRestoreDestinationPicker restoreDestinationPicker;
     private readonly IRestoreOverwriteConfirmation restoreOverwriteConfirmation;
     private readonly IProtectionRemovalConfirmation protectionRemovalConfirmation;
     private readonly IVersionPreviewLauncher versionPreviewLauncher;
     private readonly IMirrorNodeDialogService mirrorNodeDialogService;
-    private readonly IProfileDialogService profileDialogService;
+    private readonly IDiagnosticsExportFolderPicker diagnosticsExportFolderPicker;
     private readonly TimeSpan autoRefreshInterval;
     private readonly SemaphoreSlim refreshGate = new(1, 1);
     private CancellationTokenSource? autoRefreshCancellation;
     private Task? autoRefreshTask;
     private bool isApplyingStatus;
     private bool hasLocalConfigurationChanges;
+    private FluxVaultConfiguration? acceptedConfiguration;
+    private VaultId? acceptedVaultId;
+    private long? acceptedConfigurationRevision;
+    private long configurationEditGeneration;
+    private bool requiresPurgeReconciliation;
+    private bool requiresSaveStatusCheck;
+    private FluxVaultConfiguration? lastDispatchedSaveConfiguration;
+    private PendingBackupOperation? unconfirmedBackup;
+
+    public Guid? UnconfirmedBackupOperationId => unconfirmedBackup?.OperationId;
+    public bool HasUnconfirmedBackup => unconfirmedBackup is not null;
+    private PendingConfigurationSave? unconfirmedProtectionSave;
+    private bool saveRecordBlocked;
+    private bool saveConfirmedForReview;
+    public bool HasUnconfirmedProtectionSave => unconfirmedProtectionSave is not null || saveRecordBlocked;
+
+    [ObservableProperty]
+    private string backupOutcomeMessage = string.Empty;
+    private bool isOptionsEditing;
+    private bool requiresOptionsReconciliation;
     private string? lastAppliedConfigurationFingerprint;
-    private (string ProfileId, string RepositoryPath, MetadataStoreConfiguration MetadataStore)? lastAppliedVersionInventoryIdentity;
-    private RetentionPolicy currentRetentionPolicy = RetentionPolicy.CreateDefault();
-    private CaptureCadencePolicy currentCaptureCadencePolicy = CaptureCadencePolicy.CreateDefault();
-    private CodecPolicy currentCodecPolicy = CodecPolicy.CreateDefault();
-    private WorkloadPolicyConfiguration currentWorkloadPolicy = WorkloadPolicyConfiguration.CreateDefault();
-    private PerformanceWorkspaceConfiguration currentPerformanceWorkspace = PerformanceWorkspaceConfiguration.CreateDefault(AppContext.BaseDirectory);
-    private ShellIntegrationConfiguration currentShellIntegration = ShellIntegrationConfiguration.CreateDefault(AppContext.BaseDirectory);
-    private DirectCloudConfiguration currentDirectCloud = DirectCloudConfiguration.CreateDefault();
-    private SecurityPostureConfiguration currentSecurityPosture = SecurityPostureConfiguration.CreateDefault();
-    private EnterpriseFleetConfiguration currentFleet = EnterpriseFleetConfiguration.CreateDefault();
-    private IReadOnlyList<ProtectionExclusionRule> currentExclusionRules = [];
+    private (VaultId? RepositoryId, string RepositoryPath, MetadataStoreConfiguration MetadataStore)? lastAppliedVersionInventoryIdentity;
     private readonly Dictionary<string, MirrorMigrationState> pendingMirrorMigrations = new(StringComparer.OrdinalIgnoreCase);
     private RepositoryScrubReport? currentScrubReport;
     private RestoreRehearsalReport? currentRestoreRehearsalReport;
@@ -61,6 +76,71 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string serviceStatus = "Service connection: checking...";
+
+    [ObservableProperty]
+    private ProtectionSaveState protectionSaveState;
+
+    [ObservableProperty]
+    private string protectionSaveMessage = string.Empty;
+
+    [ObservableProperty]
+    private bool isProtectionSaveBusy;
+
+    public bool CanSaveProtection => !IsPreparingForExit && !IsProtectionSaveBusy && !isOptionsEditing && !requiresOptionsReconciliation && !HasUnconfirmedProtectionSave && !RequiresLocalProtectionDraftReview;
+
+    public bool CanDiscardConfigurationChanges => !IsPreparingForExit && !IsProtectionSaveBusy && !isOptionsEditing &&
+        (!HasUnconfirmedProtectionSave || saveConfirmedForReview && unconfirmedProtectionSave?.Origin == ConfigurationSaveOrigin.Protect);
+
+    public bool CanOpenOptions => !IsPreparingForExit && acceptedConfiguration is not null && !IsProtectionSaveBusy && !isOptionsEditing &&
+        (!requiresOptionsReconciliation && !HasUnconfirmedProtectionSave && !hasLocalConfigurationChanges ||
+         !saveRecordBlocked && unconfirmedProtectionSave?.Origin == ConfigurationSaveOrigin.Options &&
+         unconfirmedProtectionSave.RepositoryId == acceptedVaultId?.Value);
+
+    public bool CanCheckProtectionSaveOutcome => !IsPreparingForExit && !IsProtectionSaveBusy && HasUnconfirmedProtectionSave &&
+        unconfirmedProtectionSave?.Origin != ConfigurationSaveOrigin.Options;
+
+    public string OptionsEntryToolTip => CanOpenOptions
+        ? "Open retention, maintenance, capture, compression, and Explorer settings."
+        : "Load configuration, then save or discard pending protection changes before opening Options.";
+
+    private void NotifyOptionsEntryChanged()
+    {
+        OnPropertyChanged(nameof(CanOpenOptions));
+        OnPropertyChanged(nameof(OptionsEntryToolTip));
+    }
+
+    internal bool TryBeginOptionsEditing()
+    {
+        if (!TryLoadPendingConfigurationSave()) return false;
+        if (!CanOpenOptions) return false;
+        isOptionsEditing = true;
+        NotifyConfigurationCommandAvailability();
+        return true;
+    }
+
+    internal async Task EndOptionsEditingAsync()
+    {
+        requiresOptionsReconciliation = true;
+        try
+        {
+            var applied = await RefreshAsync(isAutomatic: false, forceConfigurationReload: !hasLocalConfigurationChanges,
+                expectedEditGeneration: configurationEditGeneration, waitForActiveRefresh: true).ConfigureAwait(true);
+            if (!applied)
+            {
+                ProtectionSaveMessage = "Options could not be reloaded. Protection saving is unavailable until saved settings are reloaded. Your pending edits are kept; refresh, or review them and use Discard changes to reload.";
+                SetServiceStatus($"Service connection: {ProtectionSaveMessage}");
+            }
+        }
+        finally
+        {
+            isOptionsEditing = false;
+            NotifyConfigurationCommandAvailability();
+        }
+    }
+
+    public bool HasProtectionSaveMessage => !string.IsNullOrWhiteSpace(ProtectionSaveMessage);
+
+    partial void OnProtectionSaveMessageChanged(string value) => OnPropertyChanged(nameof(HasProtectionSaveMessage));
 
     [ObservableProperty]
     private string serviceStatusToolTip = "Service connection status is checking.";
@@ -164,24 +244,17 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private string performanceStatusText = "Performance: waiting";
 
-    [ObservableProperty]
-    private FluxVaultProfileRow? selectedProfile;
-
-    [ObservableProperty]
-    private string activeProfileName = "Default";
-
-    public ObservableCollection<FluxVaultProfileRow> Profiles { get; } = [];
-
     public MainWindowViewModel()
         : this(
-            new NamedPipeFluxVaultClient(),
+            new NamedPipeFluxVaultClient(FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService()),
             TimeSpan.FromSeconds(5),
             new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
             new WindowsFluxVaultServiceController(),
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
             new WpfMirrorNodeDialogService(),
-            profileDialogService: new ProfileDialogService())
+            backupOperationStore: new FileBackupOperationStore(), saveOperationStore: new FileConfigurationSaveOperationStore(),
+            protectionDraftStore: new FileProtectionDraftStore())
     {
     }
 
@@ -193,8 +266,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new AssumedRunningWindowsServiceController(),
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
-            new WpfMirrorNodeDialogService(),
-            profileDialogService: new ProfileDialogService())
+            new WpfMirrorNodeDialogService())
     {
     }
 
@@ -209,8 +281,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new AssumedRunningWindowsServiceController(),
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
-            mirrorNodeDialogService,
-            profileDialogService: new ProfileDialogService())
+            mirrorNodeDialogService)
     {
     }
 
@@ -226,24 +297,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new AssumedRunningWindowsServiceController(),
             restoreDestinationPicker,
             restoreOverwriteConfirmation,
-            new WpfMirrorNodeDialogService(),
-            profileDialogService: new ProfileDialogService())
-    {
-    }
-
-    public MainWindowViewModel(
-        IFluxVaultServiceClient client,
-        TimeSpan autoRefreshInterval,
-        IProfileDialogService profileDialogService)
-        : this(
-            client,
-            autoRefreshInterval,
-            new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
-            new AssumedRunningWindowsServiceController(),
-            new SaveFileRestoreDestinationPicker(),
-            new MessageBoxRestoreOverwriteConfirmation(),
-            new WpfMirrorNodeDialogService(),
-            profileDialogService: profileDialogService)
+            new WpfMirrorNodeDialogService())
     {
     }
 
@@ -261,8 +315,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             restoreDestinationPicker,
             restoreOverwriteConfirmation,
             new WpfMirrorNodeDialogService(),
-            versionPreviewLauncher,
-            profileDialogService: new ProfileDialogService())
+            versionPreviewLauncher)
     {
     }
 
@@ -277,8 +330,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             new WindowsFluxVaultServiceController(),
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
-            new WpfMirrorNodeDialogService(),
-            profileDialogService: new ProfileDialogService())
+            new WpfMirrorNodeDialogService())
     {
     }
 
@@ -294,8 +346,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             windowsServiceController,
             new SaveFileRestoreDestinationPicker(),
             new MessageBoxRestoreOverwriteConfirmation(),
-            new WpfMirrorNodeDialogService(),
-            profileDialogService: new ProfileDialogService())
+            new WpfMirrorNodeDialogService())
     {
     }
 
@@ -308,17 +359,25 @@ public sealed partial class MainWindowViewModel : ObservableObject
         IRestoreOverwriteConfirmation restoreOverwriteConfirmation,
         IMirrorNodeDialogService? mirrorNodeDialogService = null,
         IVersionPreviewLauncher? versionPreviewLauncher = null,
-        IProfileDialogService? profileDialogService = null,
-        IProtectionRemovalConfirmation? protectionRemovalConfirmation = null)
+        IProtectionRemovalConfirmation? protectionRemovalConfirmation = null,
+        IBackupOperationStore? backupOperationStore = null,
+        FluxVault.Windows.Security.WindowsUserPreviewCache? previewCache = null,
+        IConfigurationSaveOperationStore? saveOperationStore = null,
+        IDiagnosticsExportFolderPicker? diagnosticsExportFolderPicker = null,
+        IProtectionDraftStore? protectionDraftStore = null)
     {
         this.client = client;
+        this.diagnosticsExportFolderPicker = diagnosticsExportFolderPicker ?? new DiagnosticsExportFolderPicker();
+        this.backupOperationStore = backupOperationStore ?? new MemoryBackupOperationStore();
+        this.saveOperationStore = saveOperationStore ?? new MemoryConfigurationSaveOperationStore();
+        this.protectionDraftStore = protectionDraftStore;
+        this.previewCache = previewCache ?? new();
         this.windowsServiceController = windowsServiceController;
         this.restoreDestinationPicker = restoreDestinationPicker;
         this.restoreOverwriteConfirmation = restoreOverwriteConfirmation;
         this.protectionRemovalConfirmation = protectionRemovalConfirmation ?? new MessageBoxProtectionRemovalConfirmation();
         this.versionPreviewLauncher = versionPreviewLauncher ?? new ShellVersionPreviewLauncher();
         this.mirrorNodeDialogService = mirrorNodeDialogService ?? new WpfMirrorNodeDialogService();
-        this.profileDialogService = profileDialogService ?? new ProfileDialogService();
         this.autoRefreshInterval = autoRefreshInterval;
         FileBrowser = fileBrowser;
         FileBrowser.SelectionRulesChanged += (_, _) => MarkConfigurationDirty();
@@ -422,6 +481,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         MirrorPlacementProfile != MirrorPlacementProfile.Redundant || EnabledMirrorCount >= MinimumMirrorCopies;
 
     public IFluxVaultServiceClient ServiceClient => client;
+    internal IConfigurationSaveOperationStore ConfigurationSaveOperationStore => saveOperationStore;
 
     public IReadOnlyList<string> ResourceProfiles { get; } =
     [
@@ -438,11 +498,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public void StartAutoRefresh()
     {
+        if (repositoryReadsStopping) return;
         if (autoRefreshTask is { IsCompleted: false })
         {
             return;
         }
 
+        autoRefreshCancellation?.Dispose();
         autoRefreshCancellation = new CancellationTokenSource();
         autoRefreshTask = AutoRefreshAsync(autoRefreshCancellation.Token);
     }
@@ -450,9 +512,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public void StopAutoRefresh()
     {
         autoRefreshCancellation?.Cancel();
-        autoRefreshCancellation?.Dispose();
-        autoRefreshCancellation = null;
-        autoRefreshTask = null;
     }
 
     public void ApplyRestorePathRequest(string restorePath)
@@ -478,7 +537,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             case AppStartupRequestAction.ShowVersions:
                 ApplyRestorePathRequest(request.Path);
-                await RefreshAsync(isAutomatic: false, forceConfigurationReload: true).ConfigureAwait(true);
+                await RefreshAsync(isAutomatic: false).ConfigureAwait(true);
                 await ShowVersionsForPathAsync(request.Path).ConfigureAwait(true);
                 break;
             case AppStartupRequestAction.AddToFluxVault:
@@ -520,16 +579,26 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    private async Task RefreshAsync(
+    private async Task<bool> RefreshAsync(
         bool isAutomatic,
         CancellationToken cancellationToken = default,
-        bool forceConfigurationReload = false)
+        bool forceConfigurationReload = false,
+        long? expectedEditGeneration = null,
+        bool validateDiscardReview = false,
+        PendingConfigurationSave? discardReview = null,
+        bool waitForActiveRefresh = false)
     {
+        var reconcileOptions = requiresOptionsReconciliation;
+        var refresh = BeginRepositoryRefresh(cancellationToken);
+        if (refresh is null) return false;
+        cancellationToken = refresh.Token;
         try
         {
-            if (!await refreshGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
+            // Closing Options activates its owner and can start another refresh first.
+            // Its required reload must run after that refresh, not be silently skipped.
+            if (!await refreshGate.WaitAsync(waitForActiveRefresh ? Timeout.Infinite : 0, cancellationToken).ConfigureAwait(true))
             {
-                return;
+                return false;
             }
 
             try
@@ -541,20 +610,23 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     or FluxVaultWindowsServiceState.StopPending)
                 {
                     SetServiceStatus($"Service connection: unavailable ({serviceStatusSnapshot.Message})");
-                    return;
+                    return false;
                 }
 
-                var response = await client.SendAsync(
+                var response = await SendBoundAsync(
                         FluxVaultIpcRequest.GetStatus(
                             statusDetailLevel: isAutomatic
                                 ? FluxVaultStatusDetailLevel.Fast
                                 : FluxVaultStatusDetailLevel.Full),
                         cancellationToken)
                     .ConfigureAwait(true);
+                var reloadCurrentInventory = !isAutomatic;
                 if (isAutomatic && response.Success && response.Status is { HasVersionInventory: false })
                 {
-                    response = await client.SendAsync(
-                            FluxVaultIpcRequest.GetStatus(statusDetailLevel: FluxVaultStatusDetailLevel.Full),
+                    reloadCurrentInventory = true;
+                    response = await SendBoundAsync(
+                            FluxVaultIpcRequest.GetStatus(
+                                statusDetailLevel: FluxVaultStatusDetailLevel.Full),
                             cancellationToken)
                         .ConfigureAwait(true);
                 }
@@ -562,44 +634,86 @@ public sealed partial class MainWindowViewModel : ObservableObject
                 {
                     SetServiceStatus($"Service connection: unavailable ({response.ErrorMessage ?? "no status returned"})");
                     SetServiceConnectionWarning(response.ErrorMessage ?? "The dashboard cannot connect to the FluxVault service.");
-                    return;
+                    return false;
                 }
 
                 if (!response.Status.HasVersionInventory)
                 {
                     SetServiceStatus("Service connection: running - repository inventory unavailable; previous versions retained");
                     SetServiceConnectionWarning("The service has not supplied a repository version inventory.");
-                    return;
+                    return false;
                 }
 
-                ApplyStatus(
+                var currentIdentity = (response.VaultId, response.Status.Configuration.RepositoryPath, response.Status.Configuration.MetadataStore);
+                if (response.Status.UsesPagedCurrentEntries &&
+                    (response.Status.RepositoryInventoryEpoch is not { } epoch || epoch == Guid.Empty || response.Status.TrackedEntries is not null))
+                    throw new InvalidDataException("Current inventory status has no valid cache epoch or violates its paging contract. Previous entries and edits are kept.");
+                if (response.Status.UsesPagedCurrentEntries && (reloadCurrentInventory || lastAppliedCurrentInventoryIdentity != currentIdentity ||
+                    lastAppliedCurrentInventoryEpoch != response.Status.RepositoryInventoryEpoch))
+                {
+                    var entries = await ReadCurrentInventoryAsync(response, cancellationToken).ConfigureAwait(true);
+                    response = response with { Status = response.Status with { TrackedEntries = entries } };
+                }
+                cancellationToken.ThrowIfCancellationRequested();
+                if (acceptedVaultId == response.VaultId && acceptedConfigurationRevision is { } acceptedRevision && response.VaultRevision < acceptedRevision)
+                    throw new InvalidDataException("Current inventory belongs to an older configuration revision. Previous entries and edits are kept.");
+                var discardGenerationMatches = expectedEditGeneration is null || expectedEditGeneration == configurationEditGeneration;
+                if (validateDiscardReview && !ValidateDiscardReview(discardReview)) return false;
+                var preservedOptionsDraft = reconcileOptions && hasLocalConfigurationChanges && !forceConfigurationReload &&
+                    acceptedConfiguration is not null && response.VaultId == acceptedVaultId && response.VaultRevision == acceptedConfigurationRevision &&
+                    ComputeConfigurationFingerprint(response.Status.Configuration) == ComputeConfigurationFingerprint(acceptedConfiguration);
+                var appliedConfiguration = ApplyStatus(
                     response.Status,
-                    preserveLocalConfiguration: hasLocalConfigurationChanges && !forceConfigurationReload,
+                    preserveLocalConfiguration: hasLocalConfigurationChanges && (!forceConfigurationReload || !discardGenerationMatches),
                     isAutomatic,
-                    forceConfigurationReload);
-                if (SelectedWorkspaceIndex == PerformanceWorkspaceIndex)
+                    forceConfigurationReload,
+                    reconcileOptions, response.VaultId, response.VaultRevision);
+                TryLoadPendingBackupRecord();
+                await LoadLocalProtectionDraftAsync().ConfigureAwait(true);
+                if (!validateDiscardReview) TryLoadPendingConfigurationSave();
+                if (preservedOptionsDraft)
+                {
+                    requiresOptionsReconciliation = false;
+                    requiresSaveStatusCheck = HasUnconfirmedProtectionSave;
+                    NotifyConfigurationCommandAvailability();
+                }
+                if (SelectedWorkspaceIndex == PerformanceWorkspaceIndex && !validateDiscardReview)
                 {
                     await RefreshPerformanceAsync(cancellationToken).ConfigureAwait(true);
                 }
+                return appliedConfiguration || preservedOptionsDraft;
             }
             finally
             {
                 refreshGate.Release();
             }
         }
+        catch (OperationCanceledException ex)
+        {
+            if (!repositoryReadsStopping) SetServiceUnavailable(new IOException("Current inventory refresh was cancelled; previous entries and edits are kept.", ex));
+            return false;
+        }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException)
         {
             SetServiceUnavailable(ex);
+            return false;
         }
         catch (InvalidOperationException ex)
         {
             SetServiceUnavailable(ex);
+            return false;
         }
+        catch (Exception ex) when (ex is InvalidDataException or ArgumentException or JsonException)
+        {
+            SetServiceUnavailable(new IOException("Current inventory could not be completed; previous entries and edits are kept. " + ex.Message, ex));
+            return false;
+        }
+        finally { refresh.Dispose(); EndRepositoryRefresh(); }
     }
 
     private async Task RefreshPerformanceAsync(CancellationToken cancellationToken = default)
     {
-        var response = await client.SendAsync(FluxVaultIpcRequest.GetPerformance(), cancellationToken)
+        var response = await SendBoundAsync(FluxVaultIpcRequest.GetPerformance(), cancellationToken)
             .ConfigureAwait(true);
         if (!response.Success || response.Performance is null)
         {
@@ -687,14 +801,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
         OpenSelectedVersionPreviewCommand.NotifyCanExecuteChanged();
     }
 
-    partial void OnSelectedProfileChanged(FluxVaultProfileRow? value)
-    {
-        if (isApplyingStatus || value is null || value.IsActive)
-        {
-            return;
-        }
+    partial void OnIsProtectionSaveBusyChanged(bool value)
+        => NotifyConfigurationCommandAvailability();
 
-        _ = SwitchProfileAsync(value.Id);
+    private void NotifyConfigurationCommandAvailability()
+    {
+        NotifyOptionsEntryChanged();
+        OnPropertyChanged(nameof(CanSaveProtection));
+        OnPropertyChanged(nameof(CanDiscardConfigurationChanges));
+        OnPropertyChanged(nameof(CanCheckProtectionSaveOutcome));
+        CheckProtectionSaveOutcomeCommand.NotifyCanExecuteChanged();
+        SaveConfigurationCommand.NotifyCanExecuteChanged();
+        RunBackupNowCommand.NotifyCanExecuteChanged();
+        DiscardConfigurationChangesCommand.NotifyCanExecuteChanged();
     }
 
     private void MarkConfigurationDirty()
@@ -702,163 +821,432 @@ public sealed partial class MainWindowViewModel : ObservableObject
         if (!isApplyingStatus)
         {
             hasLocalConfigurationChanges = true;
+            configurationEditGeneration++;
+            NotifyOptionsEntryChanged();
+            ScheduleLocalProtectionDraft();
         }
     }
 
-    private async Task SaveConfigurationCoreAsync(bool refreshAfterSave = true, string? successStatus = null)
+    private async Task<ProtectionSaveOutcome> SaveConfigurationCoreAsync(bool refreshAfterSave = true, string? successStatus = null)
     {
-        var removedSelections = FileBrowser.GetRemovedSelectionPurgeScopes();
-        if (removedSelections.Count > 0 && !protectionRemovalConfirmation.ConfirmPurge(removedSelections))
+        var vaultId = acceptedVaultId;
+        var generation = configurationEditGeneration;
+        var saveDispatched = false;
+        IReadOnlyList<RepositoryPurgeScope> dispatchedRemovedSelections = [];
+        if (!TryLoadPendingConfigurationSave() || HasUnconfirmedProtectionSave)
+            return new ProtectionSaveOutcome(ProtectionSaveState.Unknown, vaultId, generation, acceptedConfigurationRevision);
+        if (!CanSaveProtection)
         {
-            SetServiceStatus("Service connection: save cancelled; removed selections were not purged");
-            return;
+            return new ProtectionSaveOutcome(ProtectionSaveState.Failed, vaultId, generation, acceptedConfigurationRevision);
         }
-
-        FluxVaultIpcResponse response;
+        IsProtectionSaveBusy = true;
         try
         {
-            response = await client.SendAsync(FluxVaultIpcRequest.SaveConfiguration(
-                    BuildConfiguration(),
-                    SelectedProfile?.Id,
-                    purgeRemovedSelections: removedSelections.Count > 0,
-                    removedSelections: removedSelections,
-                    preservedSelections: FileBrowser.GetProtectedSelectionPurgeScopes()))
+            if (acceptedConfiguration is null || vaultId is null || acceptedConfigurationRevision is not > 0)
+            {
+                return CompleteProtectionSave(ProtectionSaveState.Failed, vaultId, generation,
+                    "Save failed: load the vault's verified configuration first. Your changes are kept. Backup has not started for this action.");
+            }
+            if (requiresPurgeReconciliation)
+            {
+                return CompleteProtectionSave(ProtectionSaveState.Failed, vaultId, generation,
+                    "Save stopped: the previous purge needs review. Your changes are kept. Reload saved settings using Discard changes before saving again. Backup has not started for this action.");
+            }
+            if (requiresSaveStatusCheck)
+            {
+                return CompleteProtectionSave(ProtectionSaveState.Unknown, vaultId, generation,
+                    "Save could not be confirmed. Refresh to check the saved settings before retrying. Your changes are kept. Backup has not started for this action.");
+            }
+            var removedSelections = FileBrowser.GetRemovedSelectionPurgeScopes();
+            if (removedSelections.Count > 0 && !protectionRemovalConfirmation.ConfirmPurge(removedSelections))
+            {
+                return CompleteProtectionSave(ProtectionSaveState.Cancelled, vaultId, generation,
+                    "Save cancelled; removed selections were not purged. Your changes are kept. Backup has not started for this action.");
+            }
+
+            var pending = new PendingConfigurationSave(vaultId.Value.Value, Guid.NewGuid(), acceptedConfigurationRevision.Value,
+                BuildConfiguration(), removedSelections.Count > 0, removedSelections, FileBrowser.GetProtectedSelectionPurgeScopes()).Freeze();
+            pending = await ReserveProtectionSaveAsync(pending,generation).ConfigureAwait(true);
+            var configuration = pending.Configuration;
+            lastDispatchedSaveConfiguration = configuration;
+            dispatchedRemovedSelections = removedSelections;
+            ProtectionSaveState = ProtectionSaveState.Saving;
+            ProtectionSaveMessage = "Saving protection changes…";
+            saveDispatched = true;
+            var response = await SendBoundAsync(pending.Request)
                 .ConfigureAwait(true);
+            if (!response.Success)
+            {
+                if (response.ErrorCode is not (FluxVaultIpcErrorCode.Denied or FluxVaultIpcErrorCode.InvalidRequest or FluxVaultIpcErrorCode.StaleRevision))
+                {
+                    requiresSaveStatusCheck = true;
+                    return CompleteProtectionSave(ProtectionSaveState.Unknown, vaultId, generation,
+                        $"Save could not be confirmed ({response.ErrorMessage}). Your changes are kept. Backup has not started for this action.");
+                }
+                await protectionDraftIoGate.WaitAsync().ConfigureAwait(true);
+                try
+                {
+                    if (!await CompleteLocalProtectionSaveAsync(pending,saved:false).ConfigureAwait(true) || !TryClearPendingConfigurationSave(pending))
+                        return CompleteProtectionSave(ProtectionSaveState.Unknown,vaultId,generation,
+                            "Save was rejected, but its local records could not be reconciled. Your edits and records are kept; no backup has started.");
+                }
+                finally { protectionDraftIoGate.Release(); }
+                return CompleteProtectionSave(ProtectionSaveState.Failed, vaultId, generation,
+                    $"Save failed ({response.ErrorMessage ?? "no acknowledgement returned"}). Your changes are kept. Backup has not started for this action.");
+            }
+
+            acceptedConfiguration = configuration;
+            acceptedConfigurationRevision = response.VaultRevision;
+            if (response.Purge is { Success: false })
+            {
+                requiresPurgeReconciliation = true;
+                saveConfirmedForReview = true;
+                return CompleteProtectionSave(ProtectionSaveState.Failed, vaultId, generation,
+                    $"Configuration saved; purge failed ({response.Purge.ErrorMessage ?? "unknown error"}). Backup history may remain. Your pending changes are kept for review. Backup has not started for this action.");
+            }
+            await protectionDraftIoGate.WaitAsync().ConfigureAwait(true);
+            try
+            {
+                if (!await CompleteLocalProtectionSaveAsync(pending,saved:true).ConfigureAwait(true) || !TryClearPendingConfigurationSave(pending))
+                    return CompleteProtectionSave(ProtectionSaveState.Unknown,vaultId,generation,
+                        "Configuration saved, but its local records could not be reconciled. Your edits and records are kept; no backup has started.");
+                if (generation != configurationEditGeneration || acceptedVaultId != vaultId)
+                {
+                    FileBrowser.AcknowledgeSelectionRules(configuration.SelectionRules);
+                    return CompleteProtectionSave(ProtectionSaveState.Saved, vaultId, generation,
+                        "Earlier changes saved. Newer edits are kept; save them before backing up. Backup has not started for this action.");
+                }
+
+                isApplyingStatus = true;
+                try
+                {
+                    FileBrowser.LoadSelectionRules(configuration.SelectionRules);
+                    hasLocalConfigurationChanges = false;
+                    NotifyOptionsEntryChanged();
+                }
+                finally { isApplyingStatus = false; }
+            }
+            finally { protectionDraftIoGate.Release(); }
+            var purgeStatus = response.Purge is null
+                ? string.Empty
+                : $" Purged {response.Purge.PurgedVersionCount} version(s), {response.Purge.DeletedChunkCount} chunk(s).";
+            var outcome = CompleteProtectionSave(ProtectionSaveState.Saved, vaultId, generation,
+                successStatus ?? $"Configuration saved.{purgeStatus}");
+            if (refreshAfterSave)
+            {
+                await RefreshAsync().ConfigureAwait(true);
+            }
+            FileBrowser.RefreshBrowser();
+            return outcome;
         }
-        catch (Exception ex) when (ex is IOException
-                                     or TimeoutException
-                                     or UnauthorizedAccessException
+        catch (OperationCanceledException)
+        {
+            requiresSaveStatusCheck = true;
+            requiresPurgeReconciliation = dispatchedRemovedSelections.Count > 0;
+            return CompleteProtectionSave(ProtectionSaveState.Cancelled, vaultId, generation,
+                "Save cancelled; any service-side outcome must be checked before retrying. Your changes are kept. Backup has not started for this action.");
+        }
+        catch (Exception ex) when (ex is IOException or TimeoutException)
+        {
+            if (!saveDispatched && protectionDraftStore is not null)
+            {
+                TryLoadPendingConfigurationSave(); // Preserve even a partially reserved local record.
+                requiresSaveStatusCheck = HasUnconfirmedProtectionSave;
+                LocalProtectionDraftMessage = "Save preparation stopped: local records could not be retained. Your edits are kept in this window. " + ex.Message;
+                return CompleteProtectionSave(HasUnconfirmedProtectionSave ? ProtectionSaveState.Unknown : ProtectionSaveState.Failed,vaultId,generation,
+                    "Save preparation failed: local protection records could not be retained. Your changes and any existing records are kept. No save was dispatched and backup has not started. " + ex.Message);
+            }
+            requiresSaveStatusCheck = true;
+            requiresPurgeReconciliation = dispatchedRemovedSelections.Count > 0;
+            return CompleteProtectionSave(ProtectionSaveState.Unknown, vaultId, generation,
+                $"Save could not be confirmed; service acknowledgement unavailable ({ex.Message}). Check the original save outcome before retrying. Your changes are kept. Backup has not started for this action.");
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException
                                      or InvalidDataException
                                      or InvalidOperationException
                                      or ArgumentException)
         {
-            SetServiceUnavailable(ex);
-            return;
+            if (unconfirmedProtectionSave is not null)
+                return CompleteProtectionSave(ProtectionSaveState.Unknown, vaultId, generation,
+                    $"Save could not be confirmed ({ex.Message}). Its submitted snapshot and your changes are kept. Check the original save outcome before retrying. Backup has not started for this action.");
+            return CompleteProtectionSave(ProtectionSaveState.Failed, vaultId, generation,
+                $"Save failed ({ex.Message}). Your changes are kept. Backup has not started for this action.");
         }
-
-        var purgeStatus = response.Purge switch
+        finally
         {
-            null => string.Empty,
-            { Success: false } => $" Purge failed ({response.Purge.ErrorMessage ?? "unknown error"}); backup history may remain until retry.",
-            _ => $" Purged {response.Purge.PurgedVersionCount} version(s), {response.Purge.DeletedChunkCount} chunk(s)."
-        };
-        var saveStatus = response.Success
-            ? response.Purge is not null
-                ? $"Service connection: configuration saved{purgeStatus}"
-                : successStatus ?? "Service connection: configuration saved"
-            : $"Service connection: save failed ({response.ErrorMessage})";
-        SetServiceStatus(saveStatus);
-        if (response.Success)
-        {
-            hasLocalConfigurationChanges = false;
-            if (refreshAfterSave)
-            {
-                await RefreshAsync().ConfigureAwait(true);
-                FileBrowser.RefreshBrowser();
-                if (response.Purge is not null || !string.IsNullOrWhiteSpace(successStatus))
-                {
-                    SetServiceStatus(saveStatus);
-                }
-            }
-            else
-            {
-                FileBrowser.RefreshBrowser();
-            }
+            IsProtectionSaveBusy = false;
         }
     }
 
-    [RelayCommand]
+    private ProtectionSaveOutcome CompleteProtectionSave(ProtectionSaveState state, VaultId? vaultId, long generation, string message)
+    {
+        ProtectionSaveState = state;
+        ProtectionSaveMessage = message;
+        SetServiceStatus($"Service connection: {message}");
+        return new ProtectionSaveOutcome(state, vaultId, generation, acceptedConfigurationRevision);
+    }
+
+    private sealed record ProtectionSaveOutcome(ProtectionSaveState Kind, VaultId? VaultId, long EditGeneration, long? Revision);
+
+    private void SetPendingConfigurationSave(PendingConfigurationSave? pending)
+    {
+        unconfirmedProtectionSave = pending;
+        saveRecordBlocked = false;
+        saveConfirmedForReview = false;
+        OnPropertyChanged(nameof(HasUnconfirmedProtectionSave));
+        OnPropertyChanged(nameof(CanCheckProtectionSaveOutcome));
+        CheckProtectionSaveOutcomeCommand.NotifyCanExecuteChanged();
+        NotifyConfigurationCommandAvailability();
+    }
+
+    private bool TryLoadPendingConfigurationSave()
+    {
+        try
+        {
+            var pending = saveOperationStore.Read();
+            var changed = pending is not null && (unconfirmedProtectionSave is null ||
+                !FileConfigurationSaveOperationStore.Encode(pending).AsSpan().SequenceEqual(FileConfigurationSaveOperationStore.Encode(unconfirmedProtectionSave)));
+            if (pending is null) { if (unconfirmedProtectionSave is not null || saveRecordBlocked) SetPendingConfigurationSave(null); return true; }
+            if (changed || saveRecordBlocked) SetPendingConfigurationSave(pending);
+            requiresSaveStatusCheck = true;
+            if (acceptedVaultId?.Value != pending.RepositoryId)
+            {
+                saveConfirmedForReview = false;
+                CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
+                    "The pending save does not match this installation's repository binding. Its record and your edits are kept; no save, receipt check or backup will be sent.");
+                return false;
+            }
+            if (pending.Origin == ConfigurationSaveOrigin.Options)
+            {
+                CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
+                    "A previous Options save could not be confirmed. Its submitted settings and your protection edits are kept. Open Options to check the original save outcome; no save or backup will be sent until it is resolved.");
+                return true;
+            }
+            if (changed && !hasLocalConfigurationChanges)
+            {
+                RestoreProtectionDraft(pending.Configuration);
+                lastDispatchedSaveConfiguration = pending.Configuration;
+            }
+            if (!saveConfirmedForReview)
+                CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
+                    pending.PurgeRemovedSelections
+                        ? "The previous save and purge could not be confirmed. Its submitted snapshot and purge scopes are kept. Check the original save outcome before retrying; backup has not started for this action."
+                        : "A previous protection save could not be confirmed. Its submitted snapshot is kept. Check the original save outcome before retrying; backup has not started for this action.");
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            saveRecordBlocked = true;
+            saveConfirmedForReview = false;
+            OnPropertyChanged(nameof(HasUnconfirmedProtectionSave));
+            OnPropertyChanged(nameof(CanCheckProtectionSaveOutcome));
+            CheckProtectionSaveOutcomeCommand.NotifyCanExecuteChanged();
+            NotifyConfigurationCommandAvailability();
+            CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
+                $"The pending protection save could not be read. It and your edits are kept; no save or backup will be sent. {exception.Message}");
+            return false;
+        }
+    }
+
+    private void RestoreProtectionDraft(FluxVaultConfiguration draft)
+    {
+        // Prepare path-dependent rules before touching any UI fields. Mirror
+        // text remains editable, including an unfinished path.
+        var rules = (draft.SelectionRules ?? []).Select(rule => rule with { Path=Path.GetFullPath(rule.Path) }).ToArray();
+        var mirrors = draft.MirrorSet ?? MirrorSetConfiguration.FromLegacyPath(draft.MirrorPath);
+        var placement = (mirrors.PlacementPolicy ?? MirrorPlacementPolicyConfiguration.CreateDefault()).Normalise();
+        isApplyingStatus = true;
+        try
+        {
+            RepositoryPath = draft.RepositoryPath;
+            MirrorPlacementProfile = placement.Profile;
+            MinimumMirrorCopies = placement.MinimumMirrorCopies;
+            ReplaceMirrorNodes(mirrors.Nodes ?? []);
+            FileBrowser.LoadSelectionRules(rules);
+            FileBrowser.AcknowledgeSelectionRules(acceptedConfiguration!.SelectionRules ?? []);
+            hasLocalConfigurationChanges = true;
+        }
+        finally { isApplyingStatus = false; }
+    }
+
+    private bool ValidateDiscardReview(PendingConfigurationSave? reviewed)
+    {
+        try
+        {
+            var current = saveOperationStore.Read();
+            if (reviewed is null && current is null || reviewed is not null && current is not null && saveConfirmedForReview &&
+                FileConfigurationSaveOperationStore.Encode(reviewed).AsSpan().SequenceEqual(FileConfigurationSaveOperationStore.Encode(current))) return true;
+            if (current is not null) SetPendingConfigurationSave(current);
+            saveConfirmedForReview = false;
+            CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
+                "Discard stopped because the pending save changed. Its record and your edits are kept. Check the original save outcome before continuing.");
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            saveConfirmedForReview = false;
+            TryLoadPendingConfigurationSave();
+        }
+        return false;
+    }
+
+    private bool TryClearPendingConfigurationSave(PendingConfigurationSave pending)
+    {
+        try
+        {
+            saveOperationStore.Clear(pending);
+            SetPendingConfigurationSave(null);
+            requiresSaveStatusCheck = false;
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
+                $"The save outcome was returned, but its pending record could not be cleared. Your edits are kept; check again before retrying. {exception.Message}");
+            return false;
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanCheckProtectionSaveOutcome))]
+    private async Task CheckProtectionSaveOutcomeAsync()
+    {
+        if (!CanCheckProtectionSaveOutcome) return;
+        if (!TryLoadPendingConfigurationSave() || unconfirmedProtectionSave is not { Origin: ConfigurationSaveOrigin.Protect } pending) return;
+        IsProtectionSaveBusy = true;
+        try
+        {
+            var response = await SendBoundAsync(new FluxVaultIpcRequest(FluxVaultIpcCommand.GetOperationStatus,
+                null, null, null, null, VaultId: new VaultId(pending.RepositoryId), OperationId: pending.OperationId)).ConfigureAwait(true);
+            if (!response.Success || response.ErrorCode is not null || response.VaultId?.Value != pending.RepositoryId ||
+                response.OperationId != pending.OperationId || response.VaultRevision != pending.Revision + 1)
+            {
+                CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
+                    "The original save outcome could not be confirmed. Its snapshot and your edits are kept; no backup has started. Check again later.");
+                return;
+            }
+            var current = await SendBoundAsync(FluxVaultIpcRequest.GetStatus()).ConfigureAwait(true);
+            if (current.Success && current.Status is not null)
+            {
+                ApplyStatus(current.Status, preserveLocalConfiguration: true, repositoryId: current.VaultId, revision: current.VaultRevision);
+                acceptedConfiguration = current.Status.Configuration;
+                acceptedConfigurationRevision = current.VaultRevision;
+            }
+            if (response.Purge is { Success: false } || !current.Success || current.Status is null ||
+                current.VaultRevision != pending.Revision + 1 ||
+                ComputeConfigurationFingerprint(current.Status.Configuration) != ComputeConfigurationFingerprint(pending.Configuration))
+            {
+                saveConfirmedForReview = true;
+                requiresPurgeReconciliation = response.Purge is { Success: false };
+                CompleteProtectionSave(ProtectionSaveState.Failed, acceptedVaultId, configurationEditGeneration,
+                    response.Purge is { Success: false }
+                        ? "Configuration saved, but purge failed. The durable record and your edits are kept. Review the result, then use Discard changes to reload saved settings before continuing. No backup has started."
+                        : "The historical save is confirmed, but the current settings differ or could not be verified. The durable record and your edits are kept. Review, then use Discard changes to reload current settings before continuing. No backup has started.");
+                NotifyConfigurationCommandAvailability();
+                return;
+            }
+            await protectionDraftIoGate.WaitAsync().ConfigureAwait(true);
+            try
+            {
+                if (!await CompleteLocalProtectionSaveAsync(pending,saved:true).ConfigureAwait(true) || !TryClearPendingConfigurationSave(pending)) return;
+                FileBrowser.AcknowledgeSelectionRules(pending.Configuration.SelectionRules ?? []);
+                hasLocalConfigurationChanges = ComputeConfigurationFingerprint(BuildConfiguration()) != ComputeConfigurationFingerprint(current.Status.Configuration);
+            }
+            finally { protectionDraftIoGate.Release(); }
+            NotifyConfigurationCommandAvailability();
+            CompleteProtectionSave(ProtectionSaveState.Saved, acceptedVaultId, configurationEditGeneration,
+                "The previous protection save is confirmed. Any newer edits are kept. No backup has started for this check.");
+        }
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        {
+            CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
+                "The original save outcome could not be confirmed. Its snapshot and your edits are kept; no backup has started. Check again later.");
+        }
+        finally { IsProtectionSaveBusy = false; }
+    }
+
+    private async Task<FluxVaultIpcResponse> SendBoundAsync(FluxVaultIpcRequest request, CancellationToken cancellationToken = default)
+    {
+        var mutation = PostgreSqlVaultCatalogue.IsMutation(request.Command);
+        var target = request.VaultId ?? acceptedVaultId;
+        if (target is null && request.Command != FluxVaultIpcCommand.GetStatus)
+            return FluxVaultIpcResponse.Failure("Load the vault's verified configuration before running this command.") with { ErrorCode = FluxVaultIpcErrorCode.Unavailable };
+        request = request with { VaultId = target,
+            ExpectedVaultRevision = request.ExpectedVaultRevision ?? (mutation ? acceptedConfigurationRevision : null),
+            OperationId = request.OperationId ?? (mutation ? Guid.NewGuid() : null) };
+        var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(true);
+        if (!response.Success) return response;
+        var completedDrain = request.Command == FluxVaultIpcCommand.RunMirrorDrain && response.MirrorRebalance is { IsCompletedDrain: true };
+        var expectedAcknowledgedRevision = request.ExpectedVaultRevision +
+            (request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess || completedDrain ? 1 : 0);
+        if (response.VaultId is not { IsValid: true } returnedId || response.VaultRevision is not > 0 ||
+            target is not null && returnedId != target || mutation && response.OperationId != request.OperationId ||
+            mutation && response.VaultRevision != expectedAcknowledgedRevision ||
+            request.Command == FluxVaultIpcCommand.RunMirrorDrain && (response.MirrorRebalance is not { Operation: MirrorRebalanceOperation.Drain, IsPreview: false } drain ||
+                drain.Actions is null || drain.Nodes is null ||
+                !string.Equals(drain.RequestedMirrorNodeId, request.MirrorNodeId, StringComparison.OrdinalIgnoreCase)) ||
+            request.Command == FluxVaultIpcCommand.GetStatus && acceptedConfigurationRevision is { } current && response.VaultRevision < current)
+            return FluxVaultIpcResponse.Failure(mutation
+                ? "The operation acknowledgement did not match this vault. Check its status before retrying."
+                : "The service response did not confirm this vault's current binding and revision.") with
+            { ErrorCode = mutation ? FluxVaultIpcErrorCode.OutcomeUnknown : FluxVaultIpcErrorCode.Unavailable,
+                VaultId = target, OperationId = request.OperationId };
+        return response;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDiscardConfigurationChanges))]
     private async Task DiscardConfigurationChangesAsync()
     {
-        hasLocalConfigurationChanges = false;
-        await RefreshAsync(isAutomatic: false, forceConfigurationReload: true).ConfigureAwait(true);
-        FileBrowser.RefreshBrowser();
+        if (!TryLoadPendingConfigurationSave()) return;
+        if (!CanDiscardConfigurationChanges) return;
+        var reviewed = saveConfirmedForReview ? unconfirmedProtectionSave : null;
+        var draft = acceptedConfiguration is null ? null : BuildConfiguration();
+        IsProtectionSaveBusy = true;
+        try
+        {
+            if (protectionDraftStore is not null)
+            {
+                await DiscardLocalProtectionDraftAsync(reviewed).ConfigureAwait(true);
+                return;
+            }
+            var applied = await RefreshAsync(isAutomatic: false, forceConfigurationReload: true,
+                expectedEditGeneration: configurationEditGeneration, validateDiscardReview: true, discardReview: reviewed).ConfigureAwait(true);
+            if (!applied)
+            {
+                ProtectionSaveMessage = "Discard did not complete: saved settings could not be reloaded or newer edits arrived. Your pending changes are kept. Refresh and try again.";
+                SetServiceStatus($"Service connection: {ProtectionSaveMessage}");
+                return;
+            }
+            if (reviewed is not null && !TryClearPendingConfigurationSave(reviewed))
+            {
+                if (draft is not null) RestoreProtectionDraft(draft);
+                return;
+            }
+            var previousMessage = ProtectionSaveMessage;
+            ProtectionSaveState = ProtectionSaveState.Idle;
+            ProtectionSaveMessage = string.Empty;
+            if (!string.IsNullOrWhiteSpace(previousMessage))
+            {
+                SetServiceStatus(ServiceStatus.Replace(previousMessage, string.Empty, StringComparison.Ordinal).TrimEnd(' ', '.'));
+            }
+            FileBrowser.RefreshBrowser();
+        }
+        finally { IsProtectionSaveBusy = false; }
     }
 
-    private void MarkStatusApplied()
+    private void MarkStatusApplied(bool reconcileOptions)
     {
         hasLocalConfigurationChanges = false;
-    }
-
-    [RelayCommand]
-    private async Task AddProfileAsync()
-    {
-        var displayName = profileDialogService.PromptForProfileName("Add FluxVault profile", $"Profile {Profiles.Count + 1}");
-        if (string.IsNullOrWhiteSpace(displayName))
+        requiresPurgeReconciliation = false;
+        if (reconcileOptions && requiresOptionsReconciliation)
         {
-            return;
+            requiresOptionsReconciliation = false;
+            var previousMessage = ProtectionSaveMessage;
+            ProtectionSaveMessage = string.Empty;
+            if (!string.IsNullOrWhiteSpace(previousMessage))
+            {
+                SetServiceStatus(ServiceStatus.Replace(previousMessage, string.Empty, StringComparison.Ordinal).TrimEnd(' ', '.'));
+            }
         }
-
-        await SendProfileCommandAsync(FluxVaultIpcRequest.CreateProfile(UniqueProfileId(displayName), displayName)).ConfigureAwait(true);
-    }
-
-    [RelayCommand]
-    private async Task DuplicateProfileAsync()
-    {
-        if (SelectedProfile is null)
-        {
-            return;
-        }
-
-        var displayName = profileDialogService.PromptForProfileName("Duplicate FluxVault profile", $"{SelectedProfile.DisplayName} copy");
-        if (string.IsNullOrWhiteSpace(displayName))
-        {
-            return;
-        }
-
-        await SendProfileCommandAsync(FluxVaultIpcRequest.DuplicateProfile(SelectedProfile.Id, UniqueProfileId(displayName), displayName)).ConfigureAwait(true);
-    }
-
-    [RelayCommand]
-    private async Task RenameProfileAsync()
-    {
-        if (SelectedProfile is null)
-        {
-            return;
-        }
-
-        var displayName = profileDialogService.PromptForProfileName("Rename FluxVault profile", SelectedProfile.DisplayName);
-        if (string.IsNullOrWhiteSpace(displayName))
-        {
-            return;
-        }
-
-        await SendProfileCommandAsync(FluxVaultIpcRequest.RenameProfile(SelectedProfile.Id, displayName)).ConfigureAwait(true);
-    }
-
-    [RelayCommand]
-    private async Task DeleteProfileAsync()
-    {
-        if (SelectedProfile is null || !profileDialogService.ConfirmDelete(SelectedProfile.DisplayName))
-        {
-            return;
-        }
-
-        await SendProfileCommandAsync(FluxVaultIpcRequest.DeleteProfile(SelectedProfile.Id)).ConfigureAwait(true);
-    }
-
-    private async Task SwitchProfileAsync(string profileId)
-    {
-        if (hasLocalConfigurationChanges)
-        {
-            SetServiceStatus("Service connection: save or discard configuration changes before switching profile");
-            return;
-        }
-
-        await SendProfileCommandAsync(FluxVaultIpcRequest.SetActiveProfile(profileId)).ConfigureAwait(true);
-    }
-
-    private async Task SendProfileCommandAsync(FluxVaultIpcRequest request)
-    {
-        var response = await client.SendAsync(request).ConfigureAwait(true);
-        if (!response.Success || response.Status is null)
-        {
-            SetServiceStatus($"Service connection: profile action failed ({response.ErrorMessage ?? "no status returned"})");
-            return;
-        }
-
-        ApplyStatus(response.Status, preserveLocalConfiguration: false);
-        FileBrowser.RefreshBrowser();
+        NotifyConfigurationCommandAvailability();
     }
 
     private void ReplaceMirrorNodes(IReadOnlyList<MirrorNodeConfiguration> nodes)
@@ -976,7 +1364,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             CompressionPreference.Zstd,
             "Pending save"));
         NewWatchedFolderPath = string.Empty;
-        hasLocalConfigurationChanges = true;
+        MarkConfigurationDirty();
     }
 
     [RelayCommand]
@@ -985,7 +1373,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         if (SelectedWatchedFolder is not null)
         {
             WatchedFolders.Remove(SelectedWatchedFolder);
-            hasLocalConfigurationChanges = true;
+            MarkConfigurationDirty();
         }
     }
 
@@ -1193,7 +1581,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanSaveProtection))]
     private async Task SaveConfigurationAsync()
     {
         await SaveConfigurationCoreAsync().ConfigureAwait(true);
@@ -1201,6 +1589,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private async Task ApplyExplorerSelectionRequestAsync(string path, bool add)
     {
+        if (isOptionsEditing || requiresOptionsReconciliation)
+        {
+            SetServiceStatus("Finish the Options dialogue before changing protection from Explorer. This request was not applied; retry it after closing Options.");
+            return;
+        }
         var isDirectory = IsDirectoryLike(path);
         if (add)
         {
@@ -1223,16 +1616,146 @@ public sealed partial class MainWindowViewModel : ObservableObject
             successStatus: $"Service connection: removed or excluded {path} from FluxVault.").ConfigureAwait(true);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanSaveProtection))]
     private async Task RunBackupNowAsync()
     {
-        await SaveConfigurationCoreAsync().ConfigureAwait(true);
-        var response = await client.SendAsync(FluxVaultIpcRequest.RunBackupNow()).ConfigureAwait(true);
+        if (!TryLoadPendingBackupRecord()) return;
+        if (HasUnconfirmedBackup)
+        {
+            SetServiceStatus(BackupOutcomeMessage);
+            return;
+        }
+        var outcome = await SaveConfigurationCoreAsync().ConfigureAwait(true);
+        if (outcome.Kind != ProtectionSaveState.Saved
+            || outcome.EditGeneration != configurationEditGeneration
+            || outcome.VaultId != acceptedVaultId
+            || outcome.Revision != acceptedConfigurationRevision)
+        {
+            return;
+        }
+        var pending = new PendingBackupOperation(outcome.VaultId!.Value.Value, Guid.NewGuid(), outcome.Revision!.Value);
+        try
+        {
+            backupOperationStore.Reserve(pending);
+            SetUnconfirmedBackup(pending);
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            TryLoadPendingBackupRecord();
+            BackupOutcomeMessage = $"The backup record could not be saved. No backup was sent. Check the record before retrying. {exception.Message}";
+            SetServiceStatus(BackupOutcomeMessage);
+            return;
+        }
+        FluxVaultIpcResponse response;
+        try
+        {
+            response = await SendBoundAsync(FluxVaultIpcRequest.RunBackupNow() with
+            { VaultId = outcome.VaultId, ExpectedVaultRevision = outcome.Revision, OperationId = pending.OperationId }).ConfigureAwait(true);
+        }
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        {
+            response = FluxVaultIpcResponse.Failure(exception.Message) with { ErrorCode = FluxVaultIpcErrorCode.OutcomeUnknown };
+        }
+        if (!ConfirmsBackupOutcome(response, pending))
+        {
+            BackupOutcomeMessage = "The backup outcome could not be confirmed. It may have run. Check its outcome before retrying.";
+            SetServiceStatus(BackupOutcomeMessage);
+            return;
+        }
+        if (!TryClearPendingBackup(pending)) return;
+        BackupOutcomeMessage = response.Success
+            ? response.Backup?.Message ?? "Backup request completed."
+            : $"Backup failed ({response.ErrorMessage}).";
         SetServiceStatus(response.Backup is null
             ? $"Service connection: backup failed ({response.ErrorMessage})"
             : $"Service connection: {response.Backup.Message}");
         await RefreshAsync().ConfigureAwait(true);
         FileBrowser.RefreshBrowser();
+    }
+
+    private void SetUnconfirmedBackup(PendingBackupOperation? operation)
+    {
+        unconfirmedBackup = operation;
+        OnPropertyChanged(nameof(UnconfirmedBackupOperationId));
+        OnPropertyChanged(nameof(HasUnconfirmedBackup));
+        CheckBackupOutcomeCommand.NotifyCanExecuteChanged();
+    }
+
+    private bool TryLoadPendingBackupRecord()
+    {
+        try
+        {
+            var pending = backupOperationStore.Read();
+            var changed = pending != unconfirmedBackup;
+            SetUnconfirmedBackup(pending);
+            if (pending is null) return true;
+            if (acceptedVaultId?.Value != pending.RepositoryId)
+            {
+                BackupOutcomeMessage = "The pending backup record does not match this installation's repository binding. It has been preserved; no backup or receipt check will be sent.";
+                SetServiceStatus(BackupOutcomeMessage);
+                return false;
+            }
+            if (changed)
+                BackupOutcomeMessage = "A previous backup outcome is pending. It may have run. Check its original operation before requesting another backup.";
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            BackupOutcomeMessage = $"The pending backup record could not be read. It has been preserved; no backup will be sent. {exception.Message}";
+            SetServiceStatus(BackupOutcomeMessage);
+            return false;
+        }
+    }
+
+    private static bool ConfirmsBackupOutcome(FluxVaultIpcResponse response, PendingBackupOperation pending) =>
+        (response.ErrorCode is null || response is { Success: false, ErrorCode: FluxVaultIpcErrorCode.Unavailable, Backup.Success: false }) &&
+        response.VaultId?.Value == pending.RepositoryId &&
+        response.OperationId == pending.OperationId && response.VaultRevision == pending.Revision;
+
+    private bool TryClearPendingBackup(PendingBackupOperation pending)
+    {
+        try
+        {
+            backupOperationStore.Clear(pending);
+            SetUnconfirmedBackup(null);
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            BackupOutcomeMessage = $"The backup outcome was returned, but its pending record could not be cleared. Check again before retrying. {exception.Message}";
+            SetServiceStatus(BackupOutcomeMessage);
+            return false;
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(HasUnconfirmedBackup))]
+    private async Task CheckBackupOutcomeAsync()
+    {
+        if (!TryLoadPendingBackupRecord() || unconfirmedBackup is not { } pending) return;
+        try
+        {
+            var response = await SendBoundAsync(new FluxVaultIpcRequest(
+                FluxVaultIpcCommand.GetOperationStatus, null, null, null, null,
+                VaultId: new VaultId(pending.RepositoryId), OperationId: pending.OperationId)).ConfigureAwait(true);
+            if (!ConfirmsBackupOutcome(response, pending))
+            {
+                BackupOutcomeMessage = "The backup outcome could not be confirmed. Keep this operation pending and check again when the service is available.";
+            }
+            else
+            {
+                if (!TryClearPendingBackup(pending)) return;
+                BackupOutcomeMessage = response.Success
+                    ? response.Backup?.Message ?? "The previous backup completed."
+                    : $"The previous backup failed ({response.ErrorMessage}).";
+                await RefreshAsync().ConfigureAwait(true);
+            }
+            SetServiceStatus(BackupOutcomeMessage);
+        }
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        {
+            BackupOutcomeMessage = "The backup outcome could not be confirmed. The service acknowledgement is unavailable; check again later.";
+            SetServiceStatus(BackupOutcomeMessage);
+        }
     }
 
     [RelayCommand(CanExecute = nameof(HasSelectedVersion))]
@@ -1248,68 +1771,90 @@ public sealed partial class MainWindowViewModel : ObservableObject
         await RestoreVersionAsync(selectedVersion).ConfigureAwait(true);
     }
 
-    [RelayCommand]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RestoreSelectedBrowserItemElsewhereCommand))]
+    [NotifyCanExecuteChangedFor(nameof(RestoreSelectedBrowserItemToOriginalCommand))]
+    private bool isSelectionRecoveryBusy;
+
+    public bool CanRecoverSelection => !IsSelectionRecoveryBusy;
+
+    [RelayCommand(CanExecute = nameof(CanRecoverSelection))]
     private async Task RestoreSelectedBrowserItemElsewhereAsync()
     {
-        var selection = GetSelectedBrowserRestoreSelection();
-        if (selection is null)
+        if (!CanRecoverSelection) return;
+        IsSelectionRecoveryBusy = true;
+        try
         {
-            SetServiceStatus("Service connection: select a file or folder in the browser before restoring.");
-            return;
-        }
+            var selection = GetSelectedBrowserRestoreSelection();
+            if (selection is null)
+            {
+                SetServiceStatus("Service connection: select a file or folder in the browser before restoring.");
+                return;
+            }
 
-        var destination = selection.Value.IsDirectory
-            ? restoreDestinationPicker.PickFolderDestination(selection.Value.Path)
-            : restoreDestinationPicker.PickDestination(new VersionRow(
-                "latest",
+            var destination = selection.Value.IsDirectory
+                ? restoreDestinationPicker.PickFolderDestination(selection.Value.Path)
+                : restoreDestinationPicker.PickDestination(new VersionRow(
+                    "latest",
+                    selection.Value.Path,
+                    string.Empty,
+                    CaptureConsistency.BestEffort,
+                    0));
+            if (string.IsNullOrWhiteSpace(destination))
+            {
+                SetServiceStatus("Service connection: restore cancelled.");
+                return;
+            }
+
+            if (selection.Value.IsDirectory && (File.Exists(destination) || Directory.Exists(destination)))
+            { SetServiceStatus("Choose a new recovery folder. Existing entries cannot be merged."); return; }
+            var overwriteConfirmed = !selection.Value.IsDirectory && File.Exists(destination);
+            if (overwriteConfirmed && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
+            {
+                SetServiceStatus("Service connection: restore overwrite denied.");
+                return;
+            }
+
+            await RestoreBrowserSelectionAsync(
                 selection.Value.Path,
-                string.Empty,
-                CaptureConsistency.BestEffort,
-                0));
-        if (string.IsNullOrWhiteSpace(destination))
-        {
-            SetServiceStatus("Service connection: restore cancelled.");
-            return;
+                selection.Value.IsDirectory,
+                RestoreSelectionDestinationMode.Elsewhere,
+                destination,
+                overwriteConfirmed).ConfigureAwait(true);
         }
-
-        if (!selection.Value.IsDirectory
-            && File.Exists(destination)
-            && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
-        {
-            SetServiceStatus("Service connection: restore overwrite denied.");
-            return;
-        }
-
-        await RestoreBrowserSelectionAsync(
-            selection.Value.Path,
-            selection.Value.IsDirectory,
-            RestoreSelectionDestinationMode.Elsewhere,
-            destination,
-            overwriteConfirmed: true).ConfigureAwait(true);
+        finally { IsSelectionRecoveryBusy = false; }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRecoverSelection))]
     private async Task RestoreSelectedBrowserItemToOriginalAsync()
     {
-        var selection = GetSelectedBrowserRestoreSelection();
-        if (selection is null)
+        if (!CanRecoverSelection) return;
+        IsSelectionRecoveryBusy = true;
+        try
         {
-            SetServiceStatus("Service connection: select a file or folder in the browser before restoring.");
-            return;
-        }
+            var selection = GetSelectedBrowserRestoreSelection();
+            if (selection is null)
+            {
+                SetServiceStatus("Service connection: select a file or folder in the browser before restoring.");
+                return;
+            }
 
-        if (!restoreOverwriteConfirmation.ConfirmOverwrite(selection.Value.Path))
-        {
-            SetServiceStatus("Service connection: restore overwrite denied.");
-            return;
-        }
+            if (selection.Value.IsDirectory && (File.Exists(selection.Value.Path) || Directory.Exists(selection.Value.Path)))
+            { SetServiceStatus("Choose a new recovery folder. Existing entries cannot be merged."); return; }
+            if (!selection.Value.IsDirectory && !restoreOverwriteConfirmation.ConfirmOverwrite(selection.Value.Path))
+            {
+                SetServiceStatus("Service connection: restore overwrite denied.");
+                return;
+            }
 
-        await RestoreBrowserSelectionAsync(
-            selection.Value.Path,
-            selection.Value.IsDirectory,
-            RestoreSelectionDestinationMode.Original,
-            selection.Value.Path,
-            overwriteConfirmed: true).ConfigureAwait(true);
+            await RestoreBrowserSelectionAsync(
+                selection.Value.Path,
+                selection.Value.IsDirectory,
+                RestoreSelectionDestinationMode.Original,
+                selection.Value.Path,
+                overwriteConfirmed: true).ConfigureAwait(true);
+        }
+        finally { IsSelectionRecoveryBusy = false; }
     }
 
     [RelayCommand]
@@ -1366,7 +1911,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         try
         {
-            var response = await client.SendAsync(FluxVaultIpcRequest.RestoreVersion(selectedVersion.VersionId, destination))
+            var response = await SendBoundAsync(FluxVaultIpcRequest.RestoreVersion(selectedVersion.VersionId, destination))
                 .ConfigureAwait(true);
             if (!response.Success)
             {
@@ -1397,40 +1942,56 @@ public sealed partial class MainWindowViewModel : ObservableObject
         string? destinationPath,
         bool overwriteConfirmed)
     {
+        if (acceptedVaultId is not { IsValid: true } identity || acceptedConfigurationRevision is not > 0)
+        { SetServiceStatus("Refresh the vault's verified settings before recovery."); return; }
+        var operation = Guid.NewGuid();
+        var request = FluxVaultIpcRequest.RunRestoreSelection(sourcePath, isDirectory, destinationMode, destinationPath, overwriteConfirmed) with
+        { VaultId = identity, ExpectedVaultRevision = acceptedConfigurationRevision.Value, OperationId = operation };
         try
         {
-            var response = await client.SendAsync(FluxVaultIpcRequest.RunRestoreSelection(
-                    sourcePath,
-                    isDirectory,
-                    destinationMode,
-                    destinationPath,
-                    overwriteConfirmed))
-                .ConfigureAwait(true);
+            var response = await SendBoundAsync(request).ConfigureAwait(true);
             if (!response.Success)
             {
-                SetServiceStatus($"Service connection: restore failed ({response.ErrorMessage})");
+                SetServiceStatus(response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown ? UnknownSelectionRecovery(operation) :
+                    $"Service connection: restore failed ({response.ErrorMessage})");
                 return;
             }
 
             var summary = response.RestoreSelection;
-            if (summary is null)
+            var destination = Path.GetFullPath(destinationMode == RestoreSelectionDestinationMode.Original ? sourcePath : destinationPath!);
+            if (summary is not { FailedPaths: not null, Warnings: not null } || response.RestoreResult is not { Warnings: not null } verified ||
+                !string.Equals(summary.SourcePath, sourcePath, StringComparison.OrdinalIgnoreCase) || summary.IsDirectory != isDirectory ||
+                summary.DestinationMode != destinationMode || !string.Equals(summary.DestinationPath, destination, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(response.OutputPath, destination, StringComparison.OrdinalIgnoreCase) || !string.Equals(verified.OutputPath, destination, StringComparison.OrdinalIgnoreCase) ||
+                summary.FileCount < 0 || !isDirectory && summary.FileCount != 1 || summary.ConflictCount < 0 ||
+                summary.RestoredCount != summary.FileCount || summary.FailedPaths.Count != 0 ||
+                verified.RestoredFileCount != summary.RestoredCount || verified.VerifiedLogicalBytes < 0)
             {
-                SetServiceStatus("The restore response did not include results. Check the destination before retrying.");
+                SetServiceStatus(UnknownSelectionRecovery(operation));
                 return;
             }
-            var message = $"Restored and verified {summary.RestoredCount} of {summary.FileCount} file(s).";
-            if (summary.FailedPaths.Count > 0) message += " Failed: " + string.Join("; ", summary.FailedPaths);
-            if (summary.Warnings is { Count: > 0 }) message += " " + string.Join(" ", summary.Warnings);
-            try { await RefreshAsync().ConfigureAwait(true); FileBrowser.RefreshBrowser(); }
+            var message = isDirectory && summary.FileCount == 0 ? $"Recovered and verified an empty folder to {destination}." :
+                $"Restored and verified {summary.RestoredCount} of {summary.FileCount} file(s) to {destination}.";
+            var warnings = verified.Warnings.Concat(summary.Warnings).Distinct(StringComparer.Ordinal).ToArray();
+            if (warnings.Length > 0) message += " " + string.Join(" ", warnings);
+            try
+            {
+                if (!await RefreshAsync(isAutomatic: false).ConfigureAwait(true))
+                    message += " Status refresh failed; the verified recovery result is retained.";
+                FileBrowser.RefreshBrowser();
+            }
             catch (Exception exception) when (exception is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
             { message += $" Status refresh failed: {exception.Message}"; }
             SetServiceStatus(message);
         }
-        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException)
         {
-            SetServiceStatus($"Service connection: restore failed ({ex.Message})");
+            SetServiceStatus(UnknownSelectionRecovery(operation));
         }
     }
+
+    private static string UnknownSelectionRecovery(Guid operation) =>
+        $"The recovery outcome could not be confirmed (operation {operation:D}). Keep your pending edits and inspect the destination before another recovery.";
 
     private (string Path, bool IsDirectory)? GetSelectedBrowserRestoreSelection()
     {
@@ -1462,22 +2023,38 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         IsPreviewBusy = true;
         PreviewStatus = "Preparing preview...";
+        var copyCreated = false;
+        var publicationWarnings = string.Empty;
         try
         {
-            var response = await client.SendAsync(FluxVaultIpcRequest.RestoreVersionPreview(selectedVersion.VersionId))
+            var path = previewCache.Allocate(selectedVersion.SourcePath, acceptedConfiguration?.VersionPreview ?? new());
+            var response = await SendBoundAsync(FluxVaultIpcRequest.RestoreVersionPreview(selectedVersion.VersionId) with { OutputPath = path })
                 .ConfigureAwait(true);
-            if (!response.Success || string.IsNullOrWhiteSpace(response.OutputPath))
+            if (!response.Success)
             {
-                SetServiceStatus($"Service connection: version preview failed ({response.ErrorMessage ?? "no preview path returned"})");
+                SetServiceStatus(response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown
+                    ? "Preview could not be confirmed; a copy may have been created. Nothing was opened."
+                    : $"Service connection: version preview failed ({response.ErrorMessage ?? "no preview returned"})");
                 return;
             }
-
-            versionPreviewLauncher.OpenFile(response.OutputPath);
-            SetServiceStatus($"Service connection: opened preview for {selectedVersion.VersionId}");
+            if (response.RestoreResult is not { RestoredFileCount: 1, VerifiedLogicalBytes: >= 0 } result ||
+                !string.Equals(response.OutputPath, path, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(result.OutputPath, path, StringComparison.OrdinalIgnoreCase))
+            {
+                SetServiceStatus("The preview acknowledgement did not match its verified destination. Nothing was opened.");
+                return;
+            }
+            copyCreated = true;
+            publicationWarnings = string.Join(" ", result.Warnings);
+            previewCache.MakeReadOnly(path);
+            versionPreviewLauncher.OpenFile(path);
+            SetServiceStatus($"Service connection: opened preview for {selectedVersion.VersionId}. {publicationWarnings}".TrimEnd());
         }
-        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException or ArgumentException or Win32Exception or OperationCanceledException)
         {
-            SetServiceStatus($"Service connection: version preview failed ({ex.Message})");
+            SetServiceStatus(copyCreated
+                ? $"The verified preview copy was created, but opening failed ({ex.Message}). {publicationWarnings}".TrimEnd()
+                : $"Version preview could not be prepared or confirmed ({ex.Message}); nothing was opened.");
         }
         finally
         {
@@ -1486,76 +2063,38 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    internal async Task<VersionInventoryViewModel> CreateVersionInventoryAsync(WatchedFolderRow folder)
-    {
-        try
-        {
-            var response = await client.SendAsync(FluxVaultIpcRequest.ListVersions()).ConfigureAwait(true);
-            if (!response.Success || response.Versions is null)
-            {
-                SetServiceStatus($"Service connection: backup inventory failed ({response.ErrorMessage ?? "no versions returned"})");
-                return EmptyVersionInventory(folder.Path);
-            }
-
-            return new VersionInventoryViewModel(
-                folder.Path,
-                response.Versions,
-                version => RestoreVersionAsync(ToVersionRow(version)),
-                version => OpenVersionPreviewAsync(ToVersionRow(version)));
-        }
-        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
-        {
-            SetServiceStatus($"Service connection: backup inventory failed ({ex.Message})");
-            return EmptyVersionInventory(folder.Path);
-        }
-    }
-
     internal async Task<VersionInventoryViewModel> CreateVersionInventoryForPathAsync(string path)
     {
+        if (acceptedVaultId is null) await RefreshAsync().ConfigureAwait(true);
+        if (repositoryReadsStopping) throw new InvalidOperationException("FluxVault is closing; history was not opened.");
+        if (acceptedVaultId is not { } id) throw new InvalidOperationException("Load the vault's verified configuration before browsing history.");
+        var query = new RepositoryHistoryQuery(id, Path.GetFullPath(path), IncludeDescendants: true,
+            PageSize: (acceptedConfiguration?.RepositoryBrowse ?? new()).Normalise().ItemsPerPage);
+        var inventory = new VersionInventoryViewModel(path, query,
+            (history, token) => SendBoundAsync(new(FluxVaultIpcCommand.ListHistoryPage, null, null, null, null, HistoryQuery: history), token),
+            (snapshot, token) => SendBoundAsync(new(FluxVaultIpcCommand.GetSnapshotPage, null, null, null, null, SnapshotQuery: snapshot), token),
+            version => RestoreVersionAsync(ToVersionRow(version)), version => OpenVersionPreviewAsync(ToVersionRow(version)));
+        await inventory.InitialiseAsync().ConfigureAwait(true);
+        return inventory;
+    }
+
+    internal async Task ShowVersionsForPathAsync(string path)
+    {
+        VersionInventoryViewModel inventory;
         try
         {
-            var response = await client.SendAsync(FluxVaultIpcRequest.ListVersions()).ConfigureAwait(true);
-            if (!response.Success || response.Versions is null)
-            {
-                SetServiceStatus($"Service connection: backup inventory failed ({response.ErrorMessage ?? "no versions returned"})");
-                return EmptyVersionInventory(path);
-            }
-
-            var fullPath = Path.GetFullPath(path);
-            var exactMatch = response.Versions.Any(version => IsSamePath(version.SourcePath, fullPath));
-            var folderPath = exactMatch
-                ? Path.GetDirectoryName(fullPath) ?? fullPath
-                : fullPath;
-            return new VersionInventoryViewModel(
-                folderPath,
-                response.Versions,
-                version => RestoreVersionAsync(ToVersionRow(version)),
-                version => OpenVersionPreviewAsync(ToVersionRow(version)),
-                fullPath);
+            inventory = await CreateVersionInventoryForPathAsync(path).ConfigureAwait(true);
         }
-        catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or TimeoutException or
+            InvalidOperationException or ArgumentException or OperationCanceledException)
         {
-            SetServiceStatus($"Service connection: backup inventory failed ({ex.Message})");
-            return EmptyVersionInventory(path);
+            SetServiceStatus($"History unavailable ({ex.Message}). Refresh the service status and try again.");
+            return;
         }
-    }
-
-    private async Task ShowVersionsForPathAsync(string path)
-    {
-        var inventory = await CreateVersionInventoryForPathAsync(path).ConfigureAwait(true);
         VersionInventoryRequested?.Invoke(this, new VersionInventoryRequestedEventArgs(inventory));
-        SetServiceStatus(inventory.Versions.Count == 0
+        SetServiceStatus(!inventory.HasAuthoritativeHistory ? inventory.HistoryStatus : inventory.Versions.Count == 0
             ? $"Service connection: no restorable versions found for {path}"
             : $"Service connection: showing versions for {path}");
-    }
-
-    private VersionInventoryViewModel EmptyVersionInventory(string folderPath)
-    {
-        return new VersionInventoryViewModel(
-            folderPath,
-            [],
-            version => RestoreVersionAsync(ToVersionRow(version)),
-            version => OpenVersionPreviewAsync(ToVersionRow(version)));
     }
 
     private static VersionRow ToVersionRow(VersionInventoryVersionRow version)
@@ -1573,27 +2112,58 @@ public sealed partial class MainWindowViewModel : ObservableObject
             version.IsDeleted);
     }
 
-    [RelayCommand]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ExportDiagnosticsCommand))]
+    private bool isDiagnosticsExportBusy;
+
+    public bool CanExportDiagnostics => !IsDiagnosticsExportBusy;
+
+    [RelayCommand(CanExecute = nameof(CanExportDiagnostics))]
     private async Task ExportDiagnosticsAsync()
     {
-        var path = BrowseFolder(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
-        if (string.IsNullOrWhiteSpace(path))
+        if (!CanExportDiagnostics) return;
+        IsDiagnosticsExportBusy = true;
+        Guid? operation = null;
+        try
         {
-            return;
+            var path = diagnosticsExportFolderPicker.PickFolder();
+            if (string.IsNullOrWhiteSpace(path)) return;
+            if (acceptedVaultId is not { IsValid: true } identity || acceptedConfigurationRevision is not > 0)
+            { DiagnosticsText = "Diagnostics export failed: refresh the vault's verified settings first."; return; }
+            var revision = acceptedConfigurationRevision.Value;
+            operation = Guid.NewGuid();
+            var request = FluxVaultIpcRequest.ExportDiagnostics(path) with
+            { VaultId = identity, ExpectedVaultRevision = revision, OperationId = operation };
+            var expected = Path.Combine(path, $"fluxvault-diagnostics-{operation:N}.json");
+            var response = await SendBoundAsync(request).ConfigureAwait(true);
+            if (!response.Success)
+            {
+                DiagnosticsText = response.ErrorCode == FluxVaultIpcErrorCode.OutcomeUnknown
+                    ? UnknownExport(operation.Value)
+                    : $"Diagnostics export failed: {response.ErrorMessage ?? "no confirmed result returned"}";
+                return;
+            }
+            if (response.DiagnosticsExport is not { Warnings: not null } result ||
+                !string.Equals(response.OutputPath, expected, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(result.OutputPath, expected, StringComparison.OrdinalIgnoreCase))
+            { DiagnosticsText = UnknownExport(operation.Value); return; }
+            DiagnosticsText = $"Diagnostics exported to {result.OutputPath}" +
+                (result.Warnings.Count == 0 ? string.Empty : Environment.NewLine + string.Join(Environment.NewLine, result.Warnings));
         }
-
-        var response = await client.SendAsync(FluxVaultIpcRequest.ExportDiagnostics(path)).ConfigureAwait(true);
-        DiagnosticsText = response.Success
-            ? $"Diagnostics exported to {response.OutputPath}"
-            : $"Diagnostics export failed: {response.ErrorMessage}";
+        catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
+        { DiagnosticsText = operation is { } id ? UnknownExport(id) : $"Diagnostics export failed: {exception.Message}"; }
+        finally { IsDiagnosticsExportBusy = false; }
     }
+
+    private static string UnknownExport(Guid operation) =>
+        $"The diagnostics export outcome could not be confirmed (operation {operation:D}). A report may already exist in the selected folder; inspect it before starting another export.";
 
     [RelayCommand]
     private async Task RunRepositoryScrubAsync()
     {
         try
         {
-            var response = await client.SendAsync(FluxVaultIpcRequest.RunRepositoryScrub()).ConfigureAwait(true);
+            var response = await SendBoundAsync(FluxVaultIpcRequest.RunRepositoryScrub()).ConfigureAwait(true);
             if (!response.Success || response.RepositoryScrub is null)
             {
                 RepositoryHealthStatus = $"Repository scrub failed: {response.ErrorMessage ?? "no scrub report returned"}";
@@ -1622,7 +2192,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         try
         {
-            var response = await client.SendAsync(FluxVaultIpcRequest.RunRestoreRehearsal()).ConfigureAwait(true);
+            var response = await SendBoundAsync(FluxVaultIpcRequest.RunRestoreRehearsal()).ConfigureAwait(true);
             if (!response.Success || response.RestoreRehearsal is null)
             {
                 RepositoryHealthStatus = $"Restore rehearsal failed: {response.ErrorMessage ?? "no rehearsal report returned"}";
@@ -1689,7 +2259,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             var request = isPreview
                 ? FluxVaultIpcRequest.PreviewMirrorRepair(mirrorNodeId)
                 : FluxVaultIpcRequest.RunMirrorRepair(mirrorNodeId);
-            var response = await client.SendAsync(request).ConfigureAwait(true);
+            var response = await SendBoundAsync(request).ConfigureAwait(true);
             if (!response.Success || response.MirrorRepair is null)
             {
                 RepositoryHealthStatus = $"{(isPreview ? "Mirror repair preview" : "Mirror repair")} failed: {response.ErrorMessage ?? "no mirror repair report returned"}";
@@ -1739,12 +2309,15 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private async Task RunMirrorDrainCoreAsync(bool isPreview, string mirrorNodeId)
     {
+        var originalConfiguration = acceptedConfiguration;
+        var originalVaultId = acceptedVaultId;
+        var originalRevision = acceptedConfigurationRevision;
         try
         {
             var request = isPreview
                 ? FluxVaultIpcRequest.PreviewMirrorDrain(mirrorNodeId)
                 : FluxVaultIpcRequest.RunMirrorDrain(mirrorNodeId);
-            var response = await client.SendAsync(request).ConfigureAwait(true);
+            var response = await SendBoundAsync(request).ConfigureAwait(true);
             if (!response.Success || response.MirrorRebalance is null)
             {
                 RepositoryHealthStatus = $"{(isPreview ? "Mirror drain preview" : "Mirror drain")} failed: {response.ErrorMessage ?? "no mirror drain report returned"}";
@@ -1752,15 +2325,40 @@ public sealed partial class MainWindowViewModel : ObservableObject
             }
 
             currentMirrorRebalanceReport = response.MirrorRebalance;
+            var completedDrain = !isPreview && response.MirrorRebalance.IsCompletedDrain;
+            if (completedDrain && originalConfiguration is not null && acceptedVaultId == originalVaultId &&
+                acceptedConfigurationRevision == originalRevision && acceptedConfiguration is not null &&
+                ComputeConfigurationFingerprint(acceptedConfiguration) == ComputeConfigurationFingerprint(originalConfiguration))
+            {
+                // Apply only the service-confirmed infrastructure change to this
+                // exact baseline. Selection and other pending edits stay in place.
+                var mirrorSet = originalConfiguration.MirrorSet;
+                acceptedConfiguration = originalConfiguration with { MirrorSet = new MirrorSetConfiguration(
+                    mirrorSet.Nodes.Select(node => string.Equals(node.Id, mirrorNodeId, StringComparison.OrdinalIgnoreCase)
+                        ? node with { IsEnabled = false } : node).ToArray(), mirrorSet.PlacementPolicy) };
+                acceptedConfigurationRevision = response.VaultRevision;
+                lastAppliedConfigurationFingerprint = ComputeConfigurationFingerprint(acceptedConfiguration);
+                isApplyingStatus = true;
+                try
+                {
+                    var row = MirrorNodes.SingleOrDefault(node => string.Equals(node.Id, mirrorNodeId, StringComparison.OrdinalIgnoreCase));
+                    if (row is not null) row.IsEnabled = false;
+                }
+                finally { isApplyingStatus = false; }
+                UpdateMirrorSummary();
+                NotifyConfigurationCommandAvailability();
+            }
             ApplyRepositoryHealth(new RepositoryHealthSnapshot(
                 DateTimeOffset.UtcNow,
                 CombineHealth(currentScrubReport?.HealthState, currentRestoreRehearsalReport?.HealthState, currentMirrorRepairReport?.HealthState, currentMirrorRebalanceReport.HealthState),
-                isPreview ? "Mirror drain preview completed." : "Mirror drain completed.",
+                isPreview ? "Mirror drain preview completed." : completedDrain ? "Mirror drain completed." : "Mirror drain incomplete; destination remains enabled.",
                 currentScrubReport,
                 currentRestoreRehearsalReport,
                 currentMirrorRepairReport,
                 currentMirrorRebalanceReport));
-            RepositoryHealthStatus = $"{(isPreview ? "Mirror drain preview" : "Mirror drain")} completed - {response.MirrorRebalance.HealthState}";
+            RepositoryHealthStatus = isPreview || completedDrain
+                ? $"{(isPreview ? "Mirror drain preview" : "Mirror drain")} completed - {response.MirrorRebalance.HealthState}"
+                : $"Mirror drain incomplete - {response.MirrorRebalance.HealthState}. The destination remains enabled; review the report before retrying.";
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or UnauthorizedAccessException or InvalidOperationException)
         {
@@ -1773,7 +2371,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         try
         {
-            var response = await client.SendAsync(new FluxVaultIpcRequest(
+            var response = await SendBoundAsync(new FluxVaultIpcRequest(
                 FluxVaultIpcCommand.PreviewMirrorRebalance,
                 null,
                 null,
@@ -1807,7 +2405,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         try
         {
-            var response = await client.SendAsync(new FluxVaultIpcRequest(
+            var response = await SendBoundAsync(new FluxVaultIpcRequest(
                 FluxVaultIpcCommand.RunMirrorRebalance,
                 null,
                 null,
@@ -1836,17 +2434,40 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    private void ApplyStatus(
+    private bool ApplyStatus(
         FluxVaultServiceStatus status,
         bool preserveLocalConfiguration,
         bool isAutomatic = false,
-        bool forceConfigurationReload = false)
+        bool forceConfigurationReload = false,
+        bool reconcileOptions = false,
+        VaultId? repositoryId = null,
+        long? revision = null)
     {
         var inventoryIdentity = (
-            status.ActiveProfileId ?? status.Profiles?.FirstOrDefault(profile => profile.IsActive)?.Id
-                ?? FluxVaultProfileConfiguration.DefaultProfileId,
+            repositoryId,
             status.Configuration.RepositoryPath,
             status.Configuration.MetadataStore);
+        if ((hasLocalConfigurationChanges || IsProtectionSaveBusy || isOptionsEditing || requiresOptionsReconciliation) && acceptedVaultId is not null
+            && inventoryIdentity.Item1 != acceptedVaultId)
+        {
+            SetServiceStatus("Service connection: repository binding could not be confirmed; your pending changes are kept. Backup has not started for this action.");
+            return false;
+        }
+        if (requiresSaveStatusCheck && preserveLocalConfiguration && !requiresOptionsReconciliation &&
+            unconfirmedProtectionSave?.Origin != ConfigurationSaveOrigin.Options)
+        {
+            // Rebase only an observed pre-save or dispatched snapshot. An unrelated
+            // configuration change needs explicit reload rather than a blind overwrite.
+            var observed = ComputeConfigurationFingerprint(status.Configuration);
+            if (acceptedConfiguration is not null && observed == ComputeConfigurationFingerprint(acceptedConfiguration) ||
+                lastDispatchedSaveConfiguration is not null && observed == ComputeConfigurationFingerprint(lastDispatchedSaveConfiguration))
+            {
+                acceptedConfiguration = status.Configuration;
+                acceptedConfigurationRevision = revision;
+                requiresSaveStatusCheck = HasUnconfirmedProtectionSave;
+            }
+        }
+        else requiresSaveStatusCheck = HasUnconfirmedProtectionSave;
         var sameInventoryIdentity = lastAppliedVersionInventoryIdentity == inventoryIdentity;
         var selectedVersionId = sameInventoryIdentity ? SelectedVersion?.VersionId : null;
         var configurationFingerprint = ComputeConfigurationFingerprint(status.Configuration);
@@ -1858,31 +2479,18 @@ public sealed partial class MainWindowViewModel : ObservableObject
         isApplyingStatus = true;
         try
         {
-            ApplyProfiles(status);
             if (shouldApplyConfiguration)
             {
+                acceptedConfiguration = status.Configuration;
+                acceptedVaultId = inventoryIdentity.Item1;
+                acceptedConfigurationRevision = revision;
                 RepositoryPath = status.Configuration.RepositoryPath;
                 var mirrorSet = (status.Configuration.MirrorSet
                     ?? MirrorSetConfiguration.FromLegacyPath(status.Configuration.MirrorPath)).Normalise();
                 MirrorPlacementProfile = mirrorSet.PlacementPolicy.Profile;
                 MinimumMirrorCopies = mirrorSet.PlacementPolicy.MinimumMirrorCopies;
                 ReplaceMirrorNodes(mirrorSet.Nodes);
-                currentRetentionPolicy = status.Configuration.RetentionPolicy;
-                currentCaptureCadencePolicy = status.Configuration.CaptureCadencePolicy;
-                currentCodecPolicy = status.Configuration.CodecPolicy;
-                currentWorkloadPolicy = status.Configuration.WorkloadPolicy ?? WorkloadPolicyConfiguration.CreateDefault();
-                currentPerformanceWorkspace = status.Configuration.PerformanceWorkspace
-                    ?? PerformanceWorkspaceConfiguration.CreateDefault(AppContext.BaseDirectory);
-                currentShellIntegration = status.Configuration.ShellIntegration
-                    ?? ShellIntegrationConfiguration.CreateDefault(AppContext.BaseDirectory);
-                currentDirectCloud = status.Configuration.DirectCloud
-                    ?? DirectCloudConfiguration.CreateDefault();
-                currentSecurityPosture = status.Configuration.SecurityPosture
-                    ?? SecurityPostureConfiguration.CreateDefault();
-                currentFleet = status.Configuration.Fleet
-                    ?? EnterpriseFleetConfiguration.CreateDefault();
-                currentExclusionRules = status.Configuration.ExclusionRules ?? [];
-                FileBrowser.DefaultWorkloadPreset = currentWorkloadPolicy.DefaultPreset;
+                FileBrowser.DefaultWorkloadPreset = (status.Configuration.WorkloadPolicy ?? WorkloadPolicyConfiguration.CreateDefault()).DefaultPreset;
                 var selectionRules = status.Configuration.SelectionRules;
                 FileBrowser.LoadSelectionRules(selectionRules is { Count: > 0 }
                     ? selectionRules
@@ -1898,6 +2506,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             if (status.HasVersionInventory && status.TrackedEntries is not null)
             {
                 FileBrowser.LoadTrackedEntries(status.TrackedEntries);
+                lastAppliedCurrentInventoryIdentity = inventoryIdentity;
+                lastAppliedCurrentInventoryEpoch = status.UsesPagedCurrentEntries ? status.RepositoryInventoryEpoch : null;
             }
             else if (!sameInventoryIdentity)
             {
@@ -1914,7 +2524,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             {
                 visibleStatus += sameInventoryIdentity
                     ? ". Repository inventory unavailable; previous versions retained"
-                    : ". Repository inventory unavailable for this profile";
+                    : ". Repository inventory unavailable for this vault";
             }
             else if (status.RecentVersions.Count == 0)
             {
@@ -2007,67 +2617,22 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
             if (shouldApplyConfiguration)
             {
-                MarkStatusApplied();
+                MarkStatusApplied(reconcileOptions);
             }
         }
         finally
         {
             isApplyingStatus = false;
         }
-    }
-
-    private void ApplyProfiles(FluxVaultServiceStatus status)
-    {
-        var activeProfileId = status.ActiveProfileId
-            ?? status.Profiles?.FirstOrDefault(profile => profile.IsActive)?.Id
-            ?? FluxVaultProfileConfiguration.DefaultProfileId;
-        var profiles = status.Profiles is { Count: > 0 }
-            ? status.Profiles
-            : [
-                new FluxVaultProfileRuntimeStatus(
-                    FluxVaultProfileConfiguration.DefaultProfileId,
-                    "Default",
-                    IsEnabled: true,
-                    IsActive: true,
-                    status.Configuration.RepositoryPath,
-                    status.Configuration.WatchedFolders.Count,
-                    status.Configuration.MirrorSet?.Nodes.Count(node => node.IsEnabled) ?? 0)
-            ];
-
-        Profiles.Clear();
-        foreach (var profile in profiles)
-        {
-            Profiles.Add(new FluxVaultProfileRow(
-                profile.Id,
-                profile.DisplayName,
-                profile.IsEnabled,
-                string.Equals(profile.Id, activeProfileId, StringComparison.OrdinalIgnoreCase),
-                profile.RepositoryPath,
-                profile.WatchedFolderCount,
-                profile.EnabledMirrorCount));
-        }
-
-        SelectedProfile = Profiles.FirstOrDefault(profile => profile.IsActive)
-            ?? Profiles.FirstOrDefault();
-        ActiveProfileName = SelectedProfile?.DisplayName ?? "Default";
+        return shouldApplyConfiguration;
     }
 
     private FluxVaultConfiguration BuildConfiguration()
     {
+        var baseline = acceptedConfiguration ?? throw new InvalidOperationException("Load configuration before saving.");
         var selectionRules = FileBrowser.GetSelectionRules();
         var watchedFolders = ProtectionSelectionCompiler.Compile(selectionRules);
-        return new FluxVaultConfiguration(
-            RepositoryPath: RepositoryPath,
-            MirrorPath: null,
-            IsEnabled: true,
-            WatchedFolders: watchedFolders,
-            RetentionPolicy: currentRetentionPolicy,
-            CaptureCadencePolicy: currentCaptureCadencePolicy,
-            CodecPolicy: currentCodecPolicy,
-            SelectionRules: selectionRules,
-            ExclusionRules: currentExclusionRules,
-            WorkloadPolicy: currentWorkloadPolicy,
-            MirrorSet: new MirrorSetConfiguration(MirrorNodes
+        var mirrorSet = new MirrorSetConfiguration(MirrorNodes
                 .Select(node => new MirrorNodeConfiguration(
                     node.Id,
                     node.Label,
@@ -2076,42 +2641,22 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     node.CapacityBudgetBytes,
                     node.Priority))
                 .ToArray(),
-                new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile, MinimumMirrorCopies)),
-            PerformanceWorkspace: currentPerformanceWorkspace,
-            ShellIntegration: currentShellIntegration,
-            DirectCloud: currentDirectCloud,
-            SecurityPosture: currentSecurityPosture,
-            Fleet: currentFleet);
+                new MirrorPlacementPolicyConfiguration(MirrorPlacementProfile, MinimumMirrorCopies));
+        var sameMirrors = JsonSerializer.Serialize(mirrorSet, ConfigurationFingerprintJsonOptions)
+            == JsonSerializer.Serialize((baseline.MirrorSet ?? MirrorSetConfiguration.FromLegacyPath(baseline.MirrorPath)).Normalise(), ConfigurationFingerprintJsonOptions);
+        return baseline with
+        {
+            RepositoryPath = RepositoryPath,
+            MirrorPath = sameMirrors ? baseline.MirrorPath : null,
+            WatchedFolders = watchedFolders,
+            SelectionRules = selectionRules,
+            MirrorSet = sameMirrors ? baseline.MirrorSet ?? mirrorSet : mirrorSet
+        };
     }
 
     private static string ComputeConfigurationFingerprint(FluxVaultConfiguration configuration)
     {
         return JsonSerializer.Serialize(configuration, ConfigurationFingerprintJsonOptions);
-    }
-
-    private string UniqueProfileId(string displayName)
-    {
-        var baseId = ToProfileId(displayName);
-        var candidate = baseId;
-        var suffix = 2;
-        while (Profiles.Any(profile => string.Equals(profile.Id, candidate, StringComparison.OrdinalIgnoreCase)))
-        {
-            candidate = $"{baseId}-{suffix++}";
-        }
-
-        return candidate;
-    }
-
-    private static string ToProfileId(string displayName)
-    {
-        var chars = displayName
-            .Trim()
-            .ToLowerInvariant()
-            .Select(ch => char.IsLetterOrDigit(ch) ? ch : '-')
-            .ToArray();
-        var id = string.Join('-', new string(chars)
-            .Split('-', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
-        return string.IsNullOrWhiteSpace(id) ? $"profile-{Guid.NewGuid():N}" : id;
     }
 
     private VersionRow? FindRestoreHintVersion()
@@ -2762,7 +3307,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private void SetServiceStatus(string text, string? toolTip = null)
     {
-        ServiceStatus = text;
+        ServiceStatus = string.IsNullOrWhiteSpace(ProtectionSaveMessage) || text.Contains(ProtectionSaveMessage, StringComparison.Ordinal)
+            ? text
+            : $"{text}. {ProtectionSaveMessage}";
+        if (!string.IsNullOrWhiteSpace(BackupOutcomeMessage) && !ServiceStatus.Contains(BackupOutcomeMessage, StringComparison.Ordinal))
+            ServiceStatus += $" {BackupOutcomeMessage}";
         ServiceStatusToolTip = string.IsNullOrWhiteSpace(toolTip) ? text : toolTip;
     }
 
@@ -3039,18 +3588,6 @@ public sealed record PerformanceSampleRow(
     int WatcherBacklogCount,
     long IpcTotalRequests,
     long DroppedLogMessages);
-
-public sealed record FluxVaultProfileRow(
-    string Id,
-    string DisplayName,
-    bool IsEnabled,
-    bool IsActive,
-    string RepositoryPath,
-    int WatchedFolderCount,
-    int EnabledMirrorCount)
-{
-    public string Summary => $"{WatchedFolderCount} folder(s), {EnabledMirrorCount} mirror(s)";
-}
 
 public sealed partial class MirrorNodeRow : ObservableObject
 {

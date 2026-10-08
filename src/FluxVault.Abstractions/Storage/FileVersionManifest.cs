@@ -1,4 +1,6 @@
 using FluxVault.Abstractions.Sync;
+using FluxVault.Abstractions.Security;
+using System.Text.Json.Serialization;
 
 namespace FluxVault.Abstractions.Storage;
 
@@ -22,7 +24,8 @@ public sealed record FileVersionManifest(
     bool IsDeleted = false,
     IReadOnlyList<FolderVersionEntry>? FolderEntries = null,
     string? DeletedFromVersionId = null,
-    DateTimeOffset? SourceLastWriteUtc = null);
+    DateTimeOffset? SourceLastWriteUtc = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] VaultId? VaultId = null);
 
 public sealed record FolderVersionEntry(
     string Name,

@@ -1,0 +1,67 @@
+{
+  "Observations": [
+    {
+      "RunId": "dc520ba6df1146a883c014d1e068b136",
+      "Complete": true,
+      "Actor": "System",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Result": {
+            "FixtureId": "46f18bb76fce45feb5773c7b90921512",
+            "ProbeId": "b869fc4e2a644c29a4daa138d1e24300",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL"
+          },
+          "Kind": "Npgsql"
+        },
+        {
+          "ProbeId": "b869fc4e2a644c29a4daa138d1e24300",
+          "ExitCode": 2,
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 62378 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Host": "127.0.0.1",
+          "Kind": "libpq",
+          "Output": ""
+        },
+        {
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "46f18bb76fce45feb5773c7b90921512",
+            "ProbeId": "791f84a254ec40dc9976bbc0e8fe8e3f",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL"
+          },
+          "Kind": "Npgsql"
+        },
+        {
+          "ProbeId": "791f84a254ec40dc9976bbc0e8fe8e3f",
+          "ExitCode": 2,
+          "Error": "psql: error: connection to server at \"::1\", port 62378 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Host": "::1",
+          "Kind": "libpq",
+          "Output": ""
+        },
+        {
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL"
+        }
+      ],
+      "WindowsSid": "S-1-5-18"
+    }
+  ],
+  "FailureLocation": "at <ScriptBlock>, C:\\Users\\os008\\.codex\\worktrees\\fluxvault-next002-plan\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 406",
+  "Failure": "Exception calling \"ReadAllText\" with \"1\" argument(s): \"The process cannot access the file 'C:\\ProgramData\\FluxVault.Tests\\NEXT002\\46f18bb76fce45feb5773c7b90921512\\postgres.log' because it is being used by another process.\"",
+  "FixtureId": "46f18bb76fce45feb5773c7b90921512"
+}

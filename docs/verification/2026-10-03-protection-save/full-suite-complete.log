@@ -1,0 +1,59 @@
+The files belonging to this database system will be owned by user "os008".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "C".
+The default text search configuration will be set to "english".
+
+Data page checksums are enabled.
+
+creating directory E:/Temp/AppData/Local/Temp/FluxVault.Integrity.PostgreSql/3c69897ba81f4c4199b3b7366b06c2a3/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... windows
+selecting default "max_connections" ... 100
+selecting default "shared_buffers" ... 128MB
+selecting default time zone ... Africa/Cairo
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    ^"D^:^\Program^ Files^\PostgreSQL^\18^\bin^\pg^_ctl^" -D ^"E^:^\Temp^\AppData^\Local^\Temp^\FluxVault^.Integrity^.PostgreSql^\3c69897ba81f4c4199b3b7366b06c2a3^\data^" -l logfile start
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Core.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+A total of 1 test files matched the specified pattern.
+  FluxVault.Windows.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll (.NETCoreApp,Version=v10.0)
+  FluxVault.TestHost -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\bin\Release\net10.0-windows\FluxVault.TestHost.dll
+  FluxVault.App.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+  FluxVault.Cli -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Cli\bin\Release\net10.0\FluxVault.Cli.dll
+  FluxVault.Service -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Service\bin\Release\net10.0-windows\FluxVault.Service.dll
+  FluxVault.Integration.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: E:\Temp\AppData\Local\Temp\FluxVault.Integrity.PostgreSql\3c69897ba81f4c4199b3b7366b06c2a3\results\os008_OS008-HOME_2026-10-03_23_30_02_net10.0.trx
+
+Passed!  - Failed:     0, Passed:    17, Skipped:     0, Total:    17, Duration: 81 ms - FluxVault.Windows.Tests.dll (net10.0)
+Results File: E:\Temp\AppData\Local\Temp\FluxVault.Integrity.PostgreSql\3c69897ba81f4c4199b3b7366b06c2a3\results\os008_OS008-HOME_2026-10-03_23_30_03_net10.0.trx
+
+Passed!  - Failed:     0, Passed:   222, Skipped:     0, Total:   222, Duration: 5 s - FluxVault.App.Tests.dll (net10.0)
+Results File: E:\Temp\AppData\Local\Temp\FluxVault.Integrity.PostgreSql\3c69897ba81f4c4199b3b7366b06c2a3\results\os008_OS008-HOME_2026-10-03_23_30_02_net10.0[1].trx
+
+Passed!  - Failed:     0, Passed:   339, Skipped:     0, Total:   339, Duration: 11 s - FluxVault.Core.Tests.dll (net10.0)
+Results File: E:\Temp\AppData\Local\Temp\FluxVault.Integrity.PostgreSql\3c69897ba81f4c4199b3b7366b06c2a3\results\os008_OS008-HOME_2026-10-03_23_30_03_net10.0[1].trx
+
+Passed!  - Failed:     0, Passed:   144, Skipped:     0, Total:   144, Duration: 23 s - FluxVault.Integration.Tests.dll (net10.0)
+waiting for server to shut down.... done
+server stopped
+Integrity test evidence: E:\Temp\AppData\Local\Temp\FluxVault.Integrity.PostgreSql\3c69897ba81f4c4199b3b7366b06c2a3

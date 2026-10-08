@@ -15,6 +15,14 @@ public partial class App : System.Windows.Application
     private ActivityPaneWindow? activityPaneWindow;
     private IAppStartupRequestRouter? startupRequestRouter;
     private readonly DashboardWindowLifetimeController dashboardWindowLifetime = new();
+    private bool isExitPreparing;
+
+    public App()
+    {
+        // Keep native presentation usable when the hardware composition path
+        // fails despite valid WPF layout. This choice affects only this process.
+        RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
+    }
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -73,7 +81,6 @@ public partial class App : System.Windows.Application
         menu.Items.Add("Open dashboard", null, (_, _) => ShowDashboard());
         menu.Items.Add("Activity", null, (_, _) => ShowActivityPane());
         menu.Items.Add("Blocked files", null, (_, _) => ShowActivityPane());
-        menu.Items.Add("Pause/resume protection", null, async (_, _) => await SetProtectionPausedAsync());
         menu.Items.Add("Options", null, (_, _) => ShowOptions());
         menu.Items.Add("Exit", null, (_, _) => ExitApplication());
         return menu;
@@ -124,16 +131,49 @@ public partial class App : System.Windows.Application
         });
     }
 
-    private void ExitApplication()
+    private async void ExitApplication()
     {
-        dashboardWindowLifetime.BeginExit();
-        Shutdown();
+        if (isExitPreparing) return;
+        isExitPreparing = true;
+        // Fence the visible editor and command entry points through the complete
+        // flush-and-join interval. A failed flush leaves the window usable.
+        if (mainWindow is not null) mainWindow.IsEnabled = false;
+        if (activityPaneWindow is not null) activityPaneWindow.IsEnabled = false;
+        var exitAccepted = false;
+        try
+        {
+            if (mainWindow?.DataContext is MainWindowViewModel editor && !await editor.PrepareForExitAsync())
+            {
+                mainWindow.Show(); mainWindow.Activate();
+                System.Windows.MessageBox.Show(mainWindow,editor.LocalProtectionDraftMessage,"Protection edits are kept",MessageBoxButton.OK,MessageBoxImage.Information);
+                return;
+            }
+            exitAccepted = true;
+            dashboardWindowLifetime.BeginExit();
+            try
+            {
+                if (mainWindow?.DataContext is MainWindowViewModel viewModel)
+                    await viewModel.StopRepositoryReadsAsync();
+            }
+            catch (Exception exception) { System.Diagnostics.Trace.TraceError("Repository read shutdown: {0}", exception); }
+            Shutdown();
+        }
+        finally
+        {
+            if (!exitAccepted)
+            {
+                if (mainWindow is not null) mainWindow.IsEnabled = true;
+                if (activityPaneWindow is not null) activityPaneWindow.IsEnabled = true;
+                isExitPreparing = false;
+            }
+        }
     }
 
     private Task HandleStartupRequestAsync(AppStartupRequest request)
     {
         Dispatcher.Invoke(() =>
         {
+            if (isExitPreparing) return;
             ShowDashboard();
             if (mainWindow?.DataContext is MainWindowViewModel viewModel)
             {
@@ -154,7 +194,8 @@ public partial class App : System.Windows.Application
         {
             activityPaneWindow = new ActivityPaneWindow
             {
-                DataContext = new ActivityPaneViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient()),
+                DataContext = new ActivityPaneViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient(FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService()),
+                    mainWindow?.DataContext as MainWindowViewModel),
                 ShowInTaskbar = false
             };
             activityPaneWindow.Closed += (_, _) => activityPaneWindow = null;
@@ -187,7 +228,7 @@ public partial class App : System.Windows.Application
         }
     }
 
-    private void ShowOptions()
+    private async void ShowOptions()
     {
         var owner = mainWindow;
         if (owner is null)
@@ -196,21 +237,7 @@ public partial class App : System.Windows.Application
             owner = mainWindow;
         }
 
-        var window = new OptionsWindow(new OptionsViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient()))
-        {
-            Owner = owner
-        };
-        window.ShowDialog();
-        if (owner?.DataContext is MainWindowViewModel viewModel)
-        {
-            _ = viewModel.RefreshAsync();
-        }
-    }
-
-    private static async Task SetProtectionPausedAsync()
-    {
-        var client = new FluxVault.Core.Ipc.NamedPipeFluxVaultClient();
-        _ = await client.SendAsync(FluxVault.Abstractions.Ipc.FluxVaultIpcRequest.SetProtectionPaused());
+        if (owner is not null) await owner.OpenOptionsAsync().ConfigureAwait(true);
     }
 
     private static System.Drawing.Icon LoadFluxVaultIcon()

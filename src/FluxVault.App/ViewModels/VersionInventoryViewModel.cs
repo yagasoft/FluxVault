@@ -10,7 +10,7 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
 {
     private readonly Func<VersionInventoryVersionRow, Task> restoreVersion;
     private readonly Func<VersionInventoryVersionRow, Task> openVersionPreview;
-    private readonly Dictionary<string, VersionInventoryVersionRow> versionsById = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, VersionInventoryVersionRow> versionsById = new(StringComparer.Ordinal);
     private readonly IReadOnlyList<VersionInventoryVersionRow> allVersionRows;
     private string currentFocusPath;
     private RepositoryEntryKind? currentFocusKind;
@@ -95,6 +95,13 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
 
     partial void OnSelectedVersionChanged(VersionInventoryVersionRow? value)
     {
+        if (IsPaged)
+        {
+            PreviewSelectedVersionCommand.NotifyCanExecuteChanged();
+            if (value is not null) _ = StartSnapshotAsync(value);
+            else { snapshotRequest++; SnapshotEntries.Clear(); snapshotPage = null; IsSnapshotBusy = false; SnapshotPath = string.Empty; SnapshotStatus = string.Empty; }
+            return;
+        }
         SnapshotEntries.Clear();
         SelectedSnapshotEntry = null;
         PreviewSelectedVersionCommand.NotifyCanExecuteChanged();
@@ -171,7 +178,7 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
     [RelayCommand]
     private async Task RestoreSelectedSnapshotEntryAsync()
     {
-        if (SelectedSnapshotEntry is not null && versionsById.TryGetValue(SelectedSnapshotEntry.VersionId, out var version))
+        if (SelectedSnapshotEntry is { } entry && await ResolveRecordedEntryAsync(entry).ConfigureAwait(true) is { } version)
         {
             await restoreVersion(version).ConfigureAwait(true);
         }
@@ -181,7 +188,7 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
     private async Task PreviewSelectedSnapshotEntryAsync()
     {
         if (SelectedSnapshotEntry is { EntryKind: RepositoryEntryKind.File } entry
-            && versionsById.TryGetValue(entry.VersionId, out var version))
+            && await ResolveRecordedEntryAsync(entry).ConfigureAwait(true) is { } version)
         {
             await OpenPreviewAsync(version).ConfigureAwait(true);
         }
@@ -190,13 +197,14 @@ public sealed partial class VersionInventoryViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanOpenSelectedSnapshotEntry))]
     private async Task OpenSelectedSnapshotEntryAsync()
     {
-        if (SelectedSnapshotEntry is null || !versionsById.TryGetValue(SelectedSnapshotEntry.VersionId, out var version))
+        if (SelectedSnapshotEntry is not { } entry || await ResolveRecordedEntryAsync(entry).ConfigureAwait(true) is not { } version)
         {
             return;
         }
 
-        if (SelectedSnapshotEntry.EntryKind == RepositoryEntryKind.Folder)
+        if (entry.EntryKind == RepositoryEntryKind.Folder)
         {
+            if (IsPaged) { await StartSnapshotAsync(version).ConfigureAwait(true); return; }
             NavigateToFolderVersion(version);
             return;
         }

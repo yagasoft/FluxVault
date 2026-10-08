@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9485538e-a483-45a2-b1cb-456c9fb3793d" name="os008@OS008-HOME 2026-10-04 13:22:23" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T13:22:23.1836515+03:00" queuing="2026-10-04T13:22:23.1836517+03:00" start="2026-10-04T13:22:22.1680345+03:00" finish="2026-10-04T13:22:23.1883685+03:00" />
+  <TestSettings name="default" id="b7c93b7a-4dd2-4b19-b994-829910ea0c54">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_13_22_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f3b3e634-a4f0-4b62-b61c-1c0e940353a2" testId="ab791e38-cdf5-9040-d4d5-b9eeb6f29bc3" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(acknowledgementLost: True)" computerName="OS008-HOME" duration="00:00:00.2846555" startTime="2026-10-04T13:22:22.7726896+03:00" endTime="2026-10-04T13:22:23.0729941+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3b3e634-a4f0-4b62-b61c-1c0e940353a2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(Boolean acknowledgementLost) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 151&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f0d1acf9-c01d-49b0-b270-c542021c95af" testId="f21d6497-4242-20a0-aef6-77c72eb1c40c" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(acknowledgementLost: False)" computerName="OS008-HOME" duration="00:00:00.0092771" startTime="2026-10-04T13:22:23.0853232+03:00" endTime="2026-10-04T13:22:23.0854087+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f0d1acf9-c01d-49b0-b270-c542021c95af">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(Boolean acknowledgementLost) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 151&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(acknowledgementLost: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="ab791e38-cdf5-9040-d4d5-b9eeb6f29bc3">
+      <Execution id="f3b3e634-a4f0-4b62-b61c-1c0e940353a2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Completed_failed_backup_clears_its_durable_record_and_explains_the_failure" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(acknowledgementLost: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="f21d6497-4242-20a0-aef6-77c72eb1c40c">
+      <Execution id="f0d1acf9-c01d-49b0-b270-c542021c95af" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Completed_failed_backup_clears_its_durable_record_and_explains_the_failure" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ab791e38-cdf5-9040-d4d5-b9eeb6f29bc3" executionId="f3b3e634-a4f0-4b62-b61c-1c0e940353a2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f21d6497-4242-20a0-aef6-77c72eb1c40c" executionId="f0d1acf9-c01d-49b0-b270-c542021c95af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.51]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.51]       Expected: False&#xD;
+[xUnit.net 00:00:00.51]       Actual:   True&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.51]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(151,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(Boolean acknowledgementLost)&#xD;
+[xUnit.net 00:00:00.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.52]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.52]       Expected: False&#xD;
+[xUnit.net 00:00:00.52]       Actual:   True&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs(151,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(Boolean acknowledgementLost)&#xD;
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.52]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:22:23.0755982+03:00">
+        <Text>[xUnit.net 00:00:00.51]     FluxVault.App.Tests.ProtectionSaveContractTests.Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(acknowledgementLost: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T13:22:23.0857409+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.App.Tests.ProtectionSaveContractTests.Completed_failed_backup_clears_its_durable_record_and_explains_the_failure(acknowledgementLost: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

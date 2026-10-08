@@ -544,7 +544,7 @@ public sealed class FileBrowserViewModelTests
     public async Task Main_window_save_sends_compiled_file_browser_rules_only_after_save()
     {
         var client = new FakeFluxVaultServiceClient(Status());
-        var viewModel = new MainWindowViewModel(client, TimeSpan.FromMilliseconds(20));
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
 
         viewModel.FileBrowser.ReplaceSelectionRule(Rule("docs", @"D:\Work\Docs", ProtectionSelectionMode.RecursiveFolder));
@@ -571,7 +571,7 @@ public sealed class FileBrowserViewModelTests
         }));
         var confirmation = new FakeProtectionRemovalConfirmation(confirm: false);
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
             new FakeWindowsServiceController(),
@@ -599,7 +599,7 @@ public sealed class FileBrowserViewModelTests
         }));
         var confirmation = new FakeProtectionRemovalConfirmation(confirm: true);
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
             new FakeWindowsServiceController(),
@@ -630,7 +630,7 @@ public sealed class FileBrowserViewModelTests
         }));
         var confirmation = new FakeProtectionRemovalConfirmation(confirm: true);
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
             new FakeWindowsServiceController(),
@@ -671,7 +671,7 @@ public sealed class FileBrowserViewModelTests
         };
         var confirmation = new FakeProtectionRemovalConfirmation(confirm: true);
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
             new FakeWindowsServiceController(),
@@ -684,7 +684,8 @@ public sealed class FileBrowserViewModelTests
         await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
 
         Assert.Single(client.SavedConfigurations);
-        Assert.Empty(viewModel.FileBrowser.PendingChanges);
+        // Keep the removal available for review when its dependent purge did not succeed.
+        Assert.Contains(viewModel.FileBrowser.PendingChanges, change => change.Change == "Removed" && change.Path == source);
         Assert.Contains("purge failed", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("metadata offline", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("history may remain", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
@@ -702,7 +703,7 @@ public sealed class FileBrowserViewModelTests
         }));
         var confirmation = new FakeProtectionRemovalConfirmation(confirm: false);
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
             new FakeWindowsServiceController(),
@@ -732,7 +733,7 @@ public sealed class FileBrowserViewModelTests
         }));
         var confirmation = new FakeProtectionRemovalConfirmation(confirm: false);
         var viewModel = new MainWindowViewModel(
-            client,
+            new BoundTestServiceClient(client),
             TimeSpan.FromMilliseconds(20),
             new FileBrowserViewModel(new FakeFileBrowserFileSystem([], [], [])),
             new FakeWindowsServiceController(),

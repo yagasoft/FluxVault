@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="022bbd90-29c9-43a7-ba02-1a96f9feed67" name="os008@OS008-HOME 2026-10-04 01:46:57" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T01:46:57.7831518+03:00" queuing="2026-10-04T01:46:57.7831519+03:00" start="2026-10-04T01:46:56.3452884+03:00" finish="2026-10-04T01:46:57.7868610+03:00" />
+  <TestSettings name="default" id="0eb962e4-cdef-4908-8c9d-93f4a11654ff">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_01_46_57" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9d5cb1e1-0660-4f0f-8b5a-1cdca00b74b9" testId="c455d52b-14ff-6fe3-1803-30fdb0d16d2d" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Protected_child_allows_creation_only_ancestor_but_refuses_child_replacement_or_writable_target" computerName="OS008-HOME" duration="00:00:00.7820918" startTime="2026-10-04T01:46:56.8878208+03:00" endTime="2026-10-04T01:46:57.6848194+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9d5cb1e1-0660-4f0f-8b5a-1cdca00b74b9">
+      <Output>
+        <ErrorInfo>
+          <Message>Privileged fixture component or ancestor permits standard-user write/replacement. at Assert-VaultFixtureTrustedPath, C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\eng\fixtures\vault-windows-fixture.psm1: line 220&#xD;
+at &lt;ScriptBlock&gt;, E:\Temp\AppData\Local\Temp\FluxVault.WindowsFixtureTools.f03cce37ff6849068f6fba8a61744c17\case-be37c7493bc444789f6d6c6b9016cec6.ps1: line 16</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Protected_child_allows_creation_only_ancestor_but_refuses_child_replacement_or_writable_target() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 183&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Protected_child_allows_creation_only_ancestor_but_refuses_child_replacement_or_writable_target" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="c455d52b-14ff-6fe3-1803-30fdb0d16d2d">
+      <Execution id="9d5cb1e1-0660-4f0f-8b5a-1cdca00b74b9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Protected_child_allows_creation_only_ancestor_but_refuses_child_replacement_or_writable_target" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c455d52b-14ff-6fe3-1803-30fdb0d16d2d" executionId="9d5cb1e1-0660-4f0f-8b5a-1cdca00b74b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.98]       Privileged fixture component or ancestor permits standard-user write/replacement. at Assert-VaultFixtureTrustedPath, C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\eng\fixtures\vault-windows-fixture.psm1: line 220&#xD;
+[xUnit.net 00:00:00.98]       at &lt;ScriptBlock&gt;, E:\Temp\AppData\Local\Temp\FluxVault.WindowsFixtureTools.f03cce37ff6849068f6fba8a61744c17\case-be37c7493bc444789f6d6c6b9016cec6.ps1: line 16&#xD;
+[xUnit.net 00:00:00.98]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.98]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(183,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Protected_child_allows_creation_only_ancestor_but_refuses_child_replacement_or_writable_target()&#xD;
+[xUnit.net 00:00:00.98]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.99]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T01:46:57.6873046+03:00">
+        <Text>[xUnit.net 00:00:00.98]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Protected_child_allows_creation_only_ancestor_but_refuses_child_replacement_or_writable_target [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2509d3b9-91d6-413c-9680-bc70b97c7f36" name="os008@OS008-HOME 2026-10-04 16:47:09" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T16:47:09.7212249+03:00" queuing="2026-10-04T16:47:09.7212251+03:00" start="2026-10-04T16:47:08.7922354+03:00" finish="2026-10-04T16:47:09.7250802+03:00" />
+  <TestSettings name="default" id="3ae77eb6-45c4-4f05-a278-de14a8441b41">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_16_47_09" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="92c7679b-c1d5-4a48-90d5-1034c3df881f" testId="8158039b-8de3-d286-4394-bd0e43b06a45" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(cancelled: False)" computerName="OS008-HOME" duration="00:00:00.0054306" startTime="2026-10-04T16:47:09.6320119+03:00" endTime="2026-10-04T16:47:09.6320698+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="92c7679b-c1d5-4a48-90d5-1034c3df881f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Empty() Failure: Collection was not empty&#xD;
+Collection: [RepositoryVersionSummary { VersionId = old, SourcePath = E:\Temp\AppData\Local\Temp\FluxVault.Tests\b6027625668b400ab9491863fedb606a\old.txt, CapturedAtUtc = 2026-10-04 1:47:09 PM +00:00, Consistency = BestEffort, LogicalLength = 1, ChunkCount = 1, OperationType = Capture, ParentVersionIds = , RestoredFromVersionId = , ForkOriginVersionId = , InheritedFromVersionId = , InheritedFromSourcePath = , ContentSignature = , SyncOrigin = , EntryKind = File, IsDeleted = False, FolderEntries = , DeletedFromVersionId = , SourceLastWriteUtc =  }]</Message>
+          <StackTrace>   at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(Boolean cancelled) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs:line 762&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dd0e8538-8144-497a-98bf-dd38584708e3" testId="0fac8411-fa23-1d14-4916-db047436e884" testName="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(cancelled: True)" computerName="OS008-HOME" duration="00:00:00.2404647" startTime="2026-10-04T16:47:09.3641236+03:00" endTime="2026-10-04T16:47:09.6197142+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dd0e8538-8144-497a-98bf-dd38584708e3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Empty() Failure: Collection was not empty&#xD;
+Collection: [RepositoryVersionSummary { VersionId = old, SourcePath = E:\Temp\AppData\Local\Temp\FluxVault.Tests\751e4632886a4a77b71ad46cb1b5ad71\old.txt, CapturedAtUtc = 2026-10-04 1:47:09 PM +00:00, Consistency = BestEffort, LogicalLength = 1, ChunkCount = 1, OperationType = Capture, ParentVersionIds = , RestoredFromVersionId = , ForkOriginVersionId = , InheritedFromVersionId = , InheritedFromSourcePath = , ContentSignature = , SyncOrigin = , EntryKind = File, IsDeleted = False, FolderEntries = , DeletedFromVersionId = , SourceLastWriteUtc =  }]</Message>
+          <StackTrace>   at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(Boolean cancelled) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs:line 762&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(cancelled: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="0fac8411-fa23-1d14-4916-db047436e884">
+      <Execution id="dd0e8538-8144-497a-98bf-dd38584708e3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(cancelled: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="8158039b-8de3-d286-4394-bd0e43b06a45">
+      <Execution id="92c7679b-c1d5-4a48-90d5-1034c3df881f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests" name="Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="8158039b-8de3-d286-4394-bd0e43b06a45" executionId="92c7679b-c1d5-4a48-90d5-1034c3df881f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0fac8411-fa23-1d14-4916-db047436e884" executionId="dd0e8538-8144-497a-98bf-dd38584708e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.47]       Assert.Empty() Failure: Collection was not empty&#xD;
+[xUnit.net 00:00:00.47]       Collection: [RepositoryVersionSummary { VersionId = old, SourcePath = E:\Temp\AppData\Local\Temp\FluxVault.Tests\751e4632886a4a77b71ad46cb1b5ad71\old.txt, CapturedAtUtc = 2026-10-04 1:47:09 PM +00:00, Consistency = BestEffort, LogicalLength = 1, ChunkCount = 1, OperationType = Capture, ParentVersionIds = , RestoredFromVersionId = , ForkOriginVersionId = , InheritedFromVersionId = , InheritedFromSourcePath = , ContentSignature = , SyncOrigin = , EntryKind = File, IsDeleted = False, FolderEntries = , DeletedFromVersionId = , SourceLastWriteUtc =  }]&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs(762,0): at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(Boolean cancelled)&#xD;
+[xUnit.net 00:00:00.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.48]       Assert.Empty() Failure: Collection was not empty&#xD;
+[xUnit.net 00:00:00.48]       Collection: [RepositoryVersionSummary { VersionId = old, SourcePath = E:\Temp\AppData\Local\Temp\FluxVault.Tests\b6027625668b400ab9491863fedb606a\old.txt, CapturedAtUtc = 2026-10-04 1:47:09 PM +00:00, Consistency = BestEffort, LogicalLength = 1, ChunkCount = 1, OperationType = Capture, ParentVersionIds = , RestoredFromVersionId = , ForkOriginVersionId = , InheritedFromVersionId = , InheritedFromSourcePath = , ContentSignature = , SyncOrigin = , EntryKind = File, IsDeleted = False, FolderEntries = , DeletedFromVersionId = , SourceLastWriteUtc =  }]&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\FluxVaultOperationsPerformanceTests.cs(762,0): at FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(Boolean cancelled)&#xD;
+[xUnit.net 00:00:00.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.48]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T16:47:09.6224159+03:00">
+        <Text>[xUnit.net 00:00:00.47]     FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(cancelled: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T16:47:09.6322371+03:00">
+        <Text>[xUnit.net 00:00:00.48]     FluxVault.Core.Tests.FluxVaultOperationsPerformanceTests.Retention_failure_or_cancellation_cannot_leave_history_cached_before_partial_deletion(cancelled: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

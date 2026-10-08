@@ -1,0 +1,508 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3443cd10-de40-45a4-badb-1c8c6d5b8356" name="os008@OS008-HOME 2026-10-04 05:08:23" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T05:08:23.1169162+03:00" queuing="2026-10-04T05:08:23.1169163+03:00" start="2026-10-04T05:08:22.4922994+03:00" finish="2026-10-04T05:08:23.1485065+03:00" />
+  <TestSettings name="default" id="7f5f19e7-8051-4971-aa5b-4322d40f0aad">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_05_08_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="182a861a-ecc9-488e-8643-89de465aebda" testId="f778d503-a87d-237f-d760-5c3d2026cd83" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RunRetentionNow, required: Maintain | DeleteHistory)" computerName="OS008-HOME" duration="00:00:00.0000185" startTime="2026-10-04T05:08:23.0949698+03:00" endTime="2026-10-04T05:08:23.0949988+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="182a861a-ecc9-488e-8643-89de465aebda">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 111&#xD;
+   at InvokeStub_VaultAuthorizationTests.Command_contract_requires_its_specific_permission(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="42b77265-37e4-406b-a924-402c312a3f49" testId="2d63cb37-5d97-a8ef-7074-f693dc1420ab" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: ManageProtection)" computerName="OS008-HOME" duration="00:00:00.0000190" startTime="2026-10-04T05:08:23.0717528+03:00" endTime="2026-10-04T05:08:23.0717787+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="42b77265-37e4-406b-a924-402c312a3f49">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(VaultPermission permission) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 26&#xD;
+   at InvokeStub_VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="87c16654-6313-4554-a7e0-9fe1c3a734be" testId="5ede46c9-e7ce-66c0-abbb-63556199b9d4" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RestoreVersion, required: Recover)" computerName="OS008-HOME" duration="00:00:00.0000181" startTime="2026-10-04T05:08:23.0953701+03:00" endTime="2026-10-04T05:08:23.0953968+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87c16654-6313-4554-a7e0-9fe1c3a734be">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 111&#xD;
+   at InvokeStub_VaultAuthorizationTests.Command_contract_requires_its_specific_permission(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="488023cb-35ee-49ee-b2a8-426b9dcaf1ea" testId="773a0a1f-e2a8-408c-dd34-b69cb4511f7b" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Destructive_conjunction_requires_every_permission" computerName="OS008-HOME" duration="00:00:00.0002368" startTime="2026-10-04T05:08:23.0973302+03:00" endTime="2026-10-04T05:08:23.0973559+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="488023cb-35ee-49ee-b2a8-426b9dcaf1ea">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Destructive_conjunction_requires_every_permission() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 48&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="675dbb69-7845-4f8d-a98a-d718b6a5ed34" testId="6d3d059f-5fe5-aa4e-47e3-6a76411b1938" testName="FluxVault.Core.Tests.VaultAuthorizationTests.All_existing_commands_have_explicit_nonempty_policy_and_unknown_values_fail_closed" computerName="OS008-HOME" duration="00:00:00.0008419" startTime="2026-10-04T05:08:23.0969766+03:00" endTime="2026-10-04T05:08:23.0970029+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="675dbb69-7845-4f8d-a98a-d718b6a5ed34">
+      <Output>
+        <ErrorInfo>
+          <Message>Missing policy for GetStatus.</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.All_existing_commands_have_explicit_nonempty_policy_and_unknown_values_fail_closed() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 96&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="18586a00-99de-4c6b-987f-d1084d5c1360" testId="75f8f9dd-7b7f-1950-07f6-0701c3da3d34" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Missing_impersonation_and_unknown_permissions_fail_closed_even_for_an_administrator" computerName="OS008-HOME" duration="00:00:00.0018044" startTime="2026-10-04T05:08:23.0961935+03:00" endTime="2026-10-04T05:08:23.0962232+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18586a00-99de-4c6b-987f-d1084d5c1360">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.UnauthorizedAccessException)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Missing_impersonation_and_unknown_permissions_fail_closed_even_for_an_administrator() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 88&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bf946831-311a-4100-a59d-49f719fdc09e" testId="a9bbcada-c714-428d-8d0c-06bb74d26c0e" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RunMirrorDrain, required: Maintain | DeleteHistory)" computerName="OS008-HOME" duration="00:00:00.0001988" startTime="2026-10-04T05:08:23.0721626+03:00" endTime="2026-10-04T05:08:23.0721888+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf946831-311a-4100-a59d-49f719fdc09e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 111&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1c704be7-280d-4270-ab84-3f71dd2fb05e" testId="df058b1e-a095-78be-f67e-df136583e0ea" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(groupGrant: True)" computerName="OS008-HOME" duration="00:00:00.0001708" startTime="2026-10-04T05:08:23.0686552+03:00" endTime="2026-10-04T05:08:23.0687660+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c704be7-280d-4270-ab84-3f71dd2fb05e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(Boolean groupGrant) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 38&#xD;
+   at InvokeStub_VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9daa30e5-c361-49fb-94e0-78e9dea7bbf6" testId="0bae98f3-3666-59fa-2e79-7c8a6c9cf753" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Access_management_requires_an_elevated_enabled_administrator_even_for_the_owner" computerName="OS008-HOME" duration="00:00:00.0001975" startTime="2026-10-04T05:08:23.0965757+03:00" endTime="2026-10-04T05:08:23.0966019+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9daa30e5-c361-49fb-94e0-78e9dea7bbf6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Access_management_requires_an_elevated_enabled_administrator_even_for_the_owner() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 65&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5b32f26a-f907-44de-a994-314634b798e7" testId="ff1284c4-ccde-0805-835c-927c09bbb3a8" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: Recover)" computerName="OS008-HOME" duration="00:00:00.0007158" startTime="2026-10-04T05:08:23.0701937+03:00" endTime="2026-10-04T05:08:23.0702234+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b32f26a-f907-44de-a994-314634b798e7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(VaultPermission permission) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 26&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fed4976f-245b-4d58-b38d-b38dd14cd6b6" testId="c667d7b5-7bfe-a1cd-5c9f-b1057d8fb102" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: SaveConfiguration, required: ManageProtection)" computerName="OS008-HOME" duration="00:00:00.0001699" startTime="2026-10-04T05:08:23.0725308+03:00" endTime="2026-10-04T05:08:23.0725560+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fed4976f-245b-4d58-b38d-b38dd14cd6b6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 111&#xD;
+   at InvokeStub_VaultAuthorizationTests.Command_contract_requires_its_specific_permission(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ecbb54df-52f9-4bd4-81d9-0c2ffb6c3d1b" testId="5a92a0d7-2a2a-f2ea-5a7b-b599a4a3a031" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RestoreVersionPreview, required: Recover)" computerName="OS008-HOME" duration="00:00:00.0000191" startTime="2026-10-04T05:08:23.0957820+03:00" endTime="2026-10-04T05:08:23.0958100+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ecbb54df-52f9-4bd4-81d9-0c2ffb6c3d1b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 111&#xD;
+   at InvokeStub_VaultAuthorizationTests.Command_contract_requires_its_specific_permission(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3eaf97a5-84ab-4562-986c-2b3ba3bb9d12" testId="96120a2f-6ab3-ff10-1b6d-f1c22e0114f8" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(groupGrant: False)" computerName="OS008-HOME" duration="00:00:00.0031722" startTime="2026-10-04T05:08:23.0402374+03:00" endTime="2026-10-04T05:08:23.0550341+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3eaf97a5-84ab-4562-986c-2b3ba3bb9d12">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(Boolean groupGrant) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 38&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f567b6d9-874f-4cbc-abb2-16f39d013483" testId="a197fb53-e225-640e-a0f8-62fc870b8542" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: DeleteHistory)" computerName="OS008-HOME" duration="00:00:00.0001370" startTime="2026-10-04T05:08:23.0705833+03:00" endTime="2026-10-04T05:08:23.0706111+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f567b6d9-874f-4cbc-abb2-16f39d013483">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(VaultPermission permission) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 26&#xD;
+   at InvokeStub_VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="df01a85d-868c-4a06-bb41-52a5803c30fa" testId="2000cb35-3648-f611-4350-ee0594eeda03" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Policy_owns_its_grant_snapshot" computerName="OS008-HOME" duration="00:00:00.0029935" startTime="2026-10-04T05:08:23.0977282+03:00" endTime="2026-10-04T05:08:23.0977538+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df01a85d-868c-4a06-bb41-52a5803c30fa">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Empty() Failure: Collection was not empty&#xD;
+Collection: [VaultAccessGrant { PrincipalSid = S-1-5-21-1-2-3-1002, Permissions = ReadHistory }]</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Policy_owns_its_grant_snapshot() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 76&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="078ee810-e38d-4045-8afb-1cce507fd9e1" testId="881eac52-fd37-5f31-85cb-26e6e4ca646e" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: Maintain)" computerName="OS008-HOME" duration="00:00:00.0000259" startTime="2026-10-04T05:08:23.0713822+03:00" endTime="2026-10-04T05:08:23.0714078+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="078ee810-e38d-4045-8afb-1cce507fd9e1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(VaultPermission permission) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 26&#xD;
+   at InvokeStub_VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f3b5d072-c9ad-477b-a8b3-6fca8aafafd0" testId="232ba684-ccc5-df6a-fa18-fc4017c6f9ba" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: ReadHistory)" computerName="OS008-HOME" duration="00:00:00.0000324" startTime="2026-10-04T05:08:23.0709572+03:00" endTime="2026-10-04T05:08:23.0709825+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3b5d072-c9ad-477b-a8b3-6fca8aafafd0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(VaultPermission permission) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 26&#xD;
+   at InvokeStub_VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f67dabe3-1a21-4de6-a8c6-68b5cd8bfef0" testId="3d599f24-f469-09c6-568a-775274f450d4" testName="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RunBackupNow, required: ManageProtection)" computerName="OS008-HOME" duration="00:00:00.0000217" startTime="2026-10-04T05:08:23.0944444+03:00" endTime="2026-10-04T05:08:23.0944816+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f67dabe3-1a21-4de6-a8c6-68b5cd8bfef0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs:line 111&#xD;
+   at InvokeStub_VaultAuthorizationTests.Command_contract_requires_its_specific_permission(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RunRetentionNow, required: Maintain | DeleteHistory)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="f778d503-a87d-237f-d760-5c3d2026cd83">
+      <Execution id="182a861a-ecc9-488e-8643-89de465aebda" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Command_contract_requires_its_specific_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: DeleteHistory)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="a197fb53-e225-640e-a0f8-62fc870b8542">
+      <Execution id="f567b6d9-874f-4cbc-abb2-16f39d013483" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Creator_owns_the_vault_but_other_users_have_no_default_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RunBackupNow, required: ManageProtection)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="3d599f24-f469-09c6-568a-775274f450d4">
+      <Execution id="f67dabe3-1a21-4de6-a8c6-68b5cd8bfef0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Command_contract_requires_its_specific_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RunMirrorDrain, required: Maintain | DeleteHistory)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="a9bbcada-c714-428d-8d0c-06bb74d26c0e">
+      <Execution id="bf946831-311a-4100-a59d-49f719fdc09e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Command_contract_requires_its_specific_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Missing_impersonation_and_unknown_permissions_fail_closed_even_for_an_administrator" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="75f8f9dd-7b7f-1950-07f6-0701c3da3d34">
+      <Execution id="18586a00-99de-4c6b-987f-d1084d5c1360" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Missing_impersonation_and_unknown_permissions_fail_closed_even_for_an_administrator" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: ReadHistory)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="232ba684-ccc5-df6a-fa18-fc4017c6f9ba">
+      <Execution id="f3b5d072-c9ad-477b-a8b3-6fca8aafafd0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Creator_owns_the_vault_but_other_users_have_no_default_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(groupGrant: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="96120a2f-6ab3-ff10-1b6d-f1c22e0114f8">
+      <Execution id="3eaf97a5-84ab-4562-986c-2b3ba3bb9d12" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Grants_are_limited_to_their_named_permissions_and_enabled_membership" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.All_existing_commands_have_explicit_nonempty_policy_and_unknown_values_fail_closed" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="6d3d059f-5fe5-aa4e-47e3-6a76411b1938">
+      <Execution id="675dbb69-7845-4f8d-a98a-d718b6a5ed34" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="All_existing_commands_have_explicit_nonempty_policy_and_unknown_values_fail_closed" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: Recover)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="ff1284c4-ccde-0805-835c-927c09bbb3a8">
+      <Execution id="5b32f26a-f907-44de-a994-314634b798e7" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Creator_owns_the_vault_but_other_users_have_no_default_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Destructive_conjunction_requires_every_permission" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="773a0a1f-e2a8-408c-dd34-b69cb4511f7b">
+      <Execution id="488023cb-35ee-49ee-b2a8-426b9dcaf1ea" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Destructive_conjunction_requires_every_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: ManageProtection)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="2d63cb37-5d97-a8ef-7074-f693dc1420ab">
+      <Execution id="42b77265-37e4-406b-a924-402c312a3f49" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Creator_owns_the_vault_but_other_users_have_no_default_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Policy_owns_its_grant_snapshot" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="2000cb35-3648-f611-4350-ee0594eeda03">
+      <Execution id="df01a85d-868c-4a06-bb41-52a5803c30fa" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Policy_owns_its_grant_snapshot" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Access_management_requires_an_elevated_enabled_administrator_even_for_the_owner" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="0bae98f3-3666-59fa-2e79-7c8a6c9cf753">
+      <Execution id="9daa30e5-c361-49fb-94e0-78e9dea7bbf6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Access_management_requires_an_elevated_enabled_administrator_even_for_the_owner" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RestoreVersion, required: Recover)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="5ede46c9-e7ce-66c0-abbb-63556199b9d4">
+      <Execution id="87c16654-6313-4554-a7e0-9fe1c3a734be" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Command_contract_requires_its_specific_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: Maintain)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="881eac52-fd37-5f31-85cb-26e6e4ca646e">
+      <Execution id="078ee810-e38d-4045-8afb-1cce507fd9e1" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Creator_owns_the_vault_but_other_users_have_no_default_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(groupGrant: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="df058b1e-a095-78be-f67e-df136583e0ea">
+      <Execution id="1c704be7-280d-4270-ab84-3f71dd2fb05e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Grants_are_limited_to_their_named_permissions_and_enabled_membership" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: SaveConfiguration, required: ManageProtection)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="c667d7b5-7bfe-a1cd-5c9f-b1057d8fb102">
+      <Execution id="fed4976f-245b-4d58-b38d-b38dd14cd6b6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Command_contract_requires_its_specific_permission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RestoreVersionPreview, required: Recover)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="5a92a0d7-2a2a-f2ea-5a7b-b599a4a3a031">
+      <Execution id="ecbb54df-52f9-4bd4-81d9-0c2ffb6c3d1b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.VaultAuthorizationTests" name="Command_contract_requires_its_specific_permission" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f778d503-a87d-237f-d760-5c3d2026cd83" executionId="182a861a-ecc9-488e-8643-89de465aebda" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2d63cb37-5d97-a8ef-7074-f693dc1420ab" executionId="42b77265-37e4-406b-a924-402c312a3f49" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5ede46c9-e7ce-66c0-abbb-63556199b9d4" executionId="87c16654-6313-4554-a7e0-9fe1c3a734be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="773a0a1f-e2a8-408c-dd34-b69cb4511f7b" executionId="488023cb-35ee-49ee-b2a8-426b9dcaf1ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6d3d059f-5fe5-aa4e-47e3-6a76411b1938" executionId="675dbb69-7845-4f8d-a98a-d718b6a5ed34" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="75f8f9dd-7b7f-1950-07f6-0701c3da3d34" executionId="18586a00-99de-4c6b-987f-d1084d5c1360" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a9bbcada-c714-428d-8d0c-06bb74d26c0e" executionId="bf946831-311a-4100-a59d-49f719fdc09e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="df058b1e-a095-78be-f67e-df136583e0ea" executionId="1c704be7-280d-4270-ab84-3f71dd2fb05e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0bae98f3-3666-59fa-2e79-7c8a6c9cf753" executionId="9daa30e5-c361-49fb-94e0-78e9dea7bbf6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ff1284c4-ccde-0805-835c-927c09bbb3a8" executionId="5b32f26a-f907-44de-a994-314634b798e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c667d7b5-7bfe-a1cd-5c9f-b1057d8fb102" executionId="fed4976f-245b-4d58-b38d-b38dd14cd6b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a92a0d7-2a2a-f2ea-5a7b-b599a4a3a031" executionId="ecbb54df-52f9-4bd4-81d9-0c2ffb6c3d1b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="96120a2f-6ab3-ff10-1b6d-f1c22e0114f8" executionId="3eaf97a5-84ab-4562-986c-2b3ba3bb9d12" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a197fb53-e225-640e-a0f8-62fc870b8542" executionId="f567b6d9-874f-4cbc-abb2-16f39d013483" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2000cb35-3648-f611-4350-ee0594eeda03" executionId="df01a85d-868c-4a06-bb41-52a5803c30fa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="881eac52-fd37-5f31-85cb-26e6e4ca646e" executionId="078ee810-e38d-4045-8afb-1cce507fd9e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="232ba684-ccc5-df6a-fa18-fc4017c6f9ba" executionId="f3b5d072-c9ad-477b-a8b3-6fca8aafafd0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3d599f24-f469-09c6-568a-775274f450d4" executionId="f67dabe3-1a21-4de6-a8c6-68b5cd8bfef0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="18" executed="18" passed="0" failed="18" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.21]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.21]       Expected: True&#xD;
+[xUnit.net 00:00:00.21]       Actual:   False&#xD;
+[xUnit.net 00:00:00.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.22]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(38,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(Boolean groupGrant)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.23]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.23]       Expected: True&#xD;
+[xUnit.net 00:00:00.23]       Actual:   False&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(38,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(Boolean groupGrant)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.23]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.23]       Expected: True&#xD;
+[xUnit.net 00:00:00.23]       Actual:   False&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(26,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(VaultPermission permission)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.23]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.23]       Expected: True&#xD;
+[xUnit.net 00:00:00.23]       Actual:   False&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(26,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(VaultPermission permission)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.23]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.23]       Expected: True&#xD;
+[xUnit.net 00:00:00.23]       Actual:   False&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(26,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(VaultPermission permission)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.23]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.23]       Expected: True&#xD;
+[xUnit.net 00:00:00.23]       Actual:   False&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(26,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(VaultPermission permission)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.23]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.23]       Expected: True&#xD;
+[xUnit.net 00:00:00.23]       Actual:   False&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(26,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(VaultPermission permission)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.23]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.23]       Expected: True&#xD;
+[xUnit.net 00:00:00.23]       Actual:   False&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(111,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.23]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.23]       Expected: True&#xD;
+[xUnit.net 00:00:00.23]       Actual:   False&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(111,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_VaultAuthorizationTests.Command_contract_requires_its_specific_permission(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.25]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.25]       Expected: True&#xD;
+[xUnit.net 00:00:00.25]       Actual:   False&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(111,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required)&#xD;
+[xUnit.net 00:00:00.25]            at InvokeStub_VaultAuthorizationTests.Command_contract_requires_its_specific_permission(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.25]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.25]       Expected: True&#xD;
+[xUnit.net 00:00:00.25]       Actual:   False&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(111,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required)&#xD;
+[xUnit.net 00:00:00.25]            at InvokeStub_VaultAuthorizationTests.Command_contract_requires_its_specific_permission(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.25]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.25]       Expected: True&#xD;
+[xUnit.net 00:00:00.25]       Actual:   False&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(111,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required)&#xD;
+[xUnit.net 00:00:00.25]            at InvokeStub_VaultAuthorizationTests.Command_contract_requires_its_specific_permission(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.25]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.25]       Expected: True&#xD;
+[xUnit.net 00:00:00.25]       Actual:   False&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(111,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(FluxVaultIpcCommand command, VaultPermission required)&#xD;
+[xUnit.net 00:00:00.25]            at InvokeStub_VaultAuthorizationTests.Command_contract_requires_its_specific_permission(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.25]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.25]       Expected: typeof(System.UnauthorizedAccessException)&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(88,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Missing_impersonation_and_unknown_permissions_fail_closed_even_for_an_administrator()&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.25]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.25]       Expected: True&#xD;
+[xUnit.net 00:00:00.25]       Actual:   False&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(65,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Access_management_requires_an_elevated_enabled_administrator_even_for_the_owner()&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.25]       Missing policy for GetStatus.&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(96,0): at FluxVault.Core.Tests.VaultAuthorizationTests.All_existing_commands_have_explicit_nonempty_policy_and_unknown_values_fail_closed()&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.25]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.25]       Expected: True&#xD;
+[xUnit.net 00:00:00.25]       Actual:   False&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(48,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Destructive_conjunction_requires_every_permission()&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.25]       Assert.Empty() Failure: Collection was not empty&#xD;
+[xUnit.net 00:00:00.25]       Collection: [VaultAccessGrant { PrincipalSid = S-1-5-21-1-2-3-1002, Permissions = ReadHistory }]&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\VaultAuthorizationTests.cs(76,0): at FluxVault.Core.Tests.VaultAuthorizationTests.Policy_owns_its_grant_snapshot()&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.25]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.26]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.0575903+03:00">
+        <Text>[xUnit.net 00:00:00.21]     FluxVault.Core.Tests.VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(groupGrant: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.0689163+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Core.Tests.VaultAuthorizationTests.Grants_are_limited_to_their_named_permissions_and_enabled_membership(groupGrant: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.0703544+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: Recover) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.0707231+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: DeleteHistory) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.0710581+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: ReadHistory) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.0715124+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: Maintain) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.0718777+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Core.Tests.VaultAuthorizationTests.Creator_owns_the_vault_but_other_users_have_no_default_permission(permission: ManageProtection) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.0722931+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RunMirrorDrain, required: Maintain | DeleteHistory) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.0726610+03:00">
+        <Text>[xUnit.net 00:00:00.23]     FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: SaveConfiguration, required: ManageProtection) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.1226270+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RunBackupNow, required: ManageProtection) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.1226729+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RunRetentionNow, required: Maintain | DeleteHistory) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.1227110+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RestoreVersion, required: Recover) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.1227441+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.VaultAuthorizationTests.Command_contract_requires_its_specific_permission(command: RestoreVersionPreview, required: Recover) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.1227703+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.VaultAuthorizationTests.Missing_impersonation_and_unknown_permissions_fail_closed_even_for_an_administrator [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.1228003+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.VaultAuthorizationTests.Access_management_requires_an_elevated_enabled_administrator_even_for_the_owner [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.1228299+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.VaultAuthorizationTests.All_existing_commands_have_explicit_nonempty_policy_and_unknown_values_fail_closed [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.1228585+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.VaultAuthorizationTests.Destructive_conjunction_requires_every_permission [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-04T05:08:23.1228864+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Core.Tests.VaultAuthorizationTests.Policy_owns_its_grant_snapshot [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

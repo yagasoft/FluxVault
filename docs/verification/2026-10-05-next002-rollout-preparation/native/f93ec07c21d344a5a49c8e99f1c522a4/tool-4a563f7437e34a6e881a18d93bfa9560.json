@@ -1,0 +1,5 @@
+{
+  "ExitCode": 3,
+  "Error": "ERROR:  column \"line_number\" does not exist\r\nLINE 2: ...,(SELECT coalesce(json_agg(r ORDER BY rule_number,line_numbe...\r\n                                                             ^\r\nHINT:  Perhaps you meant to reference the column \"r.rule_number\".\r\n",
+  "Output": ""
+}

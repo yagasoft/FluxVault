@@ -1,0 +1,207 @@
+# Authorised vault operations and protection-save correctness
+
+Status: approved implementation resumed after the model switch, 3 October 2026, based on `afdfe1f`. Batch C's configuration repair and regressions are in the isolated branch; [verification](../../verification/2026-10-03-protection-save/README.md) records its progress. S1–S3 security implementation remains open. No installed-system change is included. The user accepted the recommended creator-only access default with explicit Windows user/group grants.
+
+## Fixed intent and boundary
+
+Scope revision, 4 October 2026: the user requires exactly one logical vault per Windows installation. This supersedes the earlier multi-vault requirements. Keep Windows, WPF, .NET, the service boundary, local-first operation, PostgreSQL and the verified-recovery guarantees. The vault supports multiple protected folders, file types and mirror destinations. Remove profile switching, additional-vault creation, duplication, discovery and multiple-vault runtime management. Retain only the repository identity, immutable storage binding, metadata namespace, configuration revision and operation receipts needed for correctness and safe recovery. The [roadmap](../../improvement-roadmap.md) otherwise retains its sequence and scope.
+
+Deliver a real authorised selection → saved configuration → service capture → visible version → verified restore, plus denial and isolation evidence. The small configuration batch can ship independently. Its delivery never counts as completion of NEXT-002 or all of NEXT-004. Full revisioned configuration, explicit pause/resume redesign, separation of stop-protecting/history deletion, lifecycle supervision, independent disaster recovery and the full UI rebuild keep their existing roadmap positions. A revision check required to bind a NEXT-002 command to its intended configuration is scoped to that security invariant; it is not the complete NEXT-004 configuration programme.
+
+The completed Overview → Protect → Recover concepts are historical design evidence, not implemented UI or accessibility certification. Stop further multi-vault concept exploration; vault selectors in those assets are superseded.
+
+## Baseline source and reproduced evidence
+
+| Finding | Current implementation | Planning evidence |
+| --- | --- | --- |
+| Unrelated settings reset | `MainWindowViewModel.BuildConfiguration` constructs a new record, forces `IsEnabled=true`, omits MetadataStore, RepositoryMaintenancePolicy, Sync and DiagnosticsPolicy. | New `ProtectionSaveContractTests` drives `SaveConfigurationCommand`, saves through both real file-store routes and reopens disk state. Both cases change exactly those five fields. |
+| Backup follows unsuccessful save | `SaveConfigurationCoreAsync` returns only `Task`; failure and cancelled-confirmation returns are indistinguishable to `RunBackupNowAsync`, which always dispatches backup. | Rejected response, IO, timeout, access denial and confirmation cancellation all dispatch backup. An `OperationCanceledException` escapes instead of producing a handled result. |
+| Existing draft protection | `RefreshAsync` preserves local configuration while `hasLocalConfigurationChanges` is true. `ApplyStatus` replaces the general service-status message. | Failure tests establish draft/disk preservation before checking sequencing. A separate persistent save result is needed so refresh cannot erase the explanation. |
+| No trusted caller context | `NamedPipeFluxVaultServer` accepts AuthenticatedUser/AnyPackage, reads an unbounded line and calls `IFluxVaultRequestHandler` without caller identity. | Source inspection; no live exploitation performed. |
+| Mutable profile routing | The legacy profile manager can redirect omitted targets. | Remove the product profile manager and lifecycle/switch routes; commands bind to the installation's single repository identity. |
+| Global metadata namespace | Legacy stores qualify tables with `fluxvault` without a verified repository binding. | Retain the bound namespace and wrong-root/DB/namespace refusal; two-vault coexistence validation is retired. |
+| Direct DB bypass | `eng/setup-fluxvault-postgresql.ps1` writes `trust` for the exact FluxVault account/database on both loopback addresses. | Existing scoped provisioning was authorised and verified for staging. It does not identify the connecting Windows user. Closing the pipe alone cannot establish the new security boundary. |
+
+See [observed test results](../../verification/2026-10-03-next002-planning/README.md). Existing App tests still pass; the new red cases are intentionally not merged into `main`.
+
+## Bounded configuration contract — batch C
+
+1. Retain a complete last-accepted `FluxVaultConfiguration` for the selected profile in the view model. Build outgoing edits with a record copy, replacing only fields this screen actually edits. Preserve every other field automatically, rather than maintaining another incomplete list. Protection-only changes may alter SelectionRules and their compiled WatchedFolders; normal store normalisation still applies. Keep disabled protection disabled.
+2. Do not permit a save before a configuration baseline has loaded. Capture the target profile and local edit generation when starting a save. A response for a prior target/generation cannot clear newer edits or start a dependent command for another target. During an outstanding save, disable target switching and conflicting configuration actions; enforce this in command execution as well as enabled-state presentation. Keep completed-error drafts until retry/discard.
+3. Return an explicit internal save outcome: `Saved`, `Failed`, `Cancelled` or `Unknown`. Timeout/disconnection after dispatch means acknowledgement is unknown; do not promise that the server rolled back. None of Failed/Cancelled/Unknown permits a dependent backup. Confirmed cancellation before dispatch sends neither save nor backup. Transport task cancellation becomes a handled UI outcome.
+4. Only a confirmed successful save permits exactly one backup for the captured single-vault binding and accepted revision. A saved-but-partially-failed purge is not unconditional success for the combined workflow: preserve the warning and durable review gate, stop dependent backup and avoid blindly resending destructive work. Reference closure must not delete explicitly preserved history; refuse that purge before any deletion. This preserves existing removal semantics without implementing the later separate-history-deletion UX.
+5. Maintain observable `ProtectionSaveState` and `ProtectionSaveMessage` separately from connection/refresh messages. Explain that edits were kept and this action's backup did not start; do not imply unrelated scheduled activity was cancelled. A timeout says saving could not be confirmed. Keep the message and draft through automatic/manual refresh until retry, deliberate edit/discard or confirmed success.
+6. Retry reuses the retained draft; explicit discard reloads the accepted configuration. Successful acknowledgement clears only the acknowledged draft, not edits made while waiting. This batch preserves the already-loaded baseline; global cross-client stale-update arbitration remains NEXT-004 work. NEXT-002 must add revision binding where a target/authorisation race otherwise exists.
+
+No database connection is needed to prove these two client defects: the regression client is a transport adapter to production configuration stores, not a fake configuration store. Real pipe/DB proof is added for the combined security path later.
+
+## NEXT-002 security contract
+
+### Principals and resources
+
+Threat boundary: unauthorised local standard users, packaged clients and hostile requests. Elevated administrators, LocalSystem and a compromised service/OS are trusted-machine administrators, not adversaries this slice claims to contain. Permission granted to a Windows identity also applies to processes running as that identity; this is not per-application malware isolation.
+
+Accepted access decision: the installation's single vault belongs to its creating Windows user, with explicit access grants for other Windows users or groups. Persist the owner's SID from the authenticated caller context, never a client-supplied identity. Other ordinary users receive no access by default. Do not infer ownership of existing staging data or auto-grant all authenticated users. The single-vault scope does not alter the trusted-administrator boundary or grant-management requirements below.
+
+Permissions are explicit per vault: ReadHistory, Recover, ManageProtection, Maintain, DeleteHistory and ManageAccess. Default deny and exhaustively map every command. Grant management and infrastructure binding changes require an elevated trusted administrator; an ordinary configuration payload cannot supply OwnerSid, grant itself rights, change VaultId or point at another vault's database/schema/root. Profile names remain user-facing labels, not security identifiers.
+
+The server derives Windows SID, group membership, elevation and impersonation capability from the connected pipe token after reading a bounded request. Never accept identity/admin flags from JSON. Capture/duplicate a token into an owned request context; fail closed if impersonation/token acquisition fails and always release handles. No async work relies on a thread remaining impersonated after `RunAsClient` returns. Packaged clients still require an authorised Windows principal; AnyPackage is not a vault grant. Prevent local pipe spoofing/extra server-instance creation and reject remote pipe clients. Client verification and server ACL tests must cover these boundaries.
+
+### Vault identity, storage and PostgreSQL
+
+Retain an immutable UUID repository identity in one service-owned installation record, primary/mirror markers and versioned recovery metadata. Bind it to the canonical physical primary root and protected metadata endpoint/namespace. A mismatched/missing binding fails before reads or mutations; no silent adoption of non-empty roots or the old global namespace. Existing storage leases and verified publication remain mandatory. Mirror markers bind to the same repository and physical-root protections. There is one runtime and one mutation admission gate, with concurrent authorised reads for progress.
+
+Implementation choice, independently approved on 4 October: PostgreSQL is the authoritative catalogue in a fixed, fully qualified service-only control schema. A protected bootstrap supplies its instance identity and endpoint independently of editable vault configuration. Provisioning is explicit; missing or mismatched identity/schema fails closed. Logged tables, verified `fsync`/`full_page_writes` and synchronous WAL commit provide durable acknowledgement. There is no stale offline policy cache that can authorise commands. A catalogue outage blocks admission and saving while the UI retains pending edits.
+
+Permission and binding decisions use a coherent row revision and transactional admission. Revocation orders against admission: work admitted before a revocation may finish; new work after the revocation commits is denied. Configuration/policy updates use revision comparison within that same transaction, and commit their operation receipt before success. A lost commit acknowledgement is reconciled by operation identity; it is not proof of rollback. Catalogue transactions do not atomically commit filesystem/repository effects. This replaces the explored protected-JSON publisher without changing the architecture, configurable metadata endpoints or acceptance gates.
+
+Retain the existing bound PostgreSQL schema (`fv_` followed by the 32 lowercase repository UUID hex digits) in the protected configured database. It distinguishes this repository from stale or unrelated metadata and supports safe recovery; it is not a multi-vault feature. All queries, FKs, advisory locks, caches, current entries, lineage/folder edges, descriptor checks, maintenance state and outbox/export paths must use the verified binding. Identifiers derive solely from validated UUIDs, are safely quoted and never user-supplied SQL. Do not use mutable pooled-connection `search_path` as the binding mechanism.
+
+The completed namespace/binding evidence is preserved. Continue wrong-repository refusal and real-store integrity tests, with no further two-vault isolation or duplicate/create/switch validation. The namespace is not a substitute for OS/DB access control. Selected storage roots and inherited child permissions admit SYSTEM/Administrators only; fresh protected provisioning must not adopt an existing populated tree by changing its root ACL.
+
+### Close direct-access bypasses
+
+Service state, configuration/catalogue/grants and repository storage require ACLs appropriate to the authorised service and administrative recovery boundary. Normal UI/CLI access goes through the authenticated service; keep developer/disposable direct-repository workflows explicitly owned and unable to open protected service-managed roots. Do not claim shared plaintext files on an unprotected storage root are isolated by a pipe permission.
+
+For PostgreSQL, propose password-free Windows SSPI authentication with an exact service-principal-to-FluxVault-role mapping, realm retained, loopback and database/account scoping preserved. Ordinary users must fail direct login as that role on IPv4 and IPv6. Npgsql supports password-free GSS/SSPI; the exact LocalSystem identity on this Windows installation must be established in an owned rehearsal, not guessed. If this cannot satisfy the gate, stop this approach and resolve it before release; do not fall back to `trust` or silently introduce stored credentials.
+
+This plans a successor to the earlier expressly approved staging `trust` setup. It does not authorise editing the installed HBA, account, service or database now. Prepare the exact mapping, original-line preservation, rollback and reviewed rehearsal evidence before requesting any later normal-installation change. Preserve unrelated databases/HBA lines and the no-PostgreSQL-restart constraint. Password-free use remains the intended user experience.
+
+### Caller-authorised paths and background capture
+
+Permission to operate a vault is separate from permission to read a source or write an output. Admit protection only for paths the configuring principal may protect. Bind the saved grant to that principal and root. Scheduled capture must use an effective token/access decision for that principal and final handles, including newly appearing descendants; it cannot turn a one-time readable-directory check into indefinite LocalSystem access to newly restricted files. If a suitable token cannot be reacquired, report blocked protection instead of falling back to service privilege. Define and test logged-off/reboot behaviour before claiming this feature delivered.
+
+Restore/preview/diagnostic export require caller-authorised destination handles and containment through publication. Validate existing components and the final target, account for junction/reparse replacement and hard-link destination cases, pin necessary handles or use handle-relative operations. A lexical prefix check plus later privileged reopen is insufficient. Preserve current supported-path semantics and clear refusal of unsupported cases. VSS may use service privilege to create a snapshot, but that does not authorise reading arbitrary snapshot paths for a client. Preview reconstruction and launch must use the same authorisation and verified bytes as restore.
+
+### Command and result binding
+
+External commands require the installation's verified repository identity; mismatched identities fail before storage access. There is no active-profile switch or vault-discovery API. Response data, version selection and local drafts retain this binding and revision. Authorise history/activity/health/diagnostic views before materialising data. Unknown or forbidden resources return the same safe denial class without paths or contents.
+
+Mutation requests carry OperationId plus an expected configuration/binding revision when relevant. Persist operation identity, initiating SID, VaultId, command, semantic request fingerprint and terminal outcome. Duplicate identical requests return the recorded outcome; reusing an ID for another caller/vault/payload fails. After a disconnect/restart, reconcile status rather than automatically replaying destructive work. A crash with an uncertain side effect remains Unknown until reconciled; never claim exactly-once execution or rollback from an absent acknowledgement. This is bounded command admission/result tracking, not the full durable scheduler in NEXT-005.
+
+Proposed typed service IPC bounds: maximum UTF-8 request 1 MiB, response 8 MiB, JSON depth 32, 16 concurrent accepted requests, 5-second frame-read timeout and 5-second response-write timeout. Validate positive/clamped internal values; no dormant Options controls. Inventory exceeding a frame is paged through the same vault-scoped contract rather than silently truncated. Long content operations get an operation identity/status and explicit cancellation outcome, not a 5-second execution timeout. Tune only against measured supported workloads while retaining finite bounds. Track and join accepted request work and dispose tokens on completion/cancel; unrelated lifecycle refactoring stays deferred.
+
+### Implemented recovery-history paging contract
+
+The bounded S2 history browser uses authenticated `ListHistoryPage` and
+`GetSnapshotPage` reads under ReadHistory authority. Queries and cursors bind the
+single repository identity, canonical source scope, optional kind and page size.
+Bidirectional keysets use exact UTC ticks and ordinal version IDs. A short
+repeatable-read transaction observes both page rows and history generation;
+capture/pruning commit generation changes in their existing transaction. Stale
+cursors return HistoryChanged without data. No server-held browsing session or
+full-history fallback is introduced.
+
+History paging introduced schema v3; fresh staging metadata now uses v4 with
+canonical current-entry keys, exact winner ordering and transactional retained
+history fallback after pruning. Unsupported existing schemas are refused
+before mutation. SQL limits selected headers and their cumulative transfer size.
+The handler measures the actual serialised authenticated envelope against the
+smaller of the 2 MiB history budget and configured response limit. A shortened
+page anchors continuation to its last emitted row; a single oversize row is an
+explicit failure. Folder contents are separately paged from one bounded exact
+immutable manifest, and child recovery resolves its recorded identity rather
+than latest-by-path.
+
+The WPF browser retains the last accepted page on errors/history changes and
+requires explicit refresh after invalidation. An unavailable initial binding is
+handled as unavailable without dispatch or authoritative-empty presentation.
+Outstanding reads are cancelled and joined before the window closes; stale
+selection responses cannot replace current contents. The typed optional
+RepositoryBrowse policy defaults to 100 items, normalises to 1–256 and is exposed
+in Options as Items per repository page. Both real-store Options round trips and
+the original full-record protection-save regressions cover its preservation.
+Full scale/accessibility/lifecycle gates remain open.
+See [bounded evidence](../../verification/2026-10-04-next002-history-paging/README.md).
+
+### Current-file inventory transport contract
+
+The protected status route advertises UsesPagedCurrentEntries and omits its
+complete tracked-entry payload. HasVersionInventory still describes the separate
+recent-history snapshot. ListCurrentEntriesPage is a ReadHistory operation using
+the status response's exact repository identity/revision, including cold initial
+loads; subsequent pages retain one transactional history generation. Ascending
+path-identity keysets validate canonical path/kind, winner pointer, exact ticks
+and immutable binding. SQL and authenticated wire bounds share the history-page
+budget; continuation anchors the final emitted identity, including short pages.
+
+The actual dashboard accumulates entries privately and validates every query
+echo, binding/revision, generation, header, monotone identity and continuation.
+Only an absent continuation completes the sweep. Empty non-terminal, duplicate,
+stale, failed, cancelled or malformed pages cannot publish a partial browser or
+discard pending edits. Edit/discard reviews are rechecked after all page awaits.
+Save reconciliation retains previously loaded browser entries when status omits
+them. Manual, startup and automatic refresh reads share a cancellation/join gate
+that application shutdown awaits without blocking the dispatcher synchronously.
+
+This bounds transport only. Client accumulation remains O(n); scale, rendering,
+accessibility and the wider lifecycle/performance gates stay open. Status/recent
+history and the current sweep are separate snapshots, not one cross-command
+transaction. No schema upgrade or additional-vault abstraction is introduced.
+
+Automatic refresh also requires a nonempty protected runtime cache epoch. It is
+initialised once per shared runtime, rotated under the existing cache lock and
+captured alongside status generation. The client advances its applied epoch
+only with a complete validated current sweep; failed/stale/cancelled reads and
+status-only save reconciliation cannot consume an invalidation. Changed epochs
+trigger a sweep even when another request has already warmed recent history.
+Unchanged warm status avoids repetition; explicit Full and cold-fallback refresh
+still sweep. This adds no database query or browsing session and does not replace
+page generation, repository identity or revision checks.
+Applying a sweep reconciles fresh physical entries for already loaded folders
+and the selected folder's files. Missing/restored transitions and changed
+recovery IDs cannot be hidden by cached live rows. Preserve unchanged objects,
+loaded/expanded descendants, selected items, pending rules and an edited
+address; a selected-folder object replacement is not a navigation reload.
+
+Unsent Protect edits extend the existing S2 interruption work only. Keep their
+per-user draft separate from dispatched-save receipts, with exact repository,
+baseline revision/fingerprint and editing/publication identities. A typed
+`ProtectionDraft.SaveDelayMilliseconds` policy controls the bounded coalesced
+writer; local retention does not imply a service save or backup. An explicit
+save durably retains its snapshot and receipt association before dispatch.
+Restart preserves newer edits and checks the original receipt without replay.
+Confirmed completion retires the submitted draft or retains newer rebased edits
+before receipt cleanup; correlation remains valid through interrupted cleanup.
+Discard checks the reviewed record, pending receipt and edit generation before
+applying status, retaining edits arriving during retirement. Bounded corrupt
+unsent records may be quarantined with exact byte revalidation; unresolved
+receipts remain gated. Exit fences editing and refuses outstanding save/receipt
+work, force-flushes and joins the writer, then joins reads. Failed retention
+keeps the window usable. Verify these transitions through real local stores and
+actual view-model commands, with controlled publication/interruption races.
+No service/schema/privilege contract, roadmap stage or gate is added or weakened.
+
+## Acceptance gates
+
+| ID | Required result and evidence | Owner batch |
+| --- | --- | --- |
+| C01 | Actual VM save → both real store routes → reopen preserves every untouched property, including the five named fields; intended selection/compiled-watch change persists. | C; verified 8 October |
+| C02 | Rejected, exception, timeout, task cancellation and cancelled confirmation produce zero dependent backup requests, retained draft, understandable persistent message and unchanged disk where rejection precedes commit. Unknown acknowledgement is labelled honestly. | C; verified 8 October |
+| C03 | A held save prevents backup until acknowledgement; successful save leads to exactly one backup for the same repository/revision/edit generation; retry/discard/newer-edit cases are correct. Preserve completed real-store and actual VM regressions. | C; verified 8 October |
+| S01 | Real Windows standard-user/elevated/packaged identities: authenticated creator owns a new vault; ungranted users cannot discover or operate it; explicit user/group grants permit only specified operations and persist across restart. Authorised commands succeed; unauthorised identities and forged JSON claims fail before storage access. Every command has an explicit policy. | S1–S3; verified 8 October |
+| S02 | The single installed repository refuses wrong identity/root/DB/namespace/marker bindings before reads or mutations; retained integrity, metadata and recovery contracts pass through real stores. The two-vault coexistence requirement is removed. | S1–S3; verified 8 October |
+| S03 | Retired by the user's single-vault scope decision. No duplication, switching, discovery or multiple runtime management is supported. Mutation ordering and captured binding/revision checks remain under C03/S07. | Removed |
+| S04 | Actual source/output ACL denial, reparse replacement, final-path races and VSS access tests cause no unauthorised bytes read/published. Logged-off/reboot background capture never escalates source access. | S1–S3; verified 8 October |
+| S05 | Ordinary users cannot bypass IPC through direct database login or service-managed state/content files. Exact password-free Windows service mapping works; unrelated PG resources and postmaster remain unchanged on any authorised rollout. | S1–S3; verified 8 October |
+| S06 | Oversize/deep/slow/stalled clients and concurrency saturation are bounded; ordinary allowed work still completes. Request/token/child lifetimes exit cleanly. | S2–S3; verified 8 October |
+| S07 | Repeated/ambiguous mutation requests cannot retarget or execute destructive work twice; committed-versus-unknown outcomes remain truthful across disconnect and restart. | S2–S3; verified 8 October |
+| S08 | Existing integrity cases remain green: corrupt/missing content, last-good-copy drain, bounded decoding, destination preservation, real PG/private IPC/process proofs. Authorised real-interface capture/list/restore has independent hashes. | S1–S3; verified 8 October |
+| D01 | Completed design evidence is retained. Multi-vault controls are superseded and further multi-vault exploration is stopped. Implemented-screen command states, retained edits, navigation, layout, responsiveness and installed recovery observations remain required. On 7 October the user explicitly deferred accessibility and theme testing/remediation; record those as deferred, not passed. Native keyboard, failed-save, 10,000-item navigation and actual 175%/200% DPI evidence is retained. | D; verified 8 October |
+| G01 | Independent security/integrity review approves the final design and full implementation scope, zero new build warnings, combined suite plus named Windows/DB cases pass, temporary processes exited. Missing identity/packaged/DB prerequisites are incomplete gates, not skips that count as completion. | Review; verified 8 October |
+
+## Sequencing and recovery
+
+C is complete: configuration preservation and save-dependent-command correctness, with the existing-UI failure explanation. Next, simplify the installation record/runtime and remove product profile routes, correct inherited storage permissions, then compose the authenticated service/client path. S1 delivers one authorised save → backup → history → verified file/folder recovery in the owned Windows/PG fixture, including ungranted-user and wrong-binding refusal. S2 completes the applicable command families and interruption/reconciliation behaviour. S3 provides combined native/integrity/resource/performance verification and independent review. Remove only multi-vault-specific gates; do not restart the audit or expand the roadmap.
+
+C can be reviewed/merged independently if security work is larger than expected. S1/S2 foundations stay isolated from the normal installed service until S01–S08 and G01 hold. An incomplete security path must not be exposed as a release feature.
+
+Use fresh owned fixture roots/databases initially. Existing staging backups stay recoverable with v1.0.4 and its preserved installer/configuration; no automatic namespace conversion or reset. A later adoption/upgrade proposal must identify exact source VaultId/root/DB binding, schema changes, consistent export, rollback limitations and verification. If older binaries cannot read the new identity/schema, rollback uses the retained old repository/DB backup instead of pointing the old binary at new data. Normal installation/migration remains a separately authorised operational action.
+
+## Primary technical references
+
+- PostgreSQL documents that TCP loopback `trust` authorises whoever can connect as an allowed database role; filesystem permissions do not restrict TCP authentication: [trust authentication](https://www.postgresql.org/docs/18/auth-trust.html).
+- Password-free Windows identity and exact user maps are supported by [PostgreSQL SSPI](https://www.postgresql.org/docs/18/sspi-auth.html) and [Npgsql security](https://www.npgsql.org/doc/security.html). These references establish capability, not successful integration with this service identity.
+- Microsoft requires failed client impersonation to stop privileged request execution: [ImpersonateNamedPipeClient](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-impersonatenamedpipeclient). On Windows, [RunAsClient](https://learn.microsoft.com/en-us/dotnet/api/system.io.pipes.namedpipeserverstream.runasclient) changes only the delegate thread; token lifetime across asynchronous work needs deliberate ownership.
+
+8 October completion update: C01–C03/S01–S02/S04–S08 and applicable D01 are verified by the retained named native/real-store proofs and installed 1.0.7 workflow. S03 remains retired; accessibility/theme remain deferred. The current exact deployment, rollback, cleanup and test evidence is in [installation preparation](../../verification/2026-10-05-next002-rollout-preparation/README.md). G01 final independent branch/live acceptance approves the complete agreed scope with no blocking findings; requirements and roadmap scope are unchanged.

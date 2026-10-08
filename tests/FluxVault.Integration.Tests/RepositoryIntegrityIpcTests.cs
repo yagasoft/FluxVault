@@ -3,6 +3,8 @@ using FluxVault.Abstractions.Ipc;
 using FluxVault.Abstractions.Storage;
 using FluxVault.Core.Ipc;
 using FluxVault.Integration.Tests.Fixtures;
+using FluxVault.Windows.Security;
+using System.Security.Principal;
 
 namespace FluxVault.Integration.Tests;
 
@@ -21,7 +23,7 @@ public sealed class RepositoryIntegrityIpcTests
         await using var server = fixture.Files.Start("serve", fixture.HostArguments.Concat(new[] { "--pipe", pipe, "--compression", compression,
             "--fault", hintFailure ? "hint-failure" : "none" }).ToArray());
         await server.WaitForReadyAsync();
-        var client = new NamedPipeFluxVaultClient(pipe);
+        var client = CreateClient(pipe);
         Assert.True((await client.SendAsync(FluxVaultIpcRequest.RunBackupNow())).Success);
         var coldStatus = await client.SendAsync(FluxVaultIpcRequest.GetStatus(statusDetailLevel: FluxVaultStatusDetailLevel.Fast));
         Assert.True(coldStatus.Success);
@@ -72,7 +74,7 @@ public sealed class RepositoryIntegrityIpcTests
         await server.WaitForReadyAsync();
         var output = Path.Combine(fixture.Files.Root, "restored.bin");
         await File.WriteAllTextAsync(output, "new work");
-        var response = await new NamedPipeFluxVaultClient(pipe).SendAsync(FluxVaultIpcRequest.RestoreVersion(captured.Manifest.VersionId, output));
+        var response = await CreateClient(pipe).SendAsync(FluxVaultIpcRequest.RestoreVersion(captured.Manifest.VersionId, output));
         Assert.False(response.Success);
         Assert.Null(response.RestoreResult);
         Assert.Equal("new work", await File.ReadAllTextAsync(output));
@@ -92,7 +94,7 @@ public sealed class RepositoryIntegrityIpcTests
         await using var server = fixture.Files.Start("serve", fixture.HostArguments.Concat(new[] { "--pipe", pipe, "--gate", "BeforeRestorePublication" }).ToArray());
         await server.WaitForReadyAsync();
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        var client = new NamedPipeFluxVaultClient(pipe);
+        var client = CreateClient(pipe);
         var restoring = client.SendAsync(FluxVaultIpcRequest.RestoreVersion(captured.Manifest.VersionId, Path.Combine(fixture.Files.Root, "restored.bin")), cancellation.Token);
         await server.WaitForGateAsync();
         using var statusDeadline = new CancellationTokenSource(TimeSpan.FromSeconds(3));
@@ -119,11 +121,17 @@ public sealed class RepositoryIntegrityIpcTests
         var pipe = "FluxVault.Integrity." + Guid.NewGuid().ToString("N");
         await using var server = fixture.Files.Start("serve", fixture.HostArguments.Concat(new[] { "--pipe", pipe }).ToArray());
         await server.WaitForReadyAsync();
-        var response = await new NamedPipeFluxVaultClient(pipe).SendAsync(FluxVaultIpcRequest.RestoreVersion(folder.VersionId, output));
+        var response = await CreateClient(pipe).SendAsync(FluxVaultIpcRequest.RestoreVersion(folder.VersionId, output));
         Assert.False(response.Success);
         Assert.Contains("new destination", response.ErrorMessage);
         Assert.Equal("keep", await File.ReadAllTextAsync(sentinel));
         Assert.Single(Directory.EnumerateFiles(output));
+    }
+
+    private static NamedPipeFluxVaultClient CreateClient(string pipe)
+    {
+        using var identity = WindowsIdentity.GetCurrent();
+        return new(WindowsFluxVaultPipeClientFactory.ForPrivateFixture(pipe, identity.User!.Value));
     }
 
     private static async Task<byte[]> Hash(string path)

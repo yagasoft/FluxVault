@@ -1,0 +1,888 @@
+[53880]  LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+[53880]  LOG:  listening on IPv4 address "127.0.0.1", port 49720
+[53880]  LOG:  listening on IPv6 address "::1", port 49720
+[35872]  LOG:  database system was shut down at 2026-10-05 03:15:01 EEST
+[53880]  LOG:  database system is ready to accept connections
+[45872] [unknown] LOG:  connection received: host=127.0.0.1 port=49733
+[45872] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[45872] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[45872] psql LOG:  connection ready: setup total=40.914 ms, fork=17.782 ms, authentication=10.204 ms
+[53880]  LOG:  received SIGHUP, reloading configuration files
+[51832] [unknown] LOG:  connection received: host=127.0.0.1 port=49740
+[51832] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[51832] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[51832] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[51832] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[50516] [unknown] LOG:  connection received: host=127.0.0.1 port=49741
+[50516] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[50516] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[50516] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[50516] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[10224] [unknown] LOG:  connection received: host=127.0.0.1 port=49743
+[10224] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[10224] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[10224] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[10224] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[2484] [unknown] LOG:  connection received: host=::1 port=49746
+[2484] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[2484] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[2484] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[2484] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[51236] [unknown] LOG:  connection received: host=::1 port=49747
+[51236] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[51236] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[51236] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[51236] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[42136] [unknown] LOG:  connection received: host=::1 port=49749
+[42136] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[42136] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[42136] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[42136] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[53880]  LOG:  received SIGHUP, reloading configuration files
+[556] [unknown] LOG:  connection received: host=127.0.0.1 port=49753
+[556] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[556] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[556] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=41.240 ms, fork=18.725 ms, authentication=7.624 ms
+[9536] [unknown] LOG:  connection received: host=127.0.0.1 port=49754
+[9536] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[9536] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[9536] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=30.364 ms, fork=18.052 ms, authentication=3.835 ms
+[24920] [unknown] LOG:  connection received: host=127.0.0.1 port=49755
+[24920] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[24920] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[24920] [unknown] LOG:  connection ready: setup total=29.177 ms, fork=17.878 ms, authentication=3.235 ms
+[42296] [unknown] LOG:  connection received: host=127.0.0.1 port=49756
+[42296] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[42296] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[42296] [unknown] LOG:  connection ready: setup total=29.819 ms, fork=18.443 ms, authentication=3.327 ms
+[2188] [unknown] LOG:  connection received: host=127.0.0.1 port=49757
+[2188] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[2188] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[2188] [unknown] LOG:  connection ready: setup total=30.564 ms, fork=19.204 ms, authentication=3.247 ms
+[65376] [unknown] LOG:  connection received: host=127.0.0.1 port=49758
+[65376] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[65376] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[65376] [unknown] LOG:  connection ready: setup total=30.716 ms, fork=19.057 ms, authentication=3.325 ms
+[29280] [unknown] LOG:  connection received: host=127.0.0.1 port=49759
+[29280] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[29280] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[29280] [unknown] LOG:  connection ready: setup total=31.004 ms, fork=18.771 ms, authentication=3.621 ms
+[46400] [unknown] LOG:  connection received: host=127.0.0.1 port=49760
+[46400] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[46400] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[46400] [unknown] LOG:  connection ready: setup total=30.941 ms, fork=19.205 ms, authentication=3.620 ms
+[58436] [unknown] LOG:  connection received: host=127.0.0.1 port=49761
+[58436] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[58436] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[58436] [unknown] LOG:  connection ready: setup total=30.211 ms, fork=18.116 ms, authentication=3.653 ms
+[22452] [unknown] LOG:  connection received: host=127.0.0.1 port=49762
+[22452] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[22452] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[22452] [unknown] LOG:  connection ready: setup total=31.470 ms, fork=19.355 ms, authentication=3.680 ms
+[13000] [unknown] LOG:  connection received: host=127.0.0.1 port=49763
+[13000] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[13000] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[13000] [unknown] LOG:  connection ready: setup total=32.391 ms, fork=19.570 ms, authentication=3.864 ms
+[45208] [unknown] LOG:  connection received: host=127.0.0.1 port=49764
+[45208] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[45208] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=29.971 ms, fork=18.176 ms, authentication=3.422 ms
+[13000] [unknown] ERROR:  Owned current-projection rollback probe
+[13000] [unknown] CONTEXT:  PL/pgSQL function fv_781beed5966343efafaece93456260a6.fv_current_probe_failure() line 1 at RAISE
+[13000] [unknown] STATEMENT:  INSERT INTO "fv_781beed5966343efafaece93456260a6".current_entries (path_id, source_path, entry_kind, version_id, captured_at_utc, captured_at_ticks, is_deleted)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
+	ON CONFLICT (path_id)
+	DO UPDATE SET
+	    source_path = EXCLUDED.source_path,
+	    entry_kind = EXCLUDED.entry_kind,
+	    version_id = EXCLUDED.version_id,
+	    captured_at_utc = EXCLUDED.captured_at_utc,
+	    captured_at_ticks = EXCLUDED.captured_at_ticks,
+	    is_deleted = EXCLUDED.is_deleted
+	WHERE "fv_781beed5966343efafaece93456260a6".current_entries.captured_at_ticks < EXCLUDED.captured_at_ticks
+	   OR (
+	        "fv_781beed5966343efafaece93456260a6".current_entries.captured_at_ticks = EXCLUDED.captured_at_ticks
+	        AND "fv_781beed5966343efafaece93456260a6".current_entries.version_id COLLATE "C" < EXCLUDED.version_id COLLATE "C"
+	   )
+[13000] [unknown] ERROR:  Owned current-projection deletion rollback probe
+[13000] [unknown] CONTEXT:  PL/pgSQL function fv_781beed5966343efafaece93456260a6.fv_current_probe_failure() line 1 at RAISE
+[13000] [unknown] STATEMENT:  INSERT INTO "fv_781beed5966343efafaece93456260a6".current_entries(path_id,source_path,entry_kind,version_id,captured_at_utc,captured_at_ticks,is_deleted)
+	SELECT DISTINCT ON (path_id) path_id,source_path,entry_kind,version_id,captured_at_utc,captured_at_ticks,is_deleted
+	FROM "fv_781beed5966343efafaece93456260a6".versions WHERE path_id=ANY($1)
+	ORDER BY path_id,captured_at_ticks DESC,version_id COLLATE "C" DESC
+	ON CONFLICT(path_id) DO UPDATE SET source_path=EXCLUDED.source_path,entry_kind=EXCLUDED.entry_kind,
+	    version_id=EXCLUDED.version_id,captured_at_utc=EXCLUDED.captured_at_utc,
+	    captured_at_ticks=EXCLUDED.captured_at_ticks,is_deleted=EXCLUDED.is_deleted
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('"fv_781beed5966343efafaece93456260a6"') IS NOT NULL THEN
+	        IF to_regclass('"fv_781beed5966343efafaece93456260a6".schema_version') IS NULL OR to_regclass('"fv_781beed5966343efafaece93456260a6".versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM "fv_781beed5966343efafaece93456260a6".schema_version) IS DISTINCT FROM 4 OR to_regclass('"fv_781beed5966343efafaece93456260a6".history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM "fv_781beed5966343efafaece93456260a6".history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System ERROR:  Existing current projection is unsupported; no automatic upgrade occurred.
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System CONTEXT:  PL/pgSQL function inline_code_block line 22 at RAISE
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('"fv_781beed5966343efafaece93456260a6"') IS NOT NULL THEN
+	        IF to_regclass('"fv_781beed5966343efafaece93456260a6".schema_version') IS NULL OR to_regclass('"fv_781beed5966343efafaece93456260a6".versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM "fv_781beed5966343efafaece93456260a6".schema_version) IS DISTINCT FROM 4 OR to_regclass('"fv_781beed5966343efafaece93456260a6".history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM "fv_781beed5966343efafaece93456260a6".history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System ERROR:  Existing current projection is unsupported; no automatic upgrade occurred.
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System CONTEXT:  PL/pgSQL function inline_code_block line 22 at RAISE
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('"fv_781beed5966343efafaece93456260a6"') IS NOT NULL THEN
+	        IF to_regclass('"fv_781beed5966343efafaece93456260a6".schema_version') IS NULL OR to_regclass('"fv_781beed5966343efafaece93456260a6".versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM "fv_781beed5966343efafaece93456260a6".schema_version) IS DISTINCT FROM 4 OR to_regclass('"fv_781beed5966343efafaece93456260a6".history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM "fv_781beed5966343efafaece93456260a6".history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System ERROR:  Existing current projection is unsupported; no automatic upgrade occurred.
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System CONTEXT:  PL/pgSQL function inline_code_block line 22 at RAISE
+[45208] FVGate.e123c54ca4ad45e4885e8124d1c82663.System STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('"fv_781beed5966343efafaece93456260a6"') IS NOT NULL THEN
+	        IF to_regclass('"fv_781beed5966343efafaece93456260a6".schema_version') IS NULL OR to_regclass('"fv_781beed5966343efafaece93456260a6".versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM "fv_781beed5966343efafaece93456260a6".schema_version) IS DISTINCT FROM 4 OR to_regclass('"fv_781beed5966343efafaece93456260a6".history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_781beed5966343efafaece93456260a6".history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM "fv_781beed5966343efafaece93456260a6".history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[24520] [unknown] LOG:  connection received: host=127.0.0.1 port=49766
+[24520] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[24520] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[24520] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=29.591 ms, fork=17.890 ms, authentication=3.443 ms
+[33100] [unknown] LOG:  connection received: host=127.0.0.1 port=49767
+[33100] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[33100] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[33100] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=31.514 ms, fork=19.226 ms, authentication=3.535 ms
+[5828] [unknown] LOG:  connection received: host=127.0.0.1 port=49768
+[5828] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[5828] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[5828] [unknown] LOG:  connection ready: setup total=31.516 ms, fork=19.178 ms, authentication=3.766 ms
+[5828] [unknown] ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[5828] [unknown] CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[5828] [unknown] STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('fluxvault') IS NOT NULL THEN
+	        IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 4 OR to_regclass('fluxvault.history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM fluxvault.history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[5828] [unknown] ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[5828] [unknown] CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[5828] [unknown] STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('fluxvault') IS NOT NULL THEN
+	        IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 4 OR to_regclass('fluxvault.history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM fluxvault.history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[5828] [unknown] ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[5828] [unknown] CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[5828] [unknown] STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('fluxvault') IS NOT NULL THEN
+	        IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 4 OR to_regclass('fluxvault.history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM fluxvault.history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[31224] [unknown] LOG:  connection received: host=127.0.0.1 port=49769
+[31224] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[31224] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[31224] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=31.515 ms, fork=19.586 ms, authentication=3.390 ms
+[58756] [unknown] LOG:  connection received: host=127.0.0.1 port=49770
+[58756] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[58756] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[58756] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=32.748 ms, fork=20.274 ms, authentication=3.481 ms
+[46296] [unknown] LOG:  connection received: host=127.0.0.1 port=49771
+[13000] [unknown] ERROR:  canceling statement due to user request
+[13000] [unknown] STATEMENT:  SELECT pg_advisory_xact_lock($1)
+[16000] [unknown] LOG:  connection received: host=127.0.0.1 port=49775
+[16000] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[16000] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[16000] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=29.255 ms, fork=17.974 ms, authentication=3.364 ms
+[32696] [unknown] LOG:  connection received: host=127.0.0.1 port=49777
+[32696] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[32696] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[32696] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=28.323 ms, fork=17.156 ms, authentication=3.342 ms
+[6556] [unknown] LOG:  connection received: host=127.0.0.1 port=49778
+[13000] [unknown] ERROR:  canceling statement due to user request
+[13000] [unknown] STATEMENT:  SELECT pg_advisory_xact_lock($1)
+[64112] [unknown] LOG:  connection received: host=127.0.0.1 port=49779
+[64112] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[64112] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[64112] [unknown] LOG:  connection ready: setup total=29.133 ms, fork=17.377 ms, authentication=3.684 ms
+[37436] [unknown] LOG:  connection received: host=127.0.0.1 port=49780
+[37436] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[37436] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[37436] [unknown] LOG:  connection ready: setup total=27.964 ms, fork=16.955 ms, authentication=3.441 ms
+[3948] [unknown] LOG:  connection received: host=127.0.0.1 port=49781
+[3948] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[3948] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[3948] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=28.156 ms, fork=17.299 ms, authentication=3.301 ms
+[57960] [unknown] LOG:  connection received: host=127.0.0.1 port=49782
+[57960] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[57960] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[57960] [unknown] LOG:  connection ready: setup total=28.858 ms, fork=17.775 ms, authentication=3.411 ms
+[4988] [unknown] LOG:  connection received: host=127.0.0.1 port=49783
+[4988] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[4988] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[4988] [unknown] LOG:  connection ready: setup total=29.200 ms, fork=17.755 ms, authentication=3.561 ms
+[64700] [unknown] LOG:  connection received: host=127.0.0.1 port=49784
+[64700] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[64700] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.e123c54ca4ad45e4885e8124d1c82663.System
+[64700] FVGate.e123c54ca4ad45e4885e8124d1c82663.System LOG:  connection ready: setup total=29.689 ms, fork=18.333 ms, authentication=3.362 ms
+[63540] [unknown] LOG:  connection received: host=127.0.0.1 port=49789
+[63540] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[63540] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.464c4613c5fd4b0ca8a8224e01beddc9.libpq
+[63540] FVGate.464c4613c5fd4b0ca8a8224e01beddc9.libpq LOG:  connection ready: setup total=28.842 ms, fork=16.578 ms, authentication=4.649 ms
+[16936] [unknown] LOG:  connection received: host=::1 port=49791
+[16936] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[16936] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[16936] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=37.437 ms, fork=18.082 ms, authentication=7.690 ms
+[62708] [unknown] LOG:  connection received: host=::1 port=49792
+[62708] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[62708] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[62708] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=29.159 ms, fork=17.957 ms, authentication=3.278 ms
+[57908] [unknown] LOG:  connection received: host=::1 port=49793
+[57908] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[57908] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[57908] [unknown] LOG:  connection ready: setup total=30.507 ms, fork=19.341 ms, authentication=3.288 ms
+[40068] [unknown] LOG:  connection received: host=::1 port=49795
+[40068] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[40068] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[40068] [unknown] LOG:  connection ready: setup total=29.185 ms, fork=17.750 ms, authentication=3.555 ms
+[24852] [unknown] LOG:  connection received: host=::1 port=49796
+[24852] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[24852] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[24852] [unknown] LOG:  connection ready: setup total=28.984 ms, fork=17.999 ms, authentication=3.226 ms
+[65200] [unknown] LOG:  connection received: host=::1 port=49797
+[65200] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[65200] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[65200] [unknown] LOG:  connection ready: setup total=29.076 ms, fork=18.161 ms, authentication=3.313 ms
+[63300] [unknown] LOG:  connection received: host=::1 port=49799
+[63300] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[63300] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[63300] [unknown] LOG:  connection ready: setup total=29.264 ms, fork=18.180 ms, authentication=3.365 ms
+[28616] [unknown] LOG:  connection received: host=::1 port=49800
+[28616] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[28616] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[28616] [unknown] LOG:  connection ready: setup total=28.427 ms, fork=17.533 ms, authentication=3.385 ms
+[63376] [unknown] LOG:  connection received: host=::1 port=49801
+[63376] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[63376] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[63376] [unknown] LOG:  connection ready: setup total=29.177 ms, fork=17.986 ms, authentication=3.455 ms
+[19196] [unknown] LOG:  connection received: host=::1 port=49802
+[19196] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[19196] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[19196] [unknown] LOG:  connection ready: setup total=28.421 ms, fork=17.561 ms, authentication=3.311 ms
+[32668] [unknown] LOG:  connection received: host=::1 port=49803
+[32668] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[32668] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[32668] [unknown] LOG:  connection ready: setup total=29.108 ms, fork=17.908 ms, authentication=3.237 ms
+[18380] [unknown] LOG:  connection received: host=::1 port=49804
+[18380] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[18380] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=28.914 ms, fork=17.856 ms, authentication=3.498 ms
+[32668] [unknown] ERROR:  Owned current-projection rollback probe
+[32668] [unknown] CONTEXT:  PL/pgSQL function fv_ab52209809864bd9a5ce16397966cd9f.fv_current_probe_failure() line 1 at RAISE
+[32668] [unknown] STATEMENT:  INSERT INTO "fv_ab52209809864bd9a5ce16397966cd9f".current_entries (path_id, source_path, entry_kind, version_id, captured_at_utc, captured_at_ticks, is_deleted)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
+	ON CONFLICT (path_id)
+	DO UPDATE SET
+	    source_path = EXCLUDED.source_path,
+	    entry_kind = EXCLUDED.entry_kind,
+	    version_id = EXCLUDED.version_id,
+	    captured_at_utc = EXCLUDED.captured_at_utc,
+	    captured_at_ticks = EXCLUDED.captured_at_ticks,
+	    is_deleted = EXCLUDED.is_deleted
+	WHERE "fv_ab52209809864bd9a5ce16397966cd9f".current_entries.captured_at_ticks < EXCLUDED.captured_at_ticks
+	   OR (
+	        "fv_ab52209809864bd9a5ce16397966cd9f".current_entries.captured_at_ticks = EXCLUDED.captured_at_ticks
+	        AND "fv_ab52209809864bd9a5ce16397966cd9f".current_entries.version_id COLLATE "C" < EXCLUDED.version_id COLLATE "C"
+	   )
+[32668] [unknown] ERROR:  Owned current-projection deletion rollback probe
+[32668] [unknown] CONTEXT:  PL/pgSQL function fv_ab52209809864bd9a5ce16397966cd9f.fv_current_probe_failure() line 1 at RAISE
+[32668] [unknown] STATEMENT:  INSERT INTO "fv_ab52209809864bd9a5ce16397966cd9f".current_entries(path_id,source_path,entry_kind,version_id,captured_at_utc,captured_at_ticks,is_deleted)
+	SELECT DISTINCT ON (path_id) path_id,source_path,entry_kind,version_id,captured_at_utc,captured_at_ticks,is_deleted
+	FROM "fv_ab52209809864bd9a5ce16397966cd9f".versions WHERE path_id=ANY($1)
+	ORDER BY path_id,captured_at_ticks DESC,version_id COLLATE "C" DESC
+	ON CONFLICT(path_id) DO UPDATE SET source_path=EXCLUDED.source_path,entry_kind=EXCLUDED.entry_kind,
+	    version_id=EXCLUDED.version_id,captured_at_utc=EXCLUDED.captured_at_utc,
+	    captured_at_ticks=EXCLUDED.captured_at_ticks,is_deleted=EXCLUDED.is_deleted
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('"fv_ab52209809864bd9a5ce16397966cd9f"') IS NOT NULL THEN
+	        IF to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".schema_version') IS NULL OR to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM "fv_ab52209809864bd9a5ce16397966cd9f".schema_version) IS DISTINCT FROM 4 OR to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM "fv_ab52209809864bd9a5ce16397966cd9f".history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System ERROR:  Existing current projection is unsupported; no automatic upgrade occurred.
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System CONTEXT:  PL/pgSQL function inline_code_block line 22 at RAISE
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('"fv_ab52209809864bd9a5ce16397966cd9f"') IS NOT NULL THEN
+	        IF to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".schema_version') IS NULL OR to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM "fv_ab52209809864bd9a5ce16397966cd9f".schema_version) IS DISTINCT FROM 4 OR to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM "fv_ab52209809864bd9a5ce16397966cd9f".history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System ERROR:  Existing current projection is unsupported; no automatic upgrade occurred.
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System CONTEXT:  PL/pgSQL function inline_code_block line 22 at RAISE
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('"fv_ab52209809864bd9a5ce16397966cd9f"') IS NOT NULL THEN
+	        IF to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".schema_version') IS NULL OR to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM "fv_ab52209809864bd9a5ce16397966cd9f".schema_version) IS DISTINCT FROM 4 OR to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM "fv_ab52209809864bd9a5ce16397966cd9f".history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System ERROR:  Existing current projection is unsupported; no automatic upgrade occurred.
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System CONTEXT:  PL/pgSQL function inline_code_block line 22 at RAISE
+[18380] FVGate.54e1e280c01d4aad99136f254d9410cf.System STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('"fv_ab52209809864bd9a5ce16397966cd9f"') IS NOT NULL THEN
+	        IF to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".schema_version') IS NULL OR to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM "fv_ab52209809864bd9a5ce16397966cd9f".schema_version) IS DISTINCT FROM 4 OR to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".current_entries') AND c.contype='f' AND c.confrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('"fv_ab52209809864bd9a5ce16397966cd9f".history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM "fv_ab52209809864bd9a5ce16397966cd9f".history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[33252] [unknown] LOG:  connection received: host=::1 port=49805
+[33252] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[33252] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[33252] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=28.568 ms, fork=17.713 ms, authentication=3.313 ms
+[47264] [unknown] LOG:  connection received: host=::1 port=49807
+[47264] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[47264] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[47264] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=29.176 ms, fork=18.182 ms, authentication=3.382 ms
+[51276] [unknown] LOG:  connection received: host=::1 port=49808
+[51276] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[51276] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[51276] [unknown] LOG:  connection ready: setup total=28.424 ms, fork=17.590 ms, authentication=3.293 ms
+[51276] [unknown] ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[51276] [unknown] CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[51276] [unknown] STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('fluxvault') IS NOT NULL THEN
+	        IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 4 OR to_regclass('fluxvault.history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM fluxvault.history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[51276] [unknown] ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[51276] [unknown] CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[51276] [unknown] STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('fluxvault') IS NOT NULL THEN
+	        IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 4 OR to_regclass('fluxvault.history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM fluxvault.history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[51276] [unknown] ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[51276] [unknown] CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[51276] [unknown] STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('fluxvault') IS NOT NULL THEN
+	        IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 4 OR to_regclass('fluxvault.history_state') IS NULL OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT count(*)=2 AND bool_and(atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.current_entries') AND attname IN ('path_id','captured_at_ticks')) IS DISTINCT FROM true
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='p' AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='path_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.paths') AND c.conkey=ARRAY[a.attnum])
+	            OR NOT EXISTS (SELECT FROM pg_constraint c JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attname='version_id'
+	                WHERE c.conrelid=to_regclass('fluxvault.current_entries') AND c.contype='f' AND c.confrelid=to_regclass('fluxvault.versions') AND c.conkey=ARRAY[a.attnum]) THEN
+	            RAISE EXCEPTION 'Existing current projection is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.history_state')
+	            AND attname='generation' AND atttypid='pg_catalog.int8'::regtype AND attnotnull AND NOT attisdropped)
+	            OR (SELECT count(*)=1 AND bool_and(singleton AND generation>=0) FROM fluxvault.history_state) IS DISTINCT FROM true THEN
+	            RAISE EXCEPTION 'Existing history generation is unsupported; no automatic upgrade occurred.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[51992] [unknown] LOG:  connection received: host=::1 port=49809
+[51992] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[51992] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[51992] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=29.025 ms, fork=17.998 ms, authentication=3.368 ms
+[38604] [unknown] LOG:  connection received: host=::1 port=49810
+[38604] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[38604] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[38604] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=28.477 ms, fork=17.427 ms, authentication=3.400 ms
+[12328] [unknown] LOG:  connection received: host=::1 port=49811
+[32668] [unknown] ERROR:  canceling statement due to user request
+[32668] [unknown] STATEMENT:  SELECT pg_advisory_xact_lock($1)
+[12100] [unknown] LOG:  connection received: host=::1 port=49812
+[12100] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[12100] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[12100] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=28.338 ms, fork=17.151 ms, authentication=3.347 ms
+[37936] [unknown] LOG:  connection received: host=::1 port=49814
+[37936] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[37936] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[37936] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=29.071 ms, fork=18.100 ms, authentication=3.393 ms
+[15420] [unknown] LOG:  connection received: host=::1 port=49815
+[32668] [unknown] ERROR:  canceling statement due to user request
+[32668] [unknown] STATEMENT:  SELECT pg_advisory_xact_lock($1)
+[61068] [unknown] LOG:  connection received: host=::1 port=49816
+[61068] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[61068] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[61068] [unknown] LOG:  connection ready: setup total=31.235 ms, fork=19.395 ms, authentication=3.655 ms
+[11780] [unknown] LOG:  connection received: host=::1 port=49817
+[11780] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[11780] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[11780] [unknown] LOG:  connection ready: setup total=30.697 ms, fork=18.930 ms, authentication=3.677 ms
+[57484] [unknown] LOG:  connection received: host=::1 port=49818
+[57484] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[57484] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[57484] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=30.426 ms, fork=18.872 ms, authentication=3.483 ms
+[46564] [unknown] LOG:  connection received: host=::1 port=49819
+[46564] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[46564] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[46564] [unknown] LOG:  connection ready: setup total=29.298 ms, fork=18.144 ms, authentication=3.427 ms
+[3952] [unknown] LOG:  connection received: host=::1 port=49820
+[3952] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[3952] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[3952] [unknown] LOG:  connection ready: setup total=28.786 ms, fork=17.486 ms, authentication=3.422 ms
+[51896] [unknown] LOG:  connection received: host=::1 port=49821
+[51896] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[51896] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.54e1e280c01d4aad99136f254d9410cf.System
+[51896] FVGate.54e1e280c01d4aad99136f254d9410cf.System LOG:  connection ready: setup total=29.007 ms, fork=17.700 ms, authentication=3.514 ms
+[14948] [unknown] LOG:  connection received: host=::1 port=49824
+[14948] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[14948] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.2e2938529737460dae25393b1a2b16d8.libpq
+[14948] FVGate.2e2938529737460dae25393b1a2b16d8.libpq LOG:  connection ready: setup total=28.951 ms, fork=16.540 ms, authentication=4.486 ms
+[3168] [unknown] LOG:  connection received: host=127.0.0.1 port=49829
+[3168] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[3168] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[3168] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[3168] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[26288] [unknown] LOG:  connection received: host=127.0.0.1 port=49830
+[26288] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[26288] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[26288] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[26288] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[13104] [unknown] LOG:  connection received: host=127.0.0.1 port=49831
+[13104] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[13104] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[13104] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[13104] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[53024] [unknown] LOG:  connection received: host=::1 port=49835
+[53024] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[53024] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[53024] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[53024] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[40832] [unknown] LOG:  connection received: host=::1 port=49836
+[40832] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[40832] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[40832] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[40832] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[64104] [unknown] LOG:  connection received: host=::1 port=49837
+[64104] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateA_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[64104] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateA_261003@OS008-HOME"
+[64104] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[64104] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[58916] [unknown] LOG:  connection received: host=127.0.0.1 port=50420
+[58916] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[58916] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[58916] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[58916] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[58736] [unknown] LOG:  connection received: host=127.0.0.1 port=50421
+[58736] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[58736] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[58736] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[58736] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[20720] [unknown] LOG:  connection received: host=127.0.0.1 port=50423
+[20720] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[20720] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[20720] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[20720] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[20340] [unknown] LOG:  connection received: host=::1 port=61228
+[20340] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[20340] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[20340] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[20340] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[58856] [unknown] LOG:  connection received: host=::1 port=61229
+[58856] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[58856] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[58856] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[58856] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[26020] [unknown] LOG:  connection received: host=::1 port=61231
+[26020] [unknown] LOG:  connection authenticated: identity="OS008-HOME\FVGateB_261003" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:2)
+[26020] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "FVGateB_261003@OS008-HOME"
+[26020] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[26020] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[21160] [unknown] LOG:  connection received: host=127.0.0.1 port=61233
+[21160] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[21160] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.96a825d541074f288f7c938298efebe4.System
+[21160] FVGate.96a825d541074f288f7c938298efebe4.System LOG:  connection ready: setup total=36.553 ms, fork=17.824 ms, authentication=7.158 ms
+[62524] [unknown] LOG:  connection received: host=127.0.0.1 port=61234
+[62524] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[62524] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[62524] [unknown] LOG:  connection ready: setup total=28.996 ms, fork=17.623 ms, authentication=3.379 ms
+[47472] [unknown] LOG:  connection received: host=127.0.0.1 port=61236
+[47472] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[47472] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[47472] [unknown] LOG:  connection ready: setup total=28.524 ms, fork=17.781 ms, authentication=3.251 ms
+[61732] [unknown] LOG:  connection received: host=127.0.0.1 port=61239
+[61732] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[61732] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[61732] [unknown] LOG:  connection ready: setup total=29.151 ms, fork=17.884 ms, authentication=3.334 ms
+[49412] [unknown] LOG:  connection received: host=127.0.0.1 port=61240
+[49412] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[49412] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[49412] [unknown] LOG:  connection ready: setup total=29.120 ms, fork=17.945 ms, authentication=3.314 ms
+[42508] [unknown] LOG:  connection received: host=127.0.0.1 port=61241
+[42508] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[42508] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[42508] [unknown] LOG:  connection ready: setup total=29.613 ms, fork=18.390 ms, authentication=3.278 ms
+[58136] [unknown] LOG:  connection received: host=127.0.0.1 port=61254
+[58136] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[58136] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[58136] [unknown] LOG:  connection ready: setup total=30.973 ms, fork=19.567 ms, authentication=3.268 ms
+[46424] [unknown] LOG:  connection received: host=127.0.0.1 port=61256
+[46424] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/ccabb1b8008d492986e30a7fca83f2f8/data/pg_hba.conf:1)
+[46424] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[46424] [unknown] LOG:  connection ready: setup total=29.229 ms, fork=17.859 ms, authentication=3.337 ms
+[53880]  LOG:  received fast shutdown request
+[53880]  LOG:  aborting any active transactions
+[53880]  LOG:  background worker "logical replication launcher" (PID 6088) exited with exit code 1
+[24080]  LOG:  shutting down
+[24080]  LOG:  checkpoint starting: shutdown immediate
+[24080]  LOG:  checkpoint complete: wrote 1859 buffers (45.4%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.054 s, sync=0.519 s, total=0.589 s; sync files=891, longest=0.005 s, average=0.001 s; distance=12062 kB, estimate=12062 kB; lsn=0/23BAF40, redo lsn=0/23BAF40
+[53880]  LOG:  database system is shut down

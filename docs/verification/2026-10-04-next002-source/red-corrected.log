@@ -1,0 +1,147 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Windows.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.21]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Hard_linked_source_is_rejected [FAIL]
+[xUnit.net 00:00:00.22]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Cancelled_open_does_not_acquire_handles [FAIL]
+[xUnit.net 00:00:00.23]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Leaf_or_parent_reparse_point_is_rejected(parent: True) [FAIL]
+[xUnit.net 00:00:00.23]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Leaf_or_parent_reparse_point_is_rejected(parent: False) [FAIL]
+[xUnit.net 00:00:00.23]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Ambiguous_path_forms_are_rejected(relative: "sub\\..\\document.txt") [FAIL]
+[xUnit.net 00:00:00.24]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Ambiguous_path_forms_are_rejected(relative: "document.txt:stream") [FAIL]
+[xUnit.net 00:00:00.26]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Replaced_leaf_is_opened_without_following_its_new_reparse_target [FAIL]
+  Failed FluxVault.Windows.Tests.WindowsCallerSourceTests.Hard_linked_source_is_rejected [33 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.UnauthorizedAccessException)
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsCallerSourceTests.Hard_linked_source_is_rejected() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 71
+--- End of stack trace from previous location ---
+  Failed FluxVault.Windows.Tests.WindowsCallerSourceTests.Cancelled_open_does_not_acquire_handles [5 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.OperationCanceledException)
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsCallerSourceTests.Cancelled_open_does_not_acquire_handles() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 121
+--- End of stack trace from previous location ---
+  Failed FluxVault.Windows.Tests.WindowsCallerSourceTests.Leaf_or_parent_reparse_point_is_rejected(parent: True) [5 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.UnauthorizedAccessException)
+Actual:   typeof(System.IO.DirectoryNotFoundException)
+---- System.IO.DirectoryNotFoundException : Could not find a part of the path 'C:\Users\os008\AppData\Local\FluxVault.Tests\fd59abdcf9f944b6bfc6327c4dfd53ed\working\link\document.txt'.
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsCallerSourceTests.Leaf_or_parent_reparse_point_is_rejected(Boolean parent) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 58
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.FileStreamHelpers.ChooseStrategyCore(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.File.OpenRead(String path)
+   at FluxVault.Windows.Security.WindowsCallerFileAccess.<>c__DisplayClass3_0.<OpenSourceAsync>b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 17
+   at System.Security.Principal.WindowsIdentity.<>c__DisplayClass68_0`1.<RunImpersonated>b__0()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Security.Principal.WindowsIdentity.RunImpersonatedInternal(SafeAccessTokenHandle token, Action action)
+   at System.Security.Principal.WindowsIdentity.RunImpersonated[T](SafeAccessTokenHandle safeAccessTokenHandle, Func`1 func)
+   at FluxVault.Windows.Security.WindowsFluxVaultCallerContextProvider.OwnedWindowsCallerContext.RunAsCallerAsync[T](Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsFluxVaultCallerContextProvider.cs:line 68
+   at FluxVault.Windows.Tests.WindowsCallerSourceTests.<>c__DisplayClass9_0`1.<<Rejected>b__0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 155
+--- End of stack trace from previous location ---
+  Failed FluxVault.Windows.Tests.WindowsCallerSourceTests.Leaf_or_parent_reparse_point_is_rejected(parent: False) [4 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.UnauthorizedAccessException)
+Actual:   typeof(System.IO.DirectoryNotFoundException)
+---- System.IO.DirectoryNotFoundException : Could not find a part of the path 'C:\Users\os008\AppData\Local\FluxVault.Tests\e8628e18cb794f569ebd2d68a9c79515\working\document.txt'.
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsCallerSourceTests.Leaf_or_parent_reparse_point_is_rejected(Boolean parent) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 58
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.FileStreamHelpers.ChooseStrategyCore(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.File.OpenRead(String path)
+   at FluxVault.Windows.Security.WindowsCallerFileAccess.<>c__DisplayClass3_0.<OpenSourceAsync>b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 17
+   at System.Security.Principal.WindowsIdentity.<>c__DisplayClass68_0`1.<RunImpersonated>b__0()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Security.Principal.WindowsIdentity.RunImpersonatedInternal(SafeAccessTokenHandle token, Action action)
+   at System.Security.Principal.WindowsIdentity.RunImpersonated[T](SafeAccessTokenHandle safeAccessTokenHandle, Func`1 func)
+   at FluxVault.Windows.Security.WindowsFluxVaultCallerContextProvider.OwnedWindowsCallerContext.RunAsCallerAsync[T](Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsFluxVaultCallerContextProvider.cs:line 68
+   at FluxVault.Windows.Tests.WindowsCallerSourceTests.<>c__DisplayClass9_0`1.<<Rejected>b__0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 155
+--- End of stack trace from previous location ---
+  Failed FluxVault.Windows.Tests.WindowsCallerSourceTests.Ambiguous_path_forms_are_rejected(relative: "sub\\..\\document.txt") [3 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.UnauthorizedAccessException)
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsCallerSourceTests.Ambiguous_path_forms_are_rejected(String relative) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 135
+--- End of stack trace from previous location ---
+  Failed FluxVault.Windows.Tests.WindowsCallerSourceTests.Ambiguous_path_forms_are_rejected(relative: "document.txt:stream") [2 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.UnauthorizedAccessException)
+Actual:   typeof(System.IO.FileNotFoundException)
+---- System.IO.FileNotFoundException : Could not find file 'C:\Users\os008\AppData\Local\FluxVault.Tests\85c19c19b89b4df29c3d9ed8f279fd6b\document.txt:stream'.
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsCallerSourceTests.Ambiguous_path_forms_are_rejected(String relative) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 135
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.FileStreamHelpers.ChooseStrategyCore(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.File.OpenRead(String path)
+   at FluxVault.Windows.Security.WindowsCallerFileAccess.<>c__DisplayClass3_0.<OpenSourceAsync>b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 17
+   at System.Security.Principal.WindowsIdentity.<>c__DisplayClass68_0`1.<RunImpersonated>b__0()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Security.Principal.WindowsIdentity.RunImpersonatedInternal(SafeAccessTokenHandle token, Action action)
+   at System.Security.Principal.WindowsIdentity.RunImpersonated[T](SafeAccessTokenHandle safeAccessTokenHandle, Func`1 func)
+   at FluxVault.Windows.Security.WindowsFluxVaultCallerContextProvider.OwnedWindowsCallerContext.RunAsCallerAsync[T](Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsFluxVaultCallerContextProvider.cs:line 68
+   at FluxVault.Windows.Tests.WindowsCallerSourceTests.<>c__DisplayClass9_0`1.<<Rejected>b__0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 155
+--- End of stack trace from previous location ---
+  Failed FluxVault.Windows.Tests.WindowsCallerSourceTests.Replaced_leaf_is_opened_without_following_its_new_reparse_target [6 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.UnauthorizedAccessException)
+Actual:   typeof(System.IO.DirectoryNotFoundException)
+---- System.IO.DirectoryNotFoundException : Could not find a part of the path 'C:\Users\os008\AppData\Local\FluxVault.Tests\61ff3b10dd364440ab4ac8b5bce8fd80\working\document.txt'.
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsCallerSourceTests.Replaced_leaf_is_opened_without_following_its_new_reparse_target() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 90
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.FileStreamHelpers.ChooseStrategyCore(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.File.OpenRead(String path)
+   at FluxVault.Windows.Security.WindowsCallerFileAccess.<>c__DisplayClass3_0.<OpenSourceAsync>b__0() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsCallerFileAccess.cs:line 17
+   at System.Security.Principal.WindowsIdentity.<>c__DisplayClass68_0`1.<RunImpersonated>b__0()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Security.Principal.WindowsIdentity.RunImpersonatedInternal(SafeAccessTokenHandle token, Action action)
+   at System.Security.Principal.WindowsIdentity.RunImpersonated[T](SafeAccessTokenHandle safeAccessTokenHandle, Func`1 func)
+   at FluxVault.Windows.Security.WindowsFluxVaultCallerContextProvider.OwnedWindowsCallerContext.RunAsCallerAsync[T](Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\Security\WindowsFluxVaultCallerContextProvider.cs:line 68
+   at FluxVault.Windows.Tests.WindowsCallerSourceTests.<>c__DisplayClass9_0`1.<<Rejected>b__0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 155
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:00.28]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Outside_selection_is_rejected_before_reading_bytes [FAIL]
+  Failed FluxVault.Windows.Tests.WindowsCallerSourceTests.Outside_selection_is_rejected_before_reading_bytes [4 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.UnauthorizedAccessException)
+  Stack Trace:
+     at FluxVault.Windows.Tests.WindowsCallerSourceTests.Outside_selection_is_rejected_before_reading_bytes() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 40
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-source\red-corrected\source-red-corrected.trx
+
+Failed!  - Failed:     8, Passed:     2, Skipped:     0, Total:    10, Duration: 119 ms - FluxVault.Windows.Tests.dll (net10.0)

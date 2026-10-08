@@ -2,9 +2,14 @@ using System.Diagnostics;
 using FluxVault.Abstractions.Configuration;
 using FluxVault.Abstractions.Ipc;
 using FluxVault.Core.Ipc;
+using FluxVault.Core.Security;
+using FluxVault.Windows.Security;
+using System.Runtime.Versioning;
+using System.Security.Principal;
 
 namespace FluxVault.Core.Tests;
 
+[SupportedOSPlatform("windows")]
 public sealed class NamedPipeFluxVaultServerConcurrencyTests
 {
     [Fact]
@@ -12,10 +17,11 @@ public sealed class NamedPipeFluxVaultServerConcurrencyTests
     {
         var pipeName = $"FluxVault.Tests.{Guid.NewGuid():N}";
         var handler = new BlockingBackupHandler();
-        var server = new NamedPipeFluxVaultServer(handler, pipeName);
+        var server = new NamedPipeFluxVaultServer(handler, WindowsFluxVaultPipeServerFactory.ForPrivateFixture(pipeName), new WindowsFluxVaultCallerContextProvider());
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         var serverTask = server.RunAsync(cancellation.Token);
-        var client = new NamedPipeFluxVaultClient(pipeName);
+        using var identity = WindowsIdentity.GetCurrent();
+        var client = new NamedPipeFluxVaultClient(WindowsFluxVaultPipeClientFactory.ForPrivateFixture(pipeName, identity.User!.Value));
 
         var backupTask = client.SendAsync(FluxVaultIpcRequest.RunBackupNow(), cancellation.Token);
         await handler.BackupStarted.Task.WaitAsync(TimeSpan.FromSeconds(2), cancellation.Token);
@@ -42,10 +48,11 @@ public sealed class NamedPipeFluxVaultServerConcurrencyTests
     public async Task Unexpected_handler_exception_returns_failure_response()
     {
         var pipeName = $"FluxVault.Tests.{Guid.NewGuid():N}";
-        var server = new NamedPipeFluxVaultServer(new ThrowingHandler(), pipeName);
+        var server = new NamedPipeFluxVaultServer(new ThrowingHandler(), WindowsFluxVaultPipeServerFactory.ForPrivateFixture(pipeName), new WindowsFluxVaultCallerContextProvider());
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         var serverTask = server.RunAsync(cancellation.Token);
-        var client = new NamedPipeFluxVaultClient(pipeName);
+        using var identity = WindowsIdentity.GetCurrent();
+        var client = new NamedPipeFluxVaultClient(WindowsFluxVaultPipeClientFactory.ForPrivateFixture(pipeName, identity.User!.Value));
 
         var response = await client.SendAsync(FluxVaultIpcRequest.GetStatus(), cancellation.Token)
             .WaitAsync(TimeSpan.FromSeconds(2), cancellation.Token);
@@ -54,12 +61,13 @@ public sealed class NamedPipeFluxVaultServerConcurrencyTests
         await serverTask.WaitAsync(TimeSpan.FromSeconds(2), CancellationToken.None);
 
         Assert.False(response.Success);
-        Assert.Contains("metadata offline", response.ErrorMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("The service could not complete this request.", response.ErrorMessage);
     }
 
-    private sealed class ThrowingHandler : IFluxVaultRequestHandler
+    private sealed class ThrowingHandler : IAuthenticatedFluxVaultRequestHandler
     {
         public Task<FluxVaultIpcResponse> HandleAsync(
+            FluxVaultCallerContext caller,
             FluxVaultIpcRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -67,13 +75,14 @@ public sealed class NamedPipeFluxVaultServerConcurrencyTests
         }
     }
 
-    private sealed class BlockingBackupHandler : IFluxVaultRequestHandler
+    private sealed class BlockingBackupHandler : IAuthenticatedFluxVaultRequestHandler
     {
         private readonly TaskCompletionSource releaseBackup = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public TaskCompletionSource BackupStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public async Task<FluxVaultIpcResponse> HandleAsync(
+            FluxVaultCallerContext caller,
             FluxVaultIpcRequest request,
             CancellationToken cancellationToken = default)
         {

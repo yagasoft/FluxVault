@@ -1,0 +1,52 @@
+[63776]  LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+[63776]  LOG:  listening on IPv4 address "127.0.0.1", port 51355
+[63776]  LOG:  listening on IPv6 address "::1", port 51355
+[68580]  LOG:  database system was shut down at 2026-10-05 15:08:48 EEST
+[63776]  LOG:  database system is ready to accept connections
+[55284] [unknown] LOG:  connection received: host=127.0.0.1 port=51362
+[55284] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf:126)
+[55284] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[55284] psql LOG:  connection ready: setup total=44.425 ms, fork=19.017 ms, authentication=11.400 ms
+[31708] [unknown] LOG:  connection received: host=127.0.0.1 port=57885
+[31708] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf:134)
+[31708] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[31708] psql LOG:  connection ready: setup total=34.794 ms, fork=16.768 ms, authentication=9.955 ms
+[61796] [unknown] LOG:  connection received: host=127.0.0.1 port=57888
+[61796] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf:134)
+[61796] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[61796] psql LOG:  connection ready: setup total=34.775 ms, fork=16.906 ms, authentication=10.007 ms
+[19584] [unknown] LOG:  connection received: host=127.0.0.1 port=57889
+[19584] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf:1)
+[19584] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[19584] psql LOG:  connection ready: setup total=36.840 ms, fork=18.449 ms, authentication=10.331 ms
+[45008] [unknown] LOG:  connection received: host=127.0.0.1 port=57892
+[45008] [unknown] LOG:  connection authenticated: user="fv_gate_monitor" method=trust (C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf:1)
+[45008] [unknown] LOG:  connection authorized: user=fv_gate_monitor database=postgres application_name=FluxVault.PreparedSql.94b006d0fffc4d00ba30577b9a769fa2.check
+[45008] FluxVault.PreparedSql.94b006d0fffc4d00ba30577b9a769fa2.check LOG:  connection ready: setup total=24.943 ms, fork=17.111 ms, authentication=0.204 ms
+[63776]  LOG:  received SIGHUP, reloading configuration files
+[68996] [unknown] LOG:  connection received: host=127.0.0.1 port=57895
+[68996] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf:4)
+[68996] [unknown] LOG:  no match in usermap "fv_bootstrap_7871ff7f8d1b404db20771f2e742364f" for user "postgres" authenticated as "SYSTEM@NT AUTHORITY"
+[68996] [unknown] FATAL:  SSPI authentication failed for user "postgres"
+[68996] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf" line 4: "host postgres postgres 127.0.0.1/32 sspi map=fv_bootstrap_7871ff7f8d1b404db20771f2e742364f include_realm=1"
+[63776]  LOG:  received SIGHUP, reloading configuration files
+[57840] [unknown] LOG:  connection received: host=127.0.0.1 port=57897
+[57840] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf:4)
+[57840] [unknown] LOG:  connection authorized: user=postgres database=postgres application_name=FluxVault.PreparedSql.94b006d0fffc4d00ba30577b9a769fa2
+[57840] FluxVault.PreparedSql.94b006d0fffc4d00ba30577b9a769fa2 LOG:  connection ready: setup total=29.766 ms, fork=17.260 ms, authentication=4.658 ms
+[14176] [unknown] LOG:  connection received: host=127.0.0.1 port=57898
+[14176] [unknown] LOG:  connection authenticated: user="fv_gate_monitor" method=trust (C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf:1)
+[14176] [unknown] LOG:  connection authorized: user=fv_gate_monitor database=postgres application_name=FluxVault.PreparedSql.94b006d0fffc4d00ba30577b9a769fa2.check
+[14176] FluxVault.PreparedSql.94b006d0fffc4d00ba30577b9a769fa2.check LOG:  connection ready: setup total=28.442 ms, fork=20.283 ms, authentication=0.201 ms
+[63776]  LOG:  received SIGHUP, reloading configuration files
+[39948] [unknown] LOG:  connection received: host=127.0.0.1 port=57899
+[47292] [unknown] LOG:  connection received: host=127.0.0.1 port=57900
+[47292] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf:2)
+[47292] [unknown] LOG:  connection authorized: user=fluxvault_service database=fluxvault_single application_name=FluxVault.PreparedSql.94b006d0fffc4d00ba30577b9a769fa2.check
+[47292] FluxVault.PreparedSql.94b006d0fffc4d00ba30577b9a769fa2.check LOG:  connection ready: setup total=36.784 ms, fork=20.351 ms, authentication=4.577 ms
+[35700] [unknown] LOG:  connection received: host=127.0.0.1 port=57901
+[35700] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/94b006d0fffc4d00ba30577b9a769fa2/data/pg_hba.conf:2)
+[35700] [unknown] LOG:  connection authorized: user=fluxvault_service database=fluxvault_single application_name=FluxVault.PreparedSql.94b006d0fffc4d00ba30577b9a769fa2.check
+[35700] FluxVault.PreparedSql.94b006d0fffc4d00ba30577b9a769fa2.check LOG:  connection ready: setup total=32.446 ms, fork=19.241 ms, authentication=5.177 ms
+[67524] [unknown] LOG:  connection received: host=127.0.0.1 port=57902
+[63776]  LOG:  received SIGHUP, reloading configuration files

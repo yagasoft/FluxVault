@@ -1,0 +1,9 @@
+{
+  "ContextSha256": "46309856A57FD2338BB2F8BBB135E15F36271866C4339F8F7438BFBEE495D12B",
+  "InstanceId": "{CE9699BB-0800-4761-BDEE-95806F10FD9D}",
+  "Description": "FluxVault exact staging commissioning 46309856A57FD2338BB2F8BBB135E15F36271866C4339F8F7438BFBEE495D12B",
+  "Execute": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "Arguments": "-NoProfile -NonInteractive -File \"C:\\ProgramData\\FluxVault.Tests\\NEXT002\\3423b5b4d7b3447eadc358951f3c5ec7\\administrator-proof\\commission-setup-worker.ps1\" -ContextPath \"C:\\ProgramData\\FluxVault.Tests\\NEXT002\\3423b5b4d7b3447eadc358951f3c5ec7\\administrator-proof\\context.json\" -ContextSha256 46309856A57FD2338BB2F8BBB135E15F36271866C4339F8F7438BFBEE495D12B -RestoreAuthentication",
+  "Name": "FV-NEXT002-3423b5b4d7b3447eadc358951f3c5ec7-restore",
+  "Hash": "D99D5366FB64292B8229B8CD6763B7A92BC172980805D06D4AABB0237BCF9D82"
+}

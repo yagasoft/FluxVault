@@ -1,0 +1,165 @@
+[52980]  LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+[52980]  LOG:  listening on IPv4 address "127.0.0.1", port 64829
+[52980]  LOG:  listening on IPv6 address "::1", port 64829
+[62556]  LOG:  database system was shut down at 2026-10-04 22:15:40 EEST
+[52980]  LOG:  database system is ready to accept connections
+[54012] [unknown] LOG:  connection received: host=127.0.0.1 port=64779
+[54012] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[54012] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[54012] psql LOG:  connection ready: setup total=42.892 ms, fork=19.092 ms, authentication=10.258 ms
+[52980]  LOG:  received SIGHUP, reloading configuration files
+[16772] [unknown] LOG:  connection received: host=127.0.0.1 port=64782
+[16772] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[16772] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[16772] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[16772] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[27876] [unknown] LOG:  connection received: host=127.0.0.1 port=64783
+[27876] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[27876] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[27876] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[27876] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[37784] [unknown] LOG:  connection received: host=127.0.0.1 port=60491
+[37784] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[37784] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[37784] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[37784] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[57388] [unknown] LOG:  connection received: host=::1 port=60495
+[57388] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:2)
+[57388] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[57388] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[57388] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[52116] [unknown] LOG:  connection received: host=::1 port=60496
+[52116] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:2)
+[52116] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[52116] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[52116] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[52600] [unknown] LOG:  connection received: host=::1 port=60498
+[52600] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:2)
+[52600] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[52600] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[52600] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf" line 2: "host fv_gate_261003 fv_gate_service ::1/128 sspi map=fv_gate_system include_realm=1"
+[52980]  LOG:  received SIGHUP, reloading configuration files
+[32652] [unknown] LOG:  connection received: host=127.0.0.1 port=52771
+[32652] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[32652] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.18ff33d0308d433fb3b4128b46de9073.System
+[32652] FVGate.18ff33d0308d433fb3b4128b46de9073.System LOG:  connection ready: setup total=41.438 ms, fork=18.069 ms, authentication=8.203 ms
+[40740] [unknown] LOG:  connection received: host=127.0.0.1 port=52772
+[40740] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[40740] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.18ff33d0308d433fb3b4128b46de9073.System
+[40740] FVGate.18ff33d0308d433fb3b4128b46de9073.System LOG:  connection ready: setup total=32.503 ms, fork=19.970 ms, authentication=3.713 ms
+[38024] [unknown] LOG:  connection received: host=127.0.0.1 port=52773
+[38024] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[38024] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[38024] [unknown] LOG:  connection ready: setup total=29.851 ms, fork=18.117 ms, authentication=3.328 ms
+[55780] [unknown] LOG:  connection received: host=127.0.0.1 port=52775
+[55780] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[55780] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[55780] [unknown] LOG:  connection ready: setup total=29.287 ms, fork=18.222 ms, authentication=3.213 ms
+[55340] [unknown] LOG:  connection received: host=127.0.0.1 port=52776
+[55340] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[55340] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[55340] [unknown] LOG:  connection ready: setup total=29.406 ms, fork=18.197 ms, authentication=3.414 ms
+[14316] [unknown] LOG:  connection received: host=127.0.0.1 port=52777
+[14316] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[14316] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[14316] [unknown] LOG:  connection ready: setup total=28.786 ms, fork=17.593 ms, authentication=3.280 ms
+[57564] [unknown] LOG:  connection received: host=127.0.0.1 port=52778
+[57564] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[57564] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[57564] [unknown] LOG:  connection ready: setup total=29.363 ms, fork=18.038 ms, authentication=3.291 ms
+[62620] [unknown] LOG:  connection received: host=127.0.0.1 port=52779
+[62620] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[62620] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[62620] [unknown] LOG:  connection ready: setup total=29.839 ms, fork=18.381 ms, authentication=3.102 ms
+[18504] [unknown] LOG:  connection received: host=127.0.0.1 port=52780
+[18504] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[18504] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[18504] [unknown] LOG:  connection ready: setup total=29.005 ms, fork=18.130 ms, authentication=3.125 ms
+[20860] [unknown] LOG:  connection received: host=127.0.0.1 port=52781
+[20860] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[20860] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[20860] [unknown] LOG:  connection ready: setup total=29.549 ms, fork=17.992 ms, authentication=3.449 ms
+[64904] [unknown] LOG:  connection received: host=127.0.0.1 port=52782
+[64904] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[64904] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[64904] [unknown] LOG:  connection ready: setup total=29.290 ms, fork=17.716 ms, authentication=3.300 ms
+[47364] [unknown] LOG:  connection received: host=127.0.0.1 port=52784
+[47364] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[47364] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.18ff33d0308d433fb3b4128b46de9073.System
+[47364] FVGate.18ff33d0308d433fb3b4128b46de9073.System LOG:  connection ready: setup total=30.940 ms, fork=18.537 ms, authentication=3.948 ms
+[17072] [unknown] LOG:  connection received: host=127.0.0.1 port=52785
+[17072] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[17072] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.18ff33d0308d433fb3b4128b46de9073.System
+[17072] FVGate.18ff33d0308d433fb3b4128b46de9073.System LOG:  connection ready: setup total=29.334 ms, fork=18.354 ms, authentication=3.084 ms
+[39152] [unknown] LOG:  connection received: host=127.0.0.1 port=52786
+[39152] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[39152] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003
+[39152] [unknown] LOG:  connection ready: setup total=29.566 ms, fork=17.961 ms, authentication=3.389 ms
+[39152] [unknown] ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[39152] [unknown] CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[39152] [unknown] STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('fluxvault') IS NOT NULL THEN
+	        IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 2 OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[39152] [unknown] ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[39152] [unknown] CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[39152] [unknown] STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('fluxvault') IS NOT NULL THEN
+	        IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 2 OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[39152] [unknown] ERROR:  Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.
+[39152] [unknown] CONTEXT:  PL/pgSQL function inline_code_block line 12 at RAISE
+[39152] [unknown] STATEMENT:  -- Fresh staging schemas only. Refuse older/incomplete metadata before any DDL.
+	DO $fv_schema_guard$
+	BEGIN
+	    IF to_regnamespace('fluxvault') IS NOT NULL THEN
+	        IF to_regclass('fluxvault.schema_version') IS NULL OR to_regclass('fluxvault.versions') IS NULL THEN
+	            RAISE EXCEPTION 'Existing metadata is unsupported; no automatic upgrade occurred. Preserve it for recovery with its matching installation.' USING ERRCODE = '0A000';
+	        END IF;
+	        IF (SELECT max(version) FROM fluxvault.schema_version) IS DISTINCT FROM 2 OR NOT EXISTS (
+	            SELECT FROM pg_attribute WHERE attrelid=to_regclass('fluxvault.versions')
+	              AND attname='captured_at_ticks' AND atttypid='pg_catalog.int8'::regtype
+	              AND attnotnull AND NOT attisdropped
+	        ) THEN
+	            RAISE EXCEPTION 'Existing metadata requires a matching installation; no automatic upgrade occurred. Preserve it for recovery.' USING ERRCODE = '0A000';
+	        END IF;
+	    END IF;
+	END
+	$fv_schema_guard$
+[63472] [unknown] LOG:  connection received: host=127.0.0.1 port=52787
+[63472] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/e0388cee4c27412abf5d3076eddd0f85/data/pg_hba.conf:1)
+[63472] [unknown] LOG:  connection authorized: user=fv_gate_service database=fv_gate_261003 application_name=FVGate.18ff33d0308d433fb3b4128b46de9073.System
+[63472] FVGate.18ff33d0308d433fb3b4128b46de9073.System LOG:  connection ready: setup total=30.001 ms, fork=18.804 ms, authentication=3.223 ms
+[52980]  LOG:  received fast shutdown request
+[52980]  LOG:  aborting any active transactions
+[52980]  LOG:  background worker "logical replication launcher" (PID 56172) exited with exit code 1
+[65360]  LOG:  shutting down
+[65360]  LOG:  checkpoint starting: shutdown immediate
+[65360]  LOG:  checkpoint complete: wrote 1141 buffers (27.9%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.030 s, sync=0.355 s, total=0.395 s; sync files=437, longest=0.005 s, average=0.001 s; distance=6071 kB, estimate=6071 kB; lsn=0/1DE1370, redo lsn=0/1DE1370
+[52980]  LOG:  database system is shut down

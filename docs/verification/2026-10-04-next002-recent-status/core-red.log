@@ -1,0 +1,23 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.Windows -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Windows\bin\Release\net10.0\FluxVault.Windows.dll
+  FluxVault.Core.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.46]     FluxVault.Core.Tests.RecentVersionStatusTests.Overview_status_requests_only_its_existing_fifty_recent_versions_through_the_real_repository [FAIL]
+  Failed FluxVault.Core.Tests.RecentVersionStatusTests.Overview_status_requests_only_its_existing_fifty_recent_versions_through_the_real_repository [216 ms]
+  Error Message:
+   System.InvalidOperationException : Overview must not load complete historical manifests.
+  Stack Trace:
+     at FluxVault.Core.Tests.RecentVersionStatusTests.RecentOnlyMetadata.ListVersionsAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\RecentVersionStatusTests.cs:line 43
+   at FluxVault.Core.Storage.FileSystemChunkRepository.ListVersionsAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 249
+   at FluxVault.Core.Storage.FileSystemChunkRepository.ListVersionsAsync(CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.cs:line 265
+   at FluxVault.Core.Service.FluxVaultOperations.GetRecentVersionsForStatusAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Service\FluxVaultOperations.cs:line 1359
+   at FluxVault.Core.Service.FluxVaultOperations.GetStatusAsync(FluxVaultStatusDetailLevel detailLevel, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\Service\FluxVaultOperations.cs:line 1475
+   at FluxVault.Core.Tests.RecentVersionStatusTests.Overview_status_requests_only_its_existing_fifty_recent_versions_through_the_real_repository() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Core.Tests\RecentVersionStatusTests.cs:line 22
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-04-next002-recent-status\core-red.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 232 ms - FluxVault.Core.Tests.dll (net10.0)

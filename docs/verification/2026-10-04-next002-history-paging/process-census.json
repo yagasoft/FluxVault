@@ -1,0 +1,707 @@
+{
+  "CheckedUtc": "2026-10-04T20:08:06.3344312Z",
+  "AllFixtureRootsAbsent": true,
+  "OwnedProcessIdentitiesAbsent": true,
+  "CapturedProcessCount": 62,
+  "AccountsAbsent": true,
+  "GroupAbsent": true,
+  "TaskAbsent": true,
+  "TaskBuildTestAndCliProcessesAbsent": true,
+  "SnapshotsConsistent": true,
+  "Services": [
+    {
+      "Name": "postgresql-x64-18",
+      "ProcessId": 7296,
+      "StartedUtc": "2026-10-01T13:38:16.1935068Z",
+      "Unchanged": true
+    },
+    {
+      "Name": "FluxVaultService",
+      "ProcessId": 40216,
+      "StartedUtc": "2026-10-02T07:02:21.5434164Z",
+      "Unchanged": true
+    }
+  ],
+  "Files": [
+    {
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_hba.conf",
+      "Sha256": "C37D219F5AEE60D710ABCD9628A1F3D6C94F5C9861B4E31A52290DE995D97379",
+      "Unchanged": true
+    },
+    {
+      "Path": "D:\\Program Files\\PostgreSQL\\18\\data\\pg_ident.conf",
+      "Sha256": "2151E28F0BF5A8BB69109F91DBE61EBFFE48C6F9B71620F6A7B0B02B410E7DE5",
+      "Unchanged": true
+    },
+    {
+      "Path": "C:\\ProgramData\\FluxVault\\config.json",
+      "Sha256": "6C52FAFC7325B1C194DE6D4F510441DC6197CB6833A75E9A5570713CD982794F",
+      "Unchanged": true
+    }
+  ],
+  "UnrelatedPrimaryChangesPreserved": true,
+  "RemainingOutOfScopeWorkers": [
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 3052,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6642670Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 60128,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6642740Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 49592,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6644040Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 62868,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6644530Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 51360,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6646540Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 64852,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6647640Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 34568,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6647210Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 47504,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6650180Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 26148,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6650600Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 28924,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6651230Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 47436,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6651520Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 58772,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6651670Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 41904,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6651920Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    },
+    {
+      "Name": "dotnet.exe",
+      "ProcessId": 60076,
+      "ParentProcessId": 40260,
+      "StartedUtc": "2026-10-04T19:19:56.6652280Z",
+      "TaskPathMatch": false,
+      "Attribution": "Shared build worker; ownership not established, preserved"
+    }
+  ],
+  "Fixtures": [
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Root": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\985b7cd255fc4856a409191df1fd9959",
+      "RootAbsent": true,
+      "OwnerComplete": true,
+      "AllResourcesRemoved": true,
+      "Cleanup": {
+        "OwnedJobsJoined": true,
+        "RootRemoved": true,
+        "InstallationUnchanged": true
+      }
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Root": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\856ced141c3d4d14b3dc2d956791443b",
+      "RootAbsent": true,
+      "OwnerComplete": true,
+      "AllResourcesRemoved": true,
+      "Cleanup": {
+        "RootRemoved": true,
+        "InstallationUnchanged": true,
+        "OwnedJobsJoined": true
+      }
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Root": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\951b719c8ef8464b8cd77f83b5da3f9c",
+      "RootAbsent": true,
+      "OwnerComplete": true,
+      "AllResourcesRemoved": true,
+      "Cleanup": {
+        "InstallationUnchanged": true,
+        "OwnedJobsJoined": true,
+        "RootRemoved": true
+      }
+    },
+    {
+      "FixtureId": "e0388cee4c27412abf5d3076eddd0f85",
+      "Root": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\e0388cee4c27412abf5d3076eddd0f85",
+      "RootAbsent": true,
+      "OwnerComplete": true,
+      "AllResourcesRemoved": true,
+      "Cleanup": {
+        "OwnedJobsJoined": true,
+        "InstallationUnchanged": true,
+        "RootRemoved": true
+      }
+    }
+  ],
+  "ProcessRecords": [
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "tool-1d3f8c321bcd4293b96852ab742dec9c",
+      "ProcessId": 64796,
+      "StartedUtc": "2026-10-04T19:54:49.5071838Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "postgres",
+      "ProcessId": 48788,
+      "StartedUtc": "2026-10-04T19:54:54.8648927Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "tool-e794074b2e324b95989e626b6a8e56cb",
+      "ProcessId": 42116,
+      "StartedUtc": "2026-10-04T19:54:53.7706997Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "tool-470904f55da442bdaf96a8a3ae39e97a",
+      "ProcessId": 11068,
+      "StartedUtc": "2026-10-04T19:54:55.5062513Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "tool-8c9b1df3147142078798a524b3a6e745",
+      "ProcessId": 7532,
+      "StartedUtc": "2026-10-04T19:54:57.3803916Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "tool-5172c7218080410b8049d83645740527",
+      "ProcessId": 18036,
+      "StartedUtc": "2026-10-04T19:55:11.0898997Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "actor-A-73b22ebada384750bb79aad86baf1031",
+      "ProcessId": 21312,
+      "StartedUtc": "2026-10-04T19:55:24.4891929Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "actor-A-5f28607597f042898d83a14bc48e213b",
+      "ProcessId": 13644,
+      "StartedUtc": "2026-10-04T19:55:26.6335902Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "actor-A-33c2e48d53144dd3b2266fb3651b460a",
+      "ProcessId": 60908,
+      "StartedUtc": "2026-10-04T19:55:28.3861666Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "actor-A-397af486520e4a1ca77e12b5da3e55ab",
+      "ProcessId": 49984,
+      "StartedUtc": "2026-10-04T19:55:30.5696886Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "actor-B-f73f48eadd0a4d1caf54e2539f595c28",
+      "ProcessId": 58804,
+      "StartedUtc": "2026-10-04T19:55:32.9021052Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "actor-B-e2b1925d7e464d939c6124f4d3ccd4be",
+      "ProcessId": 60872,
+      "StartedUtc": "2026-10-04T19:55:35.1337095Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "actor-B-4f192ab49e4b4de6a762f627ec70d488",
+      "ProcessId": 60564,
+      "StartedUtc": "2026-10-04T19:55:36.7346402Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "actor-B-7c8740bdbc4f4fc1b4482f1690238fd6",
+      "ProcessId": 51028,
+      "StartedUtc": "2026-10-04T19:55:38.6896337Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "tool-19d7ceb0fef14857bdc14f0132680468",
+      "ProcessId": 52360,
+      "StartedUtc": "2026-10-04T19:56:27.2527308Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "fixture-runner",
+      "ProcessId": 25480,
+      "StartedUtc": "2026-10-04T19:53:19.9880116Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "985b7cd255fc4856a409191df1fd9959",
+      "Name": "output-cleanup",
+      "ProcessId": 59832,
+      "StartedUtc": "2026-10-04T19:56:32.3836256Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "tool-4bf87a85af3a41b18ef1119f8525b696",
+      "ProcessId": 55980,
+      "StartedUtc": "2026-10-04T19:27:42.7941Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "postgres",
+      "ProcessId": 14084,
+      "StartedUtc": "2026-10-04T19:27:46.9246076Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "tool-8b15df0a665a4bc5ab1acaf5c5785878",
+      "ProcessId": 45020,
+      "StartedUtc": "2026-10-04T19:27:46.0987685Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "tool-1a0a89859a2347c286dc4d34be460a8e",
+      "ProcessId": 58388,
+      "StartedUtc": "2026-10-04T19:27:47.3865048Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "tool-01df48568a9347778941f6de06c9f845",
+      "ProcessId": 56012,
+      "StartedUtc": "2026-10-04T19:27:48.7028677Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "tool-9ec650fc59224cf6b3af5d7c9a5f8cdf",
+      "ProcessId": 37932,
+      "StartedUtc": "2026-10-04T19:27:58.7733598Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "actor-A-e3d929094e75464388e502bd537fa8bd",
+      "ProcessId": 64932,
+      "StartedUtc": "2026-10-04T19:28:16.0680459Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "actor-A-084967c5ebe6406b999921c3bbcba7fa",
+      "ProcessId": 36544,
+      "StartedUtc": "2026-10-04T19:28:17.9871047Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "actor-A-5a59b6a848ea49a6abf5e5d1b2fa869b",
+      "ProcessId": 36488,
+      "StartedUtc": "2026-10-04T19:28:19.5108422Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "actor-A-c73cb94eb30b41f09960dbf9deb56d14",
+      "ProcessId": 3780,
+      "StartedUtc": "2026-10-04T19:28:21.3135087Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "actor-B-b74ae715839d416c9bf243479cc7b40b",
+      "ProcessId": 28124,
+      "StartedUtc": "2026-10-04T19:28:23.2807122Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "actor-B-ac82504215164150805a81b01fd58e5f",
+      "ProcessId": 56336,
+      "StartedUtc": "2026-10-04T19:28:25.1164229Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "actor-B-c924e6c0dc2e4e7c8e4666ec13c1e243",
+      "ProcessId": 65292,
+      "StartedUtc": "2026-10-04T19:28:26.5744276Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "actor-B-bc928cc3751946398724dc66d0b02828",
+      "ProcessId": 47496,
+      "StartedUtc": "2026-10-04T19:28:28.3893719Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "tool-31c56b3e92a046fc811396ee84fc5bd0",
+      "ProcessId": 7716,
+      "StartedUtc": "2026-10-04T19:28:31.7076301Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "fixture-runner",
+      "ProcessId": 19536,
+      "StartedUtc": "2026-10-04T19:26:55.2173604Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "856ced141c3d4d14b3dc2d956791443b",
+      "Name": "output-cleanup",
+      "ProcessId": 37884,
+      "StartedUtc": "2026-10-04T19:28:36.4749684Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "tool-7baa668ed1924c41b42e06052080a07f",
+      "ProcessId": 64752,
+      "StartedUtc": "2026-10-04T19:49:21.1731592Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "postgres",
+      "ProcessId": 43312,
+      "StartedUtc": "2026-10-04T19:49:25.4750238Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "tool-265ba010985b4e07a871b07ef98c9698",
+      "ProcessId": 46388,
+      "StartedUtc": "2026-10-04T19:49:24.4049248Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "tool-5bc4b79872c340b6b8daa39b2439d5d3",
+      "ProcessId": 17072,
+      "StartedUtc": "2026-10-04T19:49:25.951557Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "tool-a52c5f03d7b6464c864ab3744a0d9fe0",
+      "ProcessId": 33932,
+      "StartedUtc": "2026-10-04T19:49:27.1977292Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "tool-614e2f54b659428b8c2f2f4f807afcb1",
+      "ProcessId": 60320,
+      "StartedUtc": "2026-10-04T19:49:37.1943193Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "actor-A-4a6899aa0e8048ec8dbfc5a0915ceede",
+      "ProcessId": 36936,
+      "StartedUtc": "2026-10-04T19:49:55.5232556Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "actor-A-425e52fca9f041329ddc78329ea15c92",
+      "ProcessId": 35420,
+      "StartedUtc": "2026-10-04T19:49:57.4657466Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "actor-A-da99fc61a3bb4b82b1e7ad3d8c0f0e3e",
+      "ProcessId": 54476,
+      "StartedUtc": "2026-10-04T19:49:59.0695086Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "actor-A-d0c4c2f1c1d64e719ba42181185ffa8c",
+      "ProcessId": 61396,
+      "StartedUtc": "2026-10-04T19:50:00.9407032Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "actor-B-c79173e057ca49d0ad7c79f33a4699e9",
+      "ProcessId": 20748,
+      "StartedUtc": "2026-10-04T19:50:03.0749788Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "actor-B-6e286ba664ba400cb47de83e8724a052",
+      "ProcessId": 60552,
+      "StartedUtc": "2026-10-04T19:50:04.9962845Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "actor-B-7e225ca239514590897666663fcb731d",
+      "ProcessId": 56048,
+      "StartedUtc": "2026-10-04T19:50:06.4718482Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "actor-B-d8ee7e3a06414531a457c07afcb79671",
+      "ProcessId": 60160,
+      "StartedUtc": "2026-10-04T19:50:08.3345264Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "actor-A-e7cd107645d349a1bdc868f1fa0ca10a",
+      "ProcessId": 33608,
+      "StartedUtc": "2026-10-04T19:50:12.2574222Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "actor-B-804f48bbabd74d28a35c10d9e9ff7b88",
+      "ProcessId": 16792,
+      "StartedUtc": "2026-10-04T19:50:19.021839Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "tool-3b81df1b2e9d4696bee990517bb0a8e7",
+      "ProcessId": 2240,
+      "StartedUtc": "2026-10-04T19:50:24.0488356Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "fixture-runner",
+      "ProcessId": 22756,
+      "StartedUtc": "2026-10-04T19:48:28.8722873Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "951b719c8ef8464b8cd77f83b5da3f9c",
+      "Name": "output-cleanup",
+      "ProcessId": 16488,
+      "StartedUtc": "2026-10-04T19:50:29.1180886Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "e0388cee4c27412abf5d3076eddd0f85",
+      "Name": "tool-a27bc332c6f746a1a6cb3dd45917e672",
+      "ProcessId": 46104,
+      "StartedUtc": "2026-10-04T19:15:38.7812854Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "e0388cee4c27412abf5d3076eddd0f85",
+      "Name": "postgres",
+      "ProcessId": 52980,
+      "StartedUtc": "2026-10-04T19:15:42.9600826Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "e0388cee4c27412abf5d3076eddd0f85",
+      "Name": "tool-50df6e5fe11f49d0b40223d7c682a591",
+      "ProcessId": 58884,
+      "StartedUtc": "2026-10-04T19:15:42.1271597Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "e0388cee4c27412abf5d3076eddd0f85",
+      "Name": "tool-cb57b5957bc6480e8329ad809f87ea63",
+      "ProcessId": 19092,
+      "StartedUtc": "2026-10-04T19:15:43.4350453Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "e0388cee4c27412abf5d3076eddd0f85",
+      "Name": "tool-74535c6aa7d54721ab45ee1a65ec5c7b",
+      "ProcessId": 55620,
+      "StartedUtc": "2026-10-04T19:15:44.6767658Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "e0388cee4c27412abf5d3076eddd0f85",
+      "Name": "tool-9ed753caf92f4ce08ba81debace600e4",
+      "ProcessId": 25852,
+      "StartedUtc": "2026-10-04T19:15:54.9958217Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "e0388cee4c27412abf5d3076eddd0f85",
+      "Name": "tool-36a2201048c242e8b920c455179ca643",
+      "ProcessId": 19584,
+      "StartedUtc": "2026-10-04T19:16:02.0430565Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "e0388cee4c27412abf5d3076eddd0f85",
+      "Name": "fixture-runner",
+      "ProcessId": 64580,
+      "StartedUtc": "2026-10-04T19:14:50.2539781Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    },
+    {
+      "FixtureId": "e0388cee4c27412abf5d3076eddd0f85",
+      "Name": "output-cleanup",
+      "ProcessId": 42072,
+      "StartedUtc": "2026-10-04T19:16:04.9575181Z",
+      "RecordedRemoved": true,
+      "LiveIdentityAbsent": true
+    }
+  ],
+  "IntegrityDatabaseIntentCount": 38,
+  "IntegrityDatabaseIntentsRemoved": true
+}

@@ -29,7 +29,5 @@ public sealed record FluxVaultProfileSetConfiguration(
     }
 
     public FluxVaultProfileConfiguration ActiveProfile =>
-        Profiles.FirstOrDefault(profile => string.Equals(profile.Id, ActiveProfileId, StringComparison.OrdinalIgnoreCase))
-        ?? Profiles.FirstOrDefault(profile => profile.IsEnabled)
-        ?? Profiles[0];
+        Profiles.Count == 1 ? Profiles[0] : throw new InvalidDataException("Only a single legacy record is supported.");
 }

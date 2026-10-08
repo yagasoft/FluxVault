@@ -1,0 +1,273 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8dc8c613-7930-4f2e-a9c0-f36b2d0d3938" name="os008@OS008-HOME 2026-10-07 21:10:57" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-07T21:10:57.8080453+03:00" queuing="2026-10-07T21:10:57.8080455+03:00" start="2026-10-07T21:10:57.0738189+03:00" finish="2026-10-07T21:10:57.8135465+03:00" />
+  <TestSettings name="default" id="19764ad2-7ec7-4452-950e-ae024018c4bc">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-07_21_10_57" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="398f4072-d998-45bb-bc28-4af74aa5ce05" testId="bc958118-6772-caac-c31a-9e4fceedb576" testName="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(mode: &quot;MachineParent&quot;, unknownField: True)" computerName="OS008-HOME" duration="00:00:00.0029227" startTime="2026-10-07T21:10:57.7100731+03:00" endTime="2026-10-07T21:10:57.7103197+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="398f4072-d998-45bb-bc28-4af74aa5ce05" />
+    <UnitTestResult executionId="52277afb-a8a9-43a3-acef-6b741d9fc495" testId="4d94b2eb-2d09-7172-fdf6-aa85136b26a4" testName="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(mode: null, unknownField: False)" computerName="OS008-HOME" duration="00:00:00.0041335" startTime="2026-10-07T21:10:57.7089323+03:00" endTime="2026-10-07T21:10:57.7089682+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="52277afb-a8a9-43a3-acef-6b741d9fc495">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.ArgumentException)&#xD;
+Actual:   typeof(System.Text.Json.JsonException)&#xD;
+---- System.Text.Json.JsonException : The JSON property 'PackageTrustMode' could not be mapped to any .NET member contained in type 'FluxVault.Testing.WindowsDatabaseProbeConfiguration'.</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass1_0.&lt;Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields&gt;b__0(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 40&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, String json, Action`1 assertion) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 53&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(String mode, Boolean unknownField) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 37&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.Text.Json.ThrowHelper.ThrowJsonException_UnmappedJsonProperty(Type type, String unmappedPropertyName)&#xD;
+   at System.Text.Json.JsonSerializer.LookupProperty(Object obj, ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, Boolean&amp; useExtensionProperty, Boolean createExtensionProperty)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.TryLookupConstructorParameter(ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, JsonPropertyInfo&amp; jsonPropertyInfo, JsonParameterInfo&amp; jsonParameterInfo)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.ReadConstructorArgumentsWithContinuation(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonSerializerOptions options)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize[TReadBufferState,TStream](TReadBufferState&amp; bufferState, JsonReaderState&amp; jsonReaderState, ReadStack&amp; readStack, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Stream utf8Json)&#xD;
+   at FluxVault.Testing.WindowsDatabaseProbeConfiguration.Read(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\WindowsDatabaseProbe.cs:line 60&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass1_1.&lt;Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields&gt;b__2() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 40</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2dbe168c-660d-49a8-a22a-6e045fbccd88" testId="ac232fc9-5008-fbc9-5227-488648f91b31" testName="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(mode: &quot;MachineParent&quot;)" computerName="OS008-HOME" duration="00:00:00.0033009" startTime="2026-10-07T21:10:57.7059611+03:00" endTime="2026-10-07T21:10:57.7060208+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2dbe168c-660d-49a8-a22a-6e045fbccd88">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.Json.JsonException : The JSON property 'PackageTrustMode' could not be mapped to any .NET member contained in type 'FluxVault.Testing.WindowsDatabaseProbeConfiguration'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowJsonException_UnmappedJsonProperty(Type type, String unmappedPropertyName)&#xD;
+   at System.Text.Json.JsonSerializer.LookupProperty(Object obj, ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, Boolean&amp; useExtensionProperty, Boolean createExtensionProperty)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.TryLookupConstructorParameter(ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, JsonPropertyInfo&amp; jsonPropertyInfo, JsonParameterInfo&amp; jsonParameterInfo)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.ReadConstructorArgumentsWithContinuation(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonSerializerOptions options)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize[TReadBufferState,TStream](TReadBufferState&amp; bufferState, JsonReaderState&amp; jsonReaderState, ReadStack&amp; readStack, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Stream utf8Json)&#xD;
+   at FluxVault.Testing.WindowsDatabaseProbeConfiguration.Read(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\WindowsDatabaseProbe.cs:line 60&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass0_0.&lt;Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode&gt;b__0(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 21&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, String json, Action`1 assertion) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 53&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(String mode) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 19&#xD;
+   at InvokeStub_WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a3bf3ad7-9675-4e1b-b51e-5b8d19d66ad6" testId="c98b8c8a-2bf4-e254-85af-d6f3becbf13b" testName="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(mode: &quot;PerUser&quot;)" computerName="OS008-HOME" duration="00:00:00.0021945" startTime="2026-10-07T21:10:57.7072716+03:00" endTime="2026-10-07T21:10:57.7073016+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3bf3ad7-9675-4e1b-b51e-5b8d19d66ad6">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.Json.JsonException : The JSON property 'PackageTrustMode' could not be mapped to any .NET member contained in type 'FluxVault.Testing.WindowsDatabaseProbeConfiguration'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowJsonException_UnmappedJsonProperty(Type type, String unmappedPropertyName)&#xD;
+   at System.Text.Json.JsonSerializer.LookupProperty(Object obj, ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, Boolean&amp; useExtensionProperty, Boolean createExtensionProperty)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.TryLookupConstructorParameter(ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, JsonPropertyInfo&amp; jsonPropertyInfo, JsonParameterInfo&amp; jsonParameterInfo)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.ReadConstructorArgumentsWithContinuation(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonSerializerOptions options)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize[TReadBufferState,TStream](TReadBufferState&amp; bufferState, JsonReaderState&amp; jsonReaderState, ReadStack&amp; readStack, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Stream utf8Json)&#xD;
+   at FluxVault.Testing.WindowsDatabaseProbeConfiguration.Read(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\WindowsDatabaseProbe.cs:line 60&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass0_0.&lt;Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode&gt;b__0(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 21&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, String json, Action`1 assertion) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 53&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(String mode) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 19&#xD;
+   at InvokeStub_WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2ee4cc42-c324-4feb-aee0-8138431e131d" testId="2eff1577-dd63-c6c5-f533-8437fca24a4a" testName="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(mode: &quot;Unknown&quot;, unknownField: False)" computerName="OS008-HOME" duration="00:00:00.0019411" startTime="2026-10-07T21:10:57.7109473+03:00" endTime="2026-10-07T21:10:57.7114232+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2ee4cc42-c324-4feb-aee0-8138431e131d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.ArgumentException)&#xD;
+Actual:   typeof(System.Text.Json.JsonException)&#xD;
+---- System.Text.Json.JsonException : The JSON property 'PackageTrustMode' could not be mapped to any .NET member contained in type 'FluxVault.Testing.WindowsDatabaseProbeConfiguration'.</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass1_0.&lt;Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields&gt;b__0(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 40&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, String json, Action`1 assertion) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 53&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(String mode, Boolean unknownField) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 37&#xD;
+   at InvokeStub_WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at System.Text.Json.ThrowHelper.ThrowJsonException_UnmappedJsonProperty(Type type, String unmappedPropertyName)&#xD;
+   at System.Text.Json.JsonSerializer.LookupProperty(Object obj, ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, Boolean&amp; useExtensionProperty, Boolean createExtensionProperty)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.TryLookupConstructorParameter(ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, JsonPropertyInfo&amp; jsonPropertyInfo, JsonParameterInfo&amp; jsonParameterInfo)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.ReadConstructorArgumentsWithContinuation(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonSerializerOptions options)&#xD;
+   at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize[TReadBufferState,TStream](TReadBufferState&amp; bufferState, JsonReaderState&amp; jsonReaderState, ReadStack&amp; readStack, T&amp; value)&#xD;
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Stream utf8Json)&#xD;
+   at FluxVault.Testing.WindowsDatabaseProbeConfiguration.Read(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\WindowsDatabaseProbe.cs:line 60&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass1_1.&lt;Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields&gt;b__2() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 40</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="74a91a1f-a888-4d8c-a627-da2cdc40677b" testId="6cd439ec-4fb7-3964-b5ee-38eebe5e163c" testName="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(mode: null)" computerName="OS008-HOME" duration="00:00:00.0376059" startTime="2026-10-07T21:10:57.6465142+03:00" endTime="2026-10-07T21:10:57.6943863+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="74a91a1f-a888-4d8c-a627-da2cdc40677b">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.</Message>
+          <StackTrace>   at System.Text.Json.JsonElement.GetProperty(String propertyName)&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass0_0.&lt;Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode&gt;b__0(String path) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 22&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, String json, Action`1 assertion) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 53&#xD;
+   at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(String mode) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs:line 19&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(mode: null)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="6cd439ec-4fb7-3964-b5ee-38eebe5e163c">
+      <Execution id="74a91a1f-a888-4d8c-a627-da2cdc40677b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsDatabaseProbeTests" name="Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(mode: &quot;MachineParent&quot;, unknownField: True)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="bc958118-6772-caac-c31a-9e4fceedb576">
+      <Execution id="398f4072-d998-45bb-bc28-4af74aa5ce05" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsDatabaseProbeTests" name="Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(mode: &quot;Unknown&quot;, unknownField: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="2eff1577-dd63-c6c5-f533-8437fca24a4a">
+      <Execution id="2ee4cc42-c324-4feb-aee0-8138431e131d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsDatabaseProbeTests" name="Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(mode: &quot;MachineParent&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="ac232fc9-5008-fbc9-5227-488648f91b31">
+      <Execution id="2dbe168c-660d-49a8-a22a-6e045fbccd88" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsDatabaseProbeTests" name="Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(mode: &quot;PerUser&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="c98b8c8a-2bf4-e254-85af-d6f3becbf13b">
+      <Execution id="a3bf3ad7-9675-4e1b-b51e-5b8d19d66ad6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsDatabaseProbeTests" name="Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(mode: null, unknownField: False)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="4d94b2eb-2d09-7172-fdf6-aa85136b26a4">
+      <Execution id="52277afb-a8a9-43a3-acef-6b741d9fc495" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsDatabaseProbeTests" name="Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="bc958118-6772-caac-c31a-9e4fceedb576" executionId="398f4072-d998-45bb-bc28-4af74aa5ce05" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d94b2eb-2d09-7172-fdf6-aa85136b26a4" executionId="52277afb-a8a9-43a3-acef-6b741d9fc495" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ac232fc9-5008-fbc9-5227-488648f91b31" executionId="2dbe168c-660d-49a8-a22a-6e045fbccd88" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c98b8c8a-2bf4-e254-85af-d6f3becbf13b" executionId="a3bf3ad7-9675-4e1b-b51e-5b8d19d66ad6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2eff1577-dd63-c6c5-f533-8437fca24a4a" executionId="2ee4cc42-c324-4feb-aee0-8138431e131d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6cd439ec-4fb7-3964-b5ee-38eebe5e163c" executionId="74a91a1f-a888-4d8c-a627-da2cdc40677b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="6" passed="1" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.26]       System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.&#xD;
+[xUnit.net 00:00:00.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]            at System.Text.Json.JsonElement.GetProperty(String propertyName)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(22,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass0_0.&lt;Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode&gt;b__0(String path)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(53,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, String json, Action`1 assertion)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(19,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(String mode)&#xD;
+[xUnit.net 00:00:00.26]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.26]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.27]       System.Text.Json.JsonException : The JSON property 'PackageTrustMode' could not be mapped to any .NET member contained in type 'FluxVault.Testing.WindowsDatabaseProbeConfiguration'.&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.ThrowHelper.ThrowJsonException_UnmappedJsonProperty(Type type, String unmappedPropertyName)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.JsonSerializer.LookupProperty(Object obj, ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, Boolean&amp; useExtensionProperty, Boolean createExtensionProperty)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.TryLookupConstructorParameter(ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, JsonPropertyInfo&amp; jsonPropertyInfo, JsonParameterInfo&amp; jsonParameterInfo)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.ReadConstructorArgumentsWithContinuation(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonSerializerOptions options)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize[TReadBufferState,TStream](TReadBufferState&amp; bufferState, JsonReaderState&amp; jsonReaderState, ReadStack&amp; readStack, T&amp; value)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Stream utf8Json)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\WindowsDatabaseProbe.cs(60,0): at FluxVault.Testing.WindowsDatabaseProbeConfiguration.Read(String path)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(21,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass0_0.&lt;Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode&gt;b__0(String path)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(53,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, String json, Action`1 assertion)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(19,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(String mode)&#xD;
+[xUnit.net 00:00:00.27]            at InvokeStub_WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.27]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.27]       System.Text.Json.JsonException : The JSON property 'PackageTrustMode' could not be mapped to any .NET member contained in type 'FluxVault.Testing.WindowsDatabaseProbeConfiguration'.&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.ThrowHelper.ThrowJsonException_UnmappedJsonProperty(Type type, String unmappedPropertyName)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.JsonSerializer.LookupProperty(Object obj, ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, Boolean&amp; useExtensionProperty, Boolean createExtensionProperty)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.TryLookupConstructorParameter(ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, JsonPropertyInfo&amp; jsonPropertyInfo, JsonParameterInfo&amp; jsonParameterInfo)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.ReadConstructorArgumentsWithContinuation(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonSerializerOptions options)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize[TReadBufferState,TStream](TReadBufferState&amp; bufferState, JsonReaderState&amp; jsonReaderState, ReadStack&amp; readStack, T&amp; value)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Stream utf8Json)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\WindowsDatabaseProbe.cs(60,0): at FluxVault.Testing.WindowsDatabaseProbeConfiguration.Read(String path)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(21,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass0_0.&lt;Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode&gt;b__0(String path)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(53,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, String json, Action`1 assertion)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(19,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(String mode)&#xD;
+[xUnit.net 00:00:00.27]            at InvokeStub_WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.27]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.27]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.27]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.27]       Actual:   typeof(System.Text.Json.JsonException)&#xD;
+[xUnit.net 00:00:00.27]       ---- System.Text.Json.JsonException : The JSON property 'PackageTrustMode' could not be mapped to any .NET member contained in type 'FluxVault.Testing.WindowsDatabaseProbeConfiguration'.&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(40,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass1_0.&lt;Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields&gt;b__0(String path)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(53,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, String json, Action`1 assertion)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(37,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(String mode, Boolean unknownField)&#xD;
+[xUnit.net 00:00:00.27]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.27]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.27]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.ThrowHelper.ThrowJsonException_UnmappedJsonProperty(Type type, String unmappedPropertyName)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.JsonSerializer.LookupProperty(Object obj, ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, Boolean&amp; useExtensionProperty, Boolean createExtensionProperty)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.TryLookupConstructorParameter(ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, JsonPropertyInfo&amp; jsonPropertyInfo, JsonParameterInfo&amp; jsonParameterInfo)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.ReadConstructorArgumentsWithContinuation(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonSerializerOptions options)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize[TReadBufferState,TStream](TReadBufferState&amp; bufferState, JsonReaderState&amp; jsonReaderState, ReadStack&amp; readStack, T&amp; value)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Stream utf8Json)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\WindowsDatabaseProbe.cs(60,0): at FluxVault.Testing.WindowsDatabaseProbeConfiguration.Read(String path)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(40,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass1_1.&lt;Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields&gt;b__2()&#xD;
+[xUnit.net 00:00:00.27]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.27]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.27]       Actual:   typeof(System.Text.Json.JsonException)&#xD;
+[xUnit.net 00:00:00.27]       ---- System.Text.Json.JsonException : The JSON property 'PackageTrustMode' could not be mapped to any .NET member contained in type 'FluxVault.Testing.WindowsDatabaseProbeConfiguration'.&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(40,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass1_0.&lt;Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields&gt;b__0(String path)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(53,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.WithOwnedConfiguration(WindowsDatabaseProbeConfiguration configuration, String json, Action`1 assertion)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(37,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(String mode, Boolean unknownField)&#xD;
+[xUnit.net 00:00:00.27]            at InvokeStub_WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.27]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.27]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.ThrowHelper.ThrowJsonException_UnmappedJsonProperty(Type type, String unmappedPropertyName)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.JsonSerializer.LookupProperty(Object obj, ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, Boolean&amp; useExtensionProperty, Boolean createExtensionProperty)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.TryLookupConstructorParameter(ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, JsonPropertyInfo&amp; jsonPropertyInfo, JsonParameterInfo&amp; jsonParameterInfo)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.ReadConstructorArgumentsWithContinuation(ReadStack&amp; state, Utf8JsonReader&amp; reader, JsonSerializerOptions options)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Converters.ObjectWithParameterizedConstructorConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize[TReadBufferState,TStream](TReadBufferState&amp; bufferState, JsonReaderState&amp; jsonReaderState, ReadStack&amp; readStack, T&amp; value)&#xD;
+[xUnit.net 00:00:00.27]            at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.Deserialize(Stream utf8Json)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.TestHost\WindowsDatabaseProbe.cs(60,0): at FluxVault.Testing.WindowsDatabaseProbeConfiguration.Read(String path)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\WindowsDatabaseProbeTests.cs(40,0): at FluxVault.Integration.Tests.WindowsDatabaseProbeTests.&lt;&gt;c__DisplayClass1_1.&lt;Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields&gt;b__2()&#xD;
+[xUnit.net 00:00:00.28]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T21:10:57.6967409+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(mode: null) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T21:10:57.7062183+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(mode: "MachineParent") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T21:10:57.7075389+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_accepts_and_defaults_the_pinned_package_trust_mode(mode: "PerUser") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T21:10:57.7091235+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(mode: null, unknownField: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-07T21:10:57.7115315+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Integration.Tests.WindowsDatabaseProbeTests.Actual_owned_configuration_reader_rejects_unknown_trust_modes_and_unmapped_fields(mode: "Unknown", unknownField: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

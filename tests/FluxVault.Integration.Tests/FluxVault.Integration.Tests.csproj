@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Compile Include="..\FluxVault.TestHost\OwnedPostgreSqlCluster.cs" Link="Fixtures\OwnedPostgreSqlCluster.cs" />
+    <Compile Include="..\FluxVault.TestHost\WindowsDatabaseProbe.cs" Link="Fixtures\WindowsDatabaseProbe.cs" />
   </ItemGroup>
 
   <ItemGroup>

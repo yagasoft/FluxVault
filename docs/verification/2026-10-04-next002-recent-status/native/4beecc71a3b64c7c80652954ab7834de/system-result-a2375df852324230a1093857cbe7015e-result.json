@@ -1,0 +1,31 @@
+{
+  "WindowsSid": "S-1-5-18",
+  "Complete": true,
+  "Results": [
+    {
+      "Result": {
+        "Passed": 110,
+        "NativeCallerTokens": true,
+        "SingleVault": true,
+        "ProtectedProductComposition": true,
+        "ActualCatalogueAndExecutor": true,
+        "ProtectedRehearsalOutputCleaned": true,
+        "DrainEffectVerified": true,
+        "DiagnosticsOutputCleaned": true,
+        "SelectionOutputCleaned": true,
+        "CreatorVerified": true,
+        "UngrantDenied": true,
+        "ExactInstalledBinding": "4beecc71-a3b6-4c7c-8065-2954ab7834de"
+      },
+      "Kind": "CallerFiles"
+    },
+    {
+      "Kind": "ACL",
+      "WindowsSid": "S-1-5-18",
+      "WriteRuntime": true,
+      "ReadProtected": true
+    }
+  ],
+  "Actor": "System",
+  "RunId": "a2375df852324230a1093857cbe7015e"
+}

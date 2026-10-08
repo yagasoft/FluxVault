@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="90b2d8bd-8d39-42e3-9e17-1eecfc90fc4a" name="os008@OS008-HOME 2026-10-08 00:08:02" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T00:08:02.3965316+03:00" queuing="2026-10-08T00:08:02.3965318+03:00" start="2026-10-08T00:07:58.9803760+03:00" finish="2026-10-08T00:08:08.8102784+03:00" />
+  <TestSettings name="default" id="e17f12ed-151c-4042-bdfe-fc50077680c9">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_00_08_02" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a7c3584a-3c11-488d-9630-4398af14a466" testId="4b80bd88-e1a3-6404-add4-7694c5641080" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;-1&quot;)" computerName="OS008-HOME" duration="00:00:00.2637609" startTime="2026-10-08T00:08:04.8529608+03:00" endTime="2026-10-08T00:08:05.1168397+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a7c3584a-3c11-488d-9630-4398af14a466" />
+    <UnitTestResult executionId="2870b201-1c54-4b91-bbbc-62fcd5b232a2" testId="6decdf4e-19db-f357-bc3c-ca2a8f1f3f8c" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(count: 0)" computerName="OS008-HOME" duration="00:00:01.9731571" startTime="2026-10-08T00:08:02.3251418+03:00" endTime="2026-10-08T00:08:04.2903905+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2870b201-1c54-4b91-bbbc-62fcd5b232a2">
+      <Output>
+        <StdOut>{"LocalAndServiceStatesVisible":true,"StatusDoesNotOverlap":true,"OptionsDelayVisible":true,"Backups":0,"Saves":1,"ProtectionSaveMessage":"Save failed (Disposable service rejected the save. Check the selection and try again.). Your changes are kept. Backup has not started for this action.","LocalProtectionDraftMessage":"Your newer protection draft is retained locally. It has not been saved to the service.","InventoryCount":0,"LoadedFileCount":0,"RealisedFileRows":0,"LastFileRealised":false,"RefreshMilliseconds":207.4387,"LastFileMilliseconds":0,"PeakWorkingSetBytes":175071232}</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f757b13e-fbea-41b3-9f54-8820bdb5d767" testId="a8c7cf94-7b25-e254-0c9d-d9a2f16f6025" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_App_startup_uses_safe_presentation_without_a_harness_override_and_joins_reads" computerName="OS008-HOME" duration="00:00:03.6366746" startTime="2026-10-08T00:08:05.1170883+03:00" endTime="2026-10-08T00:08:08.7539366+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f757b13e-fbea-41b3-9f54-8820bdb5d767">
+      <Output>
+        <StdOut>{"StartupObserved":true,"SoftwareRendering":false,"EffectiveRenderMode":"SoftwareOnly","Loaded":true,"ContentRendered":true,"ApplicationIdle":true,"RenderingEvents":165,"FirstRendering":"2026-10-07T21:08:05.7625519+00:00","LastRendering":"2026-10-07T21:08:08.5352206+00:00","Window":{"ActualWidth":1220,"ActualHeight":760,"Visibility":0,"IsVisible":true,"IsEnabled":true,"IsMeasureValid":true,"IsArrangeValid":true},"Root":{"ActualWidth":1162.2857142857142,"ActualHeight":679.4285714285714,"Visibility":0,"IsVisible":true,"IsEnabled":true,"IsMeasureValid":true,"IsArrangeValid":true},"Hwnd":6230894,"HasPresentationSource":true,"HasCompositionTarget":true,"NativeVisible":true,"Dpi":{"DpiScaleX":1.75,"DpiScaleY":1.75,"PixelsPerDip":1.75,"PixelsPerInchX":168,"PixelsPerInchY":168},"HasNativeRect":true,"NativeRect":{"Left":396,"Top":396,"Right":2531,"Bottom":1726},"RepositoryTextBox":{"Bounds":"718,646,1535,59","Offscreen":false}}</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="02ad1217-a4f7-47da-98b0-cad0be5dc3d6" testId="cc780ce0-1701-7388-fba6-4ff259116107" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;50001&quot;)" computerName="OS008-HOME" duration="00:00:00.2718284" startTime="2026-10-08T00:08:04.5806956+03:00" endTime="2026-10-08T00:08:04.8527043+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="02ad1217-a4f7-47da-98b0-cad0be5dc3d6" />
+    <UnitTestResult executionId="134989aa-eba1-45a5-9274-9556da6ad6cd" testId="a0262b1f-9021-784f-a4af-2f360a9cac82" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;bad&quot;)" computerName="OS008-HOME" duration="00:00:00.2883870" startTime="2026-10-08T00:08:04.2931472+03:00" endTime="2026-10-08T00:08:04.5805115+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="134989aa-eba1-45a5-9274-9556da6ad6cd" />
+    <UnitTestResult executionId="a19ffe2b-9ae3-43aa-9e12-0e31e14805ae" testId="cca80bac-9548-ce8e-de8b-a1f8793a986e" testName="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(count: 10000)" computerName="OS008-HOME" duration="00:00:02.6936993" startTime="2026-10-08T00:07:59.6126090+03:00" endTime="2026-10-08T00:08:02.3161117+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a19ffe2b-9ae3-43aa-9e12-0e31e14805ae">
+      <Output>
+        <StdOut>{"LocalAndServiceStatesVisible":true,"StatusDoesNotOverlap":true,"OptionsDelayVisible":true,"Backups":0,"Saves":1,"ProtectionSaveMessage":"Save failed (Disposable service rejected the save. Check the selection and try again.). Your changes are kept. Backup has not started for this action.","LocalProtectionDraftMessage":"Your newer protection draft is retained locally. It has not been saved to the service.","InventoryCount":10000,"LoadedFileCount":10000,"RealisedFileRows":17,"LastFileRealised":true,"RefreshMilliseconds":782.3104,"LastFileMilliseconds":69.4873,"PeakWorkingSetBytes":204345344}</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_App_startup_uses_safe_presentation_without_a_harness_override_and_joins_reads" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="a8c7cf94-7b25-e254-0c9d-d9a2f16f6025">
+      <Execution id="f757b13e-fbea-41b3-9f54-8820bdb5d767" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_App_startup_uses_safe_presentation_without_a_harness_override_and_joins_reads" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(count: 0)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="6decdf4e-19db-f357-bc3c-ca2a8f1f3f8c">
+      <Execution id="2870b201-1c54-4b91-bbbc-62fcd5b232a2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save(count: 10000)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="cca80bac-9548-ce8e-de8b-a1f8793a986e">
+      <Execution id="a19ffe2b-9ae3-43aa-9e12-0e31e14805ae" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_WPF_observation_fixture_loads_its_bounded_inventory_and_joins_after_failed_save" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;-1&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="4b80bd88-e1a3-6404-add4-7694c5641080">
+      <Execution id="a7c3584a-3c11-488d-9630-4398af14a466" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;50001&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="cc780ce0-1701-7388-fba6-4ff259116107">
+      <Execution id="02ad1217-a4f7-47da-98b0-cad0be5dc3d6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.DesktopObservationFixtureTests.Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state(count: &quot;bad&quot;)" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="a0262b1f-9021-784f-a4af-2f360a9cac82">
+      <Execution id="134989aa-eba1-45a5-9274-9556da6ad6cd" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.DesktopObservationFixtureTests" name="Actual_WPF_fixture_refuses_an_invalid_inventory_bound_before_creating_UI_state" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="4b80bd88-e1a3-6404-add4-7694c5641080" executionId="a7c3584a-3c11-488d-9630-4398af14a466" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6decdf4e-19db-f357-bc3c-ca2a8f1f3f8c" executionId="2870b201-1c54-4b91-bbbc-62fcd5b232a2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a8c7cf94-7b25-e254-0c9d-d9a2f16f6025" executionId="f757b13e-fbea-41b3-9f54-8820bdb5d767" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc780ce0-1701-7388-fba6-4ff259116107" executionId="02ad1217-a4f7-47da-98b0-cad0be5dc3d6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a0262b1f-9021-784f-a4af-2f360a9cac82" executionId="134989aa-eba1-45a5-9274-9556da6ad6cd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cca80bac-9548-ce8e-de8b-a1f8793a986e" executionId="a19ffe2b-9ae3-43aa-9e12-0e31e14805ae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="6" executed="6" passed="6" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:09.37]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

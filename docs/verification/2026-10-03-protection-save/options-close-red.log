@@ -1,0 +1,37 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FluxVault.Abstractions -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Abstractions\bin\Release\net10.0\FluxVault.Abstractions.dll
+  FluxVault.Core -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.Core\bin\Release\net10.0\FluxVault.Core.dll
+  FluxVault.App -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\src\FluxVault.App\bin\Release\net10.0-windows\FluxVault.App.dll
+  FluxVault.App.Tests -> C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll
+Test run for C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.57]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_close_cannot_enable_protection_saves_with_a_stale_baseline(delayedReload: False) [FAIL]
+[xUnit.net 00:00:02.30]     FluxVault.App.Tests.ProtectionSaveContractTests.Options_close_cannot_enable_protection_saves_with_a_stale_baseline(delayedReload: True) [FAIL]
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Options_close_cannot_enable_protection_saves_with_a_stale_baseline(delayedReload: False) [1 s]
+  Error Message:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.<>c__DisplayClass23_0.<<Options_close_cannot_enable_protection_saves_with_a_stale_baseline>b__0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 724
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.ProtectionSaveContractTests.<>c__DisplayClass14_1.<<RunOnStaAsync>b__1>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 426
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 434
+--- End of stack trace from previous location ---
+  Failed FluxVault.App.Tests.ProtectionSaveContractTests.Options_close_cannot_enable_protection_saves_with_a_stale_baseline(delayedReload: True) [736 ms]
+  Error Message:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  Stack Trace:
+     at FluxVault.App.Tests.ProtectionSaveContractTests.<>c__DisplayClass23_0.<<Options_close_cannot_enable_protection_saves_with_a_stale_baseline>b__0>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 724
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.ProtectionSaveContractTests.<>c__DisplayClass14_1.<<RunOnStaAsync>b__1>d.MoveNext() in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 426
+--- End of stack trace from previous location ---
+   at FluxVault.App.Tests.ProtectionSaveContractTests.RunOnStaAsync(Func`1 action) in C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\ProtectionSaveContractTests.cs:line 434
+--- End of stack trace from previous location ---
+Results File: C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-03-protection-save\options-close-red.trx
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 2 s - FluxVault.App.Tests.dll (net10.0)

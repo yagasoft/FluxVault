@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="46272c77-e01f-4046-8259-32ca62c10680" name="os008@OS008-HOME 2026-10-04 14:40:53" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-04T14:40:53.8638909+03:00" queuing="2026-10-04T14:40:53.8638910+03:00" start="2026-10-04T14:40:52.8971829+03:00" finish="2026-10-04T14:40:53.8680774+03:00" />
+  <TestSettings name="default" id="686d47fd-8b31-4694-b5e8-cf5a86426f2f">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-04_14_40_53" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="2e112515-6d43-4023-a601-48e6086fd898" testId="3ccf90be-67fa-75a2-66ed-565da148fadb" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Options_entry_rechecks_a_save_reserved_since_the_previous_refresh" computerName="OS008-HOME" duration="00:00:00.2641537" startTime="2026-10-04T14:40:53.4635384+03:00" endTime="2026-10-04T14:40:53.7348093+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2e112515-6d43-4023-a601-48e6086fd898" />
+    <UnitTestResult executionId="b08df2e9-d753-4862-b9a6-9082afd1618f" testId="8545d843-bdd8-3e0a-dc5b-58a016e7c905" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Save_reserved_by_another_session_during_discard_keeps_the_original_draft_and_operation" computerName="OS008-HOME" duration="00:00:00.0321267" startTime="2026-10-04T14:40:53.7360777+03:00" endTime="2026-10-04T14:40:53.7685599+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b08df2e9-d753-4862-b9a6-9082afd1618f" />
+    <UnitTestResult executionId="f5838af1-0971-467e-b3f0-fd18d2c3af0a" testId="50358199-5a32-9f66-15b5-946e8ee67e67" testName="FluxVault.App.Tests.SaveOperationStoreTests.Case_variant_nested_fields_are_refused_without_reinterpreting_the_snapshot" computerName="OS008-HOME" duration="00:00:00.1984995" startTime="2026-10-04T14:40:53.4647960+03:00" endTime="2026-10-04T14:40:53.6688725+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5838af1-0971-467e-b3f0-fd18d2c3af0a" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Save_reserved_by_another_session_during_discard_keeps_the_original_draft_and_operation" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="8545d843-bdd8-3e0a-dc5b-58a016e7c905">
+      <Execution id="b08df2e9-d753-4862-b9a6-9082afd1618f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Save_reserved_by_another_session_during_discard_keeps_the_original_draft_and_operation" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Options_entry_rechecks_a_save_reserved_since_the_previous_refresh" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="3ccf90be-67fa-75a2-66ed-565da148fadb">
+      <Execution id="2e112515-6d43-4023-a601-48e6086fd898" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Options_entry_rechecks_a_save_reserved_since_the_previous_refresh" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.SaveOperationStoreTests.Case_variant_nested_fields_are_refused_without_reinterpreting_the_snapshot" storage="c:\users\os008\.codex\worktrees\fluxvault-next002-plan\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="50358199-5a32-9f66-15b5-946e8ee67e67">
+      <Execution id="f5838af1-0971-467e-b3f0-fd18d2c3af0a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.SaveOperationStoreTests" name="Case_variant_nested_fields_are_refused_without_reinterpreting_the_snapshot" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3ccf90be-67fa-75a2-66ed-565da148fadb" executionId="2e112515-6d43-4023-a601-48e6086fd898" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8545d843-bdd8-3e0a-dc5b-58a016e7c905" executionId="b08df2e9-d753-4862-b9a6-9082afd1618f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50358199-5a32-9f66-15b5-946e8ee67e67" executionId="f5838af1-0971-467e-b3f0-fd18d2c3af0a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.51]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

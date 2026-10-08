@@ -4,6 +4,7 @@ using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using FluxVault.Core.Ipc;
+using FluxVault.Windows.Security;
 
 namespace FluxVault.Core.Tests;
 
@@ -21,14 +22,11 @@ public sealed class IpcNamedPipeFluxVaultServerSecurityTests
         AssertAllows(security, WellKnownSidType.WinBuiltinAnyPackageSid, "ReadWrite");
     }
 
+    [SupportedOSPlatform("windows")]
     private static object CreateDefaultPipeSecurity()
     {
-        var method = typeof(NamedPipeFluxVaultServer).GetMethod(
-            "CreateDefaultPipeSecurity",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
-        Assert.NotNull(method);
-        return method.Invoke(null, null) ?? throw new InvalidOperationException("Pipe security factory returned null.");
+        using var pipe = WindowsFluxVaultPipeServerFactory.ForPrivateFixture($"FluxVault.Tests.{Guid.NewGuid():N}").CreateFirstListener();
+        return System.IO.Pipes.PipesAclExtensions.GetAccessControl(pipe);
     }
 
     [SupportedOSPlatform("windows")]

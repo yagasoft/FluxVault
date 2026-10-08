@@ -1,0 +1,41 @@
+[24148]  LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+[24148]  LOG:  listening on IPv4 address "127.0.0.1", port 55827
+[24148]  LOG:  listening on IPv6 address "::1", port 55827
+[59468]  LOG:  database system was shut down at 2026-10-05 12:07:35 EEST
+[24148]  LOG:  database system is ready to accept connections
+[7592] [unknown] LOG:  connection received: host=127.0.0.1 port=55835
+[7592] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/33b0a465488c47f79be3a2a0cbbf25d3/data/pg_hba.conf:126)
+[7592] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[7592] psql LOG:  connection ready: setup total=42.121 ms, fork=18.868 ms, authentication=10.173 ms
+[54116] [unknown] LOG:  connection received: host=127.0.0.1 port=55836
+[54116] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/33b0a465488c47f79be3a2a0cbbf25d3/data/pg_hba.conf:134)
+[54116] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[54116] psql LOG:  connection ready: setup total=37.016 ms, fork=17.930 ms, authentication=10.684 ms
+[47184] [unknown] LOG:  connection received: host=127.0.0.1 port=55838
+[47184] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/33b0a465488c47f79be3a2a0cbbf25d3/data/pg_hba.conf:134)
+[47184] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[47184] psql LOG:  connection ready: setup total=38.276 ms, fork=19.141 ms, authentication=10.334 ms
+[63008] [unknown] LOG:  connection received: host=127.0.0.1 port=55841
+[63008] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/33b0a465488c47f79be3a2a0cbbf25d3/data/pg_hba.conf:1)
+[63008] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[63008] psql LOG:  connection ready: setup total=38.259 ms, fork=18.925 ms, authentication=10.273 ms
+[24148]  LOG:  received SIGHUP, reloading configuration files
+[3512] [unknown] LOG:  connection received: host=127.0.0.1 port=55845
+[3512] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/33b0a465488c47f79be3a2a0cbbf25d3/data/pg_hba.conf:4)
+[3512] [unknown] LOG:  no match in usermap "fv_bootstrap_7871ff7f8d1b404db20771f2e742364f" for user "postgres" authenticated as "SYSTEM@NT AUTHORITY"
+[3512] [unknown] FATAL:  SSPI authentication failed for user "postgres"
+[3512] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/33b0a465488c47f79be3a2a0cbbf25d3/data/pg_hba.conf" line 4: "host postgres postgres 127.0.0.1/32 sspi map=fv_bootstrap_7871ff7f8d1b404db20771f2e742364f include_realm=1"
+[24148]  LOG:  received SIGHUP, reloading configuration files
+[56024] [unknown] LOG:  connection received: host=127.0.0.1 port=55846
+[56024] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/33b0a465488c47f79be3a2a0cbbf25d3/data/pg_hba.conf:4)
+[56024] [unknown] LOG:  connection authorized: user=postgres database=postgres application_name=FluxVault.PreparedSql.33b0a465488c47f79be3a2a0cbbf25d3
+[56024] FluxVault.PreparedSql.33b0a465488c47f79be3a2a0cbbf25d3 LOG:  connection ready: setup total=32.447 ms, fork=18.880 ms, authentication=5.602 ms
+[24148]  LOG:  received SIGHUP, reloading configuration files
+[24148]  LOG:  received SIGHUP, reloading configuration files
+[24148]  LOG:  received fast shutdown request
+[24148]  LOG:  aborting any active transactions
+[24148]  LOG:  background worker "logical replication launcher" (PID 30572) exited with exit code 1
+[60640]  LOG:  shutting down
+[60640]  LOG:  checkpoint starting: shutdown immediate
+[60640]  LOG:  checkpoint complete: wrote 996 buffers (24.3%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.033 s, sync=0.281 s, total=0.322 s; sync files=312, longest=0.004 s, average=0.001 s; distance=4679 kB, estimate=4679 kB; lsn=0/1C852E0, redo lsn=0/1C852E0
+[24148]  LOG:  database system is shut down

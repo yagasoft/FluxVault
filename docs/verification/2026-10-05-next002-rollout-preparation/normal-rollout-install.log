@@ -1,0 +1,15 @@
+
+PSMessageDetails      : 
+Exception             : System.Management.Automation.RuntimeException: Ancestor security transition is unconfirmed.
+TargetObject          : Ancestor security transition is unconfirmed.
+CategoryInfo          : OperationStopped: (Ancestor security t…ion is unconfirmed.:String) [], RuntimeException
+FullyQualifiedErrorId : Ancestor security transition is unconfirmed.
+ErrorDetails          : 
+InvocationInfo        : System.Management.Automation.InvocationInfo
+ScriptStackTrace      : at Set-CommissionAncestorState, C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1: line 206
+                        at Invoke-CommissionInstallation, C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1: line 383
+                        at <ScriptBlock>, C:\Users\os008\.codex\worktrees\fluxvault-next002-plan\FluxVault\docs\verification\2026-10-05-next002-rollout-preparation\commission-installation.ps1: line 492
+                        at <ScriptBlock>, <No file>: line 6
+PipelineIterationInfo : {}
+
+

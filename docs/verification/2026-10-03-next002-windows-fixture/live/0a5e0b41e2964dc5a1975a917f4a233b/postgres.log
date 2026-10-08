@@ -1,0 +1,27 @@
+[14944]  LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+[14944]  LOG:  listening on IPv4 address "127.0.0.1", port 53200
+[14944]  LOG:  listening on IPv6 address "::1", port 53200
+[8832]  LOG:  database system was shut down at 2026-10-04 03:10:13 EEST
+[14944]  LOG:  database system is ready to accept connections
+[26156] [unknown] LOG:  connection received: host=127.0.0.1 port=53208
+[26156] [unknown] LOG:  connection authenticated: identity="fv_gate_bootstrap" method=scram-sha-256 (C:/ProgramData/FluxVault.Tests/NEXT002/0a5e0b41e2964dc5a1975a917f4a233b/data/pg_hba.conf:1)
+[26156] [unknown] LOG:  connection authorized: user=fv_gate_bootstrap database=postgres application_name=psql
+[26156] psql LOG:  connection ready: setup total=42.113 ms, fork=18.303 ms, authentication=10.436 ms
+[14944]  LOG:  received SIGHUP, reloading configuration files
+[8636] [unknown] LOG:  connection received: host=127.0.0.1 port=53235
+[8636] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/0a5e0b41e2964dc5a1975a917f4a233b/data/pg_hba.conf:1)
+[8636] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[8636] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[8636] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/0a5e0b41e2964dc5a1975a917f4a233b/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[39452] [unknown] LOG:  connection received: host=127.0.0.1 port=53236
+[39452] [unknown] LOG:  connection authenticated: identity="NT AUTHORITY\SYSTEM" method=sspi (C:/ProgramData/FluxVault.Tests/NEXT002/0a5e0b41e2964dc5a1975a917f4a233b/data/pg_hba.conf:1)
+[39452] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
+[39452] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
+[39452] [unknown] DETAIL:  Connection matched file "C:/ProgramData/FluxVault.Tests/NEXT002/0a5e0b41e2964dc5a1975a917f4a233b/data/pg_hba.conf" line 1: "host fv_gate_261003 fv_gate_service 127.0.0.1/32 sspi map=fv_gate_system include_realm=1"
+[14944]  LOG:  received fast shutdown request
+[14944]  LOG:  aborting any active transactions
+[14944]  LOG:  background worker "logical replication launcher" (PID 30788) exited with exit code 1
+[35520]  LOG:  shutting down
+[35520]  LOG:  checkpoint starting: shutdown immediate
+[35520]  LOG:  checkpoint complete: wrote 1035 buffers (25.3%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.029 s, sync=0.264 s, total=0.300 s; sync files=319, longest=0.005 s, average=0.001 s; distance=5005 kB, estimate=5005 kB; lsn=0/1CD69E8, redo lsn=0/1CD69E8
+[14944]  LOG:  database system is shut down

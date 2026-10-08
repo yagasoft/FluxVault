@@ -98,7 +98,7 @@ This release contains the unsigned Yagasoft FluxVault Windows installer.
 
 ## Install
 
-Run ``$setupArtifact``. The installer sets up the FluxVault dashboard, Windows service, CLI, ProgramData folder, delayed service start, service recovery, and Application Event Log source.
+Run ``$setupArtifact`` only as part of the reviewed installation procedure. The installer places the dashboard, service and CLI payloads and registers a stopped, demand-start service and Application Event Log source. It creates no vault state and does not start runtime. Complete authenticated single-vault commissioning, join setup and verify protected activation before enabling delayed automatic start/recovery. Failed or uncertain creator confirmation requires activation/status reconciliation, never automatic setup retry. Current NEXT-002 staging preparation does not provide a completed consumer first-run commissioning experience.
 
 ## Explorer integration
 

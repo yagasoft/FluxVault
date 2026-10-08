@@ -15,24 +15,13 @@ public sealed class FluxVaultProfileConfigurationStore(
     public async Task SaveAsync(FluxVaultConfiguration configuration, CancellationToken cancellationToken = default)
     {
         var profileSet = await profileSetStore.LoadAsync(cancellationToken).ConfigureAwait(false);
-        var profiles = profileSet.Profiles
-            .Select(profile => string.Equals(profile.Id, profileId, StringComparison.OrdinalIgnoreCase)
-                ? profile with { IsEnabled = configuration.IsEnabled, Configuration = configuration }
-                : profile)
-            .ToArray();
-        if (!profiles.Any(profile => string.Equals(profile.Id, profileId, StringComparison.OrdinalIgnoreCase)))
-        {
-            profiles = profiles
-                .Append(new FluxVaultProfileConfiguration(profileId, profileId, configuration.IsEnabled, configuration))
-                .ToArray();
-        }
-
-        await profileSetStore.SaveAsync(profileSet with { Profiles = profiles }, cancellationToken).ConfigureAwait(false);
+        var profile = FindProfile(profileSet);
+        await profileSetStore.SaveAsync(profileSet with { Profiles = [profile with { IsEnabled = configuration.IsEnabled, Configuration = configuration }] }, cancellationToken).ConfigureAwait(false);
     }
 
     private FluxVaultProfileConfiguration FindProfile(FluxVaultProfileSetConfiguration profileSet)
     {
-        return profileSet.Profiles.FirstOrDefault(profile => string.Equals(profile.Id, profileId, StringComparison.OrdinalIgnoreCase))
-            ?? throw new InvalidDataException($"FluxVault profile was not found: {profileId}");
+        return profileSet.Profiles.Count == 1 && profileSet.Profiles[0].Id == profileId ? profileSet.Profiles[0]
+            : throw new InvalidDataException("The legacy file does not contain the expected single record.");
     }
 }

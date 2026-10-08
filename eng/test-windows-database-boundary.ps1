@@ -6,6 +6,7 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$ValidatePreparedAuthentication,
     [ValidateSet('Admission','MidWrite','BeforeTruncate')][string]$AuthenticationInterruption='Admission',
     [switch]$RunCatalogueTests,
+    [switch]$RunPredecessorReadTests,
     [switch]$RunMetadataTests,
     [switch]$RunCallerFileTests,
     [switch]$RunSingleVaultTests,
@@ -23,6 +24,7 @@ if($RunInterruptedEffectTests -and (-not $RunSingleVaultTests -or $RunRestartTes
     throw 'Interrupted-effect proof requires an exclusive single-vault extension within the existing resource bound.'
 }
 if($RunMetadataTests -and -not $RunCatalogueTests){throw 'Metadata proof requires the catalogue contracts.'}
+if($RunPredecessorReadTests -and -not $RunCatalogueTests){throw 'Predecessor-read proof requires the owned catalogue contracts.'}
 if($RunCallerFileTests -and $RunSingleVaultTests){throw 'Select one native file workflow per fresh fixture.'}
 if($RunIntegrityTests -and ($RunCallerFileTests -or $RunSingleVaultTests)){throw 'Run the integrity suite in its own fresh fixture.'}
 if($RunNativeAccessTests -and -not $RunSingleVaultTests){throw 'Native access proof requires the single-vault product workflow.'}
@@ -1226,7 +1228,7 @@ try {
     }
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
-    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;PackageTrustMode=$fixturePackageTrustMode;RunCatalogueTests=[bool]$RunCatalogueTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
+    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;PackageTrustMode=$fixturePackageTrustMode;RunCatalogueTests=[bool]$RunCatalogueTests;RunPredecessorReadTests=[bool]$RunPredecessorReadTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
     @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds;ValidatePreparedAuthentication=[bool]$ValidatePreparedAuthentication} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     if($RunPackagedIdentityTests) {
         $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure() -TrustMode $fixturePackageTrustMode
@@ -1323,6 +1325,7 @@ host all all ::1/128 reject
                 -not $probe.Result.Catalogue.ProtectionStateCatalogueVerified -or -not $probe.Result.Catalogue.HistoryDeletionCatalogueVerified)) {
                 throw 'Required current catalogue/drain contracts did not complete; rebuild the Release test host before running.'
             }
+            if($RunPredecessorReadTests -and -not $probe.Result.Catalogue.PredecessorReadVerified){throw 'Required actual predecessor-read proof did not complete.'}
             # Multi-vault collision/coexistence cases are retired. Retain all single-repository binding/integrity contracts.
             if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Metadata -or $probe.Result.Catalogue.Metadata.Passed -lt 18 -or
                 -not $probe.Result.Catalogue.Metadata.RecentVersionsVerified -or -not $probe.Result.Catalogue.Metadata.HistoryPagingVerified -or

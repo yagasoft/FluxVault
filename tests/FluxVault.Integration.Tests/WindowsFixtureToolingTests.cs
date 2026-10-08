@@ -2597,6 +2597,54 @@ public sealed class WindowsFixtureToolingTests
     }
 
     [Theory]
+    [InlineData("0", true)]
+    [InlineData("1", false)]
+    [InlineData("unknown", false)]
+    public async Task Controls_downgrade_requires_joined_service_and_no_unresolved_deletion(string outcome,bool expectedRestore)
+    {
+        using var fixture=new ScriptFixture();
+        var result=await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'docs/verification/2026-10-08-next004-controls/update-controls.ps1')
+            $script:events=[Collections.Generic.List[string]]::new()
+            function Get-Service {param($Name) @{Status='Running'}}
+            function Stop-ControlsServiceJoined {param($Context) $script:events.Add('joined')}
+            function Invoke-ControlsRollbackInspection {param($Context)
+                if($script:events.Count -ne 1 -or $script:events[0] -ne 'joined'){throw 'Inspection ran before quiescence.'}
+                $script:events.Add('inspect')
+                if('OUTCOME' -eq 'unknown'){throw 'Read-only inspection failed.'}
+                @{PendingHistoryDeletions=[int]'OUTCOME';OwnerSid='creator';GrantCount=0}
+            }
+            function Assert-ControlsClientRecordsResolved {param($StateRoot) $script:events.Add('client-records')}
+            function Restore-PresentationProduct {param($Context) $script:events.Add('restore')}
+            $failure=$null;try{Restore-ControlsProduct @{OperatorSid='creator'}}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Events=$script:events}|ConvertTo-Json -Compress
+            """.Replace("OUTCOME",outcome,StringComparison.Ordinal));
+        Assert.Equal(expectedRestore,result.GetProperty("Failure").ValueKind==JsonValueKind.Null);
+        Assert.Equal(expectedRestore ? ["joined","inspect","client-records","restore"] : ["joined","inspect"],
+            result.GetProperty("Events").EnumerateArray().Select(item=>item.GetString()).ToArray());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Controls_downgrade_preserves_and_refuses_every_pending_client_record(bool recordExists)
+    {
+        using var fixture=new ScriptFixture();
+        var result=await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'docs/verification/2026-10-08-next004-controls/update-controls.ps1')
+            $path=Join-Path $root 'pending-protection-save.json'
+            if(RECORD){Set-Content -LiteralPath $path -Value '{"origin":2,"historyDeletionFingerprint":"preserve even malformed records"}'}
+            $before=if(RECORD){(Get-FileHash -LiteralPath $path).Hash}else{$null}
+            $failure=$null;try{Assert-ControlsClientRecordsResolved $root}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Preserved=if(RECORD){(Get-FileHash -LiteralPath $path).Hash -ceq $before}else{-not(Test-Path -LiteralPath $path)}}|ConvertTo-Json -Compress
+            """.Replace("RECORD",recordExists ? "$true" : "$false",StringComparison.Ordinal));
+        Assert.Equal(!recordExists,result.GetProperty("Failure").ValueKind==JsonValueKind.Null);
+        Assert.True(result.GetProperty("Preserved").GetBoolean());
+    }
+
+    [Theory]
     [InlineData("intent")]
     [InlineData("uncertain")]
     [InlineData("reboot")]

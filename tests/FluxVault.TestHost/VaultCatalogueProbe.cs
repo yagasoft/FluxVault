@@ -175,11 +175,14 @@ internal static class VaultCatalogueProbe
             using (var ungrantedToggleCaller = new PolicyCaller("S-1-5-21-111-222-333-9876"))
                 await VaultProtectionStateProbe.RunAsync(store, owner, ungrantedToggleCaller, checks);
             await VaultHistoryDeletionProbe.RunAsync(store,owner,administrator,other,checks);
+            if(fixture.RunPredecessorReadTests)
+                await PredecessorCompatibilityProbe.RunAsync(connection,(await store.AdmitAsync(owner,FluxVaultIpcRequest.GetStatus())).Vault,fixture,checks);
             var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one) : null;
             var repository = fixture.RunMetadataTests ? await VaultRepositoryProbe.RunAsync(dataSource, one) : null;
             return new { Passed = checks.Count, Checks = checks, NativeActor = "SYSTEM", PolicyActorsAreDoubles = true,
                 MirrorDrainCatalogueVerified = true, DiagnosticsCatalogueVerified = true, SelectionCatalogueVerified = true, ProtectionStateCatalogueVerified = true,
                 HistoryDeletionCatalogueVerified = true,
+                PredecessorReadVerified = fixture.RunPredecessorReadTests,
                 StoreHost = host, Metadata = metadata, Repository = repository };
         }
         finally

@@ -326,6 +326,12 @@ public sealed class WindowsFixtureToolingTests
             $repo=Split-Path (Split-Path (Split-Path $module));$prepared=Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation'
             $helper=Import-Module (Join-Path $prepared 'commission-setup.psm1') -Force -PassThru
             $scenario='SCENARIO_VALUE';$ticket=Join-Path $root 'ticket.json';Copy-Item (Join-Path $prepared 'installation-ticket.template.json') $ticket
+            # Exercise real current assemblies from protected owned copies, without
+            # depending on the developer's frozen candidate directory.
+            $assemblyRoot=Join-Path $root 'setup-assemblies';New-VaultFixtureProtectedDirectory $assemblyRoot
+            foreach($name in @('FluxVault.Abstractions.dll','FluxVault.Core.dll','FluxVault.Windows.dll')) {
+                Copy-Item -LiteralPath (Join-Path $testAssemblies $name) -Destination (Join-Path $assemblyRoot $name)
+            }
             $context=@{WorkRoot=$root;IdentitySha256='A'*64;OperatorSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;
                 Setup=@{TicketPath=$ticket;TicketSha256=(Get-FileHash $ticket).Hash;ServiceExe='owned-setup-host';ServiceExeSha256='B'*64};
                 Postmaster=@{ProcessId=123;StartedUtc='2026-10-01T00:00:00Z';Executable='owned-postmaster'};Port=5432;ServiceDatabase='fluxvault_single';ServiceRole='fluxvault_service'}
@@ -334,9 +340,9 @@ public sealed class WindowsFixtureToolingTests
             if($scenario -eq 'watchdog-failed'){'failed'|Set-Content (Join-Path $root 'cleanup-failed.json')}
             $childScript=Join-Path $root 'setup-child.ps1';[IO.File]::WriteAllText($childScript,'param($Ticket,$ExitCode) if(-not(Test-Path -LiteralPath $Ticket)){exit 9};Start-Sleep -Milliseconds 500;exit ([int]$ExitCode)')
             $actual=& $helper {
-                param($context,$prepared,$scenario,$childScript)
+                param($context,$prepared,$scenario,$childScript,$assemblyRoot)
                 function Assert-CommissionSetupNativeState {}
-                function Get-CommissionSetupAssemblyRoot {param($Context) (Join-Path ((Get-Content (Join-Path $script:prepared 'candidate.json') -Raw|ConvertFrom-Json).Root) 'publish/service')}
+                function Get-CommissionSetupAssemblyRoot {param($Context) $script:assemblyRoot}
                 function Assert-CommissionSetupExecutable {}
                 function Invoke-CommissionSetupHost {
                     param($Context,$TicketPath)
@@ -352,12 +358,12 @@ public sealed class WindowsFixtureToolingTests
                     if($script:scenario -eq 'binding-mismatch'){return @{Matches=$false;Sha256='C'*64}}
                     @{Matches=$true;Sha256='C'*64}
                 }
-                $script:prepared=$prepared;$script:scenario=$scenario;$script:childScript=$childScript;$script:launched=$false
+                $script:prepared=$prepared;$script:scenario=$scenario;$script:childScript=$childScript;$script:assemblyRoot=$assemblyRoot;$script:launched=$false
                 $reply=$null;$failure=$null
                 try{$reply=Invoke-CommissionSetup $context}catch{$failure=$_.Exception.Message}
                 @{Reply=$reply;Failure=$failure;Launched=$script:launched;Completed=(Test-Path (Join-Path $context.WorkRoot 'setup-completed.json'));
                     InputRetained=(Test-Path $context.Setup.TicketPath);CopiedTicket=(Test-Path (Join-Path $context.WorkRoot 'setup-intents/installation-ticket.json'))}|ConvertTo-Json -Depth 8 -Compress
-            } $context $prepared $scenario $childScript
+            } $context $prepared $scenario $childScript $assemblyRoot
             $actual
             """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal), simulateCommissionMembership: true);
         Assert.True(result.GetProperty("InputRetained").GetBoolean());
@@ -1581,7 +1587,17 @@ public sealed class WindowsFixtureToolingTests
     {
         using var fixture = new ScriptFixture();
         var result = await fixture.RunAsync("""
-            Import-Module (Join-Path (Split-Path $module) 'packaged-identity.psm1') -Force
+            # The hosted checkout may have an owner outside native admission.
+            # Use unchanged module/asset bytes in an owned protected source tree.
+            $inputs=Join-Path $root 'package-inputs';New-VaultFixtureProtectedDirectory $inputs
+            foreach($directory in @('eng','eng/fixtures','src','src/FluxVault.App','src/FluxVault.App/Assets')) {
+                New-VaultFixtureProtectedDirectory (Join-Path $inputs $directory)
+            }
+            foreach($name in @('packaged-identity.psm1','fixture-cng-keys.psm1')) {
+                Copy-Item -LiteralPath (Join-Path (Split-Path $module) $name) -Destination (Join-Path $inputs ('eng/fixtures/'+$name))
+            }
+            Copy-Item -LiteralPath (Join-Path (Split-Path $module) '../../src/FluxVault.App/Assets/YagasoftLogo.png') -Destination (Join-Path $inputs 'src/FluxVault.App/Assets/YagasoftLogo.png')
+            Import-Module (Join-Path $inputs 'eng/fixtures/packaged-identity.psm1') -Force
             $journal=New-VaultFixtureJournal $root $parent $fixtureId
             $runtime=Join-Path $root 'runtime';New-VaultFixtureProtectedDirectory $runtime
             New-VaultFixtureProtectedDirectory (Join-Path $root 'catalogue')
@@ -2578,6 +2594,7 @@ public sealed class WindowsFixtureToolingTests
                 $parent = '{Quote(parent)}'
                 $root = '{Quote(Root)}'
                 $fixtureId = '{Path.GetFileName(Root)}'
+                $testAssemblies = '{Quote(AppContext.BaseDirectory)}'
                 {membership}
                 {body}
                 """);

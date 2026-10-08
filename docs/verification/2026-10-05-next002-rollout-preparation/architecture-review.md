@@ -388,3 +388,21 @@ The 29 affected portable fixture cases pass after correction, zero failed/skippe
 with a zero-warning build and joined exit 0 in `ci-portable-fixtures.trx`.
 Independent review accepts the complete correction diff with no blocking finding;
 the next hosted run must still establish actual combined execution.
+
+Hosted run 37738853356 confirms sequential assembly execution and resolves the
+CLI deadline and most fixture failures: App 489/Core 563 pass, Integration
+330/335 and Windows 153/154 pass. Six remaining failures expose the launcher's
+workstation candidate path, repository ownership in packaging, a three-second
+startup observation and the resource test's artificial 350/250ms frame deadlines.
+Independent review accepts current test-output assemblies and unchanged
+modules/logo copied into protected owned inputs, the existing ten-second startup
+observation option, and a configured two-second stalled-frame deadline with
+finite five-second observation waits. Every outcome, hash, ACL, token-retirement
+and joining assertion remains; short-input and production deadlines are unchanged.
+There is no additional lane exclusion or product/helper change. The retained
+`ci-hosted-sequencing-failures.log` records the unaccepted hosted result.
+Focused correction checks pass: `ci-owned-inputs-and-startup.trx` 7/7 and
+`ci-resource-deadlines.trx` 6/6, zero failed/skipped, with zero-warning builds and
+joined exit 0. The latter includes unchanged short-input/shutdown and native-token
+assertions. These local proofs do not replace the required fresh hosted combined
+result; installed 1.0.7 and its accepted native/live evidence remain unchanged.

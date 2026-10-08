@@ -12,7 +12,9 @@ public sealed class DesktopObservationFixtureTests(ITestOutputHelper testOutput)
         // Actual App startup performs its usual read-only status queries. No
         // configuration, backup or restore command is executed by this probe.
         using var fixture = new RepositoryProcessFixture();
-        await using var process = fixture.Start("ui-normal-startup-observe");
+        // Include read-only startup completion on a cold host without an installed
+        // service. This is a bounded observation, not a three-second UX target.
+        await using var process = fixture.Start("ui-normal-startup-observe", "--observation-seconds", "10");
         var result = await process.CompleteAsync();
         Assert.Equal(0, result.ExitCode);
         Assert.Empty(result.Error);

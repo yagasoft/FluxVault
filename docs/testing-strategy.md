@@ -52,6 +52,13 @@ SDK-snapshot prerequisites; real descriptor, hash, receipt, asset and refusal
 assertions remain. Synthetic SSPI input uses PostgreSQL's observed LF log format.
 These substitutions do not establish real account membership or signed SDK
 admission, which remain covered by the separate native gates.
+Setup/packaging orchestration uses protected owned copies of current assemblies,
+unchanged fixture modules and the actual logo, rather than workstation candidate
+paths or hosted-checkout ownership. Normal-startup observation uses the existing
+ten-second window and retains idle/render/join assertions; it is not a three-second
+startup target. The stalled-output/missing-receipt resource test configures a
+two-second frame deadline with finite five-second observation waits. Short-input
+deadline coverage and production settings remain unchanged.
 
 `FluxVault.TestHost` is test-only and excluded from installer/publish projects.
 Ordinary process helpers use generated disposable roots and private pipes;

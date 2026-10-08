@@ -101,10 +101,12 @@ public sealed class NamedPipeResourceBoundaryTests
     public async Task Stalled_response_or_missing_receipt_retires_native_token_and_allows_later_work(bool readFrame)
     {
         var handler = new Handler(largeFirstResponse: !readFrame);
-        await using var fixture = new Fixture(handler, capacity: 1);
+        // Allow cold native authentication to reach the handler before exercising
+        // the configured frame deadline. Short-input deadline coverage is separate.
+        await using var fixture = new Fixture(handler, capacity: 1, frameTimeout: TimeSpan.FromSeconds(2));
         using var peer = await fixture.ConnectAsync();
         await WriteAsync(peer, FluxVaultIpcSerializer.SerializeRequest(FluxVaultIpcRequest.GetStatus()) + "\n");
-        await handler.FirstStarted.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        await handler.FirstStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
         if (readFrame)
         {
             using var reader = new StreamReader(peer, leaveOpen: true);
@@ -112,10 +114,10 @@ public sealed class NamedPipeResourceBoundaryTests
             // Deliberately omit the protocol's response receipt and keep the pipe open.
         }
         var caller = fixture.Callers.Captured.Single();
-        await caller.Disposed.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        await caller.Disposed.Task.WaitAsync(TimeSpan.FromSeconds(5));
         await AssertTokenRetiredAsync(caller);
         Assert.True((await fixture.Client.SendAsync(FluxVaultIpcRequest.GetStatus(), fixture.Token)
-            .WaitAsync(TimeSpan.FromSeconds(2))).Success);
+            .WaitAsync(TimeSpan.FromSeconds(5))).Success);
         Assert.Equal(2, handler.Calls);
     }
 

@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8dd671e2-8302-4529-a900-517d6e42c5c9" name="os008@OS008-HOME 2026-10-08 15:11:49" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T15:11:49.3206842+03:00" queuing="2026-10-08T15:11:49.3206844+03:00" start="2026-10-08T15:11:48.1522152+03:00" finish="2026-10-08T15:11:49.3262192+03:00" />
+  <TestSettings name="default" id="a7b76036-7b99-4f11-9249-73441830088b">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_15_11_49" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1334012b-5521-4716-b3b5-6b6dbc1fad64" testId="0bbf9e0a-eadf-1d43-a1e9-d467237a6d39" testName="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: &quot;capture&quot;)" computerName="OS008-HOME" duration="00:00:00.0233629" startTime="2026-10-08T15:11:49.0567242+03:00" endTime="2026-10-08T15:11:49.0800881+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1334012b-5521-4716-b3b5-6b6dbc1fad64">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Reviewed deletion is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs:line 8&#xD;
+   at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(String change) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs:line 102&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="faaf5d35-99af-47fd-8b89-3971bd1ccc9f" testId="bd3d3bd6-95db-eacd-ea89-cbcca0833860" testName="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion(protectedOverlap: False)" computerName="OS008-HOME" duration="00:00:00.1737343" startTime="2026-10-08T15:11:48.7660293+03:00" endTime="2026-10-08T15:11:48.9545584+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="faaf5d35-99af-47fd-8b89-3971bd1ccc9f">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Reviewed deletion is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs:line 8&#xD;
+   at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion(Boolean protectedOverlap) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs:line 61&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0c54d23c-9dcb-4a4d-a2b4-49fd06f070b3" testId="c68e0b83-8c57-484f-cdfb-60156f4d58ac" testName="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Preview_is_read_only_and_reviewed_folder_deletion_preserves_sources_and_neighbour_recovery" computerName="OS008-HOME" duration="00:00:00.1069533" startTime="2026-10-08T15:11:49.0806875+03:00" endTime="2026-10-08T15:11:49.1875733+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c54d23c-9dcb-4a4d-a2b4-49fd06f070b3">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Reviewed deletion is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs:line 8&#xD;
+   at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Preview_is_read_only_and_reviewed_folder_deletion_preserves_sources_and_neighbour_recovery() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs:line 29&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bdec5a5e-2427-4797-9c7a-395209f362a0" testId="cfbdd408-ea1f-2695-548b-c1774e25bc3b" testName="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: &quot;vault&quot;)" computerName="OS008-HOME" duration="00:00:00.0244621" startTime="2026-10-08T15:11:48.9846668+03:00" endTime="2026-10-08T15:11:49.0088891+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bdec5a5e-2427-4797-9c7a-395209f362a0">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Reviewed deletion is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs:line 8&#xD;
+   at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(String change) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs:line 102&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d7ab4d1e-5edf-4292-bde0-0fe18c6c07e4" testId="76fc776a-8be3-31d6-9588-ba5b8f359ce3" testName="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: &quot;revision&quot;)" computerName="OS008-HOME" duration="00:00:00.0233171" startTime="2026-10-08T15:11:49.0094059+03:00" endTime="2026-10-08T15:11:49.0326483+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7ab4d1e-5edf-4292-bde0-0fe18c6c07e4">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Reviewed deletion is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs:line 8&#xD;
+   at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(String change) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs:line 102&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e567e723-8624-4388-a563-8c68ca64cfc6" testId="9cadcac2-9197-a9b4-3704-ae724dc5909f" testName="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion(protectedOverlap: True)" computerName="OS008-HOME" duration="00:00:00.0274594" startTime="2026-10-08T15:11:48.9659546+03:00" endTime="2026-10-08T15:11:48.9828752+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e567e723-8624-4388-a563-8c68ca64cfc6">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Reviewed deletion is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs:line 8&#xD;
+   at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion(Boolean protectedOverlap) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs:line 61&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="31281842-a872-4dd0-821c-9d816b5598ae" testId="9f016c5e-7dd8-dbcb-a483-ce2ae0a5fedc" testName="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: &quot;protected&quot;)" computerName="OS008-HOME" duration="00:00:00.0231629" startTime="2026-10-08T15:11:49.0331434+03:00" endTime="2026-10-08T15:11:49.0562651+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="31281842-a872-4dd0-821c-9d816b5598ae">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Reviewed deletion is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs:line 8&#xD;
+   at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(String change) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs:line 102&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8e0bfd6d-7b7b-4b2c-a260-05e4b33bb88f" testId="4a49a551-0e5e-1703-a1c4-dc64472b34c6" testName="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.A_file_scope_cannot_delete_its_unprotected_parent_folder_snapshot" computerName="OS008-HOME" duration="00:00:00.0331257" startTime="2026-10-08T15:11:49.1881123+03:00" endTime="2026-10-08T15:11:49.2212613+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8e0bfd6d-7b7b-4b2c-a260-05e4b33bb88f">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Reviewed deletion is not implemented.</Message>
+          <StackTrace>   at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs:line 8&#xD;
+   at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.A_file_scope_cannot_delete_its_unprotected_parent_folder_snapshot() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs:line 82&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.A_file_scope_cannot_delete_its_unprotected_parent_folder_snapshot" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="4a49a551-0e5e-1703-a1c4-dc64472b34c6">
+      <Execution id="8e0bfd6d-7b7b-4b2c-a260-05e4b33bb88f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ReviewedHistoryDeletionTests" name="A_file_scope_cannot_delete_its_unprotected_parent_folder_snapshot" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion(protectedOverlap: False)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="bd3d3bd6-95db-eacd-ea89-cbcca0833860">
+      <Execution id="faaf5d35-99af-47fd-8b89-3971bd1ccc9f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ReviewedHistoryDeletionTests" name="Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: &quot;revision&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="76fc776a-8be3-31d6-9588-ba5b8f359ce3">
+      <Execution id="d7ab4d1e-5edf-4292-bde0-0fe18c6c07e4" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ReviewedHistoryDeletionTests" name="Changed_content_or_review_binding_is_refused_before_any_deletion" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Preview_is_read_only_and_reviewed_folder_deletion_preserves_sources_and_neighbour_recovery" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="c68e0b83-8c57-484f-cdfb-60156f4d58ac">
+      <Execution id="0c54d23c-9dcb-4a4d-a2b4-49fd06f070b3" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ReviewedHistoryDeletionTests" name="Preview_is_read_only_and_reviewed_folder_deletion_preserves_sources_and_neighbour_recovery" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion(protectedOverlap: True)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="9cadcac2-9197-a9b4-3704-ae724dc5909f">
+      <Execution id="e567e723-8624-4388-a563-8c68ca64cfc6" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ReviewedHistoryDeletionTests" name="Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: &quot;protected&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="9f016c5e-7dd8-dbcb-a483-ce2ae0a5fedc">
+      <Execution id="31281842-a872-4dd0-821c-9d816b5598ae" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ReviewedHistoryDeletionTests" name="Changed_content_or_review_binding_is_refused_before_any_deletion" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: &quot;capture&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="0bbf9e0a-eadf-1d43-a1e9-d467237a6d39">
+      <Execution id="1334012b-5521-4716-b3b5-6b6dbc1fad64" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ReviewedHistoryDeletionTests" name="Changed_content_or_review_binding_is_refused_before_any_deletion" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: &quot;vault&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="cfbdd408-ea1f-2695-548b-c1774e25bc3b">
+      <Execution id="bdec5a5e-2427-4797-9c7a-395209f362a0" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.ReviewedHistoryDeletionTests" name="Changed_content_or_review_binding_is_refused_before_any_deletion" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0bbf9e0a-eadf-1d43-a1e9-d467237a6d39" executionId="1334012b-5521-4716-b3b5-6b6dbc1fad64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bd3d3bd6-95db-eacd-ea89-cbcca0833860" executionId="faaf5d35-99af-47fd-8b89-3971bd1ccc9f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c68e0b83-8c57-484f-cdfb-60156f4d58ac" executionId="0c54d23c-9dcb-4a4d-a2b4-49fd06f070b3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cfbdd408-ea1f-2695-548b-c1774e25bc3b" executionId="bdec5a5e-2427-4797-9c7a-395209f362a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="76fc776a-8be3-31d6-9588-ba5b8f359ce3" executionId="d7ab4d1e-5edf-4292-bde0-0fe18c6c07e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9cadcac2-9197-a9b4-3704-ae724dc5909f" executionId="e567e723-8624-4388-a563-8c68ca64cfc6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9f016c5e-7dd8-dbcb-a483-ce2ae0a5fedc" executionId="31281842-a872-4dd0-821c-9d816b5598ae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4a49a551-0e5e-1703-a1c4-dc64472b34c6" executionId="8e0bfd6d-7b7b-4b2c-a260-05e4b33bb88f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="0" failed="8" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.42]       System.NotSupportedException : Reviewed deletion is not implemented.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs(8,0): at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.42]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs(61,0): at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion(Boolean protectedOverlap)&#xD;
+[xUnit.net 00:00:00.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.45]       System.NotSupportedException : Reviewed deletion is not implemented.&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs(8,0): at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.45]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs(61,0): at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion(Boolean protectedOverlap)&#xD;
+[xUnit.net 00:00:00.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.47]       System.NotSupportedException : Reviewed deletion is not implemented.&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs(8,0): at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs(102,0): at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(String change)&#xD;
+[xUnit.net 00:00:00.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.50]       System.NotSupportedException : Reviewed deletion is not implemented.&#xD;
+[xUnit.net 00:00:00.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs(8,0): at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs(102,0): at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(String change)&#xD;
+[xUnit.net 00:00:00.50]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.52]       System.NotSupportedException : Reviewed deletion is not implemented.&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs(8,0): at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs(102,0): at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(String change)&#xD;
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.55]       System.NotSupportedException : Reviewed deletion is not implemented.&#xD;
+[xUnit.net 00:00:00.55]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.55]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs(8,0): at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.55]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs(102,0): at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(String change)&#xD;
+[xUnit.net 00:00:00.55]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.65]       System.NotSupportedException : Reviewed deletion is not implemented.&#xD;
+[xUnit.net 00:00:00.65]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.65]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs(8,0): at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.65]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs(29,0): at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Preview_is_read_only_and_reviewed_folder_deletion_preserves_sources_and_neighbour_recovery()&#xD;
+[xUnit.net 00:00:00.65]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.69]       System.NotSupportedException : Reviewed deletion is not implemented.&#xD;
+[xUnit.net 00:00:00.69]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.69]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\src\FluxVault.Core\Storage\FileSystemChunkRepository.HistoryDeletion.cs(8,0): at FluxVault.Core.Storage.FileSystemChunkRepository.PreviewHistoryDeletionAsync(RepositoryPurgeRequest request, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.69]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\ReviewedHistoryDeletionTests.cs(82,0): at FluxVault.Core.Tests.ReviewedHistoryDeletionTests.A_file_scope_cannot_delete_its_unprotected_parent_folder_snapshot()&#xD;
+[xUnit.net 00:00:00.69]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.69]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:11:48.9569607+03:00">
+        <Text>[xUnit.net 00:00:00.42]     FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion(protectedOverlap: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:11:48.9832210+03:00">
+        <Text>[xUnit.net 00:00:00.45]     FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Protected_overlap_or_outside_scope_inherited_dependency_refuses_every_deletion(protectedOverlap: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:11:49.0092075+03:00">
+        <Text>[xUnit.net 00:00:00.47]     FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: "vault") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:11:49.0329599+03:00">
+        <Text>[xUnit.net 00:00:00.50]     FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: "revision") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:11:49.0565549+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: "protected") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:11:49.0804329+03:00">
+        <Text>[xUnit.net 00:00:00.55]     FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Changed_content_or_review_binding_is_refused_before_any_deletion(change: "capture") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:11:49.1878790+03:00">
+        <Text>[xUnit.net 00:00:00.65]     FluxVault.Core.Tests.ReviewedHistoryDeletionTests.Preview_is_read_only_and_reviewed_folder_deletion_preserves_sources_and_neighbour_recovery [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:11:49.2216115+03:00">
+        <Text>[xUnit.net 00:00:00.69]     FluxVault.Core.Tests.ReviewedHistoryDeletionTests.A_file_scope_cannot_delete_its_unprotected_parent_folder_snapshot [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

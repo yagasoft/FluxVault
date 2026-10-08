@@ -1,10 +1,12 @@
 # Builds only; never installs, signs, registers, provisions, changes authentication or starts services.
 #Requires -Version 7.2
 [CmdletBinding()]
-param([string]$CandidateId='51b103b3c75645dfaa36600e2cbe07a5')
+param([string]$CandidateId='51b103b3c75645dfaa36600e2cbe07a5',
+    [version]$ProductVersion='1.0.7.0')
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 if($CandidateId -cnotmatch '^[0-9a-f]{32}$' -or [guid]::ParseExact($CandidateId,'N') -eq [guid]::Empty){throw 'A canonical nonempty candidate identity is required.'}
+if($ProductVersion.Major -gt 255 -or $ProductVersion.Minor -gt 255 -or $ProductVersion.Build -lt 0 -or $ProductVersion.Build -gt 65535 -or $ProductVersion.Revision -ne 0){throw 'A four-part MSI version with zero revision is required.'}
 $candidateRepo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
 $candidateRoot=[IO.Path]::GetFullPath((Join-Path $candidateRepo ('artifacts/staging-single-vault/'+$CandidateId)))
 if(-not $candidateRoot.StartsWith($candidateRepo+'\artifacts\staging-single-vault\',[StringComparison]::OrdinalIgnoreCase)){throw 'Candidate root is outside the checked workspace.'}
@@ -22,7 +24,7 @@ $staging=Join-Path $candidateRoot 'installer'
 [IO.Directory]::CreateDirectory($staging) | Out-Null
 $dotnetPath=(Get-Command dotnet -CommandType Application).Source
 $launches=[Collections.Generic.List[object]]::new()
-$candidateResult=@{CandidateId=$CandidateId;SourceCommit=$sourceCommit;Root=$candidateRoot;Version='1.0.7.0';Launches=$launches;Failure=$null}
+$candidateResult=@{CandidateId=$CandidateId;SourceCommit=$sourceCommit;Root=$candidateRoot;Version=$ProductVersion.ToString();Launches=$launches;Failure=$null}
 
 function Invoke-CandidateBuild([string]$Step,[string[]]$Arguments){
     $start=[Diagnostics.ProcessStartInfo]::new($dotnetPath)
@@ -62,7 +64,7 @@ try{
         Invoke-CandidateBuild -Step ('build-'+$project.ToLowerInvariant()) -Arguments @('build',
             (Join-Path $candidateRepo ('installer/wix/FluxVault.'+$project+'/FluxVault.'+$project+'.wixproj')),
             '-c','Release','--disable-build-servers','-nodeReuse:false','-p:UseSharedCompilation=false',
-            ('-p:PublishRoot='+$publish),'-p:ProductVersion=1.0.7.0',('-p:ReleasePackageRoot='+$staging),
+            ('-p:PublishRoot='+$publish),('-p:ProductVersion='+$ProductVersion),('-p:ReleasePackageRoot='+$staging),
             ('-p:OutputPath='+$staging+'\'),('-p:BaseIntermediateOutputPath='+(Join-Path $candidateRoot ('obj-'+$project.ToLowerInvariant()))+'\'))
     }
     $payload=@(Get-ChildItem -LiteralPath $publish -Recurse -File | Sort-Object FullName | ForEach-Object {

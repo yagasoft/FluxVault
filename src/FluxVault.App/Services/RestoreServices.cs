@@ -74,10 +74,17 @@ public sealed class MessageBoxRestoreOverwriteConfirmation : IRestoreOverwriteCo
 public interface IProtectionRemovalConfirmation
 {
     bool ConfirmPurge(IReadOnlyList<RepositoryPurgeScope> scopes);
+    bool ConfirmHistoryDeletion(RepositoryHistoryDeletionPreview preview)=>ConfirmPurge([preview.Scope]);
 }
 
 public sealed class MessageBoxProtectionRemovalConfirmation : IProtectionRemovalConfirmation
 {
+    public bool ConfirmHistoryDeletion(RepositoryHistoryDeletionPreview preview)=>System.Windows.MessageBox.Show(
+        $"Permanently delete all {preview.CandidateVersionCount} reviewed version(s) in this {preview.Scope.Kind} scope?{Environment.NewLine}{Environment.NewLine}"+
+        $"{preview.Scope.SourcePath}{Environment.NewLine}{preview.CandidateLogicalBytes:N0} logical bytes across the reviewed file versions.{Environment.NewLine}{Environment.NewLine}"+
+        "This deletes the reviewed FluxVault history from the repository and mirrors. Recovery of these versions will no longer be available. Live source files remain. Software rollback cannot restore deliberately deleted history.",
+        "Delete reviewed history permanently?",MessageBoxButton.YesNo,MessageBoxImage.Warning,MessageBoxResult.No)==MessageBoxResult.Yes;
+
     public bool ConfirmPurge(IReadOnlyList<RepositoryPurgeScope> scopes)
     {
         var sample = string.Join(

@@ -560,7 +560,7 @@ public sealed class FileBrowserViewModelTests
     }
 
     [Fact]
-    public async Task Main_window_save_requires_confirmation_before_purging_removed_selection()
+    public async Task Main_window_stop_protecting_does_not_offer_history_deletion()
     {
         var source = Path.GetFullPath(@"D:\Work\Docs");
         var baseline = Rule("docs", source, ProtectionSelectionMode.RecursiveFolder);
@@ -583,12 +583,12 @@ public sealed class FileBrowserViewModelTests
         viewModel.FileBrowser.RemovePathSelection(source, isDirectory: true);
         await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
 
-        Assert.Equal(1, confirmation.ConfirmCount);
-        Assert.DoesNotContain(FluxVaultIpcCommand.SaveConfiguration, client.Commands);
+        Assert.Equal(0, confirmation.ConfirmCount);
+        Assert.False(Assert.Single(client.Requests,request=>request.Command==FluxVaultIpcCommand.SaveConfiguration).PurgeRemovedSelections);
     }
 
     [Fact]
-    public async Task Main_window_save_sends_confirmed_removed_selection_purge_scope()
+    public async Task Main_window_save_retains_history_for_removed_selection()
     {
         var source = Path.GetFullPath(@"D:\Work\Docs");
         var baseline = Rule("docs", source, ProtectionSelectionMode.RecursiveFolder);
@@ -612,14 +612,15 @@ public sealed class FileBrowserViewModelTests
         await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
 
         var request = Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
-        Assert.True(request.PurgeRemovedSelections);
+        Assert.False(request.PurgeRemovedSelections);
+        Assert.Equal(0,confirmation.ConfirmCount);
         var scope = Assert.Single(request.RemovedSelections!);
         Assert.Equal(source, scope.SourcePath);
         Assert.Equal(RepositoryPurgeScopeKind.RecursiveFolder, scope.Kind);
     }
 
     [Fact]
-    public async Task Main_window_save_pipe_failure_after_removed_selection_confirmation_preserves_pending_changes()
+    public async Task Main_window_stop_protecting_pipe_failure_preserves_pending_changes()
     {
         var source = Path.GetFullPath(@"D:\Work\Docs");
         var baseline = Rule("docs", source, ProtectionSelectionMode.RecursiveFolder);
@@ -643,7 +644,7 @@ public sealed class FileBrowserViewModelTests
         viewModel.FileBrowser.RemovePathSelection(source, isDirectory: true);
         await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
 
-        Assert.Equal(1, confirmation.ConfirmCount);
+        Assert.Equal(0, confirmation.ConfirmCount);
         Assert.Empty(client.SavedConfigurations);
         Assert.Contains(viewModel.FileBrowser.PendingChanges, change => change.Change == "Removed" && change.Path == source);
         Assert.Contains("unavailable", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);

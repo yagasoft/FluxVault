@@ -181,6 +181,16 @@
                     <Button Grid.Row="1" Grid.Column="1" Content="Open Mirrors" Command="{Binding OpenMirrorsWorkspaceCommand}" Margin="0" />
 
                     <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,12">
+                        <WrapPanel Margin="0,8,0,0">
+                            <Button Name="PauseProtectionButton" Content="Pause protection" Command="{Binding PauseProtectionCommand}"
+                                    AutomationProperties.Name="Pause protection"
+                                    ToolTip="Stop new captures after the current accepted capture finishes. Keep history and recovery." />
+                            <Button Name="ResumeProtectionButton" Content="Resume protection" Command="{Binding ResumeProtectionCommand}"
+                                    AutomationProperties.Name="Resume protection"
+                                    ToolTip="Allow new captures using saved protection settings. Pending edits remain unsaved." />
+                        </WrapPanel>
+                        <TextBlock Text="{Binding ProtectionControlStatus}" TextWrapping="Wrap"
+                                   AutomationProperties.LiveSetting="Polite" Margin="0,4,0,0" />
                         <TextBlock Text="{Binding ProtectionSaveMessage}"
                                    Visibility="{Binding HasProtectionSaveMessage, Converter={StaticResource BooleanToVisibilityConverter}}"
                                    AutomationProperties.LiveSetting="Polite" Foreground="#1E293B"
@@ -224,7 +234,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,0,0,12">
+                    <WrapPanel Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,12">
                         <Button Content="Refresh file browser"
                                 Command="{Binding FileBrowser.RefreshRootsCommand}"
                                 ToolTip="Reload drives, expanded folders, visible files, and selection indicators." />
@@ -240,13 +250,16 @@
                         <Button Content="Cycle folder selection"
                                 Command="{Binding FileBrowser.ToggleSelectedFolderCommand}"
                                 ToolTip="Cycle the selected folder between recursive, immediate files only, deselected, and restored selections." />
+                        <Button Name="StopProtectingKeepHistoryButton" Content="Stop protecting, keep history"
+                                Command="{Binding StopProtectingSelectedKeepHistoryCommand}"
+                                ToolTip="Stage removal of the selected file or folder and its child selections. Save selections to apply. Existing history remains subject to retention." />
                         <Button Content="Save selections"
                                 Command="{Binding SaveConfigurationCommand}"
-                                ToolTip="Save pending File browser selections to the service configuration." />
+                                ToolTip="Save pending selections. Removed selections stop protection while keeping history subject to retention." />
                         <Button Content="Discard changes"
                                 Command="{Binding DiscardConfigurationChangesCommand}"
                                 ToolTip="Discard unsaved File browser and configuration edits, then reload settings from the service." />
-                    </StackPanel>
+                    </WrapPanel>
 
                     <Border Grid.Row="1" Grid.ColumnSpan="3" BorderBrush="#DADCE0" BorderThickness="1" Background="#FAFBFC" Padding="10" Margin="0,0,0,12">
                         <Grid>
@@ -468,6 +481,8 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="8" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0">
@@ -505,6 +520,44 @@
                             <DataGridTextColumn Header="Chunks" Binding="{Binding ChunkCount}" Width="80" />
                         </DataGrid.Columns>
                     </DataGrid>
+                    <StackPanel Grid.Row="4">
+                        <WrapPanel>
+                            <Button Name="ReviewHistoryDeletionButton" Content="Review history deletion…"
+                                    Command="{Binding PreviewHistoryDeletionCommand}" Margin="0,0,8,4"
+                                    ToolTip="Review all history for the selected file, or the selected folder and its descendants. Saved protection and retained dependencies prevent deletion." />
+                            <Button Name="DeleteHistoryButton" Content="Delete reviewed history…"
+                                    Command="{Binding DeleteHistoryCommand}" Margin="0,0,8,4" />
+                            <Button Name="CheckHistoryDeletionButton" Content="Check original deletion outcome"
+                                    Command="{Binding CheckHistoryDeletionOutcomeCommand}" Margin="0,0,0,4" />
+                        </WrapPanel>
+                        <TextBlock Text="Removing a selection and saving stops protection while keeping history subject to retention. Pausing keeps the saved selections."
+                                   TextWrapping="Wrap" Margin="0,4,0,4" />
+                        <TextBlock Text="{Binding HistoryDeletionMessage}" TextWrapping="Wrap" Margin="0,0,0,4" />
+                        <Expander Header="Reviewed candidates and retained dependencies" IsExpanded="False">
+                            <ScrollViewer MaxHeight="240" VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                    <TextBlock Text="Candidates in the exact reviewed scope" Margin="0,4" />
+                                    <DataGrid ItemsSource="{Binding HistoryDeletionPreview.Candidates}" IsReadOnly="True" MaxHeight="160">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Version" Binding="{Binding VersionId}" Width="220" />
+                                            <DataGridTextColumn Header="Path" Binding="{Binding SourcePath}" Width="*" />
+                                            <DataGridTextColumn Header="Captured" Binding="{Binding CapturedAtUtc}" Width="170" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                    <TextBlock Text="Protected or outside-scope dependent versions prevent deletion" Margin="0,8,0,4" />
+                                    <DataGrid ItemsSource="{Binding HistoryDeletionPreview.BlockingDependencies}" IsReadOnly="True" MaxHeight="160">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Version" Binding="{Binding VersionId}" Width="220" />
+                                            <DataGridTextColumn Header="Retained path" Binding="{Binding SourcePath}" Width="*" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                    <ItemsControl ItemsSource="{Binding HistoryDeletionPreview.Warnings}">
+                                        <ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,4" /></DataTemplate></ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Expander>
+                    </StackPanel>
                 </Grid>
             </TabItem>
 

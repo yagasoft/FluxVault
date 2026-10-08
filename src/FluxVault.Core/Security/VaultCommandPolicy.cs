@@ -36,6 +36,7 @@ public static class VaultCommandPolicy
             FluxVaultIpcCommand.GetActivity or FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.GetSyncStatus or
             FluxVaultIpcCommand.GetRepositoryHealth or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.ExportDiagnostics or
             FluxVaultIpcCommand.PreviewRetention or FluxVaultIpcCommand.GetOperationStatus => new(VaultPermission.ReadHistory),
+            FluxVaultIpcCommand.PreviewHistoryDeletion => new(VaultPermission.ReadHistory | VaultPermission.Maintain | VaultPermission.DeleteHistory),
             FluxVaultIpcCommand.SetVaultAccess => new(VaultPermission.ManageAccess),
             FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview or
             FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.RunRestoreSelection => new(VaultPermission.Recover),
@@ -43,7 +44,7 @@ public static class VaultCommandPolicy
             FluxVaultIpcCommand.ResolveConflict => new(VaultPermission.ManageProtection | VaultPermission.Recover | VaultPermission.DeleteHistory),
             FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.RunMirrorRebalance or FluxVaultIpcCommand.RunRepositoryScrub or
             FluxVaultIpcCommand.RunRestoreRehearsal or FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair => new(VaultPermission.Maintain),
-            FluxVaultIpcCommand.RunRetentionNow or FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain =>
+            FluxVaultIpcCommand.RunRetentionNow or FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain or FluxVaultIpcCommand.DeleteHistory =>
                 new(VaultPermission.Maintain | VaultPermission.DeleteHistory),
             _ => null!
         };

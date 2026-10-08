@@ -1,3 +1,5 @@
+using FluxVault.Abstractions.Security;
+
 namespace FluxVault.Abstractions.Storage;
 
 public enum RepositoryPurgeScopeKind
@@ -13,7 +15,21 @@ public sealed record RepositoryPurgeScope(
 
 public sealed record RepositoryPurgeRequest(
     IReadOnlyList<RepositoryPurgeScope> Scopes,
-    IReadOnlyList<RepositoryPurgeScope>? PreserveScopes = null);
+    IReadOnlyList<RepositoryPurgeScope>? PreserveScopes = null,
+    RepositoryHistoryDeletionReview? HistoryDeletionReview = null);
+
+public sealed record RepositoryHistoryDeletionReview(VaultId VaultId, long ConfigurationRevision, string? Fingerprint = null);
+
+public sealed record RepositoryHistoryDeletionPreview(
+    RepositoryPurgeScope Scope,
+    string Fingerprint,
+    bool CanDelete,
+    bool IsComplete,
+    int CandidateVersionCount,
+    long CandidateLogicalBytes,
+    IReadOnlyList<RepositoryVersionSummary> Candidates,
+    IReadOnlyList<RepositoryVersionSummary> BlockingDependencies,
+    IReadOnlyList<string> Warnings);
 
 public sealed record RepositoryPurgeResult(
     int PurgedVersionCount,

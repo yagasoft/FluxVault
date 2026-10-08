@@ -1293,6 +1293,42 @@ public sealed class WindowsFixtureToolingTests
     }
 
     [Fact]
+    public async Task Installation_snapshot_preserves_current_bootstrap_and_detects_creation_of_legacy_configuration()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $runner=Join-Path (Split-Path (Split-Path $module)) 'test-windows-database-boundary.ps1'
+            $ast=[Management.Automation.Language.Parser]::ParseFile($runner,[ref]$null,[ref]$null)
+            $definition=$ast.Find({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Get-InstallationSnapshot'},$true)
+            Invoke-Expression $definition.Extent.Text
+            function Get-CimInstance {param($ClassName,$Filter) @{State='Running';ProcessId=$PID;StartName='Preserved';PathName='Preserved'}}
+            $script:legacyExists=$false;$script:bootstrapHash='B'*64
+            function Test-Path {
+                param($LiteralPath)
+                if($LiteralPath -eq 'C:\ProgramData\FluxVault\config.json'){return $script:legacyExists}
+                if($LiteralPath -eq 'C:\ProgramData\FluxVault\installation.json'){return $true}
+                throw 'Unexpected snapshot existence check.'
+            }
+            function Get-FileHash {
+                param($LiteralPath,$Algorithm)
+                if($LiteralPath -eq 'C:\ProgramData\FluxVault\config.json' -and -not $script:legacyExists){throw 'Legacy configuration is absent.'}
+                @{Hash=$(if($LiteralPath.EndsWith('installation.json')){$script:bootstrapHash}else{'A'*64})}
+            }
+            $RunPackagedIdentityTests=$false;$fixtureJournal=$null;$fixtureBefore=$null
+            $before=Get-InstallationSnapshot
+            $same=Test-VaultFixtureInstallationUnchanged $before (Get-InstallationSnapshot)
+            $script:bootstrapHash='C'*64
+            $changedBootstrap=Test-VaultFixtureInstallationUnchanged $before (Get-InstallationSnapshot)
+            $script:bootstrapHash='B'*64;$script:legacyExists=$true
+            $createdLegacy=Test-VaultFixtureInstallationUnchanged $before (Get-InstallationSnapshot)
+            @{Same=$same;ChangedBootstrap=$changedBootstrap;CreatedLegacy=$createdLegacy}|ConvertTo-Json -Compress
+            """);
+        Assert.True(result.GetProperty("Same").GetBoolean());
+        Assert.False(result.GetProperty("ChangedBootstrap").GetBoolean());
+        Assert.False(result.GetProperty("CreatedLegacy").GetBoolean());
+    }
+
+    [Fact]
     public async Task Machine_trust_interrupted_before_profile_intents_retains_reopened_boundary_verification()
     {
         var result = await RunMachineTrustCaseAsync("""
@@ -1305,7 +1341,7 @@ public sealed class WindowsFixtureToolingTests
             function Get-CimInstance {param($ClassName,$Filter) @{State='Running';ProcessId=$PID;StartName='Preserved';PathName='Preserved'}}
             function Get-FileHash {
                 param($LiteralPath,$Algorithm='SHA256')
-                if($LiteralPath -in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf','C:\ProgramData\FluxVault\config.json')){@{Hash='A'*64}}
+                if($LiteralPath -in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf','C:\ProgramData\FluxVault\config.json','C:\ProgramData\FluxVault\installation.json')){@{Hash='A'*64}}
                 else {Microsoft.PowerShell.Utility\Get-FileHash -LiteralPath $LiteralPath -Algorithm $Algorithm}
             }
             function Get-ChildItem {
@@ -2529,6 +2565,35 @@ public sealed class WindowsFixtureToolingTests
             Assert.True(result.GetProperty("Old").GetBoolean());
             Assert.False(result.GetProperty("New").GetBoolean());
         }
+    }
+
+    [Fact]
+    public async Task Presentation_rollback_passes_the_frozen_old_and_new_candidate_identity_to_every_registration_check()
+    {
+        using var fixture=new ScriptFixture();
+        var result=await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'docs/verification/2026-10-05-next002-rollout-preparation/update-presentation.ps1')
+            $script:oldInstalled=$false;$script:newInstalled=$true;$script:checks=0
+            $context=@{OldProductCode='{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}';NewProductCode='{00000000-0000-0000-0000-000000000008}'}
+            function Assert-PresentationSettled {param($Context)}
+            function Get-PresentationRegistration {param($Context)
+                if($null -eq $Context -or $Context.OldProductCode -cne '{0D47E056-CFFC-4BA4-91A6-3CD47F3FD688}' -or
+                    $Context.NewProductCode -cne '{00000000-0000-0000-0000-000000000008}'){throw 'Rollback lost the frozen candidate identity.'}
+                $script:checks++;@{Old=$script:oldInstalled;New=$script:newInstalled}
+            }
+            function Invoke-PresentationMsi {param($Context,$Phase)
+                if($Phase -eq 'UninstallNew'){$script:newInstalled=$false}
+                elseif($Phase -eq 'InstallOld'){$script:oldInstalled=$true}
+                else{throw 'Unexpected rollback effect.'}
+            }
+            $failure=$null;try{Restore-PresentationProduct $context}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Checks=$script:checks;Old=$script:oldInstalled;New=$script:newInstalled}|ConvertTo-Json -Compress
+            """);
+        Assert.Equal(JsonValueKind.Null,result.GetProperty("Failure").ValueKind);
+        Assert.Equal(3,result.GetProperty("Checks").GetInt32());
+        Assert.True(result.GetProperty("Old").GetBoolean());
+        Assert.False(result.GetProperty("New").GetBoolean());
     }
 
     [Theory]

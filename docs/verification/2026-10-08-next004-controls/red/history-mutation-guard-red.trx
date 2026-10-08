@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f3af523f-922d-421e-88bd-0c6c6c264890" name="os008@OS008-HOME 2026-10-08 15:34:10" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T15:34:10.1775108+03:00" queuing="2026-10-08T15:34:10.1775109+03:00" start="2026-10-08T15:34:08.8775066+03:00" finish="2026-10-08T15:34:10.1824506+03:00" />
+  <TestSettings name="default" id="dc50d4e7-7ebf-4364-8001-2df4d0bfa88b">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_15_34_10" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6e5ef0dc-a525-4b9f-8fe3-3077018f6381" testId="10d73e7a-9c2e-e825-8100-96e1087f4750" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: False)" computerName="OS008-HOME" duration="00:00:00.0281251" startTime="2026-10-08T15:34:10.0759463+03:00" endTime="2026-10-08T15:34:10.0806360+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e5ef0dc-a525-4b9f-8fe3-3077018f6381">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Filter matched in collection&#xD;
+                                                               ↓ (pos 3)&#xD;
+Collection: [GetStatus, PreviewHistoryDeletion, DeleteHistory, RunMirrorRepair, RunMirrorRebalance]</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(Boolean malformedAcknowledgement) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs:line 90&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="310ab73a-fbdb-4e29-a219-7e05a2549177" testId="80e1fbaa-47c4-dfe4-299a-495de96f4ff2" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: True)" computerName="OS008-HOME" duration="00:00:00.5427629" startTime="2026-10-08T15:34:09.4929237+03:00" endTime="2026-10-08T15:34:10.0513531+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="310ab73a-fbdb-4e29-a219-7e05a2549177">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Filter matched in collection&#xD;
+                                                               ↓ (pos 3)&#xD;
+Collection: [GetStatus, PreviewHistoryDeletion, DeleteHistory, RunMirrorRepair, RunMirrorRebalance]</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(Boolean malformedAcknowledgement) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs:line 90&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: False)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="10d73e7a-9c2e-e825-8100-96e1087f4750">
+      <Execution id="6e5ef0dc-a525-4b9f-8fe3-3077018f6381" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: True)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="80e1fbaa-47c4-dfe4-299a-495de96f4ff2">
+      <Execution id="310ab73a-fbdb-4e29-a219-7e05a2549177" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="10d73e7a-9c2e-e825-8100-96e1087f4750" executionId="6e5ef0dc-a525-4b9f-8fe3-3077018f6381" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="80e1fbaa-47c4-dfe4-299a-495de96f4ff2" executionId="310ab73a-fbdb-4e29-a219-7e05a2549177" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.79]       Assert.DoesNotContain() Failure: Filter matched in collection&#xD;
+[xUnit.net 00:00:00.79]                                                                      ↓ (pos 3)&#xD;
+[xUnit.net 00:00:00.81]       Collection: [GetStatus, PreviewHistoryDeletion, DeleteHistory, RunMirrorRepair, RunMirrorRebalance]&#xD;
+[xUnit.net 00:00:00.81]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.81]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs(90,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(Boolean malformedAcknowledgement)&#xD;
+[xUnit.net 00:00:00.81]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.82]       Assert.DoesNotContain() Failure: Filter matched in collection&#xD;
+[xUnit.net 00:00:00.82]                                                                      ↓ (pos 3)&#xD;
+[xUnit.net 00:00:00.82]       Collection: [GetStatus, PreviewHistoryDeletion, DeleteHistory, RunMirrorRepair, RunMirrorRebalance]&#xD;
+[xUnit.net 00:00:00.82]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.82]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs(90,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(Boolean malformedAcknowledgement)&#xD;
+[xUnit.net 00:00:00.82]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.83]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:34:10.0539434+03:00">
+        <Text>[xUnit.net 00:00:00.79]     FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:34:10.0809571+03:00">
+        <Text>[xUnit.net 00:00:00.82]     FluxVault.App.Tests.ProtectionSaveContractTests.Unknown_history_deletion_survives_restart_and_checks_original_receipt_without_replay(malformedAcknowledgement: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

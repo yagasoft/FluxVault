@@ -15,7 +15,7 @@ internal static class WindowsProtectionStateProbe
         var configuration = before.Status!.Configuration;
         if (!configuration.IsEnabled) throw new InvalidOperationException("Native protection state requires its enabled baseline.");
         var revision = before.VaultRevision!.Value;
-        var pause = Bind(FluxVaultIpcRequest.SetProtectionPaused());
+        var pause = Bind(FluxVaultIpcRequest.SetProtectionPaused(true));
         var paused = await send(pause);
         Check(paused.VaultRevision == revision + 1, "native pause returns its atomic incremented revision");
         revision = paused.VaultRevision!.Value;
@@ -40,7 +40,7 @@ internal static class WindowsProtectionStateProbe
             Check(report.RootElement.GetProperty("status").GetProperty("lastMessage").GetString()!.Contains("manual backup paused", StringComparison.Ordinal),
                 "paused diagnostics reports the same truthful capture state");
         File.Delete(diagnostics.OutputPath!);
-        var resume = Bind(FluxVaultIpcRequest.SetProtectionPaused());
+        var resume = Bind(FluxVaultIpcRequest.SetProtectionPaused(false));
         var resumed = await send(resume);
         Check(resumed.VaultRevision == revision + 1, "native resume publishes its own atomic revision");
         revision = resumed.VaultRevision!.Value;

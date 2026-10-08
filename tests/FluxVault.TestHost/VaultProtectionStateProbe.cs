@@ -22,6 +22,12 @@ internal static class VaultProtectionStateProbe
         Check(current.Revision == baseline.Revision + 1 && JsonSerializer.Serialize(current.Configuration) ==
             JsonSerializer.Serialize(baseline.Configuration with { IsEnabled = !baseline.Configuration.IsEnabled }),
             "toggle changes only IsEnabled and preserves every untouched setting");
+        var sameState = Request(current.Revision);
+        var repeated = await handler.HandleAsync(owner,sameState);
+        Check(repeated.Success && repeated.VaultRevision==current.Revision+1 &&
+            JsonSerializer.Serialize((await store.AdmitAsync(owner,FluxVaultIpcRequest.GetStatus())).Vault.Configuration)==JsonSerializer.Serialize(current.Configuration),
+            "a new explicit command already at the desired state never reverses it");
+        current = (await store.AdmitAsync(owner,FluxVaultIpcRequest.GetStatus())).Vault;
         var replay = await handler.HandleAsync(owner, request);
         var receipt = await store.GetReceiptAsync(owner, baseline.Binding.Id, request.OperationId!.Value);
         Check(JsonSerializer.Serialize(toggled) == JsonSerializer.Serialize(replay) && receipt is
@@ -37,7 +43,8 @@ internal static class VaultProtectionStateProbe
         foreach (var malformed in new[] { Request(current.Revision) with { Configuration = baseline.Configuration },
             Request(current.Revision) with { PurgeRemovedSelections = true },
             Request(current.Revision) with { AccessGrants = [] }, Request(current.Revision) with { RemovedSelections = [] },
-            Request(current.Revision) with { PreservedSelections = [] } })
+            Request(current.Revision) with { PreservedSelections = [] }, Request(current.Revision) with { SourcePath="C:\\unrelated" },
+            Request(current.Revision) with { IsProtectionPaused=null } })
         {
             Check((await handler.HandleAsync(owner, malformed)).ErrorCode == FluxVaultIpcErrorCode.InvalidRequest,
                 "toggle refuses unrelated write payload before admission: " + checks.Count);
@@ -55,7 +62,7 @@ internal static class VaultProtectionStateProbe
         var syncRead = await store.AdmitAsync(owner, new(FluxVaultIpcCommand.GetSyncStatus, null, null, null, null,
             VaultId: baseline.Binding.Id, OperationId: Guid.NewGuid()));
         Check(syncRead.Receipt is null && syncRead.Vault.Revision == current.Revision, "sync status is read-only without a mutation receipt");
-        var lost = Request(current.Revision);
+        var lost = Request(current.Revision, !baseline.Configuration.IsEnabled);
         await using (var disconnected = new PostgreSqlVaultCatalogue(store.Endpoint)
             { AfterMutationCommit = (_, _) => throw new JsonException("fixture lost acknowledgement after toggle WAL commit") })
         {
@@ -71,8 +78,8 @@ internal static class VaultProtectionStateProbe
                 "same lost toggle returns its completed receipt without retoggling");
         }
         var final = (await store.AdmitAsync(owner, FluxVaultIpcRequest.GetStatus())).Vault;
-        Check(final.Revision == baseline.Revision + 2 && JsonSerializer.Serialize(final.Configuration) == JsonSerializer.Serialize(baseline.Configuration) && executor.Calls == 0,
-            "two real toggles and all replays restore the full baseline with exactly two revisions");
+        Check(final.Revision == baseline.Revision + 3 && JsonSerializer.Serialize(final.Configuration) == JsonSerializer.Serialize(baseline.Configuration) && executor.Calls == 0,
+            "three explicit commands and all replays restore the full baseline with exactly three revisions");
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var heldRequest = Request(final.Revision);
@@ -102,13 +109,40 @@ internal static class VaultProtectionStateProbe
                 JsonSerializer.Serialize(snapshotExecutor.Observed.Configuration) == JsonSerializer.Serialize(final.Configuration with { IsEnabled = !final.Configuration.IsEnabled }),
                 "queued backup receives the new authoritative configuration and revision, never the pre-toggle snapshot");
         }
-        var restored = await handler.HandleAsync(owner, Request(final.Revision + 1));
+        var restored = await handler.HandleAsync(owner, Request(final.Revision + 1, !baseline.Configuration.IsEnabled));
         var restoredRecord = (await store.AdmitAsync(owner, FluxVaultIpcRequest.GetStatus())).Vault;
         Check(restored.Success && restoredRecord.Revision == final.Revision + 2 &&
             JsonSerializer.Serialize(restoredRecord.Configuration) == JsonSerializer.Serialize(baseline.Configuration),
             "sequencing checks restore the complete baseline through another atomic toggle");
+        var enabled = await handler.HandleAsync(owner,Request(restoredRecord.Revision,paused:false));
+        var heldCapture = new HeldCaptureExecutor();
+        var captureSequencing = new AuthenticatedFluxVaultRequestHandler(store,heldCapture);
+        var captureTask = captureSequencing.HandleAsync(owner,FluxVaultIpcRequest.RunBackupNow() with
+            {VaultId=baseline.Binding.Id,ExpectedVaultRevision=enabled.VaultRevision,OperationId=Guid.NewGuid()});
+        Task<FluxVaultIpcResponse>? pauseTask = null;
+        try
+        {
+            await heldCapture.Entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            pauseTask = captureSequencing.HandleAsync(owner,Request(enabled.VaultRevision!.Value,paused:true));
+            var during = (await store.AdmitAsync(owner,FluxVaultIpcRequest.GetStatus())).Vault;
+            Check(!pauseTask.IsCompleted && during.Configuration.IsEnabled && during.Revision==enabled.VaultRevision,
+                "pause waits behind an already accepted capture without committing a misleading paused state");
+        }
+        finally
+        {
+            heldCapture.Release.TrySetResult();
+            await captureTask;
+            if(pauseTask is not null)await pauseTask;
+        }
+        var afterCapture = (await store.AdmitAsync(owner,FluxVaultIpcRequest.GetStatus())).Vault;
+        Check((await captureTask).Success && pauseTask is not null && (await pauseTask).Success &&
+            !afterCapture.Configuration.IsEnabled && afterCapture.Revision==enabled.VaultRevision+1,
+            "accepted capture finishes before the queued pause acknowledgement");
+        await handler.HandleAsync(owner,Request(afterCapture.Revision,!baseline.Configuration.IsEnabled));
+        Check(JsonSerializer.Serialize((await store.AdmitAsync(owner,FluxVaultIpcRequest.GetStatus())).Vault.Configuration)==JsonSerializer.Serialize(baseline.Configuration),
+            "capture-before-pause ordering preserves and restores the full configuration baseline");
 
-        FluxVaultIpcRequest Request(long revision) => FluxVaultIpcRequest.SetProtectionPaused() with
+        FluxVaultIpcRequest Request(long revision, bool? paused = null) => FluxVaultIpcRequest.SetProtectionPaused(paused ?? baseline.Configuration.IsEnabled) with
             { VaultId = baseline.Binding.Id, ExpectedVaultRevision = revision, OperationId = Guid.NewGuid() };
         void Check(bool condition, string name) { if (!condition) throw new InvalidOperationException("Protection state contract failed: " + name); checks.Add(name); }
         async Task NoReceipt(FluxVaultIpcRequest command, string name)
@@ -136,6 +170,19 @@ internal static class VaultProtectionStateProbe
         {
             if (request.Command != FluxVaultIpcCommand.RunBackupNow) throw new InvalidOperationException("Toggle escaped the catalogue-only path.");
             Calls++; Observed = admission.Vault; return Task.FromResult(FluxVaultIpcResponse.Ok());
+        }
+    }
+    private sealed class HeldCaptureExecutor : IAuthorisedVaultCommandExecutor
+    {
+        internal TaskCompletionSource Entered {get;} = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        internal TaskCompletionSource Release {get;} = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public async Task<FluxVaultIpcResponse> ExecuteAsync(FluxVaultCallerContext caller,VaultAdmission admission,
+            FluxVaultIpcRequest request,CancellationToken cancellationToken=default)
+        {
+            if(request.Command!=FluxVaultIpcCommand.RunBackupNow || !admission.Vault.Configuration.IsEnabled)throw new InvalidOperationException("Capture was not admitted while enabled.");
+            Entered.TrySetResult();
+            await Release.Task.WaitAsync(cancellationToken);
+            return FluxVaultIpcResponse.Ok();
         }
     }
 }

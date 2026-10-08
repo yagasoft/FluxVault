@@ -1,0 +1,119 @@
+{
+  "FixtureId": "d24d4973880a482b8a6c2863b4457b12",
+  "Observations": [
+    {
+      "Actor": "System",
+      "Complete": true,
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Host": "127.0.0.1",
+          "Result": {
+            "FixtureId": "d24d4973880a482b8a6c2863b4457b12",
+            "ProbeId": "95a1b1bd9e9149199be6be8d82d6d761",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "Kind": "ACL",
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "RunId": "566de634263a40eb95130dc849d08669",
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 897,
+      "ServerLogEnd": 2302
+    },
+    {
+      "Actor": "System",
+      "RunId": "34d3425befd64e8d8ae399976343506f",
+      "WindowsSid": "S-1-5-18",
+      "Results": [
+        {
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 50747 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ProbeId": "092028eacdb7477abf0bab8fcd02e6a3",
+          "Kind": "libpq",
+          "Output": "",
+          "Host": "127.0.0.1",
+          "ExitCode": 2
+        },
+        {
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "WriteRuntime": true
+        }
+      ],
+      "Complete": true,
+      "ServerLogStart": 2302,
+      "ServerLogEnd": 3002
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "Actor": "System",
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "d24d4973880a482b8a6c2863b4457b12",
+            "ProbeId": "7237210953f8494ab91f00f9e3ba7ce8",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Kind": "Npgsql",
+          "Host": "::1"
+        },
+        {
+          "Kind": "ACL",
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "RunId": "310e3460557940259ff7f66d5c63a6bb",
+      "ServerLogStart": 3002,
+      "ServerLogEnd": 4390
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "Results": [
+        {
+          "Kind": "libpq",
+          "Host": "::1",
+          "Error": "psql: error: connection to server at \"::1\", port 50747 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Output": "",
+          "ProbeId": "d29ff47b361946f489840e343699b2fd",
+          "ExitCode": 2
+        },
+        {
+          "WriteRuntime": true,
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "Complete": true,
+      "RunId": "3bc6a48ad43444e0a2340e12e01666d6",
+      "ServerLogStart": 4390,
+      "ServerLogEnd": 5084
+    }
+  ],
+  "FailureLocation": "at Read-ActorResult, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 496\r\nat Invoke-SystemActor, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 628\r\nat Invoke-CorrelatedActor, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 911\r\nat <ScriptBlock>, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 1316\r\nat <ScriptBlock>, <No file>: line 4",
+  "Failure": "Actor probe incomplete: Npgsql probe failed before its result: {\"error\":\"This operation identity has already been used for a different request.\",\"code\":null,\"detail\":\"FluxVault.Core.Security.VaultCatalogueException: This operation identity has already been used for a different request.\\r\\n   at FluxVault.Core.Security.PostgreSqlVaultCatalogue.MutateAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, Mutation mutation, CancellationToken ct) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\src\\\\FluxVault.Core\\\\Security\\\\PostgreSqlVaultCatalogue.cs:line 225\\r\\n   at FluxVault.Core.Security.PostgreSqlVaultCatalogue.MutateAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, Mutation mutation, CancellationToken ct) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\src\\\\FluxVault.Core\\\\Security\\\\PostgreSqlVaultCatalogue.cs:line 312\\r\\n   at FluxVault.Core.Security.PostgreSqlVaultCatalogue.MutateAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, Mutation mutation, CancellationToken ct) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\src\\\\FluxVault.Core\\\\Security\\\\PostgreSqlVaultCatalogue.cs:line 312\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 104\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 188\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 188\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 188\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 188\\r\\n   at FluxVault.Testing.WindowsDatabaseProbe.RunAsync(String configurationPath, String host, String actor, Guid probeId, Func\\u00603 catalogueProbe) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsDatabaseProbe.cs:line 94\\r\\n   at FluxVault.Testing.WindowsDatabaseProbe.RunAsync(String configurationPath, String host, String actor, Guid probeId, Func\\u00603 catalogueProbe) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsDatabaseProbe.cs:line 98\\r\\n   at FluxVault.TestHost.Program.Main(String[] arguments) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\Program.cs:line 52\"}\r\n"
+}

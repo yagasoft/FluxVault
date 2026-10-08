@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3f49c91e-3188-472a-9bfd-85e06efaf45f" name="os008@OS008-HOME 2026-10-08 15:15:52" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T15:15:52.5912577+03:00" queuing="2026-10-08T15:15:52.5912577+03:00" start="2026-10-08T15:15:51.8867731+03:00" finish="2026-10-08T15:15:52.5949907+03:00" />
+  <TestSettings name="default" id="66f79e18-037e-426e-9f3f-b1ea0a65270d">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_15_15_52" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="cc16bfe7-1087-4fd8-a7c4-6de337bfd7d7" testId="bd5abc2c-6424-408f-a991-bbd794e866a6" testName="FluxVault.Core.Tests.HistoryDeletionCommandContractTests.Preview_is_a_history_read_and_deliberate_deletion_requires_both_destructive_permissions" computerName="OS008-HOME" duration="00:00:00.0029215" startTime="2026-10-08T15:15:52.4785522+03:00" endTime="2026-10-08T15:15:52.4934746+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cc16bfe7-1087-4fd8-a7c4-6de337bfd7d7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at FluxVault.Core.Tests.HistoryDeletionCommandContractTests.Preview_is_a_history_read_and_deliberate_deletion_requires_both_destructive_permissions() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\HistoryDeletionCommandContractTests.cs:line 12&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.HistoryDeletionCommandContractTests.Preview_is_a_history_read_and_deliberate_deletion_requires_both_destructive_permissions" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="bd5abc2c-6424-408f-a991-bbd794e866a6">
+      <Execution id="cc16bfe7-1087-4fd8-a7c4-6de337bfd7d7" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.HistoryDeletionCommandContractTests" name="Preview_is_a_history_read_and_deliberate_deletion_requires_both_destructive_permissions" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="bd5abc2c-6424-408f-a991-bbd794e866a6" executionId="cc16bfe7-1087-4fd8-a7c4-6de337bfd7d7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.24]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:00.24]       Expected: True&#xD;
+[xUnit.net 00:00:00.24]       Actual:   False&#xD;
+[xUnit.net 00:00:00.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.24]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\HistoryDeletionCommandContractTests.cs(12,0): at FluxVault.Core.Tests.HistoryDeletionCommandContractTests.Preview_is_a_history_read_and_deliberate_deletion_requires_both_destructive_permissions()&#xD;
+[xUnit.net 00:00:00.24]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.24]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.25]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:15:52.4957370+03:00">
+        <Text>[xUnit.net 00:00:00.24]     FluxVault.Core.Tests.HistoryDeletionCommandContractTests.Preview_is_a_history_read_and_deliberate_deletion_requires_both_destructive_permissions [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

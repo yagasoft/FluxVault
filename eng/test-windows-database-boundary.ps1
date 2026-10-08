@@ -72,9 +72,19 @@ function Get-InstallationSnapshot {
         $process = Get-Process -Id $service.ProcessId
         try { @{ Name=$name; StartName=$service.StartName; PathName=$service.PathName; Identity=(Get-VaultFixtureProcessIdentity $process) } } finally { $process.Dispose() }
     }
-    $files = foreach ($path in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf','C:\ProgramData\FluxVault\config.json')) {
+    $files = @(foreach ($path in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf')) {
         @{ Path=$path; Sha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash }
+    })
+    # The commissioned single-vault installation uses installation.json. Keep
+    # legacy absence explicit so the fixture cannot create or remove either file.
+    $productFiles = @(foreach($path in @('C:\ProgramData\FluxVault\config.json','C:\ProgramData\FluxVault\installation.json')) {
+        $exists=Test-Path -LiteralPath $path
+        @{Path=$path;Sha256=$(if($exists){(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash}else{$null})}
+    })
+    if(-not @($productFiles | Where-Object {$null -ne $_.Sha256}).Count) {
+        throw 'Neither legacy configuration nor the installed single-vault bootstrap exists.'
     }
+    $files += $productFiles
     $snapshot=@{Services=@($services);Files=@($files)}
     if($RunPackagedIdentityTests -or
         ($null -ne $fixtureBefore -and $null -ne $fixtureBefore.PSObject.Properties['PackageBoundary']) -or
@@ -1310,7 +1320,7 @@ host all all ::1/128 reject
             if($RunCatalogueTests -and ($null -eq $probe.Result.Catalogue -or $probe.Result.Catalogue.Passed -lt 40 -or
                 -not $probe.Result.Catalogue.PolicyActorsAreDoubles -or -not $probe.Result.Catalogue.MirrorDrainCatalogueVerified -or
                 -not $probe.Result.Catalogue.DiagnosticsCatalogueVerified -or -not $probe.Result.Catalogue.SelectionCatalogueVerified -or
-                -not $probe.Result.Catalogue.ProtectionStateCatalogueVerified)) {
+                -not $probe.Result.Catalogue.ProtectionStateCatalogueVerified -or -not $probe.Result.Catalogue.HistoryDeletionCatalogueVerified)) {
                 throw 'Required current catalogue/drain contracts did not complete; rebuild the Release test host before running.'
             }
             # Multi-vault collision/coexistence cases are retired. Retain all single-repository binding/integrity contracts.
@@ -1352,7 +1362,8 @@ host all all ::1/128 reject
                 -not $creatorProof[0].Result.SelectionCommandsVerified -or -not $proof[0].Result.SelectionOutputCleaned -or
                 -not $creatorProof[0].Result.ProtectionStateCommandsVerified -or -not $creatorProof[0].Result.HistoryPagingVerified -or -not $creatorProof[0].Result.CurrentPagingVerified -or
                 -not $creatorProof[0].Result.LocalProtectionDraftVerified -or -not $creatorProof[0].Result.LockedSourceBoundaryVerified -or -not $creatorProof[0].Result.ProvisioningSetupVerified -or -not $creatorProof[0].Result.CreatorCliConfirmed -or
-                $deniedProof.Count -ne 1 -or $deniedProof[0].Result.MaintenanceDenied -ne 19 -or -not $proof[0].Result.DiagnosticsOutputCleaned -or
+                -not $creatorProof[0].Result.HistoryDeletionCommandsVerified -or
+                $deniedProof.Count -ne 1 -or $deniedProof[0].Result.MaintenanceDenied -ne 21 -or -not $proof[0].Result.DiagnosticsOutputCleaned -or
                 -not $proof[0].Result.ProtectedRehearsalOutputCleaned -or -not $proof[0].Result.DrainEffectVerified) {
                 throw 'Required current maintenance proof is missing; rebuild the Release test host before running.'
             }

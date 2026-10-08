@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e2baeb65-7eb2-4bb0-8b9b-18184829b766" name="os008@OS008-HOME 2026-10-08 15:47:28" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T15:47:28.4607248+03:00" queuing="2026-10-08T15:47:28.4607249+03:00" start="2026-10-08T15:47:27.4635994+03:00" finish="2026-10-08T15:47:28.4646071+03:00" />
+  <TestSettings name="default" id="718309e5-9667-4cda-bff3-33f5916c36b6">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_15_47_28" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ecd85341-4784-4313-b174-0700df5a6147" testId="0df7f3c4-d81e-effd-8725-6081e9a137a2" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Stop_explicit_file_under_protected_ancestor_excludes_inherited_capture_after_save" computerName="OS008-HOME" duration="00:00:00.2748436" startTime="2026-10-08T15:47:28.0693957+03:00" endTime="2026-10-08T15:47:28.3594746+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ecd85341-4784-4313-b174-0700df5a6147">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotEmpty() Failure: Collection was empty</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Stop_explicit_file_under_protected_ancestor_excludes_inherited_capture_after_save() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs:line 54&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Stop_explicit_file_under_protected_ancestor_excludes_inherited_capture_after_save" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="0df7f3c4-d81e-effd-8725-6081e9a137a2">
+      <Execution id="ecd85341-4784-4313-b174-0700df5a6147" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Stop_explicit_file_under_protected_ancestor_excludes_inherited_capture_after_save" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0df7f3c4-d81e-effd-8725-6081e9a137a2" executionId="ecd85341-4784-4313-b174-0700df5a6147" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.52]       Assert.NotEmpty() Failure: Collection was empty&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\HistoryDeletionControlsContractTests.cs(54,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Stop_explicit_file_under_protected_ancestor_excludes_inherited_capture_after_save()&#xD;
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.53]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T15:47:28.3619428+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.App.Tests.ProtectionSaveContractTests.Stop_explicit_file_under_protected_ancestor_excludes_inherited_capture_after_save [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

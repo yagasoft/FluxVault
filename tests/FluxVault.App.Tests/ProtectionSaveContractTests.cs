@@ -20,7 +20,7 @@ using FluxVault.Core.Security;
 namespace FluxVault.App.Tests;
 
 // Exercises public view-model commands through the production configuration stores.
-public sealed class ProtectionSaveContractTests
+public sealed partial class ProtectionSaveContractTests
 {
     [Theory]
     [InlineData("truncated", false)]
@@ -1590,7 +1590,7 @@ public sealed class ProtectionSaveContractTests
     }
 
     [Fact]
-    public async Task Cancelling_removal_confirmation_keeps_edits_and_sends_neither_save_nor_backup()
+    public async Task Stopping_protection_saves_without_offering_history_deletion()
     {
         using var fixture = new StoreFixture(profileStore: true);
         var existing = Selection(fixture.Root, "existing-project");
@@ -1611,14 +1611,14 @@ public sealed class ProtectionSaveContractTests
 
         await viewModel.RunBackupNowCommand.ExecuteAsync(null);
 
-        Assert.Equal(1, confirmation.Calls);
-        Assert.Equal(before, await File.ReadAllBytesAsync(fixture.ConfigPath));
+        Assert.Equal(0, confirmation.Calls);
+        Assert.NotEqual(before, await File.ReadAllBytesAsync(fixture.ConfigPath));
         Assert.Equal(added.Path, Assert.Single(viewModel.FileBrowser.GetSelectionRules()).Path);
-        Assert.NotEmpty(viewModel.FileBrowser.PendingChanges);
-        Assert.DoesNotContain(FluxVaultIpcCommand.SaveConfiguration, client.Commands);
-        Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
-        Assert.Contains("cancel", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("not started", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Empty(viewModel.FileBrowser.PendingChanges);
+        var saved = Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
+        Assert.False(saved.PurgeRemovedSelections);
+        Assert.Single(client.Commands, command => command == FluxVaultIpcCommand.RunBackupNow);
+        Assert.DoesNotContain("Purged", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -1922,7 +1922,7 @@ public sealed class ProtectionSaveContractTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task Acknowledged_save_rebases_newer_edits_and_the_next_purge_scopes(bool initiallyProtected)
+    public async Task Acknowledged_save_rebases_newer_edits_and_the_next_save_retains_history(bool initiallyProtected)
     {
         using var fixture = new StoreFixture(true);
         var first = Selection(fixture.Root, "first-project");
@@ -1958,14 +1958,14 @@ public sealed class ProtectionSaveContractTests
         }
         await viewModel.SaveConfigurationCommand.ExecuteAsync(null);
         var nextSave = client.Requests.Last(request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
-        Assert.Equal(!initiallyProtected, nextSave.PurgeRemovedSelections);
+        Assert.False(nextSave.PurgeRemovedSelections);
         Assert.Empty(viewModel.FileBrowser.PendingChanges);
     }
 
     [Theory]
     [InlineData(SaveFailure.Timeout)]
     [InlineData(SaveFailure.Cancelled)]
-    public async Task Ambiguous_destructive_save_guard_uses_dispatched_scopes_even_if_the_user_readds_them(SaveFailure failure)
+    public async Task Ambiguous_selection_save_keeps_its_original_snapshot_even_if_the_user_readds_then_removes_it(SaveFailure failure)
     {
         using var fixture = new StoreFixture(true);
         var selection = Selection(fixture.Root, "existing-project");
@@ -1988,9 +1988,10 @@ public sealed class ProtectionSaveContractTests
 
         await viewModel.RunBackupNowCommand.ExecuteAsync(null);
 
-        Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration);
+        Assert.False(Assert.Single(client.Requests, request => request.Command == FluxVaultIpcCommand.SaveConfiguration).PurgeRemovedSelections);
         Assert.DoesNotContain(FluxVaultIpcCommand.RunBackupNow, client.Commands);
-        Assert.Contains("purge", viewModel.ProtectionSaveMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("could not be confirmed", viewModel.ProtectionSaveMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("purge", viewModel.ProtectionSaveMessage, StringComparison.OrdinalIgnoreCase);
     }
 
     [Theory]
@@ -2380,10 +2381,10 @@ public sealed class ProtectionSaveContractTests
     }
 
     private static MainWindowViewModel CreateViewModel(StoreClient client, IProtectionRemovalConfirmation? confirmation = null, IBackupOperationStore? backupStore = null,
-        IConfigurationSaveOperationStore? saveStore = null) => new(
+        IConfigurationSaveOperationStore? saveStore = null, IProtectionDraftStore? draftStore = null) => new(
         client, TimeSpan.FromHours(1), new FileBrowserViewModel(new WindowsFileBrowserFileSystem()),
         new FixtureServiceController(), new UnusedDestinationPicker(), new UnusedOverwriteConfirmation(),
-        protectionRemovalConfirmation: confirmation, backupOperationStore: backupStore, saveOperationStore: saveStore);
+        protectionRemovalConfirmation: confirmation, backupOperationStore: backupStore, saveOperationStore: saveStore, protectionDraftStore:draftStore);
 
     public enum SaveFailure { None, Rejected, Io, Timeout, Denied, Cancelled, AcknowledgementLost }
 
@@ -2407,6 +2408,11 @@ public sealed class ProtectionSaveContractTests
         public Action<FluxVaultIpcRequest>? BackupDispatchCheck { get; set; }
         public Action<FluxVaultIpcRequest>? SaveDispatchCheck { get; set; }
         public Func<FluxVaultIpcRequest, CancellationToken, Task<FluxVaultIpcResponse>>? SaveDispatchHandler { get; init; }
+        public bool LoseProtectionStateAcknowledgement { get; set; }
+        public bool LoseHistoryDeletionAcknowledgement { get; set; }
+        public RepositoryHistoryDeletionPreview? HistoryDeletionPreview { get; set; }
+        public Action<FluxVaultIpcRequest>? DeletionDispatchCheck { get; set; }
+        private readonly Dictionary<Guid, FluxVaultIpcResponse> deletionReceipts = [];
         public Action<FluxVaultIpcRequest>? ReceiptDispatchCheck { get; set; }
         public bool RequireBoundRequests { get; init; }
         public bool HoldSave { get; init; }
@@ -2512,6 +2518,15 @@ public sealed class ProtectionSaveContractTests
                     return Envelope(PurgeFails
                         ? FluxVaultIpcResponse.WithPurge(new RepositoryPurgeResult(0, 0, 0, [], Success: false, ErrorMessage: "Fixture purge denied"))
                         : FluxVaultIpcResponse.Ok());
+                case FluxVaultIpcCommand.SetProtectionPaused:
+                    var pause = JsonNode.Parse(FluxVaultIpcSerializer.SerializeRequest(request))!["isProtectionPaused"]!.GetValue<bool>();
+                    if (request.VaultId != Identity || request.ExpectedVaultRevision != revision || request.OperationId is null)
+                        return FluxVaultIpcResponse.Failure("The state revision is stale") with { ErrorCode = FluxVaultIpcErrorCode.StaleRevision };
+                    await store.SaveAsync((await store.LoadAsync(cancellationToken)) with { IsEnabled = !pause }, cancellationToken);
+                    revision++;
+                    var stateResponse = Envelope(FluxVaultIpcResponse.Ok());
+                    if (LoseProtectionStateAcknowledgement) throw new IOException("Lost protection state acknowledgement");
+                    return stateResponse;
                 case FluxVaultIpcCommand.RunBackupNow:
                     BackupDispatchCheck?.Invoke(request);
                     ConfigurationAtBackup = await store.LoadAsync(cancellationToken);
@@ -2523,6 +2538,16 @@ public sealed class ProtectionSaveContractTests
                     return Envelope(CompletedBackupResponse());
                 case FluxVaultIpcCommand.ListVersions:
                     return Envelope(FluxVaultIpcResponse.WithVersions([]));
+                case FluxVaultIpcCommand.PreviewHistoryDeletion:
+                    return Envelope(FluxVaultIpcResponse.Ok() with { HistoryDeletionPreview = HistoryDeletionPreview });
+                case FluxVaultIpcCommand.DeleteHistory:
+                    DeletionDispatchCheck?.Invoke(request);
+                    if (request.VaultId != Identity || request.ExpectedVaultRevision != revision || request.OperationId is null)
+                        return Envelope(FluxVaultIpcResponse.Failure("The deletion revision is stale") with { ErrorCode = FluxVaultIpcErrorCode.StaleRevision });
+                    var deleted = Envelope(FluxVaultIpcResponse.WithPurge(new RepositoryPurgeResult(HistoryDeletionPreview!.CandidateVersionCount, 1, 10, [])));
+                    deletionReceipts.Add(request.OperationId.Value, deleted);
+                    if (LoseHistoryDeletionAcknowledgement) throw new IOException("Lost history deletion acknowledgement");
+                    return deleted;
                 case FluxVaultIpcCommand.RestoreVersionPreview:
                     if (request.OutputPath is null) return Envelope(FluxVaultIpcResponse.Failure("Missing caller preview destination"));
                     File.WriteAllText(request.OutputPath, "verified preview bytes");
@@ -2534,6 +2559,7 @@ public sealed class ProtectionSaveContractTests
                     if (ReceiptFailure == SaveFailure.Timeout) throw new TimeoutException("Receipt timed out");
                     if (ReceiptFailure == SaveFailure.Cancelled) throw new OperationCanceledException("Receipt cancelled");
                     if (ReceiptFailure == SaveFailure.Denied) throw new UnauthorizedAccessException("Pipe identity refused");
+                    if (request.OperationId is { } deletionId && deletionReceipts.TryGetValue(deletionId, out var deletionReceipt)) return deletionReceipt;
                     var receiptResponse = Envelope(ReceiptResponseOverride ?? (ReceiptErrorCode is { } error
                         ? FluxVaultIpcResponse.Failure("The receipt is not available") with { ErrorCode = error }
                         : CompletedBackupResponse()));

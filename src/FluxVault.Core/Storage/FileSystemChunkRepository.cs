@@ -12,7 +12,7 @@ using FluxVault.Core.Security;
 
 namespace FluxVault.Core.Storage;
 
-public sealed class FileSystemChunkRepository : IChunkRepository
+public sealed partial class FileSystemChunkRepository : IChunkRepository
 {
 
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
@@ -392,6 +392,7 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        if(request.HistoryDeletionReview is not null)ValidateHistoryDeletionRequest(request,requireFingerprint:true);
         var scopes = NormalisePurgeScopes(request.Scopes);
         if (scopes.Count == 0)
         {
@@ -404,6 +405,13 @@ public sealed class FileSystemChunkRepository : IChunkRepository
         {
             var manifests = (await ReadAllManifestsAsync(cancellationToken).ConfigureAwait(false)).ToArray();
             ValidateMaintenanceInputs(manifests);
+            if(request.HistoryDeletionReview is { } review)
+            {
+                var plan=BuildHistoryDeletionPreview(request,manifests,lease.Warnings);
+                if(!string.Equals(plan.Fingerprint,review.Fingerprint,StringComparison.Ordinal))throw new RepositoryHistoryChangedException();
+                if(!plan.CanDelete)throw new RepositoryHistoryDeletionRefusedException(
+                    "History deletion refused. "+string.Join(" ",plan.Warnings));
+            }
             if (manifests.Length == 0)
             {
                 return new RepositoryPurgeResult(0, 0, 0, []);

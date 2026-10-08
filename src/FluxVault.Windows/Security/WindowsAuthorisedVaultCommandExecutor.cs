@@ -66,7 +66,8 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
         FluxVaultIpcCommand.RunRepositoryScrub or FluxVaultIpcCommand.RunRestoreRehearsal or
         FluxVaultIpcCommand.PreviewMirrorRepair or FluxVaultIpcCommand.RunMirrorRepair or
         FluxVaultIpcCommand.PreviewMirrorRebalance or FluxVaultIpcCommand.RunMirrorRebalance or
-        FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain or FluxVaultIpcCommand.ExportDiagnostics => true,
+        FluxVaultIpcCommand.PreviewMirrorDrain or FluxVaultIpcCommand.RunMirrorDrain or FluxVaultIpcCommand.ExportDiagnostics or
+        FluxVaultIpcCommand.PreviewHistoryDeletion or FluxVaultIpcCommand.DeleteHistory => true,
         _ => false
     };
 
@@ -146,6 +147,9 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                         var backup = await operations.RunBackupNowAsync(cancellationToken);
                         return FluxVaultIpcResponse.WithBackup(backup) with { Success = backup.Success,
                             ErrorCode = backup.Success ? null : FluxVaultIpcErrorCode.Unavailable, ErrorMessage = backup.Success ? null : backup.Message };
+                    case FluxVaultIpcCommand.PreviewHistoryDeletion:
+                    case FluxVaultIpcCommand.DeleteHistory:
+                        return await operations.HandleAsync(request with {ExpectedVaultRevision=vault.Revision},cancellationToken);
                     case FluxVaultIpcCommand.RestoreVersion:
                         await using (var target = await WindowsCallerRecoveryTarget.CreateAsync(caller, request.OutputPath!, cancellationToken))
                             return FluxVaultIpcResponse.WithRestore(await operations.RestoreVersionAsync(request.VersionId!, target, cancellationToken));

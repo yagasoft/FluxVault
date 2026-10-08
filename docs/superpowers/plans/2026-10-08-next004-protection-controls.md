@@ -1,6 +1,6 @@
 # NEXT-004 protection controls: design and implementation plan
 
-**Status, 8 October 2026:** planning only; pause before implementation for the owner's model switch. Implementation and installation must not start until an explicit resume. After resume, the owner authorises implementation, installation, corrective redeployment and self-operated validation on this PC within this plan; independent technical gates remain required.
+**Status, 8 October 2026:** the owner approved and resumed after the model switch. Implementation is in progress in the existing task worktree. Implementation, installation, corrective redeployment and self-operated validation on this PC within this plan are authorised; independent technical gates remain required. Progress and observed checks are in the [execution evidence](../../verification/2026-10-08-next004-controls/README.md).
 
 **Goal:** finish explicit protection control and separate stopping capture from deleting history, retaining the delivered configuration and recovery guarantees.
 
@@ -8,7 +8,7 @@
 
 **Contract:** [improvement roadmap](../../improvement-roadmap.md), [delivered NEXT-002 specification](../specs/2026-10-03-next002-and-protection-save-design.md), and the decisions below. [NEXT-005](2026-10-08-next005-signed-in-automatic-protection.md) is a separate subsequent delivery, not a prerequisite for shipping these controls.
 
-**Design gate:** [independent Astra review](../../verification/2026-10-08-next004-next005-planning/independent-design-review.md) accepts this approach. Implementation and candidate gates are not yet run.
+**Design gate:** [independent Astra review](../../verification/2026-10-08-next004-next005-planning/independent-design-review.md) accepts this approach. The independent implementation code gate is accepted; concrete candidate and installed acceptance gates remain open, as recorded in the execution evidence.
 
 ## Checked baseline and evidence reuse
 

@@ -10,6 +10,7 @@ namespace FluxVault.App.ViewModels;
 
 public sealed partial class ActivityPaneViewModel(IFluxVaultServiceClient client, MainWindowViewModel? dashboard = null) : ObservableObject
 {
+    public MainWindowViewModel? Dashboard => dashboard;
     private VaultId? acceptedVaultId;
     [ObservableProperty]
     private string statusText = "Activity is loading...";
@@ -66,17 +67,12 @@ public sealed partial class ActivityPaneViewModel(IFluxVaultServiceClient client
     public async Task RunBackupNowAsync(CancellationToken cancellationToken = default)
     {
         if (dashboard is null) { StatusText = "Open the dashboard to save selections and request a backup."; return; }
+        if (!dashboard.RunBackupNowCommand.CanExecute(null)) { StatusText=dashboard.ProtectionControlStatus; return; }
         await dashboard.RunBackupNowCommand.ExecuteAsync(null).ConfigureAwait(true);
         await RefreshAsync(cancellationToken).ConfigureAwait(true);
         StatusText = dashboard.ServiceStatus;
     }
 
-    [RelayCommand]
-    public Task PauseProtectionAsync(CancellationToken cancellationToken = default)
-    {
-        StatusText = "Automatic protection unavailable; manual backup available.";
-        return Task.CompletedTask;
-    }
 }
 
 public sealed record ActivityEventRow(

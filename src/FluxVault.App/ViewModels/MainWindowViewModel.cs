@@ -97,7 +97,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
          unconfirmedProtectionSave.RepositoryId == acceptedVaultId?.Value);
 
     public bool CanCheckProtectionSaveOutcome => !IsPreparingForExit && !IsProtectionSaveBusy && HasUnconfirmedProtectionSave &&
-        unconfirmedProtectionSave?.Origin != ConfigurationSaveOrigin.Options;
+        unconfirmedProtectionSave?.Origin == ConfigurationSaveOrigin.Protect;
 
     public string OptionsEntryToolTip => CanOpenOptions
         ? "Open retention, maintenance, capture, compression, and Explorer settings."
@@ -381,11 +381,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
         this.autoRefreshInterval = autoRefreshInterval;
         FileBrowser = fileBrowser;
         FileBrowser.SelectionRulesChanged += (_, _) => MarkConfigurationDirty();
+        FileBrowser.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(FileBrowserViewModel.SelectedFolder) or nameof(FileBrowserViewModel.SelectedFile))
+            {
+                OnPropertyChanged(nameof(CanStopProtectingSelectedKeepHistory));
+                StopProtectingSelectedKeepHistoryCommand.NotifyCanExecuteChanged();
+            }
+        };
     }
 
     public string CaptureStrategy { get; } =
-        "The service watches configured folders, debounces rapid edits, periodically reconciles missed changes, " +
-        "uses normal reads where possible, and falls back to writer-aware VSS for locked files.";
+        "Manual backup reads saved selections using the signed-in caller's authority. Live reads are best effort; capture failures are reported. " +
+        "Automatic capture and VSS fallback are not available in this release.";
 
     public string RepositorySummary { get; } =
         "Versions are stored as immutable BLAKE3-addressed chunks plus manifests. Optional cloud-folder mirroring uses atomic writes.";
@@ -434,13 +442,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public bool CanDisableSelectedMirror => SelectedMirrorNode is { IsEnabled: true };
 
-    public bool CanShowSelectedMirrorRepairActions => SelectedMirrorNode is { IsEnabled: true };
+    public bool CanShowSelectedMirrorRepairActions => !IsHistoryDeletionPending && SelectedMirrorNode is { IsEnabled: true };
 
-    public bool CanShowSelectedMirrorDrainActions => SelectedMirrorNode is { IsEnabled: true } && EnabledMirrorCount >= 2;
+    public bool CanShowSelectedMirrorDrainActions => !IsHistoryDeletionPending && SelectedMirrorNode is { IsEnabled: true } && EnabledMirrorCount >= 2;
 
-    public bool CanShowGlobalMirrorRepairActions => EnabledMirrorCount > 0;
+    public bool CanShowGlobalMirrorRepairActions => !IsHistoryDeletionPending && EnabledMirrorCount > 0;
 
-    public bool CanShowMirrorPlacementActions => EnabledMirrorCount > 0 && HasRequiredMirrorCountForPlacement;
+    public bool CanShowMirrorPlacementActions => !IsHistoryDeletionPending && EnabledMirrorCount > 0 && HasRequiredMirrorCountForPlacement;
 
     public string MirrorActionStatus
     {
@@ -786,6 +794,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         RestoreSelectedCommand.NotifyCanExecuteChanged();
         OpenSelectedVersionPreviewCommand.NotifyCanExecuteChanged();
+        InvalidateHistoryDeletionPreview();
     }
 
     partial void OnSelectedWorkspaceIndexChanged(int value)
@@ -814,6 +823,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
         SaveConfigurationCommand.NotifyCanExecuteChanged();
         RunBackupNowCommand.NotifyCanExecuteChanged();
         DiscardConfigurationChangesCommand.NotifyCanExecuteChanged();
+        NotifyProtectionControlAvailability();
+        RefreshMirrorActionState();
     }
 
     private void MarkConfigurationDirty()
@@ -832,7 +843,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
         var vaultId = acceptedVaultId;
         var generation = configurationEditGeneration;
         var saveDispatched = false;
-        IReadOnlyList<RepositoryPurgeScope> dispatchedRemovedSelections = [];
         if (!TryLoadPendingConfigurationSave() || HasUnconfirmedProtectionSave)
             return new ProtectionSaveOutcome(ProtectionSaveState.Unknown, vaultId, generation, acceptedConfigurationRevision);
         if (!CanSaveProtection)
@@ -858,18 +868,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     "Save could not be confirmed. Refresh to check the saved settings before retrying. Your changes are kept. Backup has not started for this action.");
             }
             var removedSelections = FileBrowser.GetRemovedSelectionPurgeScopes();
-            if (removedSelections.Count > 0 && !protectionRemovalConfirmation.ConfirmPurge(removedSelections))
-            {
-                return CompleteProtectionSave(ProtectionSaveState.Cancelled, vaultId, generation,
-                    "Save cancelled; removed selections were not purged. Your changes are kept. Backup has not started for this action.");
-            }
-
             var pending = new PendingConfigurationSave(vaultId.Value.Value, Guid.NewGuid(), acceptedConfigurationRevision.Value,
-                BuildConfiguration(), removedSelections.Count > 0, removedSelections, FileBrowser.GetProtectedSelectionPurgeScopes()).Freeze();
+                BuildConfiguration(), false, removedSelections, FileBrowser.GetProtectedSelectionPurgeScopes()).Freeze();
             pending = await ReserveProtectionSaveAsync(pending,generation).ConfigureAwait(true);
             var configuration = pending.Configuration;
             lastDispatchedSaveConfiguration = configuration;
-            dispatchedRemovedSelections = removedSelections;
             ProtectionSaveState = ProtectionSaveState.Saving;
             ProtectionSaveMessage = "Saving protection changes…";
             saveDispatched = true;
@@ -942,7 +945,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
         catch (OperationCanceledException)
         {
             requiresSaveStatusCheck = true;
-            requiresPurgeReconciliation = dispatchedRemovedSelections.Count > 0;
             return CompleteProtectionSave(ProtectionSaveState.Cancelled, vaultId, generation,
                 "Save cancelled; any service-side outcome must be checked before retrying. Your changes are kept. Backup has not started for this action.");
         }
@@ -957,7 +959,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     "Save preparation failed: local protection records could not be retained. Your changes and any existing records are kept. No save was dispatched and backup has not started. " + ex.Message);
             }
             requiresSaveStatusCheck = true;
-            requiresPurgeReconciliation = dispatchedRemovedSelections.Count > 0;
             return CompleteProtectionSave(ProtectionSaveState.Unknown, vaultId, generation,
                 $"Save could not be confirmed; service acknowledgement unavailable ({ex.Message}). Check the original save outcome before retrying. Your changes are kept. Backup has not started for this action.");
         }
@@ -1022,14 +1023,22 @@ public sealed partial class MainWindowViewModel : ObservableObject
                     "A previous Options save could not be confirmed. Its submitted settings and your protection edits are kept. Open Options to check the original save outcome; no save or backup will be sent until it is resolved.");
                 return true;
             }
-            if (changed && !hasLocalConfigurationChanges)
+            if (pending.Origin == ConfigurationSaveOrigin.HistoryDeletion)
+            {
+                HistoryDeletionMessage = "A previous history deletion could not be confirmed. Check its original outcome; it will not be replayed. Your independent protection edits are kept.";
+                ProtectionSaveMessage = "A history deletion outcome is pending. Check its original outcome in Repository before changing protection. Your edits are kept.";
+                return true;
+            }
+            if (changed && !hasLocalConfigurationChanges && pending.IsProtectionPaused is null)
             {
                 RestoreProtectionDraft(pending.Configuration);
                 lastDispatchedSaveConfiguration = pending.Configuration;
             }
             if (!saveConfirmedForReview)
                 CompleteProtectionSave(ProtectionSaveState.Unknown, acceptedVaultId, configurationEditGeneration,
-                    pending.PurgeRemovedSelections
+                    pending.IsProtectionPaused is not null
+                        ? "The previous protection control could not be confirmed. Check its original outcome before continuing. Your edits and history are kept; no backup has started."
+                        : pending.PurgeRemovedSelections
                         ? "The previous save and purge could not be confirmed. Its submitted snapshot and purge scopes are kept. Check the original save outcome before retrying; backup has not started for this action."
                         : "A previous protection save could not be confirmed. Its submitted snapshot is kept. Check the original save outcome before retrying; backup has not started for this action.");
             return true;
@@ -1172,11 +1181,17 @@ public sealed partial class MainWindowViewModel : ObservableObject
         request = request with { VaultId = target,
             ExpectedVaultRevision = request.ExpectedVaultRevision ?? (mutation ? acceptedConfigurationRevision : null),
             OperationId = request.OperationId ?? (mutation ? Guid.NewGuid() : null) };
+        var changesVault = mutation && request.Command is not (FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview or
+            FluxVaultIpcCommand.RunRestoreSelection or FluxVaultIpcCommand.ExportDiagnostics);
+        if (changesVault && saveOperationStore.Read() is { Origin: ConfigurationSaveOrigin.HistoryDeletion } pendingDeletion &&
+            (request.Command != FluxVaultIpcCommand.DeleteHistory || request.OperationId != pendingDeletion.OperationId))
+            return FluxVaultIpcResponse.Failure("Check the original history deletion outcome before changing protection or repository state. No command was sent.") with
+                { ErrorCode=FluxVaultIpcErrorCode.InvalidRequest,VaultId=target,OperationId=request.OperationId };
         var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(true);
         if (!response.Success) return response;
         var completedDrain = request.Command == FluxVaultIpcCommand.RunMirrorDrain && response.MirrorRebalance is { IsCompletedDrain: true };
         var expectedAcknowledgedRevision = request.ExpectedVaultRevision +
-            (request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess || completedDrain ? 1 : 0);
+            (request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess or FluxVaultIpcCommand.SetProtectionPaused || completedDrain ? 1 : 0);
         if (response.VaultId is not { IsValid: true } returnedId || response.VaultRevision is not > 0 ||
             target is not null && returnedId != target || mutation && response.OperationId != request.OperationId ||
             mutation && response.VaultRevision != expectedAcknowledgedRevision ||
@@ -1616,7 +1631,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             successStatus: $"Service connection: removed or excluded {path} from FluxVault.").ConfigureAwait(true);
     }
 
-    [RelayCommand(CanExecute = nameof(CanSaveProtection))]
+    [RelayCommand(CanExecute = nameof(CanRunBackupNow))]
     private async Task RunBackupNowAsync()
     {
         if (!TryLoadPendingBackupRecord()) return;
@@ -1679,6 +1694,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         OnPropertyChanged(nameof(UnconfirmedBackupOperationId));
         OnPropertyChanged(nameof(HasUnconfirmedBackup));
         CheckBackupOutcomeCommand.NotifyCanExecuteChanged();
+        NotifyProtectionControlAvailability();
     }
 
     private bool TryLoadPendingBackupRecord()
@@ -2624,6 +2640,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             isApplyingStatus = false;
         }
+        NotifyProtectionControlAvailability();
         return shouldApplyConfiguration;
     }
 

@@ -1,5 +1,6 @@
 using FluxVault.Abstractions.Storage;
 using FluxVault.Abstractions.Security;
+using System.Text.Json.Serialization;
 
 namespace FluxVault.Abstractions.Ipc;
 
@@ -31,7 +32,8 @@ public sealed record FluxVaultIpcResponse(
     DiagnosticsExportResult? DiagnosticsExport = null,
     RepositoryHistoryPage? HistoryPage = null,
     RepositorySnapshotPage? SnapshotPage = null,
-    RepositoryCurrentEntriesPage? CurrentEntriesPage = null)
+    RepositoryCurrentEntriesPage? CurrentEntriesPage = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RepositoryHistoryDeletionPreview? HistoryDeletionPreview = null)
 {
     public static FluxVaultIpcResponse Ok()
     {

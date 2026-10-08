@@ -220,6 +220,17 @@ public sealed class WindowsCallerFileAccess
         VerifyFinalPath(handle, expected);
     }
 
+    internal readonly record struct SourceObservation(long Identity, long Length, long LastWriteTime, long ChangeTime);
+
+    internal static SourceObservation ObserveSource(SafeFileHandle handle, string physicalPath)
+    {
+        VerifyHandle(handle, physicalPath, directory: false);
+        if (!GetFileInformationByHandleEx(handle, 1, out StandardInfo standard, Marshal.SizeOf<StandardInfo>())) NativeError();
+        if (!GetFileInformationByHandleEx(handle, 0, out BasicInfo basic, Marshal.SizeOf<BasicInfo>())) NativeError();
+        if (standard.EndOfFile < 0) throw new IOException("The source length is invalid.");
+        return new(FileIdentity(handle), standard.EndOfFile, basic.LastWriteTime, basic.ChangeTime);
+    }
+
     private static long FileIdentity(SafeFileHandle handle)
     {
         var status = NtQueryInformationFile(handle, out _, out var identity, sizeof(long), 6);
@@ -340,6 +351,7 @@ public sealed class WindowsCallerFileAccess
     [StructLayout(LayoutKind.Sequential)] private struct AttributeTag { internal uint Attributes, ReparseTag; }
     [StructLayout(LayoutKind.Sequential)] private struct CaseSensitive { internal uint Flags; }
     [StructLayout(LayoutKind.Sequential)] private struct StandardInfo { internal long AllocationSize, EndOfFile; internal uint NumberOfLinks; internal byte DeletePending, Directory; }
+    [StructLayout(LayoutKind.Sequential)] private struct BasicInfo { internal long CreationTime, LastAccessTime, LastWriteTime, ChangeTime; internal uint Attributes; }
     [DllImport("ntdll.dll")] private static extern int NtCreateFile(out SafeFileHandle file, uint access, ref ObjectAttributes attributes, out IoStatus status,
         IntPtr allocationSize, uint fileAttributes, uint sharing, uint disposition, uint options, IntPtr ea, uint eaLength);
     [DllImport("ntdll.dll")] private static extern uint RtlNtStatusToDosError(int status);
@@ -354,6 +366,8 @@ public sealed class WindowsCallerFileAccess
     [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GetFileInformationByHandleEx(SafeFileHandle handle, int kind, out AttributeTag value, int size);
     [DllImport("kernel32.dll", EntryPoint = "GetFileInformationByHandleEx", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GetFileInformationByHandleEx(SafeFileHandle handle, int kind, out StandardInfo value, int size);
+    [DllImport("kernel32.dll", EntryPoint = "GetFileInformationByHandleEx", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GetFileInformationByHandleEx(SafeFileHandle handle, int kind, out BasicInfo value, int size);
     [DllImport("kernel32.dll", EntryPoint = "GetFileInformationByHandleEx", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GetFileInformationByHandleEx(SafeFileHandle handle, int kind, out CaseSensitive value, int size);
     [DllImport("kernel32.dll", EntryPoint = "GetFinalPathNameByHandleW", CharSet = CharSet.Unicode, SetLastError = true)]

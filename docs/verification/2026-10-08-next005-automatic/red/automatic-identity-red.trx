@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="532d4272-9a42-4bcc-bb07-7e0763828d2a" name="os008@OS008-HOME 2026-10-08 17:41:57" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T17:41:57.1167041+03:00" queuing="2026-10-08T17:41:57.1167041+03:00" start="2026-10-08T17:41:56.2374807+03:00" finish="2026-10-08T17:41:57.1220974+03:00" />
+  <TestSettings name="default" id="b28318ed-9ebc-471d-af27-d10c54d7b850">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_17_41_57" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="342086bb-9545-4dcb-b400-98475179a295" testId="b8e13fde-049a-67d6-76a7-8815e42c7a4c" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.Rejected_publication_keeps_previous_good_version_and_publishes_no_reserved_result" computerName="OS008-HOME" duration="00:00:00.1345693" startTime="2026-10-08T17:41:56.8893649+03:00" endTime="2026-10-08T17:41:57.0152590+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="342086bb-9545-4dcb-b400-98475179a295">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 88&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 80&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.Rejected_publication_keeps_previous_good_version_and_publishes_no_reserved_result() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 46&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="547abb54-1fdb-4b31-9bfb-888366da3bc8" testId="4c191187-cc80-5fff-6291-5286674e820a" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;../../outside&quot;)" computerName="OS008-HOME" duration="00:00:00.0007282" startTime="2026-10-08T17:41:56.8859396+03:00" endTime="2026-10-08T17:41:56.8860044+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="547abb54-1fdb-4b31-9bfb-888366da3bc8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.ArgumentException)&#xD;
+Actual:   typeof(Xunit.Sdk.NotNullException)&#xD;
+---- Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(String reserved) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 72&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 88&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 80&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.&lt;&gt;c__DisplayClass3_0.&lt;Invalid_reserved_identity_is_refused_without_publication&gt;b__0() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 72</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="888d1e9b-2fc4-4cde-9a7b-c9489b319d31" testId="65202611-a7d9-6877-408d-4ced5596c55f" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;00000000000000000000000000000000&quot;)" computerName="OS008-HOME" duration="00:00:00.0004905" startTime="2026-10-08T17:41:56.8870420+03:00" endTime="2026-10-08T17:41:56.8870740+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="888d1e9b-2fc4-4cde-9a7b-c9489b319d31">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.ArgumentException)&#xD;
+Actual:   typeof(Xunit.Sdk.NotNullException)&#xD;
+---- Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(String reserved) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 72&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 88&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 80&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.&lt;&gt;c__DisplayClass3_0.&lt;Invalid_reserved_identity_is_refused_without_publication&gt;b__0() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 72</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8258cd96-071c-437a-8ffe-b7dbb0c72d5f" testId="58beaa3f-1e01-ef54-dfd8-9b6e4401f189" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.A_reserved_identity_cannot_overwrite_an_acknowledged_version" computerName="OS008-HOME" duration="00:00:00.0012493" startTime="2026-10-08T17:41:56.8883315+03:00" endTime="2026-10-08T17:41:56.8883616+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8258cd96-071c-437a-8ffe-b7dbb0c72d5f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 88&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 80&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.A_reserved_identity_cannot_overwrite_an_acknowledged_version() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 29&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b18a0742-f2b5-436d-8042-c1857252b370" testId="b278c544-7097-5cd7-6144-97c3d2780008" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.Reserved_capture_identity_is_published_and_independently_recoverable" computerName="OS008-HOME" duration="00:00:00.0009873" startTime="2026-10-08T17:41:56.8888266+03:00" endTime="2026-10-08T17:41:56.8888578+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b18a0742-f2b5-436d-8042-c1857252b370">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 88&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 80&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.Reserved_capture_identity_is_published_and_independently_recoverable() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 13&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1d8529f1-eb42-445a-811f-570ba9c71e4d" testId="6c36e7cb-542c-0bd4-d989-324b3ddaf411" testName="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;not-a-reserved-version&quot;)" computerName="OS008-HOME" duration="00:00:00.0095491" startTime="2026-10-08T17:41:56.8495813+03:00" endTime="2026-10-08T17:41:56.8734005+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d8529f1-eb42-445a-811f-570ba9c71e4d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.ArgumentException)&#xD;
+Actual:   typeof(Xunit.Sdk.NotNullException)&#xD;
+---- Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(String reserved) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 72&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 88&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 80&#xD;
+   at FluxVault.Core.Tests.AutomaticCommitContractTests.&lt;&gt;c__DisplayClass3_0.&lt;Invalid_reserved_identity_is_refused_without_publication&gt;b__0() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs:line 72</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;../../outside&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="4c191187-cc80-5fff-6291-5286674e820a">
+      <Execution id="547abb54-1fdb-4b31-9bfb-888366da3bc8" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="Invalid_reserved_identity_is_refused_without_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.Reserved_capture_identity_is_published_and_independently_recoverable" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="b278c544-7097-5cd7-6144-97c3d2780008">
+      <Execution id="b18a0742-f2b5-436d-8042-c1857252b370" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="Reserved_capture_identity_is_published_and_independently_recoverable" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;00000000000000000000000000000000&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="65202611-a7d9-6877-408d-4ced5596c55f">
+      <Execution id="888d1e9b-2fc4-4cde-9a7b-c9489b319d31" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="Invalid_reserved_identity_is_refused_without_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: &quot;not-a-reserved-version&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="6c36e7cb-542c-0bd4-d989-324b3ddaf411">
+      <Execution id="1d8529f1-eb42-445a-811f-570ba9c71e4d" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="Invalid_reserved_identity_is_refused_without_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.A_reserved_identity_cannot_overwrite_an_acknowledged_version" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="58beaa3f-1e01-ef54-dfd8-9b6e4401f189">
+      <Execution id="8258cd96-071c-437a-8ffe-b7dbb0c72d5f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="A_reserved_identity_cannot_overwrite_an_acknowledged_version" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticCommitContractTests.Rejected_publication_keeps_previous_good_version_and_publishes_no_reserved_result" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="b8e13fde-049a-67d6-76a7-8815e42c7a4c">
+      <Execution id="342086bb-9545-4dcb-b400-98475179a295" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticCommitContractTests" name="Rejected_publication_keeps_previous_good_version_and_publishes_no_reserved_result" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b8e13fde-049a-67d6-76a7-8815e42c7a4c" executionId="342086bb-9545-4dcb-b400-98475179a295" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4c191187-cc80-5fff-6291-5286674e820a" executionId="547abb54-1fdb-4b31-9bfb-888366da3bc8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="65202611-a7d9-6877-408d-4ced5596c55f" executionId="888d1e9b-2fc4-4cde-9a7b-c9489b319d31" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="58beaa3f-1e01-ef54-dfd8-9b6e4401f189" executionId="8258cd96-071c-437a-8ffe-b7dbb0c72d5f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b278c544-7097-5cd7-6144-97c3d2780008" executionId="b18a0742-f2b5-436d-8042-c1857252b370" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c36e7cb-542c-0bd4-d989-324b3ddaf411" executionId="1d8529f1-eb42-445a-811f-570ba9c71e4d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="6" passed="0" failed="6" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.26]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.26]       Actual:   typeof(Xunit.Sdk.NotNullException)&#xD;
+[xUnit.net 00:00:00.26]       ---- Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(72,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(String reserved)&#xD;
+[xUnit.net 00:00:00.26]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.26]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(88,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(80,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved)&#xD;
+[xUnit.net 00:00:00.26]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(72,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.&lt;&gt;c__DisplayClass3_0.&lt;Invalid_reserved_identity_is_refused_without_publication&gt;b__0()&#xD;
+[xUnit.net 00:00:00.27]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.27]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.27]       Actual:   typeof(Xunit.Sdk.NotNullException)&#xD;
+[xUnit.net 00:00:00.27]       ---- Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(72,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(String reserved)&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(88,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(80,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(72,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.&lt;&gt;c__DisplayClass3_0.&lt;Invalid_reserved_identity_is_refused_without_publication&gt;b__0()&#xD;
+[xUnit.net 00:00:00.27]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:00.27]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:00.27]       Actual:   typeof(Xunit.Sdk.NotNullException)&#xD;
+[xUnit.net 00:00:00.27]       ---- Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(72,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(String reserved)&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(88,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(80,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(72,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.&lt;&gt;c__DisplayClass3_0.&lt;Invalid_reserved_identity_is_refused_without_publication&gt;b__0()&#xD;
+[xUnit.net 00:00:00.27]       Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(88,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(80,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(29,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.A_reserved_identity_cannot_overwrite_an_acknowledged_version()&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]       Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(88,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(80,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved)&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(13,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.Reserved_capture_identity_is_published_and_independently_recoverable()&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.40]       Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.40]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(88,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.SetContract(FileCommitRequest request, String name, Object value)&#xD;
+[xUnit.net 00:00:00.40]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(80,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.ReservedRequest(String content, String reserved)&#xD;
+[xUnit.net 00:00:00.40]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticCommitContractTests.cs(46,0): at FluxVault.Core.Tests.AutomaticCommitContractTests.Rejected_publication_keeps_previous_good_version_and_publishes_no_reserved_result()&#xD;
+[xUnit.net 00:00:00.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.41]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T17:41:56.8760719+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: "not-a-reserved-version") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T17:41:56.8863204+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: "../../outside") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T17:41:56.8872449+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Core.Tests.AutomaticCommitContractTests.Invalid_reserved_identity_is_refused_without_publication(reserved: "00000000000000000000000000000000") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T17:41:56.8885129+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Core.Tests.AutomaticCommitContractTests.A_reserved_identity_cannot_overwrite_an_acknowledged_version [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T17:41:56.8889628+03:00">
+        <Text>[xUnit.net 00:00:00.27]     FluxVault.Core.Tests.AutomaticCommitContractTests.Reserved_capture_identity_is_published_and_independently_recoverable [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T17:41:57.0156129+03:00">
+        <Text>[xUnit.net 00:00:00.40]     FluxVault.Core.Tests.AutomaticCommitContractTests.Rejected_publication_keeps_previous_good_version_and_publishes_no_reserved_result [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -130,6 +130,9 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
     {
         ArgumentNullException.ThrowIfNull(request);
         await using var content = request.Content;
+        if (request.ReservedVersionId is { } reserved &&
+            (!Guid.TryParseExact(reserved, "N", out var identity) || identity == Guid.Empty || reserved != identity.ToString("N")))
+            throw new ArgumentException("A reserved capture requires a canonical nonempty version identity.", nameof(request));
         await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.BestEffort, cancellationToken).ConfigureAwait(false);
         try
         {
@@ -142,6 +145,18 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
             var existingManifests = metadataStore is null
                 ? await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false)
                 : null;
+            if (request.ReservedVersionId is { } reservedIdentity)
+            {
+                var exists = existingManifests?.Any(manifest => manifest.VersionId == reservedIdentity) == true;
+                if (metadataStore is not null)
+                {
+                    try { await metadataStore.ReadManifestAsync(reservedIdentity, cancellationToken).ConfigureAwait(false); exists = true; }
+                    catch (FileNotFoundException) { }
+                }
+                // A durable worker reconciles an existing immutable result before dispatch.
+                // Reusing its identity here must never overwrite a committed version.
+                if (exists) throw new IOException("The reserved capture is already published; reconcile its original result.");
+            }
             var localReferences = existingManifests?.SelectMany(manifest => manifest.Chunks).ToLookup(chunk => chunk.Digest, StringComparer.OrdinalIgnoreCase);
             var verifiedDescriptors = new Dictionary<string, ChunkDescriptor>(StringComparer.OrdinalIgnoreCase);
             var mirrorUsedBytes = new Dictionary<string, long>(GetMirrorNodeUsedBytes(), StringComparer.OrdinalIgnoreCase);
@@ -201,7 +216,7 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
                     cancellationToken).ConfigureAwait(false);
 
             var manifest = new FileVersionManifest(
-                VersionId: Guid.CreateVersion7().ToString("N"),
+                VersionId: request.ReservedVersionId ?? Guid.CreateVersion7().ToString("N"),
                 WatchedFolderId: request.WatchedFolderId,
                 SourcePath: sourcePath,
                 CapturedAtUtc: request.CapturedAtUtc,
@@ -227,6 +242,9 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
                     request.WatchedFolderPath,
                     cancellationToken)
                 .ConfigureAwait(false));
+            if (request.BeforePublication is not null)
+                await request.BeforePublication(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             mirrorWarnings.AddRange(await WriteManifestsAsync(manifestsToRecord, cancellationToken).ConfigureAwait(false));
             if (lineage.OperationType == VersionOperationType.Restore)
             {

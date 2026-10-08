@@ -1339,6 +1339,14 @@ public sealed class WindowsFixtureToolingTests
             # Native machine/store checks are substituted. Run the actual snapshot
             # function over the real reopened baseline and ownership journal.
             function Get-CimInstance {param($ClassName,$Filter) @{State='Running';ProcessId=$PID;StartName='Preserved';PathName='Preserved'}}
+            function Test-Path {
+                param($LiteralPath,$Path)
+                # This is an ordinary orchestration test, including on a clean
+                # hosted runner. Its installation is synthetic like its services.
+                if($LiteralPath -eq 'C:\ProgramData\FluxVault\installation.json'){return $true}
+                if($LiteralPath -eq 'C:\ProgramData\FluxVault\config.json'){return $false}
+                Microsoft.PowerShell.Management\Test-Path @PSBoundParameters
+            }
             function Get-FileHash {
                 param($LiteralPath,$Algorithm='SHA256')
                 if($LiteralPath -in @('D:\Program Files\PostgreSQL\18\data\pg_hba.conf','D:\Program Files\PostgreSQL\18\data\pg_ident.conf','C:\ProgramData\FluxVault\config.json','C:\ProgramData\FluxVault\installation.json')){@{Hash='A'*64}}
@@ -2759,7 +2767,9 @@ public sealed class WindowsFixtureToolingTests
             var error = process.StandardError.ReadToEndAsync();
             try
             {
-                await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(20));
+                // A cold PowerShell/module launch competes with native filesystem
+                // tests on hosted Windows. This bounds orchestration, not performance.
+                await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60));
                 Assert.True(process.ExitCode == 0, await error);
                 using var result = JsonDocument.Parse(await output);
                 return result.RootElement.Clone();

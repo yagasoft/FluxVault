@@ -16,7 +16,21 @@ snapshots: vault `67539278-9292-4870-93cd-a011419228dc`, revision **13**, full
 configuration and history are unchanged. PostgreSQL retains PID 10660 and its
 6 October lifetime; bootstrap, authentication and ACLs are preserved. This
 section supersedes the historical intermediate gate statements below without
-discarding their evidence. NEXT-005 product implementation has not begun.
+discarding their evidence. NEXT-005 remains a separate release; its automatic
+runtime is not delivered by this branch.
+
+Hosted Windows CI for PR #35 at `f31639f` found one synthetic machine-trust
+fixture using the real machine's installation-file existence, plus two bounded
+test deadlines under concurrent filesystem/PowerShell load. The fixture now
+substitutes exactly the two installation paths, as it already substitutes
+services, hashes and storage; other paths retain native `Test-Path`. The noisy
+watcher correctness deadline is 30 seconds and finite PowerShell fixture deadline
+60 seconds. Assertions and joined teardown are unchanged. These are test-only
+corrections; no installed payload or live acceptance changes. The retained
+`ci-first-failure.txt` identifies the original failures.
+`tooling/ci-fixture-corrections.trx` passes all eight affected cases, zero skipped,
+and the test process exited 0 and was joined. Fresh hosted CI remains required
+before merge.
 
 Independent GPT-6-Astra/high final assessment (`review_protection_design`,
 8 October) **approves bounded NEXT-004 installed acceptance and the complete-branch

@@ -352,3 +352,20 @@ guards. C01–C03/S01–S02/S04–S08/applicableD01 are satisfied; S03 remains r
 Accessibility/theme are deferred, not passed. Synthetic formats, manual-protection
 baseline and timing limits remain; no general application fidelity or throughput
 certification is claimed. Documentation and authorised Git closeout may proceed.
+
+## Hosted CI handoff correction
+
+Hosted run37736542823 built successfully but failed before executing tests: its
+obsolete `PostgreSqlBinPath`/`RunFullSuite` arguments no longer match the approved
+integrity entry point. Independent review accepts explicitly separating ordinary
+hosted tests from the required native PostgreSQL/security lane. The hosted job
+uses `Category!=RequiresPostgreSql`; the40 native cases and applicable S01–S08
+requirements remain required, with unchanged accepted evidence reused only
+within its valid code/dependency/configuration/environment scope. This does not
+restore the retired elevated TEMP/trust runner or generalise the privileged
+fixture for hosted execution. The testing guide now reflects the actual approved
+`FixtureId`/`EvidenceDirectory` interface. The two existing workflow-contract
+checks pass and their host exits zero and joins; these narrow structural checks
+do not prove hosted execution. Fresh execution of the corrected hosted job is
+required for Git handoff, with results recorded by [PR34's checks](https://github.com/yagasoft/FluxVault/pull/34/checks).
+Installed1.0.7 and its acceptance are unchanged.

@@ -5,7 +5,7 @@ The owner approved/resumed after the model-switch planning pause on 8 October 20
 ## Installed acceptance and bounded corrective release
 
 **Current state:** corrective 1.0.9 is installed and its bounded live acceptance
-is independently accepted; Git integration remains open.
+is independently accepted; source integration is tracked in [PR #35](https://github.com/yagasoft/FluxVault/pull/35).
 The update exited 0 and was joined. The independent
 concrete-candidate gate approved candidate `3da720718ab04b99afdf43455222e0cf`,
 its sealed procedure and guarded fallbacks with no blocking finding.

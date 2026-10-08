@@ -1,6 +1,6 @@
 # NEXT-004 protection controls: design and implementation plan
 
-**Status, 8 October 2026:** the owner approved and resumed after the model switch. The bounded implementation is installed as corrective 1.0.9 and its live control, cancellation, deletion, recovery and preservation checks pass. Independent final live/complete-branch assessment is accepted; Git integration remains open. Implementation, installation, corrective redeployment and self-operated validation on this PC within this plan are authorised; independent technical gates remain required. Progress and observed checks are in the [execution evidence](../../verification/2026-10-08-next004-controls/README.md).
+**Status, 8 October 2026:** the owner approved and resumed after the model switch. The bounded implementation is installed as corrective 1.0.9 and its live control, cancellation, deletion, recovery and preservation checks pass. Independent final live/complete-branch assessment is accepted; source integration is tracked in [PR #35](https://github.com/yagasoft/FluxVault/pull/35). Implementation, installation, corrective redeployment and self-operated validation on this PC within this plan are authorised; independent technical gates remain required. Progress and observed checks are in the [execution evidence](../../verification/2026-10-08-next004-controls/README.md).
 
 **Goal:** finish explicit protection control and separate stopping capture from deleting history, retaining the delivered configuration and recovery guarantees.
 

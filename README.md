@@ -22,7 +22,7 @@ and pending edits and prevents dependent backup after unsuccessful saves.
 NEXT-004 adds explicit Pause/Resume, Stop protecting while retaining history,
 and separate reviewed history deletion. Corrective 1.0.9 is installed and its
 bounded [live acceptance](docs/verification/2026-10-08-next004-controls/README.md)
-has independent technical approval; Git integration remains open.
+has independent technical approval; source integration is tracked in [PR #35](https://github.com/yagasoft/FluxVault/pull/35).
 In the File browser, Stop stages a selection change; Save makes it effective
 without deleting versions. Recovery remains available while paused or after
 stopping protection. Retention still applies. In Repository, Review history

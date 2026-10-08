@@ -54,6 +54,38 @@ Use the existing outbox, adding bounded draining and failure visibility; export 
 
 ## Implementation sequence and acceptance
 
+### Current interface notes for the first batch
+
+Targeted inspection during NEXT-004's idle measurement confirms that the shipping
+`Program`/`Worker` composes only the authenticated pipe runtime. The legacy
+`FileSystemProtectionLoop` is not a safe shortcut to automatic operation:
+pending changes are memory-only and `UsnCatchUpService.CatchUpAsync` persists
+checkpoints before work admission. Retain their existing cadence/journal tests
+while replacing only those unsafe admission paths for the new runtime.
+
+`AuthenticatedFluxVaultRequestHandler` currently owns the single mutation
+semaphore through admission and execution. Automatic dispatch must share that
+ordering so acknowledged Pause and changed selections cannot race a source
+publication. `WindowsFluxVaultCallerContextProvider` already owns a duplicated
+effective token and joins its users before disposal; extract/reuse that bounded
+ownership implementation for the service session adapter rather than retaining
+a pipe caller or adding a helper process. Native ordinary-token verification
+remains required.
+
+`FileSystemChunkRepository.CommitAsync` currently creates its version ID during
+commit. The durable work identity must be reserved before source work and passed
+into this existing writer, with source/session stability checked before manifest
+publication. Reconciliation must inspect the reserved immutable result, not just
+its filename. `PostgreSqlRepositoryMetadataStore.ExportOutboxAsync` already has a
+bounded 1,000-row drain; its existing-file fast path needs payload validation and
+draining must share repository coordination with deletion. These are the exposed
+NEXT-003 prerequisites for the first automatic result, not a broader redesign.
+
+Do not add fields to the predecessor's strict configuration JSON, bypass the
+catalogue binding checks or run legacy source enumeration as LocalSystem. The
+extension schema, new policy/status contracts and meaningful Options control
+ship together after NEXT-004's separate installed acceptance.
+
 | Batch | Affected areas and deliverable | Acceptance through real interfaces |
 | --- | --- | --- |
 | 1. First automatic round trip | New bounded Windows session provider and PostgreSQL work store beside existing security/service types; additive work/consent schema; `WindowsSingleVaultService`, `Worker`, catalogue, capture provider/repository identity, Options/status and focused tests. Initially one owned local folder with default serial dispatch; integrate the real discovery event, durable admission and visible result together. | Creator enables → saves file without manual backup → PostgreSQL work/version → history → independent recovery. Close WPF and repeat. Capture ACL denial, wrong creator/binding, default-off upgrade and no privileged fallback. Required authority/identity invariants pass before exposing the path. |

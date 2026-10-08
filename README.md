@@ -11,17 +11,32 @@ measured performance and complete local installation. The supporting
 integrity failures and outstanding validation; the implementation inventory
 below should not be read as a release-readiness certification.
 
-The first integrity slice is implemented and
-installed as v1.0.4 on the staging PC. Its
-[verification record](docs/verification/2026-10-01-verified-recovery/README.md)
-records 687 passing tests, native fixture recovery, and installed service/CLI/UI
-recovery with independent hashes. Desktop validation also proved inventory and
-selection survive service cache invalidation. All temporary processes exited;
-the installed service remains healthy with no watched test folders. The UI rebuild has not started.
-The bounded [protection-save repair](docs/protection-saves.md) preserves unrelated
-settings and stops dependent backup after an unsuccessful save. Its isolated
-[verification](docs/verification/2026-10-03-protection-save/README.md) does not
-establish NEXT-002 security or installed release readiness.
+The accepted installed release is 1.0.9: one logical vault per Windows
+installation, creator ownership with explicit access grants, secure manual save
+→ backup → history → independently verified recovery. The
+[NEXT-002 acceptance record](docs/verification/2026-10-05-next002-rollout-preparation/README.md)
+and [tracker](docs/roadmap-tracker.md) identify completed gates. The
+[protection-save repair](docs/protection-saves.md) preserves unrelated settings
+and pending edits and prevents dependent backup after unsuccessful saves.
+
+NEXT-004 adds explicit Pause/Resume, Stop protecting while retaining history,
+and separate reviewed history deletion. Corrective 1.0.9 is installed and its
+bounded [live acceptance](docs/verification/2026-10-08-next004-controls/README.md)
+has independent technical approval; Git integration remains open.
+In the File browser, Stop stages a selection change; Save makes it effective
+without deleting versions. Recovery remains available while paused or after
+stopping protection. Retention still applies. In Repository, Review history
+deletion shows the exact scope and affected versions; cancellation deletes
+nothing. Confirmation is irreversible and cannot be undone by software rollback.
+Protected overlaps and outside dependencies refuse deletion. An uncertain result
+requires checking the original operation before another destructive action.
+
+Automatic capture, logged-off/reboot protection and VSS/application consistency
+are not supported by this accepted single-vault workflow. NEXT-005 is a separate
+creator-signed-in automatic release; NEXT-006 independent disaster recovery and
+NEXT-010 professional consistency remain following work. The inventory below
+includes existing components and future direction, not those support claims.
+The UI rebuild has not started.
 Fresh owned local NTFS storage is required; existing unmarked non-empty roots
 are preserved and refused. Unrestricted use with working files remains outside
 this slice's verified scope.
@@ -50,8 +65,9 @@ this slice's verified scope.
 FluxVault now has a developer-usable MVP loop:
 
 - WPF dashboard connected to the service over local named-pipe IPC.
-- Per-machine Worker Service host with persisted configuration under
-  `C:\ProgramData\FluxVault\config.json`.
+- Per-machine Worker Service host with a protected
+  `C:\ProgramData\FluxVault\installation.json` binding and authoritative
+  revisioned configuration in the local PostgreSQL vault catalogue.
 - The service IPC pipe grants explicit local desktop and packaged-app access,
   so sparse-packaged FluxVault can connect without weakening service-control or
   ProgramData permissions.

@@ -1,0 +1,27 @@
+{
+  "Service": {
+    "State": "Running",
+    "StartMode": "Auto",
+    "StartName": "LocalSystem",
+    "ProcessId": 26864,
+    "PathName": "\"C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe\""
+  },
+  "ObservedUtc": "2026-10-08T13:59:29.1446836+00:00",
+  "PayloadHashesMatched": 208,
+  "Version": "1.0.9.0",
+  "Registration": {
+    "Related": [
+      "{67CE8AD2-72FD-49A7-89B3-44A670060428}"
+    ],
+    "Old": false,
+    "New": true
+  },
+  "BootstrapAuthenticationAndAclPreserved": true,
+  "Postmaster": {
+    "StartedUtc": "2026-10-06T09:31:44.0114872Z",
+    "ProcessId": 10660,
+    "Port": 5432,
+    "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+    "DataDirectory": "D:\\Program Files\\PostgreSQL\\18\\data"
+  }
+}

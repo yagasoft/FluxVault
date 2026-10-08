@@ -4,6 +4,86 @@ The owner approved/resumed after the model-switch planning pause on 8 October 20
 
 ## Installed acceptance and bounded corrective release
 
+**Current state:** corrective 1.0.9 is installed and its bounded live acceptance
+is independently accepted; Git integration remains open.
+The update exited 0 and was joined. The independent
+concrete-candidate gate approved candidate `3da720718ab04b99afdf43455222e0cf`,
+its sealed procedure and guarded fallbacks with no blocking finding.
+`corrective-update-verified.json` observes its exact MSI registration, 208 matching
+installed payload hashes and FluxVault service PID 26864 running as LocalSystem.
+`corrective-preservation.json` compares complete authenticated before/after
+snapshots: vault `67539278-9292-4870-93cd-a011419228dc`, revision **13**, full
+configuration and history are unchanged. PostgreSQL retains PID 10660 and its
+6 October lifetime; bootstrap, authentication and ACLs are preserved. This
+section supersedes the historical intermediate gate statements below without
+discarding their evidence. NEXT-005 product implementation has not begun.
+
+Independent GPT-6-Astra/high final assessment (`review_protection_design`,
+8 October) **approves bounded NEXT-004 installed acceptance and the complete-branch
+technical gate, with no remaining requirement-backed blocker**. It accepts the
+installed cancellation/deletion/recovery, original configuration/history,
+PostgreSQL/authentication/ACL/unrelated-change preservation, exact 1.0.9 payload,
+changed layouts and joined cleanup. Prior design/code/compatibility/candidate and
+guarded rollback approvals remain applicable. NEXT-009's measured limitations
+remain open; NEXT-005 is unimplemented and separate. This is technical assessment;
+the owner's existing post-resume standing authority covers the in-scope rollout.
+
+Installed WPF review of the stopped synthetic Source retains its exact two-version,
+119-byte preview across more than nine seconds of periodic status refresh.
+The separate confirmation names the exact scope, count, size and irreversible
+effect. Cancel admits nothing: `installed-cancel-preservation.json` compares
+complete authenticated snapshots and confirms equal vault, revision,
+configuration and history, with no pending operation. Confirmed deletion removes
+only the two reviewed Source versions; all 18 other versions, configuration and
+revision remain equal and the live source hash is unchanged
+(`installed-deletion-preservation.json`). Protected Neighbour review refuses
+deletion with its overlap reason and disabled Delete control, surviving more
+than 22 seconds of refresh (`installed-protected-neighbour.jpg`).
+
+After deletion, installed WPF restores the retained Neighbour file to a new
+destination. Independent SHA-256 matches the 1 MiB original
+(`installed-post-deletion-recovery.json`). Stop protecting Neighbour, then Save,
+retains its history and returns the **complete original four-scope configuration**
+with protection enabled at revision 14; no draft/save/backup remains pending.
+Fresh `installed-final-status.json` and `installed-final-preservation.json`
+confirm all 16 original versions and the two retained Neighbour versions,
+unchanged unrelated dirty files and original PostgreSQL lifetime.
+
+Changed Pause/Resume, Stop/Save and reviewed-deletion layouts were inspected in
+the actual installed desktop at 175% and 200% scaling. The controls remain
+visible, explanatory text wraps and the Stop/Save toolbar wraps without clipping.
+`installed-*-controls-200.jpg`, `installed-history-controls-175.jpg` and
+`display-restored-175.jpg` retain the observations. Keyboard Tab/Return saves the
+stopped selection. Theme/accessibility work remains deferred. The original 175%
+display setting is restored; owned Settings exited and the idle desktop was
+terminated and joined after checking no pending records. No graceful desktop
+shutdown is claimed. `installed-ui-cleanup.json` and the final joined read-only
+snapshot process record retain cleanup evidence. The production service remains
+running intentionally; `installed-final-readonly-check.json` freshly verifies
+1.0.9 registration, all 208 payload hashes and bootstrap/authentication/ACL pins.
+
+`corrective-startup-observations.json` records three fresh finite observer
+processes, each exited 0 and joined, using 63 hash-verified frozen candidate App
+files overlaid onto the existing TestHost runtime. Readers and draft writers were
+joined. On the stated 24-logical-processor workstation with 20 retained versions,
+first content rendered in **1565.39, 1482.31 and 1489.96 ms**. Caches were
+uncontrolled after prior product/build activity; these are not cold-start trials.
+Each observes one startup dispatcher task of **539–549 ms**, missing NEXT-009's
+proposed 100 ms target. Independent Astra/high assessment treats this as a
+documented NEXT-009 limitation, not an added NEXT-004 blocker on this evidence.
+It establishes neither a baseline regression nor full performance acceptance.
+The fresh installed App observation records **620.37 seconds** with no Sky
+window-state captures: App **1.540%**, service **0.0169%** machine CPU, normalised
+over 24 logical processors (`idle-fresh-observation.json`). App working set rises
+from 214.4 to 225.3 MB and handles fall from 605 to 594. External automation
+isolation is **not proved**; `NoUiAutomationAttached` in the initial observation
+means no task capture was attached, not a census of external clients. A subsequent
+15-second joined trace shows automation-provider stack activity but does not
+establish its CPU contribution or excuse the measured target miss. Independent
+Astra/high assessment leaves NEXT-009 performance acceptance open and finds no
+additional NEXT-004 blocker on this bounded evidence. These observations are
+neither a predecessor regression comparison nor a full idle/performance pass.
+
 The authorised 1.0.8 update exited 0 and was joined. Its protected `controls-update-1.0.8/Update-verified.json` observes exact MSI registration, 208 matching installed payload hashes, FluxVault service PID 27768 and unchanged bootstrap/authentication/ACLs. Normal PostgreSQL remains PID 10660, started 6 October 09:31:44 UTC. Complete authenticated `installed-before.json` / `installed-after.json` configurations are equal; vault identity and revision 8 are unchanged by installation.
 
 Actual installed WPF acceptance observes Pause/Resume retaining an unsaved source-selection draft, disabled backup while paused, then a non-purging save of two owned synthetic folders at revision 11. Every configuration field outside the intentionally changed selection lists remains equal to the baseline. Manual backup reports two captured and eight unchanged files, no failure. `installed-neighbour-recovery.json` independently matches the 1 MiB source/recovery SHA-256. The named Stop action stages removal, Save keeps history, and `installed-stopped-source-recovery.json` independently matches the 119-byte source/recovery SHA-256 after stopping protection. Saved protected neighbour history refuses deletion with a visible overlap reason. No deletion has been admitted yet.

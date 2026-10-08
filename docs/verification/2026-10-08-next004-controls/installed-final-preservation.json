@@ -1,0 +1,39 @@
+{
+  "Candidate": "3da720718ab04b99afdf43455222e0cf",
+  "ProtectedScopes": 4,
+  "DraftAbsent": true,
+  "IsEnabled": true,
+  "AllOriginalHistoryRetained": true,
+  "VaultId": "67539278-9292-4870-93cd-a011419228dc",
+  "RetainedVersions": 18,
+  "InstalledVersion": "1.0.9.0",
+  "PayloadHashesMatched": 208,
+  "DatabaseRestorePerformed": false,
+  "ObservedUtc": "2026-10-08T14:33:37.0988967+00:00",
+  "PostmasterPreserved": {
+    "StartedUtc": "2026-10-06T09:31:44.0114872Z",
+    "ProcessId": 10660,
+    "Port": 5432,
+    "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+    "DataDirectory": "D:\\Program Files\\PostgreSQL\\18\\data"
+  },
+  "FinalHistoryMatchesAfterValidation": true,
+  "TemporaryUiAndSnapshotProcessesAbsent": true,
+  "NormalPostgresqlRestarted": false,
+  "Revision": 14,
+  "PendingBackupAbsent": true,
+  "FullOriginalConfigurationRestored": true,
+  "PendingSaveAbsent": true,
+  "UnrelatedWorkingTree": [
+    {
+      "Path": "scripts/fluxvault-index.ps1",
+      "Sha256": "19BDE2B0593DA98696FC768F0DD0A68C08AE939D718B08B57891511E35F1CFE0",
+      "Preserved": true
+    },
+    {
+      "Path": "scripts/fluxvault-index.json",
+      "Sha256": "9752DDF184A20EF4C574BB462083265C2FD3126153F73F8C2783F6A5FD1A5911",
+      "Preserved": true
+    }
+  ]
+}

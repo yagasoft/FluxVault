@@ -23,6 +23,6 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       # Native PostgreSQL/security acceptance uses the separately authorised
       # Windows fixture; this hosted job does not establish those results.
-      - name: Ordinary tests (excludes required native PostgreSQL gate)
+      - name: Ordinary tests (excludes required native installation gates)
         shell: pwsh
-        run: dotnet test --configuration Release --no-build --filter "Category!=RequiresPostgreSql"
+        run: dotnet test --configuration Release --no-build -m:1 --filter "Category!=RequiresPostgreSql&Category!=RequiresPreparedWindowsInstallation"

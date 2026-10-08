@@ -40,7 +40,7 @@ public sealed class WindowsFixtureToolingTests
                 if(-not $joined){throw 'Owned readiness child did not join'}
             }
             @{Failure=$failure;Joined=$joined}|ConvertTo-Json -Compress
-            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal), simulateCommissionMembership: true);
         Assert.True(result.GetProperty("Joined").GetBoolean());
         if (accepted) Assert.Equal(JsonValueKind.Null, result.GetProperty("Failure").ValueKind);
         else Assert.Contains("bound native SYSTEM process", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
@@ -104,7 +104,7 @@ public sealed class WindowsFixtureToolingTests
             if($failure){try{Invoke-CommissionRollback $reopened}catch{}}
             @{Failure=$failure;RestoredExact=$restoredExact;FailurePreserved=$preserved;ReplayRefused=$replayRefused;Effects=$script:effects;
                 ActiveFailureAbsent=(-not(Test-Path (Join-Path $root 'cleanup-failed.json')));InstallerId=(Get-Content (Join-Path $root 'installer-Install-completed.json') -Raw|ConvertFrom-Json).Process.ProcessId}|ConvertTo-Json -Compress
-            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal), simulateCommissionMembership: true);
         Assert.True(result.GetProperty("RestoredExact").GetBoolean());
         Assert.True(result.GetProperty("FailurePreserved").GetBoolean());
         Assert.True(result.GetProperty("ReplayRefused").GetBoolean());
@@ -163,7 +163,7 @@ public sealed class WindowsFixtureToolingTests
             if($failure){try{Invoke-CommissionRollback $reopened}catch{}}
             @{Failure=$failure;OriginalsExact=$originalsExact;OperatorMatches=$operatorMatches;TargetsUnchanged=($successor.Targets -join ',') -ceq 'unchanged-repository,unchanged-database';
                 Effects=$script:effects;ReplayRefused=$replayRefused;OriginalInstallerRetained=(Get-Content (Join-Path $root 'acl-handoff-original-installer-Install-completed.json') -Raw|ConvertFrom-Json).Process.ProcessId -eq 456}|ConvertTo-Json -Compress
-            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal), simulateCommissionMembership: true);
         Assert.True(result.GetProperty("OriginalsExact").GetBoolean());
         Assert.True(result.GetProperty("OperatorMatches").GetBoolean());
         Assert.True(result.GetProperty("OriginalInstallerRetained").GetBoolean());
@@ -193,7 +193,7 @@ public sealed class WindowsFixtureToolingTests
             $reopened=@{WorkRoot=$root;IdentitySha256=('A'*64);InstallerUncertain=$false};$failure=$null
             try{Assert-CommissionInstallerSettled $reopened}catch{$failure=$_.Exception.Message}
             @{Failure=$failure;CatchMarkerExists=(Test-Path (Join-Path $root 'installer-uncertain.json'))}|ConvertTo-Json -Compress
-            """.Replace("COMPLETED_VALUE", completed ? "$true" : "$false", StringComparison.Ordinal));
+            """.Replace("COMPLETED_VALUE", completed ? "$true" : "$false", StringComparison.Ordinal), simulateCommissionMembership: true);
         Assert.False(result.GetProperty("CatchMarkerExists").GetBoolean());
         if (completed) Assert.Equal(JsonValueKind.Null, result.GetProperty("Failure").ValueKind);
         else Assert.Contains("intent has no confirmed completion", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
@@ -222,7 +222,7 @@ public sealed class WindowsFixtureToolingTests
             $count=$context.Tasks.Count
             if(-not $failure){$context.Jobs=@{};Stop-CommissionActors $context}
             @{Failure=$failure;Recovered=$count;Retired=$script:retired;ResultChecked=$script:resultChecked;StartedExists=(Test-Path (Join-Path $root 'task-cleanup-started.json'));IntentRetained=(Test-Path (Join-Path $root 'task-cleanup-intent.json'))}|ConvertTo-Json -Compress
-            """.Replace("MISMATCH_VALUE", mismatched ? "$true" : "$false", StringComparison.Ordinal));
+            """.Replace("MISMATCH_VALUE", mismatched ? "$true" : "$false", StringComparison.Ordinal), simulateCommissionMembership: true);
         Assert.False(result.GetProperty("StartedExists").GetBoolean());
         Assert.True(result.GetProperty("IntentRetained").GetBoolean());
         Assert.Equal(mismatched ? 0 : 1, result.GetProperty("Recovered").GetInt32());
@@ -359,7 +359,7 @@ public sealed class WindowsFixtureToolingTests
                     InputRetained=(Test-Path $context.Setup.TicketPath);CopiedTicket=(Test-Path (Join-Path $context.WorkRoot 'setup-intents/installation-ticket.json'))}|ConvertTo-Json -Depth 8 -Compress
             } $context $prepared $scenario $childScript
             $actual
-            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal), simulateCommissionMembership: true);
         Assert.True(result.GetProperty("InputRetained").GetBoolean());
         Assert.Equal(scenario is not ("cleanup-unconfirmed" or "watchdog-failed"), result.GetProperty("Launched").GetBoolean());
         Assert.True(accepted == result.GetProperty("Completed").GetBoolean(), result.ToString());
@@ -481,6 +481,7 @@ public sealed class WindowsFixtureToolingTests
     }
 
     [Theory]
+    [Trait("Category", "RequiresPreparedWindowsInstallation")]
     [InlineData("protected-template", true)]
     [InlineData("volume-delete", true)]
     [InlineData("creator-owner", true)]
@@ -1114,6 +1115,7 @@ public sealed class WindowsFixtureToolingTests
     }
 
     [Fact]
+    [Trait("Category", "RequiresPreparedWindowsInstallation")]
     public async Task Interrupted_native_key_import_is_recovered_without_deleting_an_unrelated_key()
     {
         using var fixture = new ScriptFixture();
@@ -1587,9 +1589,15 @@ public sealed class WindowsFixtureToolingTests
             $sentinel=Join-Path $assets 'existing-logo.png';[IO.File]::WriteAllText($sentinel,'preserve cloned assets')
             $acl=(Get-Acl -LiteralPath $assets).Sddl
             [IO.File]::WriteAllText((Join-Path $runtime 'FluxVault.TestHost.exe'),'not executed')
+            # This test covers asset staging and preservation, not signed SDK admission.
+            # The separate snapshot tests retain the actual signature boundary.
+            $sdk=Join-Path $root 'sdk-stand-in';New-VaultFixtureProtectedDirectory $sdk
+            & (Get-Module packaged-identity) {
+                function script:New-VaultFixtureSdkSnapshot {param($Journal,$Source) return $Source}
+            }
             $failure=$null
             try {
-                New-VaultFixtureIdentityPackage $journal 'E:\Windows Kits\10\bin\10.0.28000.0\x64' {
+                New-VaultFixtureIdentityPackage $journal $sdk {
                     param($Executable,$Arguments)
                     if([IO.Path]::GetFileName($Executable) -ne 'mt.exe'){throw 'Unexpected tool invocation.'}
                     throw 'Reached bounded packaging boundary.'
@@ -1944,6 +1952,8 @@ public sealed class WindowsFixtureToolingTests
             [101] [unknown] LOG:  no match in usermap "fv_gate_system" for user "fv_gate_service" authenticated as "SYSTEM@NT AUTHORITY"
             [101] [unknown] FATAL:  SSPI authentication failed for user "fv_gate_service"
             '@
+            # Match the observed PostgreSQL LF log format regardless of checkout endings.
+            $one=$one.Replace("`r`n","`n")
             $two=$one+"`n"+$one.Replace('[101]','[102]')
             $principal=Assert-VaultFixtureSspiRefusal $two -ExpectedSid 'S-1-5-18' -HostAddress '127.0.0.1'
             $refused=0
@@ -2542,10 +2552,25 @@ public sealed class WindowsFixtureToolingTests
             Directory.CreateDirectory(Root);
         }
 
-        internal async Task<JsonElement> RunAsync(string body)
+        internal async Task<JsonElement> RunAsync(string body, bool simulateCommissionMembership = false)
         {
             var module = FindModule();
             var script = Path.Combine(parent, $"case-{Guid.NewGuid():N}.ps1");
+            // Explicit synthetic orchestration cases supply only the accepted group
+            // prerequisite. Native ACLs, hashes, receipts and admission remain real.
+            // Other tests, including direct-membership refusal, use the actual lookup.
+            var membership = simulateCommissionMembership ? """
+                & (Get-Module vault-windows-fixture) {
+                    function script:Get-LocalGroupMember {
+                        param($SID)
+                        if($SID -ne 'S-1-5-32-544'){throw 'Unexpected group lookup in orchestration test.'}
+                        foreach($member in @([Security.Principal.WindowsIdentity]::GetCurrent().User.Value,
+                            'S-1-5-21-136112424-624261118-1239521417-1001') | Select-Object -Unique) {
+                            [pscustomobject]@{SID=[Security.Principal.SecurityIdentifier]::new($member)}
+                        }
+                    }
+                }
+                """ : string.Empty;
             await File.WriteAllTextAsync(script, $"""
                 $ErrorActionPreference = 'Stop'
                 $module = '{Quote(module)}'
@@ -2553,6 +2578,7 @@ public sealed class WindowsFixtureToolingTests
                 $parent = '{Quote(parent)}'
                 $root = '{Quote(Root)}'
                 $fixtureId = '{Path.GetFileName(Root)}'
+                {membership}
                 {body}
                 """);
             var start = new ProcessStartInfo("pwsh")

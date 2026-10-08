@@ -8,7 +8,7 @@ contain the observed results and native prerequisites. A passing non-database
 run is not the full integrity gate. For ordinary checks without that fixture:
 
 ```powershell
-dotnet test FluxVault.slnx -c Release --filter "Category!=RequiresPostgreSql"
+dotnet test FluxVault.slnx -c Release -m:1 --filter "Category!=RequiresPostgreSql&Category!=RequiresPreparedWindowsInstallation"
 ```
 
 The required native PostgreSQL lane runs only on the authorised Windows
@@ -28,11 +28,30 @@ and data state. It never restarts normal PostgreSQL. Missing ownership or
 authentication prerequisites fail visibly; no database case silently skips.
 
 Hosted CI builds the solution and explicitly runs ordinary tests excluding
-`RequiresPostgreSql`. The 40 PostgreSQL cases and applicable S01–S08 native
+`RequiresPostgreSql` and `RequiresPreparedWindowsInstallation`, with assemblies
+run sequentially to avoid contention between deadline-sensitive checks. The 40
+PostgreSQL cases and applicable S01–S08 native
 security gates remain required through the approved Windows fixtures and their
 retained evidence. They are not run or established by hosted CI. Relevant code,
 dependency, configuration or environment changes require fresh affected native
 proof before acceptance; unchanged evidence may be reused.
+
+The eight `RequiresPreparedWindowsInstallation` cases also remain required on
+the approved Windows installation: seven fixed-target PostgreSQL ACL cases and
+one persisted native CNG-key recovery. They depend on actual reviewed installation
+ancestors or the admitted native key profile, and retain the accepted local
+343-case Integration evidence. They are not hosted passes or skips. To select
+them on that installation, with its approved prerequisites:
+
+```powershell
+dotnet test tests/FluxVault.Integration.Tests/FluxVault.Integration.Tests.csproj -c Release --filter "Category=RequiresPreparedWindowsInstallation"
+```
+
+Portable orchestration tests model only their declared direct-administrator and
+SDK-snapshot prerequisites; real descriptor, hash, receipt, asset and refusal
+assertions remain. Synthetic SSPI input uses PostgreSQL's observed LF log format.
+These substitutions do not establish real account membership or signed SDK
+admission, which remain covered by the separate native gates.
 
 `FluxVault.TestHost` is test-only and excluded from installer/publish projects.
 Ordinary process helpers use generated disposable roots and private pipes;

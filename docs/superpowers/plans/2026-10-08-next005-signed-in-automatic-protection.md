@@ -1,6 +1,6 @@
 # NEXT-005 signed-in automatic protection: design and implementation plan
 
-**Status, 8 October 2026:** the owner explicitly resumed after the model-switch pause. This separate slice is in implementation; no automatic runtime is deployed or claimed. [NEXT-004](2026-10-08-next004-protection-controls.md) is independently live-accepted as 1.0.9 and merged through PR #35 at `41222b6`. Its baseline, evidence-reuse rules, fixed architecture, post-resume authority and deployment/cleanup requirements also apply here.
+**Status, 11 October 2026:** the owner has removed virtual machines from this plan and confirmed that FluxVault remains in staging with disposable data. Implementation continues on this Windows staging PC under the existing standing authority; no additional environment acquisition or approval is required. No automatic runtime is deployed or claimed. [NEXT-004](2026-10-08-next004-protection-controls.md) is independently live-accepted as 1.0.9 and merged through PR #35 at `41222b6`. Reuse its valid evidence, fixed architecture and deployment/cleanup procedure, subject to the staging-data scope below.
 
 **Goal:** with the creator signed in, save a supported file → durable automatic capture → restart FluxVault → find its version → independently verify recovery, without keeping the desktop open.
 
@@ -10,6 +10,18 @@
 
 **Design gate:** [independent Astra review](../../verification/2026-10-08-next004-next005-planning/independent-design-review.md) accepts the corrected extension-table/rollback design. Implementation, migration and candidate proof remain required.
 
+**Staging scope:** use the installed Windows service, WPF client, PostgreSQL and
+existing owned process/database fixtures on this PC. FluxVault staging captures,
+history and metadata, together with explicitly owned test sources and recovery
+outputs, are disposable and may be reset or recreated when a test needs it. Check
+the exact owned targets and join their users before cleanup. Retain expected
+bytes and evidence until each integrity/recovery/interruption assertion is
+resolved; disposability does not turn an unverified outcome into success.
+Unrelated files, source repositories, Windows accounts, working-tree changes and
+databases are outside this permission. Never restart normal PostgreSQL. No
+virtual machine, hypervisor, evaluation image or second Windows environment is a
+dependency of this slice. The prior VM/environment decision is superseded.
+
 ## What already exists and what must change
 
 | Area | Verified current source | Remaining work |
@@ -17,8 +29,8 @@
 | Installed runtime | `Worker` runs the authenticated pipe server and joins its lifetime; `WindowsSingleVaultService` opens the fixed protected binding. Status explicitly says automatic protection unavailable. | Compose a supervised automatic worker without loosening manual request authority or disposal order. |
 | Discovery/cadence | `FileSystemProtectionLoop`, `UsnCatchUpService`, Windows journal reader and defaulted `CaptureCadencePolicy` exist. | Pending paths are memory-only; checkpoints are saved before capture/admission. Native watcher error handling, rename reconciliation and root reappearance need closure before activation. |
 | Source authority | `WindowsCallerCaptureProvider` and `WindowsProtectionSourceAccess` use validated caller handles on local NTFS. Tokens are request-owned; the executor explicitly does not retain callers. | Obtain and supervise an ordinary creator logon token independently of a desktop request. Never reuse a request after token disposal. |
-| Integrity/recovery | Verified publication/reads, reference-safe maintenance, cross-process leases, PostgreSQL identity checks and independently hashed manual recovery are delivered. | Bind capture publication to durable work identity; preserve dirty ranges through failures; cover the new concurrent scheduler paths. |
-| Export repair | Metadata outbox and export APIs exist; `WriteOutboxFileAsync` currently accepts an existing filename without comparing its payload. | Bounded retry independent of a subsequent capture, validated existing exports and truthful lag. This is not a portable disaster-recovery bundle. |
+| Integrity/recovery | Verified publication/reads, reference-safe maintenance, cross-process leases, PostgreSQL identity checks and independently hashed manual recovery are delivered. The reviewed, unexposed foundation adds reserved capture identity, live-source stability guards, durable work/consent and runtime fencing. | Compose these existing primitives with discovery, session ownership, publication/claim reconciliation and supervised shutdown; preserve dirty ranges and prove the new scheduler interleavings. |
+| Export repair | Reviewed unexposed code validates existing export payloads, retires pending exports atomically with deletion and drains old orphan work in bounded batches under existing coordination. | Wire retry independent of a subsequent capture and truthful lag into the supervisor. Reuse the completed real-store regressions. This is not a portable disaster-recovery bundle. |
 
 ## Signed-in authority and support boundary
 
@@ -63,23 +75,23 @@ pending changes are memory-only and `UsnCatchUpService.CatchUpAsync` persists
 checkpoints before work admission. Retain their existing cadence/journal tests
 while replacing only those unsafe admission paths for the new runtime.
 
-`AuthenticatedFluxVaultRequestHandler` currently owns the single mutation
-semaphore through admission and execution. Automatic dispatch must share that
-ordering so acknowledged Pause and changed selections cannot race a source
-publication. `WindowsFluxVaultCallerContextProvider` already owns a duplicated
+`AuthenticatedFluxVaultRequestHandler` holds a single mutation semaphore through
+admission and execution and now accepts a shared gate. Wire automatic dispatch
+to that existing gate so acknowledged Pause and changed selections cannot race
+a source publication. `WindowsFluxVaultCallerContextProvider` already owns a duplicated
 effective token and joins its users before disposal; extract/reuse that bounded
 ownership implementation for the service session adapter rather than retaining
 a pipe caller or adding a helper process. Native ordinary-token verification
 remains required.
 
-`FileSystemChunkRepository.CommitAsync` currently creates its version ID during
-commit. The durable work identity must be reserved before source work and passed
-into this existing writer, with source/session stability checked before manifest
-publication. Reconciliation must inspect the reserved immutable result, not just
-its filename. `PostgreSqlRepositoryMetadataStore.ExportOutboxAsync` already has a
-bounded 1,000-row drain; its existing-file fast path needs payload validation and
-draining must share repository coordination with deletion. These are the exposed
-NEXT-003 prerequisites for the first automatic result, not a broader redesign.
+The reviewed foundation already lets `FileSystemChunkRepository.CommitAsync`
+accept a reserved version identity and a pre-publication guard. Wire durable
+claims and creator-session validity into those interfaces. Reserved-result
+verification validates identity and content; reconciliation must use it rather
+than infer success from a filename. The existing 1,000-row outbox drain now
+validates prior exports and excludes deleted versions, including older orphaned
+work. Wire its repository-coordinated entry point into the supervisor. Reuse
+these completed NEXT-003 prerequisite tests; do not rebuild their machinery.
 
 Do not add fields to the predecessor's strict configuration JSON, bypass the
 catalogue binding checks or run legacy source enumeration as LocalSystem. The
@@ -88,22 +100,42 @@ ship together after NEXT-004's separate installed acceptance.
 
 | Batch | Affected areas and deliverable | Acceptance through real interfaces |
 | --- | --- | --- |
-| 1. First automatic round trip | New bounded Windows session provider and PostgreSQL work store beside existing security/service types; additive work/consent schema; `WindowsSingleVaultService`, `Worker`, catalogue, capture provider/repository identity, Options/status and focused tests. Initially one owned local folder with default serial dispatch; integrate the real discovery event, durable admission and visible result together. | Creator enables → saves file without manual backup → PostgreSQL work/version → history → independent recovery. Close WPF and repeat. Capture ACL denial, wrong creator/binding, default-off upgrade and no privileged fallback. Required authority/identity invariants pass before exposing the path. |
+| 1. First automatic round trip | Compose a bounded Windows session provider with the reviewed PostgreSQL work/consent store and existing security/service types; wire `WindowsSingleVaultService`, `Worker`, shared mutation gate, capture/repository identity, Options/status and focused tests. Initially one owned local folder with default serial dispatch; integrate the real discovery event, durable admission and visible result together. | Creator enables → saves file without manual backup → PostgreSQL work/version → history → independent recovery. Close WPF and repeat. Capture ACL denial, wrong creator/binding, default-off upgrade and no privileged fallback. Required authority/identity invariants pass before exposing the path. |
 | 2. Restart and accountable coverage | `FileSystemProtectionLoop`, `UsnCatchUpService`, checkpoint reader/store, `ProtectionRuntimeCoordinator`, repository metadata/outbox and supervisor. Preserve cadence tests and replace only unsafe in-memory/early-ack behaviour. | Kill after admission and after publication; restart and recover correct bytes without false completion/duplicate acknowledged version. Newer save during running work survives. Pause/resume; sign-out and creator re-entry; native overflow, rename, missing/reappearing root, journal reset/wrap; controlled source change/lock, DB/mirror failure and retry without another save. Prove no post-stop writes, leaked handles or overlapping generations. |
-| 3. Combined, responsive and installed | Existing WPF views/VM status, native/process/PG fixtures, performance observations, candidate/update tooling, help and tracker. | End-to-end **save → automatic capture → FluxVault restart → find version → independently verify recovery** on the installed candidate. Also exercise a pending save across restart, grants/denial, retained earlier data, overlapping maintenance/restore and joined teardown. Independent final candidate review and zero-warning build required. |
+| 3. Combined, responsive and installed | Existing WPF views/view-model status, native/process/PG fixtures, performance observations, candidate/update tooling, help and tracker. | End-to-end **save → automatic capture → FluxVault restart → find version → independently verify recovery** on the installed staging candidate. Also exercise a pending save across restart, grants/denial, retained earlier test versions, overlapping maintenance/restore and joined teardown. Independent final candidate review and zero-warning build required. |
 
 **Effort checkpoint:** after two substantive batches, the private real-service/DB/UI round trip and restart result must exist. If not, identify the exact authority/durability blocker and reduce the affected path, without spending another batch on broad fixture conversion or UI scaffolding. Do not enable an unsafe shortcut to produce a demonstration.
 
-The current checkpoint identifies a native source-authority environment blocker:
-the existing token fixture cannot prove real WTS sign-out/replacement without
-affecting the operator's session. The [verification ledger](../../verification/2026-10-08-next005-automatic/README.md#native-authority-gate)
-records the independent assessment, host inventory and pending isolated-Windows
-environment decision. Complete only the bounded unexposed foundation corrections
-already under review; runtime composition/exposure and deployment wait for that
-decision and the required native proof. This does not waive signed-in acceptance
-or move logged-off/reboot work into this slice.
+The 11 October staging decision removes the previous environment acquisition
+block. The two foundation review findings are closed at `1b2caff`; resume from
+that checkpoint without repeating unchanged verification. The next batch must
+join the real session adapter, supervisor, discovery admission and existing
+capture/work interfaces into the first observable staging round trip. The
+[verification ledger](../../verification/2026-10-08-next005-automatic/README.md#native-authority-gate)
+keeps the narrower native sign-out/re-entry acceptance item open. It is not a VM
+dependency or a reason to stop all implementation.
 
-Extend existing `ProtectionLoopUsnTests`, cadence/checkpoint tests, native caller source tests, service lifetime tests, repository process/PostgreSQL integrity cases and actual VM contracts. Add focused real-store tests for each distinct new durability, consent, concurrency and migration invariant. Use barriers/crash points at admission, publication, completion and shutdown; component fakes alone cannot close these gates. The existing resource-intent journal, isolated authenticated PostgreSQL fixtures and native creator/ungranted-user probes remain the tooling boundary. Join every temporary process; do not ask the owner to perform validation.
+Extend existing `ProtectionLoopUsnTests`, cadence/checkpoint tests, native caller source tests, service lifetime tests, repository process/PostgreSQL integrity cases and actual view-model contracts. Add focused real-store tests for each distinct new durability, consent, concurrency and migration invariant. Use barriers/crash points at admission, publication, completion and shutdown; component fakes alone cannot close these gates. The existing resource-intent journal, isolated authenticated PostgreSQL fixtures and native creator/ungranted-user probes remain the tooling boundary. Join every temporary process; do not ask the owner to perform validation.
+
+Use this concrete staging verification sequence:
+
+1. Exercise real WTS acquisition and ordinary-token SID, session ID and
+   AuthenticationId validation against the current signed-in creator, then read
+   owned disposable sources through the existing caller access layer.
+2. Use deterministic authority-loss and replacement barriers to prove refusal
+   at admission/open/publication, retained pending work, joined readers before
+   token disposal and stale-generation rejection. Record these as injected
+   transitions, separately from actual Windows sign-out evidence.
+3. Use the existing owned PostgreSQL/process fixtures and scoped FluxVault
+   restarts for durable admission/publication interruption, takeover,
+   reconciliation, migration/rollback and the real save-to-recovery workflow.
+4. Retain actual native sign-out/re-entry as a specific candidate acceptance
+   check. A separately owned staging session can be used if available; the
+   current session plus injected transitions does not establish that result.
+   If testing would require signing out the operator or rebooting Windows,
+   identify the concrete disruption and obtain that separate authority only
+   then. Do not infer it from disposable FluxVault data, request a VM instead,
+   or claim the unresolved check passed.
 
 ## Migration, release and recovery
 
@@ -123,7 +155,7 @@ Keep automatic protection off through migration and until explicit creator conse
 
 Rehearse actual forward → rollback → old-binary read/save (including changed source scope) → re-upgrade → fresh consent in an owned fixture. Assert preserved policy/work/history/receipts, readable verified recovery throughout, no capture before renewed approval, correct exclusion of obsolete queued scope and no duplicate completion. Test interrupted migration and interrupted rollback-marker publication; do not downgrade before durable quiescence/invalidation is established. Never drop the queue or restore a stale DB over later versions. Retain packages outside the task worktree and clearly report the rollback release's manual-only operation.
 
-Use the NEXT-004 release/preservation procedure and standing authority after resume; no repeated routine rollout approval is needed. Do not restart PostgreSQL. Installed validation uses owned synthetic data and a scoped FluxVault restart, not a reboot/sign-out of the operator's live desktop. Native sign-out/session replacement and hostile-user proofs use the owned Windows fixture. If the fixture cannot prove them, the gate remains open; do not claim broader support or ask for testing assistance as a substitute.
+Use the NEXT-004 candidate/rollback procedure and existing standing authority; no repeated routine staging rollout approval is needed. Apply the disposable-data scope above and preserve unrelated resources. Installed validation uses this staging PC, owned synthetic data and scoped FluxVault restarts. An operator sign-out or Windows reboot is a separate host disruption; neither is assumed here. Keep the actual native sign-out/session-replacement acceptance result explicit alongside the current-session and injected-transition results. No additional machine is required by the plan, and the removed environment approval does not block implementation. Completion still requires applicable candidate, recovery, authority and live-validation gates; do not ask the owner to perform tests or claim broader support from incomplete evidence.
 
 ## Following priorities and bounded UI exploration
 

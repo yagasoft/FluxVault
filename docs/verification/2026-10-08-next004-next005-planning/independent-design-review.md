@@ -29,3 +29,41 @@ The owner explicitly requested a pause before implementation for a model switch.
 ## Planning validation by the task owner
 
 Five changed Markdown documents were checked: 71 local file links resolve, and the whitespace check passes. No product tests were run for these documentation-only changes. Final read-only observations preserve the primary checkout's two index-script hashes, FluxVault PID 10384/start time and PostgreSQL postmaster PID 10660/start time. All shell/tool sessions launched for this planning pass returned completed; no temporary product, build, test or database processes were launched. Existing acceptance is reused within the limits stated in the plans, not represented as a fresh runtime pass.
+
+## Staging verification revision — 11 October 2026
+
+The owner directs: “Remove VMs from the design/plan; we are still in staging and
+the data is disposable.” This supersedes the later environment acquisition
+proposal and its pending approval. The original planning/model-switch pause above
+is historical: the owner already resumed, and standing implementation/staging
+rollout authority remains in force within the agreed slices.
+
+Independent GPT-6-Astra/high reviewer `review_protection_design` returns
+**Accepted approach** for proceeding on this Windows staging PC with the real
+service/WPF/PostgreSQL interfaces, existing owned fixtures and disposable
+FluxVault data. No virtual machine, hypervisor, evaluation image or additional
+Windows environment is required to continue implementation. Reuse the completed
+foundation review and evidence; no further architecture or tracking framework is
+introduced.
+
+The accepted verification route combines real WTS token acquisition and
+SID/session/AuthenticationId checks against the current creator session with
+explicitly labelled injected authority-loss/replacement barriers. The latter must
+prove stopped admission/publication, retained work, joined readers and stale
+generation rejection; they do not establish an actual Windows sign-out. Existing
+owned PostgreSQL/process fixtures cover interruption, takeover, reconciliation
+and migration/rollback. Independent candidate review and joined cleanup remain.
+
+The reviewer retains one specific acceptance limitation: actual native
+sign-out/re-entry is still unproved and remains a candidate check. Disposable
+FluxVault data does not authorise operator sign-out, Windows reboot, unrelated
+database changes or restarting normal PostgreSQL. Any required host disruption
+must be made concrete and separately authorised when reached; it is not a blanket
+implementation block or a reason to recreate the removed VM requirement.
+
+This is a planning correction. It does not rerun, invalidate or expand previously
+completed tests, and it does not establish new runtime or live-acceptance evidence.
+Final independent review of the six-document diff returns **Approved plan
+correction**, with no material mismatch. All 80 local file links resolve and the
+whitespace check passes. No product build, test, installation or service action
+was performed for this documentation change.

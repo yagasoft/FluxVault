@@ -12,7 +12,8 @@ the same dedicated task worktree on `codex/next005-signed-in-protection`.
 
 ## First automatic round trip
 
-Not yet available: the native authority environment gate below remains open.
+Not yet available. The 11 October staging decision below removes the environment
+acquisition block; implementation can continue under the existing authority.
 No NEXT-005 capability is deployed or claimed. The first batch must
 join creator-session authority, additive default-off consent/work persistence,
 real discovery admission, reserved capture identity, verified publication,
@@ -23,31 +24,47 @@ added. Normal PostgreSQL and unrelated data/changes remain untouched.
 
 ## Native authority gate
 
-Independent GPT-6-Astra/high assessment (`review_protection_design`, 8 October)
-finds a precise environment blocker: the existing A/B token fixture cannot prove
-real WTS sign-out/session replacement while preserving the operator's session.
-Native `LogonUser`/`LsaLogonUser` tokens are not an independently owned WTS desktop
-session. Injected coordinator transitions remain useful tests but do not replace
-actual WTS revocation. The [WTS token contract](https://learn.microsoft.com/en-us/windows/win32/api/wtsapi32/nf-wtsapi32-wtsqueryusertoken)
-requires an actual logged-on session and service-owned token closure.
+**Current decision, 11 October 2026:** the owner removed VMs from the design/plan
+and confirmed that FluxVault is in staging with disposable data. Use this Windows
+PC, the real installed service/WPF/PostgreSQL interfaces and existing owned
+fixtures. There is no pending VM approval, image download, hypervisor setup or
+second-machine requirement. The earlier blanket implementation block is removed.
+Disposable FluxVault staging data and explicitly owned test sources/outputs may
+be reset when needed; preserve unrelated data, accounts, repositories and working
+changes. Normal PostgreSQL still must never restart. Preserve expected recovery
+bytes and results until the relevant test assertions have been resolved.
 
-`authority-environment-inventory.json` records the read-only host inspection:
-no Hyper-V/VMware/VirtualBox service or tool, all Hyper-V/Sandbox/VM platform
-features disabled, and only the operator's console session observed. The owner
-has been asked for the material additional environment decision: a bounded
-disposable Windows software VM with an official evaluation image (at most 40 GB
-disk/6 GB RAM, no host reboot), another existing isolated interactive Windows
-environment, or pausing NEXT-005 at this gate. No VM is provisioned and no host
-virtualisation feature is changed while that decision is pending. Automatic
-runtime exposure/deployment remains blocked; safe unexposed prerequisites may
-continue. This does not request testing assistance from the owner.
+Independent GPT-6-Astra/high review (`review_protection_design`, 11 October)
+accepts the revised route, retaining the completed foundation acceptance:
 
-Required native proof retains the service's duplicated token across sign-out of
-the owned session, proves invalidation blocks new source access/publication and
-retains pending work, then joins readers before token disposal. A new creator
-logon must have a new AuthenticationId; replacement starts after the old
-generation joins, even if Windows reuses the numeric session ID. The review
-does not approve a different source-authority model or waive this gate.
+- Use real WTS acquisition and ordinary creator-token SID/session/AuthenticationId
+  checks against the current signed-in session, with disposable source data.
+- Use deterministic authority-loss/replacement barriers for stopped
+  admission/publication, retained pending work, joined readers and stale-generation
+  rejection. Label these as injected transitions, not actual Windows sign-out.
+- Reuse owned database/process fixtures for interruption, takeover,
+  reconciliation and migration/rollback. Retain independent candidate review,
+  checked rollback and joined cleanup.
+- Keep actual native sign-out/re-entry as an open candidate acceptance item.
+  The current-session checks and injected transitions alone do not close it.
+  Disposable data does not authorise operator sign-out or a Windows reboot;
+  any such host disruption needs a concrete, separately authorised operation.
+  It is not an environment acquisition prerequisite for implementation.
+
+The native acceptance criterion remains: retain the service's duplicated token
+across the owned session's sign-out, prove invalidation stops source access and
+publication while work remains pending, and join readers before token disposal.
+Re-entry has a new AuthenticationId and starts after the old generation joins,
+including when the numeric session ID is reused. This check has not been run or
+passed by this planning update, and no automatic capability is declared complete.
+
+**Superseded context, 8 October:** the A/B token fixture did not provide an owned
+interactive WTS session; its tokens and injected transitions could not prove
+actual sign-out/re-entry. `authority-environment-inventory.json` retains the
+historical host observation. The subsequent VM proposal and pending environment
+question are superseded by the owner's 11 October decision and are not work items.
+The [WTS token contract](https://learn.microsoft.com/en-us/windows/win32/api/wtsapi32/nf-wtsapi32-wtsqueryusertoken)
+still governs actual token acquisition and closure.
 
 ## Unexposed durable catalogue and export prerequisites
 

@@ -32,6 +32,30 @@ public sealed partial class PostgreSqlVaultCatalogue
         if (vault?.Binding != binding) throw new VaultCatalogueException(VaultCatalogueFailure.IdentityMismatch);
         if (await HasAutomaticSchemaAsync(connection, transaction, ct))
         {
+            await using var migrate = new NpgsqlCommand("""
+                DO $migration$ BEGIN
+                    IF (SELECT schema_version FROM fv_control.automatic_identity WHERE singleton)=1 THEN
+                        ALTER TABLE fv_control.automatic_work
+                            ADD COLUMN first_event_utc timestamptz NOT NULL DEFAULT now(),
+                            ADD COLUMN latest_event_utc timestamptz NOT NULL DEFAULT now(),
+                            ADD COLUMN last_attempt_utc timestamptz,
+                            ADD COLUMN queued_observation text,
+                            ADD COLUMN is_deletion boolean NOT NULL DEFAULT false,
+                            ADD COLUMN claimed_is_deletion boolean,
+                            ADD COLUMN deleted_from_version_id text,
+                            ADD COLUMN mirror_after_outbox_id bigint,
+                            ADD COLUMN mirror_through_outbox_id bigint,
+                            ADD COLUMN mirror_due_at_utc timestamptz,
+                            ADD COLUMN mirror_reason text;
+                        UPDATE fv_control.automatic_work SET first_event_utc=LEAST(due_at_utc,now()),
+                            latest_event_utc=LEAST(due_at_utc,now()),
+                            claimed_is_deletion=CASE WHEN claimed_generation IS NOT NULL THEN false END;
+                        ALTER TABLE fv_control.automatic_scopes ADD COLUMN journal_checkpoint jsonb;
+                        UPDATE fv_control.automatic_identity SET schema_version=2 WHERE singleton;
+                    END IF;
+                END $migration$;
+                """, connection, transaction);
+            await migrate.ExecuteNonQueryAsync(ct);
             await transaction.CommitAsync(ct);
             return;
         }
@@ -55,7 +79,7 @@ public sealed partial class PostgreSqlVaultCatalogue
                 root_path text NOT NULL CHECK(octet_length(root_path) BETWEEN 1 AND 131072),
                 scope_fingerprint text NOT NULL CHECK(length(scope_fingerprint)=64),
                 dirty_generation bigint NOT NULL CHECK(dirty_generation>0), scanned_generation bigint NOT NULL DEFAULT 0,
-                reason text
+                reason text, journal_checkpoint jsonb
             );
             CREATE TABLE fv_control.automatic_work (
                 path_key text PRIMARY KEY CHECK(length(path_key)=64), scope_id text NOT NULL,
@@ -66,12 +90,17 @@ public sealed partial class PostgreSqlVaultCatalogue
                 due_at_utc timestamptz NOT NULL, claimed_generation bigint, reserved_version_id text,
                 owner_generation uuid, attempts integer NOT NULL DEFAULT 0,
                 source_observation text, last_source_observation text, last_version_id text, reason text,
+                first_event_utc timestamptz NOT NULL DEFAULT now(), latest_event_utc timestamptz NOT NULL DEFAULT now(),
+                last_attempt_utc timestamptz, queued_observation text, is_deletion boolean NOT NULL DEFAULT false,
+                claimed_is_deletion boolean, deleted_from_version_id text,
+                mirror_after_outbox_id bigint, mirror_through_outbox_id bigint,
+                mirror_due_at_utc timestamptz, mirror_reason text,
                 CHECK ((claimed_generation IS NULL AND reserved_version_id IS NULL AND owner_generation IS NULL) OR
                        (claimed_generation IS NOT NULL AND claimed_generation>0 AND reserved_version_id IS NOT NULL
                         AND length(reserved_version_id)=32 AND owner_generation IS NOT NULL))
             );
             CREATE INDEX automatic_work_due ON fv_control.automatic_work(due_at_utc) WHERE pending;
-            INSERT INTO fv_control.automatic_identity VALUES(true,1);
+            INSERT INTO fv_control.automatic_identity VALUES(true,2);
             INSERT INTO fv_control.automatic_policy(singleton,vault_id) VALUES(true,@vault);
             REVOKE ALL ON ALL TABLES IN SCHEMA fv_control FROM PUBLIC;
             """, connection, transaction);
@@ -95,7 +124,7 @@ public sealed partial class PostgreSqlVaultCatalogue
         if (await security.ExecuteScalarAsync(ct) is not true)
             throw new AutomaticProtectionUnavailableException("Automatic protection extension ownership and durable table storage could not be verified.");
         await using var version = new NpgsqlCommand("SELECT schema_version FROM fv_control.automatic_identity WHERE singleton", connection, transaction);
-        if (await version.ExecuteScalarAsync(ct) is not int schema || schema != 1)
+        if (await version.ExecuteScalarAsync(ct) is not int schema || schema is not (1 or 2))
             throw new AutomaticProtectionUnavailableException("Automatic protection has an unsupported extension version. Manual history and recovery remain available.");
         return true;
     }
@@ -113,7 +142,9 @@ public sealed partial class PostgreSqlVaultCatalogue
         await using var command = new NpgsqlCommand("""
             SELECT enabled,approval_required,consent_fingerprint,last_version_id,last_success_utc,
                 (SELECT count(*)::integer FROM fv_control.automatic_work WHERE pending),
-                (SELECT count(*)::integer FROM fv_control.automatic_work WHERE claimed_generation IS NOT NULL)
+                (SELECT count(*)::integer FROM fv_control.automatic_work WHERE claimed_generation IS NOT NULL),
+                (SELECT count(*)::integer FROM fv_control.automatic_work WHERE mirror_through_outbox_id IS NOT NULL),
+                (SELECT mirror_reason FROM fv_control.automatic_work WHERE mirror_through_outbox_id IS NOT NULL ORDER BY mirror_due_at_utc,path_key LIMIT 1)
             FROM fv_control.automatic_policy WHERE singleton AND vault_id=@vault
             """, connection, transaction);
         command.Parameters.AddWithValue("vault", binding.Id.Value);
@@ -123,7 +154,7 @@ public sealed partial class PostgreSqlVaultCatalogue
             if (!await reader.ReadAsync(ct)) throw new VaultCatalogueException(VaultCatalogueFailure.IdentityMismatch);
             state = new(vault, new(reader.GetBoolean(0)), reader.GetBoolean(1) || reader.IsDBNull(2) || reader.GetString(2) != fingerprint,
                 fingerprint, reader.GetInt32(5), reader.GetInt32(6), reader.IsDBNull(3) ? null : reader.GetString(3),
-                reader.IsDBNull(4) ? null : reader.GetFieldValue<DateTimeOffset>(4));
+                reader.IsDBNull(4) ? null : reader.GetFieldValue<DateTimeOffset>(4),reader.GetInt32(7),reader.IsDBNull(8)?null:reader.GetString(8));
         }
         await transaction.CommitAsync(ct);
         return state;
@@ -268,6 +299,7 @@ public sealed partial class PostgreSqlVaultCatalogue
                     await using var command = new NpgsqlCommand("SELECT 1", connection) { CommandTimeout=timeout };
                     if (await command.ExecuteScalarAsync(ct) is not 1) throw new IOException("The runtime owner could not be verified.");
                 }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
                 catch(Exception exception)
                 {
                     failed=true;

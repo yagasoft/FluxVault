@@ -6,6 +6,8 @@ using FluxVault.Abstractions.Policies;
 using FluxVault.Abstractions.Security;
 using FluxVault.Core.Security;
 using FluxVault.Core.Storage.Integrity;
+using FluxVault.Core.Storage.Metadata;
+using FluxVault.Abstractions.Storage;
 using Npgsql;
 
 namespace FluxVault.TestHost;
@@ -27,9 +29,12 @@ internal static class VaultAutomaticProtectionProbe
             "automatic extension preserves predecessor-readable base configuration and identity");
         await using var wrong = new PostgreSqlVaultCatalogue(store.Endpoint with { InstanceId=Guid.NewGuid() });
         await Reject(() => wrong.EnsureAutomaticSchemaAsync(binding), "automatic migration refuses wrong installation identity", VaultCatalogueFailure.IdentityMismatch);
+        await VaultAutomaticCadenceProbe.VerifyMigrationAsync(store,source,binding,checks);
         await using (var storage = await RepositoryLeaseSet.AcquireAsync(binding.RepositoryPath,[],MirrorLeaseMode.None,CancellationToken.None,binding:binding,provision:true)) { }
         await using var owner = await store.OpenAutomaticRuntimeOwnerAsync(binding,new());
         await store.ActivateAutomaticRuntimeAsync(owner);
+        await using var metadata=new PostgreSqlRepositoryMetadataStore(binding,baseline.Configuration.Sync.LocalDevice.DeviceId);
+        await metadata.ProvisionVaultAsync();
         await Reject(() => original.OpenAutomaticRuntimeOwnerAsync(binding,new()), "exclusive automatic owner refuses a concurrent generation");
         var root = Path.Combine(Path.GetDirectoryName(binding.RepositoryPath)!,"automatic-source");
         var saved = await store.SaveConfigurationAsync(creator, Request(baseline,FluxVaultIpcCommand.SaveConfiguration) with
@@ -45,16 +50,23 @@ internal static class VaultAutomaticProtectionProbe
             "creator automatic preference and completed original receipt share one durable revision");
         state=await store.ReadAutomaticStateAsync(binding);
         Check(state.Policy.Enabled && !state.RequiresCreatorApproval,"creator enable approves the authoritative source scope");
+        await VaultAutomaticCadenceProbe.VerifyAsync(store,source,creator,state,checks);
+        state=await store.ReadAutomaticStateAsync(binding);
+        await VaultAutomaticMirrorProbe.VerifyAsync(store,source,metadata,state,checks);
         await store.MarkAutomaticScopeDirtyAsync(binding,"automatic",state.ScopeFingerprint,"fixture restart coverage");
         var marker=(await store.ListAutomaticScopesAsync(binding)).Single();
         var path=Path.Combine(root,"saved.txt");
-        Check(await store.QueueAutomaticPathAsync(binding,path,state.ScopeFingerprint,DateTimeOffset.UtcNow.AddSeconds(-1),"fixture first save",new()),
+        var observed = new AutomaticPathObservation("native-observation-one", DateTimeOffset.UtcNow.AddMinutes(-1));
+        Check(await store.QueueAutomaticPathAsync(binding,path,state.ScopeFingerprint,DateTimeOffset.UtcNow.AddSeconds(-1),"fixture first save",new(),observation:observed),
             "automatic change is durably admitted before dispatch");
+        await store.QueueAutomaticPathAsync(binding,path,state.ScopeFingerprint,DateTimeOffset.UtcNow.AddSeconds(-1),"duplicate scan",new(),observation:observed);
         var first=await store.ClaimAutomaticPathAsync(binding) ?? throw new InvalidOperationException("Automatic claim absent.");
+        Check(first.DirtyGeneration==1, "duplicate pending observations do not invent a generation or postpone capture");
         Check(first.ReservedVersionId is { Length:32 } && first.OwnerGeneration==owner.Generation,
             "dispatch reserves immutable capture identity before source work");
         await store.ObserveAutomaticClaimAsync(binding,first,"native-observation-one");
         await store.QueueAutomaticPathAsync(binding,path,state.ScopeFingerprint,DateTimeOffset.UtcNow.AddSeconds(-1),"fixture newer save",new());
+        await metadata.RecordVersionAsync(new(first.ReservedVersionId!,first.ScopeId,first.SourcePath,DateTimeOffset.UtcNow,CaptureConsistency.CrashConsistent,0,[],VaultId:binding.Id));
         await store.CompleteAutomaticPathAsync(binding,first,first.ReservedVersionId!);
         Check((await store.ReadAutomaticStateAsync(binding)).PendingCount==1,
             "completing one claimed generation preserves a newer save as pending");
@@ -160,6 +172,9 @@ internal static class VaultAutomaticProtectionProbe
                 await identity.ExecuteNonQueryAsync();
             }
         }
+        await using(var cleanupConnection=await source.OpenConnectionAsync())
+        await using(var cleanupMetadata=new NpgsqlCommand($"DROP SCHEMA \"{binding.MetadataNamespace}\" CASCADE",cleanupConnection))
+            await cleanupMetadata.ExecuteNonQueryAsync(); // This probe created this empty-before-test namespace; the following metadata fixture starts fresh.
         void Check(bool condition,string name) { if(!condition)throw new InvalidOperationException("Automatic catalogue contract failed: "+name);checks.Add(name); }
         async Task Reject(Func<Task> action,string name,VaultCatalogueFailure? failure=null)
         {

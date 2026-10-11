@@ -106,6 +106,36 @@ ship together after NEXT-004's separate installed acceptance.
 
 **Effort checkpoint:** after two substantive batches, the private real-service/DB/UI round trip and restart result must exist. If not, identify the exact authority/durability blocker and reduce the affected path, without spending another batch on broad fixture conversion or UI scaffolding. Do not enable an unsafe shortcut to produce a demonstration.
 
+**11 October execution refinement:** the first real-service/Options/DB round trip
+and native discovery/owner-interruption barriers pass on IPv4 and IPv6; see the
+existing verification ledger. On this host `EnableLUA=0`. Independent Astra review
+accepts a native LUA-filtered creator token only after verifying exact WTS
+SID/session/AuthenticationId, no elevation or UI access, at most Medium integrity,
+only traverse privilege and preservation of native denial groups. No host UAC
+change or elevated source fallback is permitted.
+
+The next bounded storage change uses extension version 2 in the same five owned
+tables, with transactional v1 migration and unchanged base configuration/schema.
+Persist first/latest event, last attempt, queued observation, claimed deletion
+intent/lineage and the existing USN checkpoint JSON. Reuse the cadence scheduler:
+quiet/hot deadlines survive restart, the minimum same-file interval takes
+precedence, and duplicate observations neither postpone work nor invent new
+dirty generations. A newer observation during capture remains pending. An
+unchanged observation skips completed work only after its retained version is
+verified under the repository lease; purged history cannot suppress recapture.
+
+Use one native journal read per volume under creator authority. Atomically mark
+all accepted scopes on an advanced/reset volume dirty with its cursor, including
+records the reader cannot resolve to a current path. An unavailable journal uses
+bounded full reconciliation without privileged fallback. Full-scan saturation
+retains uncovered scope state; observation deduplication allows subsequent passes
+to progress. Missing roots and denied paths remain unresolved. Only confirmed
+file absence may claim a deletion; persist its exact intent/lineage and validate
+them when reconciling its reserved manifest. Recheck absence and authority before
+publication. A reappearing file remains capture-pending, and a no-op deletion
+never invents a successful reserved result. Independent integrity review accepts
+this refinement subject to its focused real-store and native acceptance checks.
+
 The 11 October staging decision removes the previous environment acquisition
 block. The two foundation review findings are closed at `1b2caff`; resume from
 that checkpoint without repeating unchanged verification. The next batch must
@@ -138,6 +168,20 @@ Use this concrete staging verification sequence:
    or claim the unresolved check passed.
 
 ## Migration, release and recovery
+
+**11 October mirror refinement:** retain a constant-size interval on each
+existing automatic work row, ordered by the existing metadata-outbox ordinal.
+Successful primary completion extends the interval atomically, preserving its
+oldest unfinished position. Newer primary captures remain eligible. Retry only
+retained file manifests for the exact path/scope, verify the primary graph and
+chunks, and advance conditionally under the existing repository lease/fence.
+The PostgreSQL path copies chunks only; independent metadata recovery remains
+NEXT-006. Export acknowledgement cannot clear mirror intent. Purged versions
+retire only after authoritative absence, with no resurrection. Unavailable or
+corrupt mirrors retain a reason and bounded retry; Pause/automatic-off stop
+writes. Consent/source changes do not discard existing mirror obligations.
+Strictly pin primary/state. For automatic operation and healthy manual recovery,
+omit inaccessible mirror roots and report them; never access an unpinned root.
 
 Ship separately after NEXT-004 acceptance, with its own source commit/version/candidate manifest, independent architecture/concurrency/migration review and pre-deployment candidate/rollback review. Add versioned, transactional, idempotent extension tables in the installed vault's existing database. Preserve the predecessor-readable base configuration shape and control identity schema version 1: `PostgreSqlVaultCatalogue` currently uses `JsonUnmappedMemberHandling.Disallow` and pins that identity version. New optional fields alone are not backwards compatibility. Give the automatic-policy/consent/work extension its own version record; unsupported extension versions block automatic operation without changing the base binding or preventing manual recovery. Leave unrelated databases and normal PostgreSQL service untouched.
 

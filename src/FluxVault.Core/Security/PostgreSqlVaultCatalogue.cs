@@ -168,6 +168,35 @@ public sealed partial class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDi
     public Task<VaultAdmission> SetAccessAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default) =>
         MutateAsync(caller, request, Mutation.Access, cancellationToken);
 
+    /// <summary>Read-only permission check before stopping source readers. Admission still repeats all checks.</summary>
+    public async Task<bool> VerifyMutationAuthorityAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken ct)
+    {
+        RequireCaller(caller);
+        if (request.VaultId is null or { IsValid: false } || !IsMutation(request.Command) ||
+            request.OperationId is null || request.OperationId == Guid.Empty || request.ExpectedVaultRevision is null or <= 0)
+            throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
+        await using var connection = await OpenVerifiedAsync(ct);
+        await using var transaction = await connection.BeginTransactionAsync(ct);
+        await LockAsync(connection, transaction, ct);
+        var vault = await LoadAsync(connection, transaction, request.VaultId, ct);
+        if (vault is null || !VaultCommandPolicy.TryGet(request, vault.Configuration, out var requirement) ||
+            !VaultAuthorizer.IsAllowed(caller, vault.Access, requirement.Permissions) ||
+            request.Command == FluxVaultIpcCommand.SetAutomaticProtection && caller.UserSid != vault.Access.OwnerSid)
+            throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
+        var receipt = await ReadReceiptAsync(connection, transaction, request.OperationId!.Value, ct);
+        if (receipt is not null)
+        {
+            if (receipt.VaultId != vault.Binding.Id || receipt.ActorSid != caller.UserSid || receipt.Command != request.Command ||
+                receipt.Fingerprint != RequestFingerprint(request)) throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
+            if (!VaultAuthorizer.IsAllowed(caller, vault.Access, receipt.RequiredPermissions)) throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
+            await transaction.CommitAsync(ct);
+            return true;
+        }
+        if (request.ExpectedVaultRevision != vault.Revision) throw new VaultCatalogueException(VaultCatalogueFailure.StaleRevision);
+        await transaction.CommitAsync(ct);
+        return false;
+    }
+
     private enum Mutation { Admit, Save, Access }
 
     private static bool ValidPurgeScopes(IReadOnlyList<RepositoryPurgeScope> scopes)

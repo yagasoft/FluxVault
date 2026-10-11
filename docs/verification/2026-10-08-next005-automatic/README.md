@@ -10,10 +10,109 @@ The test-only hosted-fixture correction has separate independent Astra/high
 approval; it did not reopen unchanged installed/product gates. Work reuses
 the same dedicated task worktree on `codex/next005-signed-in-protection`.
 
+## Current verification, 11 October
+
+The supervised signed-in runtime, native creator adapter, durable v2 work/cadence
+and volume reconciliation, Options preference/status and mirror retry are
+implemented. **No NEXT-005 installation has happened yet.** Earlier prerequisite
+sections below are historical checkpoints, superseded within their checked scope
+by these results. Independent Astra/high review accepts the current product code
+gate without another requirement-backed blocker.
+
+- Combined suites: **608 Core, 514 App and 157 Windows tests pass, zero skipped**.
+  `green/*-combined*.trx` retain final results and the initial two App failures
+  (missing tooltips and a tab-selector assumption), corrected before the green run.
+  `final-build.log` confirms a zero-warning/error solution build.
+- `native-pause`: 39 native checks per endpoint, including a held native capture
+  whose cancellation/reader join precedes Pause acknowledgement and whose saved
+  bytes reach history after Resume without another save.
+- `native-mirrors-green`: 45 native checks per endpoint. Two successive primary
+  captures continue while a configured mirror is offline; restart preserves both
+  and their lag, manual primary recovery matches SHA-256, and the restored mirror
+  receives both retained versions' verified bytes without another save.
+  The preceding `native-mirrors` failure was the fixture metadata reader omitting
+  the required `pg_catalog` search path; product security correctly refused it.
+- `store-mirrors`: **227 catalogue, 134 metadata and 10 repository checks on each
+  IPv4/IPv6**. Includes v1→v2 migration/failed migration rollback, durable cadence,
+  newer work, volume dirty/checkpoint atomicity and mirror interval extension,
+  delayed retry, export independence and purge/no-resurrection.
+- `native-rollback`: **56 native checks per endpoint**. The actual frozen 1.0.9
+  service/pipe reads the forward store, independently recovers retained bytes and
+  saves a changed source scope. Interrupted rollback-marker publication leaves
+  records unchanged; a committed marker preserves the enabled preference and
+  held reserved identity. Old binaries leave extension records unchanged.
+  Re-upgrade captures nothing before fresh creator approval, then captures only
+  the current scope without another save or duplicate completion and independently
+  recovers old/new bytes. The frozen predecessor's 63 files match its accepted
+  manifest (`rollback-predecessor-copy.json`).
+
+All completed owned fixtures above exited 0 and were joined, with root removed,
+owned jobs joined and installation unchanged. `native-final-green` passes **61
+checks on each IPv4/IPv6**, including explicit original-receipt preservation,
+default-off offline-mirror visibility and execution of the exact operational
+rollback SQL. A wholly absent first-start extension is safe to downgrade without
+creating consent; partial/untrusted extensions remain refused; v2 invalidation
+preserves durable work. This closes the independent operational review finding
+about migration failure before extension creation. `native-final` retains the
+failed test assumption that a warning contains a path; warnings correctly
+identify the configured mirror by label. Native USN volume access is denied to the ordinary creator
+on this host, so the runtime truthfully uses durable bounded reconciliation.
+No native USN-access pass is claimed.
+
+`installed-before.json` freshly observes the original installed vault/revision 14
+and four saved scopes. `installed-baseline.json` verifies all 208 accepted 1.0.9
+payload hashes, unchanged bootstrap/HBA/ident/storage ACLs, zero grants and zero
+pending history deletion using a joined read-only SYSTEM/psql job. Windows rebooted
+on 10 October: the old sealed postmaster PID is correctly refused. The bounded
+operator wrapper verifies current service/data/port/parent ancestry and records
+postmaster 13748, started `2026-10-10T08:12:14.0315058Z`; it does not restart
+PostgreSQL or rewrite old seals. Initial wrapper checks caught forward-slash path
+spelling and dot-sourced parameter shadowing before any installation effects.
+
+The candidate, deployment/live workflow, displayed WPF and foreground measurements
+remain open. Native sign-out/re-entry and NEXT-009's existing baseline misses
+remain explicitly open; no broader readiness claim is made.
+
+`integrity-final` (fixture `e9c659f927e84a86b833501b98132156`) freshly passes all
+**40 real PostgreSQL integrity cases, zero skipped**, exits 0 and is joined.
+Failure/location are null; root removal, owned-job joining and installation
+preservation are all true. Independent Astra/high review confirms the absent
+extension correction and the 61-check native result, and finds no blocker in the
+bounded installed acceptance helper. Concrete candidate approval remains separate.
+
+`green/rollout-tooling-green.trx` passes all 18 affected existing joined-service,
+rollback-context and cleanup checks. `update-automatic.ps1` reuses these helpers
+and the guarded MSI/service/job procedure for the exact 1.0.9→1.0.10 candidate.
+Rollback requires a joined stopped/manual service, the transactionally obtained
+automatic owner lock and the durable approval marker, or verified total extension
+absence. It never drops history/queue or restarts normal PostgreSQL. The owned
+installed acceptance temporarily selects only its synthetic source, uses the
+existing cadence model to hold a newer observation across Pause/restart, then
+restores the complete original saved configuration and default-off preference.
+
 ## First automatic round trip
 
-Not yet available. The 11 October staging decision below removes the environment
-acquisition block; implementation can continue under the existing authority.
+The private actual-service round trip passes on both IPv4 and IPv6 in
+`native-first-capture` (fixture `4cf9cdb48fd54301a67c55273ce102d4`): ten checks
+per endpoint cover real ordinary WTS authority, actual Options view-model enable,
+save without manual backup, automatic publication, joined restart, authenticated
+history and recovery matching an independent SHA-256 check. This satisfies the
+agreed effort checkpoint. The preceding failure was the fixture's protected
+parent lacking creator traversal; the correction grants only Traverse and
+Synchronize there, preserving private state/repository ACLs and product source
+checks. `native-first`, `native-roundtrip`, `native-roundtrip-2` and
+`native-diagnostic` retain failed attempts and joined cleanup.
+
+`native-interruption` (fixture `c2433c518f7b46bfac732378b71acb77`) passes twenty
+checks on each endpoint. A held real native directory reader proves Pause cancels
+and joins discovery before acknowledgement. Resume and original receipt replay
+preserve a healthy owner. Terminating only the private fixture's dedicated owner
+backend cancels a held capture independently, joins it before replacement and
+retains the unresolved reserved identity. Replacement verifies absence and
+captures the pending save without another write. Both fixture processes exit 0
+and are joined; root removal, owned-job joining and installation preservation are
+all true. These are private compositions, not installed acceptance or native
+Windows sign-out evidence.
 No NEXT-005 capability is deployed or claimed. The first batch must
 join creator-session authority, additive default-off consent/work persistence,
 real discovery admission, reserved capture identity, verified publication,
@@ -21,6 +120,33 @@ Options/status and independently verified recovery. Existing mutation ordering,
 source access, repository leases and native/database fixtures are the boundaries.
 No logged-off/reboot, disaster-recovery, VSS or application-consistency claim is
 added. Normal PostgreSQL and unrelated data/changes remain untouched.
+
+11 October implementation checks: actual Options and existing save-record tests
+pass 39 cases (`green/options-automatic-green.trx`); creator generation/session
+joining and supervised sibling cancellation pass five
+(`green/supervision-session-green-2.trx`). Source-suspension barriers pass three
+(`green/source-quiescence-green.trx`) after the recorded red run. These component
+checks do not close native composition/interruption gates. The initial supervision
+green attempt contains a failure and remains retained as such.
+
+The host has `EnableLUA=0`. A native Windows LUA derivative, with maximum privilege
+restriction and explicit lowering to at most Medium integrity, passed actual WTS
+SID/session/LUID, non-elevation/UI-access, privilege and native denial-group
+postconditions. `session-7c27d3aeb24441484a602d496139825c.json` records creator read
+and refusal of SYSTEM-only, administrator-only and explicitly denied sources.
+Independent Astra review accepts this bounded refinement before exposure. No UAC
+policy or host session was changed. Earlier refused probes retain their reasons.
+The fixture SYSTEM owner restored its test ACLs to correct an unsuccessful
+elevated cleanup; the corresponding cleanup record proves joined job, removed
+task and removed root. No elevated source token is admitted.
+
+Independent composition review required preservation of manual recovery after
+extension/reconciliation failure, source quiescence before consent mutations,
+owner-loss observation and pre-publication fencing. Follow-up findings required
+effect-free receipt replay, non-poisoning routine cancellation and mutation fencing
+for uncertainty created during capture. Real enumeration and owner-backend
+interruption now pass as above; manual-recovery fallback and corrupt-claim proofs
+remain open alongside the bounded cadence/coverage batch.
 
 ## Native authority gate
 

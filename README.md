@@ -31,11 +31,14 @@ nothing. Confirmation is irreversible and cannot be undone by software rollback.
 Protected overlaps and outside dependencies refuse deletion. An uncertain result
 requires checking the original operation before another destructive action.
 
-Automatic capture, logged-off/reboot protection and VSS/application consistency
-are not supported by this accepted single-vault workflow. NEXT-005 is a separate
-creator-signed-in automatic release; NEXT-006 independent disaster recovery and
-NEXT-010 professional consistency remain following work. The inventory below
-includes existing components and future direction, not those support claims.
+The separate NEXT-005 candidate adds creator-signed-in automatic capture,
+durable pending work, joined shutdown, restart reconciliation and visible
+failure/mirror states. Its [verification record](docs/verification/2026-10-08-next005-automatic/README.md)
+distinguishes private fixture evidence from installed acceptance. Native Windows
+sign-out/re-entry acceptance and logged-off/reboot protection remain open.
+NEXT-006 independent disaster recovery and NEXT-010 VSS/application consistency
+remain following work. The inventory below includes existing components and
+future direction, not those broader support claims.
 The UI rebuild has not started.
 Fresh owned local NTFS storage is required; existing unmarked non-empty roots
 are preserved and refused. Unrestricted use with working files remains outside

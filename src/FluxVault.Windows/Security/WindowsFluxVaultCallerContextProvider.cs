@@ -33,7 +33,7 @@ public sealed class WindowsFluxVaultCallerContextProvider : IFluxVaultCallerCont
         catch { token?.Dispose(); throw; }
     }
 
-    private sealed class OwnedWindowsCallerContext : FluxVaultCallerContext
+    internal sealed class OwnedWindowsCallerContext : FluxVaultCallerContext
     {
         private readonly SafeAccessTokenHandle token;
         private int disposed;

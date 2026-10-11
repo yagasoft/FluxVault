@@ -36,6 +36,7 @@ builder.Logging.AddEventLog(options =>
 builder.Logging.AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning);
 builder.Services.AddSingleton(_ => new NamedPipeFluxVaultServer(vault,
     WindowsFluxVaultPipeServerFactory.ForService(), new WindowsFluxVaultCallerContextProvider()));
+builder.Services.AddSingleton(vault);
 builder.Services.AddSingleton<IFluxVaultServiceRuntime, FluxVaultServiceRuntime>();
 builder.Services.AddSingleton<Worker>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Worker>());

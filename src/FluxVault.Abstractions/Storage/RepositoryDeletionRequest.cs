@@ -6,4 +6,7 @@ public sealed record RepositoryDeletionRequest(
     string SourcePath,
     bool IsDirectory,
     DateTimeOffset DeletedAtUtc,
-    CaptureConsistency Consistency = CaptureConsistency.BestEffort);
+    CaptureConsistency Consistency = CaptureConsistency.BestEffort,
+    string? ReservedVersionId = null,
+    string? ExpectedDeletedFromVersionId = null,
+    Func<string, CancellationToken, ValueTask>? BeforePublication = null);

@@ -391,9 +391,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
         };
     }
 
-    public string CaptureStrategy { get; } =
+    public string CaptureStrategy =>
         "Manual backup reads saved selections using the signed-in caller's authority. Live reads are best effort; capture failures are reported. " +
-        "Automatic capture and VSS fallback are not available in this release.";
+        (automaticProtectionStatus is not null || automaticStatusUnavailable
+            ? "Automatic capture follows saved selections while the creator is signed in. VSS and application consistency are not supported."
+            : "Automatic capture and VSS fallback are not available in this release.");
 
     public string RepositorySummary { get; } =
         "Versions are stored as immutable BLAKE3-addressed chunks plus manifests. Optional cloud-folder mirroring uses atomic writes.";
@@ -2469,6 +2471,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             SetServiceStatus("Service connection: repository binding could not be confirmed; your pending changes are kept. Backup has not started for this action.");
             return false;
         }
+        automaticProtectionStatus = status.AutomaticProtection;
+        automaticStatusUnavailable = false;
         if (requiresSaveStatusCheck && preserveLocalConfiguration && !requiresOptionsReconciliation &&
             unconfirmedProtectionSave?.Origin != ConfigurationSaveOrigin.Options)
         {
@@ -3328,6 +3332,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private void SetServiceStatus(string text, string? toolTip = null)
     {
+        if (text.StartsWith("Service connection: unavailable", StringComparison.Ordinal) && automaticProtectionStatus is not null)
+        {
+            automaticStatusUnavailable = true;
+            OnPropertyChanged(nameof(ProtectionControlStatus));
+        }
         ServiceStatus = string.IsNullOrWhiteSpace(ProtectionSaveMessage) || text.Contains(ProtectionSaveMessage, StringComparison.Ordinal)
             ? text
             : $"{text}. {ProtectionSaveMessage}";

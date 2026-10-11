@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e8042432-32f5-468d-b861-248dbcd01732" name="os008@OS008-HOME 2026-10-11 14:38:50" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-11T14:38:50.7845653+03:00" queuing="2026-10-11T14:38:50.7845657+03:00" start="2026-10-11T14:38:50.0858547+03:00" finish="2026-10-11T14:38:50.7888884+03:00" />
+  <TestSettings name="default" id="60c8c089-b95c-4265-912b-db609c95b4ce">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-11_14_38_50" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d30cfe06-9054-427d-832e-af03167edc18" testId="1c7edf6a-79f0-9158-7ecd-0ad6ddbb08d0" testName="FluxVault.Core.Tests.AutomaticSourceActivityTests.Mutation_cancels_and_joins_discovery_before_acknowledgement_and_holds_new_admission" computerName="OS008-HOME" duration="00:00:00.0053522" startTime="2026-10-11T14:38:50.6889856+03:00" endTime="2026-10-11T14:38:50.6890640+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d30cfe06-9054-427d-832e-af03167edc18" />
+    <UnitTestResult executionId="2d7066d9-c797-44f8-bfd6-0ff2b8cdfbf9" testId="7aedbb11-5c38-f003-9233-f880acc6c83c" testName="FluxVault.Core.Tests.AutomaticSourceActivityTests.Cancelled_mutation_does_not_claim_a_reader_was_joined" computerName="OS008-HOME" duration="00:00:00.0020306" startTime="2026-10-11T14:38:50.6900896+03:00" endTime="2026-10-11T14:38:50.6920739+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d7066d9-c797-44f8-bfd6-0ff2b8cdfbf9" />
+    <UnitTestResult executionId="520a85ef-51dd-42f8-b89e-4d3388a51696" testId="6355dfc8-4aa3-6a4a-2b1c-377710db5795" testName="FluxVault.Core.Tests.AutomaticSourceActivityTests.Overlapping_mutations_keep_discovery_suspended_until_both_finish" computerName="OS008-HOME" duration="00:00:00.0043504" startTime="2026-10-11T14:38:50.6678227+03:00" endTime="2026-10-11T14:38:50.6779573+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="520a85ef-51dd-42f8-b89e-4d3388a51696" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticSourceActivityTests.Mutation_cancels_and_joins_discovery_before_acknowledgement_and_holds_new_admission" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="1c7edf6a-79f0-9158-7ecd-0ad6ddbb08d0">
+      <Execution id="d30cfe06-9054-427d-832e-af03167edc18" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticSourceActivityTests" name="Mutation_cancels_and_joins_discovery_before_acknowledgement_and_holds_new_admission" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticSourceActivityTests.Cancelled_mutation_does_not_claim_a_reader_was_joined" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="7aedbb11-5c38-f003-9233-f880acc6c83c">
+      <Execution id="2d7066d9-c797-44f8-bfd6-0ff2b8cdfbf9" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticSourceActivityTests" name="Cancelled_mutation_does_not_claim_a_reader_was_joined" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticSourceActivityTests.Overlapping_mutations_keep_discovery_suspended_until_both_finish" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="6355dfc8-4aa3-6a4a-2b1c-377710db5795">
+      <Execution id="520a85ef-51dd-42f8-b89e-4d3388a51696" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticSourceActivityTests" name="Overlapping_mutations_keep_discovery_suspended_until_both_finish" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1c7edf6a-79f0-9158-7ecd-0ad6ddbb08d0" executionId="d30cfe06-9054-427d-832e-af03167edc18" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7aedbb11-5c38-f003-9233-f880acc6c83c" executionId="2d7066d9-c797-44f8-bfd6-0ff2b8cdfbf9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6355dfc8-4aa3-6a4a-2b1c-377710db5795" executionId="520a85ef-51dd-42f8-b89e-4d3388a51696" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -357,6 +357,9 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        if (request.ReservedVersionId is { } reserved &&
+            (!Guid.TryParseExact(reserved,"N",out var identity) || identity==Guid.Empty || reserved!=identity.ToString("N")))
+            throw new ArgumentException("A reserved deletion requires a canonical nonempty version identity.",nameof(request));
         await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.BestEffort, cancellationToken).ConfigureAwait(false);
         try
         {
@@ -370,6 +373,16 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
             var existingManifests = metadataStore is null
                 ? await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false)
                 : null;
+            if (request.ReservedVersionId is { } reservedIdentity)
+            {
+                var exists = existingManifests?.Any(manifest => manifest.VersionId==reservedIdentity)==true;
+                if (metadataStore is not null)
+                {
+                    try { await metadataStore.ReadManifestAsync(reservedIdentity,cancellationToken).ConfigureAwait(false); exists=true; }
+                    catch (FileNotFoundException) { }
+                }
+                if (exists) throw new IOException("The reserved deletion is already published; reconcile its original result.");
+            }
             var deletedFrom = existingManifests is null
                 ? await FindLatestManifestAsync(sourcePath, entryKind, cancellationToken).ConfigureAwait(false)
                 : LatestForPath(existingManifests, sourcePath, entryKind);
@@ -377,9 +390,11 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
             {
                 return null;
             }
+            if (request.ExpectedDeletedFromVersionId is { } expected && expected!=deletedFrom.VersionId)
+                throw new IOException("The deletion's retained version changed before publication.");
 
             var manifest = new FileVersionManifest(
-                VersionId: Guid.CreateVersion7().ToString("N"),
+                VersionId: request.ReservedVersionId ?? Guid.CreateVersion7().ToString("N"),
                 WatchedFolderId: request.WatchedFolderId,
                 SourcePath: sourcePath,
                 CapturedAtUtc: entryKind == RepositoryEntryKind.Folder
@@ -406,6 +421,9 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
                     request.WatchedFolderPath,
                     cancellationToken)
                 .ConfigureAwait(false));
+            if (request.BeforePublication is not null)
+                await request.BeforePublication(deletedFrom.VersionId,cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             mirrorWarnings.AddRange(await WriteManifestsAsync(manifestsToRecord, cancellationToken).ConfigureAwait(false));
             return new RepositoryDeletionResult(manifest, CondenseMirrorWarnings(mirrorWarnings));
         }

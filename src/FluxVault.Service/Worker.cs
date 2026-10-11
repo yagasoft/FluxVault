@@ -1,4 +1,6 @@
 using FluxVault.Core.Ipc;
+using FluxVault.Core.Service;
+using FluxVault.Windows.Security;
 
 namespace FluxVault.Service;
 
@@ -17,7 +19,7 @@ public sealed class Worker(ILogger<Worker> logger, IFluxVaultServiceRuntime runt
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        logger.LogInformation("FluxVault single-vault service started. Automatic protection unavailable; manual backup available.");
+        logger.LogInformation("FluxVault single-vault service started with supervised creator-signed-in automatic protection.");
         try { await runtime.RunAsync(stoppingToken).ConfigureAwait(false); }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
         { logger.LogInformation("FluxVault service is stopping; accepted requests have been joined."); }
@@ -34,7 +36,7 @@ public interface IFluxVaultServiceRuntime
     Task RunAsync(CancellationToken cancellationToken);
 }
 
-public sealed class FluxVaultServiceRuntime(NamedPipeFluxVaultServer ipcServer) : IFluxVaultServiceRuntime
+public sealed class FluxVaultServiceRuntime(NamedPipeFluxVaultServer ipcServer, WindowsSingleVaultService vault) : IFluxVaultServiceRuntime
 {
-    public Task RunAsync(CancellationToken cancellationToken) => ipcServer.RunAsync(cancellationToken);
+    public Task RunAsync(CancellationToken cancellationToken) => SupervisedRuntime.RunAsync(ipcServer.RunAsync, vault.RunAutomaticProtectionAsync, cancellationToken);
 }

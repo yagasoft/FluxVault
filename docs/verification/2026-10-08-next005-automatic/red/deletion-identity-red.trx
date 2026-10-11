@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="89249da3-e5a1-47db-a4af-9548d16f85c5" name="os008@OS008-HOME 2026-10-11 15:15:31" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-11T15:15:31.8238240+03:00" queuing="2026-10-11T15:15:31.8238243+03:00" start="2026-10-11T15:15:30.8149478+03:00" finish="2026-10-11T15:15:31.8290664+03:00" />
+  <TestSettings name="default" id="040f47c9-9d24-437e-86e4-bb3bd9a89cd4">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-11_15_15_31" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="2b56bfe7-1292-4050-a07d-7a4b2cd1605a" testId="091efac8-3991-e59c-d20b-d6736ded3d57" testName="FluxVault.Core.Tests.AutomaticDeletionContractTests.Deletion_does_not_reuse_an_existing_reserved_identity" computerName="OS008-HOME" duration="00:00:00.0298455" startTime="2026-10-11T15:15:31.6599250+03:00" endTime="2026-10-11T15:15:31.6783650+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2b56bfe7-1292-4050-a07d-7a4b2cd1605a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.IO.IOException)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AutomaticDeletionContractTests.Deletion_does_not_reuse_an_existing_reserved_identity() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticDeletionContractTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="93b29d62-19ff-4573-9702-2810f60c2291" testId="fc82a2b6-c1c5-124a-67eb-33ce90ca43a3" testName="FluxVault.Core.Tests.AutomaticDeletionContractTests.Deletion_has_a_reserved_identity_and_reconciles_its_exact_intent_and_lineage" computerName="OS008-HOME" duration="00:00:00.0319700" startTime="2026-10-11T15:15:31.6793944+03:00" endTime="2026-10-11T15:15:31.7110103+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="93b29d62-19ff-4573-9702-2810f60c2291">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                      ↓ (pos 11)&#xD;
+Expected: "01a12ae3c1737607a0672b11c6e297be"&#xD;
+Actual:   "01a12ae3c176717f935f1f305a1589e1"&#xD;
+                      ↑ (pos 11)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AutomaticDeletionContractTests.Deletion_has_a_reserved_identity_and_reconciles_its_exact_intent_and_lineage() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticDeletionContractTests.cs:line 18&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="127ed6b5-7f13-407e-88a2-69360b7bbe74" testId="e68bf5a6-480c-dc62-4b35-0e1a5e3dadd0" testName="FluxVault.Core.Tests.AutomaticDeletionContractTests.Rejected_absence_or_changed_lineage_publishes_no_deletion" computerName="OS008-HOME" duration="00:00:00.1777115" startTime="2026-10-11T15:15:31.4528132+03:00" endTime="2026-10-11T15:15:31.6462910+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="127ed6b5-7f13-407e-88a2-69360b7bbe74">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.IO.IOException)</Message>
+          <StackTrace>   at FluxVault.Core.Tests.AutomaticDeletionContractTests.Rejected_absence_or_changed_lineage_publishes_no_deletion() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticDeletionContractTests.cs:line 40&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticDeletionContractTests.Rejected_absence_or_changed_lineage_publishes_no_deletion" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="e68bf5a6-480c-dc62-4b35-0e1a5e3dadd0">
+      <Execution id="127ed6b5-7f13-407e-88a2-69360b7bbe74" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticDeletionContractTests" name="Rejected_absence_or_changed_lineage_publishes_no_deletion" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticDeletionContractTests.Deletion_has_a_reserved_identity_and_reconciles_its_exact_intent_and_lineage" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="fc82a2b6-c1c5-124a-67eb-33ce90ca43a3">
+      <Execution id="93b29d62-19ff-4573-9702-2810f60c2291" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticDeletionContractTests" name="Deletion_has_a_reserved_identity_and_reconciles_its_exact_intent_and_lineage" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Core.Tests.AutomaticDeletionContractTests.Deletion_does_not_reuse_an_existing_reserved_identity" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.core.tests\bin\release\net10.0\fluxvault.core.tests.dll" id="091efac8-3991-e59c-d20b-d6736ded3d57">
+      <Execution id="2b56bfe7-1292-4050-a07d-7a4b2cd1605a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\bin\Release\net10.0\FluxVault.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Core.Tests.AutomaticDeletionContractTests" name="Deletion_does_not_reuse_an_existing_reserved_identity" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="091efac8-3991-e59c-d20b-d6736ded3d57" executionId="2b56bfe7-1292-4050-a07d-7a4b2cd1605a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc82a2b6-c1c5-124a-67eb-33ce90ca43a3" executionId="93b29d62-19ff-4573-9702-2810f60c2291" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e68bf5a6-480c-dc62-4b35-0e1a5e3dadd0" executionId="127ed6b5-7f13-407e-88a2-69360b7bbe74" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.20]   Discovered:  FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.22]   Starting:    FluxVault.Core.Tests&#xD;
+[xUnit.net 00:00:00.44]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.44]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticDeletionContractTests.cs(40,0): at FluxVault.Core.Tests.AutomaticDeletionContractTests.Rejected_absence_or_changed_lineage_publishes_no_deletion()&#xD;
+[xUnit.net 00:00:00.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.47]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.47]       Expected: typeof(System.IO.IOException)&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticDeletionContractTests.cs(52,0): at FluxVault.Core.Tests.AutomaticDeletionContractTests.Deletion_does_not_reuse_an_existing_reserved_identity()&#xD;
+[xUnit.net 00:00:00.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.50]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.50]                             ↓ (pos 11)&#xD;
+[xUnit.net 00:00:00.50]       Expected: "01a12ae3c1737607a0672b11c6e297be"&#xD;
+[xUnit.net 00:00:00.50]       Actual:   "01a12ae3c176717f935f1f305a1589e1"&#xD;
+[xUnit.net 00:00:00.50]                             ↑ (pos 11)&#xD;
+[xUnit.net 00:00:00.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.50]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Core.Tests\AutomaticDeletionContractTests.cs(18,0): at FluxVault.Core.Tests.AutomaticDeletionContractTests.Deletion_has_a_reserved_identity_and_reconciles_its_exact_intent_and_lineage()&#xD;
+[xUnit.net 00:00:00.50]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.51]   Finished:    FluxVault.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T15:15:31.6491569+03:00">
+        <Text>[xUnit.net 00:00:00.44]     FluxVault.Core.Tests.AutomaticDeletionContractTests.Rejected_absence_or_changed_lineage_publishes_no_deletion [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T15:15:31.6788021+03:00">
+        <Text>[xUnit.net 00:00:00.47]     FluxVault.Core.Tests.AutomaticDeletionContractTests.Deletion_does_not_reuse_an_existing_reserved_identity [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T15:15:31.7114780+03:00">
+        <Text>[xUnit.net 00:00:00.50]     FluxVault.Core.Tests.AutomaticDeletionContractTests.Deletion_has_a_reserved_identity_and_reconciles_its_exact_intent_and_lineage [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="16840e16-2116-45dd-917e-a72f57547520" name="os008@OS008-HOME 2026-10-11 15:38:13" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-11T15:38:13.4969709+03:00" queuing="2026-10-11T15:38:13.4969712+03:00" start="2026-10-11T15:38:12.7673214+03:00" finish="2026-10-11T15:38:13.5006442+03:00" />
+  <TestSettings name="default" id="a6fd4113-b557-4706-b985-e65ee5c53022">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-11_15_38_13" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="914e6855-3fd2-4c84-93ef-dc01993fc99b" testId="fcb9dca7-4db0-724f-7ead-a1fa06e40fee" testName="FluxVault.App.Tests.OptionsAutomaticProtectionTests.Unavailable_or_ungranted_preference_is_explained_without_sending_an_enable" computerName="OS008-HOME" duration="00:00:00.0300501" startTime="2026-10-11T15:38:13.3530918+03:00" endTime="2026-10-11T15:38:13.3956175+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="914e6855-3fd2-4c84-93ef-dc01993fc99b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at FluxVault.App.Tests.OptionsAutomaticProtectionTests.Unavailable_or_ungranted_preference_is_explained_without_sending_an_enable() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\OptionsAutomaticProtectionTests.cs:line 30&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.OptionsAutomaticProtectionTests.Unavailable_or_ungranted_preference_is_explained_without_sending_an_enable" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="fcb9dca7-4db0-724f-7ead-a1fa06e40fee">
+      <Execution id="914e6855-3fd2-4c84-93ef-dc01993fc99b" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.OptionsAutomaticProtectionTests" name="Unavailable_or_ungranted_preference_is_explained_without_sending_an_enable" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="fcb9dca7-4db0-724f-7ead-a1fa06e40fee" executionId="914e6855-3fd2-4c84-93ef-dc01993fc99b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.27]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.27]       Expected: False&#xD;
+[xUnit.net 00:00:00.27]       Actual:   True&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\OptionsAutomaticProtectionTests.cs(30,0): at FluxVault.App.Tests.OptionsAutomaticProtectionTests.Unavailable_or_ungranted_preference_is_explained_without_sending_an_enable()&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.28]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T15:38:13.3978840+03:00">
+        <Text>[xUnit.net 00:00:00.26]     FluxVault.App.Tests.OptionsAutomaticProtectionTests.Unavailable_or_ungranted_preference_is_explained_without_sending_an_enable [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

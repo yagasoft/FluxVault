@@ -1,0 +1,119 @@
+{
+  "Observations": [
+    {
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "07bcf9f7f153445cb29390f4748114d3",
+            "ProbeId": "f5b439c0e1834f85a1168e13a4dce127",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1"
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "WriteRuntime": true,
+          "ReadProtected": true
+        }
+      ],
+      "Actor": "System",
+      "RunId": "0f74166785cf4879900bbaf8e8df67eb",
+      "ServerLogStart": 897,
+      "ServerLogEnd": 2307
+    },
+    {
+      "Results": [
+        {
+          "ExitCode": 2,
+          "Kind": "libpq",
+          "Host": "127.0.0.1",
+          "Output": "",
+          "ProbeId": "e1bf9b0a6ab14a75b478bbed5c5f0dbd",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 59024 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\""
+        },
+        {
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "RunId": "6545b0bf92de4841a4fb497a8b87f454",
+      "ServerLogStart": 2307,
+      "ServerLogEnd": 3012
+    },
+    {
+      "RunId": "9371c4067df54577aef9655cea2c4369",
+      "Actor": "System",
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "07bcf9f7f153445cb29390f4748114d3",
+            "ProbeId": "7c6a6a2f2990462eb3e0e307a30dc5f9",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 3012,
+      "ServerLogEnd": 4400
+    },
+    {
+      "Results": [
+        {
+          "Error": "psql: error: connection to server at \"::1\", port 59024 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Output": "",
+          "Host": "::1",
+          "ProbeId": "f8ce0108d0dd4edfb3106f1bd7d20a9a",
+          "ExitCode": 2,
+          "Kind": "libpq"
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "ReadProtected": true
+        }
+      ],
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "RunId": "b834cd2f82b14465beaba0308106ceef",
+      "Complete": true,
+      "ServerLogStart": 4400,
+      "ServerLogEnd": 5094
+    }
+  ],
+  "FixtureId": "07bcf9f7f153445cb29390f4748114d3",
+  "FailureLocation": "at Read-ActorResult, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 500\r\nat Invoke-SystemActor, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 632\r\nat Invoke-CorrelatedActor, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 915\r\nat <ScriptBlock>, C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\eng\\test-windows-database-boundary.ps1: line 1320\r\nat <ScriptBlock>, <No file>: line 2",
+  "Failure": "Actor probe incomplete: Npgsql probe failed before its result: {\"error\":\"No ordinary current creator WTS token could be established.\",\"code\":null,\"detail\":\"System.InvalidOperationException: No ordinary current creator WTS token could be established.\\r\\n   at FluxVault.TestHost.WindowsAutomaticRuntimeProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsAutomaticRuntimeProbe.cs:line 42\\r\\n   at FluxVault.TestHost.WindowsAutomaticRuntimeProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsAutomaticRuntimeProbe.cs:line 130\\r\\n   at FluxVault.TestHost.VaultCatalogueProbe.RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\VaultCatalogueProbe.cs:line 19\\r\\n   at FluxVault.Testing.WindowsDatabaseProbe.RunAsync(String configurationPath, String host, String actor, Guid probeId, Func\\u00603 catalogueProbe) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsDatabaseProbe.cs:line 99\\r\\n   at FluxVault.Testing.WindowsDatabaseProbe.RunAsync(String configurationPath, String host, String actor, Guid probeId, Func\\u00603 catalogueProbe) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsDatabaseProbe.cs:line 103\\r\\n   at FluxVault.TestHost.Program.Main(String[] arguments) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\Program.cs:line 64\"}\r\n"
+}

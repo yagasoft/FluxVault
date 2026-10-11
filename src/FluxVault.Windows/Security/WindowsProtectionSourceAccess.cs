@@ -34,7 +34,9 @@ public sealed class WindowsProtectionSourceAccess(FluxVaultCallerContext caller)
                 if (!GetFileInformationByHandleEx(source.Handle, 0, out BasicInfo basic, Marshal.SizeOf<BasicInfo>())) NativeError();
                 if (standard.EndOfFile < 0) throw new IOException("Source length is invalid.");
                 var written = DateTimeOffset.FromFileTime(basic.LastWriteTime).ToUniversalTime();
-                return Task.FromResult(new ProtectionSourceInspection(ProtectionSourceAvailability.Present, kind, standard.EndOfFile, written));
+                var observed = WindowsCallerFileAccess.ObserveSource(source.Handle,source.PhysicalPath);
+                return Task.FromResult(new ProtectionSourceInspection(ProtectionSourceAvailability.Present, kind, standard.EndOfFile, written,
+                    SourceObservation: FormattableString.Invariant($"{observed.Identity:X16}:{observed.Length:X16}:{observed.LastWriteTime:X16}:{observed.ChangeTime:X16}")));
             }).GetAwaiter().GetResult();
         }
         catch (WindowsCallerFileAccess.ConfirmedSourceMissingException) { return new(ProtectionSourceAvailability.Missing); }

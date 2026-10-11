@@ -1,0 +1,5 @@
+{
+  "ExitCode": 3,
+  "Error": "{\"error\":\"Ordinary creator acquisition refused: Session 1: Native filtering removed source groups: S-1-5-114,S-1-5-32-544\",\"code\":null,\"detail\":\"System.InvalidOperationException: Ordinary creator acquisition refused: Session 1: Native filtering removed source groups: S-1-5-114,S-1-5-32-544\\r\\n   at FluxVault.TestHost.WindowsAutomaticSessionProbe.RunAsync(String creatorSid, String scratch) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\WindowsAutomaticSessionProbe.cs:line 20\\r\\n   at FluxVault.TestHost.Program.Main(String[] arguments) in C:\\\\Users\\\\os008\\\\.codex\\\\worktrees\\\\next004-next005-planning\\\\FluxVault\\\\tests\\\\FluxVault.TestHost\\\\Program.cs:line 37\"}\r\n",
+  "Output": ""
+}

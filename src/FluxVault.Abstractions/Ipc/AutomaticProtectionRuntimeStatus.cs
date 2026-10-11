@@ -18,4 +18,7 @@ public sealed record AutomaticProtectionRuntimeStatus(
     DateTimeOffset? LastSuccessfulUtc = null,
     DateTimeOffset? LastObservationUtc = null,
     int? CreatorSessionId = null,
-    string? DiscoveryMode = null);
+    string? DiscoveryMode = null,
+    bool CanChangePreference = true,
+    int MirrorPendingCount=0,
+    string? MirrorReason=null);

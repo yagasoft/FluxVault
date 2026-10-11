@@ -16,6 +16,7 @@ internal static class VaultCatalogueProbe
 {
     internal static async Task<object> RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture)
     {
+        if (fixture.RunAutomaticTests) return await WindowsAutomaticRuntimeProbe.RunAsync(dataSource, fixture);
         if (WindowsIdentity.GetCurrent().User?.Value != "S-1-5-18") throw new UnauthorizedAccessException();
         await using var connection = await dataSource.OpenConnectionAsync();
         await using var identity = new NpgsqlCommand("SELECT current_setting('fluxvault.test_instance'), current_database(), current_user", connection);

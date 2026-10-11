@@ -18,13 +18,13 @@ function Stop-ControlsServiceJoined($Context) {
     }finally{if($null -ne $process){$process.Dispose()}}
 }
 
-function Invoke-ControlsRollbackInspection($Context) {
+function Invoke-ControlsRollbackInspection($Context,[string]$WorkerSource='', [switch]$RequireAutomaticApproval) {
     # SYSTEM is the existing authenticated service database principal. Never change PostgreSQL authentication.
     $runId=[guid]::NewGuid().ToString('N')
     $root=Join-Path $Context.WorkRoot ('rollback-read-'+$runId)
     New-VaultFixtureProtectedDirectory $root
     $sources=@{
-        'inspect-rollback-worker.ps1'=(Join-Path $PSScriptRoot 'inspect-rollback-worker.ps1')
+        'inspect-rollback-worker.ps1'=$(if($WorkerSource){$WorkerSource}else{Join-Path $PSScriptRoot 'inspect-rollback-worker.ps1'})
         'vault-windows-fixture.psm1'=(Join-Path $controlsRepo 'eng/fixtures/vault-windows-fixture.psm1')
         'owned-windows-job.cs'=(Join-Path $controlsRepo 'eng/fixtures/owned-windows-job.cs')
         'commission-authentication.psm1'=(Join-Path $controlsPrevious 'commission-authentication.psm1')
@@ -46,7 +46,7 @@ function Invoke-ControlsRollbackInspection($Context) {
     try {
         $inspection=@{WorkRoot=$root;KernelName=$kernel;OperatorSid=$Context.OperatorSid;PsqlPath=$Context.PsqlPath;
             ServiceConnection=$Context.ServiceConnection;Postmaster=$Context.Postmaster;DataDirectory=$Context.DataDirectory;
-            Port=$Context.Port;ApplicationName=$Context.ApplicationName;NormalInstallation=$true;EmptyPasswordFile=(Join-Path $root 'empty.pgpass')}
+            Port=$Context.Port;ApplicationName=$Context.ApplicationName;NormalInstallation=$true;EmptyPasswordFile=(Join-Path $root 'empty.pgpass');RequireAutomaticApproval=[bool]$RequireAutomaticApproval}
         [IO.File]::WriteAllText($inspection.EmptyPasswordFile,'')
         $contextPath=Join-Path $root 'context.json'
         $inspection|ConvertTo-Json -Depth 12|Set-Content -LiteralPath $contextPath
@@ -70,7 +70,9 @@ function Invoke-ControlsRollbackInspection($Context) {
         }while($true)
         if((Get-ScheduledTaskInfo $name).LastTaskResult -ne 0){throw 'Inspection task did not exit successfully.'}
         $result=Get-Content -LiteralPath (Join-Path $root 'result.json') -Raw|ConvertFrom-Json -AsHashtable
-        if(-not $result.ReadOnly -or -not $result.Tool.Joined -or $result.Tool.ExitCode -ne 0){throw 'Inspection evidence is incomplete.'}
+        if(-not $result.Tool.Joined -or $result.Tool.ExitCode -ne 0 -or
+            ($RequireAutomaticApproval -and -not ($result.AutomaticApprovalRequired -or $result.AutomaticExtensionAbsent)) -or
+            (-not $RequireAutomaticApproval -and -not $result.ReadOnly)){throw 'Inspection evidence is incomplete.'}
         return $result
     }finally{
         $cleanup=Complete-ControlsInspection $job $name $taskCreated $definitionHash

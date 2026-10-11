@@ -33,6 +33,23 @@
         </StackPanel>
 
         <TabControl Grid.Row="2" Background="White" BorderBrush="#DADCE0">
+            <TabItem Header="Automatic protection">
+                <StackPanel Margin="18">
+                    <CheckBox Name="SignedInAutomaticProtectionToggle" Content="Protect automatically while you are signed in"
+                              IsChecked="{Binding AutomaticProtectionEnabled}" IsEnabled="{Binding AutomaticProtectionAvailable}" Margin="0,0,0,12"
+                              ToolTip="Allow the service to capture saved changes in the protected folders using your signed-in creator account." />
+                    <TextBlock Text="The vault creator can approve automatic access to the saved protected folders. Closing FluxVault keeps protection running. Pause stops captures and keeps pending work and history."
+                               TextWrapping="Wrap" Margin="0,0,0,12" />
+                    <TextBlock Text="Sign-out stops source access. Logged-off capture, VSS and application-consistent snapshots are not supported by this release."
+                               TextWrapping="Wrap" Margin="0,0,0,12" />
+                    <Button Name="ApplyAutomaticProtectionButton" Content="Apply automatic preference" Command="{Binding ApplyAutomaticProtectionCommand}"
+                            HorizontalAlignment="Left" Padding="12,6" Margin="0,0,0,12"
+                            ToolTip="Save this automatic preference for the current saved folders. Other Options edits are kept." />
+                    <TextBlock Text="{Binding AutomaticProtectionStatus}" TextWrapping="Wrap" />
+                    <TextBlock Text="Apply saves this preference separately. Save options applies your other edits. If an outcome is unconfirmed, use Check save outcome before retrying."
+                               TextWrapping="Wrap" Margin="0,12,0,0" />
+                </StackPanel>
+            </TabItem>
             <TabItem Header="Basic">
                 <ScrollViewer Name="BasicOptionsScrollViewer"
                               VerticalScrollBarVisibility="Auto"

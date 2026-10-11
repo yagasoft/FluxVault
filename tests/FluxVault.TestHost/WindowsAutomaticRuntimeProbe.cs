@@ -216,11 +216,25 @@ internal static class WindowsAutomaticRuntimeProbe
             var paused=MutateAsync(client,id,FluxVaultIpcRequest.SetProtectionPaused(true),ct);
             await cancelled.Task.WaitAsync(TimeSpan.FromSeconds(5),ct);
             check(!paused.IsCompleted,"Pause cancels a held native capture before waiting for its mutation gate and does not acknowledge an open reader");
+            // Hold dispatch across both mutations, so neither can rely on a later
+            // polling cycle to replace the preceding Capturing observation.
+            var holding=service.AutomaticRuntimeForFixture.SuspendSourceForFixtureAsync(ct).AsTask();
             release.TrySetResult();
-            var response=await paused;
-            check(response.Success,"Pause reconciles the cancelled reserved identity and acknowledges after the capture reader joins");
-            service.AutomaticRuntimeForFixture.CaptureOpened=null;
-            check((await MutateAsync(client,id,FluxVaultIpcRequest.SetProtectionPaused(false),ct)).Success,"Resume after a held capture pause preserves pending work");
+            await using(var held=await holding)
+            {
+                var response=await paused;
+                check(response.Success,"Pause reconciles the cancelled reserved identity and acknowledges after the capture reader joins");
+                var stopped=await client.SendAsync(FluxVaultIpcRequest.GetStatus(),ct);
+                check(stopped.Status?.Configuration.IsEnabled==false && stopped.Status.AutomaticProtection?.State==AutomaticProtectionState.Paused,
+                    "acknowledged Pause projects saved Paused immediately while dispatch remains held");
+                service.AutomaticRuntimeForFixture.CaptureOpened=null;
+                var resumed=await MutateAsync(client,id,FluxVaultIpcRequest.SetProtectionPaused(false),ct);
+                check(resumed.Success,"Resume after a held capture pause preserves pending work");
+                var current=await client.SendAsync(FluxVaultIpcRequest.GetStatus(),ct);
+                check(current.VaultRevision==resumed.VaultRevision && current.Status?.Configuration.IsEnabled==true &&
+                    current.Status.AutomaticProtection?.State==AutomaticProtectionState.Reconciling,
+                    "rapid Resume cannot reuse stale Capturing or Pending before a fresh runtime cycle observes its controls");
+            }
             var version=await WaitForHistoryAsync(client,id,file,false,ct);
             check(version.SourcePath==file,"the held capture's saved bytes reach history after Resume without another save");
         }

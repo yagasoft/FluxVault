@@ -29,7 +29,8 @@ internal static class InstalledAutomaticAcceptanceProbe
         using var deadline=new CancellationTokenSource(TimeSpan.FromSeconds(120));var ct=deadline.Token;
         var client=new NamedPipeFluxVaultClient(WindowsFluxVaultPipeClientFactory.ForService());
         var status=await SendAsync(FluxVaultIpcRequest.GetStatus());
-        if(status.VaultId?.Value!=Guid.Parse("67539278-9292-4870-93cd-a011419228dc") || status.Status?.AutomaticProtection is null)
+        if(status.VaultId?.Value!=Guid.Parse("67539278-9292-4870-93cd-a011419228dc") || status.Status is null ||
+            phase!="verify-predecessor" && status.Status.AutomaticProtection is null)
             throw new InvalidDataException("The installed automatic staging vault was not verified.");
         var id=status.VaultId!.Value;
         var working=Path.Combine(root,"working");Directory.CreateDirectory(working);
@@ -37,7 +38,7 @@ internal static class InstalledAutomaticAcceptanceProbe
         switch(phase)
         {
             case "prepare":
-                if(status.Status.AutomaticProtection.Policy.Enabled)throw new InvalidDataException("Default-off upgrade was not observed.");
+                if(status.Status.AutomaticProtection!.Policy.Enabled)throw new InvalidDataException("Default-off upgrade was not observed.");
                 WriteNew("baseline.json",status);
                 WriteNew("history-before.json",await SendAsync(FluxVaultIpcRequest.ListVersions() with {VaultId=id}));
                 var configuration=status.Status.Configuration with
@@ -65,7 +66,8 @@ internal static class InstalledAutomaticAcceptanceProbe
                 timer.Restart();await MutateAsync(FluxVaultIpcRequest.SetProtectionPaused(true));var pauseMs=timer.Elapsed.TotalMilliseconds;
                 var paused=await SendAsync(FluxVaultIpcRequest.GetStatus());
                 var versions=await SendAsync(FluxVaultIpcRequest.ListVersions() with {VaultId=id});
-                if(paused.Status!.AutomaticProtection!.PendingCount<1 || versions.Versions!.Count(item=>item.SourcePath==file)!=1)
+                if(paused.Status!.Configuration.IsEnabled || paused.Status.AutomaticProtection!.State!=AutomaticProtectionState.Paused ||
+                    paused.Status.AutomaticProtection.PendingCount<1 || versions.Versions!.Count(item=>item.SourcePath==file)!=1)
                     throw new InvalidOperationException("The saved second observation was not retained pending before restart.");
                 WriteNew("captured.json",new {FirstVersion=first.VersionId,Source=file,SaveMs=saveMs,AutomaticCaptureMs=captureMs,PauseAcknowledgementMs=pauseMs,Paused=paused});
                 break;
@@ -73,7 +75,7 @@ internal static class InstalledAutomaticAcceptanceProbe
                 using(var captured=JsonDocument.Parse(await File.ReadAllBytesAsync(Path.Combine(root,"captured.json"),ct)))
                 {
                     var firstId=captured.RootElement.GetProperty("FirstVersion").GetString()!;
-                    if(status.Status.AutomaticProtection.State!=AutomaticProtectionState.Paused || status.Status.AutomaticProtection.PendingCount<1)
+                    if(status.Status.AutomaticProtection!.State!=AutomaticProtectionState.Paused || status.Status.AutomaticProtection.PendingCount<1)
                         throw new InvalidOperationException("Restart did not preserve the paused durable pending observation.");
                     await VerifyRecoveryAsync(firstId,"first");
                     await MutateAsync(FluxVaultIpcRequest.SetProtectionPaused(false));
@@ -96,6 +98,23 @@ internal static class InstalledAutomaticAcceptanceProbe
                 var after=await SendAsync(FluxVaultIpcRequest.ListVersions() with {VaultId=id});
                 if(before.Versions!.Any(previous=>!after.Versions!.Any(current=>current.VersionId==previous.VersionId)))throw new InvalidOperationException("Earlier history was not preserved.");
                 WriteNew("baseline-restored.json",new {OriginalConfigurationPreserved=true,OriginalVersionsPreserved=before.Versions!.Count,OwnedVersionsRetained=after.Versions!.Count(item=>item.SourcePath==file),Status=restored});
+                break;
+            case "verify-predecessor":
+                if(status.Status.AutomaticProtection is not null)throw new InvalidOperationException("Expected the accepted manual-only predecessor.");
+                var original=JsonSerializer.Deserialize<FluxVaultIpcResponse>(await File.ReadAllBytesAsync(Path.Combine(root,"baseline.json"),ct))!;
+                if(JsonSerializer.Serialize(status.Status.Configuration)!=JsonSerializer.Serialize(original.Status!.Configuration))
+                    throw new InvalidOperationException("Rollback changed the original saved configuration.");
+                using(var verified=JsonDocument.Parse(await File.ReadAllBytesAsync(Path.Combine(root,"restart-verified.json"),ct)))
+                {
+                    await VerifyRecoveryAsync(verified.RootElement.GetProperty("FirstVersion").GetString()!,"first","rollback-");
+                    await VerifyRecoveryAsync(verified.RootElement.GetProperty("PendingVersion").GetString()!,"pending","rollback-");
+                }
+                var oldHistory=await SendAsync(FluxVaultIpcRequest.ListVersions() with {VaultId=id});
+                var originalHistory=JsonSerializer.Deserialize<FluxVaultIpcResponse>(await File.ReadAllBytesAsync(Path.Combine(root,"history-before.json"),ct))!;
+                if(originalHistory.Versions!.Any(previous=>!oldHistory.Versions!.Any(current=>current.VersionId==previous.VersionId)))
+                    throw new InvalidOperationException("Rollback lost earlier history.");
+                WriteNew("predecessor-verified.json",new {ManualOnlyPredecessor=true,OriginalConfigurationPreserved=true,
+                    OriginalVersionsPreserved=originalHistory.Versions!.Count,IndependentSha256Recovery=true,Status=status});
                 break;
             default:throw new ArgumentException("Unsupported installed acceptance phase.");
         }
@@ -122,14 +141,14 @@ internal static class InstalledAutomaticAcceptanceProbe
                 await Task.Delay(100,ct);
             }
         }
-        async Task VerifyRecoveryAsync(string version,string expectedName)
+        async Task VerifyRecoveryAsync(string version,string expectedName,string prefix="")
         {
-            var output=Path.Combine(working,"recovered-"+expectedName+".bin");
+            var output=Path.Combine(working,"recovered-"+prefix+expectedName+".bin");
             await MutateAsync(FluxVaultIpcRequest.RestoreVersion(version,output));
             var actual=SHA256.HashData(await File.ReadAllBytesAsync(output,ct));
             var expected=SHA256.HashData(await File.ReadAllBytesAsync(Path.Combine(root,"expected-"+expectedName+".bin"),ct));
             if(!actual.SequenceEqual(expected))throw new InvalidDataException("Independent recovery digest differs.");
-            WriteNew("recovery-"+expectedName+".json",new {VersionId=version,ExpectedSha256=Convert.ToHexString(expected),ActualSha256=Convert.ToHexString(actual),IndependentVerification=true});
+            WriteNew("recovery-"+prefix+expectedName+".json",new {VersionId=version,ExpectedSha256=Convert.ToHexString(expected),ActualSha256=Convert.ToHexString(actual),IndependentVerification=true});
         }
         void WriteNew(string name,object value)
         {using var stream=new FileStream(Path.Combine(root,name),FileMode.CreateNew);JsonSerializer.Serialize(stream,value);stream.Flush(true);}

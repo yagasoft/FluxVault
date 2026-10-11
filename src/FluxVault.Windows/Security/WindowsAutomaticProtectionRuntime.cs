@@ -50,6 +50,7 @@ public sealed class WindowsAutomaticProtectionRuntime : IAsyncDisposable
     internal Func<CancellationToken, Task>? CaptureOpened { get; set; }
     internal Func<FileVersionManifest,CancellationToken,Task>? PublicationCommitted { get; set; }
     internal PostgreSqlVaultCatalogue.AutomaticRuntimeOwner OwnerForFixture => owner ?? throw new InvalidOperationException("No automatic owner exists.");
+    internal ValueTask<IAsyncDisposable> SuspendSourceForFixtureAsync(CancellationToken ct) => sourceActivity.SuspendAsync(ct);
 
     public WindowsAutomaticProtectionRuntime(PostgreSqlVaultCatalogue catalogue, VaultBinding binding,
         NpgsqlDataSource source, SemaphoreSlim mutationGate, IAutomaticProtectionSessionProvider? sessions = null,
@@ -104,7 +105,14 @@ public sealed class WindowsAutomaticProtectionRuntime : IAsyncDisposable
                 }
             }
             await mutationGate.WaitAsync(ct);
-            try { await RetireSessionAsync(); }
+            try
+            {
+                await RetireSessionAsync();
+                var previous = Status;
+                if (previous.State is not (AutomaticProtectionState.Failed or AutomaticProtectionState.OutcomeUncertain))
+                    Volatile.Write(ref status, previous with { State = AutomaticProtectionState.Reconciling,
+                        Reason = "Source activity is joined; the automatic runtime is updating saved controls.", CreatorSessionId = null });
+            }
             finally { mutationGate.Release(); }
             return held;
         }

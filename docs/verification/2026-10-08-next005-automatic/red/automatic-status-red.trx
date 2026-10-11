@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6c444fb6-57c4-4af8-8ba8-0c63dcb0f7ba" name="os008@OS008-HOME 2026-10-11 16:58:30" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-11T16:58:30.7212748+03:00" queuing="2026-10-11T16:58:30.7212749+03:00" start="2026-10-11T16:58:30.1134477+03:00" finish="2026-10-11T16:58:30.7484687+03:00" />
+  <TestSettings name="default" id="b40d4430-aca6-4c18-a906-93142678676d">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-11_16_58_30" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="7b99842a-1536-4784-a505-5e584ba4ce68" testId="3ca0b1a2-8cca-b498-9f29-585957a59025" testName="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(previous: Failed)" computerName="OS008-HOME" duration="00:00:00.0001613" startTime="2026-10-11T16:58:30.6781927+03:00" endTime="2026-10-11T16:58:30.6782204+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7b99842a-1536-4784-a505-5e584ba4ce68">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Failed&#xD;
+Actual:   Reconciling</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(AutomaticProtectionState previous) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs:line 57&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fab5b12c-c29c-4f98-a267-bf8ad46f2db2" testId="648a6c0f-e98b-008b-290e-c48ff37a6bf5" testName="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Live_blocked_state_and_durable_mirror_warning_are_retained_for_a_non_creator" computerName="OS008-HOME" duration="00:00:00.0012501" startTime="2026-10-11T16:58:30.6773360+03:00" endTime="2026-10-11T16:58:30.6775742+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fab5b12c-c29c-4f98-a267-bf8ad46f2db2" />
+    <UnitTestResult executionId="07a040c8-d0a3-460d-984d-a1949cf8f509" testId="aecf8064-abef-b3d5-8aae-96cab5a52cbb" testName="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(previous: Disabled)" computerName="OS008-HOME" duration="00:00:00.0001925" startTime="2026-10-11T16:58:30.6757504+03:00" endTime="2026-10-11T16:58:30.6757831+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="07a040c8-d0a3-460d-984d-a1949cf8f509">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Reconciling&#xD;
+Actual:   Disabled</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(AutomaticProtectionState previous) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs:line 48&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="00eee308-3d53-40cc-950b-41f9a7a5cf08" testId="9edc90f4-a736-c3bf-f117-70f256ec6bf2" testName="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Disabled_preference_is_visible_before_the_runtime_observes_it" computerName="OS008-HOME" duration="00:00:00.0003902" startTime="2026-10-11T16:58:30.6765722+03:00" endTime="2026-10-11T16:58:30.6765999+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00eee308-3d53-40cc-950b-41f9a7a5cf08">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Disabled&#xD;
+Actual:   Reconciling</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Disabled_preference_is_visible_before_the_runtime_observes_it() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs:line 30&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="08045630-8ad1-4b3d-9050-2b18f40a21de" testId="ae789492-4560-b92f-e3f7-bdd5a691ad9a" testName="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(previous: Pending)" computerName="OS008-HOME" duration="00:00:00.0113037" startTime="2026-10-11T16:58:30.6399157+03:00" endTime="2026-10-11T16:58:30.6611405+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08045630-8ad1-4b3d-9050-2b18f40a21de">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Paused&#xD;
+Actual:   Pending</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(AutomaticProtectionState previous) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs:line 21&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8a6bedac-13f3-4447-812b-7051135de940" testId="70e7c1a5-6b7b-6dc1-ee68-e1a1adfc6cce" testName="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Invalidated_creator_consent_cannot_report_pending_capture" computerName="OS008-HOME" duration="00:00:00.0001570" startTime="2026-10-11T16:58:30.6769573+03:00" endTime="2026-10-11T16:58:30.6769828+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8a6bedac-13f3-4447-812b-7051135de940">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Blocked&#xD;
+Actual:   Pending</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Invalidated_creator_consent_cannot_report_pending_capture() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs:line 38&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c25d6146-3dd0-4414-9d9c-9e2a6c5a679a" testId="eb1d8a50-3eac-76ff-5b2f-10d4f6b8e3d6" testName="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(previous: Paused)" computerName="OS008-HOME" duration="00:00:00.0001893" startTime="2026-10-11T16:58:30.6761502+03:00" endTime="2026-10-11T16:58:30.6761771+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c25d6146-3dd0-4414-9d9c-9e2a6c5a679a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Reconciling&#xD;
+Actual:   Paused</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(AutomaticProtectionState previous) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs:line 48&#xD;
+   at InvokeStub_AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ef9d06de-665a-448d-862c-64d03328f440" testId="dbb80059-7925-730c-e1c3-54e3ee993c60" testName="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(previous: OutcomeUncertain)" computerName="OS008-HOME" duration="00:00:00.0001564" startTime="2026-10-11T16:58:30.6984820+03:00" endTime="2026-10-11T16:58:30.6985215+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ef9d06de-665a-448d-862c-64d03328f440">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: OutcomeUncertain&#xD;
+Actual:   Reconciling</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(AutomaticProtectionState previous) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs:line 57&#xD;
+   at InvokeStub_AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a2136438-525e-4800-86e6-cde8cf9bea5a" testId="23b9fdad-c7ec-c843-c3c4-db0cd3c7f1f4" testName="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(previous: WaitingForChanges)" computerName="OS008-HOME" duration="00:00:00.0006790" startTime="2026-10-11T16:58:30.6738806+03:00" endTime="2026-10-11T16:58:30.6739371+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a2136438-525e-4800-86e6-cde8cf9bea5a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Paused&#xD;
+Actual:   WaitingForChanges</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(AutomaticProtectionState previous) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs:line 21&#xD;
+   at InvokeStub_AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ba8cd51e-d61e-470d-bdf8-de9fa7084d7e" testId="a98b6b66-0cc8-03bd-d84d-a01a9a88281e" testName="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(previous: Capturing)" computerName="OS008-HOME" duration="00:00:00.0000529" startTime="2026-10-11T16:58:30.6747300+03:00" endTime="2026-10-11T16:58:30.6747609+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ba8cd51e-d61e-470d-bdf8-de9fa7084d7e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Paused&#xD;
+Actual:   Capturing</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(AutomaticProtectionState previous) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs:line 21&#xD;
+   at InvokeStub_AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(previous: OutcomeUncertain)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="dbb80059-7925-730c-e1c3-54e3ee993c60">
+      <Execution id="ef9d06de-665a-448d-862c-64d03328f440" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.AutomaticStatusProjectionTests" name="Preference_changes_do_not_hide_failed_or_uncertain_results" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Live_blocked_state_and_durable_mirror_warning_are_retained_for_a_non_creator" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="648a6c0f-e98b-008b-290e-c48ff37a6bf5">
+      <Execution id="fab5b12c-c29c-4f98-a267-bf8ad46f2db2" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.AutomaticStatusProjectionTests" name="Live_blocked_state_and_durable_mirror_warning_are_retained_for_a_non_creator" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(previous: Failed)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="3ca0b1a2-8cca-b498-9f29-585957a59025">
+      <Execution id="7b99842a-1536-4784-a505-5e584ba4ce68" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.AutomaticStatusProjectionTests" name="Preference_changes_do_not_hide_failed_or_uncertain_results" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Disabled_preference_is_visible_before_the_runtime_observes_it" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="9edc90f4-a736-c3bf-f117-70f256ec6bf2">
+      <Execution id="00eee308-3d53-40cc-950b-41f9a7a5cf08" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.AutomaticStatusProjectionTests" name="Disabled_preference_is_visible_before_the_runtime_observes_it" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(previous: Disabled)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="aecf8064-abef-b3d5-8aae-96cab5a52cbb">
+      <Execution id="07a040c8-d0a3-460d-984d-a1949cf8f509" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.AutomaticStatusProjectionTests" name="Resume_does_not_reuse_a_stale_stopped_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(previous: WaitingForChanges)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="23b9fdad-c7ec-c843-c3c4-db0cd3c7f1f4">
+      <Execution id="a2136438-525e-4800-86e6-cde8cf9bea5a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.AutomaticStatusProjectionTests" name="Acknowledged_pause_overrides_the_previous_runtime_cycle" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Invalidated_creator_consent_cannot_report_pending_capture" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="70e7c1a5-6b7b-6dc1-ee68-e1a1adfc6cce">
+      <Execution id="8a6bedac-13f3-4447-812b-7051135de940" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.AutomaticStatusProjectionTests" name="Invalidated_creator_consent_cannot_report_pending_capture" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(previous: Capturing)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="a98b6b66-0cc8-03bd-d84d-a01a9a88281e">
+      <Execution id="ba8cd51e-d61e-470d-bdf8-de9fa7084d7e" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.AutomaticStatusProjectionTests" name="Acknowledged_pause_overrides_the_previous_runtime_cycle" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(previous: Paused)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="eb1d8a50-3eac-76ff-5b2f-10d4f6b8e3d6">
+      <Execution id="c25d6146-3dd0-4414-9d9c-9e2a6c5a679a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.AutomaticStatusProjectionTests" name="Resume_does_not_reuse_a_stale_stopped_state" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(previous: Pending)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="ae789492-4560-b92f-e3f7-bdd5a691ad9a">
+      <Execution id="08045630-8ad1-4b3d-9050-2b18f40a21de" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.AutomaticStatusProjectionTests" name="Acknowledged_pause_overrides_the_previous_runtime_cycle" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3ca0b1a2-8cca-b498-9f29-585957a59025" executionId="7b99842a-1536-4784-a505-5e584ba4ce68" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="648a6c0f-e98b-008b-290e-c48ff37a6bf5" executionId="fab5b12c-c29c-4f98-a267-bf8ad46f2db2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aecf8064-abef-b3d5-8aae-96cab5a52cbb" executionId="07a040c8-d0a3-460d-984d-a1949cf8f509" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9edc90f4-a736-c3bf-f117-70f256ec6bf2" executionId="00eee308-3d53-40cc-950b-41f9a7a5cf08" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ae789492-4560-b92f-e3f7-bdd5a691ad9a" executionId="08045630-8ad1-4b3d-9050-2b18f40a21de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="70e7c1a5-6b7b-6dc1-ee68-e1a1adfc6cce" executionId="8a6bedac-13f3-4447-812b-7051135de940" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb1d8a50-3eac-76ff-5b2f-10d4f6b8e3d6" executionId="c25d6146-3dd0-4414-9d9c-9e2a6c5a679a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbb80059-7925-730c-e1c3-54e3ee993c60" executionId="ef9d06de-665a-448d-862c-64d03328f440" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="23b9fdad-c7ec-c843-c3c4-db0cd3c7f1f4" executionId="a2136438-525e-4800-86e6-cde8cf9bea5a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a98b6b66-0cc8-03bd-d84d-a01a9a88281e" executionId="ba8cd51e-d61e-470d-bdf8-de9fa7084d7e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="10" executed="10" passed="1" failed="9" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.21]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.21]       Expected: Paused&#xD;
+[xUnit.net 00:00:00.21]       Actual:   Pending&#xD;
+[xUnit.net 00:00:00.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.21]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs(21,0): at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(AutomaticProtectionState previous)&#xD;
+[xUnit.net 00:00:00.21]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.21]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.22]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.22]       Expected: Paused&#xD;
+[xUnit.net 00:00:00.22]       Actual:   WaitingForChanges&#xD;
+[xUnit.net 00:00:00.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.22]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs(21,0): at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(AutomaticProtectionState previous)&#xD;
+[xUnit.net 00:00:00.22]            at InvokeStub_AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.22]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.22]       Expected: Paused&#xD;
+[xUnit.net 00:00:00.22]       Actual:   Capturing&#xD;
+[xUnit.net 00:00:00.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.22]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs(21,0): at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(AutomaticProtectionState previous)&#xD;
+[xUnit.net 00:00:00.22]            at InvokeStub_AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.22]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.22]       Expected: Reconciling&#xD;
+[xUnit.net 00:00:00.22]       Actual:   Disabled&#xD;
+[xUnit.net 00:00:00.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.22]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs(48,0): at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(AutomaticProtectionState previous)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.22]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.22]       Expected: Reconciling&#xD;
+[xUnit.net 00:00:00.22]       Actual:   Paused&#xD;
+[xUnit.net 00:00:00.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.22]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs(48,0): at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(AutomaticProtectionState previous)&#xD;
+[xUnit.net 00:00:00.22]            at InvokeStub_AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.22]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.22]       Expected: Disabled&#xD;
+[xUnit.net 00:00:00.22]       Actual:   Reconciling&#xD;
+[xUnit.net 00:00:00.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.22]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs(30,0): at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Disabled_preference_is_visible_before_the_runtime_observes_it()&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.22]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.22]       Expected: Blocked&#xD;
+[xUnit.net 00:00:00.22]       Actual:   Pending&#xD;
+[xUnit.net 00:00:00.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.22]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs(38,0): at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Invalidated_creator_consent_cannot_report_pending_capture()&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.22]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.22]       Expected: Failed&#xD;
+[xUnit.net 00:00:00.22]       Actual:   Reconciling&#xD;
+[xUnit.net 00:00:00.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.22]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs(57,0): at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(AutomaticProtectionState previous)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.24]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.24]       Expected: OutcomeUncertain&#xD;
+[xUnit.net 00:00:00.24]       Actual:   Reconciling&#xD;
+[xUnit.net 00:00:00.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.24]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\AutomaticStatusProjectionTests.cs(57,0): at FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(AutomaticProtectionState previous)&#xD;
+[xUnit.net 00:00:00.24]            at InvokeStub_AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.24]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.25]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:58:30.6634929+03:00">
+        <Text>[xUnit.net 00:00:00.21]     FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(previous: Pending) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:58:30.6741295+03:00">
+        <Text>[xUnit.net 00:00:00.22]     FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(previous: WaitingForChanges) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:58:30.6748852+03:00">
+        <Text>[xUnit.net 00:00:00.22]     FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Acknowledged_pause_overrides_the_previous_runtime_cycle(previous: Capturing) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:58:30.6759074+03:00">
+        <Text>[xUnit.net 00:00:00.22]     FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(previous: Disabled) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:58:30.6762582+03:00">
+        <Text>[xUnit.net 00:00:00.22]     FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Resume_does_not_reuse_a_stale_stopped_state(previous: Paused) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:58:30.6767021+03:00">
+        <Text>[xUnit.net 00:00:00.22]     FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Disabled_preference_is_visible_before_the_runtime_observes_it [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:58:30.6770872+03:00">
+        <Text>[xUnit.net 00:00:00.22]     FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Invalidated_creator_consent_cannot_report_pending_capture [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:58:30.6783403+03:00">
+        <Text>[xUnit.net 00:00:00.22]     FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(previous: Failed) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:58:30.7271779+03:00">
+        <Text>[xUnit.net 00:00:00.24]     FluxVault.Windows.Tests.AutomaticStatusProjectionTests.Preference_changes_do_not_hide_failed_or_uncertain_results(previous: OutcomeUncertain) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

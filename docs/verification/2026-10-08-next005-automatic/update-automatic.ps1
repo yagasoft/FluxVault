@@ -1,4 +1,4 @@
-# Bounded 1.0.9 -> 1.0.10 staging update. Uses existing installation, preservation and joined-job helpers.
+# Bounded 1.0.9 -> reviewed NEXT-005 staging candidate. Reuses existing preservation and joined-job helpers.
 #Requires -Version 7.2
 param([ValidateSet('Baseline','Check','Update','Rollback','Restart')][string]$Mode='Baseline',
     [ValidatePattern('^[0-9a-f]{32}$')][string]$CandidateId,
@@ -50,14 +50,14 @@ if(-not $CandidateId -or -not $CandidateSha256){throw 'The independently reviewe
 $newManifest=Join-Path $retained ($CandidateId+'/candidate.json')
 Assert-PresentationHash $newManifest $CandidateSha256
 $context.New=Get-Content $newManifest -Raw|ConvertFrom-Json -AsHashtable -Depth 12
-if($context.New.CandidateId -cne $CandidateId -or $context.New.Version -cne '1.0.10.0' -or $context.New.Failure -or
+if($context.New.CandidateId -cne $CandidateId -or $context.New.Version -cnotin @('1.0.10.0','1.0.11.0') -or $context.New.Failure -or
     @($context.New.Launches|Where-Object {-not $_.Exited -or $_.ExitCode -ne 0}).Count){throw 'The frozen candidate did not complete.'}
 foreach($entry in $context.New.Installer){$entry.Path=Join-Path $retained ($CandidateId+'/installer/'+[IO.Path]::GetFileName($entry.Path));Assert-PresentationHash $entry.Path $entry.Sha256}
 $tables=Read-PresentationMsi @($context.New.Installer|Where-Object Path -like '*.msi')[0].Path
 $properties=@{};foreach($row in $tables.Property){$properties[$row[0]]=$row[1]}
-if($properties.ProductVersion -cne '1.0.10.0' -or $properties.UpgradeCode -cne '{4B89B6E7-D41E-49E6-BE42-09C10D6570D6}'){throw 'Candidate MSI identity changed.'}
+if($properties.ProductVersion -cne $context.New.Version -or $properties.UpgradeCode -cne '{4B89B6E7-D41E-49E6-BE42-09C10D6570D6}'){throw 'Candidate MSI identity changed.'}
 $context.NewProductCode=$properties.ProductCode
-$context.WorkRoot=Join-Path $context.WorkRoot ('automatic-update-1.0.10-'+$CandidateId)
+$context.WorkRoot=Join-Path $context.WorkRoot ('automatic-update-'+([version]$context.New.Version).ToString(3)+'-'+$CandidateId)
 if(-not(Test-Path -LiteralPath $context.WorkRoot)){New-VaultFixtureProtectedDirectory $context.WorkRoot}
 Assert-VaultFixtureTrustedPath $context.WorkRoot -AdditionalTrustedOwnerSid $context.OperatorSid
 Assert-PresentationSettled $context
@@ -71,7 +71,7 @@ if($Mode -eq 'Check'){
 }
 if(-not $OperationalApprovalRecorded){throw 'Recorded standing operational approval is required.'}
 if($Mode -eq 'Update' -and -not $state.Old){throw 'Update requires the accepted 1.0.9 predecessor.'}
-if($Mode -in @('Rollback','Restart') -and -not $state.New){throw 'Rollback/restart requires the reviewed 1.0.10 candidate.'}
+if($Mode -in @('Rollback','Restart') -and -not $state.New){throw 'Rollback/restart requires this exact reviewed candidate.'}
 Assert-ControlsClientRecordsResolved (Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'FluxVault')
 Stop-ControlsServiceJoined $context
 if($Mode -eq 'Update'){
@@ -79,7 +79,7 @@ if($Mode -eq 'Update'){
     Invoke-PresentationMsi $context 'Update'
     $target=$context.New
 }elseif($Mode -eq 'Rollback'){
-    if(-not $state.New){throw 'Rollback requires the reviewed 1.0.10 candidate.'}
+    if(-not $state.New){throw 'Rollback requires this exact reviewed candidate.'}
     $marker=Invoke-ControlsRollbackInspection $context -WorkerSource (Join-Path $PSScriptRoot 'automatic-rollback-worker.ps1') -RequireAutomaticApproval
     Write-PresentationReceipt $context 'automatic-approval-invalidated' $marker
     Restore-ControlsProduct $context
@@ -89,7 +89,7 @@ if($Mode -eq 'Update'){
     $target=$context.New
 }
 $state=Get-PresentationRegistration $context
-if(($target.Version -eq '1.0.10.0') -ne $state.New -or $state.Old -eq $state.New){throw 'Expected exact registration was not established.'}
+if(($target.CandidateId -ceq $context.New.CandidateId) -ne $state.New -or $state.Old -eq $state.New){throw 'Expected exact registration was not established.'}
 Assert-PresentationPayload $target
 Assert-PresentationPreservation $context
 Assert-PresentationSettled $context

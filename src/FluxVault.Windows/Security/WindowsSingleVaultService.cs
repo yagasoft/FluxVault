@@ -65,15 +65,39 @@ public sealed class WindowsSingleVaultService : IAuthenticatedFluxVaultRequestHa
             return response with { Status = status with { AutomaticProtection = automatic.Status with
                 { State = AutomaticProtectionState.Blocked, Reason = exception.Message,CanChangePreference=false }, LastMessage = exception.Message + " " + ManualStatusMessage(status) } };
         }
-        var observed = automatic.Status with { Policy = saved.Policy, RequiresCreatorApproval = saved.RequiresCreatorApproval,
+        var observed = ProjectAutomaticStatus(saved, automatic.Status, caller.UserSid, response.VaultRevision);
+        return response with { Status = status with { AutomaticProtection = observed, LastMessage = observed.Reason + " " + ManualStatusMessage(status) } };
+    }
+
+    internal static AutomaticProtectionRuntimeStatus ProjectAutomaticStatus(AutomaticCatalogueState saved,
+        AutomaticProtectionRuntimeStatus runtime, string callerSid, long? responseRevision)
+    {
+        var diagnostic = runtime.State is AutomaticProtectionState.Failed or AutomaticProtectionState.OutcomeUncertain;
+        // A concurrent command can commit between the admitted response and this read.
+        // Never attach its controls to an earlier receipt/configuration revision.
+        if (saved.Vault.Revision != responseRevision)
+            return runtime with { State = diagnostic ? runtime.State : AutomaticProtectionState.Reconciling,
+                Reason = (diagnostic ? runtime.Reason + " " : "") + "Saved controls changed during this status read; refresh to confirm automatic protection.",
+                CanChangePreference = false };
+        var observed = runtime with { Policy = saved.Policy, RequiresCreatorApproval = saved.RequiresCreatorApproval,
             PendingCount = saved.PendingCount, UncertainCount = saved.UncertainCount,
             LastSuccessfulVersionId = saved.LastSuccessfulVersionId, LastSuccessfulUtc = saved.LastSuccessfulUtc,
             MirrorPendingCount=saved.MirrorPendingCount,MirrorReason=saved.MirrorReason,
-            CanChangePreference=automatic.Status.CanChangePreference && caller.UserSid==saved.Vault.Access.OwnerSid };
-        if (observed.Policy != automatic.Status.Policy)
-            observed = observed with { State = AutomaticProtectionState.Reconciling, Reason = "Saved preference changed; the automatic runtime is updating." };
+            CanChangePreference=runtime.CanChangePreference && callerSid==saved.Vault.Access.OwnerSid };
+        if (!diagnostic)
+        {
+            if (!saved.Vault.Configuration.IsEnabled)
+                observed = observed with { State = AutomaticProtectionState.Paused, Reason = "Protection is paused; pending work and history are kept." };
+            else if (!saved.Policy.Enabled)
+                observed = observed with { State = AutomaticProtectionState.Disabled, Reason = "Automatic protection is off." };
+            else if (saved.RequiresCreatorApproval)
+                observed = observed with { State = AutomaticProtectionState.Blocked, Reason = "Creator approval is required for the saved source selection." };
+            else if (observed.Policy != runtime.Policy || runtime.RequiresCreatorApproval ||
+                runtime.State is AutomaticProtectionState.Paused or AutomaticProtectionState.Disabled)
+                observed = observed with { State = AutomaticProtectionState.Reconciling, Reason = "Saved preference changed; the automatic runtime is updating." };
+        }
         if(saved.MirrorPendingCount>0)observed=observed with {Reason=observed.Reason+" Mirror replication is pending for "+saved.MirrorPendingCount+" file(s). "+saved.MirrorReason};
-        return response with { Status = status with { AutomaticProtection = observed, LastMessage = observed.Reason + " " + ManualStatusMessage(status) } };
+        return observed;
     }
 
     private static string ManualStatusMessage(FluxVaultServiceStatus status) => status.LastMessage

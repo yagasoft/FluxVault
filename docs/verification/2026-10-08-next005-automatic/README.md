@@ -14,12 +14,16 @@ the same dedicated task worktree on `codex/next005-signed-in-protection`.
 
 The supervised signed-in runtime, native creator adapter, durable v2 work/cadence
 and volume reconciliation, Options preference/status and mirror retry are
-implemented. **No NEXT-005 installation has happened yet.** Earlier prerequisite
+implemented. **The first 1.0.10 staging installation and automatic recovery passed;
+a live status defect requires corrective 1.0.11 acceptance.** Earlier prerequisite
 sections below are historical checkpoints, superseded within their checked scope
 by these results. Independent Astra/high review accepts the current product code
 gate without another requirement-backed blocker.
 
-- Combined suites: **608 Core, 514 App and 157 Windows tests pass, zero skipped**.
+- Combined suites: **608 Core, 514 App, 173 Windows and 348 Integration tests pass,
+  zero skipped**. The corrective App/Windows/Integration receipts are
+  `green/app-fixture-complete.trx`, `green/windows-final-corrective.trx` and
+  `green/integration-corrective-combined.trx`.
   `green/*-combined*.trx` retain final results and the initial two App failures
   (missing tooltips and a tab-selector assumption), corrected before the green run.
   `final-build.log` confirms a zero-warning/error solution build.
@@ -69,9 +73,61 @@ postmaster 13748, started `2026-10-10T08:12:14.0315058Z`; it does not restart
 PostgreSQL or rewrite old seals. Initial wrapper checks caught forward-slash path
 spelling and dot-sourced parameter shadowing before any installation effects.
 
-The candidate, deployment/live workflow, displayed WPF and foreground measurements
-remain open. Native sign-out/re-entry and NEXT-009's existing baseline misses
-remain explicitly open; no broader readiness claim is made.
+The frozen 1.0.10 candidate is `ed7e1a6bf10b4b5a9c10a40c65a2c8e3`, source
+`b584398161959d5b4311eceaad551d126c5b7d40`. Independent Astra/high accepted its
+concrete deployment and retained 1.0.9 fallback. `candidate-retained.json` and
+`candidate-readonly-check.json` retain the exact package/manifest pins. The joined
+update verified all 208 payload hashes and bootstrap/authentication/ACL/process
+preservation. `installed-1.0.10` records the real installed workflow: desktop
+closed, 1 MiB save, automatic capture in 3.971 s, newer pending save, Pause in
+64.50 ms, joined FluxVault service restart, history and independently equal SHA-256
+recovery of both versions without another save. The source write took 0.814 ms;
+twenty history reads took 13.87–43.10 ms. These are one synthetic trial, not a
+professional workload or full performance pass.
+
+The immediate post-Pause status still reported the preceding runtime cycle's
+Pending state despite saved `IsEnabled=false`. Capture had joined; the dashboard's
+saved pause display was correct, but this service/Options inconsistency prevents
+acceptance. Focused regressions reproduce the stale Pause/off/approval and hidden
+Failed/OutcomeUncertain states. The correction reads one runtime snapshot,
+projects committed controls immediately, preserves failed/uncertain diagnostics,
+and reports Reconciling until resumed authority is observed. A revision mismatch
+between admission and the automatic-state read refuses mixed control projection
+and preference changes, while preserving receipt revision/configuration.
+Independent Astra/high approves this bounded approach.
+
+The held native capture regression additionally reproduces a rapid Resume reusing
+stale Capturing/Pending after its source readers have joined. The runtime now
+invalidates that cached activity under the existing mutation gate while source
+suspension remains held. `native-rapid-red` retains the precise failure;
+`native-rapid-green` passes **63 checks on each IPv4/IPv6**, including immediate
+Paused and resumed Reconciling status while dispatch is held, then capture without
+another save. Both runs joined, removed their roots and preserved installation.
+Independent Astra/high approves the correction and regression. The final source
+build (`frozen-source-build.log`) has zero warnings/errors.
+
+The complete original four-scope configuration/default-off policy and all eighteen
+prior versions were restored, retaining the two owned automatic versions.
+Independent review approved exercising the exact 1.0.10→1.0.9 rollback. Its joined
+transition, durable approval invalidation and 208 fallback payload hashes passed;
+`predecessor-verified.json` and both `recovery-rollback-*.json` prove actual old-service
+pipe/history/configuration and independent recovery of the new versions. PostgreSQL
+postmaster 13748 and bootstrap/authentication/ACLs remain unchanged. Corrective
+1.0.11 needs its own frozen candidate gate, displayed WPF and measurements.
+
+Hosted run `38144602250` failed four fixture cases: the new Options tab displaced
+an ordinal selector; a test enumerated a collection while refresh mutated it;
+and a supposedly single watcher burst raced the loop's consumption. Repairs select
+Advanced by header, await collection notification and join reads, and hold the
+existing journal-reader fixture until all burst hints are admitted. No assertions
+or product scheduling policy are weakened. Seven focused Integration checks and
+all 514 App/173 Windows checks pass. The first App fixture repair used the wrong
+event item type and timed out; that diagnostic result is retained, then corrected
+to `VersionRow`. All 348 ordinary Integration checks now pass; fresh hosted CI
+for the corrective commit remains required.
+
+Native sign-out/re-entry and NEXT-009's existing baseline misses remain explicitly
+open; no broader readiness claim is made.
 
 `integrity-final` (fixture `e9c659f927e84a86b833501b98132156`) freshly passes all
 **40 real PostgreSQL integrity cases, zero skipped**, exits 0 and is joined.

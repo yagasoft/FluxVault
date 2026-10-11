@@ -1,0 +1,135 @@
+{
+  "App": {
+    "Executable": "C:\\Program Files\\FluxVault\\app\\FluxVault.App.exe",
+    "CpuSeconds": 27.859375,
+    "WriteTransferBytes": 4367586,
+    "ReadTransferBytes": 8542216,
+    "ProcessId": 29416,
+    "PrivateBytes": 125800448,
+    "Threads": 20,
+    "Handles": 641,
+    "StartedUtc": "2026-10-11T14:30:56.1498481Z",
+    "WorkingSetBytes": 236998656
+  },
+  "ObservedUtc": "2026-10-11T14:44:47.4490906+00:00",
+  "SharedPostgreSql": {
+    "Processes": [
+      {
+        "ReadTransferBytes": 1213048,
+        "ProcessId": 13748,
+        "CpuSeconds": 3.703125,
+        "StartedUtc": "2026-10-10T08:12:14.0315050Z",
+        "WorkingSetBytes": 26513408,
+        "WriteTransferBytes": 4989
+      },
+      {
+        "ReadTransferBytes": 48644,
+        "ProcessId": 14292,
+        "CpuSeconds": 0.03125,
+        "StartedUtc": "2026-10-10T08:12:14.2726960Z",
+        "WorkingSetBytes": 10502144,
+        "WriteTransferBytes": 4568
+      },
+      {
+        "ReadTransferBytes": 945070,
+        "ProcessId": 8120,
+        "CpuSeconds": 0.046875,
+        "StartedUtc": "2026-10-10T08:12:14.3011330Z",
+        "WorkingSetBytes": 11902976,
+        "WriteTransferBytes": 0
+      },
+      {
+        "ReadTransferBytes": 117678,
+        "ProcessId": 8056,
+        "CpuSeconds": 0.015625,
+        "StartedUtc": "2026-10-10T08:12:14.3033100Z",
+        "WorkingSetBytes": 10768384,
+        "WriteTransferBytes": 0
+      },
+      {
+        "ReadTransferBytes": 43950,
+        "ProcessId": 8652,
+        "CpuSeconds": 0.046875,
+        "StartedUtc": "2026-10-10T08:12:14.3057090Z",
+        "WorkingSetBytes": 10641408,
+        "WriteTransferBytes": 0
+      },
+      {
+        "ReadTransferBytes": 43950,
+        "ProcessId": 12972,
+        "CpuSeconds": 0.171875,
+        "StartedUtc": "2026-10-10T08:12:14.3101730Z",
+        "WorkingSetBytes": 13987840,
+        "WriteTransferBytes": 2019487
+      },
+      {
+        "ReadTransferBytes": 43950,
+        "ProcessId": 10436,
+        "CpuSeconds": 0.65625,
+        "StartedUtc": "2026-10-10T08:12:14.3139810Z",
+        "WorkingSetBytes": 12386304,
+        "WriteTransferBytes": 0
+      },
+      {
+        "ReadTransferBytes": 43950,
+        "ProcessId": 14684,
+        "CpuSeconds": 0.421875,
+        "StartedUtc": "2026-10-10T08:12:15.8350930Z",
+        "WorkingSetBytes": 15106048,
+        "WriteTransferBytes": 892928
+      },
+      {
+        "ReadTransferBytes": 48136,
+        "ProcessId": 14704,
+        "CpuSeconds": 0.34375,
+        "StartedUtc": "2026-10-10T08:12:15.8382250Z",
+        "WorkingSetBytes": 11624448,
+        "WriteTransferBytes": 3662
+      },
+      {
+        "ReadTransferBytes": 44474,
+        "ProcessId": 14724,
+        "CpuSeconds": 0.09375,
+        "StartedUtc": "2026-10-10T08:12:15.8414660Z",
+        "WorkingSetBytes": 11345920,
+        "WriteTransferBytes": 0
+      },
+      {
+        "ReadTransferBytes": 243605,
+        "ProcessId": 60604,
+        "CpuSeconds": 0.203125,
+        "StartedUtc": "2026-10-11T14:28:40.5882680Z",
+        "WorkingSetBytes": 21864448,
+        "WriteTransferBytes": 0
+      },
+      {
+        "ReadTransferBytes": 243605,
+        "ProcessId": 48428,
+        "CpuSeconds": 0.328125,
+        "StartedUtc": "2026-10-11T14:40:12.3587310Z",
+        "WorkingSetBytes": 23076864,
+        "WriteTransferBytes": 0
+      },
+      {
+        "ReadTransferBytes": 243605,
+        "ProcessId": 31456,
+        "CpuSeconds": 0.5625,
+        "StartedUtc": "2026-10-11T14:43:44.6956020Z",
+        "WorkingSetBytes": 23130112,
+        "WriteTransferBytes": 1515520
+      }
+    ]
+  },
+  "Service": {
+    "Executable": "C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe",
+    "CpuSeconds": 11.828125,
+    "WriteTransferBytes": 9405823,
+    "ReadTransferBytes": 11762491,
+    "ProcessId": 3848,
+    "PrivateBytes": 76492800,
+    "Threads": 20,
+    "Handles": 554,
+    "StartedUtc": "2026-10-11T14:28:40.1008122Z",
+    "WorkingSetBytes": 163713024
+  }
+}

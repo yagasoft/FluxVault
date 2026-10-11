@@ -7,6 +7,239 @@ namespace FluxVault.Integration.Tests;
 public sealed class WindowsFixtureToolingTests
 {
     [Theory]
+    [InlineData("S-1-5-18")]
+    [InlineData("S-1-5-32-544")]
+    public async Task Native_observer_builtin_owner_needs_no_additional_administrator_grant(string ownerSid)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $failure=$null
+            try{Assert-VaultFixtureTrustedPath $root -AdditionalTrustedOwnerSid 'OWNER_SID'}catch{$failure=$_.Exception.Message}
+            @{Accepted=($null -eq $failure);Failure=$failure}|ConvertTo-Json -Compress
+            """.Replace("OWNER_SID", ownerSid, StringComparison.Ordinal));
+        Assert.True(result.GetProperty("Accepted").GetBoolean(), result.GetProperty("Failure").GetString());
+    }
+
+    [Theory]
+    [InlineData("equal", true)]
+    [InlineData("windows-ai", true)]
+    [InlineData("grant", false)]
+    [InlineData("owner", false)]
+    [InlineData("group", false)]
+    [InlineData("unprotected", false)]
+    [InlineData("removed-ai", false)]
+    [InlineData("audit", false)]
+    public async Task Native_observer_descriptor_check_allows_only_the_added_Windows_processing_marker(string scenario, bool accepted)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'eng/test-automatic-session-transition.ps1') -Mode Collect -RunId $fixtureId
+            $expected='O:SYG:BAD:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)S:(AU;SA;0x1;;;WD)';$actual=$expected
+            switch('SCENARIO_VALUE'){
+                'windows-ai' {$actual=$expected.Replace('D:P','D:PAI')}
+                'grant' {$actual=$expected.Replace('S:','(A;;FA;;;BU)S:')}
+                'owner' {$actual=$expected.Replace('O:SY','O:BA')}
+                'group' {$actual=$expected.Replace('G:BA','G:SY')}
+                'unprotected' {$actual=$expected.Replace('D:P','D:')}
+                'removed-ai' {$expected=$expected.Replace('D:P','D:PAI')}
+                'audit' {$actual=$expected.Replace('0x1;;;WD','0x2;;;WD')}
+            }
+            function Get-Acl {param($LiteralPath,[switch]$Audit)
+                if(-not $Audit){throw 'The descriptor check must include audit data.'}
+                $acl=[Security.AccessControl.DirectorySecurity]::new();$acl.SetSecurityDescriptorSddlForm($actual);$acl}
+            $failure=$null;$read=$null
+            try{$read=Read-VerifiedObserverDescriptor 'owned parent' $expected}catch{$failure=$_.Exception.Message}
+            @{Accepted=($null -eq $failure);Failure=$failure;Actual=$read}|ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.Equal(accepted, result.GetProperty("Accepted").GetBoolean());
+        if (!accepted)
+            Assert.Contains("descriptor differs", result.GetProperty("Failure").GetString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData("accepted")]
+    [InlineData("unexpected-child")]
+    [InlineData("inheriting-child")]
+    [InlineData("non-administrator")]
+    public async Task Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(string scenario)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));$testRoot=$root
+            . (Join-Path $repo 'eng/test-automatic-session-transition.ps1') -Mode Collect -RunId $fixtureId
+            $root=$testRoot;$isSystem=$false;$script:scenario='SCENARIO_VALUE';$script:changes=0
+            $operatorSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+            $base='C:\ProgramData\FluxVault.Tests';$nested=Join-Path $base 'NEXT002'
+            $script:descriptors=@{}
+            foreach($path in @($base,$nested,(Join-Path $base 'NEXT005'),(Join-Path $base 'NEXT005Session'))){
+                $acl=[Security.AccessControl.DirectorySecurity]::new();$acl.SetAccessRuleProtection($true,$false)
+                $acl.SetOwner([Security.Principal.SecurityIdentifier]::new($operatorSid))
+                $acl.SetGroup([Security.Principal.SecurityIdentifier]::new($operatorSid))
+                foreach($sid in @('S-1-5-18','S-1-5-32-544',$operatorSid)){
+                    $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new($sid),'FullControl','ContainerInherit,ObjectInherit','None','Allow'))}
+                $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new('S-1-5-32-545'),'Traverse,Synchronize','None','None','Allow'))
+                $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new('S-1-5-21-1-2-3-9199'),'WriteData','None','None','Deny'))
+                if($script:scenario -eq 'inheriting-child' -and $path.EndsWith('NEXT005')){$acl.SetAccessRuleProtection($false,$true)}
+                $script:descriptors[$path]=$acl.GetSecurityDescriptorSddlForm('All')
+            }
+            $original=@{};foreach($key in $script:descriptors.Keys){$original[$key]=$script:descriptors[$key]}
+            function Get-LocalGroupMember {param($SID) if($script:scenario -ne 'non-administrator'){[pscustomobject]@{SID=[Security.Principal.SecurityIdentifier]::new($operatorSid)}}}
+            function Assert-VaultFixtureTrustedPath {param($Path)}
+            function Set-ObserverSystemOwner {param($Path)}
+            function Get-Acl {param($LiteralPath,[switch]$Audit)
+                $acl=[Security.AccessControl.DirectorySecurity]::new();$acl.SetSecurityDescriptorSddlForm($script:descriptors[$LiteralPath]);$acl}
+            function Set-Acl {param($LiteralPath,$AclObject)
+                if(-not(Test-Path -LiteralPath (Join-Path $root 'parent-acls-before.json'))){throw 'Original descriptors were not persisted before mutation.'}
+                if($LiteralPath -notin @($base,$nested)){throw 'Unexpected child mutation.'}
+                $script:changes++;$script:descriptors[$LiteralPath]=$AclObject.GetSecurityDescriptorSddlForm('All')}
+            function Get-ChildItem {param($LiteralPath,[switch]$Force)
+                if($LiteralPath -eq $nested){return}
+                foreach($name in @('NEXT002','NEXT005','NEXT005Session')){
+                    [pscustomobject]@{Name=$name;FullName=(Join-Path $base $name);PSIsContainer=$true;Attributes=[IO.FileAttributes]::Directory}}
+                if($script:scenario -eq 'unexpected-child'){
+                    [pscustomobject]@{Name='Unrelated';FullName=(Join-Path $base 'Unrelated');PSIsContainer=$true;Attributes=[IO.FileAttributes]::Directory}}}
+            $failure=$null;$receipt=$null
+            try{$receipt=Initialize-ObserverParents}catch{$failure=$_.Exception.Message}
+            $childrenPreserved=$original[(Join-Path $base 'NEXT005')] -ceq $script:descriptors[(Join-Path $base 'NEXT005')] -and
+                $original[(Join-Path $base 'NEXT005Session')] -ceq $script:descriptors[(Join-Path $base 'NEXT005Session')]
+            $expected=$true
+            foreach($path in @($base,$nested)){
+                $acl=[Security.AccessControl.DirectorySecurity]::new();$acl.SetSecurityDescriptorSddlForm($original[$path])
+                $acl.SetOwner([Security.Principal.SecurityIdentifier]::new('S-1-5-18'))
+                foreach($rule in @($acl.GetAccessRules($true,$false,[Security.Principal.SecurityIdentifier]))){
+                    if($rule.IdentityReference.Value -eq $operatorSid -and $rule.AccessControlType -eq 'Allow'){$acl.RemoveAccessRuleSpecific($rule)}}
+                $expected=$expected -and $acl.GetSecurityDescriptorSddlForm('All') -ceq $script:descriptors[$path]
+            }
+            @{Failure=$failure;Changes=$script:changes;ChildrenPreserved=$childrenPreserved;ExactExpectedDescriptors=$expected;
+                OriginalSaved=(Test-Path -LiteralPath (Join-Path $root 'parent-acls-before.json'));Receipt=$receipt}|ConvertTo-Json -Depth 6 -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        Assert.True(result.GetProperty("ChildrenPreserved").GetBoolean());
+        if (scenario == "accepted")
+        {
+            Assert.Equal(JsonValueKind.Null, result.GetProperty("Failure").ValueKind);
+            Assert.Equal(2, result.GetProperty("Changes").GetInt32());
+            Assert.True(result.GetProperty("ExactExpectedDescriptors").GetBoolean());
+            Assert.True(result.GetProperty("OriginalSaved").GetBoolean());
+        }
+        else
+        {
+            Assert.Contains(scenario switch
+            {
+                "unexpected-child" => "Unexpected observer parent child",
+                "inheriting-child" => "Inheritance-enabled observer parent child",
+                _ => "direct local administrator"
+            }, result.GetProperty("Failure").GetString(), StringComparison.OrdinalIgnoreCase);
+            Assert.Equal(0, result.GetProperty("Changes").GetInt32());
+        }
+    }
+
+    [Theory]
+    [InlineData("pin-owner")]
+    [InlineData("start")]
+    [InlineData("changed-task")]
+    public async Task Native_observer_failed_start_removes_only_its_unchanged_task(string scenario)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));$testRoot=$root
+            . (Join-Path $repo 'eng/test-automatic-session-transition.ps1') -Mode Collect -RunId $fixtureId
+            $root=$testRoot;$requestPath=Join-Path $root 'request.json';'{}'|Set-Content -LiteralPath $requestPath
+            $isSystem=$false;$script:registered=$null;$script:removed=0;$script:changed=$false;$script:scenario='SCENARIO_VALUE'
+            function New-ScheduledTaskAction {param($Execute,$Argument) [pscustomobject]@{Execute=$Execute;Arguments=$Argument}}
+            function New-ScheduledTaskSettingsSet {param($ExecutionTimeLimit,$MultipleInstances) [pscustomobject]@{Limit=$ExecutionTimeLimit}}
+            function Get-ScheduledTask {param($TaskName,$ErrorAction) $script:registered}
+            function Register-ScheduledTask {param($TaskName,$Action,$Settings,$User,$RunLevel,$Description)
+                $script:registered=[pscustomobject]@{Actions=$Action;Description=$Description;Principal=[pscustomobject]@{UserId=$User};State='Ready'}}
+            function Get-TaskDigest {if($script:changed){'B'*64}else{'A'*64}}
+            function Set-ObserverSystemOwner {param($Path) if($script:scenario -eq 'pin-owner'){throw 'injected pin ownership IO failure'}}
+            function Start-ScheduledTask {param($TaskName)
+                if($script:scenario -eq 'changed-task'){$script:changed=$true}
+                throw 'injected task start failure'}
+            function Unregister-ScheduledTask {param($TaskName,$Confirm) $script:removed++;$script:registered=$null}
+            $failure=$null;try{Invoke-ObserverStart ([pscustomobject]@{TimeoutSeconds=60;InstalledAssemblies=@()})}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;Removed=$script:removed;TaskRetained=($null -ne $script:registered)}|ConvertTo-Json -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        if (scenario == "changed-task")
+        {
+            Assert.Contains("ownership changed", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+            Assert.Equal(0, result.GetProperty("Removed").GetInt32());
+            Assert.True(result.GetProperty("TaskRetained").GetBoolean());
+        }
+        else
+        {
+            Assert.Contains("injected", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+            Assert.Equal(1, result.GetProperty("Removed").GetInt32());
+            Assert.False(result.GetProperty("TaskRetained").GetBoolean());
+        }
+    }
+
+    [Theory]
+    [InlineData("request-io")]
+    [InlineData("worker-identity-io")]
+    [InlineData("changed-task")]
+    [InlineData("changed-task-worker-identity-io")]
+    public async Task Native_observer_early_worker_failure_removes_owned_task_and_retains_identity(string scenario)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module));$testRoot=$root
+            . (Join-Path $repo 'eng/test-automatic-session-transition.ps1') -Mode Collect -RunId $fixtureId
+            $root=$testRoot;$isSystem=$true;$script:removed=0;$script:scenario='SCENARIO_VALUE'
+            $identity=Get-ObserverTaskIdentity;$identity.DefinitionSha256='A'*64;$identity.RequestSha256='B'*64
+            $identity|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $root 'task.json')
+            $script:registered=[pscustomobject]@{Actions=[pscustomobject]@{Execute=$identity.Executable;Arguments=$identity.Arguments};
+                Description=$identity.Description;Principal=[pscustomobject]@{UserId='SYSTEM'};State='Running'}
+            function Get-ScheduledTask {param($TaskName,$ErrorAction) $script:registered}
+            function Get-TaskDigest {if($script:scenario.StartsWith('changed-task')){'B'*64}else{'A'*64}}
+            function Read-Request {throw 'injected request IO failure'}
+            function Unregister-ScheduledTask {param($TaskName,$Confirm) $script:removed++;$script:registered=$null}
+            function Set-Content {
+                [CmdletBinding()]param([string]$LiteralPath,[Parameter(ValueFromPipeline=$true)]$Value)
+                process {
+                    if($script:scenario.Contains('worker-identity-io') -and $LiteralPath.EndsWith('worker.json')){throw 'injected worker identity IO failure'}
+                    Microsoft.PowerShell.Management\Set-Content -LiteralPath $LiteralPath -Value $Value
+                }
+            }
+            $failure=$null;try{Invoke-ObserverWorker}catch{$failure=$_.Exception.Message}
+            $receipt=Get-Content -LiteralPath (Join-Path $root 'result.json') -Raw|ConvertFrom-Json
+            @{Failure=$failure;Removed=$script:removed;Receipt=$receipt}|ConvertTo-Json -Depth 5 -Compress
+            """.Replace("SCENARIO_VALUE", scenario, StringComparison.Ordinal));
+        var receipt = result.GetProperty("Receipt");
+        if (scenario.StartsWith("changed-task", StringComparison.Ordinal))
+        {
+            Assert.Equal(0, result.GetProperty("Removed").GetInt32());
+            Assert.False(receipt.GetProperty("TaskRemoved").GetBoolean());
+        }
+        else
+        {
+            Assert.Contains("injected", result.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+            Assert.Equal(1, result.GetProperty("Removed").GetInt32());
+            Assert.True(receipt.GetProperty("TaskRemoved").GetBoolean());
+        }
+        Assert.True(receipt.GetProperty("WorkerProcess").GetProperty("ProcessId").GetInt32() > 0);
+        Assert.False(receipt.GetProperty("OwnedHarnessJoined").GetBoolean());
+    }
+
+    [Theory]
+    [InlineData(60)]
+    [InlineData(600)]
+    public async Task Native_observer_outer_deadline_allows_primary_join_recovery_join_and_finalisation(int seconds)
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            . (Join-Path $repo 'eng/test-automatic-session-transition.ps1') -Mode Collect -RunId $fixtureId
+            Get-ObserverBounds OBSERVATION_SECONDS|ConvertTo-Json -Compress
+            """.Replace("OBSERVATION_SECONDS", seconds.ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal));
+        int Value(string name) => result.GetProperty(name).GetInt32();
+        Assert.True(Value("PrimaryWait") > Value("PrimaryTool"));
+        Assert.True(Value("RecoveryWait") > Value("RecoveryTool"));
+        Assert.True(Value("Scheduler") > Value("PrimaryWait") + Value("RecoveryWait") + 2 * Value("JoinGrace"));
+        Assert.True(Value("FinalisationGrace") >= 30);
+    }
+
+    [Theory]
     [InlineData("cim-precision", true)]
     [InlineData("wrong-native-lifetime", false)]
     [InlineData("wrong-owner", false)]

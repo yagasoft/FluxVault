@@ -8,6 +8,15 @@ In **Options → Automatic protection**, the creator can enable **Protect automa
 
 The dashboard and Options show pending, capturing, paused, blocked, failed and uncertain states and their reasons. A missing or denied source stays unresolved; it is not treated as deletion. Restart reconciles interrupted reserved results before admitting fresh changes. Healthy retained versions remain recoverable when automatic operation is blocked or uncertain. An offline mirror retains visible durable lag while primary captures continue; returning the original mirror lets the service copy verified retained bytes without another save. Pausing stops those writes as well.
 
+Acknowledged Pause and automatic-off changes appear immediately. Resume shows
+reconciliation until the service has observed the saved controls. Failed or
+uncertain diagnostics stay visible through those changes. If controls change
+during a status read, refresh before changing the automatic preference again.
+The [installed 1.0.11 record](verification/2026-10-08-next005-automatic/README.md)
+retains the automatic capture, pending-save restart, displayed states and
+independently verified recovery evidence; native sign-out/re-entry acceptance
+is still open.
+
 This slice supports creator-signed-in capture. Native Windows sign-out/re-entry acceptance and logged-off/reboot protection remain open; VSS, application consistency and independent disaster recovery are separate work. Software rollback is manual-only and preserves pending work/history. Re-upgrade requires fresh creator approval of the current scope before automatic capture resumes.
 
 When protection is enabled, **Run backup** first saves the current draft. It requests backup once, for that same vault and acknowledged revision, only after the service confirms success. A rejected, cancelled or unconfirmed save keeps the edits and explains why this action's backup did not start.

@@ -83,6 +83,8 @@ function Invoke-ActorTool {
         $limit=if($ClientKind -eq 'Integrity'){[int]$runtime.IntegrityTimeoutSeconds*1000}elseif($ClientKind -eq 'CallerFiles'){
             if(($configuration.PSObject.Properties.Name -contains 'RunPackagedIdentityTests') -and $configuration.RunPackagedIdentityTests){120000}
             elseif(($configuration.PSObject.Properties.Name -contains 'RunRestartTests') -and $configuration.RunRestartTests){90000}else{60000}
+        }elseif($ClientKind -eq 'Npgsql' -and $configuration.RunAutomaticTests -and $configuration.AutomaticSessionTransition -ne 'None'){
+            ([int]$configuration.SessionTransitionTimeoutSeconds+120)*1000
         }elseif($ClientKind -eq 'RestartServer' -or $ClientKind -like 'Interrupted*Server'){70000}elseif($ClientKind -like 'Packaged*' -or
             (($configuration.PSObject.Properties.Name -contains 'RunAutomaticTests') -and $configuration.RunAutomaticTests)){255000}else{25000}
         if (-not $child.WaitForExit($limit)) { throw 'Actor tool exceeded its finite deadline.' }

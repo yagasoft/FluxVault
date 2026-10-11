@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1afd2441-90d3-4e81-a3e7-848b717639f5" name="os008@OS008-HOME 2026-10-11 18:35:34" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-11T18:35:34.5246294+03:00" queuing="2026-10-11T18:35:34.5246294+03:00" start="2026-10-11T18:35:32.6763524+03:00" finish="2026-10-11T18:35:37.2958538+03:00" />
+  <TestSettings name="default" id="c0048bdc-9d73-4b1a-bb69-e38fa000d139">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-11_18_35_34" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a51f02fa-55a0-4cfe-bf3d-29cca816cd14" testId="90efb42e-752e-3be2-c571-e1aa52a0c537" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: &quot;accepted&quot;)" computerName="OS008-HOME" duration="00:00:01.1813385" startTime="2026-10-11T18:35:33.2388119+03:00" endTime="2026-10-11T18:35:34.4349612+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a51f02fa-55a0-4cfe-bf3d-29cca816cd14">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Null&#xD;
+Actual:   String</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(String scenario) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 69&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0ae1f0e6-c41c-4197-b833-6c1df3300745" testId="3417eaf0-3909-15da-7160-4f3c7576d3d5" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: &quot;non-administrator&quot;)" computerName="OS008-HOME" duration="00:00:00.9359012" startTime="2026-10-11T18:35:35.3784008+03:00" endTime="2026-10-11T18:35:36.3137004+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0ae1f0e6-c41c-4197-b833-6c1df3300745">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "The term 'Initialize-ObserverParents' is "···&#xD;
+Not found: "direct local administrator"</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(String scenario) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 80&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="50a0a868-61b4-4586-b798-099945dca474" testId="dba4e5e1-4dbc-e52f-811d-7cac14af284b" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: &quot;unexpected-child&quot;)" computerName="OS008-HOME" duration="00:00:00.9275209" startTime="2026-10-11T18:35:36.3149161+03:00" endTime="2026-10-11T18:35:37.2416786+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="50a0a868-61b4-4586-b798-099945dca474">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "The term 'Initialize-ObserverParents' is "···&#xD;
+Not found: "Unexpected observer parent child"</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(String scenario) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 80&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0c9118f7-7a88-4fe1-830b-76fe9eee3312" testId="338a1dc6-0bc9-5d01-ec47-416837240d91" testName="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: &quot;inheriting-child&quot;)" computerName="OS008-HOME" duration="00:00:00.9407595" startTime="2026-10-11T18:35:34.4471514+03:00" endTime="2026-10-11T18:35:35.3769317+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c9118f7-7a88-4fe1-830b-76fe9eee3312">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "The term 'Initialize-ObserverParents' is "···&#xD;
+Not found: "Inheritance-enabled observer parent child"</Message>
+          <StackTrace>   at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(String scenario) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs:line 80&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: &quot;unexpected-child&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="dba4e5e1-4dbc-e52f-811d-7cac14af284b">
+      <Execution id="50a0a868-61b4-4586-b798-099945dca474" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: &quot;accepted&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="90efb42e-752e-3be2-c571-e1aa52a0c537">
+      <Execution id="a51f02fa-55a0-4cfe-bf3d-29cca816cd14" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: &quot;inheriting-child&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="338a1dc6-0bc9-5d01-ec47-416837240d91">
+      <Execution id="0c9118f7-7a88-4fe1-830b-76fe9eee3312" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: &quot;non-administrator&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.integration.tests\bin\release\net10.0-windows\fluxvault.integration.tests.dll" id="3417eaf0-3909-15da-7160-4f3c7576d3d5">
+      <Execution id="0ae1f0e6-c41c-4197-b833-6c1df3300745" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\bin\Release\net10.0-windows\FluxVault.Integration.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Integration.Tests.WindowsFixtureToolingTests" name="Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="90efb42e-752e-3be2-c571-e1aa52a0c537" executionId="a51f02fa-55a0-4cfe-bf3d-29cca816cd14" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3417eaf0-3909-15da-7160-4f3c7576d3d5" executionId="0ae1f0e6-c41c-4197-b833-6c1df3300745" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dba4e5e1-4dbc-e52f-811d-7cac14af284b" executionId="50a0a868-61b4-4586-b798-099945dca474" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="338a1dc6-0bc9-5d01-ec47-416837240d91" executionId="0c9118f7-7a88-4fe1-830b-76fe9eee3312" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    FluxVault.Integration.Tests&#xD;
+[xUnit.net 00:00:01.41]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.41]       Expected: Null&#xD;
+[xUnit.net 00:00:01.41]       Actual:   String&#xD;
+[xUnit.net 00:00:01.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.42]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(69,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(String scenario)&#xD;
+[xUnit.net 00:00:01.42]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.35]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:02.35]       String:    "The term 'Initialize-ObserverParents' is "···&#xD;
+[xUnit.net 00:00:02.35]       Not found: "Inheritance-enabled observer parent child"&#xD;
+[xUnit.net 00:00:02.35]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.35]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(80,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(String scenario)&#xD;
+[xUnit.net 00:00:02.35]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.29]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:03.29]       String:    "The term 'Initialize-ObserverParents' is "···&#xD;
+[xUnit.net 00:00:03.29]       Not found: "direct local administrator"&#xD;
+[xUnit.net 00:00:03.29]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.29]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(80,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(String scenario)&#xD;
+[xUnit.net 00:00:03.29]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.22]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:04.22]       String:    "The term 'Initialize-ObserverParents' is "···&#xD;
+[xUnit.net 00:00:04.22]       Not found: "Unexpected observer parent child"&#xD;
+[xUnit.net 00:00:04.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.22]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Integration.Tests\WindowsFixtureToolingTests.cs(80,0): at FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(String scenario)&#xD;
+[xUnit.net 00:00:04.22]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.23]   Finished:    FluxVault.Integration.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T18:35:34.4378918+03:00">
+        <Text>[xUnit.net 00:00:01.41]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: "accepted") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T18:35:35.3774256+03:00">
+        <Text>[xUnit.net 00:00:02.35]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: "inheriting-child") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T18:35:36.3143942+03:00">
+        <Text>[xUnit.net 00:00:03.29]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: "non-administrator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T18:35:37.2420588+03:00">
+        <Text>[xUnit.net 00:00:04.22]     FluxVault.Integration.Tests.WindowsFixtureToolingTests.Native_observer_parent_trust_preserves_other_descriptors_and_refuses_unexpected_boundaries(scenario: "unexpected-child") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

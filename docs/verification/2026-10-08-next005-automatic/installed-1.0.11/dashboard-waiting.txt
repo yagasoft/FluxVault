@@ -1,0 +1,94 @@
+Window: "FluxVault", App: FluxVault.App.exe.
+	0 window FluxVault Secondary Actions: Raise
+		1 title bar (settable, string) Value: FluxVault
+			2 menu bar System ID: MenuBar
+				3 menu item System
+			4 button Minimize
+			5 button Maximize
+			6 button Close
+		7 text FluxVault
+		8 text Service connection: running - Waiting for saved file changes. Restored and verified 1 file(s) to C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working\recovered-pending.bin. Last refreshed 17:32:12
+		9 button Refresh Description: Refresh dashboard status and version data.
+			10 text ⟳
+			11 text Refresh
+		12 button Stop service Description: Stop the FluxVault Windows service. ID: ServiceControlToggleButton
+			13 text ⚠
+			14 text Stop service
+		15 button Run backup now Description: Run a full scan backup now.
+			16 text ↥
+			17 text Run backup now
+		18 button (disabled) Restore Description: Restore the selected repository version.
+			19 text (disabled) ↙
+			20 text (disabled) Restore
+		21 button Options Description: Open retention, maintenance, capture, compression, and Explorer settings. ID: OpenOptionsButton
+			22 text ⚙
+			23 text Options
+		24 button About Description: About FluxVault.
+			25 text ⓘ
+			26 text About
+		27 button Export diagnostics Description: Export local service status, diagnostics, and health details.
+			28 text ▣
+			29 text Export diagnostics
+		30 tab ID: OperationalCockpitWorkspace
+			31 tab item (selectable) 🛡 Protection
+				32 text 🛡 Protection
+				33 edit (settable, string) Repository path Value: C:\ProgramData\FluxVault\repository
+				34 button Repository
+					35 text Repository
+				36 text Mirrors: local only
+				37 button Open Mirrors
+					38 text Open Mirrors
+				39 button Pause protection Description: Stop new captures after the current accepted capture finishes. Keep history and recovery. ID: PauseProtectionButton
+					40 text Pause protection
+				41 button (disabled) Resume protection Description: Allow new captures using saved protection settings. Pending edits remain unsaved. ID: ResumeProtectionButton
+					42 text (disabled) Resume protection
+				43 text Automatic Waiting for changes: Waiting for saved file changes.
+				44 datagrid ID: WatchedFoldersGrid
+					45 header ID: PART_ColumnHeadersPresenter
+						46 header item Folder
+							47 text Folder
+							48 thumb ID: PART_RightHeaderGripper
+						49 header item Profile
+							50 text Profile
+							51 thumb ID: PART_LeftHeaderGripper
+							52 thumb ID: PART_RightHeaderGripper
+						53 header item Regex
+							54 text Regex
+							55 thumb ID: PART_LeftHeaderGripper
+							56 thumb ID: PART_RightHeaderGripper
+						57 header item Compression
+							58 text Compression
+							59 thumb ID: PART_LeftHeaderGripper
+							60 thumb ID: PART_RightHeaderGripper
+						61 header item Status
+							62 text Status
+							63 thumb ID: PART_LeftHeaderGripper
+							64 thumb ID: PART_RightHeaderGripper
+					65 dataitem (selectable) WatchedFolderRow { Id = next005-staging, Path = C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working, Profile = Fast, Regex = None, Compression = Off, Status = Ready - Using reconciliation scan }
+						66 data grid cell Item: , Column Display Index: 0
+						68 data grid cell Item: , Column Display Index: 1
+						70 data grid cell Item: , Column Display Index: 2
+						72 data grid cell Item: , Column Display Index: 3
+						74 data grid cell Item: , Column Display Index: 4
+			76 tab item (selectable) 📁 File browser
+				77 text 📁 File browser
+			78 tab item (selectable) 🧱 Repository
+				79 text 🧱 Repository
+			80 tab item (selectable) 🪞 Mirrors
+				81 text 🪞 Mirrors
+			82 tab item (selectable) ↯ Activity
+				83 text ↯ Activity
+			84 tab item (selectable) ▥ Performance
+				85 text ▥ Performance
+			86 tab item (selectable) ⚙ Options
+				87 text ⚙ Options
+			88 tab item (selectable) ▣ Diagnostics
+				89 text ▣ Diagnostics
+		90 text USN: reconciliation scan
+		91 text Retention: waiting
+		92 text Mirror: local only
+		93 text Capture: idle
+
+Document text: ```
+C:\ProgramData\FluxVault\repository
+```

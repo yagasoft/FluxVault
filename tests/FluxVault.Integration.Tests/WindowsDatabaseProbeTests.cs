@@ -8,6 +8,29 @@ namespace FluxVault.Integration.Tests;
 public sealed class WindowsDatabaseProbeTests
 {
     [Theory]
+    [InlineData("AbortRehearsal")]
+    [InlineData("ObserveSignOut")]
+    public void Native_session_transition_requires_an_explicit_owned_automatic_fixture(string mode)
+    {
+        var configuration = Configuration() with { RunAutomaticTests = true,
+            AutomaticCreatorSid = "S-1-5-21-11-22-33-1003", AutomaticSessionTransition = mode };
+        configuration.Validate();
+        Assert.Throws<ArgumentException>(() => (configuration with { RunAutomaticTests = false }).Validate());
+        Assert.Throws<ArgumentException>(() => (configuration with { AutomaticCreatorSid = "S-1-5-18" }).Validate());
+        Assert.Throws<ArgumentException>(() => (configuration with { SessionTransitionTimeoutSeconds = 59 }).Validate());
+        Assert.Throws<ArgumentException>(() => (configuration with { SessionTransitionTimeoutSeconds = 601 }).Validate());
+    }
+
+    [Fact]
+    public void Native_session_transition_is_off_by_default_and_rejects_unknown_modes()
+    {
+        var configuration = Configuration();
+        WithOwnedConfiguration(configuration, JsonSerializer.Serialize(configuration), path =>
+            Assert.Equal("None", WindowsDatabaseProbeConfiguration.Read(path).AutomaticSessionTransition));
+        Assert.Throws<ArgumentException>(() => (configuration with { AutomaticSessionTransition = "LogOff" }).Validate());
+    }
+
+    [Theory]
     [InlineData(null)]
     [InlineData("PerUser")]
     [InlineData("MachineParent")]

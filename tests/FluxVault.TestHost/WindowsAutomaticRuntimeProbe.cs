@@ -30,7 +30,8 @@ internal static class WindowsAutomaticRuntimeProbe
     {
         using var processIdentity = WindowsIdentity.GetCurrent();
         if (processIdentity.User?.Value != "S-1-5-18" || !fixture.RunAutomaticTests) throw new UnauthorizedAccessException();
-        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(240));
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(
+            fixture.AutomaticSessionTransition == "None" ? 240 : fixture.SessionTransitionTimeoutSeconds + 90));
         var ct = deadline.Token;
         await using var connection = await dataSource.OpenConnectionAsync(ct);
         await using (var verify = new NpgsqlCommand("SELECT current_setting('fluxvault.test_instance'),current_database(),current_user", connection))
@@ -133,6 +134,13 @@ internal static class WindowsAutomaticRuntimeProbe
                 }
                 finally { await run.CancelAsync(); await running; }
             }
+            if (fixture.AutomaticSessionTransition != "None")
+            {
+                var nativeSignOut = await VerifyNativeSessionTransitionAsync(bootstrap, pipe, client, creator,
+                    connection, endpoint, binding, sourceRoot, fixture, ct, Check);
+                return new { Passed = checks.Count, Checks = checks, NativeWts = true, RestartRecoveryVerified = true,
+                    NativeSignOutVerified = nativeSignOut, AbortRehearsal = !nativeSignOut, StoreHost = host };
+            }
             await VerifySourceQuiescenceAsync(bootstrap, pipe, client, id, ct, Check);
             await VerifyCapturePauseAsync(bootstrap,pipe,client,creator,id,sourceRoot,ct,Check);
             await VerifyOwnerInterruptionAsync(bootstrap, pipe, client, creator, connection, endpoint, binding, file, ct, Check);
@@ -152,6 +160,155 @@ internal static class WindowsAutomaticRuntimeProbe
             await cleanup.ExecuteNonQueryAsync(CancellationToken.None);
         }
         void Check(bool condition, string name) { if (!condition) throw new InvalidOperationException("Automatic native contract failed: " + name); checks.Add(name); }
+    }
+
+    private static async Task<bool> VerifyNativeSessionTransitionAsync(string bootstrap, string pipe, CreatorClient client,
+        AutomaticProtectionSession creator, NpgsqlConnection connection, VaultCatalogueEndpoint endpoint, VaultBinding binding,
+        string sourceRoot, WindowsDatabaseProbeConfiguration fixture, CancellationToken ct, Action<bool, string> check)
+    {
+        var abort = fixture.AutomaticSessionTransition == "AbortRehearsal";
+        var creatorSid = creator.Caller.UserSid;
+        var oldAuthenticationId = creator.AuthenticationId;
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var cancelled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var probeReaderOpened = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var probeReaderRelease = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        Task<bool>? probeReader = null;
+        Task? retiringProbe = null;
+        Task<IAsyncDisposable>? suspending = null;
+        IAsyncDisposable? suspended = null;
+        var events = Path.Combine(fixture.Root, "runtime", "automatic-session-transition.jsonl");
+        var abortMarker = Path.Combine(fixture.Root, "runtime", "native-session-abort");
+        var file = Path.Combine(sourceRoot, "native-session-held.txt");
+        var bytes = Encoding.UTF8.GetBytes("one save retained across a real native session boundary; " + fixture.FixtureId);
+        await using var service = await WindowsSingleVaultService.OpenAsync(bootstrap, ct);
+        service.AutomaticRuntimeForFixture.CaptureOpened = async token =>
+        {
+            using var registration = token.Register(() => cancelled.TrySetResult());
+            entered.TrySetResult(); await release.Task; token.ThrowIfCancellationRequested();
+        };
+        using var run = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        var server = new NamedPipeFluxVaultServer(service, WindowsFluxVaultPipeServerFactory.ForPrivateFixture(pipe), new WindowsFluxVaultCallerContextProvider());
+        var running = SupervisedRuntime.RunAsync(server.RunAsync, service.RunAutomaticProtectionAsync, run.Token);
+        try
+        {
+            await WaitForStateAsync(client, AutomaticProtectionState.WaitingForChanges, ct);
+            await creator.Caller.RunAsCallerAsync(async () => { await File.WriteAllBytesAsync(file, bytes, ct); return true; });
+            probeReader = creator.Caller.RunAsCallerAsync(async () =>
+            {
+                await using var reader = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                probeReaderOpened.TrySetResult(); await probeReaderRelease.Task;
+                return reader.Length == bytes.Length;
+            });
+            await probeReaderOpened.Task.WaitAsync(ct);
+            await entered.Task.WaitAsync(ct);
+            await using var claim = new NpgsqlCommand("SELECT reserved_version_id FROM fv_control.automatic_work WHERE source_path=@path AND reserved_version_id IS NOT NULL", connection);
+            claim.Parameters.AddWithValue("path", file);
+            var reserved = await claim.ExecuteScalarAsync(ct) as string ?? throw new InvalidOperationException("Held native capture has no durable reserved identity.");
+            if (File.Exists(abortMarker)) throw new OperationCanceledException("Owned native observer abort requested.");
+            Record("Ready", new { creator.SessionId, AuthenticationId = oldAuthenticationId, ReservedVersionId = reserved, AbortRehearsal = abort });
+            if (abort)
+            {
+                // Rehearses only fixture cancellation, never labels it a WTS transition.
+                await Task.Delay(1000, ct);
+                await run.CancelAsync();
+                await cancelled.Task.WaitAsync(TimeSpan.FromSeconds(5), ct);
+                check(!running.IsCompleted, "abort cancellation waits for the held runtime source reader");
+            }
+            else
+            {
+                using var observation = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                observation.CancelAfter(TimeSpan.FromSeconds(fixture.SessionTransitionTimeoutSeconds));
+                while (true)
+                {
+                    if (File.Exists(abortMarker)) throw new OperationCanceledException("Owned native observer abort requested.");
+                    try { await creator.VerifyAsync(observation.Token); }
+                    catch (UnauthorizedAccessException) { break; }
+                    await Task.Delay(100, observation.Token);
+                }
+                Record("NativeIdentityLost", new { creator.SessionId, AuthenticationId = oldAuthenticationId });
+                // Do not cancel the fixture or source gate until the real runtime observer cancels capture.
+                await cancelled.Task.WaitAsync(TimeSpan.FromSeconds(10), ct);
+                check(!run.IsCancellationRequested && !running.IsCompleted,
+                    "real WTS identity loss cancels the runtime-held capture before fixture cancellation and reader release");
+                var staleExecuted = false;
+                try
+                {
+                    await creator.Caller.RunAsCallerAsync(() => { staleExecuted = true; return Task.FromResult(true); });
+                    throw new InvalidOperationException("Stale creator authority executed after real sign-out.");
+                }
+                catch (UnauthorizedAccessException) { }
+                check(!staleExecuted, "the retained old creator token refuses source access after actual sign-out before fixture disposal");
+                retiringProbe = creator.DisposeAsync().AsTask();
+                check(!retiringProbe.IsCompleted && !probeReader.IsCompleted,
+                    "the retained probe token cannot retire before its own held native reader joins");
+                suspending = service.AutomaticRuntimeForFixture.SuspendSourceForFixtureAsync(ct).AsTask();
+                check(!suspending.IsCompleted, "source suspension cannot acknowledge while the old runtime reader is held");
+            }
+            service.AutomaticRuntimeForFixture.CaptureOpened = null;
+            release.TrySetResult();
+            probeReaderRelease.TrySetResult();
+            check(await probeReader, "the retained probe's native source reader joins");
+            if (retiringProbe is not null) await retiringProbe;
+            if (abort) await running;
+            else suspended = await suspending!;
+            await using var catalogue = new PostgreSqlVaultCatalogue(endpoint);
+            var pending = await catalogue.ReadAutomaticStateAsync(binding, ct);
+            await using var metadata = new PostgreSqlRepositoryMetadataStore(binding);
+            var versions = await metadata.ListManifestsAsync(ct);
+            check(pending.PendingCount > 0 && pending.UncertainCount > 0 && versions.All(item => item.VersionId != reserved && item.SourcePath != file),
+                "SYSTEM inspection proves the held reserved result was not published and durable pending work remains");
+            Record(abort ? "AbortJoined" : "OldReadersJoined", new { ReservedVersionId = reserved, pending.PendingCount, pending.UncertainCount });
+            if (abort) return false;
+            await suspended!.DisposeAsync(); suspended = null;
+            var provider = new WindowsAutomaticProtectionSessionProvider();
+            AutomaticProtectionSession? replacement = null;
+            while (replacement is null)
+            {
+                if (File.Exists(abortMarker)) throw new OperationCanceledException("Owned native observer abort requested.");
+                replacement = await provider.AcquireAsync(creatorSid, ct);
+                if (replacement is null) await Task.Delay(200, ct);
+            }
+            await using (replacement)
+            {
+                check(replacement.AuthenticationId != oldAuthenticationId,
+                    "native creator re-entry has a fresh AuthenticationId after the old source generation joined");
+                var freshClient = new CreatorClient(replacement, pipe);
+                var version = await WaitForHistoryAsync(freshClient, binding.Id, file, false, ct);
+                var output = Path.Combine(sourceRoot, "native-session-recovered.bin");
+                var restored = await MutateAsync(freshClient, binding.Id, FluxVaultIpcRequest.RestoreVersion(version.VersionId, output), ct);
+                var actual = await replacement.Caller.RunAsCallerAsync(() => File.ReadAllBytesAsync(output, ct));
+                check(restored.Success && restored.RestoreResult?.VerifiedLogicalBytes == bytes.Length && SHA256.HashData(actual).SequenceEqual(SHA256.HashData(bytes)),
+                    "native re-entry captures the retained save without another write and independently verifies recovery");
+                Record("NativeReentryRecovered", new { replacement.SessionId, replacement.AuthenticationId, version.VersionId, Sha256 = Convert.ToHexString(SHA256.HashData(actual)) });
+            }
+            return true;
+        }
+        finally
+        {
+            release.TrySetResult(); probeReaderRelease.TrySetResult();
+            try
+            {
+                try { if (probeReader is not null) await probeReader; }
+                finally { if (retiringProbe is not null) await retiringProbe; }
+            }
+            finally
+            {
+                try
+                {
+                    if (suspending is not null) suspended ??= await suspending;
+                    if (suspended is not null) await suspended.DisposeAsync();
+                }
+                finally { await run.CancelAsync(); await running; }
+            }
+        }
+        void Record(string stage, object detail)
+        {
+            using var output = new FileStream(events, FileMode.Append, FileAccess.Write, FileShare.Read);
+            var record = JsonSerializer.SerializeToUtf8Bytes(new { fixture.FixtureId, ObservedUtc = DateTimeOffset.UtcNow, Stage = stage, Detail = detail });
+            output.Write(record); output.WriteByte((byte)'\n'); output.Flush(flushToDisk: true);
+        }
     }
 
     private static async Task VerifySourceQuiescenceAsync(string bootstrap, string pipe, CreatorClient client, VaultId id,

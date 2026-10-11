@@ -1,0 +1,45 @@
+{
+  "WallSeconds": 601.0222111,
+  "ExternalAutomationIsolationProven": false,
+  "ForegroundWorkload": "Protection workspace visible; no FluxVault input or screenshots during interval; concurrent source/document/CI work",
+  "Metrics": {
+    "App": {
+      "StartedUtc": "2026-10-11T14:30:56.1498481Z",
+      "MachineCpuPercent": 0.02307267060001004,
+      "WorkingSetBeforeBytes": 242933760,
+      "WriteTransferBytesDelta": 646184,
+      "ThreadsBefore": 20,
+      "CpuSecondsDelta": 3.328125,
+      "HandlesBefore": 616,
+      "ReadTransferBytesDelta": 3887789,
+      "PrivateAfterBytes": 125800448,
+      "ProcessId": 29416,
+      "HandlesAfter": 641,
+      "WorkingSetAfterBytes": 236998656,
+      "ThreadsAfter": 20
+    },
+    "Service": {
+      "StartedUtc": "2026-10-11T14:28:40.1008122Z",
+      "MachineCpuPercent": 0.03141349518311226,
+      "WorkingSetBeforeBytes": 148066304,
+      "WriteTransferBytesDelta": 3787034,
+      "ThreadsBefore": 22,
+      "CpuSecondsDelta": 4.53125,
+      "HandlesBefore": 536,
+      "ReadTransferBytesDelta": 3276370,
+      "PrivateAfterBytes": 76492800,
+      "ProcessId": 3848,
+      "HandlesAfter": 554,
+      "WorkingSetAfterBytes": 163713024,
+      "ThreadsAfter": 20
+    }
+  },
+  "SkyWindowStateCapturesDuringWindow": 0,
+  "Candidate": "de279a32e6fc4d7b9b86e02150bd98cd",
+  "ObservedUtc": "2026-10-11T14:44:47.4490906+00:00",
+  "AutomaticProtectionEnabled": true,
+  "SharedPostgreSql": "Before/after cohort snapshots retained; shared cluster activity cannot be attributed solely to FluxVault",
+  "LogicalProcessors": 24,
+  "Corpus": "One owned 1 MiB source, two retained file versions plus earlier staging history",
+  "Limit": "One uncontrolled workstation trial; process IO includes all requests, not source-only bytes; no cold-cache or professional corpus claim."
+}

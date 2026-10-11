@@ -1,6 +1,6 @@
 # NEXT-005 signed-in automatic protection: design and implementation plan
 
-**Status, 11 October 2026:** the owner has removed virtual machines from this plan and confirmed that FluxVault remains in staging with disposable data. Implementation continues on this Windows staging PC under the existing standing authority; no additional environment acquisition or approval is required. No automatic runtime is deployed or claimed. [NEXT-004](2026-10-08-next004-protection-controls.md) is independently live-accepted as 1.0.9 and merged through PR #35 at `41222b6`. Reuse its valid evidence, fixed architecture and deployment/cleanup procedure, subject to the staging-data scope below.
+**Status, 11 October 2026:** the owner removed virtual machines from this plan and confirmed that FluxVault remains in staging with disposable data. The supervised automatic runtime is now installed as corrective candidate 1.0.11 under the existing standing authority. Its real save → automatic capture → service restart → history → independently verified recovery workflow passes, including retained pending work and displayed Pause/Resume states. [Evidence](../../verification/2026-10-08-next005-automatic/README.md) records the exact candidate, exercised manual-only 1.0.9 rollback and successful exact-source hosted CI. Independent final branch/live assessment accepts the bounded signed-in workflow. Actual native Windows sign-out/re-entry still blocks full candidate/slice closeout; broader NEXT-005 completion is not claimed. [NEXT-004](2026-10-08-next004-protection-controls.md) is independently live-accepted as 1.0.9 and merged through PR #35 at `41222b6`. Reuse its valid evidence, fixed architecture and deployment/cleanup procedure, subject to the staging-data scope below.
 
 **Goal:** with the creator signed in, save a supported file → durable automatic capture → restart FluxVault → find its version → independently verify recovery, without keeping the desktop open.
 
@@ -21,6 +21,11 @@ Unrelated files, source repositories, Windows accounts, working-tree changes and
 databases are outside this permission. Never restart normal PostgreSQL. No
 virtual machine, hypervisor, evaluation image or second Windows environment is a
 dependency of this slice. The prior VM/environment decision is superseded.
+
+**Desktop control, 11 October:** the owner withholds mouse, keyboard and desktop
+UI automation until explicit consent. Do not take over the desktop, sign out or
+reboot Windows under the routine staging authority. Continue repository work and
+non-interactive checks; retain completed UI evidence within its unchanged scope.
 
 ## What already exists and what must change
 
@@ -166,6 +171,32 @@ Use this concrete staging verification sequence:
    identify the concrete disruption and obtain that separate authority only
    then. Do not infer it from disposable FluxVault data, request a VM instead,
    or claim the unresolved check passed.
+
+The remaining native check uses a bounded extension of the existing owned
+Windows/PostgreSQL fixture, independently reviewed on 11 October. A scheduled
+SYSTEM supervisor owns its child jobs independently of the desktop launcher and
+pins the real creator SID, protected payload and installed product assemblies.
+`AbortRehearsal` verifies held-reader cancellation/join, retained pending work,
+absent reserved publication and joined cleanup without a Windows transition.
+`ObserveSignOut` requires real WTS identity loss and runtime cancellation before
+fixture cancellation, separate stale-probe refusal, joined old readers, a fresh
+AuthenticationId and capture/recovery without another source write. Observation
+has a finite deadline plus cleanup grace. Preparation and rehearsal do not
+authorise operator logoff and cannot satisfy native sign-out acceptance.
+
+The implemented headless rehearsal now passes 16 native checks, including
+separate held readers, pending/uncertain preservation and absent reserved
+publication. Its worker, task, child jobs and private fixture are joined/removed;
+installed FluxVault and normal PostgreSQL are unchanged. The existing ledger
+retains the permission-boundary corrections, 24 focused trust checks and
+374 ordinary Integration checks. Actual operation
+`f0d1d52eb0064d1fb9cda2913f76be89` is pinned and prepared without a task or worker,
+with a 600-second observation allowance plus finite cleanup grace. The
+[prepared check record](../../verification/2026-10-08-next005-automatic/README.md#prepared-native-session-check-11-october)
+identifies its exact request, payload, installed assemblies and required native
+proofs. Only explicit operator-session-disruption consent can authorise starting
+that check and signing out the operator; the desktop-control restriction remains
+in force.
 
 ## Migration, release and recovery
 

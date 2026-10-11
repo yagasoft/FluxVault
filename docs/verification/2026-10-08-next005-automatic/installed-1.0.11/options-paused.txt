@@ -1,0 +1,37 @@
+Window: "FluxVault options", App: FluxVault.App.exe.
+	0 window FluxVault options Secondary Actions: Raise
+		1 title bar (settable, string) Value: FluxVault options
+			2 menu bar System ID: MenuBar
+				3 menu item System
+			4 button Minimize
+			5 button Maximize
+			6 button Close
+		7 text Options
+		8 text Options loaded.
+		9 tab
+			10 tab item (selectable) Automatic protection
+				11 text Automatic protection
+				12 check box Protect automatically while you are signed in Description: Allow the service to capture saved changes in the protected folders using your signed-in creator account. ID: SignedInAutomaticProtectionToggle
+					13 text Protect automatically while you are signed in
+				14 text The vault creator can approve automatic access to the saved protected folders. Closing FluxVault keeps protection running. Pause stops captures and keeps pending work and history.
+				15 text Sign-out stops source access. Logged-off capture, VSS and application-consistent snapshots are not supported by this release.
+				16 button Apply automatic preference Description: Save this automatic preference for the current saved folders. Other Options edits are kept. ID: ApplyAutomaticProtectionButton
+					17 text Apply automatic preference
+				18 text Paused: Protection is paused; pending work and history are kept.
+				19 text Apply saves this preference separately. Save options applies your other edits. If an outcome is unconfirmed, use Check save outcome before retrying.
+			20 tab item (selectable) Basic
+				21 text Basic
+			22 tab item (selectable) Storage
+				23 text Storage
+			24 tab item (selectable) Advanced
+				25 text Advanced
+		26 button (disabled) Check save outcome Description: Check the previous save receipt without overwriting pending edits. ID: CheckOptionsSaveOutcomeButton
+			27 text (disabled) Check save outcome
+		28 button (disabled) Reload saved options Description: After reviewing a confirmed historical save, discard these Options edits and reload the current saved settings. Protection edits in the main window are kept. ID: ReloadSavedOptionsButton
+			29 text (disabled) Reload saved options
+		30 button Save Description: Save the current retention, maintenance, workload, storage, cadence, compression, and Explorer options to the service configuration. ID: SaveOptionsButton
+			31 text Save
+		32 button Close Description: Close Options without applying any unsaved changes.
+			33 text Close
+
+The focused UI element is 0 window FluxVault options Secondary Actions: Raise.

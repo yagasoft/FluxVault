@@ -1,0 +1,26 @@
+{
+  "Job": "Global\\FluxVault.NEXT002.b21a48c89a4948f98c1172271b49e7a8",
+  "TimeoutSeconds": 300,
+  "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "Arguments": [
+    "-NoProfile",
+    "-NonInteractive",
+    "-File",
+    "C:\\ProgramData\\FluxVault.Tests\\NEXT005Session\\574fe1cfb8ec4ce0832467cc4c42b9c5\\payload\\eng\\test-windows-database-boundary.ps1",
+    "-FixtureId",
+    "574fe1cfb8ec4ce0832467cc4c42b9c5",
+    "-EvidenceDirectory",
+    "C:\\ProgramData\\FluxVault.Tests\\NEXT005Session\\574fe1cfb8ec4ce0832467cc4c42b9c5\\evidence",
+    "-RunAutomaticTests",
+    "-AutomaticSessionTransition",
+    "AbortRehearsal",
+    "-AutomaticCreatorSid",
+    "S-1-5-21-136112424-624261118-1239521417-1001",
+    "-SessionTransitionTimeoutSeconds",
+    "60"
+  ],
+  "ResultPath": "C:\\ProgramData\\FluxVault.Tests\\NEXT005Session\\574fe1cfb8ec4ce0832467cc4c42b9c5\\harness-result.json",
+  "InputText": null,
+  "StartsPostmaster": false,
+  "OwnerPath": "C:\\ProgramData\\FluxVault.Tests\\NEXT005Session\\574fe1cfb8ec4ce0832467cc4c42b9c5\\harness-tool-owner.json"
+}

@@ -1,7 +1,7 @@
 # NEXT-005 signed-in automatic protection execution
 
 The owner resumed the [agreed plan](../../superpowers/plans/2026-10-08-next005-signed-in-automatic-protection.md).
-NEXT-004 is independently installed/live-accepted as 1.0.9 and isolated in
+NEXT-004 was independently installed/live-accepted as 1.0.9 and isolated in
 [PR #35](https://github.com/yagasoft/FluxVault/pull/35), squash-merged at
 `41222b625b772e53f02972f76674440713d3884b`. Fresh hosted CI
 [37796903281](https://github.com/yagasoft/FluxVault/actions/runs/37796903281)
@@ -12,10 +12,72 @@ the same dedicated task worktree on `codex/next005-signed-in-protection`.
 
 ## Current verification, 11 October
 
+### Corrective 1.0.11 installed workflow
+
+Candidate `de279a32e6fc4d7b9b86e02150bd98cd`, source
+`ee7ca8d9901884d4f4993a982f1cf4793d09445c`, is installed on this staging PC.
+Its manifest SHA-256 is
+`35B669189863F0CE265BE622383B3749DB00BCBD6528A749680109125115EECA`;
+`installed-1.0.11/candidate-retained.json` pins both retained installers and all
+five joined successful build processes. Independent Astra/high approved the
+exact 1.0.9→1.0.11 update and exercised 1.0.9 fallback. The update and subsequent
+joined FluxVault-only restart verified all 208 payload hashes and preserved
+PostgreSQL postmaster 13748, bootstrap, authentication and storage ACLs.
+
+Fresh exact-source hosted CI [38147096910](https://github.com/yagasoft/FluxVault/actions/runs/38147096910)
+passed. The installed real-pipe workflow in `installed-1.0.11` passes:
+
+- WPF closed: save a random 1 MiB file; capture automatically without manual backup.
+- Save changed bytes, retain the observation pending, acknowledge Pause with
+  immediate Paused status, then join a service restart.
+- Find and independently SHA-256 verify the first version, Resume, capture the
+  pending save without another write, and independently verify its recovery.
+- Displayed dashboard/Options show Paused correctly; resumed dashboard shows
+  Waiting for changes. Repository displays both versions and permits recovery.
+  Screenshots and associated control text are retained in the same directory.
+
+The first source write took **0.799 ms**, automatic publication **6.628 s**, Pause
+acknowledgement **55.99 ms**, and twenty history requests **11.66–40.42 ms**.
+Two fresh observer processes using all **63 hash-matched installed App files**
+rendered in **0.825–0.869 s**; their longest dispatcher operations were
+**450–466 ms**, still above NEXT-009's proposed 100 ms limit. Both processes exited
+0 and were joined. Cache state was uncontrolled; these synthetic observations
+do not establish cold-cache or professional-workload performance.
+
+The automatic-enabled idle observation ran **601.022 s** with no FluxVault input
+or Sky captures: **0.02307% App / 0.03141% service machine CPU** over 24 logical
+processors. App working set changed 242.9→237.0 MB and handles 616→641; service
+working set 148.1→163.7 MB and handles 536→554. Process IO and shared PostgreSQL
+cohort snapshots are retained; shared-cluster activity is not attributable solely
+to FluxVault. This single uncontrolled sample is not a leak, regression or full
+NEXT-009 certification. Startup dispatcher work remains above its proposed limit.
+
+The actual Options view-model restored automatic-off and the complete original
+four-scope configuration, checked for exact JSON equality. All **22 earlier
+history entries** remain, including the prior 1.0.10 trial; both new owned file
+versions and their folder snapshots are retained. The final read-only check passes
+the exact registration and 208 payload hashes with unchanged PostgreSQL lifetime,
+bootstrap, authentication and ACLs. The owned installed desktop was terminated
+after restoration and joined (exit -1); tray Exit was not exposed by the supported
+Computer Use window inventory. This is not claimed as graceful tray-exit proof.
+All temporary processes are joined. The two joined startup observers' diagnostic
+folders and copied runtime are deliberately retained after automatic approval
+review rejected removal with the generic reason “blocked by policy”; there was
+no deletion or retry through another mechanism.
+
+Final independent GPT-6-Astra/high review (`review_protection_design`, 11 October)
+accepts the bounded signed-in branch/live workflow with
+no additional product blocker. **Full candidate/slice closeout remains blocked by
+actual native Windows sign-out/re-entry.** Current-session and injected authority
+transitions do not close that gate. [PR #36](https://github.com/yagasoft/FluxVault/pull/36)
+remains draft while it is unresolved.
+
+### Prior checkpoints and corrective regression evidence
+
 The supervised signed-in runtime, native creator adapter, durable v2 work/cadence
 and volume reconciliation, Options preference/status and mirror retry are
 implemented. **The first 1.0.10 staging installation and automatic recovery passed;
-a live status defect requires corrective 1.0.11 acceptance.** Earlier prerequisite
+its live status defect was corrected and live-accepted in 1.0.11 above.** Earlier prerequisite
 sections below are historical checkpoints, superseded within their checked scope
 by these results. Independent Astra/high review accepts the current product code
 gate without another requirement-backed blocker.
@@ -112,8 +174,9 @@ Independent review approved exercising the exact 1.0.10→1.0.9 rollback. Its jo
 transition, durable approval invalidation and 208 fallback payload hashes passed;
 `predecessor-verified.json` and both `recovery-rollback-*.json` prove actual old-service
 pipe/history/configuration and independent recovery of the new versions. PostgreSQL
-postmaster 13748 and bootstrap/authentication/ACLs remain unchanged. Corrective
-1.0.11 needs its own frozen candidate gate, displayed WPF and measurements.
+postmaster 13748 and bootstrap/authentication/ACLs remained unchanged. Corrective
+1.0.11 subsequently passed its own frozen candidate gate, displayed WPF and
+measurements in the current verification section above.
 
 Hosted run `38144602250` failed four fixture cases: the new Options tab displaced
 an ordinal selector; a test enumerated a collection while refresh mutated it;
@@ -123,8 +186,8 @@ existing journal-reader fixture until all burst hints are admitted. No assertion
 or product scheduling policy are weakened. Seven focused Integration checks and
 all 514 App/173 Windows checks pass. The first App fixture repair used the wrong
 event item type and timed out; that diagnostic result is retained, then corrected
-to `VersionRow`. All 348 ordinary Integration checks now pass; fresh hosted CI
-for the corrective commit remains required.
+to `VersionRow`. All 348 ordinary Integration checks passed; fresh hosted CI
+for the corrective commit subsequently passed as recorded above.
 
 Native sign-out/re-entry and NEXT-009's existing baseline misses remain explicitly
 open; no broader readiness claim is made.
@@ -169,8 +232,8 @@ captures the pending save without another write. Both fixture processes exit 0
 and are joined; root removal, owned-job joining and installation preservation are
 all true. These are private compositions, not installed acceptance or native
 Windows sign-out evidence.
-No NEXT-005 capability is deployed or claimed. The first batch must
-join creator-session authority, additive default-off consent/work persistence,
+At this early checkpoint no NEXT-005 capability was deployed or claimed. The
+first batch had to join creator-session authority, additive default-off consent/work persistence,
 real discovery admission, reserved capture identity, verified publication,
 Options/status and independently verified recovery. Existing mutation ordering,
 source access, repository leases and native/database fixtures are the boundaries.
@@ -239,6 +302,103 @@ publication while work remains pending, and join readers before token disposal.
 Re-entry has a new AuthenticationId and starts after the old generation joins,
 including when the numeric session ID is reused. This check has not been run or
 passed by this planning update, and no automatic capability is declared complete.
+
+11 October final installed checkpoint: `quser` returns only the operator's active
+console session 1; no separately owned interactive staging session is available.
+Before any operator logoff, prepare and independently review a bounded SYSTEM
+observer using the existing owned fixture/job interfaces. Its lifetime must
+survive the operator desktop and its launcher. Retain the real creator token and
+a held source reader, observe actual WTS disappearance, prove cancellation and
+join before token retirement, refuse old-token publication while pending work
+remains, then reacquire a different AuthenticationId after re-entry and capture
+without another save. Include a finite timeout, abort rehearsal, durable ownership
+record and joined teardown; normal PostgreSQL and unrelated resources remain
+untouched. The headless rehearsal below has passed; actual logoff has not been
+executed. Signing out session 1
+would close the operator's Windows apps and require normal Windows sign-in again;
+that host disruption is outside the existing automatic rollout approval.
+
+### Prepared native session check, 11 October
+
+`eng/test-automatic-session-transition.ps1` extends the existing fixture with
+Prepare, Rehearse, Start, Worker and Collect operations. It pins the real creator
+SID, 98 protected payload files and four exact installed product assemblies.
+The scheduled SYSTEM worker independently owns the existing harness/job tree,
+records its native process identity and removes only its unchanged task. Its
+finite primary/recovery/join/finalisation bounds reserve 480 seconds beyond the
+observation allowance; the actual observation allowance is 600 seconds. An abort
+marker requests joined cleanup without terminating the supervisor.
+
+The independently reviewed `AbortRehearsal` run
+`574fe1cfb8ec4ce0832467cc4c42b9c5` passes **16 native checks** on the bounded IPv4
+endpoint (`native-session-rehearsal/fixture/result.json`). It performs the real
+ordinary-creator save → automatic capture → restart → independent recovery
+round trip, then holds separate runtime and probe readers across fixture
+cancellation. SYSTEM inspection proves one pending and one uncertain work item
+and absence of the reserved publication. The event record contains Ready and
+AbortJoined; `NativeSignOutVerified=false` and `AbortRehearsal=true` are explicit.
+The collector confirms worker exit/join; task removal, private fixture root
+removal, owned-job joining and installed service/file preservation all pass.
+The retained observer root contains the protected payload and additional raw
+logs; compact receipts are retained under `native-session-rehearsal` here.
+
+The first rehearsal refused an older desktop-owned fixture parent before
+dispatch. Its worker exited; operator cleanup compared the full saved task
+digest before removing that unchanged task (`native-session-rehearsal-failed`).
+Independent review approved changing only the two existing fixture parents to
+SYSTEM ownership and removing the direct-admin preparer's redundant explicit
+FullControl grant. Both originals were saved before mutation; known immediate
+children had to be inheritance-protected and NEXT002 empty. SYSTEM/Admin rights,
+Users Traverse/Synchronise, unrelated ACEs, group and audit data are preserved.
+Windows added only its DACL inheritance-processing marker, including to an
+otherwise unchanged protected child. The second preparation stopped on that
+observed normalisation before starting any task or child fixture
+(`native-session-parent-marker`). The corrected verifier permits equality or
+addition of that one marker, refusing its removal and every other descriptor
+difference; actual before/after descriptors remain available. This follows the
+separate [Windows descriptor control flags](https://learn.microsoft.com/en-us/windows/win32/secauthz/security-descriptor-control).
+The trust helper also accepts a redundant already-trusted SYSTEM owner without
+adding an identity; unrelated owners still require direct admin membership.
+
+Test-first regression receipts retain these corrections. The final focused
+trust run passes **24 cases**, and `green/session-observer-combined-final.trx`
+passes **374 ordinary Integration cases, zero skipped**, using the hosted CI
+filter that excludes the separately required PostgreSQL/prepared-installation
+gates. An earlier unfiltered invocation refused all 40 PostgreSQL cases because
+no owned cluster was supplied; this runner mistake is retained as
+`red/session-observer-unfiltered-run.trx`, not reported as a product regression
+or a passing run. The earlier 40-case native integrity and 63-per-endpoint runtime
+results remain valid within their unchanged product scope. No `src` product
+code changed for this observer and no identical-product redeployment was needed.
+
+The concrete actual-transition operation is **prepared, not started**:
+`f0d1d52eb0064d1fb9cda2913f76be89`, request SHA-256
+`E0D5762315B0BEBE10B936ACF6C79C712A5CC469AB0B7D62E87F2AA01D555150`.
+Its protected root is
+`C:\ProgramData\FluxVault.Tests\NEXT005Session\f0d1d52eb0064d1fb9cda2913f76be89`.
+`native-session-prepared/prepared.json` confirms no task, worker record or child
+fixture exists. Start must recheck the protected request/payload and installed
+assembly hashes. Actual sign-out must be separately authorised and must wait
+for its durable Ready record. The observer then requires real WTS identity loss,
+runtime-originated capture cancellation before fixture cancellation, stale-token
+refusal, joined old readers, a different AuthenticationId after re-entry, and
+capture plus independently verified recovery without another source write.
+Collect checks worker exit and every owned teardown result. Preparation or an
+injected abort cannot close this gate.
+
+Independent GPT-6-Astra/high assessment (`review_protection_design`, 11 October)
+verified the rehearsal/cleanup evidence, both final test counts, all 98 prepared
+payload hashes, four installed product pins and absence of a started task/worker.
+It finds no preparation blocker and accepts readiness to request concrete
+operator-session-disruption consent. It does not authorise that disruption or
+close actual sign-out/re-entry acceptance.
+
+`installed-1.0.11/post-observer-installed-check.json` freshly confirms exact
+registration/payloads and unchanged bootstrap/authentication/storage ACLs, with
+PostgreSQL postmaster 13748 still started at `2026-10-10T08:12:14.0315058Z`.
+The immediately accepted 1.0.9 fallback is retained and hash-checked; its exercised
+manual-only rollback evidence is reused. The operator's desktop remains active;
+no mouse/keyboard/UI automation, sign-out or reboot was used for this preparation.
 
 **Superseded context, 8 October:** the A/B token fixture did not provide an owned
 interactive WTS session; its tokens and injected transitions could not prove

@@ -10,7 +10,8 @@ internal sealed record WindowsDatabaseProbeConfiguration(string FixtureId, strin
     string Database, string Role, int TimeoutSeconds, Dictionary<string, string> Actors, bool RunCatalogueTests = false, bool RunMetadataTests = false,
     bool RunSingleVaultTests = false, bool RunPackagedIdentityTests = false, bool RunRestartTests = false,
     bool RunInterruptedEffectTests = false, string PackageTrustMode = "PerUser", bool RunPredecessorReadTests = false,
-    bool RunAutomaticTests = false, string? AutomaticCreatorSid = null)
+    bool RunAutomaticTests = false, string? AutomaticCreatorSid = null,
+    string AutomaticSessionTransition = "None", int SessionTransitionTimeoutSeconds = 600)
 {
     internal static string AllowedParent => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "FluxVault.Tests", "NEXT002");
 
@@ -19,6 +20,12 @@ internal sealed record WindowsDatabaseProbeConfiguration(string FixtureId, strin
         if (RunAutomaticTests && (RunCatalogueTests || RunSingleVaultTests || string.IsNullOrWhiteSpace(AutomaticCreatorSid)))
             throw new ArgumentException("Automatic runtime proof requires its exclusive owned fixture and recorded creator SID.");
         if (AutomaticCreatorSid is not null) _ = new SecurityIdentifier(AutomaticCreatorSid);
+        if (AutomaticSessionTransition is not ("None" or "AbortRehearsal" or "ObserveSignOut") ||
+            SessionTransitionTimeoutSeconds is < 60 or > 600)
+            throw new ArgumentException("Native session observation requires a known mode and a finite bounded deadline.");
+        if (AutomaticSessionTransition != "None" && (!RunAutomaticTests || AutomaticCreatorSid is null ||
+            !Regex.IsMatch(AutomaticCreatorSid, @"^S-1-5-21-\d+-\d+-\d+-\d+$", RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1))))
+            throw new ArgumentException("Native session observation requires the owned automatic fixture and an ordinary creator SID.");
         if(RunPredecessorReadTests && !RunCatalogueTests)throw new ArgumentException("Predecessor read requires the owned catalogue fixture.");
         if (PackageTrustMode is not ("PerUser" or "MachineParent") || (PackageTrustMode == "MachineParent" && !RunPackagedIdentityTests))
             throw new ArgumentException("Probe requires a known, scoped package trust ownership mode.");

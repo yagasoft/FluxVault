@@ -1,0 +1,29 @@
+{
+  "FixtureRootAbsent": true,
+  "Failure": "Exact SDDL comparison refused the Windows-added DiscretionaryAclAutoInherited marker before task dispatch.",
+  "ObservedUtc": "2026-10-11T15:39:30.0905555+00:00",
+  "ProcessesLaunched": 0,
+  "Descriptors": [
+    {
+      "Path": "C:\\ProgramData\\FluxVault.Tests",
+      "ActualSddl": "O:SYG:S-1-5-21-136112424-624261118-1239521417-1001D:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;;0x100020;;;BU)"
+    },
+    {
+      "Path": "C:\\ProgramData\\FluxVault.Tests\\NEXT002",
+      "ActualSddl": "O:SYG:S-1-5-21-136112424-624261118-1239521417-1001D:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;;0x100020;;;BU)"
+    },
+    {
+      "Path": "C:\\ProgramData\\FluxVault.Tests\\NEXT002",
+      "ActualSddl": "O:SYG:S-1-5-21-136112424-624261118-1239521417-1001D:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;;0x100020;;;BU)"
+    },
+    {
+      "Path": "C:\\ProgramData\\FluxVault.Tests\\NEXT005",
+      "ActualSddl": "O:S-1-5-21-136112424-624261118-1239521417-1001G:S-1-5-21-136112424-624261118-1239521417-1001D:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;FA;;;S-1-5-21-136112424-624261118-1239521417-1001)"
+    },
+    {
+      "Path": "C:\\ProgramData\\FluxVault.Tests\\NEXT005Session",
+      "ActualSddl": "O:SYG:S-1-5-21-136112424-624261118-1239521417-1001D:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)"
+    }
+  ],
+  "TaskAbsent": true
+}

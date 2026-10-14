@@ -1,7 +1,11 @@
 # Supplementary version-history MVP acceptance
 
-Status: in progress. Production pilot readiness remains blocked until every
-applicable gate below passes, including an explicitly authorised Windows restart.
+Status: ready for the bounded supplementary production pilot on this PC. The
+installed 1.0.12 candidate passes the applicable gates, including the explicitly
+authorised Windows restart and independent final live acceptance. Automatic
+protection is off after restoration of the original configuration; select and
+save the intended folders, then deliberately enable it in Options. The source
+change and evidence are in [PR #37](https://github.com/yagasoft/FluxVault/pull/37).
 This is continuation of NEXT-005 with bounded NEXT-009 measurement, not a new
 roadmap programme or a restart of the completed NEXT-002/004/005 audits.
 
@@ -83,10 +87,10 @@ retained but is not the immediate fallback for this change.
 | Sustained ordinary use and foreground interference | [One-hour result](sustained-use.json): 120 verified saves/recoveries, no pending/uncertain work after each, desktop closed, original configuration/26 earlier versions preserved. [UI observations](ui-observations.json) pass the 2 s shell target and repeated navigation; first-use and startup dispatcher target misses remain below. |
 | Delayed database startup | Focused regressions: 15 passed. Native same-endpoint delayed availability, unchanged bootstrap/binding, no pipe during four failed opens, capture/restart/recovery: 23 passed on each of IPv4 and IPv6. Private cluster removed, all jobs joined, normal installation unchanged. |
 | Storage failure and existing destination preservation | [Native result](native-startup-storage/result.json): 30 checks pass on each IPv4/IPv6, including delayed startup, durable pending before storage outage, visible failure, recovery without another save, refused unconfirmed overwrite with sentinel preservation/no staging leak, and separately confirmed verified overwrite. [Cleanup](native-startup-storage/cleanup.json) and [wrapper join](native-startup-storage/wrapper-cleanup.json) pass. Existing accepted mirror/offline and interruption checks reused. |
-| Pause/resume, stop while retaining history, reviewed deletion | Accepted NEXT-004/005 installed and native evidence reused within unchanged contracts; startup persistence remains part of live restart acceptance. |
+| Pause/resume, stop while retaining history, reviewed deletion | Accepted NEXT-004/005 installed and native evidence reused within unchanged contracts, including automatic-off startup and paused service-restart persistence. The physical boot adds enabled-pending resumption; it is not a separate physical reboot of every control state. |
 | Exact upgrade and exercised rollback | Independently reviewed [1.0.12 candidate](candidate.json), product source `216b8c8362047b226865e10c451b68f6c18b65c9`: 208 payload hashes match after upgrade, exercised 1.0.11 rollback and final re-upgrade. Bootstrap/authentication/ACL and the normal PostgreSQL process remain preserved. Both versions independently recover all 44 newly created sample versions. [Transition evidence](installed-upgrade-rollback.json). |
-| Windows restart → automatic service → creator sign-in → reconcile | Open. Isolated retry proof and earlier sign-out/re-entry evidence do not substitute for this live gate. No reboot consent yet. |
-| Independent final acceptance | Open. Independent startup/overwrite, complete-change, exact-candidate and operational reviews accept the bounded implementation and checked deployment/rollback. Final review after the real boot remains required. |
+| Windows restart → automatic service → creator sign-in → reconcile | Passed after explicit consent. [Boot evidence](boot-acceptance.json): ten pre-sign-in observations retain one pending item; automatic delayed service startup then captures it after sign-in, with desktop closed and no source write or manual service start. Independent new-location SHA-256 matches. This boot did not observe a running service before sign-in; accepted native session-authority tests establish access gating. |
+| Independent final acceptance | [Approved](independent-review.md) for the bounded supplementary pilot after independent inspection of the raw boot, recovery, collection, baseline and sign-in-restoration receipts. No remaining product or live-acceptance blocker. |
 
 Raw private evidence roots: `%USERPROFILE%\FluxVault Staging\MVP\be23b1606edf419f9c228728d93becec`
 and final installation run `283216a322c04a14bb4a95a03b78485e` in the same parent.
@@ -96,8 +100,8 @@ These retained paths contain identity-bound evidence; do not publish the source 
 Focused overwrite regression failed before the fix, then 14 relevant App checks
 passed. [Final combined checks](combined-checks.json) pass: 515 App, 173 Windows and
 397 Integration checks (389 ordinary and eight prepared-installation checks), with
-no failures or skips. The unchanged 608 Core checks are reused from the accepted
-baseline, giving 1,685 ordinary checks across fresh and reused evidence. Builds report
+no failures or skips. Hosted CI also passes all 608 Core checks, giving 1,685
+ordinary checks on the complete branch. Builds report
 zero warnings/errors. Historical failed fixture
 runs remain private and are not counted as passes: `d312cef4a86c444fbadad14022f6489e`
 injected storage failure before confirmed work admission;
@@ -111,7 +115,8 @@ joins `OpenOptionsAsync`, including cleanup, without changing product code or
 behaviour assertions. The three affected checks and all 515 App checks pass
 locally; [correction evidence](ci-correction.json) retains the failed hosted run.
 Fresh hosted CI on `6fbc229` passes all 1,685 ordinary checks with zero build
-warnings/errors. This fixture correction does not change the
+warnings/errors; [CI on pre-boot head `02f6a014`](https://github.com/yagasoft/FluxVault/actions/runs/38543027425)
+also passes. This fixture correction does not change the
 frozen `216b8c8` product candidate or invalidate its installed acceptance evidence.
 
 ## Performance and usability limits
@@ -142,7 +147,39 @@ large-vault scale tests or full DB/IO resource attribution. Wider NEXT-009 work
 remains deferred. The existing UI is functional within this envelope; its full
 redesign remains separate.
 
-## Prepared live restart gate
+## Live restart acceptance
+
+The owner explicitly authorised one restart and temporary automatic-sign-in
+suspension after saving work and confirming manual sign-in. The reviewed wrapper
+submitted it once and joined `shutdown.exe` with exit code zero. The new Windows
+boot began at 10:35:51.500 UTC on 14 October 2026. Ten observations from
+10:36:29.380 to 10:36:38.464 UTC recorded no creator session, one durable pending
+item and zero uncertain items. The creator was first observed at 10:36:39.490 UTC.
+
+The service is configured for **Automatic (Delayed Start)**. It was still stopped
+during the pre-sign-in observations and started automatically at 10:38:11.940 UTC.
+The pending version was captured at 10:38:43.388 UTC: 171.888 seconds after boot
+and 123.898 seconds after the creator was first observed. The observer made no
+post-boot source write or manual service start, and the desktop remained closed.
+Recovery to a new file independently matched SHA-256
+`9DE8C81A750499DAE6AB27EC2A279666577A9714E6F209B01BB92B2F919316CA`.
+This proves automatic startup and retained-work resumption, without claiming
+immediate capture at sign-in or a running service waiting before this sign-in.
+The previously accepted native session tests establish authority gating.
+
+Automatic sign-in was restored to its original string value `1` at
+10:38:19.068 UTC and independently rechecked. No account or password values were
+read or changed. Collection joined all ten recorded observer/preparation actors,
+removed the exact task, then joined its baseline-restoration helper. Independent
+review found no live matches across fourteen recorded process identities. The
+original configuration, four saved scopes and 442 earlier version records remain
+preserved; automatic protection is off, with pending and uncertain counts zero.
+All 208 installed payload hashes still match the frozen candidate. All 44 sampled
+originals retain their recorded length and last-write timestamp. Normal PostgreSQL
+restarted naturally with Windows; it was never separately restarted by the tests.
+[Boot acceptance](boot-acceptance.json) pins the raw receipts and observations.
+
+### Retained preparation and failure-boundary evidence
 
 `eng/test-mvp-boot.ps1` prepares a sealed SYSTEM observer from the reviewed
 candidate, rehearses read-only catalogue/session access, and records exact
@@ -161,16 +198,16 @@ no source writes or manual service starts. Recovery hashes, absence of the deskt
 process exit and task removal are checked. Collection restores the original
 automatic-off configuration and verifies earlier history. If the observer misses
 pre-sign-in waiting, that gate remains open even if subsequent capture passes.
-The user will need to leave the sign-in screen visible briefly before signing in.
+The user left the sign-in screen available before signing in for this trial.
 
 The [exact-candidate preparation](exact-candidate-boot-preparation.json) passes
 the read-only SYSTEM rehearsal on installed 1.0.12. Its five recorded processes
-have exited and its rehearsal task is removed. It is not armed. The source and
+have exited and its rehearsal task is removed. This records preparation before
+the later authorised boot; its observer has now been collected. The source and
 candidate remain frozen; the later CI correction changes only a test fixture.
 
-Windows currently has `AutoAdminLogon` set to the string `1`. A real pre-sign-in
-observation therefore requires a deliberate test arrangement. The proposed
-restart consent also covers temporarily changing only that value to string `0`,
+Before the trial, Windows had `AutoAdminLogon` set to the string `1`. The owner
+consented to temporarily changing only that value to string `0`,
 then restoring the recorded string `1` after manual creator sign-in, even if boot
 acceptance or collection fails. No account/password values are needed or changed. The exact
 value/type and before/after receipts will be retained under the protected boot
@@ -223,6 +260,6 @@ do not establish a Windows restart or authorise one.
 
 Previously accepted native sign-out/re-entry, automatic-off startup and paused
 service-restart persistence remain relevant independent evidence. The real
-Windows restart gate specifically adds automatic SCM startup, pre-sign-in waiting
+Windows restart gate adds automatic SCM startup, pending persistence before sign-in
 and enabled resumption with retained pending work. This does not claim that every
 control state was exercised through a separate physical Windows reboot.

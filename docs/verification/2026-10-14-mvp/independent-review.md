@@ -37,8 +37,29 @@ Sixteen isolated boundary checks pass; the missing-consent refusal preserves the
 real Windows sign-in value and leaves no action intent. The exact-candidate
 SYSTEM rehearsal has exited and its task is removed.
 
-**Still open:** explicit user consent for the single restart and temporary
-automatic-sign-in suspension; actual new-boot waiting/capture/recovery evidence;
-post-boot collection and restoration; independent final live acceptance. No
-review here declares the supplementary pilot ready or establishes standalone
-backup readiness.
+The owner subsequently gave explicit consent and the single restart completed.
+**Final live acceptance: approved for the bounded supplementary version-history
+pilot, with no remaining product or live-acceptance blocker.** The reviewer read
+the raw ten pre-sign-in observations, post-boot capture, process/job joins,
+collection and restoration receipts, and independently hashed the recovered file.
+The reviewer also confirmed current task absence, `AutoAdminLogon` string `1`,
+no live matches across fourteen recorded process identities, configuration and
+442 earlier version records preserved, and automatic off/pending zero/uncertain
+zero. Hosted CI `38543027425` passes at `02f6a014`.
+
+The service is Automatic (Delayed Start) and was still stopped during this boot's
+pre-sign-in observations. It started after creator sign-in. This boot therefore
+proves durable pending persistence and automatic resumption; accepted native
+session-authority evidence establishes source-access gating. It does not prove
+that a running service was observed waiting before sign-in on this physical boot.
+
+Approval is limited to the representative 44 stable local-file samples across
+24 types, largest 441,612,566 bytes, the one-hour 120-save workload, installed
+recovery and exercised rollback. Retain NEXT-009 timing misses and all stated
+workload limits. NEXT-006 remains outside the MVP critical path. No independent
+backup has been verified and no standalone-backup readiness is claimed.
+
+The reviewer also confirmed the final documentation reconciliation and all
+thirteen raw receipt hashes in `boot-acceptance.json`, with no material claim or
+gate mismatch. Commit/push, PR readiness and final-head CI are source-integration
+steps; unchanged runtime tests do not need repeating for this evidence-only update.

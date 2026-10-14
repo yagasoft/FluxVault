@@ -7,8 +7,13 @@ Reuse that accepted work. The [finalisation ledger](verification/2026-10-14-mvp/
 covers representative working-file copies, sustained use, storage/interruption
 recovery, usable existing controls, NEXT-009 measurements, checked upgrade/rollback
 and automatic Windows service startup with protection resumption after creator
-sign-in. Reboot requires explicit consent. Paused/off preferences remain saved;
-before sign-in the service waits for authorised source access.
+sign-in. The explicitly authorised restart now passes: durable pending work
+survives before sign-in and is captured/recovered after automatic delayed service
+startup, without the desktop. Independent final acceptance approves installed
+1.0.12 for the tested supplementary pilot envelope. Paused/off preferences remain
+saved; source access requires the creator's authorised session. Automatic
+protection was restored off after validation. Future reboots still require
+explicit consent during agent-operated testing.
 
 NEXT-006 independent disaster recovery retains its existing design and backlog
 position, outside this MVP's critical path. Full shell redesign, theme/accessibility,
@@ -29,7 +34,7 @@ The first [verified local recovery design](superpowers/specs/2026-10-01-verified
 ## Current bounded continuation — updated 11 October 2026
 
 1. [NEXT-004 completion slice](superpowers/plans/2026-10-08-next004-protection-controls.md): explicit desired-state Pause/Resume and UI; stop protecting while retaining history; separate reviewed history deletion; remaining configuration/command interactions. Reuse the delivered revision, receipt, real-store and actual-view-model contracts. Deliver and validate this slice independently.
-2. [NEXT-005 signed-in slice](superpowers/plans/2026-10-08-next005-signed-in-automatic-protection.md): creator-authorised automatic capture with the desktop closed, durable pending work, restart reconciliation and supervised shutdown. Its acceptance is save → automatic capture → FluxVault restart → find version → independently verified recovery. Close only the NEXT-003 prerequisites exposed by this path. Logged-off/reboot requirements remain open and must not be claimed from signed-in restart evidence.
+2. [NEXT-005 signed-in slice](superpowers/plans/2026-10-08-next005-signed-in-automatic-protection.md): creator-authorised automatic capture with the desktop closed, durable pending work, restart reconciliation and supervised shutdown. Its acceptance is save → automatic capture → FluxVault restart → find version → independently verified recovery. Close only the NEXT-003 prerequisites exposed by this path. Logged-off capture remains outside the MVP. The 14 October continuation above separately accepts a real Windows restart; signed-in service-restart evidence alone does not establish it.
 3. NEXT-006 independent disaster recovery remains the following priority. Bounded single-vault Overview → Protect → Recover design exploration belongs to NEXT-007 alongside these slices, tied to actual commands and states. Measure foreground responsiveness against NEXT-009's existing targets; VSS and professional application consistency remain in NEXT-010.
 
 Exactly one logical vault per installation continues to support multiple folders, file types and mirror destinations. WPF/.NET, the Windows service, PostgreSQL, local-first operation, creator ownership and explicit grants remain fixed. No automatic sharing or new roadmap package is introduced.

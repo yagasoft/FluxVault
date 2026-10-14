@@ -11,8 +11,11 @@ The dashboard and Options show pending, capturing, paused, blocked, failed and u
 The MVP contract is automatic service startup after Windows restart, followed by
 resumption of previously enabled protection when the creator signs in. Pause and
 automatic off remain saved. Before sign-in the service waits for authorised source
-access. The [live restart gate](verification/2026-10-14-mvp/README.md) remains open
-until explicitly authorised and observed. Use FluxVault for supported saved-file
+access. The [live restart acceptance](verification/2026-10-14-mvp/README.md) verifies
+retained pending work and capture/recovery after automatic delayed startup, with
+the desktop closed. Startup is not immediate; this trial captured the pending
+version approximately 172 seconds after boot. Native session-authority evidence
+establishes access gating. Use FluxVault for supported saved-file
 history alongside an independently tested backup; logged-off capture, standalone
 disaster protection and application-consistent recovery of open projects are
 outside this release.

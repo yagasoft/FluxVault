@@ -12,7 +12,8 @@ usable controls, measured performance and complete local installation. The suppo
 integrity failures and outstanding validation; the implementation inventory
 below should not be read as a release-readiness certification.
 
-The installed staging candidate is 1.0.11, building on the accepted 1.0.9
+The installed candidate is 1.0.12, accepted for the bounded supplementary
+production pilot described below, building on the accepted 1.0.9
 manual/control baseline: one logical vault per Windows
 installation, creator ownership with explicit access grants, secure manual save
 → backup → history → independently verified recovery. The
@@ -43,16 +44,20 @@ and readers retire before a new creator logon captures retained work and verifie
 its recovery without another save. This closes the bounded signed-in staging
 workflow. The [MVP finalisation record](docs/verification/2026-10-14-mvp/README.md)
 extends acceptance to representative working-file copies, sustained use and
-automatic service startup after a Windows restart. That restart gate remains
-open until an authorised live test passes. Logged-off capture is outside the MVP.
+automatic service startup after a Windows restart. The authorised live restart
+retained pending work before sign-in and captured/recovered it after automatic
+delayed service startup, with the desktop closed. Independent final acceptance
+passes within the recorded workload limits. Automatic protection is currently
+off; save the intended folder selections and deliberately enable it in Options.
+Logged-off capture is outside the MVP.
 NEXT-006 independent disaster recovery retains its separate design and backlog
 position outside this MVP's critical path. NEXT-010 VSS/application consistency
 and the full shell redesign remain deferred. The inventory below includes
 existing components and future direction, not broader support claims.
 The UI rebuild has not started.
 Fresh owned local NTFS storage is required; existing unmarked non-empty roots
-are preserved and refused. The current workload evidence and remaining acceptance
-gates are recorded in the MVP finalisation record; no independent backup has
+are preserved and refused. The supported workload and remaining wider performance
+limits are recorded in the MVP finalisation record; no independent backup has
 been verified by this work.
 
 ## MVP direction

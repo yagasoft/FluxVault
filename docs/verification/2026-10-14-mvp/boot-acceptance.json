@@ -1,0 +1,133 @@
+{
+  "RunId": "ae4b8f3536d043e0a688e1f4d2d4bc44",
+  "CandidateId": "f97246fc79bc4308bbdb7361e9a38158",
+  "ManifestSha256": "748E2E2C676B7C4544C5A8FF4D6922BAC432D4D6F67BB9CC5388786E4920D84F",
+  "ProductSourceCommit": "216b8c8362047b226865e10c451b68f6c18b65c9",
+  "InstalledPayloadHashesMatched": 208,
+  "ExplicitRestartAndTemporarySignInChangeConsentRecorded": true,
+  "RestartCount": 1,
+  "BootBeforeUtc": "2026-10-14T06:23:55.5Z",
+  "BootResult": {
+    "Passed": true,
+    "BootUtc": "2026-10-14T13:35:51.5+03:00",
+    "CapturedAtUtc": "2026-10-14T13:38:43.3878905+03:00",
+    "BeforeSignInObservations": 10,
+    "BeforeSignInObserved": true,
+    "CreatorObservedUtc": "2026-10-14T13:36:39.4900301+03:00",
+    "SessionId": 1,
+    "AuthenticationId": "00000000:001B77C7",
+    "VersionId": "01a139fe34ab78ba938fdce29b6150f0",
+    "ExpectedSha256": "9DE8C81A750499DAE6AB27EC2A279666577A9714E6F209B01BB92B2F919316CA",
+    "ActualSha256": "9DE8C81A750499DAE6AB27EC2A279666577A9714E6F209B01BB92B2F919316CA",
+    "DesktopClosed": true,
+    "NoManualServiceStart": true,
+    "NoSourceWriteAfterBoot": true,
+    "CompletedUtc": "2026-10-14T13:38:44.5470871+03:00"
+  },
+  "Service": {
+    "ObservedUtc": "2026-10-14T13:38:44.8499043+03:00",
+    "StartMode": "Auto",
+    "Process": {
+      "ProcessId": 34716,
+      "Executable": "C:\\Program Files\\FluxVault\\service\\FluxVault.Service.exe",
+      "StartedUtc": "2026-10-14T10:38:11.9398175Z"
+    },
+    "State": "Running",
+    "Name": "FluxVaultService"
+  },
+  "ServiceAutomaticDelayedStart": true,
+  "BootToCaptureSeconds": 171.8878905,
+  "CreatorObservationToCaptureSeconds": 123.8978604,
+  "BeforeSignInPendingCount": 1,
+  "BeforeSignInUncertainCount": 0,
+  "IndependentRecoverySha256": "9DE8C81A750499DAE6AB27EC2A279666577A9714E6F209B01BB92B2F919316CA",
+  "Collection": {
+    "TaskStoppedByCollector": false,
+    "BaselineRestored": true,
+    "JobJoinedByCollector": false,
+    "RecordedProcessesExited": true,
+    "RecordedProcessCount": 10,
+    "ChildLaunchRequested": true,
+    "Acceptance": "Inspect boot-capture-verified.json; cleanup does not establish acceptance.",
+    "CollectedUtc": "2026-10-14T13:41:42.6208518+03:00",
+    "TaskRemoved": true,
+    "WorkerJobJoined": true
+  },
+  "BaselineHelperJoined": true,
+  "OriginalConfigurationPreserved": true,
+  "OriginalVersionRecordsPreserved": 442,
+  "AutomaticProtectionEnabled": false,
+  "PendingCount": 0,
+  "UncertainCount": 0,
+  "SavedScopeCount": 4,
+  "AutomaticSignInRestoration": {
+    "ValueName": "AutoAdminLogon",
+    "Kind": "String",
+    "Restored": "1",
+    "RunId": "ae4b8f3536d043e0a688e1f4d2d4bc44",
+    "VerifiedUtc": "2026-10-14T13:38:19.0683833+03:00"
+  },
+  "OriginalSampleMetadataUnchanged": 44,
+  "OriginalSampleMetadataChecked": 44,
+  "PostgreSqlManuallyRestarted": false,
+  "NormalPostgreSqlRestartedNaturallyWithWindows": true,
+  "PausedAndDisabledEvidence": "Prior unchanged native startup/service-restart and sign-out/re-entry evidence retained; not separate physical boots of each state.",
+  "RawEvidenceRoot": "C:\\ProgramData\\FluxVault.Tests\\MVPBoot\\ae4b8f3536d043e0a688e1f4d2d4bc44",
+  "RawReceiptHashes": [
+    {
+      "Name": "before-sign-in.json",
+      "Sha256": "19B422FC518BB527321773971A79D85D49CA9791A8A2ECDAC0582516F62DC04F"
+    },
+    {
+      "Name": "boot-capture-verified.json",
+      "Sha256": "6A049AD2D7AFE6A7BC61E97555C9724DF4B7B9B06BDB5299752A6DD953DC2029"
+    },
+    {
+      "Name": "boot-service-start.json",
+      "Sha256": "C16F258758BED9263DC345617DF6CBF8CAAC0A2C54FF5813354ACE65B38B1ECC"
+    },
+    {
+      "Name": "boot-service-end.json",
+      "Sha256": "346BDC619D504C987E1A2101C0386F5BB89EB3C3FD601D4544D41CCDCB37DAFC"
+    },
+    {
+      "Name": "boot-tool-result.json",
+      "Sha256": "A12C1644B222A9003C87EAE24D3A87D4D6259ADF48BE6F8906C4E0138C58830A"
+    },
+    {
+      "Name": "boot-job-joined.json",
+      "Sha256": "68411E8327811126FC5BF7D3AA0AEA657751A5940D273BF62249B754FC857F63"
+    },
+    {
+      "Name": "boot-launcher-joined.json",
+      "Sha256": "36B9C112892929313F9DF1AF3A6AC65116D6952248CA8B0AE95ACCD2A6C05236"
+    },
+    {
+      "Name": "boot-collected.json",
+      "Sha256": "30CE8CCA5A9C8D2E2F2A8AF86D037167531BB15EEB4D16018D23BAB9892AD888"
+    },
+    {
+      "Name": "boot-processes-joined.json",
+      "Sha256": "92C31C17AB012CA2C690C302B37D65C822BCFC3A1DEF7CF07AA0A42935978939"
+    },
+    {
+      "Name": "boot-task-removed.json",
+      "Sha256": "B530AFC304303C988FF02FC0B1EF9365322B9B0A0AE77D63702B09597E227AD9"
+    },
+    {
+      "Name": "restart-submission-result.json",
+      "Sha256": "6EE596E1F267DA4AE4006CE64D732FB98DAA72DC66A016749E3B24386D5B6817"
+    },
+    {
+      "Name": "sign-in-restored.json",
+      "Sha256": "3855D7052C39B2BF47C38E5737A54A4BF71CA3016C6C9FE72E81888926AD6EE6"
+    },
+    {
+      "Name": "baseline-restore-baseline-joined-407af59fa58c48369dbfd9213f7540c0.json",
+      "Sha256": "271C28DF67D8506A867A45F9AEA0AB1ACAE6F8B306F31582FA659B9D5DBA630C"
+    }
+  ],
+  "OwnerVerifiedUtc": "2026-10-14T13:49:45.3638386+03:00",
+  "ObservedRunningServiceBeforeSignIn": false,
+  "SourceAccessAuthorityEvidence": "Accepted NEXT-005 native session-authority/sign-out/re-entry evidence; this physical boot service started after sign-in."
+}

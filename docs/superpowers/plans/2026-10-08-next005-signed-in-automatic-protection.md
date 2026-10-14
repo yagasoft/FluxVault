@@ -15,12 +15,18 @@ The reviewed 1.0.12 candidate is now installed after an exercised 1.0.11 rollbac
 and re-upgrade. All 44 copied samples pass automatic capture and independently
 verified new-location recovery, including retained recovery on both versions.
 The existing one-hour sustained run and final native/UI evidence are retained.
-The actual Windows restart and final independent acceptance remain open; automatic
-protection is off pending the explicitly consented owned boot trial. Windows
-automatic sign-in is enabled, so its temporary test suspension and restoration
-also require explicit consent. See the ledger for exact candidate and receipts.
+The explicitly authorised actual Windows restart now passes: one pending item
+survived ten pre-sign-in observations, then automatic delayed service startup
+captured it after creator sign-in. Independent recovery hashes match with no
+desktop, manual service start or post-boot source write. Independent final
+acceptance approves the bounded supplementary pilot. Original configuration and
+442 earlier version records are preserved; automatic protection is off, with
+pending and uncertain counts zero. Windows automatic sign-in is restored and
+the observer task/processes are collected. See the ledger for exact candidate,
+receipts, workload and remaining wider performance limits. Native authority tests
+establish source-access gating; this boot's service started after sign-in.
 
-**Status, 14 October 2026:** the bounded creator-signed-in slice is installed and live-validated as corrective 1.0.11. Its real save → automatic capture → joined service restart → history → independently verified recovery workflow passes, including pending work and displayed Pause/Resume states. The authorised native sign-out/re-entry check passes all 21 cases, including old-authority retirement, retained work and recovery without another save. [Evidence](../../verification/2026-10-08-next005-automatic/README.md) pins the exact candidate, exercised manual-only 1.0.9 rollback, hosted CI and joined cleanup. Final independent branch/live review accepts the bounded slice; source integration is tracked in PR #36. Broader NEXT-005 logged-off/reboot support remains open. [NEXT-004](2026-10-08-next004-protection-controls.md) is separately delivered as 1.0.9 and squash-merged through PR #35 at `41222b6`. The staging plan uses this PC and existing owned fixtures without VMs.
+**Status, 14 October 2026:** the bounded creator-signed-in slice is installed and live-validated as corrective 1.0.11. Its real save → automatic capture → joined service restart → history → independently verified recovery workflow passes, including pending work and displayed Pause/Resume states. The authorised native sign-out/re-entry check passes all 21 cases, including old-authority retirement, retained work and recovery without another save. [Evidence](../../verification/2026-10-08-next005-automatic/README.md) pins the exact candidate, exercised manual-only 1.0.9 rollback, hosted CI and joined cleanup. Final independent branch/live review accepts the bounded slice; source integration is tracked in PR #36. The supplementary continuation above additionally accepts actual Windows restart/resumption; logged-off capture remains outside the MVP. [NEXT-004](2026-10-08-next004-protection-controls.md) is separately delivered as 1.0.9 and squash-merged through PR #35 at `41222b6`. The staging plan uses this PC and existing owned fixtures without VMs.
 
 **Goal:** with the creator signed in, save a supported file → durable automatic capture → restart FluxVault → find its version → independently verify recovery, without keeping the desktop open.
 

@@ -1,5 +1,23 @@
 # FluxVault improvement roadmap
 
+**MVP boundary, 14 October 2026:** finish supplementary automatic local version
+history for supported saved files while the creator is signed in. NEXT-002 and
+NEXT-004 are delivered; NEXT-005 1.0.11 is merged through PR #36 at `aa0b81d`.
+Reuse that accepted work. The [finalisation ledger](verification/2026-10-14-mvp/README.md)
+covers representative working-file copies, sustained use, storage/interruption
+recovery, usable existing controls, NEXT-009 measurements, checked upgrade/rollback
+and automatic Windows service startup with protection resumption after creator
+sign-in. Reboot requires explicit consent. Paused/off preferences remain saved;
+before sign-in the service waits for authorised source access.
+
+NEXT-006 independent disaster recovery retains its existing design and backlog
+position, outside this MVP's critical path. Full shell redesign, theme/accessibility,
+VSS, advanced professional consistency and optional expansion remain deferred.
+Pilot readiness requires all applicable gates, independent final acceptance and
+honest workload limits. It does not establish standalone backup readiness or
+verify the owner's independent backup. This boundary supersedes broader completion
+requirements below only for the supplementary MVP, not for the later full product.
+
 **Decision, 1 October 2026:** rebuild the desktop experience and selectively redesign the parts of the engine that establish trust. Retain .NET, the Windows service boundary, useful WPF infrastructure, content-addressed storage, chunking/hash/codec primitives and the Windows adapters where their contracts can be proved. A wholesale rewrite would discard useful work without resolving the underlying correctness problems by itself.
 
 This roadmap serves professionals protecting Office, CAD/BIM, Adobe and other large working files. The owner has confirmed that FluxVault is in staging, backward compatibility may be dropped, the product is Windows-only for now, and basic protection/recovery must work locally. Cloud-dependent features are acceptable when explicit. The priorities are easier use, a substantially more modern interface, correctness the owner can trust, and serious performance work. There is no fixed delivery deadline.

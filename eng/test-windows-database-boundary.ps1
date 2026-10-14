@@ -7,6 +7,7 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [ValidateSet('Admission','MidWrite','BeforeTruncate')][string]$AuthenticationInterruption='Admission',
     [switch]$RunCatalogueTests,
     [switch]$RunAutomaticTests,
+    [switch]$RunStartupRecoveryTests,
     [ValidateSet('None','AbortRehearsal','ObserveSignOut')][string]$AutomaticSessionTransition='None',
     [ValidateRange(60,600)][int]$SessionTransitionTimeoutSeconds=600,
     [string]$AutomaticCreatorSid,
@@ -24,8 +25,9 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [ValidateRange(60,600)][int]$IntegrityTimeoutSeconds = 300,
     [string]$EvidenceDirectory = (Join-Path $PSScriptRoot ("../docs/verification/2026-10-03-next002-windows-fixture/live/$FixtureId")))
 $ErrorActionPreference = 'Stop'
+if($RunStartupRecoveryTests -and (-not $RunAutomaticTests -or $AutomaticSessionTransition -ne 'None')){throw 'Startup recovery requires the exclusive automatic fixture without session transitions.'}
 if($AutomaticSessionTransition -ne 'None' -and (-not $RunAutomaticTests -or [Security.Principal.WindowsIdentity]::GetCurrent().User.Value -ne 'S-1-5-18' -or $AutomaticCreatorSid -notmatch '^S-1-5-21-\d+-\d+-\d+-\d+$')){throw 'Native session transition requires the independently owned SYSTEM automatic fixture and pinned creator SID.'}
-if($AutomaticSessionTransition -eq 'None' -and $AutomaticCreatorSid){throw 'A creator override is confined to the owned native session transition.'}
+if($AutomaticSessionTransition -eq 'None' -and $AutomaticCreatorSid -and -not ($RunStartupRecoveryTests -and [Security.Principal.WindowsIdentity]::GetCurrent().User.Value -eq 'S-1-5-18')){throw 'A creator override is confined to the owned native session or startup fixture.'}
 if($RunAutomaticTests -and ($RunCatalogueTests -or $RunSingleVaultTests -or $RunCallerFileTests -or $RunIntegrityTests)){throw 'Automatic runtime proof uses its own instance of the existing owned fixture.'}
 if($RunInterruptedEffectTests -and (-not $RunSingleVaultTests -or $RunRestartTests -or $RunNativeAccessTests -or $RunPackagedIdentityTests -or $RunCallerFileTests -or $RunIntegrityTests)) {
     throw 'Interrupted-effect proof requires an exclusive single-vault extension within the existing resource bound.'
@@ -1235,7 +1237,7 @@ try {
     }
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
-    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;PackageTrustMode=$fixturePackageTrustMode;RunCatalogueTests=[bool]$RunCatalogueTests;RunAutomaticTests=[bool]$RunAutomaticTests;AutomaticCreatorSid=$(if($AutomaticCreatorSid){$AutomaticCreatorSid}elseif($RunAutomaticTests){[Security.Principal.WindowsIdentity]::GetCurrent().User.Value}else{$null});AutomaticSessionTransition=$AutomaticSessionTransition;SessionTransitionTimeoutSeconds=$SessionTransitionTimeoutSeconds;RunPredecessorReadTests=[bool]$RunPredecessorReadTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
+    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;PackageTrustMode=$fixturePackageTrustMode;RunCatalogueTests=[bool]$RunCatalogueTests;RunAutomaticTests=[bool]$RunAutomaticTests;RunStartupRecoveryTests=[bool]$RunStartupRecoveryTests;AutomaticCreatorSid=$(if($AutomaticCreatorSid){$AutomaticCreatorSid}elseif($RunAutomaticTests){[Security.Principal.WindowsIdentity]::GetCurrent().User.Value}else{$null});AutomaticSessionTransition=$AutomaticSessionTransition;SessionTransitionTimeoutSeconds=$SessionTransitionTimeoutSeconds;RunPredecessorReadTests=[bool]$RunPredecessorReadTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
     @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds;ValidatePreparedAuthentication=[bool]$ValidatePreparedAuthentication} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     if($RunPackagedIdentityTests) {
         $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure() -TrustMode $fixturePackageTrustMode
@@ -1339,6 +1341,7 @@ host all all ::1/128 reject
             }
             if($RunPredecessorReadTests -and -not $probe.Result.Catalogue.PredecessorReadVerified){throw 'Required actual predecessor-read proof did not complete.'}
             if($RunAutomaticTests -and ($null -eq $probe.Result.Catalogue -or -not $probe.Result.Catalogue.NativeWts -or -not $probe.Result.Catalogue.RestartRecoveryVerified -or $probe.Result.Catalogue.Passed -lt 8)){throw 'Required native automatic round trip did not complete.'}
+            if($RunStartupRecoveryTests -and -not $probe.Result.Catalogue.StartupRecoveryVerified){throw 'Required native startup recovery did not complete.'}
             if($AutomaticSessionTransition -eq 'AbortRehearsal' -and (-not $probe.Result.Catalogue.AbortRehearsal -or $probe.Result.Catalogue.NativeSignOutVerified)){throw 'Abort rehearsal must not claim actual native sign-out.'}
             if($AutomaticSessionTransition -eq 'ObserveSignOut' -and (-not $probe.Result.Catalogue.NativeSignOutVerified -or $probe.Result.Catalogue.AbortRehearsal)){throw 'Actual native sign-out/re-entry proof is incomplete.'}
             # Multi-vault collision/coexistence cases are retired. Retain all single-repository binding/integrity contracts.

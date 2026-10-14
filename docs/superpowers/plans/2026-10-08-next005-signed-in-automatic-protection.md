@@ -1,5 +1,16 @@
 # NEXT-005 signed-in automatic protection: design and implementation plan
 
+**Supplementary MVP continuation, 14 October 2026:** the owner requires automatic
+service startup after Windows restart and reconciliation/resumption after creator
+sign-in, without opening the desktop. Paused/off controls must persist and source
+access must wait before sign-in. The [MVP acceptance ledger](../../verification/2026-10-14-mvp/README.md)
+records the smallest startup fix, representative copied workload, sustained-use,
+storage-failure, UI/performance, installation/rollback and independent acceptance
+gates. A real reboot remains subject to explicit consent. This extends the bounded
+signed-in workflow; it does not add logged-off capture or put NEXT-006 independent
+disaster recovery on the MVP critical path. Existing accepted work and the separate
+NEXT-006 planning worktree must be preserved.
+
 **Status, 14 October 2026:** the bounded creator-signed-in slice is installed and live-validated as corrective 1.0.11. Its real save → automatic capture → joined service restart → history → independently verified recovery workflow passes, including pending work and displayed Pause/Resume states. The authorised native sign-out/re-entry check passes all 21 cases, including old-authority retirement, retained work and recovery without another save. [Evidence](../../verification/2026-10-08-next005-automatic/README.md) pins the exact candidate, exercised manual-only 1.0.9 rollback, hosted CI and joined cleanup. Final independent branch/live review accepts the bounded slice; source integration is tracked in PR #36. Broader NEXT-005 logged-off/reboot support remains open. [NEXT-004](2026-10-08-next004-protection-controls.md) is separately delivered as 1.0.9 and squash-merged through PR #35 at `41222b6`. The staging plan uses this PC and existing owned fixtures without VMs.
 
 **Goal:** with the creator signed in, save a supported file → durable automatic capture → restart FluxVault → find its version → independently verify recovery, without keeping the desktop open.

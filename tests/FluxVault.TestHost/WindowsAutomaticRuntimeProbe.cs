@@ -20,6 +20,7 @@ using FluxVault.Core.Storage.Metadata;
 using FluxVault.Testing;
 using FluxVault.Windows.Security;
 using Npgsql;
+using FluxVault.Service;
 
 namespace FluxVault.TestHost;
 
@@ -39,6 +40,8 @@ internal static class WindowsAutomaticRuntimeProbe
             if (!await reader.ReadAsync(ct) || reader.GetString(0) != fixture.FixtureId || reader.GetString(1) != fixture.Database || reader.GetString(2) != fixture.Role)
                 throw new UnauthorizedAccessException("Automatic runtime proof does not own this endpoint.");
         var host = new NpgsqlConnectionStringBuilder(dataSource.ConnectionString).Host!;
+        await using var relay = fixture.RunStartupRecoveryTests ? new OwnedLoopbackRelay(host, fixture.Port) : null;
+        var servicePort = relay?.Port ?? fixture.Port;
         var checks = new List<string>();
         var acquisition = new List<string>();
         await using var creator = await new WindowsAutomaticProtectionSessionProvider(acquisition.Add).AcquireAsync(fixture.AutomaticCreatorSid!, ct)
@@ -53,9 +56,9 @@ internal static class WindowsAutomaticRuntimeProbe
         var mirrorRoot=Path.Combine(parent,"mirror");PrivateDirectory(mirrorRoot);
         var id = VaultId.New();
         var metadataConfiguration = MetadataStoreConfiguration.CreateDefault(stateRoot) with
-        { Host = host, Port = fixture.Port, DatabaseName = fixture.Database, Username = fixture.Role };
+        { Host = host, Port = servicePort, DatabaseName = fixture.Database, Username = fixture.Role };
         var binding = new VaultBinding(id, Path.Combine(parent, "repository"), stateRoot, metadataConfiguration);
-        var endpoint = new VaultCatalogueEndpoint(Guid.ParseExact(fixture.FixtureId, "N"), host, fixture.Port, fixture.Database, fixture.Role);
+        var endpoint = new VaultCatalogueEndpoint(Guid.ParseExact(fixture.FixtureId, "N"), host, servicePort, fixture.Database, fixture.Role);
         var configuration = FluxVaultConfiguration.CreateDefault(stateRoot) with
         {
             RepositoryPath = binding.RepositoryPath, MetadataStore = metadataConfiguration,
@@ -83,7 +86,7 @@ internal static class WindowsAutomaticRuntimeProbe
             var expected = Encoding.UTF8.GetBytes("automatic creator save; no manual backup; " + id);
             string firstVersion;
             var initiallyOffline=mirrorRoot+"-default-off";Directory.Move(mirrorRoot,initiallyOffline);
-            await using (var service = await WindowsSingleVaultService.OpenAsync(bootstrap, ct))
+            await using (var service = fixture.RunStartupRecoveryTests ? await OpenAfterDependencyDelayAsync(pipe) : await WindowsSingleVaultService.OpenAsync(bootstrap, ct))
             {
                 using var run = CancellationTokenSource.CreateLinkedTokenSource(ct);
                 var server = new NamedPipeFluxVaultServer(service, WindowsFluxVaultPipeServerFactory.ForPrivateFixture(pipe), new WindowsFluxVaultCallerContextProvider());
@@ -134,6 +137,12 @@ internal static class WindowsAutomaticRuntimeProbe
                 }
                 finally { await run.CancelAsync(); await running; }
             }
+            if (fixture.RunStartupRecoveryTests)
+            {
+                await VerifyStorageWriteFailureAsync(bootstrap, pipe, client, creator, binding, sourceRoot, ct, Check);
+                return new { Passed = checks.Count, Checks = checks, NativeWts = true, RestartRecoveryVerified = true,
+                    StartupRecoveryVerified = true, StorageFailureRecoveryVerified = true, SameEndpointAndBinding = true, StoreHost = host };
+            }
             if (fixture.AutomaticSessionTransition != "None")
             {
                 var nativeSignOut = await VerifyNativeSessionTransitionAsync(bootstrap, pipe, client, creator,
@@ -160,6 +169,29 @@ internal static class WindowsAutomaticRuntimeProbe
             await cleanup.ExecuteNonQueryAsync(CancellationToken.None);
         }
         void Check(bool condition, string name) { if (!condition) throw new InvalidOperationException("Automatic native contract failed: " + name); checks.Add(name); }
+        async Task<WindowsSingleVaultService> OpenAfterDependencyDelayAsync(string delayedPipe)
+        {
+            var bootstrapHash = SHA256.HashData(await File.ReadAllBytesAsync(bootstrap, ct));
+            await relay!.StopAsync();
+            var failures = 0;
+            var result = await ServiceDependencyStartup.OpenAsync(token => WindowsSingleVaultService.OpenAsync(bootstrap, token),
+                exception =>
+                {
+                    Check(exception is NpgsqlException, "actual private PostgreSQL transport unavailable before service admission, attempt " + ++failures);
+                    using var transport = new System.IO.Pipes.NamedPipeClientStream(".", delayedPipe, System.IO.Pipes.PipeDirection.InOut);
+                    try { transport.Connect(20); throw new InvalidOperationException("Service pipe admitted before dependency verification."); }
+                    catch (TimeoutException) { Check(true, "no service pipe is admitted during dependency wait, attempt " + failures); }
+                    if (failures == 4) relay.Start();
+                }, new() { RetryDelay = TimeSpan.FromMilliseconds(100) }, ct);
+            try
+            {
+                Check(failures == 4, "same service initialisation survives more than the configured SCM restart attempts");
+                Check(SHA256.HashData(await File.ReadAllBytesAsync(bootstrap, ct)).SequenceEqual(bootstrapHash),
+                    "protected bootstrap and binding remain unchanged while the same private endpoint recovers");
+                return result;
+            }
+            catch { await result.DisposeAsync(); throw; }
+        }
     }
 
     private static async Task<bool> VerifyNativeSessionTransitionAsync(string bootstrap, string pipe, CreatorClient client,
@@ -759,6 +791,88 @@ internal static class WindowsAutomaticRuntimeProbe
         var running=SupervisedRuntime.RunAsync(server.RunAsync,service.RunAutomaticProtectionAsync,run.Token);
         try {await assertion(service);}
         finally {await run.CancelAsync();await running;}
+    }
+
+    private static async Task VerifyStorageWriteFailureAsync(string bootstrap, string pipe, CreatorClient client,
+        AutomaticProtectionSession creator, VaultBinding binding, string sourceRoot, CancellationToken ct, Action<bool, string> check)
+    {
+        var repository = Path.GetFullPath(binding.RepositoryPath);
+        var fixtureParent = Path.GetFullPath(WindowsDatabaseProbeConfiguration.AllowedParent) + Path.DirectorySeparatorChar;
+        if (!repository.StartsWith(fixtureParent, StringComparison.OrdinalIgnoreCase) || Path.GetFileName(repository) != "repository")
+            throw new UnauthorizedAccessException("Storage fault is confined to the owned private fixture repository.");
+        var chunks = Path.Combine(repository, "chunks");
+        var retained = Path.Combine(repository, "chunks-owned-unavailable");
+        var blocker = Encoding.UTF8.GetBytes("FluxVault owned storage-unavailable fixture");
+        var file = Path.Combine(sourceRoot, "storage-failure.txt");
+        var expected = Encoding.UTF8.GetBytes("Saved while private primary chunk storage is unavailable " + Guid.NewGuid());
+        await RunServiceAsync(bootstrap, pipe, ct, async _ =>
+        {
+            await creator.Caller.RunAsCallerAsync(async () => { await File.WriteAllBytesAsync(file, expected, ct); return true; });
+            while (true)
+            {
+                var pending = (await client.SendAsync(FluxVaultIpcRequest.GetStatus(), ct)).Status!.AutomaticProtection!;
+                if (pending.PendingCount > 0)
+                {
+                    var history = await client.SendAsync(FluxVaultIpcRequest.ListVersions() with { VaultId = binding.Id }, ct);
+                    check(history.Success && !history.Versions!.Any(item => item.SourcePath == file),
+                        "source save is durably pending before the private storage outage and joined restart");
+                    break;
+                }
+                await Task.Delay(50, ct);
+            }
+        });
+        if (!Directory.Exists(chunks) || File.Exists(retained) || Directory.Exists(retained)) throw new InvalidDataException("Unexpected owned storage state.");
+        FluxVault.Testing.WindowsDatabaseProbeConfiguration.RejectReparseComponents(chunks);
+        Directory.Move(chunks, retained);
+        try
+        {
+            await File.WriteAllBytesAsync(chunks, blocker, ct);
+            await RunServiceAsync(bootstrap, pipe, ct, async _ =>
+            {
+                var before = (await client.SendAsync(FluxVaultIpcRequest.GetStatus(), ct)).Status!.AutomaticProtection!.LastSuccessfulVersionId;
+                while (true)
+                {
+                    var status = (await client.SendAsync(FluxVaultIpcRequest.GetStatus(), ct)).Status!.AutomaticProtection!;
+                    if (status.State is AutomaticProtectionState.Blocked or AutomaticProtectionState.OutcomeUncertain)
+                    {
+                        Console.Error.WriteLine(JsonSerializer.Serialize(new { StorageFailureStatus = status }));
+                        check(status.PendingCount + status.UncertainCount > 0 && !string.IsNullOrWhiteSpace(status.Reason),
+                            "primary storage write failure is visible and its work remains durable");
+                        check(status.LastSuccessfulVersionId == before, "unavailable primary storage cannot acknowledge a new capture");
+                        break;
+                    }
+                    await Task.Delay(100, ct);
+                }
+                RestoreChunkDirectory();
+                var version = await WaitForHistoryAsync(client, binding.Id, file, false, ct);
+                var output = Path.Combine(sourceRoot, "storage-failure-recovery.bin");
+                var restored = await MutateAsync(client, binding.Id, FluxVaultIpcRequest.RestoreVersion(version.VersionId, output), ct);
+                var actual = await creator.Caller.RunAsCallerAsync(() => File.ReadAllBytesAsync(output, ct));
+                check(restored.Success && SHA256.HashData(actual).SequenceEqual(SHA256.HashData(expected)),
+                    "restored primary storage captures retained work without another save and recovers independently verified bytes");
+                var sentinel = Encoding.UTF8.GetBytes("Existing destination must survive an unconfirmed restore.");
+                await creator.Caller.RunAsCallerAsync(async () => { await File.WriteAllBytesAsync(output, sentinel, ct); return true; });
+                var overwrite = await MutateAsync(client, binding.Id, FluxVaultIpcRequest.RestoreVersion(version.VersionId, output), ct);
+                var preserved = await creator.Caller.RunAsCallerAsync(() => File.ReadAllBytesAsync(output, ct));
+                check(!overwrite.Success && preserved.SequenceEqual(sentinel), "unconfirmed recovery refuses an existing destination and preserves its distinct contents");
+                check(!Directory.EnumerateFileSystemEntries(sourceRoot, ".FluxVault-recovery-*").Any(),
+                    "refused recovery leaves no owned staging entries");
+                var confirmed = await MutateAsync(client, binding.Id, FluxVaultIpcRequest.RestoreVersion(version.VersionId, output)
+                    with { OverwriteConfirmed = true }, ct);
+                var replaced = await creator.Caller.RunAsCallerAsync(() => File.ReadAllBytesAsync(output, ct));
+                check(confirmed.Success && SHA256.HashData(replaced).SequenceEqual(SHA256.HashData(expected)),
+                    "separately confirmed overwrite restores and independently verifies the expected bytes");
+            });
+        }
+        finally { if (Directory.Exists(retained)) RestoreChunkDirectory(); }
+
+        void RestoreChunkDirectory()
+        {
+            if (!File.Exists(chunks) || !File.ReadAllBytes(chunks).SequenceEqual(blocker) || !Directory.Exists(retained))
+                throw new InvalidDataException("Owned storage fault target changed; preserve it for inspection.");
+            File.Delete(chunks);
+            Directory.Move(retained, chunks);
+        }
     }
     private static async Task<FluxVaultIpcResponse> MutateAsync(CreatorClient client,VaultId id,FluxVaultIpcRequest request,CancellationToken ct)
     {

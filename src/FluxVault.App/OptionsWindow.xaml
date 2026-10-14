@@ -38,9 +38,9 @@
                     <CheckBox Name="SignedInAutomaticProtectionToggle" Content="Protect automatically while you are signed in"
                               IsChecked="{Binding AutomaticProtectionEnabled}" IsEnabled="{Binding AutomaticProtectionAvailable}" Margin="0,0,0,12"
                               ToolTip="Allow the service to capture saved changes in the protected folders using your signed-in creator account." />
-                    <TextBlock Text="The vault creator can approve automatic access to the saved protected folders. Closing FluxVault keeps protection running. Pause stops captures and keeps pending work and history."
+                    <TextBlock Text="First save your protected folders in File browser, then enable this preference. Closing FluxVault keeps the service running. After a Windows restart, enabled protection resumes when the creator signs in. Pause and automatic off remain saved across restart."
                                TextWrapping="Wrap" Margin="0,0,0,12" />
-                    <TextBlock Text="Sign-out stops source access. Logged-off capture, VSS and application-consistent snapshots are not supported by this release."
+                    <TextBlock Text="FluxVault keeps local version history for supported saved files. Use it alongside an independently tested backup. Before creator sign-in and after sign-out, source access waits. Logged-off capture, standalone disaster recovery and application-consistent recovery of open projects are outside this release."
                                TextWrapping="Wrap" Margin="0,0,0,12" />
                     <Button Name="ApplyAutomaticProtectionButton" Content="Apply automatic preference" Command="{Binding ApplyAutomaticProtectionCommand}"
                             HorizontalAlignment="Left" Padding="12,6" Margin="0,0,0,12"

@@ -1921,7 +1921,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             SetServiceStatus("Choose a new recovery folder. Existing folders cannot be merged.");
             return;
         }
-        if (File.Exists(destination) && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
+        var overwriteConfirmed = File.Exists(destination);
+        if (overwriteConfirmed && !restoreOverwriteConfirmation.ConfirmOverwrite(destination))
         {
             SetServiceStatus("Service connection: restore overwrite denied.");
             return;
@@ -1929,7 +1930,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         try
         {
-            var response = await SendBoundAsync(FluxVaultIpcRequest.RestoreVersion(selectedVersion.VersionId, destination))
+            var response = await SendBoundAsync(FluxVaultIpcRequest.RestoreVersion(selectedVersion.VersionId, destination)
+                with { OverwriteConfirmed = overwriteConfirmed })
                 .ConfigureAwait(true);
             if (!response.Success)
             {

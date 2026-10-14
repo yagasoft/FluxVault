@@ -56,7 +56,7 @@ public sealed class WorkerRecoveryTests
         Assert.Contains(
             logger.Entries,
             entry => entry.Level == LogLevel.Critical
-                && entry.Message.Contains("authenticated transport failed", StringComparison.OrdinalIgnoreCase)
+                && entry.Message.Contains("startup or its supervised runtime failed", StringComparison.OrdinalIgnoreCase)
                 && ReferenceEquals(entry.Exception, failure));
     }
 

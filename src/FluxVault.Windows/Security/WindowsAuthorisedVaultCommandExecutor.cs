@@ -160,7 +160,9 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                     case FluxVaultIpcCommand.DeleteHistory:
                         return await operations.HandleAsync(request with {ExpectedVaultRevision=vault.Revision},cancellationToken);
                     case FluxVaultIpcCommand.RestoreVersion:
-                        await using (var target = await WindowsCallerRecoveryTarget.CreateAsync(caller, request.OutputPath!, cancellationToken))
+                        await using (var target = await (request.OverwriteConfirmed
+                            ? WindowsCallerRecoveryTarget.CreateAsync(caller, request.OutputPath!, cancellationToken)
+                            : WindowsCallerRecoveryTarget.CreateNewAsync(caller, request.OutputPath!, cancellationToken)))
                             return FluxVaultIpcResponse.WithRestore(await operations.RestoreVersionAsync(request.VersionId!, target, cancellationToken));
                     case FluxVaultIpcCommand.ExportDiagnostics:
                         var exportDirectory = WindowsLocalPath.Validate(request.ExportPath ?? string.Empty);

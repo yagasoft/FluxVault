@@ -1,0 +1,62 @@
+{
+  "Checks": [
+    {
+      "Suite": "App",
+      "Passed": 515,
+      "Failed": 0,
+      "NotExecuted": 0,
+      "StartedUtc": "2026-10-14T11:11:43.445041+03:00",
+      "FinishedUtc": "2026-10-14T11:11:51.4529381+03:00",
+      "TrxSha256": "D06C6267D05C6E553AFEE6FEBBA76D60EA01E1A0C2209AEEECD99189970BA14D"
+    },
+    {
+      "Suite": "Integration",
+      "Passed": 397,
+      "Failed": 0,
+      "NotExecuted": 0,
+      "StartedUtc": "2026-10-14T11:19:10.8638778+03:00",
+      "FinishedUtc": "2026-10-14T11:23:16.3766523+03:00",
+      "TrxSha256": "E81022BCA960E69D8895C4B85B0C62E943460157DEE36B44D73B72949A636CE0"
+    },
+    {
+      "Suite": "Windows",
+      "Passed": 173,
+      "Failed": 0,
+      "NotExecuted": 0,
+      "StartedUtc": "2026-10-14T11:36:07.6815099+03:00",
+      "FinishedUtc": "2026-10-14T11:36:13.8660414+03:00",
+      "TrxSha256": "92AD1F45913E6158B5CFD06C759515C60D9E2B2FCBF75F4B4B9057533600B9D4"
+    }
+  ],
+  "IntegrationOrdinary": 389,
+  "IntegrationPreparedInstallation": 8,
+  "CoreBaselineReused": 608,
+  "BaselineCommit": "aa0b81db1a268f3efbf9a28dc2e89da20c3b4302",
+  "ProductFiles": [
+    {
+      "Path": "src/FluxVault.Service/Program.cs",
+      "Sha256": "CD201649BE14ECDC1880150F418C3D0D3B5CFCA580E4FFFA7C4212F7C29169D9"
+    },
+    {
+      "Path": "src/FluxVault.Service/Worker.cs",
+      "Sha256": "93FF559AF725DB2CEA9DD00EC9EF77DF56B13608C9B1BF1A1D3396E683718022"
+    },
+    {
+      "Path": "src/FluxVault.Service/ServiceDependencyStartup.cs",
+      "Sha256": "745E7343E3C1C4B42CF07B7724C999C7EA41266376797ABDF10B45A60C6DF4F8"
+    },
+    {
+      "Path": "src/FluxVault.Windows/Security/WindowsAuthorisedVaultCommandExecutor.cs",
+      "Sha256": "287C0081F29027B1CB27F26D487DF7B5403EF787B77E7E7200132F47B22C21F1"
+    },
+    {
+      "Path": "src/FluxVault.App/ViewModels/MainWindowViewModel.cs",
+      "Sha256": "1CF3AC8CA84D26DA8ACC21278953705117E84CA9CE944F9205218E8D8FD5B1C2"
+    },
+    {
+      "Path": "src/FluxVault.App/OptionsWindow.xaml",
+      "Sha256": "0D7DA8F2EB0DC40B76257AD1880FCEC8E90D05D1CF6918D997E02A5922889D54"
+    }
+  ],
+  "Note": "Core and Abstractions sources and dependencies unchanged; baseline Core checks reused. Current TestHost build reports zero warnings/errors. After combined tests, one Options label was corrected to File browser and the final XAML was rebuilt/rendered in the second UI observation."
+}

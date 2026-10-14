@@ -1,0 +1,121 @@
+{
+  "ElapsedSeconds": 3600.0048494,
+  "VerifiedSaves": 120,
+  "AllRecoveryHashesMatch": true,
+  "NoPendingOrUncertainAfterVerifiedSaves": true,
+  "DesktopClosed": true,
+  "ControlSaveMs": {
+    "Count": 120,
+    "Median": 3.7288,
+    "P95": 17.7981,
+    "Maximum": 30.1363
+  },
+  "ProtectedSaveMs": {
+    "Count": 120,
+    "Median": 4.5837,
+    "P95": 16.4121,
+    "Maximum": 20.0737
+  },
+  "SaveToVerifiedRecoveryMs": {
+    "Count": 120,
+    "Median": 12047.702,
+    "P95": 15351.4535,
+    "Maximum": 27654.5255
+  },
+  "CombinedHistoryAndStatusMs": {
+    "Count": 120,
+    "Median": 47.2814,
+    "P95": 83.0446,
+    "Maximum": 179.5429
+  },
+  "Note": "The frozen probe field HistoryMs includes both history and GetStatus. Copy control runs immediately before the protected save; these timings do not establish a causal overhead comparison. Concurrent normal workstation, build and test activity was present.",
+  "ByExtension": [
+    {
+      "Extension": ".csv",
+      "Count": 20,
+      "MinimumBytes": 2013.0,
+      "MaximumBytes": 31253425.0,
+      "ProtectedSaveMs": {
+        "Count": 20,
+        "Median": 5.5941,
+        "P95": 12.0103,
+        "Maximum": 13.1447
+      }
+    },
+    {
+      "Extension": ".docx",
+      "Count": 20,
+      "MinimumBytes": 137948.0,
+      "MaximumBytes": 53383404.0,
+      "ProtectedSaveMs": {
+        "Count": 20,
+        "Median": 7.6404,
+        "P95": 19.6951,
+        "Maximum": 20.0737
+      }
+    },
+    {
+      "Extension": ".pdf",
+      "Count": 20,
+      "MinimumBytes": 427371.0,
+      "MaximumBytes": 13633763.0,
+      "ProtectedSaveMs": {
+        "Count": 20,
+        "Median": 3.8506,
+        "P95": 6.1255,
+        "Maximum": 8.7273
+      }
+    },
+    {
+      "Extension": ".pptx",
+      "Count": 20,
+      "MinimumBytes": 61128.0,
+      "MaximumBytes": 23945138.0,
+      "ProtectedSaveMs": {
+        "Count": 20,
+        "Median": 4.1659,
+        "P95": 11.5013,
+        "Maximum": 12.3995
+      }
+    },
+    {
+      "Extension": ".vsdx",
+      "Count": 20,
+      "MinimumBytes": 35596.0,
+      "MaximumBytes": 5406367.0,
+      "ProtectedSaveMs": {
+        "Count": 20,
+        "Median": 2.3703,
+        "P95": 3.4454,
+        "Maximum": 4.6689
+      }
+    },
+    {
+      "Extension": ".xlsx",
+      "Count": 20,
+      "MinimumBytes": 85040.0,
+      "MaximumBytes": 29870065.0,
+      "ProtectedSaveMs": {
+        "Count": 20,
+        "Median": 4.9298,
+        "P95": 10.5793,
+        "Maximum": 11.7212
+      }
+    }
+  ],
+  "ServiceResources": {
+    "ProcessId": 35328,
+    "StartedUtc": "2026-10-14T06:26:15.657229Z",
+    "ObservedUtc": "2026-10-14T11:42:26.6462539+03:00",
+    "CpuSeconds": 2435.15625,
+    "WorkingSet": 160956416,
+    "PeakWorkingSet": 226660352,
+    "PrivateBytes": 72704000,
+    "Processors": 24,
+    "MeasuredSeconds": 2501.9756576,
+    "MachineCpuPercent": 2.6494166805864396
+  },
+  "SustainEvidenceSha256": "1B39FB35B8B9503E3C17222ACA2ECF7FE8D391E7FF3E305BA547181F22D3FC64",
+  "AutomaticOffRestored": true,
+  "ExistingVersionsPreserved": 26
+}

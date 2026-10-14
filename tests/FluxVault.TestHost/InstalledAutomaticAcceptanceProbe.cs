@@ -38,6 +38,7 @@ internal static class InstalledAutomaticAcceptanceProbe
         switch(phase)
         {
             case "prepare":
+            case "prepare-boot":
                 if(status.Status.AutomaticProtection!.Policy.Enabled)throw new InvalidDataException("Default-off upgrade was not observed.");
                 WriteNew("baseline.json",status);
                 WriteNew("history-before.json",await SendAsync(FluxVaultIpcRequest.ListVersions() with {VaultId=id}));
@@ -46,7 +47,7 @@ internal static class InstalledAutomaticAcceptanceProbe
                     WatchedFolders=[new("next005-staging",working,true,["*.txt"],[],CompressionPreference.Off,ResourceProfile.Fast,true)],
                     SelectionRules=[],
                     CaptureCadencePolicy=status.Status.Configuration.CaptureCadencePolicy with
-                    {FastDebounce=TimeSpan.FromSeconds(2),MinimumSameFileCaptureInterval=TimeSpan.FromSeconds(15)}
+                    {FastDebounce=TimeSpan.FromSeconds(2),MinimumSameFileCaptureInterval=TimeSpan.FromSeconds(phase == "prepare-boot" ? 60 : 15)}
                 };
                 await MutateAsync(FluxVaultIpcRequest.SaveConfiguration(configuration));
                 var options=new OptionsViewModel(client);await options.InitialiseAsync(ct);options.AutomaticProtectionEnabled=true;
@@ -71,6 +72,18 @@ internal static class InstalledAutomaticAcceptanceProbe
                     throw new InvalidOperationException("The saved second observation was not retained pending before restart.");
                 WriteNew("captured.json",new {FirstVersion=first.VersionId,Source=file,SaveMs=saveMs,AutomaticCaptureMs=captureMs,PauseAcknowledgementMs=pauseMs,Paused=paused});
                 break;
+            case "resume-for-boot":
+                if (!File.Exists(Path.Combine(root,"captured.json")) || status.Status.AutomaticProtection!.State != AutomaticProtectionState.Paused ||
+                    status.Status.AutomaticProtection.PendingCount < 1 || status.Status.Configuration.WatchedFolders.Count != 1 ||
+                    status.Status.Configuration.WatchedFolders[0].Path != working)
+                    throw new InvalidOperationException("The owned paused pending boot fixture is required.");
+                await MutateAsync(FluxVaultIpcRequest.SetProtectionPaused(false));
+                var bootReady = await SendAsync(FluxVaultIpcRequest.GetStatus());
+                if (!bootReady.Status!.Configuration.IsEnabled || !bootReady.Status.AutomaticProtection!.Policy.Enabled ||
+                    bootReady.Status.AutomaticProtection.PendingCount < 1)
+                    throw new InvalidOperationException("Pending enabled work was not retained for the authorised boot.");
+                WriteNew("boot-prepared.json", bootReady);
+                break;
             case "verify-restart":
                 using(var captured=JsonDocument.Parse(await File.ReadAllBytesAsync(Path.Combine(root,"captured.json"),ct)))
                 {
@@ -87,17 +100,23 @@ internal static class InstalledAutomaticAcceptanceProbe
                 }
                 break;
             case "restore-baseline":
+            case "verify-baseline":
                 var baseline=JsonSerializer.Deserialize<FluxVaultIpcResponse>(await File.ReadAllBytesAsync(Path.Combine(root,"baseline.json"),ct))!;
-                var stop=new OptionsViewModel(client);await stop.InitialiseAsync(ct);stop.AutomaticProtectionEnabled=false;await stop.ApplyAutomaticProtectionAsync(ct);
-                if(stop.HasUnconfirmedSave)throw new InvalidOperationException("Disabling the scoped fixture was not confirmed.");
-                await MutateAsync(FluxVaultIpcRequest.SaveConfiguration(baseline.Status!.Configuration));
+                if (baseline.Status is null) throw new InvalidDataException("Saved baseline status is missing.");
+                if (phase == "restore-baseline")
+                {
+                    var stop=new OptionsViewModel(client);await stop.InitialiseAsync(ct);stop.AutomaticProtectionEnabled=false;await stop.ApplyAutomaticProtectionAsync(ct);
+                    if(stop.HasUnconfirmedSave)throw new InvalidOperationException("Disabling the scoped fixture was not confirmed.");
+                    await MutateAsync(FluxVaultIpcRequest.SaveConfiguration(baseline.Status!.Configuration));
+                }
                 var restored=await SendAsync(FluxVaultIpcRequest.GetStatus());
                 if(JsonSerializer.Serialize(restored.Status!.Configuration)!=JsonSerializer.Serialize(baseline.Status.Configuration) || restored.Status.AutomaticProtection!.Policy.Enabled)
                     throw new InvalidOperationException("Original configuration/default-off policy was not restored.");
                 var before=JsonSerializer.Deserialize<FluxVaultIpcResponse>(await File.ReadAllBytesAsync(Path.Combine(root,"history-before.json"),ct))!;
                 var after=await SendAsync(FluxVaultIpcRequest.ListVersions() with {VaultId=id});
                 if(before.Versions!.Any(previous=>!after.Versions!.Any(current=>current.VersionId==previous.VersionId)))throw new InvalidOperationException("Earlier history was not preserved.");
-                WriteNew("baseline-restored.json",new {OriginalConfigurationPreserved=true,OriginalVersionsPreserved=before.Versions!.Count,OwnedVersionsRetained=after.Versions!.Count(item=>item.SourcePath==file),Status=restored});
+                WriteNew(phase == "restore-baseline" ? "baseline-restored.json" : "baseline-verified-"+Guid.NewGuid().ToString("N")+".json",
+                    new {OriginalConfigurationPreserved=true,OriginalVersionsPreserved=before.Versions!.Count,OwnedVersionsRetained=after.Versions!.Count(item=>item.SourcePath==file),Status=restored});
                 break;
             case "verify-predecessor":
                 if(status.Status.AutomaticProtection is not null)throw new InvalidOperationException("Expected the accepted manual-only predecessor.");

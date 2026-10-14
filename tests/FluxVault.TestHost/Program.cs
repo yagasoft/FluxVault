@@ -32,6 +32,17 @@ internal static class Program
         try
         {
             var options = Parse(arguments);
+            if (Require(options, "mode") == "installed-boot-observe")
+            {
+                InstalledBootObservationProbe.RunAsync(Require(options, "root"),
+                    options.GetValueOrDefault("snapshot") == "true").GetAwaiter().GetResult();
+                return 0;
+            }
+            if (Require(options, "mode") == "installed-mvp-acceptance")
+            {
+                InstalledMvpAcceptanceProbe.RunAsync(Require(options, "root"), Require(options, "phase")).GetAwaiter().GetResult();
+                return 0;
+            }
             if(Require(options,"mode")=="installed-automatic-acceptance")
             {
                 InstalledAutomaticAcceptanceProbe.RunAsync(Require(options,"root"),Require(options,"phase")).GetAwaiter().GetResult();
@@ -90,7 +101,8 @@ internal static class Program
             {
                 if (!int.TryParse(options.GetValueOrDefault("observation-seconds", "3"), out var seconds) || seconds is < 3 or > 90)
                     throw new ArgumentException("Normal startup observation must last between 3 and 90 seconds.");
-                return NormalStartupObservation.Run(scratch, options.GetValueOrDefault("software-rendering") == "true", seconds);
+                return NormalStartupObservation.Run(scratch, options.GetValueOrDefault("software-rendering") == "true", seconds,
+                    options.GetValueOrDefault("mvp-ui") == "true");
             }
             if (mode == "ui") { ShowUi(options, scratch); return 0; }
             if (mode == "ui-save") { ProtectionSaveUiFixture.Show(options, scratch); return 0; }

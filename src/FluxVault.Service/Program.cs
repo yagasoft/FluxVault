@@ -23,9 +23,8 @@ if (args.Contains("--provision-installation", StringComparer.Ordinal))
     return;
 }
 
-// No user-editable configuration, legacy profile or privileged source fallback.
-// Missing or mismatched protected installation state fails before the service pipe opens.
-await using var vault = await WindowsSingleVaultService.OpenAsync(WindowsVaultInstallation.DefaultPath);
+// Connect the Windows service lifetime before waiting for boot dependencies.
+// The runtime still verifies protected installation state before opening its pipe.
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddWindowsService(options => options.ServiceName = "FluxVaultService");
 builder.Logging.AddEventLog(options =>
@@ -34,9 +33,7 @@ builder.Logging.AddEventLog(options =>
     options.SourceName = "FluxVaultService";
 });
 builder.Logging.AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning);
-builder.Services.AddSingleton(_ => new NamedPipeFluxVaultServer(vault,
-    WindowsFluxVaultPipeServerFactory.ForService(), new WindowsFluxVaultCallerContextProvider()));
-builder.Services.AddSingleton(vault);
+builder.Services.AddSingleton(new ServiceStartupPolicy());
 builder.Services.AddSingleton<IFluxVaultServiceRuntime, FluxVaultServiceRuntime>();
 builder.Services.AddSingleton<Worker>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Worker>());

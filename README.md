@@ -1,17 +1,19 @@
 # FluxVault
 
-FluxVault is a Windows 11 backup utility for frequent, versioned protection of
-large local files that may be open while users work. It combines a WPF dashboard,
-a tray app, and a per-machine Windows service.
+FluxVault provides automatic local version history for supported saved files
+while their creator is signed in to Windows. Use it alongside an independently
+tested backup. It combines a WPF dashboard, a tray app and a per-machine Windows
+service with one logical vault per installation.
 
 The [October 2026 improvement roadmap](docs/improvement-roadmap.md) sets the
-current staging priorities: trustworthy recovery, a modern professional UI,
-measured performance and complete local installation. The supporting
+current staging priorities: reliable saved-file capture, verified recovery,
+usable controls, measured performance and complete local installation. The supporting
 [engineering review](docs/reviews/2026-10-01/review.md) records reproduced
 integrity failures and outstanding validation; the implementation inventory
 below should not be read as a release-readiness certification.
 
-The installed staging candidate is 1.0.11, building on the accepted 1.0.9
+The installed candidate is 1.0.12, accepted for the bounded supplementary
+production pilot described below, building on the accepted 1.0.9
 manual/control baseline: one logical vault per Windows
 installation, creator ownership with explicit access grants, secure manual save
 → backup → history → independently verified recovery. The
@@ -40,21 +42,30 @@ independently verified recovery result, and distinguishes it from private fixtur
 evidence. The 21-check native sign-out/re-entry acceptance passes: old authority
 and readers retire before a new creator logon captures retained work and verifies
 its recovery without another save. This closes the bounded signed-in staging
-workflow; logged-off/reboot protection remains unsupported.
-NEXT-006 independent disaster recovery and NEXT-010 VSS/application consistency
-remain following work. The inventory below includes existing components and
-future direction, not those broader support claims.
+workflow. The [MVP finalisation record](docs/verification/2026-10-14-mvp/README.md)
+extends acceptance to representative working-file copies, sustained use and
+automatic service startup after a Windows restart. The authorised live restart
+retained pending work before sign-in and captured/recovered it after automatic
+delayed service startup, with the desktop closed. Independent final acceptance
+passes within the recorded workload limits. Automatic protection is currently
+off; save the intended folder selections and deliberately enable it in Options.
+Logged-off capture is outside the MVP.
+NEXT-006 independent disaster recovery retains its separate design and backlog
+position outside this MVP's critical path. NEXT-010 VSS/application consistency
+and the full shell redesign remain deferred. The inventory below includes
+existing components and future direction, not broader support claims.
 The UI rebuild has not started.
 Fresh owned local NTFS storage is required; existing unmarked non-empty roots
-are preserved and refused. Unrestricted use with working files remains outside
-this slice's verified scope.
+are preserved and refused. The supported workload and remaining wider performance
+limits are recorded in the MVP finalisation record; no independent backup has
+been verified by this work.
 
 ## MVP direction
 
 - Watched local folders with recursive include/exclude policies.
 - USN journal catch-up plus directory notifications for low-latency detection.
-- Writer-aware VSS requester reads for locked-file capture and app-consistency
-  where VSS writer metadata covers the source path.
+- Writer-aware VSS and application consistency remain deferred; the MVP captures
+  stable saved-file bytes and does not promise a consistent open project.
 - FastCDC-style chunking with BLAKE3 chunk fingerprints.
 - Configurable capture cadence with bounded hot-file snapshots.
 - Adaptive compression policy with zstd by default, plus lz4, Brotli, LZMA,

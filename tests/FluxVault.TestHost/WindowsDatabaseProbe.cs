@@ -11,12 +11,14 @@ internal sealed record WindowsDatabaseProbeConfiguration(string FixtureId, strin
     bool RunSingleVaultTests = false, bool RunPackagedIdentityTests = false, bool RunRestartTests = false,
     bool RunInterruptedEffectTests = false, string PackageTrustMode = "PerUser", bool RunPredecessorReadTests = false,
     bool RunAutomaticTests = false, string? AutomaticCreatorSid = null,
-    string AutomaticSessionTransition = "None", int SessionTransitionTimeoutSeconds = 600)
+    string AutomaticSessionTransition = "None", int SessionTransitionTimeoutSeconds = 600, bool RunStartupRecoveryTests = false)
 {
     internal static string AllowedParent => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "FluxVault.Tests", "NEXT002");
 
     internal void Validate()
     {
+        if (RunStartupRecoveryTests && (!RunAutomaticTests || AutomaticSessionTransition != "None"))
+            throw new ArgumentException("Startup recovery uses only the exclusive automatic fixture, without session transitions.");
         if (RunAutomaticTests && (RunCatalogueTests || RunSingleVaultTests || string.IsNullOrWhiteSpace(AutomaticCreatorSid)))
             throw new ArgumentException("Automatic runtime proof requires its exclusive owned fixture and recorded creator SID.");
         if (AutomaticCreatorSid is not null) _ = new SecurityIdentifier(AutomaticCreatorSid);

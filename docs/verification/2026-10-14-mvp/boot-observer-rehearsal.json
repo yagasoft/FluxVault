@@ -1,0 +1,48 @@
+{
+  "RunId": "72eb9a7c3df54841abe84db64bdd6ef3",
+  "InstalledVersion": "1.0.11",
+  "NoReboot": true,
+  "EarlyFailureRunId": "6a664b6225bb4c1cb9cbb732a1df3d03",
+  "InjectedBoundaries": [
+    "AfterTaskRemoval",
+    "AfterBaselineRestoration"
+  ],
+  "ReadOnlySystemSnapshot": {
+    "ReadOnly": true,
+    "Policy": {
+      "Enabled": true
+    },
+    "PendingCount": 0,
+    "UncertainCount": 0,
+    "CreatorSignedIn": true,
+    "ObservedUtc": "2026-10-14T11:44:51.6434166+03:00"
+  },
+  "Collection": {
+    "RecordedProcessesExited": true,
+    "TaskRemoved": true,
+    "BaselineRestored": true,
+    "JobJoinedByCollector": false,
+    "TaskStoppedByCollector": false,
+    "RecordedProcessCount": 6,
+    "WorkerJobJoined": true,
+    "CollectedUtc": "2026-10-14T11:45:11.3952274+03:00",
+    "ChildLaunchRequested": true,
+    "Acceptance": "Inspect snapshot.json; cleanup does not establish acceptance."
+  },
+  "OriginalConfigurationPreserved": true,
+  "OriginalVersionsPreserved": 354,
+  "AutomaticOff": true,
+  "ReadOnlyResumedVerificationSha256": "E2EBCE0901168FBA4D3F9E6D251F0CD39E05BDED88EEB578607BFF8776C9C057",
+  "EarlyFailureCollection": {
+    "Acceptance": "Inspect snapshot.json; cleanup does not establish acceptance.",
+    "RecordedProcessCount": 1,
+    "RecordedProcessesExited": true,
+    "ChildLaunchRequested": false,
+    "BaselineRestored": false,
+    "JobJoinedByCollector": false,
+    "WorkerJobJoined": true,
+    "CollectedUtc": "2026-10-14T11:30:51.7874125+03:00",
+    "TaskRemoved": true,
+    "TaskStoppedByCollector": false
+  }
+}

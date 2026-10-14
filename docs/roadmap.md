@@ -8,9 +8,15 @@ It prioritises verified local protection and independent recovery, a rebuilt
 professional desktop experience, measured performance and complete installation
 before further cloud, sync or native-driver expansion. The product is still in
 staging; backward compatibility may be dropped, Windows is the current target,
-and basic protection/recovery remain local-first. The first integrity slice is
-in progress with [verified PostgreSQL/process evidence and remaining native/install gates](verification/2026-10-01-verified-recovery/README.md);
-no improvement package is complete. The tracks below retain their
+and basic protection/recovery remain local-first. NEXT-002 and NEXT-004 are
+delivered, and NEXT-005's bounded signed-in slice is accepted as 1.0.11. The
+[supplementary MVP continuation](verification/2026-10-14-mvp/README.md) has deployed
+1.0.12 with verified copied-file recovery, exercised rollback, actual Windows
+restart/sign-in resumption and independent final acceptance. It is ready for the
+bounded supplementary production pilot; wider NEXT-009 targets remain open and
+no independently tested backup has been established. NEXT-006 independent
+disaster recovery keeps its design and backlog position outside this MVP's
+critical path. The tracks below retain their
 historical product context; their ordering does not override the new trust gates.
 
 FluxVault is being built as a configurable, low-friction protection platform

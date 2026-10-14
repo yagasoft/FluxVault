@@ -1,0 +1,128 @@
+{
+  "Transitions": [
+    {
+      "BootstrapAuthenticationAndAclPreserved": true,
+      "Sha256": "CE66FC4F66EF6853E87503A7E20A873798A1081D75276EE12FA385D7DCDFCACD",
+      "PayloadHashesMatched": 208,
+      "Cycle": 1,
+      "ObservedUtc": "2026-10-14T11:57:51.2173507+03:00",
+      "Receipt": "Rollback-verified-6effe140d015461ebdcde279239b67f2.json",
+      "Version": "1.0.11.0",
+      "Postmaster": {
+        "StartedUtc": "2026-10-14T06:24:14.7311992Z",
+        "Port": 5432,
+        "DataDirectory": "D:\\Program Files\\PostgreSQL\\18\\data",
+        "ProcessId": 11964,
+        "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe"
+      }
+    },
+    {
+      "BootstrapAuthenticationAndAclPreserved": true,
+      "Sha256": "D6C4A7665A8953DF0DDCCA69FF16BCF481648352FAB149776666468354DA74F4",
+      "PayloadHashesMatched": 208,
+      "Cycle": 1,
+      "ObservedUtc": "2026-10-14T11:53:49.2834419+03:00",
+      "Receipt": "Update-verified-b4a035b781874d61a0101cbd90d30e87.json",
+      "Version": "1.0.12.0",
+      "Postmaster": {
+        "ProcessId": 11964,
+        "DataDirectory": "D:\\Program Files\\PostgreSQL\\18\\data",
+        "StartedUtc": "2026-10-14T06:24:14.7311992Z",
+        "Port": 5432,
+        "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe"
+      }
+    },
+    {
+      "BootstrapAuthenticationAndAclPreserved": true,
+      "Sha256": "23B1519E3B2437A88B7005F00CE92990B0C3B2069562CE3305115AB754A5EFB2",
+      "PayloadHashesMatched": 208,
+      "Cycle": 2,
+      "ObservedUtc": "2026-10-14T12:07:07.2221838+03:00",
+      "Receipt": "Update-verified-ecf7de2b64754cf4a95fc1dd7f705ede.json",
+      "Version": "1.0.12.0",
+      "Postmaster": {
+        "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+        "ProcessId": 11964,
+        "Port": 5432,
+        "StartedUtc": "2026-10-14T06:24:14.7311992Z",
+        "DataDirectory": "D:\\Program Files\\PostgreSQL\\18\\data"
+      }
+    }
+  ],
+  "NormalPostgreSqlManuallyRestarted": false,
+  "RetainedRecoveries": [
+    {
+      "ConfigurationPreserved": true,
+      "InstalledVersion": "1.0.11.0",
+      "IndependentRecoveryHashesMatched": 44,
+      "Receipt": "retained-verified-e0d028b581ee4c65a9a990a21379212d.json",
+      "Sha256": "C57CC87EACE52033808D2888284D98CE7B7ACB985784E2053C5226A478BB9EF5",
+      "Passed": true,
+      "CompletedUtc": "2026-10-14T11:59:52.4792849+03:00"
+    },
+    {
+      "ConfigurationPreserved": true,
+      "InstalledVersion": "1.0.12.0",
+      "IndependentRecoveryHashesMatched": 44,
+      "Receipt": "retained-verified-b25828a47203493bbf4fe31e85262263.json",
+      "Sha256": "34501D091E3F0F267A4990B2C9AE530E7FF5E623E6D397A5D523D638D70C949F",
+      "Passed": true,
+      "CompletedUtc": "2026-10-14T12:07:59.2400466+03:00"
+    }
+  ],
+  "InstalledRoundtrip": {
+    "IndependentRecoveryHashesMatched": 44,
+    "ReceiptSha256": "5F20E49A0F322F76E38745C73F84DA941A4658B6D02556731579FA711F85F8BE",
+    "MaximumBytes": 441612566,
+    "Bytes": 1085547333,
+    "CompletedUtc": "2026-10-14T11:55:42.328613+03:00",
+    "ElapsedSeconds": 61.2216428,
+    "DesktopClosed": true,
+    "Samples": 44
+  },
+  "ProbeJoins": [
+    {
+      "Phase": "roundtrip",
+      "Exited": true,
+      "JoinedUtc": "2026-10-14T11:55:46.0579375+03:00",
+      "ProcessId": 55992,
+      "ExitCode": 0,
+      "Receipt": "joined-55f35eddcb904ad9ae6bfb824790a5ed.json",
+      "StartedUtc": "2026-10-14T08:54:39.0856226Z",
+      "TimedOut": false,
+      "Sha256": "249BBCFB7CD3E0C09A65C434AF3C757E572235EA3005F34867C600E9D6649E6A"
+    },
+    {
+      "Phase": "verify-retained",
+      "Exited": true,
+      "JoinedUtc": "2026-10-14T11:59:52.571145+03:00",
+      "ProcessId": 51912,
+      "ExitCode": 0,
+      "Receipt": "joined-a77fb8c65e6d463f8865f6bf5fc2a948.json",
+      "StartedUtc": "2026-10-14T08:59:43.4685998Z",
+      "TimedOut": false,
+      "Sha256": "4C142681357C0F662EDFFE4026429C86E998CFDEB60DBECD28AE807A7CC3980B"
+    },
+    {
+      "Phase": "verify-retained",
+      "Exited": true,
+      "JoinedUtc": "2026-10-14T12:07:59.3532431+03:00",
+      "ProcessId": 47112,
+      "ExitCode": 0,
+      "Receipt": "joined-e9ce077ec92748b798b9bf94237b3fba.json",
+      "StartedUtc": "2026-10-14T09:07:50.0730576Z",
+      "TimedOut": false,
+      "Sha256": "18F44E4E8E9B0D4AF31B3E8DF01F609718F6808651FC011D070D37CE4BB7D300"
+    }
+  ],
+  "BaselineRestoration": {
+    "PendingCount": 0,
+    "AutomaticOff": true,
+    "ReceiptSha256": "45DF9DF26FA97CE701948468D9E183DF65104A4C43B56B84DD5494B3ECC4A7A5",
+    "OriginalConfigurationPreserved": true,
+    "UncertainCount": 0,
+    "EarlierVersionsPreserved": 354
+  },
+  "CandidateId": "f97246fc79bc4308bbdb7361e9a38158",
+  "ProductSourceCommit": "216b8c8362047b226865e10c451b68f6c18b65c9"
+}

@@ -1,0 +1,34 @@
+{
+  "BootBefore": "2026-10-14T06:23:55.5Z",
+  "ContextSha256": "CC50620E775FD71D07B2C1F09CE86A4B700324070C042DF25FCDCE69AD8B84C8",
+  "PreparedUtc": "2026-10-14T12:08:25.9548569+03:00",
+  "ObserverPayloadFiles": 132,
+  "RebootConsentRecorded": false,
+  "CandidateSha256": "748E2E2C676B7C4544C5A8FF4D6922BAC432D4D6F67BB9CC5388786E4920D84F",
+  "RunId": "ae4b8f3536d043e0a688e1f4d2d4bc44",
+  "Collection": {
+    "TaskRemoved": true,
+    "RecordedProcessesExited": true,
+    "RecordedProcessCount": 5,
+    "TaskStoppedByCollector": false,
+    "BaselineRestored": false,
+    "ChildLaunchRequested": true,
+    "JobJoinedByCollector": false,
+    "Acceptance": "Inspect snapshot.json; cleanup does not establish acceptance.",
+    "WorkerJobJoined": true,
+    "CollectedUtc": "2026-10-14T12:09:33.6598152+03:00"
+  },
+  "Armed": false,
+  "CandidateId": "f97246fc79bc4308bbdb7361e9a38158",
+  "Snapshot": {
+    "ReadOnly": true,
+    "Policy": {
+      "Enabled": false
+    },
+    "PendingCount": 0,
+    "UncertainCount": 0,
+    "CreatorSignedIn": true,
+    "ObservedUtc": "2026-10-14T12:09:30.9510391+03:00"
+  },
+  "RebootSubmitted": false
+}

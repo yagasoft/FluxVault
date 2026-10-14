@@ -1,0 +1,183 @@
+{
+  "FixtureId": "e7781e20745e4c19b7ab0f104b25988f",
+  "Failure": null,
+  "Observations": [
+    {
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "e7781e20745e4c19b7ab0f104b25988f",
+            "ProbeId": "c1679e7ccf6849599d24cbf36b19ef62",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1"
+        },
+        {
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "Complete": true,
+      "RunId": "bb66804ff627447d9b0ede74b674fbfd",
+      "ServerLogStart": 899,
+      "ServerLogEnd": 2304
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "e7781e20745e4c19b7ab0f104b25988f",
+            "ProbeId": "e069c98e383342a88a9e3d64a6dec34e",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 30,
+              "Checks": [
+                "real WTS creator SID/session/AuthenticationId and ordinary effective token are verified",
+                "actual operational rollback SQL accepts a wholly absent first-start extension without creating consent or work",
+                "actual operational rollback SQL refuses a partial extension before downgrade",
+                "actual private PostgreSQL transport unavailable before service admission, attempt 1",
+                "no service pipe is admitted during dependency wait, attempt 1",
+                "actual private PostgreSQL transport unavailable before service admission, attempt 2",
+                "no service pipe is admitted during dependency wait, attempt 2",
+                "actual private PostgreSQL transport unavailable before service admission, attempt 3",
+                "no service pipe is admitted during dependency wait, attempt 3",
+                "actual private PostgreSQL transport unavailable before service admission, attempt 4",
+                "no service pipe is admitted during dependency wait, attempt 4",
+                "same service initialisation survives more than the configured SCM restart attempts",
+                "protected bootstrap and binding remain unchanged while the same private endpoint recovers",
+                "automatic extension is default off in actual service composition",
+                "default-off startup and status remain available and explain an offline configured mirror before any mirror cursor exists",
+                "actual Options view-model enable has a confirmed catalogue receipt",
+                "saved creator preference is enabled and approved through the actual pipe",
+                "ordinary creator can enumerate the owned source through validated native handles",
+                "ordinary creator save reaches an automatic version without RunBackupNow",
+                "automatic, authority-observer and accepted pipe requests join before service disposal",
+                "restart retains automatic preference and acknowledged version identity",
+                "automatic version is findable through authenticated history after restart",
+                "restarted service recovery matches independently hashed original bytes",
+                "source save is durably pending before the private storage outage and joined restart",
+                "primary storage write failure is visible and its work remains durable",
+                "unavailable primary storage cannot acknowledge a new capture",
+                "restored primary storage captures retained work without another save and recovers independently verified bytes",
+                "unconfirmed recovery refuses an existing destination and preserves its distinct contents",
+                "refused recovery leaves no owned staging entries",
+                "separately confirmed overwrite restores and independently verifies the expected bytes"
+              ],
+              "NativeWts": true,
+              "RestartRecoveryVerified": true,
+              "StartupRecoveryVerified": true,
+              "StorageFailureRecoveryVerified": true,
+              "SameEndpointAndBinding": true,
+              "StoreHost": "127.0.0.1"
+            }
+          },
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql"
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "Kind": "ACL"
+        }
+      ],
+      "RunId": "1d8abf48588d4f5cbcbdcc1d7382cfa8",
+      "Actor": "System",
+      "ServerLogStart": 2367,
+      "ServerLogEnd": 15910
+    },
+    {
+      "RunId": "936593c98d354a01b2fbf4d4aec9a8b7",
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "e7781e20745e4c19b7ab0f104b25988f",
+            "ProbeId": "66ccee944585443e82d7a8f2163388e5",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 30,
+              "Checks": [
+                "real WTS creator SID/session/AuthenticationId and ordinary effective token are verified",
+                "actual operational rollback SQL accepts a wholly absent first-start extension without creating consent or work",
+                "actual operational rollback SQL refuses a partial extension before downgrade",
+                "actual private PostgreSQL transport unavailable before service admission, attempt 1",
+                "no service pipe is admitted during dependency wait, attempt 1",
+                "actual private PostgreSQL transport unavailable before service admission, attempt 2",
+                "no service pipe is admitted during dependency wait, attempt 2",
+                "actual private PostgreSQL transport unavailable before service admission, attempt 3",
+                "no service pipe is admitted during dependency wait, attempt 3",
+                "actual private PostgreSQL transport unavailable before service admission, attempt 4",
+                "no service pipe is admitted during dependency wait, attempt 4",
+                "same service initialisation survives more than the configured SCM restart attempts",
+                "protected bootstrap and binding remain unchanged while the same private endpoint recovers",
+                "automatic extension is default off in actual service composition",
+                "default-off startup and status remain available and explain an offline configured mirror before any mirror cursor exists",
+                "actual Options view-model enable has a confirmed catalogue receipt",
+                "saved creator preference is enabled and approved through the actual pipe",
+                "ordinary creator can enumerate the owned source through validated native handles",
+                "ordinary creator save reaches an automatic version without RunBackupNow",
+                "automatic, authority-observer and accepted pipe requests join before service disposal",
+                "restart retains automatic preference and acknowledged version identity",
+                "automatic version is findable through authenticated history after restart",
+                "restarted service recovery matches independently hashed original bytes",
+                "source save is durably pending before the private storage outage and joined restart",
+                "primary storage write failure is visible and its work remains durable",
+                "unavailable primary storage cannot acknowledge a new capture",
+                "restored primary storage captures retained work without another save and recovers independently verified bytes",
+                "unconfirmed recovery refuses an existing destination and preserves its distinct contents",
+                "refused recovery leaves no owned staging entries",
+                "separately confirmed overwrite restores and independently verifies the expected bytes"
+              ],
+              "NativeWts": true,
+              "RestartRecoveryVerified": true,
+              "StartupRecoveryVerified": true,
+              "StorageFailureRecoveryVerified": true,
+              "SameEndpointAndBinding": true,
+              "StoreHost": "::1"
+            }
+          },
+          "Host": "::1",
+          "Kind": "Npgsql"
+        },
+        {
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "Kind": "ACL"
+        }
+      ],
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "ServerLogStart": 15910,
+      "ServerLogEnd": 29039
+    }
+  ],
+  "FailureLocation": null
+}

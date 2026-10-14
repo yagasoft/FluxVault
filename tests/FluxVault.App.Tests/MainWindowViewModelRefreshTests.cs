@@ -1366,9 +1366,27 @@ public sealed class MainWindowViewModelRefreshTests
         var request = Assert.Single(client.RestoreRequests);
         Assert.Equal("v1", request.VersionId);
         Assert.Equal(destination, request.OutputPath);
+        Assert.False(request.OverwriteConfirmed);
         Assert.Equal(1, picker.PickCount);
         Assert.Equal(0, confirmation.ConfirmCount);
         Assert.Contains("restored and verified", viewModel.ServiceStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Restore_existing_destination_carries_only_explicit_overwrite_confirmation()
+    {
+        using var workspace = TempFolder.Create();
+        var destination = Path.Combine(workspace.Path, "existing.txt");
+        await File.WriteAllTextAsync(destination, "preserve unless confirmed");
+        var client = new FakeFluxVaultServiceClient(StatusWithVersions("v1"));
+        var confirmation = new FakeRestoreOverwriteConfirmation(confirmOverwrite: true);
+        var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20),
+            new FakeRestoreDestinationPicker(destination), confirmation);
+        await viewModel.RefreshAsync();
+        viewModel.SelectedVersion = viewModel.RecentVersions.Single();
+        await viewModel.RestoreSelectedCommand.ExecuteAsync(null);
+        Assert.Equal(1, confirmation.ConfirmCount);
+        Assert.True(Assert.Single(client.RestoreRequests).OverwriteConfirmed);
     }
 
     [Fact]
@@ -1961,7 +1979,7 @@ public sealed class MainWindowViewModelRefreshTests
 
         public List<FluxVaultIpcRequest> Requests { get; } = [];
 
-        public List<(string VersionId, string OutputPath)> RestoreRequests { get; } = [];
+        public List<FluxVaultIpcRequest> RestoreRequests { get; } = [];
 
         public List<string> RestorePreviewRequests { get; } = [];
 
@@ -2010,9 +2028,7 @@ public sealed class MainWindowViewModelRefreshTests
                     throw exception;
                 }
 
-                RestoreRequests.Add((
-                    request.VersionId ?? throw new InvalidOperationException("Missing version id."),
-                    request.OutputPath ?? throw new InvalidOperationException("Missing output path.")));
+                RestoreRequests.Add(request);
                 return Task.FromResult(RestoreResponse);
             }
 

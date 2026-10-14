@@ -1,0 +1,74 @@
+{
+  "NoRealRegistryAccess": true,
+  "ScheduledTasksMocked": true,
+  "NoShutdownInvoked": true,
+  "CompletedUtc": "2026-10-14T09:29:55.4937819+00:00",
+  "SourceSha256": "339A1C076C6EAE8348CC0338143A4EC1CCC6609F8F9481680EDC78FC25AB8340",
+  "Passed": 16,
+  "Checks": [
+    {
+      "Passed": true,
+      "Name": "Partial Arm before task receipt independently restores baseline and sign-in"
+    },
+    {
+      "Passed": true,
+      "Name": "Receipted preparation collects then independently verifies restoration"
+    },
+    {
+      "Passed": true,
+      "Name": "Collection failure cannot prevent baseline or sign-in restoration"
+    },
+    {
+      "Passed": true,
+      "Name": "Baseline restoration failure cannot prevent sign-in restoration"
+    },
+    {
+      "Passed": true,
+      "Name": "Exact unreceipted task is identified and removed before independent restoration"
+    },
+    {
+      "Passed": true,
+      "Name": "Changed unreceipted task is preserved and reported"
+    },
+    {
+      "Passed": true,
+      "Name": "Active unreceipted task requires joined ownership before removal"
+    },
+    {
+      "Passed": true,
+      "Name": "Missing shutdown result preserves observer and suspended sign-in"
+    },
+    {
+      "Passed": true,
+      "Name": "Accepted shutdown with lost receipt preserves the observation"
+    },
+    {
+      "Passed": true,
+      "Name": "Killed shutdown process is not a definite refusal"
+    },
+    {
+      "Passed": true,
+      "Name": "Definite Windows refusal permits preparation rollback"
+    },
+    {
+      "Passed": true,
+      "Name": "Natural shutdown process exit is joined and disposed"
+    },
+    {
+      "Passed": true,
+      "Name": "Hung submission process is killed, joined and marked ambiguous"
+    },
+    {
+      "Passed": true,
+      "Name": "A pin or receipt exception still joins the submission process in finally"
+    },
+    {
+      "Passed": true,
+      "Name": "A live preparation actor blocks baseline mutation without a task receipt"
+    },
+    {
+      "Passed": true,
+      "Name": "Collection failure with an unresolved actor cannot race baseline restoration"
+    }
+  ]
+}

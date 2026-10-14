@@ -7,6 +7,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using FluxVault.App.ViewModels;
 
@@ -21,8 +22,9 @@ internal static class NormalStartupObservation
     [DllImport("user32.dll", SetLastError = true)] private static extern bool GetWindowRect(nint window, out Rect rect);
     [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool IsWindowVisible(nint window);
 
-    internal static int Run(string scratch, bool softwareRendering = false, int seconds = 3)
+    internal static int Run(string scratch, bool softwareRendering = false, int seconds = 3, bool mvpUi = false)
     {
+        if (mvpUi) Window.ShowActivatedProperty.OverrideMetadata(typeof(FluxVault.App.MainWindow), new FrameworkPropertyMetadata(false));
         if (softwareRendering) RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
         using var process = Process.GetCurrentProcess();
         File.WriteAllText(Path.Combine(scratch, "ui-process.json"), JsonSerializer.Serialize(new
@@ -70,6 +72,8 @@ internal static class NormalStartupObservation
             timer.Stop();
             try
             {
+                // Freeze passive timings before explicit navigation/render instrumentation.
+                var passiveDurations = dispatcherDurations.ToArray();
                 var window = app.MainWindow;
                 var root = window?.Content as FrameworkElement;
                 var source = window is null ? null : PresentationSource.FromVisual(window) as HwndSource;
@@ -86,10 +90,10 @@ internal static class NormalStartupObservation
                     ProcessFresh = true, CacheState = "Uncontrolled; prior product and build activity. No cache flush.",
                     LoadedMillisecondsFromProcessStart = loadedAtUtc is null ? (double?)null : (loadedAtUtc.Value.UtcDateTime - process.StartTime.ToUniversalTime()).TotalMilliseconds,
                     ContentRenderedMillisecondsFromProcessStart = contentRenderedAtUtc is null ? (double?)null : (contentRenderedAtUtc.Value.UtcDateTime - process.StartTime.ToUniversalTime()).TotalMilliseconds,
-                    DispatcherOperationCount = dispatcherDurations.Count,
-                    DispatcherMaximumMilliseconds = dispatcherDurations.Count == 0 ? (double?)null : dispatcherDurations.Max(),
-                    DispatcherOver100Milliseconds = dispatcherDurations.Count(value => value > 100),
-                    DispatcherSlowestMilliseconds = dispatcherDurations.OrderDescending().Take(10).ToArray(),
+                    DispatcherOperationCount = passiveDurations.Length,
+                    DispatcherMaximumMilliseconds = passiveDurations.Length == 0 ? (double?)null : passiveDurations.Max(),
+                    DispatcherOver100Milliseconds = passiveDurations.Count(value => value > 100),
+                    DispatcherSlowestMilliseconds = passiveDurations.OrderDescending().Take(10).ToArray(),
                     ProcessCpuSeconds = process.TotalProcessorTime.TotalSeconds, WorkingSetBytes = process.WorkingSet64, HandleCount = process.HandleCount,
                     RenderingEvents = rendering, FirstRendering = firstRendering, LastRendering = lastRendering,
                     Window = window is null ? null : new { window.ActualWidth, window.ActualHeight, window.Visibility, window.IsVisible, window.IsEnabled, window.IsMeasureValid, window.IsArrangeValid },
@@ -102,6 +106,39 @@ internal static class NormalStartupObservation
                 });
                 if (window?.DataContext is MainWindowViewModel model)
                 {
+                    if (mvpUi)
+                    {
+                        var tabs = (TabControl)window.FindName("OperationalCockpitWorkspace");
+                        var navigation = new List<object>();
+                        for (var pass = 0; pass < 2; pass++)
+                        for (var index = 0; index < tabs.Items.Count; index++)
+                        {
+                            var timer = Stopwatch.StartNew();
+                            model.SelectedWorkspaceIndex = index;
+                            await app.Dispatcher.InvokeAsync(window.UpdateLayout, DispatcherPriority.ApplicationIdle);
+                            navigation.Add(new { Pass = pass, Tab = ((TabItem)tabs.Items[index]).Header?.ToString(), Milliseconds = timer.Elapsed.TotalMilliseconds });
+                            if (pass == 1 && index is 1 or 2) Render(window, index == 1 ? "file-browser" : "repository");
+                        }
+                        model.SelectedWorkspaceIndex = 0;
+                        await app.Dispatcher.InvokeAsync(window.UpdateLayout, DispatcherPriority.ApplicationIdle);
+                        Render(window, "dashboard");
+                        var optionsModel = new OptionsViewModel(new FluxVault.Core.Ipc.NamedPipeFluxVaultClient(
+                            FluxVault.Windows.Security.WindowsFluxVaultPipeClientFactory.ForService()));
+                        var optionsTimer = Stopwatch.StartNew();
+                        await optionsModel.InitialiseAsync();
+                        var options = new FluxVault.App.OptionsWindow(optionsModel) { ShowActivated = false };
+                        try
+                        {
+                            options.Show();
+                            await app.Dispatcher.InvokeAsync(options.UpdateLayout, DispatcherPriority.ApplicationIdle);
+                            Render(options, "automatic-options");
+                            Write("ui-mvp", new { Navigation = navigation, AutomaticStatus = optionsModel.AutomaticProtectionStatus,
+                                OptionsLoadedAndRenderedMilliseconds = optionsTimer.Elapsed.TotalMilliseconds,
+                                NoMouseOrKeyboardInput = true, NoActivationRequested = true,
+                                MainWindowIsActive = window.IsActive, OptionsWindowIsActive = options.IsActive });
+                        }
+                        finally { options.Close(); }
+                    }
                     model.StopAutoRefresh();
                     await model.CancelAndJoinLocalProtectionDraftWriterAsync();
                     await model.StopRepositoryReadsAsync();
@@ -126,6 +163,14 @@ internal static class NormalStartupObservation
         };
         // The parent must bound/join this child even if the dispatcher never runs.
         return app.Run();
+
+        void Render(Window window, string name)
+        {
+            var bitmap = new RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth), (int)Math.Ceiling(window.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(window);
+            var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            using var stream = File.Create(Path.Combine(scratch, name + ".png")); encoder.Save(stream);
+        }
     }
 
     private static IEnumerable<DependencyObject> Descendants(DependencyObject root)

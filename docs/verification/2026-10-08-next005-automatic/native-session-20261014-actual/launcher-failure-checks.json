@@ -1,0 +1,48 @@
+{
+  "NativeSignOutSubmitted": false,
+  "ObservedUtc": "2026-10-14T03:18:23.6363066+00:00",
+  "Passed": 5,
+  "Checks": [
+    {
+      "Passed": true,
+      "UnresolvedOwnership": false,
+      "TaskRemoved": true,
+      "AbortRequested": false,
+      "Scenario": "pin-io",
+      "CollectAndJoinRequired": false
+    },
+    {
+      "Passed": true,
+      "UnresolvedOwnership": false,
+      "TaskRemoved": false,
+      "AbortRequested": true,
+      "Scenario": "start-ack",
+      "CollectAndJoinRequired": true
+    },
+    {
+      "Passed": true,
+      "UnresolvedOwnership": true,
+      "TaskRemoved": false,
+      "AbortRequested": false,
+      "Scenario": "changed-pin",
+      "CollectAndJoinRequired": false
+    },
+    {
+      "Passed": true,
+      "UnresolvedOwnership": true,
+      "TaskRemoved": false,
+      "AbortRequested": false,
+      "Scenario": "registration-ready",
+      "CollectAndJoinRequired": false
+    },
+    {
+      "Passed": true,
+      "UnresolvedOwnership": true,
+      "TaskRemoved": false,
+      "AbortRequested": true,
+      "Scenario": "registration-running",
+      "CollectAndJoinRequired": true
+    }
+  ],
+  "RealTasksCreated": 0
+}

@@ -7,6 +7,34 @@ namespace FluxVault.Integration.Tests;
 public sealed class WindowsFixtureToolingTests
 {
     [Theory]
+    [InlineData(12, false)]
+    [InlineData(70000, true)]
+    public async Task Native_actor_failure_retains_exit_code_and_bounded_child_streams(int length, bool truncated)
+    {
+        using var fixture = new ScriptFixture();
+        var receipt = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            $tokens=$null;$errors=$null
+            $ast=[Management.Automation.Language.Parser]::ParseFile((Join-Path $repo 'eng/fixtures/invoke-windows-database-actor.ps1'),[ref]$tokens,[ref]$errors)
+            $branch=$ast.Find({param($node) $node -is [Management.Automation.Language.IfStatementAst] -and
+                $node.Extent.Text.StartsWith('if ($result.ExitCode -ne 0)') -and $node.Extent.Text.Contains('Npgsql probe failed before its result')},$true)
+            if($null -eq $branch){throw 'Native Npgsql failure path missing.'}
+            $result=@{ExitCode=-1073741510;Output=('o'*STREAM_LENGTH);Error=('e'*STREAM_LENGTH)}
+            $probeFailure=$null;$failure=$null;$output=$root;$RunId=$fixtureId
+            try{Invoke-Expression $branch.Extent.Text}catch{$failure=$_.Exception.Message}
+            @{Failure=$failure;ToolFailure=$probeFailure}|ConvertTo-Json -Depth 4 -Compress
+            """.Replace("STREAM_LENGTH", length.ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal));
+        var result = receipt.GetProperty("ToolFailure");
+        Assert.Equal(JsonValueKind.Object, result.ValueKind);
+        Assert.Equal(-1073741510, result.GetProperty("ExitCode").GetInt32());
+        Assert.Equal(new string('o', Math.Min(length, 65536)), result.GetProperty("Output").GetString());
+        Assert.Equal(new string('e', Math.Min(length, 65536)), result.GetProperty("Error").GetString());
+        Assert.Equal(truncated, result.GetProperty("OutputTruncated").GetBoolean());
+        Assert.Equal(truncated, result.GetProperty("ErrorTruncated").GetBoolean());
+        Assert.Contains("exit code -1073741510", receipt.GetProperty("Failure").GetString(), StringComparison.Ordinal);
+    }
+
+    [Theory]
     [InlineData("S-1-5-18")]
     [InlineData("S-1-5-32-544")]
     public async Task Native_observer_builtin_owner_needs_no_additional_administrator_grant(string ownerSid)

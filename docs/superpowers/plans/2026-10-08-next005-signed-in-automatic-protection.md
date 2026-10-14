@@ -27,6 +27,21 @@ UI automation until explicit consent. Do not take over the desktop, sign out or
 reboot Windows under the routine staging authority. Continue repository work and
 non-interactive checks; retain completed UI evidence within its unchanged scope.
 
+On 14 October the owner explicitly approved the prepared native sign-out/re-entry
+check for the current creator Windows session. This permits that bounded
+disruption and its independently owned observer, preserving exact target,
+single-use submission, review, process-join and acceptance gates. Broader desktop
+control and reboot remain outside this approval. The execution record retains a
+refused unsubmitted attempt and a completed observation-only diagnostic hold;
+neither is actual sign-out proof.
+
+The subsequent authorised sign-out verified native authority loss, stale-token
+refusal, joined old readers and retained pending work. Re-entry recovery timed
+out because the owner returned after the observation window. Cleanup and
+installation preservation pass. A fresh session-2 attempt is prepared and
+independently reviewed, but another sign-out requires renewed explicit consent;
+do not repeat it automatically or claim the remaining acceptance gate passed.
+
 ## What already exists and what must change
 
 | Area | Verified current source | Remaining work |

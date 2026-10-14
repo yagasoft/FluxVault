@@ -10,6 +10,67 @@ The test-only hosted-fixture correction has separate independent Astra/high
 approval; it did not reopen unchanged installed/product gates. Work reuses
 the same dedicated task worktree on `codex/next005-signed-in-protection`.
 
+## Native session continuation, 14 October
+
+The owner explicitly approved the prepared observer and creator-session sign-out/
+re-entry check. This does not grant broader desktop control or reboot authority.
+The installed 1.0.11 candidate and all 208 payload hashes still match. Windows
+restarted independently since preparation: the freshly verified normal PostgreSQL
+baseline is PID 15560, started `2026-10-13T12:18:42.5743729Z`; no PostgreSQL restart
+was performed for this work. The primary checkout's two unrelated index changes
+remain untouched.
+
+The first operation, `f0d1d52eb0064d1fb9cda2913f76be89`, submitted no sign-out:
+the launcher correctly refused its expired fresh-Ready admission window before
+creating an invocation or task. The observer also exited early, independently of
+the later abort request. Its cause remains unexplained because the old actor
+failure receipt discarded the child exit code and stdout. Eight recorded owned
+process identities are gone, and private fixture/jobs/task cleanup and installation
+preservation pass. `native-session-20261014-first` retains the evidence and exact
+reviewed single-use helper; submission success would not itself prove sign-out.
+
+The focused diagnostic correction preserves signed child exit codes and bounded
+stdout/stderr with truncation flags in existing actor failure receipts. Two
+meaningful tests failed before the correction and pass afterwards; the affected
+ordinary Integration suite passes **376 cases, zero skipped**. No product or
+timeout change was made. Observation-only run
+`c9bf403d9ec2445fa15e315ee2e02503` survived **198.531 seconds after Ready**, beyond
+the first failure window, before the existing owned abort. Its recorded code 3
+and cancellation exception match that deliberate abort; all eight recorded
+processes, jobs, task and private fixture are joined/removed, with installation
+unchanged. `native-session-20261014-hold` retains these receipts. This is neither
+a causal explanation of the first exit nor native sign-out acceptance.
+
+Independent Astra/high accepts the bounded fresh actual attempt. Replacement
+operation `dcae496cfd194462af01839b12cf08af` is prepared with its launcher **before**
+observer start, retaining the unchanged 110/120-second Ready admission guards.
+Request SHA-256 is `CAE021B1A5891D503BC37F27B7311BB757192836FB56C1E10933D3FDABE85DF3`.
+The SYSTEM helper pins the live observer, exact creator SID/session/AuthenticationId
+and single-use submission, using the documented [native sign-out API](https://learn.microsoft.com/en-us/windows/win32/api/wtsapi32/nf-wtsapi32-wtslogoffsession).
+The actual attempt submitted sign-out at 03:21:41 UTC (06:21 Cairo). Its native
+events verify identity loss, runtime-originated capture cancellation, stale-token
+refusal, joined old readers and retained pending/uncertain work with the reserved
+version unpublished. The observer then timed out waiting for creator re-entry;
+the owner's new console session 2 began at 08:34 Cairo, after cleanup completed
+around 06:32. **Re-entry capture and independently verified recovery remain open.**
+`native-session-20261014-actual/session-collected.json` confirms all ten recorded
+process identities are gone, both SYSTEM workers exited, both tasks and the
+private fixture were removed, and owned jobs joined. Fresh installed checks match
+all 208 payload hashes and the same PostgreSQL PID/start time. No full native
+acceptance pass is claimed.
+
+Retry `8ce7aacd21554ed7a4784227b75c280e` is prepared for the current creator session
+but **unstarted pending renewed explicit consent**. Its request SHA-256 is
+`2C70E627E581784C977E2A26BDE79700B6D3C39D5097E30D9F281E7DDEC6F51C`.
+The helper and launcher differ from the accepted operation only in concrete pins;
+independent Astra/high accepts readiness to request consent. Five isolated
+launcher failure checks cover pin-write cleanup, uncertain Start, changed pins
+and uncertain registration in Ready/Running states. They create no real tasks
+and submit no sign-out. The owner must remain present and sign back in promptly
+for the finite native acceptance window. The first single-use sign-out approval
+does not authorise an automatic repeat. `native-session-20261014-retry` retains
+the concrete prepared inputs and pending-consent record.
+
 ## Current verification, 11 October
 
 ### Corrective 1.0.11 installed workflow

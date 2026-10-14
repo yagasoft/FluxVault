@@ -1,7 +1,14 @@
 {
   "FailedHostedResult": "Core 608, Integration 389 and Windows 173 passed; App 514 passed and one failed during fixture disposal with config.json still open.",
   "FailedHostedRun": "https://github.com/yagasoft/FluxVault/actions/runs/38538029196",
-  "FreshHostedResult": "Pending",
+  "FreshHostedResult": {
+    "UpdatedAt": "2026-10-14T09:14:53Z",
+    "Url": "https://github.com/yagasoft/FluxVault/actions/runs/38539868671",
+    "Status": "completed",
+    "HeadSha": "6fbc22999e1f208978a42dc4e054ebd125e4490f",
+    "Conclusion": "success",
+    "LogSha256": "E06E60A7BEE00B1D2D89385ED6791282AE5DEBBB6B0C7CAB04B26713BFF558A6"
+  },
   "Cause": "The test joined its forwarded action but not the asynchronous Options close/reload. It now captures and awaits OpenOptionsAsync, including cleanup, preserving all behaviour assertions.",
   "ProductSourceCommit": "216b8c8362047b226865e10c451b68f6c18b65c9",
   "Checks": [

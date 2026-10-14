@@ -79,17 +79,18 @@ retained but is not the immediate fallback for this change.
 | Gate | Evidence and current result |
 | --- | --- |
 | Deliberate selection/enable; clear pending/attention | Existing NEXT-004/005 accepted controls reused; actual Options view-model enables the owned copied corpus. Actual WPF Protection, File browser, Repository and Options screens inspected; clear automatic-off and explicit setup/support wording. No mouse/keyboard input; windows remained inactive. |
-| Desktop-closed capture and verified new-location recovery | Installed 1.0.11: all 44 copied samples captured and independently restored in 90.213 s; no manual capture. Indexed history p95 15.402 ms, maximum 27.438 ms over 30 observations. Earlier 26 versions remain readable and original configuration was restored. |
+| Desktop-closed capture and verified new-location recovery | Installed 1.0.11: all 44 copied samples captured and independently restored in 90.213 s. Final 1.0.12: all 44 pass in 61.222 s, with the desktop closed and no manual capture. All 44 new versions also restore correctly after rollback and re-upgrade. Original configuration and all 354 earlier records remain preserved; automatic off/pending zero/uncertain zero restored. [Installed evidence](installed-upgrade-rollback.json). |
 | Sustained ordinary use and foreground interference | [One-hour result](sustained-use.json): 120 verified saves/recoveries, no pending/uncertain work after each, desktop closed, original configuration/26 earlier versions preserved. [UI observations](ui-observations.json) pass the 2 s shell target and repeated navigation; first-use and startup dispatcher target misses remain below. |
 | Delayed database startup | Focused regressions: 15 passed. Native same-endpoint delayed availability, unchanged bootstrap/binding, no pipe during four failed opens, capture/restart/recovery: 23 passed on each of IPv4 and IPv6. Private cluster removed, all jobs joined, normal installation unchanged. |
 | Storage failure and existing destination preservation | [Native result](native-startup-storage/result.json): 30 checks pass on each IPv4/IPv6, including delayed startup, durable pending before storage outage, visible failure, recovery without another save, refused unconfirmed overwrite with sentinel preservation/no staging leak, and separately confirmed verified overwrite. [Cleanup](native-startup-storage/cleanup.json) and [wrapper join](native-startup-storage/wrapper-cleanup.json) pass. Existing accepted mirror/offline and interruption checks reused. |
 | Pause/resume, stop while retaining history, reviewed deletion | Accepted NEXT-004/005 installed and native evidence reused within unchanged contracts; startup persistence remains part of live restart acceptance. |
-| Exact upgrade and exercised rollback | Pending candidate review/build/install; retained 1.0.11 payload and installers verified. |
+| Exact upgrade and exercised rollback | Independently reviewed [1.0.12 candidate](candidate.json), product source `216b8c8362047b226865e10c451b68f6c18b65c9`: 208 payload hashes match after upgrade, exercised 1.0.11 rollback and final re-upgrade. Bootstrap/authentication/ACL and the normal PostgreSQL process remain preserved. Both versions independently recover all 44 newly created sample versions. [Transition evidence](installed-upgrade-rollback.json). |
 | Windows restart → automatic service → creator sign-in → reconcile | Open. Isolated retry proof and earlier sign-out/re-entry evidence do not substitute for this live gate. No reboot consent yet. |
-| Independent final acceptance | Open. Independent startup design/implementation review accepts the focused fix; candidate and final live review remain required. |
+| Independent final acceptance | Open. Independent startup/overwrite, complete-change, exact-candidate and operational reviews accept the bounded implementation and checked deployment/rollback. Final review after the real boot remains required. |
 
-Raw private evidence root: `%USERPROFILE%\FluxVault Staging\MVP\be23b1606edf419f9c228728d93becec`.
-Native delayed-start run: `C:\ProgramData\FluxVault.Tests\MVPStartup\b790fe7a2c614fd5b63bf309e428c572`.
+Raw private evidence roots: `%USERPROFILE%\FluxVault Staging\MVP\be23b1606edf419f9c228728d93becec`
+and final installation run `283216a322c04a14bb4a95a03b78485e` in the same parent.
+Final native startup/storage run: `C:\ProgramData\FluxVault.Tests\MVPStartup\e7781e20745e4c19b7ab0f104b25988f`.
 These retained paths contain identity-bound evidence; do not publish the source map.
 
 Focused overwrite regression failed before the fix, then 14 relevant App checks
@@ -109,7 +110,8 @@ test had not joined its asynchronous close/reload. The bounded test correction
 joins `OpenOptionsAsync`, including cleanup, without changing product code or
 behaviour assertions. The three affected checks and all 515 App checks pass
 locally; [correction evidence](ci-correction.json) retains the failed hosted run.
-Fresh hosted CI remains required. This fixture correction does not change the
+Fresh hosted CI on `6fbc229` passes all 1,685 ordinary checks with zero build
+warnings/errors. This fixture correction does not change the
 frozen `216b8c8` product candidate or invalidate its installed acceptance evidence.
 
 ## Performance and usability limits
@@ -160,6 +162,57 @@ process exit and task removal are checked. Collection restores the original
 automatic-off configuration and verifies earlier history. If the observer misses
 pre-sign-in waiting, that gate remains open even if subsequent capture passes.
 The user will need to leave the sign-in screen visible briefly before signing in.
+
+The [exact-candidate preparation](exact-candidate-boot-preparation.json) passes
+the read-only SYSTEM rehearsal on installed 1.0.12. Its five recorded processes
+have exited and its rehearsal task is removed. It is not armed. The source and
+candidate remain frozen; the later CI correction changes only a test fixture.
+
+Windows currently has `AutoAdminLogon` set to the string `1`. A real pre-sign-in
+observation therefore requires a deliberate test arrangement. The proposed
+restart consent also covers temporarily changing only that value to string `0`,
+then restoring the recorded string `1` after manual creator sign-in, even if boot
+acceptance or collection fails. No account/password values are needed or changed. The exact
+value/type and before/after receipts will be retained under the protected boot
+root. If preparation fails before submission, or Windows definitely refuses it,
+collect the owned observer, restore the original FluxVault configuration and
+restore that value. An ambiguous submission retains the observer and suspended
+sign-in until the new boot or cancellation is established; never retry it or
+prematurely roll back preparation.
+Do not perform any of these sign-in changes without the owner's explicit consent.
+
+The concrete boot run is `ae4b8f3536d043e0a688e1f4d2d4bc44`.
+[`restart-mvp.ps1`](restart-mvp.ps1) pins this PC, creator, candidate and boot run.
+Its read-only Check passes. Start additionally requires the recorded explicit
+consent switch; it records and suspends the single sign-in value, invokes the
+sealed Arm helper, verifies joined preparation and the exact observer task, then
+submits `shutdown.exe /r /t 0` once without force-closing applications. A positive
+timeout is deliberately avoided because [Windows would imply force-close](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/shutdown). The owner
+must save work, confirm manual sign-in is available, wait approximately 60 seconds
+at sign-in, sign in normally, keep FluxVault closed and return to this chat.
+The observer verifies capture/recovery without Codex or FluxVault being open.
+Collect its exact task/processes and invoke RestoreSignIn in a finally block,
+independently of acceptance; it checks the current value before restoring it.
+A blocked shutdown or missed pre-sign-in observation is not a pass and needs
+reassessment. Never repeat an ambiguous restart submission.
+
+Independent pre-boot review required corrections for ambiguous shutdown submission
+and incomplete Arm cleanup. [Sixteen isolated boundary checks](restart-boundary-checks.json)
+now exercise cleanup/join control flow with simulated tasks and processes,
+including lost receipts, known refusal, partial Arm before task registration,
+collection/restoration failure and unreceipted task identity. A live-actor
+regression failed before the final correction: independent baseline mutation is
+now refused until recorded preparation processes and the owned observer job have
+exited. Windows sign-in restoration remains independent of that refusal. These
+checks invoke no real shutdown or registry writes. The
+[missing-consent check](restart-consent-guard.json) also confirms that Start refuses
+without consent, preserving the real sign-in value and leaving no action intent
+or armed test. These are harness checks, not evidence of a Windows restart.
+
+The [owned recovery-output cleanup](recovery-reclaim.json) individually verifies
+and removes 132 already accepted output files, reclaiming 3,256,641,999 bytes.
+The corpus, working copies, raw receipts and repository history remain retained.
+The copied original working documents remain outside all mutations.
 
 The [observer rehearsal](boot-observer-rehearsal.json) passes actual SYSTEM
 catalogue/session access, early failure before child launch, and resumable

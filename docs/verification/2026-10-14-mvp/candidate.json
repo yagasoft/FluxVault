@@ -1,0 +1,70 @@
+{
+  "Version": "1.0.12.0",
+  "CandidateId": "f97246fc79bc4308bbdb7361e9a38158",
+  "SourceCommit": "216b8c8362047b226865e10c451b68f6c18b65c9",
+  "ManifestSha256": "748E2E2C676B7C4544C5A8FF4D6922BAC432D4D6F67BB9CC5388786E4920D84F",
+  "PayloadHashesMatched": 208,
+  "Installer": [
+    {
+      "Name": "FluxVault.Installer.msi",
+      "Sha256": "8A06102E9CE7BC16C30AEACC5A437D6E8A5201297704619955FDAB6120DDFF09",
+      "Length": 14536704
+    },
+    {
+      "Name": "FluxVault.Setup.exe",
+      "Sha256": "129EB07061B4E17AB2C6AA16D4DA210AF5AC73E44E646385F19F80B5066DA95A",
+      "Length": 15182021
+    }
+  ],
+  "BuildLaunches": [
+    {
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "StartedUtc": "2026-10-14T08:49:18.804905Z",
+      "ExitCode": 0,
+      "Exited": true,
+      "ProcessId": 21680,
+      "Step": "publish-service"
+    },
+    {
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "StartedUtc": "2026-10-14T08:49:29.0729946Z",
+      "ExitCode": 0,
+      "Exited": true,
+      "ProcessId": 55648,
+      "Step": "publish-app"
+    },
+    {
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "StartedUtc": "2026-10-14T08:49:37.9309687Z",
+      "ExitCode": 0,
+      "Exited": true,
+      "ProcessId": 33396,
+      "Step": "publish-cli"
+    },
+    {
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "StartedUtc": "2026-10-14T08:49:41.831821Z",
+      "ExitCode": 0,
+      "Exited": true,
+      "ProcessId": 45992,
+      "Step": "build-installer"
+    },
+    {
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "StartedUtc": "2026-10-14T08:49:54.5168606Z",
+      "ExitCode": 0,
+      "Exited": true,
+      "ProcessId": 31828,
+      "Step": "build-bundle"
+    }
+  ],
+  "ImmediateFallback": {
+    "Version": "1.0.11.0",
+    "CandidateId": "de279a32e6fc4d7b9b86e02150bd98cd",
+    "ManifestSha256": "35B669189863F0CE265BE622383B3749DB00BCBD6528A749680109125115EECA",
+    "SchemaChange": false,
+    "RecoveryRequiresNewDestination": true
+  },
+  "IndependentCandidateReview": "Approved by independent Astra/high reviewer mvp_startup_review before staging installation",
+  "WindowsRestartConsent": false
+}

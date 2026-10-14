@@ -13,4 +13,6 @@ public sealed record FileCommitRequest(
     Stream Content,
     SyncOriginMetadata? SyncOrigin = null,
     string? WatchedFolderPath = null,
-    DateTimeOffset? SourceLastWriteUtc = null);
+    DateTimeOffset? SourceLastWriteUtc = null,
+    string? ReservedVersionId = null,
+    Func<CancellationToken, ValueTask>? BeforePublication = null);

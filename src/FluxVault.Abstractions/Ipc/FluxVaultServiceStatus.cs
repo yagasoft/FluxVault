@@ -32,7 +32,8 @@ public sealed record FluxVaultServiceStatus(
     bool HasVersionInventory = true,
     bool UsesPagedCurrentEntries = false,
     // Invalidation hint for shared runtime caches; not a metadata transaction identity.
-    Guid? RepositoryInventoryEpoch = null);
+    Guid? RepositoryInventoryEpoch = null,
+    AutomaticProtectionRuntimeStatus? AutomaticProtection = null);
 
 public sealed record MetadataStoreRuntimeStatus(
     MetadataStoreProvider Provider,

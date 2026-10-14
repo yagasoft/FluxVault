@@ -1,0 +1,421 @@
+{
+  "RunId": "574fe1cfb8ec4ce0832467cc4c42b9c5",
+  "InstalledAssemblies": [
+    {
+      "Sha256": "730BEF60799210507357B9F39A0A09B18249AC2219C3C434D27CEEF334204F30",
+      "Path": "C:\\Program Files\\FluxVault\\app\\FluxVault.Abstractions.dll"
+    },
+    {
+      "Sha256": "A860849615F168EB07F7DED8DDBB6251098BF813D917C9EB3B67C328A3F11E9F",
+      "Path": "C:\\Program Files\\FluxVault\\app\\FluxVault.Core.dll"
+    },
+    {
+      "Sha256": "90FDB408DA0CF24A050B011F13DBDD198D123496D31F225A45E0B8905BBAC26F",
+      "Path": "C:\\Program Files\\FluxVault\\app\\FluxVault.Windows.dll"
+    },
+    {
+      "Sha256": "745E013F467785AA8E20BAE062025F87C20341DE256FD35F40D99D9AAC790F34",
+      "Path": "C:\\Program Files\\FluxVault\\app\\FluxVault.App.dll"
+    }
+  ],
+  "Transition": "AbortRehearsal",
+  "TimeoutSeconds": 60,
+  "Root": "C:\\ProgramData\\FluxVault.Tests\\NEXT005Session\\574fe1cfb8ec4ce0832467cc4c42b9c5",
+  "CreatorSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+  "Payload": [
+    {
+      "RelativePath": "docs\\verification\\2026-10-03-next002-windows-fixture\\live\\4b7d6d4a3f6a46c3ad7fb15f3a2f3e66\\postgresql-provenance.json",
+      "Sha256": "AF6B95D45491EC1203AAB26CCCFEB2244D4755CECB18609454BA352815F6DA18"
+    },
+    {
+      "RelativePath": "eng\\test-automatic-session-transition.ps1",
+      "Sha256": "B1A93F1668853430957CE7640B46AFD6282B6F6A43DF109FCE0322D1631ACBA2"
+    },
+    {
+      "RelativePath": "eng\\test-windows-database-boundary.ps1",
+      "Sha256": "B775441C01E88433A7210208EC3E291957DB0A92C01FD56590B70EADAC490D8F"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\cleanup-windows-fixture-outputs.ps1",
+      "Sha256": "2F8A0EB53848FC9CFDA042F0FD3267439A31EABA70701C247CB6073375B58EF1"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\fixture-cng-keys.cs",
+      "Sha256": "93737CBD2B9EBA15C632B5C33920FF147DFF4EB21525652442A0AA65971D4055"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\fixture-cng-keys.psm1",
+      "Sha256": "62EE699543B3140ECCE66F0D0C80716D7F7E3C3EAD73DAD3624EC435D9F89FCB"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\invoke-owned-tool.ps1",
+      "Sha256": "B396D57DDB4EB2D1C22103B6939255ED3CB9812E44FC2D1DBE2E03003B05800A"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\invoke-packaged-identity.ps1",
+      "Sha256": "EDFB44EDC940B93353CFE4FEE0C1CD4B6F6C041F2FD41F42D3574D1364A86213"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\invoke-windows-database-actor.ps1",
+      "Sha256": "869E2B5CF262515455D90467710C56447E7589D72F24CC90F5DA1FF2ACB5EC81"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\invoke-windows-output-cleanup.ps1",
+      "Sha256": "D4745390CFD4AC75BB553A2A2EB680327535EA512557D65F6A8C9023F26170ED"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\owned-windows-job.cs",
+      "Sha256": "9478E0A549597F2FF82C30D7B55FDC761610256D8F1CCFB7CC432C99D911CBDB"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\packaged-identity.psm1",
+      "Sha256": "E2AA5636B7CEA72C014FFE9127C1B777465010DE91B1612E2B102E438B226026"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\vault-windows-fixture.psm1",
+      "Sha256": "6D7EEDECE68D7F244221C34FE39D1B496D9D2F063127BF3447821B2B900BB97D"
+    },
+    {
+      "RelativePath": "eng\\fixtures\\verified-postgresql-snapshot.psm1",
+      "Sha256": "9BB7BCD9300EAC40B37BF9D35187AD9EB7B9256A969E8D101508753134E4FBF1"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\AWSSDK.Core.dll",
+      "Sha256": "52A3559388AC86174D8E27D45C30ABFCA1D96C9F0ECFFD05623F6CE1B19500AC"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\AWSSDK.S3.dll",
+      "Sha256": "8CBF88E7E945E30FAEC71F20DAA07B50118A1F487F9A89DA1C5E03C3D3B8E41B"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Azure.Core.dll",
+      "Sha256": "F87221287BDE26EAC8B932DA37DB8A9ED2998E1E0559408585A48339A625D938"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Azure.Storage.Blobs.dll",
+      "Sha256": "B94E678E1485D8D2D3DFE5B5DD9CB6957C3E22C5EAD76F2AC82C0888AA5C1260"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Azure.Storage.Common.dll",
+      "Sha256": "2DACB6B33477E4FB071318CD24F6A7F0268DF90A3A0C59689F34183021888592"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Blake3.dll",
+      "Sha256": "5487A86AB58FB7B0242D5A608D0B8FAB45A9CDAC0F34FCF12B8757DF7E850EA8"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\CommunityToolkit.Mvvm.dll",
+      "Sha256": "19B2144FED9600D58A742A5A4A5FD7B10D4D0D2C2E79F5D8019307CF5657044F"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Dropbox.Api.dll",
+      "Sha256": "702E0EB7BAAFC737F523A62850E6B98DD61371E42A12DF119E56AC5853C3466D"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Abstractions.dll",
+      "Sha256": "730BEF60799210507357B9F39A0A09B18249AC2219C3C434D27CEEF334204F30"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Abstractions.pdb",
+      "Sha256": "FCE7E048F95A7FDE66555164CC46AE43D50DD1CF939C40C95AE6FEA1AFDFB124"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.App.deps.json",
+      "Sha256": "B26DE382DC7320C3E854CBCBD675D86F77675F300B32A1ECFAB054848DACCF4E"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.App.dll",
+      "Sha256": "745E013F467785AA8E20BAE062025F87C20341DE256FD35F40D99D9AAC790F34"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.App.exe",
+      "Sha256": "7CE12DB7F32A2E40D19C58D23CCB712E8476DFA2E6B9636497C5E32174D6A59E"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.App.pdb",
+      "Sha256": "4D2D82D0AB23A9D5ABAE8320DACC4AA28A3C7817EE5D38FD359F3951B2122105"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.App.runtimeconfig.json",
+      "Sha256": "42BDF3FF1BC458718481097CB192E129BABE98117BFDCB7DA9CE75BB0AF4FBB8"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Cli.deps.json",
+      "Sha256": "9623F118FE6DDF9AE6A5F69562AF5F81A7DE0B1DD350FEBB5E359A3893616174"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Cli.dll",
+      "Sha256": "076C564DD0C8D0B73CC531D228A29DEA0A0F397BC5F2169F2040B218B67A417C"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Cli.exe",
+      "Sha256": "A51C26B70136D1AA0BDED059755F68D5F495F3D13572E8BF2B2833829385D640"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Cli.pdb",
+      "Sha256": "35DDD114B44A875D2482AFE183C9573A9416F37510FDA79DD2C755FAB5E3E97E"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Cli.runtimeconfig.json",
+      "Sha256": "C230A317A54DD960BCBEB5F347F52E18DC665A26F7EFDA2159FCED9A5AC7E097"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Core.dll",
+      "Sha256": "A860849615F168EB07F7DED8DDBB6251098BF813D917C9EB3B67C328A3F11E9F"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Core.pdb",
+      "Sha256": "D74F7A0379D2C1CCF0F4D627C6906A31C114A8DA4D6F9EC9D95486C61C71736B"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.TestHost.deps.json",
+      "Sha256": "CDA8ACE95C705FFFD1019C9326D1A79F92D64204FBAF2F9E05CEFC34FAB6D123"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.TestHost.dll",
+      "Sha256": "2736928D5E3E134F4A0FE27CD8C43427F6EFD912CAB00FC8C2A5B6DC53CD3728"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.TestHost.exe",
+      "Sha256": "42FC6D881ACD640E0C981BB58FFA1135EBDE8AFC75319B24435F948CC167C2A1"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.TestHost.pdb",
+      "Sha256": "C87207B31EEDDC4854DCFD63489D69F4AFC6ECA13E7E14177C33085141A5BF77"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.TestHost.runtimeconfig.json",
+      "Sha256": "42BDF3FF1BC458718481097CB192E129BABE98117BFDCB7DA9CE75BB0AF4FBB8"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Windows.dll",
+      "Sha256": "90FDB408DA0CF24A050B011F13DBDD198D123496D31F225A45E0B8905BBAC26F"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\FluxVault.Windows.pdb",
+      "Sha256": "B4B42AC665D14A22067B8065753D29F519BAA080F553BF7D40A10FEEAB9E4213"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Google.Apis.Auth.dll",
+      "Sha256": "A83EC6D1C80A0FCC818FAE12EA93A7C425435CB55CF7E5328275432556471A80"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Google.Apis.Core.dll",
+      "Sha256": "138A800B3DBF78E7D70A031516EFB9F75E0A1AF198301721ECFBEFD0E9A0EA4B"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Google.Apis.dll",
+      "Sha256": "F26773F2C697CF381393183C141A1A6529D7C1E269C28A18B05D450CCCF7A393"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Google.Apis.Drive.v3.dll",
+      "Sha256": "635505EBD0F19B1CE6A61320006D220657F77C16F2593FE1A2E29A06106BE5D1"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\H.GeneratedIcons.System.Drawing.dll",
+      "Sha256": "062F717DA727DBD18E1EFC180918BD3913E34A80AF693AEBC140E33B9F10EC40"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\H.NotifyIcon.dll",
+      "Sha256": "0027E443A6121AF8FB616C0200D3C63BF4ABB72E3C548E119FEE1EAE321A8368"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\H.NotifyIcon.Wpf.dll",
+      "Sha256": "1A9BAAF2F4F385B1FE3FD59A35D42FC26341A900E55E8A26F8F10D33410EF360"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\K4os.Compression.LZ4.dll",
+      "Sha256": "E282AADC2353B864FE95CD5FB525A1A093D99A30A5BF2530B7AB831D56179816"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\K4os.Compression.LZ4.Streams.dll",
+      "Sha256": "B146CF3C769000CD5E4458CFED5DA3C0E838B7B2DA6DBE6DAD458CD5A0E3CE41"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\K4os.Hash.xxHash.dll",
+      "Sha256": "19D73FA58C1F6C12C61F30EAAD91881BD06F50CAF4B462B061BC1B45D0A577CD"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Bcl.AsyncInterfaces.dll",
+      "Sha256": "136D5965CF4768E8420B547A8BDDEA882921F426C371833D558A858A2F0C235A"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+      "Sha256": "1CFFAB3D20722BF5C3C93E2E7D1C24EFD8A2FDEC356A93546502C9327DF845D0"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Extensions.Logging.Abstractions.dll",
+      "Sha256": "E25C6CAEC7F5FF58900B88902ED2528B7E791A7BFA74D849B6B8E3C6D9B89FD9"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Graph.Core.dll",
+      "Sha256": "3382DAE3402FAFB81C51E37958413E51E7F63ABC989E84F5D5C6FD879BDCDA20"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Graph.dll",
+      "Sha256": "C3E6469BBA7AB3F843077270471B361C0AA86FBFBA1A9895C8BC091E4A3252E2"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.IdentityModel.Abstractions.dll",
+      "Sha256": "613FD94FF39CE6FF90666E062E93D5D5EA7FDEAE93AAAB2BF2CB6F5C87CEA39D"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.IdentityModel.JsonWebTokens.dll",
+      "Sha256": "D1AF130B42EAA6E8B5B45B0A48D286E7A282F2B67F5809AEB828AAA909D94891"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.IdentityModel.Logging.dll",
+      "Sha256": "B2B89896DA6F307FE4C7FBA033F4F629CE43B92CC6D28C7DAA024A4E5CD68DBD"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.IdentityModel.Protocols.dll",
+      "Sha256": "647F131D0FD0A66802A80ADC9CC38FE02AA2CAF78D6F58796E758829541B16DE"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
+      "Sha256": "F19F659E8533AD2B0D4650779231EFD0E25247DF72C127B57CFDBF186BE8D256"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.IdentityModel.Tokens.dll",
+      "Sha256": "21C943EC715D8771C3A711AD78FC109ADCEAC0E002F67A76F3BCA33D195D0F5F"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.IdentityModel.Validators.dll",
+      "Sha256": "69E36C1A544FC2F98CA8ED330B8026C04DF5479B436A7B3FFED52522D0E14D99"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.IO.RecyclableMemoryStream.dll",
+      "Sha256": "631A5FC41DF9498D032C0655EBD0E1209430CCFFBEC55667D89C2566B338CCC0"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Kiota.Abstractions.dll",
+      "Sha256": "945BEA10D1B6AFFCCE668F8752B10496D0D86EA53B58DA1C0627D30E59DA3D35"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Kiota.Authentication.Azure.dll",
+      "Sha256": "8F46F37A40B17A22424AA10E0DA775E47CBB921027D0CC9BF61CBE619C64C4A6"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Kiota.Http.HttpClientLibrary.dll",
+      "Sha256": "24F032C048BB839A0BAFED0377C0FF1805CDDED378E5E0BDE10C8E9C736DC339"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Kiota.Serialization.Form.dll",
+      "Sha256": "B108D8E5E48781A76E8BAD77B739B26830871E14A961C70F706C97132159C526"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Kiota.Serialization.Json.dll",
+      "Sha256": "B4118C20F780AA9F24219D779F076C07B586DDB223E47B52DF36EF2D6D58DA07"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Kiota.Serialization.Multipart.dll",
+      "Sha256": "3D9A4615932DB2E85239324C6D6F1E375E9E564D1A74B8B6EC08CF6957333F5E"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Microsoft.Kiota.Serialization.Text.dll",
+      "Sha256": "E4D713A5F94956AEA7EDCDFC9B8F8C8005DBC603D701636C21AF8FBFD7700949"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Newtonsoft.Json.dll",
+      "Sha256": "A28C251DFE36D881E9E2462E171441B8B0EC156FE3F452602C9149B1B9EFE05B"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Npgsql.dll",
+      "Sha256": "6C74F02211D3C2323DB73C7C3C88BF610E9EE95E3F84DD6EA5D630EEF9895C1B"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\SharpCompress.dll",
+      "Sha256": "DB4D49F11B30F2ABABC6ED98551DE818D8B6F15DA88FADA8BCCD360EA3E12D73"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Std.UriTemplate.dll",
+      "Sha256": "305D9797B64E1C478AEBB01C6EC9FAAA419D8BDDBB9AE7D3D98EC42CD275A7AC"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\System.ClientModel.dll",
+      "Sha256": "3C4062071D51B56D7B64E12E98F195692FE58CBC907F0252D1BA5D90A366B965"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\System.IdentityModel.Tokens.Jwt.dll",
+      "Sha256": "D6026966EB5304C2E3BDB3BC091A94D204DCB27696A61CDC89D1ABF5259E24CA"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\System.IO.Hashing.dll",
+      "Sha256": "2679A6164163C1F4B7B5FADA83A55EB48B0A85840E04F00E8921B8D495A66B84"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\System.Management.dll",
+      "Sha256": "36056B240F488B7DA63720585D84F93183CF7BD05DA68D5340151EBDD85E4D88"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\System.Memory.Data.dll",
+      "Sha256": "BAE79A4FF6E8FCFB65A3D88EB53D281898E699E5471EBD780843E5616753F0C3"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\System.ServiceProcess.ServiceController.dll",
+      "Sha256": "6C655144E339E47FBAA5EB94C4BE6D1B32616434C173A92BE5AFA6547FA21BA7"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\ZstdSharp.dll",
+      "Sha256": "177F541B9BBA3CFE89D3FE9565EA9F78285EF8499D689DCFD5DE0018B6FA43E5"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Assets\\FluxVault.ico",
+      "Sha256": "797CA737C5E8CE904B7A69DE88E1E1C33F54C55BF23485A9AEB22F9B1C1E48DF"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\Assets\\YagasoftLogo.png",
+      "Sha256": "C9D8E56B33CCF3D7D339223C0D1CE045D2F4CAB6FA11AA003B796219FAAEB675"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\linux-arm\\native\\libblake3_dotnet.so",
+      "Sha256": "FE86108C8BB4C2B16C5C62A968FD8F7563202CF46C0FF0E475CE36019C6A1F70"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\linux-arm64\\native\\libblake3_dotnet.so",
+      "Sha256": "601A831774C20C5201D46E974382B665A569F57B5756C01F0D9FC1A743D9C670"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\linux-musl-arm64\\native\\libblake3_dotnet.so",
+      "Sha256": "C77345C5CDDC1A3FDB5210660062CC67A5EC734C83365F727EDC42121FCA8629"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\linux-musl-x64\\native\\libblake3_dotnet.so",
+      "Sha256": "49A553E1F8136809BCCFB3C14F55793FD951600BCB46C94D824476A3BCCE9893"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\linux-x64\\native\\libblake3_dotnet.so",
+      "Sha256": "613AC9B92836489B8DF713D6AB4560BCA12EFF3F54AC2F8B127DD100745A305C"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\osx-arm64\\native\\libblake3_dotnet.dylib",
+      "Sha256": "3D8D65FD6410CDA1311DBA83F69C2CD0F811B99218BE9B7832221DF7052C300E"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\osx-x64\\native\\libblake3_dotnet.dylib",
+      "Sha256": "3FAE6987DE66A40B0E93DF5E7E9892E57AAF566FAE3DD8F0DB6971D71C628263"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\win\\lib\\net10.0\\System.ServiceProcess.ServiceController.dll",
+      "Sha256": "8A1FA55A76D81375C81DE0CD11613861F364294BDD24BFDCE4B47B36B472331D"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\win\\lib\\net7.0\\System.Management.dll",
+      "Sha256": "979FEE559E30CC0FC4AF6F34548A225B6F08CAE0A6C61D24A3E389B3F22DC9D1"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\win-arm64\\native\\blake3_dotnet.dll",
+      "Sha256": "90B8C5BB44C2C1739ECE1A36852E3EF7C42333E5794C688DA4D71F059DE8A96B"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\win-x64\\native\\blake3_dotnet.dll",
+      "Sha256": "ED515032FC106D5F07E113FCC6B1524E8B3F7FC1C90F817BD58290A81136CA53"
+    },
+    {
+      "RelativePath": "tests\\FluxVault.TestHost\\bin\\Release\\net10.0-windows\\runtimes\\win-x86\\native\\blake3_dotnet.dll",
+      "Sha256": "912B841198037CF6FE06CB27AFF6F165FD42AFBBADBB77A26D1D5BCE412F844C"
+    }
+  ],
+  "FixtureRoot": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\574fe1cfb8ec4ce0832467cc4c42b9c5",
+  "PreparedUtc": "2026-10-11T15:46:54.3351689+00:00"
+}

@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="405f7d0d-0637-45c3-81d0-0477bd0094c2" name="os008@OS008-HOME 2026-10-08 17:48:48" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T17:48:48.2455627+03:00" queuing="2026-10-08T17:48:48.2455628+03:00" start="2026-10-08T17:48:47.5348538+03:00" finish="2026-10-08T17:48:48.2503040+03:00" />
+  <TestSettings name="default" id="00c6210a-51cc-4e86-9731-ac8b5803eb3f">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-08_17_48_48" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="abaa6f84-4e54-423d-b78a-041384834d25" testId="6be70d4c-afa6-8c22-e262-e9314582b538" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.A_generic_capture_cannot_claim_verified_native_source_stability" computerName="OS008-HOME" duration="00:00:00.0042915" startTime="2026-10-08T17:48:48.0849270+03:00" endTime="2026-10-08T17:48:48.1030761+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="abaa6f84-4e54-423d-b78a-041384834d25">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsCallerSourceTests.A_generic_capture_cannot_claim_verified_native_source_stability() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 46&#xD;
+   at FluxVault.Windows.Tests.WindowsCallerSourceTests.A_generic_capture_cannot_claim_verified_native_source_stability() in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 47&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2df1e184-b2fb-498d-ba87-68f026d9028a" testId="69511e63-b2fa-9cf8-7b80-ea0df7e4774c" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(rewriteWithRestoredTimestamp: True)" computerName="OS008-HOME" duration="00:00:00.0424512" startTime="2026-10-08T17:48:48.1166345+03:00" endTime="2026-10-08T17:48:48.1482368+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2df1e184-b2fb-498d-ba87-68f026d9028a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(Boolean rewriteWithRestoredTimestamp) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 29&#xD;
+   at FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(Boolean rewriteWithRestoredTimestamp) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 37&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="187b2431-5681-46de-92a1-c2eac1d18b29" testId="57427d98-7ace-7489-af98-7cc262eb9edd" testName="FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(rewriteWithRestoredTimestamp: False)" computerName="OS008-HOME" duration="00:00:00.0037414" startTime="2026-10-08T17:48:48.1493355+03:00" endTime="2026-10-08T17:48:48.1529661+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="187b2431-5681-46de-92a1-c2eac1d18b29">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(Boolean rewriteWithRestoredTimestamp) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 29&#xD;
+   at FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(Boolean rewriteWithRestoredTimestamp) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs:line 37&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.A_generic_capture_cannot_claim_verified_native_source_stability" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="6be70d4c-afa6-8c22-e262-e9314582b538">
+      <Execution id="abaa6f84-4e54-423d-b78a-041384834d25" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="A_generic_capture_cannot_claim_verified_native_source_stability" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(rewriteWithRestoredTimestamp: True)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="69511e63-b2fa-9cf8-7b80-ea0df7e4774c">
+      <Execution id="2df1e184-b2fb-498d-ba87-68f026d9028a" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Capture_verifies_native_source_stability_before_publication" />
+    </UnitTest>
+    <UnitTest name="FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(rewriteWithRestoredTimestamp: False)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.windows.tests\bin\release\net10.0\fluxvault.windows.tests.dll" id="57427d98-7ace-7489-af98-7cc262eb9edd">
+      <Execution id="187b2431-5681-46de-92a1-c2eac1d18b29" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\bin\Release\net10.0\FluxVault.Windows.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.Windows.Tests.WindowsCallerSourceTests" name="Capture_verifies_native_source_stability_before_publication" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6be70d4c-afa6-8c22-e262-e9314582b538" executionId="abaa6f84-4e54-423d-b78a-041384834d25" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="69511e63-b2fa-9cf8-7b80-ea0df7e4774c" executionId="2df1e184-b2fb-498d-ba87-68f026d9028a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="57427d98-7ace-7489-af98-7cc262eb9edd" executionId="187b2431-5681-46de-92a1-c2eac1d18b29" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    FluxVault.Windows.Tests&#xD;
+[xUnit.net 00:00:00.20]       Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.20]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs(46,0): at FluxVault.Windows.Tests.WindowsCallerSourceTests.A_generic_capture_cannot_claim_verified_native_source_stability()&#xD;
+[xUnit.net 00:00:00.20]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs(47,0): at FluxVault.Windows.Tests.WindowsCallerSourceTests.A_generic_capture_cannot_claim_verified_native_source_stability()&#xD;
+[xUnit.net 00:00:00.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.25]       Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs(29,0): at FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(Boolean rewriteWithRestoredTimestamp)&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs(37,0): at FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(Boolean rewriteWithRestoredTimestamp)&#xD;
+[xUnit.net 00:00:00.25]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.25]       Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs(29,0): at FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(Boolean rewriteWithRestoredTimestamp)&#xD;
+[xUnit.net 00:00:00.25]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.Windows.Tests\WindowsCallerSourceTests.cs(37,0): at FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(Boolean rewriteWithRestoredTimestamp)&#xD;
+[xUnit.net 00:00:00.25]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.26]   Finished:    FluxVault.Windows.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T17:48:48.1054388+03:00">
+        <Text>[xUnit.net 00:00:00.20]     FluxVault.Windows.Tests.WindowsCallerSourceTests.A_generic_capture_cannot_claim_verified_native_source_stability [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T17:48:48.1485710+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(rewriteWithRestoredTimestamp: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-08T17:48:48.1531129+03:00">
+        <Text>[xUnit.net 00:00:00.25]     FluxVault.Windows.Tests.WindowsCallerSourceTests.Capture_verifies_native_source_stability_before_publication(rewriteWithRestoredTimestamp: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

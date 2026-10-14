@@ -271,21 +271,30 @@ public sealed class ProtectionLoopUsnTests
         // Thirty durable publications contend with the hosted runner's other
         // filesystem tests. Keep a bounded correctness deadline; this is not
         // a workstation throughput requirement.
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        reader.BeforeRead = async (count, token) =>
+        {
+            if (count != 2) return;
+            entered.TrySetResult();
+            await release.Task.WaitAsync(token);
+        };
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         var loopTask = loop.RunAsync(cancellation.Token);
         try
         {
-            await WaitUntilAsync(_ => Task.FromResult(reader.ReadCount >= 2), cancellation.Token);
+            await entered.Task.WaitAsync(cancellation.Token);
             var folder = Assert.Single(configuration.WatchedFolders);
             foreach (var file in files)
             {
                 loop.RecordFileSystemEventForTesting(folder, file);
             }
-
+            release.TrySetResult();
             await WaitUntilAsync(async token => (await operations.ListVersionsAsync(token)).Count == files.Length, cancellation.Token);
         }
         finally
         {
+            release.TrySetResult();
             await StopLoopAsync(loopTask, cancellation);
         }
 
@@ -481,19 +490,24 @@ public sealed class ProtectionLoopUsnTests
         private readonly Lock gate = new();
 
         public int ReadCount { get; private set; }
+        public Func<int, CancellationToken, Task>? BeforeRead { get; set; }
 
-        public Task<UsnChangeJournalReadResult> ReadChangesAsync(
+        public async Task<UsnChangeJournalReadResult> ReadChangesAsync(
             IReadOnlyList<UsnWatchedFolderScope> watchedFolders,
             IReadOnlyList<UsnJournalCheckpoint> checkpoints,
             CancellationToken cancellationToken = default)
         {
+            UsnChangeJournalReadResult result;
+            int count;
             lock (gate)
             {
-                ReadCount++;
-                return Task.FromResult(results.Count == 0
+                count = ++ReadCount;
+                result = results.Count == 0
                     ? UsnChangeJournalReadResult.Active("USN active. Found 0 changed file(s).", [], checkpoints)
-                    : results.Dequeue());
+                    : results.Dequeue();
             }
+            if (BeforeRead is { } before) await before(count, cancellationToken);
+            return result;
         }
     }
 

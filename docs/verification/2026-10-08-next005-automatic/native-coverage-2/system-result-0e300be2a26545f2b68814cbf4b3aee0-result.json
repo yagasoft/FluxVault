@@ -1,0 +1,78 @@
+{
+  "Actor": "System",
+  "Complete": true,
+  "RunId": "0e300be2a26545f2b68814cbf4b3aee0",
+  "Results": [
+    {
+      "Host": "::1",
+      "Result": {
+        "FixtureId": "109f095ffeb44db8b505c442938d486a",
+        "ProbeId": "8911c4e8cf2943828c6688f49b80de36",
+        "Actor": "System",
+        "WindowsSid": "S-1-5-18",
+        "Host": "::1",
+        "Authenticated": true,
+        "FixtureVerified": true,
+        "SqlState": null,
+        "ErrorKind": null,
+        "Catalogue": {
+          "Passed": 35,
+          "Checks": [
+            "real WTS creator SID/session/AuthenticationId and ordinary effective token are verified",
+            "automatic extension is default off in actual service composition",
+            "actual Options view-model enable has a confirmed catalogue receipt",
+            "saved creator preference is enabled and approved through the actual pipe",
+            "ordinary creator can enumerate the owned source through validated native handles",
+            "ordinary creator save reaches an automatic version without RunBackupNow",
+            "automatic, authority-observer and accepted pipe requests join before service disposal",
+            "restart retains automatic preference and acknowledged version identity",
+            "automatic version is findable through authenticated history after restart",
+            "restarted service recovery matches independently hashed original bytes",
+            "Pause cancels a real native enumeration and waits for its held reader before acknowledgement",
+            "Pause acknowledges after native discovery joins",
+            "Resume retains automatic preference and the same source contract",
+            "original Pause replay returns its historical receipt after Resume",
+            "source-cycle cancellation leaves the healthy runtime owner and supervisor running",
+            "only the verified private fixture's dedicated owner backend is interrupted",
+            "owner-loss observation cancels capture independently and waits for its held native reader",
+            "joined lost-owner generation reports failure before replacement",
+            "owner interruption retains the unresolved reserved result without a new acknowledged publication",
+            "replacement verifies absence and captures retained pending source work without another save",
+            "automatic preference can be disabled without deleting history",
+            "existing manual backup creates the pre-enrolment file version",
+            "creator re-enables automatic protection after the manual source disappears",
+            "bounded repository reconciliation records a tombstone for manually retained history missing before first automatic observation",
+            "confirmed deletion retains independently recoverable original manual bytes",
+            "unavailable source root stays blocked and produces no deletion or captured version",
+            "root reappearance resumes retained reconciliation and captures its saved file without another save",
+            "unsupported automatic extension keeps authenticated status and history available",
+            "unsupported automatic extension blocks fresh unsafe changes",
+            "manual recovery remains independently verified while the automatic extension is unavailable",
+            "uncertainty created during capture blocks a fresh mutation before releasing safe admission",
+            "healthy manual recovery remains verified while an automatic publication is uncertain",
+            "restart preserves corrupt reserved publication as uncertain rather than recapturing or acknowledging it",
+            "verified restart reconciles the original committed identity exactly once without another save",
+            "reconciled original publication recovers independently verified new bytes"
+          ],
+          "NativeWts": true,
+          "CreatorSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+          "SessionId": 1,
+          "AuthenticationId": "00000000:000640CC",
+          "TokenIsElevated": false,
+          "RestartRecoveryVerified": true,
+          "NoManualBackup": true,
+          "StoreHost": "::1",
+          "RecoverySha256": "8CD371E2993DE277BD181EBA3F257F494A0CD0223984A5CEF83E75E41529B3A8"
+        }
+      },
+      "Kind": "Npgsql"
+    },
+    {
+      "ReadProtected": true,
+      "WindowsSid": "S-1-5-18",
+      "WriteRuntime": true,
+      "Kind": "ACL"
+    }
+  ],
+  "WindowsSid": "S-1-5-18"
+}

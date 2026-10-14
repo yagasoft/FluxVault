@@ -11,7 +11,8 @@ measured performance and complete local installation. The supporting
 integrity failures and outstanding validation; the implementation inventory
 below should not be read as a release-readiness certification.
 
-The accepted installed release is 1.0.9: one logical vault per Windows
+The installed staging candidate is 1.0.11, building on the accepted 1.0.9
+manual/control baseline: one logical vault per Windows
 installation, creator ownership with explicit access grants, secure manual save
 → backup → history → independently verified recovery. The
 [NEXT-002 acceptance record](docs/verification/2026-10-05-next002-rollout-preparation/README.md)
@@ -20,7 +21,7 @@ and [tracker](docs/roadmap-tracker.md) identify completed gates. The
 and pending edits and prevents dependent backup after unsuccessful saves.
 
 NEXT-004 adds explicit Pause/Resume, Stop protecting while retaining history,
-and separate reviewed history deletion. Corrective 1.0.9 is installed and its
+and separate reviewed history deletion. Corrective 1.0.9 delivered these controls; its
 bounded [live acceptance](docs/verification/2026-10-08-next004-controls/README.md)
 has independent technical approval; source integration is tracked in [PR #35](https://github.com/yagasoft/FluxVault/pull/35).
 In the File browser, Stop stages a selection change; Save makes it effective
@@ -31,11 +32,18 @@ nothing. Confirmation is irreversible and cannot be undone by software rollback.
 Protected overlaps and outside dependencies refuse deletion. An uncertain result
 requires checking the original operation before another destructive action.
 
-Automatic capture, logged-off/reboot protection and VSS/application consistency
-are not supported by this accepted single-vault workflow. NEXT-005 is a separate
-creator-signed-in automatic release; NEXT-006 independent disaster recovery and
-NEXT-010 professional consistency remain following work. The inventory below
-includes existing components and future direction, not those support claims.
+The separate NEXT-005 1.0.11 candidate adds creator-signed-in automatic capture,
+durable pending work, joined shutdown, restart reconciliation and visible
+failure/mirror states. Its [verification record](docs/verification/2026-10-08-next005-automatic/README.md)
+records the installed save → automatic capture → service restart → history →
+independently verified recovery result, and distinguishes it from private fixture
+evidence. The 21-check native sign-out/re-entry acceptance passes: old authority
+and readers retire before a new creator logon captures retained work and verifies
+its recovery without another save. This closes the bounded signed-in staging
+workflow; logged-off/reboot protection remains unsupported.
+NEXT-006 independent disaster recovery and NEXT-010 VSS/application consistency
+remain following work. The inventory below includes existing components and
+future direction, not those broader support claims.
 The UI rebuild has not started.
 Fresh owned local NTFS storage is required; existing unmarked non-empty roots
 are preserved and refused. Unrestricted use with working files remains outside

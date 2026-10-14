@@ -12,6 +12,40 @@ namespace FluxVault.Windows.Tests;
 [SupportedOSPlatform("windows")]
 public sealed class WindowsCallerSourceTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Capture_verifies_native_source_stability_before_publication(bool rewriteWithRestoredTimestamp)
+    {
+        using var workspace = new Workspace(); using var caller = await Caller();
+        var path = Path.Combine(workspace.Root, "stable.txt");
+        await File.WriteAllTextAsync(path, "first!");
+        var originalTimestamp = File.GetLastWriteTimeUtc(path);
+        await using var capture = await new FluxVault.Windows.Capture.WindowsCallerCaptureProvider(caller, [workspace.Root])
+            .CaptureAsync(new(path));
+        Assert.True(capture.Success, capture.Message);
+        await capture.Content!.CopyToAsync(Stream.Null);
+        Assert.Equal(6, capture.SourceLength);
+        Assert.Equal(originalTimestamp, capture.SourceLastWriteUtc?.UtcDateTime);
+        if (rewriteWithRestoredTimestamp)
+        {
+            await File.WriteAllTextAsync(path, "second");
+            File.SetLastWriteTimeUtc(path, originalTimestamp);
+            await Assert.ThrowsAnyAsync<IOException>(async () =>
+                await capture.VerifySourceUnchangedAsync());
+        }
+        else await capture.VerifySourceUnchangedAsync();
+    }
+
+    [Fact]
+    public async Task A_generic_capture_cannot_claim_verified_native_source_stability()
+    {
+        await using var capture = FluxVault.Abstractions.Capture.FileCaptureResult.Captured(new MemoryStream([1, 2, 3]),
+            FluxVault.Abstractions.Storage.CaptureConsistency.BestEffort, "Unobserved source");
+        await Assert.ThrowsAnyAsync<InvalidOperationException>(async () =>
+            await capture.VerifySourceUnchangedAsync());
+    }
+
     [Fact]
     public async Task Ordinary_case_variant_resolves_the_same_selected_root()
     {

@@ -1,0 +1,35 @@
+{
+  "InstalledVersion": "1.0.9.0",
+  "ObservedUtc": "2026-10-11T13:29:33.393779+00:00",
+  "Postmaster": {
+    "Port": 5432,
+    "DataDirectory": "D:\\Program Files\\PostgreSQL\\18\\data",
+    "StartedUtc": "2026-10-10T08:12:14.0315058Z",
+    "ProcessId": 13748,
+    "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe"
+  },
+  "ReadOnly": true,
+  "Inspection": {
+    "GrantCount": 0,
+    "OwnerSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+    "Tool": {
+      "Process": {
+        "StartedUtc": "2026-10-11T13:29:30.7353729Z",
+        "Executable": "D:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+        "ProcessId": 51864
+      },
+      "Error": "",
+      "Joined": true,
+      "ExitCode": 0,
+      "Output": "{\"PendingHistoryDeletions\" : 0, \"OwnerSid\" : \"S-1-5-21-136112424-624261118-1239521417-1001\", \"GrantCount\" : 0}\r\n"
+    },
+    "PendingHistoryDeletions": 0,
+    "Worker": {
+      "StartedUtc": "2026-10-11T13:29:29.2165271Z",
+      "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "ProcessId": 44420
+    },
+    "ReadOnly": true,
+    "ObservedUtc": "2026-10-11T16:29:30.8077233+03:00"
+  }
+}

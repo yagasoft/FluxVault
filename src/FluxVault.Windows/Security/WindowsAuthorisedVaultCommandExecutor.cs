@@ -30,6 +30,8 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
     private bool stopping;
     private int active;
     private Task? disposal;
+    internal NpgsqlDataSource MetadataSource => source;
+    internal Func<CancellationToken, ValueTask>? RuntimeFence { get; set; }
 
     public WindowsAuthorisedVaultCommandExecutor(VaultCatalogueEndpoint endpoint, VaultBinding binding)
     {
@@ -56,7 +58,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
 
     public bool CanExecute(FluxVaultIpcRequest request) => request.Command switch
     {
-        FluxVaultIpcCommand.SaveConfiguration => true,
+        FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetAutomaticProtection => true,
         FluxVaultIpcCommand.SetVaultAccess or FluxVaultIpcCommand.SetProtectionPaused or FluxVaultIpcCommand.GetSyncStatus or
         FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.GetPerformance or FluxVaultIpcCommand.GetActivity or
         FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.ListVersions or FluxVaultIpcCommand.ListHistoryPage or FluxVaultIpcCommand.GetSnapshotPage or FluxVaultIpcCommand.ListCurrentEntriesPage or FluxVaultIpcCommand.InspectVersion or
@@ -103,21 +105,28 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
             if (request.Command == FluxVaultIpcCommand.SaveConfiguration)
                 return await ApplyCommittedSaveAsync(caller, vault, request, cancellationToken);
             IDisposable pins;
-            try { pins = storage.Open(vault, cancellationToken); }
+            var repositoryMirrors=configuration.MirrorSet;
+            IReadOnlyList<string> currentMirrorWarnings=[];
+            try { pins = CanUsePrimaryWhileMirrorsUnavailable(request.Command)
+                ? storage.OpenAutomatic(vault,out repositoryMirrors,out currentMirrorWarnings,cancellationToken) : storage.Open(vault, cancellationToken); }
             catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
             { return Failure(FluxVaultIpcErrorCode.Unavailable, "Protected vault storage is unavailable. No repository command was started."); }
             using (pins)
             {
                 await using var store = new PostgreSqlRepositoryMetadataStore(binding, configuration.Sync.LocalDevice.DeviceId, sharedWindowsDataSource: source);
-                var repository = new FileSystemChunkRepository(binding, new FastCdcChunker(new()), new Blake3ContentHasher(), new ZstdChunkCodec(), configuration.MirrorSet, store);
+                var repository = new FileSystemChunkRepository(binding, new FastCdcChunker(new()), new Blake3ContentHasher(), new ZstdChunkCodec(), repositoryMirrors, store, runtimeFence: RuntimeFence);
                 var operations = new FluxVaultOperations(new AdmittedConfiguration(configuration),
                     new WindowsCallerCaptureProvider(caller, configuration.WatchedFolders.Where(folder => folder.IsEnabled).Select(folder => folder.Path).ToArray()),
                     new FileRepositoryMaintenanceStateStore(Path.Combine(binding.StateRoot, "repository-maintenance.json")), binding.StateRoot,
                     _ => store, _ => repository, sourceAccess: new WindowsProtectionSourceAccess(caller), runtimeState: runtime.State, pageCurrentEntriesForStatus: true);
                 switch (request.Command)
                 {
-                    case FluxVaultIpcCommand.GetStatus: return FluxVaultIpcResponse.WithStatus(await operations.GetStatusAsync(request.StatusDetailLevel, cancellationToken));
-                    case FluxVaultIpcCommand.GetSyncStatus: return FluxVaultIpcResponse.WithStatus(await operations.GetStatusAsync(cancellationToken));
+                    case FluxVaultIpcCommand.GetStatus:
+                        var status=await operations.GetStatusAsync(request.StatusDetailLevel,cancellationToken);
+                        return FluxVaultIpcResponse.WithStatus(status with {MirrorWarnings=(status.MirrorWarnings ?? []).Concat(currentMirrorWarnings).Distinct().ToArray()});
+                    case FluxVaultIpcCommand.GetSyncStatus:
+                        var syncStatus=await operations.GetStatusAsync(cancellationToken);
+                        return FluxVaultIpcResponse.WithStatus(syncStatus with {MirrorWarnings=(syncStatus.MirrorWarnings ?? []).Concat(currentMirrorWarnings).Distinct().ToArray()});
                     case FluxVaultIpcCommand.GetPerformance: return FluxVaultIpcResponse.WithPerformance(await operations.GetPerformanceAsync(cancellationToken));
                     case FluxVaultIpcCommand.GetActivity: return FluxVaultIpcResponse.WithActivity(operations.GetActivity());
                     case FluxVaultIpcCommand.ListBlockedFiles: return FluxVaultIpcResponse.WithBlockedFiles(operations.ListBlockedFiles());
@@ -195,7 +204,7 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
                     catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
                     { throw new IOException("Protected vault storage is unavailable. Purge was not started."); }
                     return new FileSystemChunkRepository(vault.Binding, new FastCdcChunker(new()), new Blake3ContentHasher(),
-                        new ZstdChunkCodec(), configuration.MirrorSet, store);
+                        new ZstdChunkCodec(), configuration.MirrorSet, store, runtimeFence: RuntimeFence);
                 });
             var purge = await operations.ApplyCommittedConfigurationAsync(configuration, true,
                 request.RemovedSelections!, request.PreservedSelections!, cancellationToken);
@@ -203,6 +212,13 @@ public sealed class WindowsAuthorisedVaultCommandExecutor : IAuthorisedVaultComm
         }
         finally { pins?.Dispose(); }
     }
+
+    private static bool CanUsePrimaryWhileMirrorsUnavailable(FluxVaultIpcCommand command) => command is
+        FluxVaultIpcCommand.GetStatus or FluxVaultIpcCommand.GetSyncStatus or FluxVaultIpcCommand.GetPerformance or
+        FluxVaultIpcCommand.GetActivity or FluxVaultIpcCommand.ListBlockedFiles or FluxVaultIpcCommand.ListVersions or
+        FluxVaultIpcCommand.ListHistoryPage or FluxVaultIpcCommand.GetSnapshotPage or FluxVaultIpcCommand.ListCurrentEntriesPage or
+        FluxVaultIpcCommand.InspectVersion or FluxVaultIpcCommand.RestoreVersion or FluxVaultIpcCommand.RestoreVersionPreview or
+        FluxVaultIpcCommand.PreviewRestoreSelection or FluxVaultIpcCommand.RunRestoreSelection;
 
     public ValueTask DisposeAsync()
     {

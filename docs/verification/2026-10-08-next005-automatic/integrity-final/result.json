@@ -1,0 +1,477 @@
+{
+  "Observations": [
+    {
+      "WindowsSid": "S-1-5-18",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "e9c659f927e84a86b833501b98132156",
+            "ProbeId": "944480cdf5674275b8ba245531a8023e",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "RunId": "8afd7f31f43e4de88f0a8d61471409ab",
+      "Actor": "System",
+      "Complete": true,
+      "ServerLogStart": 1858,
+      "ServerLogEnd": 3268
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "RunId": "3e98d7328f814cea9f68c33d2fa80458",
+      "Actor": "System",
+      "Results": [
+        {
+          "ProbeId": "20442ca22bfa4555ac79f155fb582e26",
+          "Host": "127.0.0.1",
+          "Kind": "libpq",
+          "ExitCode": 2,
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 62823 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Output": ""
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true,
+          "Kind": "ACL",
+          "ReadProtected": true
+        }
+      ],
+      "ServerLogStart": 3268,
+      "ServerLogEnd": 3973
+    },
+    {
+      "RunId": "d6322dc22c024d239c935bf1b6031a41",
+      "Actor": "System",
+      "Results": [
+        {
+          "Host": "::1",
+          "Result": {
+            "FixtureId": "e9c659f927e84a86b833501b98132156",
+            "ProbeId": "d0123daf806546ca828f978a474f86be",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Kind": "Npgsql"
+        },
+        {
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "Kind": "ACL"
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "ServerLogStart": 3973,
+      "ServerLogEnd": 5361
+    },
+    {
+      "Actor": "System",
+      "Results": [
+        {
+          "Error": "psql: error: connection to server at \"::1\", port 62823 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ExitCode": 2,
+          "Output": "",
+          "ProbeId": "42a9a5e7c2f34419b2056a0240cdd75e",
+          "Kind": "libpq",
+          "Host": "::1"
+        },
+        {
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "ReadProtected": true
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "RunId": "87a09ad803f445659c6004ec9e06af48",
+      "Complete": true,
+      "ServerLogStart": 5361,
+      "ServerLogEnd": 6055
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Result": {
+            "FixtureId": "e9c659f927e84a86b833501b98132156",
+            "ProbeId": "6fd50661cf054e9fb605f87f4d81c278",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": null
+          },
+          "Kind": "Npgsql"
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "Kind": "ACL"
+        }
+      ],
+      "Complete": true,
+      "RunId": "caf043eb5c86462faa301ffbb1e3ec8f",
+      "ServerLogStart": 6118,
+      "ServerLogEnd": 6674
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "Actor": "System",
+      "Results": [
+        {
+          "ExitCode": 0,
+          "Host": "127.0.0.1",
+          "Kind": "libpq",
+          "ProbeId": "17c34c6494314f39b07c5493809062d9",
+          "Error": "",
+          "Output": "e9c659f927e84a86b833501b98132156|fv_gate_261003|fv_gate_service"
+        },
+        {
+          "WriteRuntime": true,
+          "WindowsSid": "S-1-5-18",
+          "Kind": "ACL",
+          "ReadProtected": true
+        }
+      ],
+      "RunId": "4997f78c61854585839692d4cc5b2b4d",
+      "Complete": true,
+      "ServerLogStart": 6674,
+      "ServerLogEnd": 7227
+    },
+    {
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "RunId": "2382a3e22bd8450fafed57e7110c10e9",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "e9c659f927e84a86b833501b98132156",
+            "ProbeId": "25941c8b645441bba1a3d593afb0da55",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": null
+          },
+          "Host": "::1"
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "WriteRuntime": true
+        }
+      ],
+      "ServerLogStart": 7227,
+      "ServerLogEnd": 7776
+    },
+    {
+      "Results": [
+        {
+          "Kind": "libpq",
+          "Output": "e9c659f927e84a86b833501b98132156|fv_gate_261003|fv_gate_service",
+          "ProbeId": "6a59df15eaa54af7b460f5bda03f2e1a",
+          "Host": "::1",
+          "ExitCode": 0,
+          "Error": ""
+        },
+        {
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WriteRuntime": true
+        }
+      ],
+      "Complete": true,
+      "WindowsSid": "S-1-5-18",
+      "RunId": "9293be2ee7b8405b9d7e73b6f745ad32",
+      "Actor": "System",
+      "ServerLogStart": 7776,
+      "ServerLogEnd": 8323
+    },
+    {
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "e9c659f927e84a86b833501b98132156",
+            "ProbeId": "ecf51ab4574345d1b04a3bf8908d0634",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1481",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "ReadProtected": false,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1481",
+          "WriteRuntime": false
+        }
+      ],
+      "Actor": "A",
+      "RunId": "e481a0c374c84dfd86a747d605a0b487",
+      "Complete": true,
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1481",
+      "ServerLogStart": 8323,
+      "ServerLogEnd": 9757
+    },
+    {
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "ExitCode": 2,
+          "Output": "",
+          "ProbeId": "320dd5a14a6a48fbab18082f57e5e520",
+          "Kind": "libpq",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 62823 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\""
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1481",
+          "ReadProtected": false,
+          "WriteRuntime": false
+        }
+      ],
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1481",
+      "Complete": true,
+      "Actor": "A",
+      "RunId": "e89f8ff8b1d74b4ba71d75f1d78fb5ed",
+      "ServerLogStart": 9757,
+      "ServerLogEnd": 10474
+    },
+    {
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1481",
+      "RunId": "ba163d051c914ab4b68c66038bf4e8b5",
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "e9c659f927e84a86b833501b98132156",
+            "ProbeId": "bda35e96122646c4a14d2dd7b5e2b6ac",
+            "Actor": "A",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1481",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "::1"
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1481",
+          "WriteRuntime": false
+        }
+      ],
+      "Actor": "A",
+      "Complete": true,
+      "ServerLogStart": 10474,
+      "ServerLogEnd": 11886
+    },
+    {
+      "Results": [
+        {
+          "ExitCode": 2,
+          "ProbeId": "801dd381d4b5427ebccbaa3f855e13c5",
+          "Error": "psql: error: connection to server at \"::1\", port 62823 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Host": "::1",
+          "Kind": "libpq",
+          "Output": ""
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1481",
+          "WriteRuntime": false,
+          "ReadProtected": false
+        }
+      ],
+      "Actor": "A",
+      "Complete": true,
+      "RunId": "cbfcb7fa5f144cf09c12d490ff19d71d",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1481",
+      "ServerLogStart": 11886,
+      "ServerLogEnd": 12592
+    },
+    {
+      "Actor": "B",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1482",
+      "RunId": "63a13cf4ce474cf0811a8e6e47c48868",
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "e9c659f927e84a86b833501b98132156",
+            "ProbeId": "b9b0c2408a0e4475bec1dbea80559589",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1482",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1482",
+          "WriteRuntime": false,
+          "ReadProtected": false
+        }
+      ],
+      "ServerLogStart": 12592,
+      "ServerLogEnd": 14026
+    },
+    {
+      "Actor": "B",
+      "Complete": true,
+      "RunId": "628dc85babd44047ab939b6550b22c3f",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1482",
+      "Results": [
+        {
+          "Output": "",
+          "ExitCode": 2,
+          "Kind": "libpq",
+          "ProbeId": "4221ae8a3cc049be81a5067e3271c04d",
+          "Error": "psql: error: connection to server at \"127.0.0.1\", port 62823 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "Host": "127.0.0.1"
+        },
+        {
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1482",
+          "ReadProtected": false,
+          "Kind": "ACL",
+          "WriteRuntime": false
+        }
+      ],
+      "ServerLogStart": 14026,
+      "ServerLogEnd": 14743
+    },
+    {
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "e9c659f927e84a86b833501b98132156",
+            "ProbeId": "0291f2bbb41b47deac0dd2b5cfe03fa0",
+            "Actor": "B",
+            "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1482",
+            "Host": "::1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          }
+        },
+        {
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1482",
+          "WriteRuntime": false,
+          "Kind": "ACL"
+        }
+      ],
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1482",
+      "Complete": true,
+      "Actor": "B",
+      "RunId": "25bd6a1f00b24903ac7adb6bd5edb5be",
+      "ServerLogStart": 14743,
+      "ServerLogEnd": 16150
+    },
+    {
+      "Actor": "B",
+      "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1482",
+      "Results": [
+        {
+          "Kind": "libpq",
+          "ProbeId": "60b7db45bb9a47499bd72ae824a1d82d",
+          "Output": "",
+          "Error": "psql: error: connection to server at \"::1\", port 62823 failed: FATAL:  SSPI authentication failed for user \"fv_gate_service\"",
+          "ExitCode": 2,
+          "Host": "::1"
+        },
+        {
+          "WriteRuntime": false,
+          "Kind": "ACL",
+          "ReadProtected": false,
+          "WindowsSid": "S-1-5-21-136112424-624261118-1239521417-1482"
+        }
+      ],
+      "Complete": true,
+      "RunId": "98e2f073587749ca932cf23868fad81f",
+      "ServerLogStart": 16150,
+      "ServerLogEnd": 16856
+    },
+    {
+      "IntegritySuite": {
+        "Results": [
+          {
+            "ExitCode": 0,
+            "Output": "VSTest version 18.6.0 (x64)\r\n\r\nStarting test execution, please wait...\r\nA total of 1 test files matched the specified pattern.\r\nResults File: C:\\ProgramData\\FluxVault.Tests\\NEXT002\\e9c659f927e84a86b833501b98132156\\integrity\\results\\PostgreSql.trx\r\n\r\nPassed!  - Failed:     0, Passed:    40, Skipped:     0, Total:    40, Duration: 25 s - FluxVault.Integration.Tests.dll (net10.0)\r\n",
+            "Error": "",
+            "Kind": "Integrity"
+          },
+          {
+            "WriteRuntime": true,
+            "ReadProtected": true,
+            "WindowsSid": "S-1-5-18",
+            "Kind": "ACL"
+          }
+        ],
+        "Actor": "System",
+        "RunId": "c8c7f9cea81d48dd9f049aaa33797515",
+        "Complete": true,
+        "WindowsSid": "S-1-5-18"
+      }
+    }
+  ],
+  "Failure": null,
+  "FailureLocation": null,
+  "FixtureId": "e9c659f927e84a86b833501b98132156"
+}

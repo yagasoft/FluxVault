@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="381fbb1b-776b-4b15-968c-6d456b80b6b3" name="os008@OS008-HOME 2026-10-11 16:05:36" runUser="OS008-HOME\os008" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-11T16:05:36.2836038+03:00" queuing="2026-10-11T16:05:36.2836040+03:00" start="2026-10-11T16:05:35.2743757+03:00" finish="2026-10-11T16:05:36.2883032+03:00" />
+  <TestSettings name="default" id="65fb1c64-201d-4940-8a11-2d7a5e83b1f1">
+    <Deployment runDeploymentRoot="os008_OS008-HOME_2026-10-11_16_05_36" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="76c055c2-c676-4f2b-8892-b2cfb9fc9d04" testId="14ddc67e-e3ae-a644-ad34-a26b646e8b73" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: WaitingForChanges, reason: &quot;Waiting for saved changes.&quot;, label: &quot;Waiting for changes&quot;)" computerName="OS008-HOME" duration="00:00:00.0088992" startTime="2026-10-11T16:05:36.1667781+03:00" endTime="2026-10-11T16:05:36.1755561+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76c055c2-c676-4f2b-8892-b2cfb9fc9d04">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Automatic WaitingForChanges: Waiting for "···&#xD;
+Not found: "Waiting for changes"</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(AutomaticProtectionState state, String reason, String label) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\AutomaticProtectionStatusTests.cs:line 21&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b50d2543-c032-4f9a-8a24-53d0907af58f" testId="820a2585-542e-5f86-0c85-27927131386b" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: Pending, reason: &quot;Three saved changes are pending.&quot;, label: &quot;Pending&quot;)" computerName="OS008-HOME" duration="00:00:00.0037160" startTime="2026-10-11T16:05:36.1800744+03:00" endTime="2026-10-11T16:05:36.1835972+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b50d2543-c032-4f9a-8a24-53d0907af58f" />
+    <UnitTestResult executionId="fb172503-7580-47fa-a385-a16acba9f728" testId="318127fe-3d15-71e0-999a-5ca95f647852" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: Blocked, reason: &quot;Creator session unavailable.&quot;, label: &quot;Blocked&quot;)" computerName="OS008-HOME" duration="00:00:00.2648265" startTime="2026-10-11T16:05:35.8850502+03:00" endTime="2026-10-11T16:05:36.1585460+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fb172503-7580-47fa-a385-a16acba9f728" />
+    <UnitTestResult executionId="bb3b1cdb-5212-40ab-8825-d6d8fe748fae" testId="64ded253-46bc-3bbb-bba8-55119f30543a" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: OutcomeUncertain, reason: &quot;Interrupted publication needs reconciliation.&quot;, label: &quot;Outcome uncertain&quot;)" computerName="OS008-HOME" duration="00:00:00.0037222" startTime="2026-10-11T16:05:36.1836692+03:00" endTime="2026-10-11T16:05:36.1877511+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bb3b1cdb-5212-40ab-8825-d6d8fe748fae">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "Automatic OutcomeUncertain: Interrupted p"···&#xD;
+Not found: "Outcome uncertain"</Message>
+          <StackTrace>   at FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(AutomaticProtectionState state, String reason, String label) in C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\AutomaticProtectionStatusTests.cs:line 21&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f8d57440-c5ca-4772-9f53-0f33a436c79f" testId="e97775e7-3fb4-67d9-a17d-4f3f28c0f293" testName="FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: Failed, reason: &quot;Database unavailable; pending work retained.&quot;, label: &quot;Failed&quot;)" computerName="OS008-HOME" duration="00:00:00.0043162" startTime="2026-10-11T16:05:36.1798475+03:00" endTime="2026-10-11T16:05:36.1798928+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f8d57440-c5ca-4772-9f53-0f33a436c79f" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: Blocked, reason: &quot;Creator session unavailable.&quot;, label: &quot;Blocked&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="318127fe-3d15-71e0-999a-5ca95f647852">
+      <Execution id="fb172503-7580-47fa-a385-a16acba9f728" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Dashboard_shows_the_actual_automatic_state_and_reason" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: WaitingForChanges, reason: &quot;Waiting for saved changes.&quot;, label: &quot;Waiting for changes&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="14ddc67e-e3ae-a644-ad34-a26b646e8b73">
+      <Execution id="76c055c2-c676-4f2b-8892-b2cfb9fc9d04" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Dashboard_shows_the_actual_automatic_state_and_reason" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: OutcomeUncertain, reason: &quot;Interrupted publication needs reconciliation.&quot;, label: &quot;Outcome uncertain&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="64ded253-46bc-3bbb-bba8-55119f30543a">
+      <Execution id="bb3b1cdb-5212-40ab-8825-d6d8fe748fae" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Dashboard_shows_the_actual_automatic_state_and_reason" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: Pending, reason: &quot;Three saved changes are pending.&quot;, label: &quot;Pending&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="820a2585-542e-5f86-0c85-27927131386b">
+      <Execution id="b50d2543-c032-4f9a-8a24-53d0907af58f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Dashboard_shows_the_actual_automatic_state_and_reason" />
+    </UnitTest>
+    <UnitTest name="FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: Failed, reason: &quot;Database unavailable; pending work retained.&quot;, label: &quot;Failed&quot;)" storage="c:\users\os008\.codex\worktrees\next004-next005-planning\fluxvault\tests\fluxvault.app.tests\bin\release\net10.0-windows\fluxvault.app.tests.dll" id="e97775e7-3fb4-67d9-a17d-4f3f28c0f293">
+      <Execution id="f8d57440-c5ca-4772-9f53-0f33a436c79f" />
+      <TestMethod codeBase="C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\bin\Release\net10.0-windows\FluxVault.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FluxVault.App.Tests.ProtectionSaveContractTests" name="Dashboard_shows_the_actual_automatic_state_and_reason" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="14ddc67e-e3ae-a644-ad34-a26b646e8b73" executionId="76c055c2-c676-4f2b-8892-b2cfb9fc9d04" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="820a2585-542e-5f86-0c85-27927131386b" executionId="b50d2543-c032-4f9a-8a24-53d0907af58f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="318127fe-3d15-71e0-999a-5ca95f647852" executionId="fb172503-7580-47fa-a385-a16acba9f728" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="64ded253-46bc-3bbb-bba8-55119f30543a" executionId="bb3b1cdb-5212-40ab-8825-d6d8fe748fae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e97775e7-3fb4-67d9-a17d-4f3f28c0f293" executionId="f8d57440-c5ca-4772-9f53-0f33a436c79f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="3" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    FluxVault.App.Tests&#xD;
+[xUnit.net 00:00:00.52]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.52]       String:    "Automatic WaitingForChanges: Waiting for "···&#xD;
+[xUnit.net 00:00:00.52]       Not found: "Waiting for changes"&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\AutomaticProtectionStatusTests.cs(21,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(AutomaticProtectionState state, String reason, String label)&#xD;
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.53]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.53]       String:    "Automatic OutcomeUncertain: Interrupted p"···&#xD;
+[xUnit.net 00:00:00.53]       Not found: "Outcome uncertain"&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Users\os008\.codex\worktrees\next004-next005-planning\FluxVault\tests\FluxVault.App.Tests\AutomaticProtectionStatusTests.cs(21,0): at FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(AutomaticProtectionState state, String reason, String label)&#xD;
+[xUnit.net 00:00:00.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.54]   Finished:    FluxVault.App.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:05:36.1776910+03:00">
+        <Text>[xUnit.net 00:00:00.52]     FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: WaitingForChanges, reason: "Waiting for saved changes.", label: "Waiting for changes") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="OS008-HOME" outcome="Error" timestamp="2026-10-11T16:05:36.1880209+03:00">
+        <Text>[xUnit.net 00:00:00.53]     FluxVault.App.Tests.ProtectionSaveContractTests.Dashboard_shows_the_actual_automatic_state_and_reason(state: OutcomeUncertain, reason: "Interrupted publication needs reconciliation.", label: "Outcome uncertain") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

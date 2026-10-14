@@ -23,8 +23,8 @@ $resolved=Resolve-VaultFixtureRoot $Root $parent $fixtureId
 if($resolved -ne $Root -or $Ledger -ne (Join-Path $Root 'output-cleanup-owner.json') -or
    $PSScriptRoot -ne (Join-Path $resolved 'runtime') -or
    [Security.Principal.WindowsIdentity]::GetCurrent().User.Value -ne 'S-1-5-18'){throw 'Output cleanup location or identity changed.'}
-# The protected root belongs to its elevated administrator, not to this SYSTEM actor.
-# Trust that physical owner only after direct administrator membership is independently checked.
+# The protected root belongs to SYSTEM or its elevated administrator.
+# Additional owners require direct administrator membership; existing trusted SIDs need no added grant.
 $rootOwner=(Get-Acl -LiteralPath $resolved).GetOwner([Security.Principal.SecurityIdentifier]).Value
 Assert-VaultFixtureTrustedPath $resolved -AdditionalTrustedOwnerSid $rootOwner
 Assert-VaultFixtureTrustedPath $Ledger -AdditionalTrustedOwnerSid $rootOwner

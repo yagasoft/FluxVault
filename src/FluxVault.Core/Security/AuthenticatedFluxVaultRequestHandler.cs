@@ -16,11 +16,13 @@ public interface IAuthorisedVaultCommandExecutor
 }
 
 public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalogue, IAuthorisedVaultCommandExecutor executor,
-    ILogger<AuthenticatedFluxVaultRequestHandler>? logger = null, FluxVaultIpcLimits? limits = null) : IAuthenticatedFluxVaultRequestHandler
+    ILogger<AuthenticatedFluxVaultRequestHandler>? logger = null, FluxVaultIpcLimits? limits = null,
+    SemaphoreSlim? sharedMutationGate = null,
+    Func<FluxVaultCallerContext, FluxVaultIpcRequest, CancellationToken, ValueTask<IAsyncDisposable?>>? prepareMutation = null) : IAuthenticatedFluxVaultRequestHandler
 {
     // One installation owns one vault. Admission remains inside its mutation gate
     // so a queued command never carries an earlier configuration snapshot.
-    private readonly SemaphoreSlim mutationGate = CreateMutationGate(limits ?? new());
+    private readonly SemaphoreSlim mutationGate = sharedMutationGate ?? CreateMutationGate(limits ?? new());
 
     public async Task<FluxVaultIpcResponse> HandleAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request,
         CancellationToken cancellationToken = default)
@@ -32,6 +34,7 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
         var catalogueMutationStarted = false;
         var admissionStarted = false;
         SemaphoreSlim? heldGate = null;
+        IAsyncDisposable? preparation = null;
         try
         {
             if (request.VaultId is { IsValid: false } || request.VaultId is null && request.Command != FluxVaultIpcCommand.GetStatus) return Denied();
@@ -45,13 +48,16 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
                 return Failure(FluxVaultIpcErrorCode.InvalidRequest, "This command is not available in this build. No change was started by this request.", request);
             if (mutation)
             {
+                // A validated preparation may cancel/join an automatic source cycle
+                // that currently holds this gate; never wait for that join under it.
+                if (prepareMutation is not null) preparation = await prepareMutation(caller, request, cancellationToken);
                 await mutationGate.WaitAsync(cancellationToken);
                 heldGate = mutationGate;
             }
             cancellationToken.ThrowIfCancellationRequested();
             admissionStarted = true;
             catalogueMutationStarted = request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetVaultAccess or
-                FluxVaultIpcCommand.SetProtectionPaused;
+                FluxVaultIpcCommand.SetProtectionPaused or FluxVaultIpcCommand.SetAutomaticProtection;
             var admission = request.Command switch
             {
                 FluxVaultIpcCommand.SaveConfiguration => await catalogue.SaveConfigurationAsync(caller, request, cancellationToken),
@@ -107,7 +113,11 @@ public sealed class AuthenticatedFluxVaultRequestHandler(IVaultCatalogue catalog
                     executionStarted ? "The vault command could not be completed. Try again when the vault is available." :
                         "The vault catalogue is unavailable. No repository command was started; try again when it is available.", request);
         }
-        finally { heldGate?.Release(); }
+        finally
+        {
+            try { if (preparation is not null) await preparation.DisposeAsync(); }
+            finally { heldGate?.Release(); }
+        }
     }
 
     private static SemaphoreSlim CreateMutationGate(FluxVaultIpcLimits limits)

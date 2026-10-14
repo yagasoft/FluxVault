@@ -26,13 +26,23 @@ public sealed class MainWindowViewModelRefreshTests
         var viewModel = new MainWindowViewModel(new BoundTestServiceClient(client), TimeSpan.FromMilliseconds(20));
         await viewModel.RefreshAsync();
         if (!initiallyEmpty) viewModel.SelectedVersion = viewModel.RecentVersions.Single();
-
+        var applied = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        void Changed(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs args)
+        {
+            if (args.NewItems?.OfType<VersionRow>().Any(version => version.VersionId == "v2") == true)
+                applied.TrySetResult();
+        }
+        viewModel.RecentVersions.CollectionChanged += Changed;
         try
         {
             viewModel.StartAutoRefresh();
-            await WaitUntilAsync(() => viewModel.RecentVersions.Any(version => version.VersionId == "v2"));
+            await applied.Task.WaitAsync(TimeSpan.FromSeconds(5));
         }
-        finally { viewModel.StopAutoRefresh(); }
+        finally
+        {
+            await viewModel.StopRepositoryReadsAsync();
+            viewModel.RecentVersions.CollectionChanged -= Changed;
+        }
 
         Assert.Equal(FluxVaultStatusDetailLevel.Fast, client.Requests[1].StatusDetailLevel);
         Assert.Equal(FluxVaultStatusDetailLevel.Full, client.Requests[2].StatusDetailLevel);

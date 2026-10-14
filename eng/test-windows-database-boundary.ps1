@@ -6,6 +6,10 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [switch]$ValidatePreparedAuthentication,
     [ValidateSet('Admission','MidWrite','BeforeTruncate')][string]$AuthenticationInterruption='Admission',
     [switch]$RunCatalogueTests,
+    [switch]$RunAutomaticTests,
+    [ValidateSet('None','AbortRehearsal','ObserveSignOut')][string]$AutomaticSessionTransition='None',
+    [ValidateRange(60,600)][int]$SessionTransitionTimeoutSeconds=600,
+    [string]$AutomaticCreatorSid,
     [switch]$RunPredecessorReadTests,
     [switch]$RunMetadataTests,
     [switch]$RunCallerFileTests,
@@ -20,6 +24,9 @@ param([ValidateSet('Run','Cleanup')][string]$Mode = 'Run',
     [ValidateRange(60,600)][int]$IntegrityTimeoutSeconds = 300,
     [string]$EvidenceDirectory = (Join-Path $PSScriptRoot ("../docs/verification/2026-10-03-next002-windows-fixture/live/$FixtureId")))
 $ErrorActionPreference = 'Stop'
+if($AutomaticSessionTransition -ne 'None' -and (-not $RunAutomaticTests -or [Security.Principal.WindowsIdentity]::GetCurrent().User.Value -ne 'S-1-5-18' -or $AutomaticCreatorSid -notmatch '^S-1-5-21-\d+-\d+-\d+-\d+$')){throw 'Native session transition requires the independently owned SYSTEM automatic fixture and pinned creator SID.'}
+if($AutomaticSessionTransition -eq 'None' -and $AutomaticCreatorSid){throw 'A creator override is confined to the owned native session transition.'}
+if($RunAutomaticTests -and ($RunCatalogueTests -or $RunSingleVaultTests -or $RunCallerFileTests -or $RunIntegrityTests)){throw 'Automatic runtime proof uses its own instance of the existing owned fixture.'}
 if($RunInterruptedEffectTests -and (-not $RunSingleVaultTests -or $RunRestartTests -or $RunNativeAccessTests -or $RunPackagedIdentityTests -or $RunCallerFileTests -or $RunIntegrityTests)) {
     throw 'Interrupted-effect proof requires an exclusive single-vault extension within the existing resource bound.'
 }
@@ -504,7 +511,7 @@ function Invoke-SystemActor {
     $runId=[guid]::NewGuid().ToString('N')
     $arguments='-NoProfile -NonInteractive -File "'+(Join-Path $fixtureRoot 'runtime/invoke-windows-database-actor.ps1')+'" -Root "'+$fixtureRoot+'" -Actor System -RunId mission'
     $action=New-ScheduledTaskAction -Execute $fixturePwsh -Argument $arguments
-    $taskSeconds=if($RunIntegrityTests){$IntegrityTimeoutSeconds+30}elseif($RunPackagedIdentityTests){150}else{120}
+    $taskSeconds=if($RunIntegrityTests){$IntegrityTimeoutSeconds+30}elseif($AutomaticSessionTransition -ne 'None'){$SessionTransitionTimeoutSeconds+180}elseif($RunAutomaticTests){290}elseif($RunPackagedIdentityTests){150}else{120}
     $settings=New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Seconds $taskSeconds) -MultipleInstances IgnoreNew
     $existing=Get-ScheduledTask -TaskName $fixtureTask -ErrorAction SilentlyContinue
     if ($null -ne $existing) {
@@ -627,7 +634,7 @@ function Invoke-SystemActor {
             Invoke-RestartGrant 'revoke'
             'stop' | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/restart-stop')
         }
-        $result=Read-ActorResult System $runId -TimeoutSeconds $(if($ClientKind -eq 'Integrity'){$IntegrityTimeoutSeconds+10}elseif($RunPackagedIdentityTests -and $ClientKind -eq 'CallerFiles'){130}elseif($RunRestartTests){100}else{70})
+        $result=Read-ActorResult System $runId -TimeoutSeconds $(if($ClientKind -eq 'Integrity'){$IntegrityTimeoutSeconds+10}elseif($AutomaticSessionTransition -ne 'None' -and $ClientKind -eq 'Npgsql'){$SessionTransitionTimeoutSeconds+150}elseif($RunAutomaticTests -and $ClientKind -eq 'Npgsql'){265}elseif($RunPackagedIdentityTests -and $ClientKind -eq 'CallerFiles'){130}elseif($RunRestartTests){100}else{70})
         Wait-SystemTaskIdle $registered
         Join-ActorProcesses System $runId
         if($fixtureJobs[$jobName].ProcessIds().Length){throw 'SYSTEM invocation job is not empty after completion.'}
@@ -1105,7 +1112,7 @@ function Remove-OwnedFixture {
         $source=Join-Path $fixtureRoot $pair.Source
         if(Test-Path -LiteralPath $source){Assert-VaultFixtureTrustedPath $source;Copy-Item -LiteralPath $source -Destination (Join-Path $fixtureEvidence $pair.Target)}
     }
-    foreach($name in @('effect-gate-intent.json','effect-gate-created.json','effect-gate-removed.json','effect-held.json',
+    foreach($name in @('automatic-session-transition.jsonl','effect-gate-intent.json','effect-gate-created.json','effect-gate-removed.json','effect-held.json',
         'effect-held-server-ready.json','effect-reopened-server-ready.json','interrupted-termination.json')) {
         $source=Join-Path $fixtureRoot ('runtime/'+$name)
         if(Test-Path -LiteralPath $source){Assert-VaultFixtureTrustedPath $source;Copy-Item -LiteralPath $source -Destination (Join-Path $fixtureEvidence $name)}
@@ -1228,7 +1235,7 @@ try {
     }
     $lease=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$lease.Start();$fixturePort=$lease.LocalEndpoint.Port;$lease.Stop()
     if($fixturePort -eq 5432){throw 'Normal PostgreSQL port refused.'}
-    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;PackageTrustMode=$fixturePackageTrustMode;RunCatalogueTests=[bool]$RunCatalogueTests;RunPredecessorReadTests=[bool]$RunPredecessorReadTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
+    @{ FixtureId=$FixtureId;Root=$fixtureRoot;Port=$fixturePort;Database='fv_gate_261003';Role='fv_gate_service';TimeoutSeconds=5;Actors=$actors;PackageTrustMode=$fixturePackageTrustMode;RunCatalogueTests=[bool]$RunCatalogueTests;RunAutomaticTests=[bool]$RunAutomaticTests;AutomaticCreatorSid=$(if($AutomaticCreatorSid){$AutomaticCreatorSid}elseif($RunAutomaticTests){[Security.Principal.WindowsIdentity]::GetCurrent().User.Value}else{$null});AutomaticSessionTransition=$AutomaticSessionTransition;SessionTransitionTimeoutSeconds=$SessionTransitionTimeoutSeconds;RunPredecessorReadTests=[bool]$RunPredecessorReadTests;RunMetadataTests=[bool]$RunMetadataTests;RunSingleVaultTests=[bool]$RunSingleVaultTests;RunPackagedIdentityTests=[bool]$RunPackagedIdentityTests;RunRestartTests=[bool]$RunRestartTests;RunInterruptedEffectTests=[bool]$RunInterruptedEffectTests } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/database-probe.json')
     @{Dotnet=$fixtureDotnet;Vstest=$fixtureVstest;Psql=(Join-Path $fixtureBin 'psql.exe');WorkingDirectory=(Join-Path $fixtureRoot 'runtime');SafePath=($fixtureBin+';'+(Join-Path $env:SystemRoot 'System32')+';'+$env:SystemRoot);IntegrityTimeoutSeconds=$IntegrityTimeoutSeconds;ValidatePreparedAuthentication=[bool]$ValidatePreparedAuthentication} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $fixtureRoot 'runtime/actor-runtime.json')
     if($RunPackagedIdentityTests) {
         $package=New-VaultFixtureIdentityPackage $fixtureJournal $PackageSdkDirectory ${function:Invoke-OwnedTool}.GetNewClosure() -TrustMode $fixturePackageTrustMode
@@ -1303,7 +1310,11 @@ host all all ::1/128 reject
     '# No principal admitted until observed through the owned SYSTEM probe.' | Set-Content -LiteralPath (Join-Path $fixtureData 'pg_ident.conf')
     $reload=Invoke-OwnedTool (Join-Path $fixtureBin 'pg_ctl.exe') @('-D',$fixtureData,'reload');if($reload.ExitCode -ne 0){throw 'Owned reload failed.'}
     $principals=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
-    foreach($hostAddress in @('127.0.0.1','::1')){foreach($clientKind in @('Npgsql','libpq')){
+    # Automatic composition reuses the completed SSPI boundary acceptance. Only
+    # rediscover the exact principal required by this fresh private endpoint.
+    $mappingHosts=if($RunAutomaticTests){@('127.0.0.1')}else{@('127.0.0.1','::1')}
+    $probeClients=if($RunAutomaticTests){@('Npgsql')}else{@('Npgsql','libpq')}
+    foreach($hostAddress in $mappingHosts){foreach($clientKind in $probeClients){
         $attempt=Invoke-CorrelatedActor System $hostAddress $clientKind
         $probe=@($attempt.Result.Results | Where-Object {$_.Kind -eq $clientKind})[0]
         if(($clientKind -eq 'Npgsql' -and ($probe.Result.Authenticated -or $probe.Result.SqlState -ne '28000')) -or
@@ -1314,7 +1325,8 @@ host all all ::1/128 reject
     $principal=@($principals)[0]
     ('fv_gate_system "'+$principal+'" fv_gate_service') | Set-Content -LiteralPath (Join-Path $fixtureData 'pg_ident.conf')
     $reload=Invoke-OwnedTool (Join-Path $fixtureBin 'pg_ctl.exe') @('-D',$fixtureData,'reload');if($reload.ExitCode -ne 0){throw 'Owned exact-map reload failed.'}
-    foreach($hostAddress in @('127.0.0.1','::1')){foreach($clientKind in @('Npgsql','libpq')){
+    $acceptanceHosts=if($AutomaticSessionTransition -ne 'None'){@('127.0.0.1')}else{@('127.0.0.1','::1')}
+    foreach($hostAddress in $acceptanceHosts){foreach($clientKind in $probeClients){
         $attempt=Invoke-CorrelatedActor System $hostAddress $clientKind
         $probe=@($attempt.Result.Results | Where-Object {$_.Kind -eq $clientKind})[0]
         if($clientKind -eq 'Npgsql'){
@@ -1326,6 +1338,9 @@ host all all ::1/128 reject
                 throw 'Required current catalogue/drain contracts did not complete; rebuild the Release test host before running.'
             }
             if($RunPredecessorReadTests -and -not $probe.Result.Catalogue.PredecessorReadVerified){throw 'Required actual predecessor-read proof did not complete.'}
+            if($RunAutomaticTests -and ($null -eq $probe.Result.Catalogue -or -not $probe.Result.Catalogue.NativeWts -or -not $probe.Result.Catalogue.RestartRecoveryVerified -or $probe.Result.Catalogue.Passed -lt 8)){throw 'Required native automatic round trip did not complete.'}
+            if($AutomaticSessionTransition -eq 'AbortRehearsal' -and (-not $probe.Result.Catalogue.AbortRehearsal -or $probe.Result.Catalogue.NativeSignOutVerified)){throw 'Abort rehearsal must not claim actual native sign-out.'}
+            if($AutomaticSessionTransition -eq 'ObserveSignOut' -and (-not $probe.Result.Catalogue.NativeSignOutVerified -or $probe.Result.Catalogue.AbortRehearsal)){throw 'Actual native sign-out/re-entry proof is incomplete.'}
             # Multi-vault collision/coexistence cases are retired. Retain all single-repository binding/integrity contracts.
             if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Metadata -or $probe.Result.Catalogue.Metadata.Passed -lt 18 -or
                 -not $probe.Result.Catalogue.Metadata.RecentVersionsVerified -or -not $probe.Result.Catalogue.Metadata.HistoryPagingVerified -or
@@ -1333,7 +1348,8 @@ host all all ::1/128 reject
             if($RunMetadataTests -and ($null -eq $probe.Result.Catalogue.Repository -or $probe.Result.Catalogue.Repository.Passed -lt 10)){throw 'Required bound repository capture/recovery contracts did not complete.'}
         }elseif($probe.ExitCode -ne 0 -or $probe.Output -ne "$FixtureId|fv_gate_261003|fv_gate_service"){throw 'SYSTEM password-free libpq authentication failed.'}
     }}
-    foreach($actor in @('A','B')) {
+    $denialActors=if($RunAutomaticTests){@()}else{@('A','B')}
+    foreach($actor in $denialActors) {
         foreach($hostAddress in @('127.0.0.1','::1')){foreach($clientKind in @('Npgsql','libpq')){
             $attempt=Invoke-CorrelatedActor $actor $hostAddress $clientKind
             $probe=@($attempt.Result.Results | Where-Object {$_.Kind -eq $clientKind})[0]

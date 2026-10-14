@@ -16,6 +16,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
 {
     // Legacy/direct fixtures retain their lock. Service-managed stores derive a stable key from their immutable vault ID.
     private const long MetadataMutationLockKey = 0x46564D455441;
+    private const int OutboxDrainBatchSize = 1000;
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         Converters = { new JsonStringEnumConverter() }
@@ -569,6 +570,17 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
                     await AdvanceHistoryAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
             }
 
+            // A retry must not publish a version after deletion. Keep already exported
+            // journal evidence unchanged, and retire only this deletion's pending work.
+            await using (var outbox = CreateCommand("""
+                DELETE FROM fluxvault.metadata_outbox
+                WHERE version_id=ANY(@version_ids) AND exported_at_utc IS NULL;
+                """, connection, transaction))
+            {
+                outbox.Parameters.AddWithValue("version_ids", ids);
+                await outbox.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+
             if (affectedPaths.Count != 0)
             {
                 await using var rebuild = CreateCommand("""
@@ -708,24 +720,7 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         RequireExportRoot(repositoryPath);
         await InitializeAsync(cancellationToken).ConfigureAwait(false);
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var select = CreateCommand(
-            """
-            SELECT outbox_id, device_id, payload_json::text
-            FROM fluxvault.metadata_outbox
-            WHERE exported_at_utc IS NULL
-            ORDER BY outbox_id
-            LIMIT 1000;
-            """,
-            connection);
-        var rows = new List<OutboxRow>();
-        await using (var reader = await select.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
-        {
-            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
-            {
-                rows.Add(new OutboxRow(reader.GetInt64(0), reader.GetString(1), reader.GetString(2)));
-            }
-        }
-
+        var rows = await PrepareOutboxRowsAsync(connection, null, cancellationToken).ConfigureAwait(false);
         return await ExportOutboxRowsAsync(repositoryPath, connection, rows, cancellationToken).ConfigureAwait(false);
     }
 
@@ -745,16 +740,46 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
 
         await InitializeAsync(cancellationToken).ConfigureAwait(false);
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var select = CreateCommand(
-            """
-            SELECT outbox_id, device_id, payload_json::text
-            FROM fluxvault.metadata_outbox
-            WHERE exported_at_utc IS NULL
-              AND version_id = ANY(@version_ids)
-            ORDER BY outbox_id;
-            """,
-            connection);
-        select.Parameters.AddWithValue("version_ids", ids);
+        var rows = await PrepareOutboxRowsAsync(connection, ids, cancellationToken).ConfigureAwait(false);
+        return await ExportOutboxRowsAsync(repositoryPath, connection, rows, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<IReadOnlyList<OutboxRow>> PrepareOutboxRowsAsync(
+        NpgsqlConnection connection, string[]? versionIds, CancellationToken cancellationToken)
+    {
+        // Repository callers already hold their lease through preparation, export and
+        // acknowledgement. Never wait for that lease inside this short transaction.
+        await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
+        await AcquireMutationLockAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
+        var scopeFilter = versionIds is null ? "" : "AND o.version_id=ANY(@version_ids)";
+        await using (var retire = CreateCommand($"""
+            WITH obsolete AS (
+                SELECT o.outbox_id FROM fluxvault.metadata_outbox o
+                WHERE o.exported_at_utc IS NULL AND o.version_id IS NOT NULL
+                  AND NOT EXISTS (SELECT 1 FROM fluxvault.versions v WHERE v.version_id=o.version_id)
+                  {scopeFilter}
+                ORDER BY o.outbox_id LIMIT @batch
+            )
+            DELETE FROM fluxvault.metadata_outbox o USING obsolete
+            WHERE o.outbox_id=obsolete.outbox_id;
+            """, connection, transaction))
+        {
+            retire.Parameters.AddWithValue("batch", OutboxDrainBatchSize);
+            if (versionIds is not null) retire.Parameters.AddWithValue("version_ids", versionIds);
+            await retire.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+        // Old installations may have more than one batch of orphaned work. Do not
+        // export those remaining rows while bounded retirement catches up.
+        var limit = versionIds is null ? "LIMIT @batch" : "";
+        await using var select = CreateCommand($"""
+            SELECT o.outbox_id,o.device_id,o.payload_json::text FROM fluxvault.metadata_outbox o
+            WHERE o.exported_at_utc IS NULL
+              AND (o.version_id IS NULL OR EXISTS (SELECT 1 FROM fluxvault.versions v WHERE v.version_id=o.version_id))
+              {scopeFilter}
+            ORDER BY o.outbox_id {limit};
+            """, connection, transaction);
+        if (versionIds is null) select.Parameters.AddWithValue("batch", OutboxDrainBatchSize);
+        else select.Parameters.AddWithValue("version_ids", versionIds);
         var rows = new List<OutboxRow>();
         await using (var reader = await select.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
         {
@@ -764,7 +789,8 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
             }
         }
 
-        return await ExportOutboxRowsAsync(repositoryPath, connection, rows, cancellationToken).ConfigureAwait(false);
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return rows;
     }
 
     private async Task<int> ExportOutboxRowsAsync(
@@ -1193,23 +1219,33 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         return $"{configuration.Host}:{configuration.Port}/{configuration.DatabaseName}";
     }
 
-    private static async Task<string> WriteOutboxFileAsync(
+    internal static async Task<string> WriteOutboxFileAsync(
         string repositoryPath,
         OutboxRow row,
         CancellationToken cancellationToken)
     {
         var devicePath = Path.Combine(repositoryPath, "metadata-journal", SanitizePathSegment(row.DeviceId));
+        StorageOwnership.RejectReparseComponents(devicePath);
         Directory.CreateDirectory(devicePath);
         var exportPath = Path.Combine(devicePath, $"{row.OutboxId:D20}.fvop");
+        StorageOwnership.RejectReparseComponents(exportPath);
+        var payload = System.Text.Encoding.UTF8.GetBytes(row.PayloadJson);
         if (File.Exists(exportPath))
         {
+            await VerifyExistingOutboxPayloadAsync(exportPath,payload,cancellationToken).ConfigureAwait(false);
             return exportPath;
         }
 
         var temporaryPath = exportPath + $".{Guid.NewGuid():N}.tmp";
         try
         {
-            await File.WriteAllTextAsync(temporaryPath, row.PayloadJson, cancellationToken).ConfigureAwait(false);
+            await using (var output = new FileStream(temporaryPath,FileMode.CreateNew,FileAccess.Write,FileShare.None,
+                65536,FileOptions.Asynchronous | FileOptions.WriteThrough))
+            {
+                await output.WriteAsync(payload,cancellationToken).ConfigureAwait(false);
+                await output.FlushAsync(cancellationToken).ConfigureAwait(false);
+                output.Flush(flushToDisk:true);
+            }
             File.Move(temporaryPath, exportPath);
             return exportPath;
         }
@@ -1221,6 +1257,22 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
             }
 
             throw;
+        }
+    }
+
+    private static async Task VerifyExistingOutboxPayloadAsync(string path,byte[] expected,CancellationToken ct)
+    {
+        await using var input = new FileStream(path,FileMode.Open,FileAccess.Read,FileShare.Read,65536,FileOptions.Asynchronous);
+        if (input.Length != expected.Length)
+            throw new InvalidDataException("The existing metadata journal export differs from its durable outbox payload. It was preserved and remains unacknowledged.");
+        var buffer = new byte[Math.Min(65536,Math.Max(1,expected.Length))];
+        var offset = 0;
+        while(offset<expected.Length)
+        {
+            var read = await input.ReadAsync(buffer.AsMemory(0,Math.Min(buffer.Length,expected.Length-offset)),ct).ConfigureAwait(false);
+            if (read==0 || !buffer.AsSpan(0,read).SequenceEqual(expected.AsSpan(offset,read)))
+                throw new InvalidDataException("The existing metadata journal export differs from its durable outbox payload. It was preserved and remains unacknowledged.");
+            offset += read;
         }
     }
 
@@ -1326,5 +1378,5 @@ public sealed class PostgreSqlRepositoryMetadataStore : IRepositoryMetadataStore
         schemaGate.Dispose();
     }
 
-    private sealed record OutboxRow(long OutboxId, string DeviceId, string PayloadJson);
+    internal sealed record OutboxRow(long OutboxId, string DeviceId, string PayloadJson);
 }

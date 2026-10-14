@@ -1,0 +1,149 @@
+{
+  "Failure": null,
+  "FailureLocation": null,
+  "FixtureId": "4cf9cdb48fd54301a67c55273ce102d4",
+  "Observations": [
+    {
+      "Results": [
+        {
+          "Result": {
+            "FixtureId": "4cf9cdb48fd54301a67c55273ce102d4",
+            "ProbeId": "1086a32b369444eab43e07b3f2cc11b0",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql"
+        },
+        {
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "Complete": true,
+      "Actor": "System",
+      "RunId": "23bfdc70508943a1b042fa2a20f93e98",
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 897,
+      "ServerLogEnd": 2307
+    },
+    {
+      "Complete": true,
+      "RunId": "749b51bc2fdc456fbce2363fca48b08f",
+      "Actor": "System",
+      "WindowsSid": "S-1-5-18",
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "4cf9cdb48fd54301a67c55273ce102d4",
+            "ProbeId": "445efe41e21740eda89b8367db70f102",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 10,
+              "Checks": [
+                "real WTS creator SID/session/AuthenticationId and ordinary effective token are verified",
+                "automatic extension is default off in actual service composition",
+                "actual Options view-model enable has a confirmed catalogue receipt",
+                "saved creator preference is enabled and approved through the actual pipe",
+                "ordinary creator can enumerate the owned source through validated native handles",
+                "ordinary creator save reaches an automatic version without RunBackupNow",
+                "automatic, authority-observer and accepted pipe requests join before service disposal",
+                "restart retains automatic preference and acknowledged version identity",
+                "automatic version is findable through authenticated history after restart",
+                "restarted service recovery matches independently hashed original bytes"
+              ],
+              "NativeWts": true,
+              "CreatorSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+              "SessionId": 1,
+              "AuthenticationId": "00000000:000640CC",
+              "TokenIsElevated": false,
+              "RestartRecoveryVerified": true,
+              "NoManualBackup": true,
+              "StoreHost": "127.0.0.1",
+              "RecoverySha256": "2257897C2428E060ECAD4D2FE8211D36E0BD15ACDDE637E28C1BCD24718E2F9E"
+            }
+          }
+        },
+        {
+          "Kind": "ACL",
+          "ReadProtected": true,
+          "WindowsSid": "S-1-5-18",
+          "WriteRuntime": true
+        }
+      ],
+      "ServerLogStart": 2370,
+      "ServerLogEnd": 8014
+    },
+    {
+      "WindowsSid": "S-1-5-18",
+      "RunId": "33a87d441f024bfcab46bc32090ae7b0",
+      "Results": [
+        {
+          "Host": "::1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "4cf9cdb48fd54301a67c55273ce102d4",
+            "ProbeId": "beafa767721d42be92f0247b5487d0ef",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "::1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 10,
+              "Checks": [
+                "real WTS creator SID/session/AuthenticationId and ordinary effective token are verified",
+                "automatic extension is default off in actual service composition",
+                "actual Options view-model enable has a confirmed catalogue receipt",
+                "saved creator preference is enabled and approved through the actual pipe",
+                "ordinary creator can enumerate the owned source through validated native handles",
+                "ordinary creator save reaches an automatic version without RunBackupNow",
+                "automatic, authority-observer and accepted pipe requests join before service disposal",
+                "restart retains automatic preference and acknowledged version identity",
+                "automatic version is findable through authenticated history after restart",
+                "restarted service recovery matches independently hashed original bytes"
+              ],
+              "NativeWts": true,
+              "CreatorSid": "S-1-5-21-136112424-624261118-1239521417-1001",
+              "SessionId": 1,
+              "AuthenticationId": "00000000:000640CC",
+              "TokenIsElevated": false,
+              "RestartRecoveryVerified": true,
+              "NoManualBackup": true,
+              "StoreHost": "::1",
+              "RecoverySha256": "19B4423D76BCC2FE7ABE7E4B3FCDB84D4E0DC783D9D9154BDBB6A16CAC9604C1"
+            }
+          }
+        },
+        {
+          "WriteRuntime": true,
+          "ReadProtected": true,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "Complete": true,
+      "Actor": "System",
+      "ServerLogStart": 8014,
+      "ServerLogEnd": 14036
+    }
+  ]
+}

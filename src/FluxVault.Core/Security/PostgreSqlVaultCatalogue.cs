@@ -24,7 +24,7 @@ public sealed record VaultCatalogueEndpoint(Guid InstanceId, string Host, int Po
     }
 }
 
-public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
+public sealed partial class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
 {
     private const long ControlMutationLock = 0x4656434F4E54524C;
     private readonly NpgsqlDataSource dataSource;
@@ -168,6 +168,35 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
     public Task<VaultAdmission> SetAccessAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken cancellationToken = default) =>
         MutateAsync(caller, request, Mutation.Access, cancellationToken);
 
+    /// <summary>Read-only permission check before stopping source readers. Admission still repeats all checks.</summary>
+    public async Task<bool> VerifyMutationAuthorityAsync(FluxVaultCallerContext caller, FluxVaultIpcRequest request, CancellationToken ct)
+    {
+        RequireCaller(caller);
+        if (request.VaultId is null or { IsValid: false } || !IsMutation(request.Command) ||
+            request.OperationId is null || request.OperationId == Guid.Empty || request.ExpectedVaultRevision is null or <= 0)
+            throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
+        await using var connection = await OpenVerifiedAsync(ct);
+        await using var transaction = await connection.BeginTransactionAsync(ct);
+        await LockAsync(connection, transaction, ct);
+        var vault = await LoadAsync(connection, transaction, request.VaultId, ct);
+        if (vault is null || !VaultCommandPolicy.TryGet(request, vault.Configuration, out var requirement) ||
+            !VaultAuthorizer.IsAllowed(caller, vault.Access, requirement.Permissions) ||
+            request.Command == FluxVaultIpcCommand.SetAutomaticProtection && caller.UserSid != vault.Access.OwnerSid)
+            throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
+        var receipt = await ReadReceiptAsync(connection, transaction, request.OperationId!.Value, ct);
+        if (receipt is not null)
+        {
+            if (receipt.VaultId != vault.Binding.Id || receipt.ActorSid != caller.UserSid || receipt.Command != request.Command ||
+                receipt.Fingerprint != RequestFingerprint(request)) throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
+            if (!VaultAuthorizer.IsAllowed(caller, vault.Access, receipt.RequiredPermissions)) throw new VaultCatalogueException(VaultCatalogueFailure.Denied);
+            await transaction.CommitAsync(ct);
+            return true;
+        }
+        if (request.ExpectedVaultRevision != vault.Revision) throw new VaultCatalogueException(VaultCatalogueFailure.StaleRevision);
+        await transaction.CommitAsync(ct);
+        return false;
+    }
+
     private enum Mutation { Admit, Save, Access }
 
     private static bool ValidPurgeScopes(IReadOnlyList<RepositoryPurgeScope> scopes)
@@ -231,6 +260,9 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         }
         if (request.ExpectedVaultRevision is not null && request.ExpectedVaultRevision != vault.Revision)
             throw new VaultCatalogueException(VaultCatalogueFailure.StaleRevision);
+        if (modifying) await VerifyRuntimeFenceAsync(connection, transaction, ct);
+        if (request.IsAutomaticProtectionEnabled is not null && request.Command != FluxVaultIpcCommand.SetAutomaticProtection)
+            throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration, "An automatic preference belongs only to its separate command.");
         if (modifying && requirement.Permissions.HasFlag(VaultPermission.DeleteHistory))
         {
             // Original receipt replay precedes this guard. A new operation must
@@ -288,7 +320,9 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
             ValidateBindingConfiguration(vault.Binding, configuration);
             if (!SameInfrastructure(vault.Configuration, configuration)) throw new VaultCatalogueException(VaultCatalogueFailure.InvalidConfiguration);
             // Legacy combined save/purge receipts remain replayable above; new saves never delete history.
+            var before = vault;
             vault = vault with { Revision = checked(vault.Revision + 1), Configuration = configuration };
+            await UpdateAutomaticConsentForSaveAsync(connection, transaction, caller, before, vault, ct);
         }
         else if (mutation == Mutation.Access)
         {
@@ -297,6 +331,12 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
             vault = vault with { Revision = checked(vault.Revision + 1), Access = access };
         }
         var settingProtectionState = request.Command == FluxVaultIpcCommand.SetProtectionPaused;
+        var settingAutomaticPolicy = request.Command == FluxVaultIpcCommand.SetAutomaticProtection;
+        if (settingAutomaticPolicy)
+        {
+            await ApplyAutomaticPolicyAsync(connection, transaction, caller, vault, request, ct);
+            vault = vault with { Revision = checked(vault.Revision + 1) };
+        }
         if (settingProtectionState)
         {
             if (request.IsProtectionPaused is null || request != (FluxVaultIpcRequest.SetProtectionPaused(request.IsProtectionPaused.Value) with
@@ -307,7 +347,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
             vault = vault with { Revision = checked(vault.Revision + 1),
                 Configuration = vault.Configuration with { IsEnabled = !request.IsProtectionPaused.Value } };
         }
-        if (mutation != Mutation.Admit || settingProtectionState)
+        if (mutation != Mutation.Admit || settingProtectionState || settingAutomaticPolicy)
         {
             await using var update = new NpgsqlCommand("UPDATE fv_control.vault SET revision=@revision, configuration=@configuration, grants=@grants WHERE singleton=true AND vault_id=@id", connection, transaction);
             update.Parameters.AddWithValue("revision", vault.Revision);
@@ -319,7 +359,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         VaultOperationReceipt? recorded = null;
         if (modifying)
         {
-            var completed = settingProtectionState || mutation == Mutation.Access || (mutation == Mutation.Save && !request.PurgeRemovedSelections);
+            var completed = settingProtectionState || settingAutomaticPolicy || mutation == Mutation.Access || (mutation == Mutation.Save && !request.PurgeRemovedSelections);
             var response = completed ? FluxVaultIpcResponse.Ok() with { VaultId = id, VaultRevision = vault.Revision, OperationId = request.OperationId } : null;
             recorded = new(request.OperationId!.Value, id, caller.UserSid, request.Command, fingerprint,
                 completed ? VaultOperationState.Completed : VaultOperationState.Admitted, vault.Revision, response, requirement.Permissions);
@@ -358,12 +398,16 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
             throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
         response = response with { VaultId = receipt.VaultId, VaultRevision = receipt.Revision, OperationId = receipt.OperationId };
         await using var connection = await OpenVerifiedAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await LockAsync(connection, transaction, cancellationToken);
+        await VerifyRuntimeFenceAsync(connection, transaction, cancellationToken);
         await using var command = new NpgsqlCommand("""
             UPDATE fv_control.operations SET state=1,response=@response,completed_at_utc=now()
             WHERE operation_id=@operation AND vault_id=@id AND actor_sid=@actor AND command=@command AND fingerprint=@fingerprint AND revision=@revision AND state=0
-            """, connection);
+            """, connection, transaction);
         AddReceiptParameters(command, receipt with { Response = response });
         if (await command.ExecuteNonQueryAsync(cancellationToken) != 1) throw new VaultCatalogueException(VaultCatalogueFailure.OperationConflict);
+        await transaction.CommitAsync(cancellationToken);
     }
 
     /// <summary>Repository effects already ran. Publish their result and the single mirror disablement together.</summary>
@@ -384,6 +428,7 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         await using var connection = await OpenVerifiedAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         await LockAsync(connection, transaction, cancellationToken);
+        await VerifyRuntimeFenceAsync(connection, transaction, cancellationToken);
         var vault = await LoadAsync(connection, transaction, receipt.VaultId, cancellationToken);
         var durable = await ReadReceiptAsync(connection, transaction, receipt.OperationId, cancellationToken);
         if (vault is null || durable != receipt)
@@ -488,11 +533,13 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         command.Parameters.AddWithValue("response", NpgsqlTypes.NpgsqlDbType.Text, receipt.Response is null ? DBNull.Value : Encode(receipt.Response, limits.MaximumResponseBytes));
     }
 
-    private async Task<NpgsqlConnection> OpenAsync(CancellationToken ct)
+    private async Task<NpgsqlConnection> OpenAsync(CancellationToken ct, bool dedicated = false)
     {
-        var connection = await dataSource.OpenConnectionAsync(ct);
+        var connection = dedicated ? new NpgsqlConnection(new NpgsqlConnectionStringBuilder(dataSource.ConnectionString)
+            { Pooling=false }.ConnectionString) : dataSource.CreateConnection();
         try
         {
+            await connection.OpenAsync(ct);
             await using var command = new NpgsqlCommand("SELECT current_database(), current_user, session_user, current_setting('fsync'), current_setting('full_page_writes'), current_setting('synchronous_commit')", connection);
             await using var reader = await command.ExecuteReaderAsync(ct);
             if (!await reader.ReadAsync(ct) || reader.GetString(0) != Endpoint.Database || reader.GetString(1) != Endpoint.ServiceRole || reader.GetString(2) != Endpoint.ServiceRole ||
@@ -503,9 +550,9 @@ public sealed class PostgreSqlVaultCatalogue : IVaultCatalogue, IAsyncDisposable
         catch { await connection.DisposeAsync(); throw; }
     }
 
-    private async Task<NpgsqlConnection> OpenVerifiedAsync(CancellationToken ct)
+    private async Task<NpgsqlConnection> OpenVerifiedAsync(CancellationToken ct, bool dedicated = false)
     {
-        var connection = await OpenAsync(ct);
+        var connection = await OpenAsync(ct, dedicated);
         try
         {
             await using var security = new NpgsqlCommand("""

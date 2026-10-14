@@ -6,6 +6,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\..\docs\verification\2026-10-08-next005-automatic\automatic-rollback-worker.ps1" LogicalName="automatic-rollback-worker.ps1" />
     <ProjectReference Include="..\..\src\FluxVault.Core\FluxVault.Core.csproj" />
     <ProjectReference Include="..\..\src\FluxVault.Cli\FluxVault.Cli.csproj" />
     <ProjectReference Include="..\..\src\FluxVault.App\FluxVault.App.csproj" />

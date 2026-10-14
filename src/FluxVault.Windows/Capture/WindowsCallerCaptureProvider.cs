@@ -30,8 +30,28 @@ public sealed class WindowsCallerCaptureProvider : IFileCaptureProvider
             var root = acceptedRoots.Select(WindowsCallerFileAccess.ValidatePath)
                 .FirstOrDefault(candidate => source.StartsWith(candidate.TrimEnd('\\') + "\\", StringComparison.OrdinalIgnoreCase));
             if (root is null) return FileCaptureResult.Failed("The source is outside the admitted protection selection.");
-            var stream = await new WindowsCallerFileAccess().OpenSourceAsync(caller, root, source, cancellationToken).ConfigureAwait(false);
-            return FileCaptureResult.Captured(stream, CaptureConsistency.BestEffort, "Captured from the caller's live readable file.");
+            using var opened = await WindowsCallerFileAccess.OpenValidatedSourceAsync(caller, root, source,
+                directory: false, 0x120089, asynchronous: true, beforeOpen: null, cancellationToken).ConfigureAwait(false);
+            var observation = await caller.RunAsCallerAsync(() => Task.FromResult(
+                WindowsCallerFileAccess.ObserveSource(opened.Handle, opened.PhysicalPath))).ConfigureAwait(false);
+            return FileCaptureResult.Captured(opened.TakeStream(), CaptureConsistency.BestEffort,
+                "Captured from the caller's live readable file.", sourceLength: observation.Length,
+                sourceLastWriteUtc: DateTimeOffset.FromFileTime(observation.LastWriteTime).ToUniversalTime(),
+                sourceObservation: FormattableString.Invariant($"{observation.Identity:X16}:{observation.Length:X16}:{observation.LastWriteTime:X16}:{observation.ChangeTime:X16}"),
+                sourceVerification: async ct =>
+                {
+                    ct.ThrowIfCancellationRequested();
+                    using var current = await WindowsCallerFileAccess.OpenValidatedSourceAsync(caller, root, source,
+                        directory: false, 0x100080, asynchronous: false, beforeOpen: null, ct).ConfigureAwait(false);
+                    await caller.RunAsCallerAsync(() =>
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        if (WindowsCallerFileAccess.ObserveSource(opened.Handle, opened.PhysicalPath) != observation ||
+                            WindowsCallerFileAccess.ObserveSource(current.Handle, current.PhysicalPath) != observation)
+                            throw new IOException("The source changed during capture. Its earlier version is kept and this save remains pending.");
+                        return Task.FromResult(true);
+                    }).ConfigureAwait(false);
+                });
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
         {

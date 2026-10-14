@@ -4,6 +4,7 @@ using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using FluxVault.Core.Security;
+using FluxVault.Abstractions.Configuration;
 using Microsoft.Win32.SafeHandles;
 
 namespace FluxVault.Windows.Security;
@@ -17,6 +18,14 @@ public sealed class WindowsVaultStorageGuard
     private const string InstallerSid = "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464";
 
     public IDisposable Open(VaultCatalogueEntry vault, CancellationToken cancellationToken = default)
+        => OpenCore(vault,false,out _,out _,cancellationToken);
+
+    public IDisposable OpenAutomatic(VaultCatalogueEntry vault,out MirrorSetConfiguration availableMirrors,
+        out IReadOnlyList<string> mirrorWarnings,CancellationToken ct=default)
+        => OpenCore(vault,true,out availableMirrors,out mirrorWarnings,ct);
+
+    private IDisposable OpenCore(VaultCatalogueEntry vault,bool allowUnavailableMirrors,
+        out MirrorSetConfiguration availableMirrors,out IReadOnlyList<string> mirrorWarnings,CancellationToken cancellationToken)
     {
         using var identity = WindowsIdentity.GetCurrent();
         if (identity.User?.Value != SystemSid || identity.ImpersonationLevel != TokenImpersonationLevel.None)
@@ -24,11 +33,19 @@ public sealed class WindowsVaultStorageGuard
         vault.Binding.Validate();
         var trusted = ReadTrustedPrincipals();
         var scopes = new List<IDisposable>();
+        var available=new List<MirrorNodeConfiguration>();var warnings=new List<string>();
         try
         {
             foreach (var root in new[] { vault.Binding.RepositoryPath, vault.Binding.StateRoot }
-                .Concat(vault.Configuration.MirrorSet.EnabledNodes.Select(node => node.Path)).Distinct(StringComparer.OrdinalIgnoreCase))
+                .Distinct(StringComparer.OrdinalIgnoreCase))
                 scopes.Add(PinRoot(root, SystemSid, trusted, cancellationToken));
+            foreach(var node in vault.Configuration.MirrorSet.EnabledNodes)
+            {
+                try {scopes.Add(PinRoot(node.Path,SystemSid,trusted,cancellationToken));available.Add(node);}
+                catch(Exception exception) when(allowUnavailableMirrors && exception is IOException or UnauthorizedAccessException)
+                {warnings.Add($"Mirror '{node.Label}' is unavailable: {exception.Message}");}
+            }
+            availableMirrors=vault.Configuration.MirrorSet with {Nodes=available};mirrorWarnings=warnings;
             return new StoragePins(scopes);
         }
         catch { foreach (var scope in Enumerable.Reverse(scopes)) scope.Dispose(); throw; }

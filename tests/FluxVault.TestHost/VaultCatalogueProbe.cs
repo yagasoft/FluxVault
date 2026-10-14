@@ -16,6 +16,7 @@ internal static class VaultCatalogueProbe
 {
     internal static async Task<object> RunAsync(NpgsqlDataSource dataSource, WindowsDatabaseProbeConfiguration fixture)
     {
+        if (fixture.RunAutomaticTests) return await WindowsAutomaticRuntimeProbe.RunAsync(dataSource, fixture);
         if (WindowsIdentity.GetCurrent().User?.Value != "S-1-5-18") throw new UnauthorizedAccessException();
         await using var connection = await dataSource.OpenConnectionAsync();
         await using var identity = new NpgsqlCommand("SELECT current_setting('fluxvault.test_instance'), current_database(), current_user", connection);
@@ -175,6 +176,7 @@ internal static class VaultCatalogueProbe
             using (var ungrantedToggleCaller = new PolicyCaller("S-1-5-21-111-222-333-9876"))
                 await VaultProtectionStateProbe.RunAsync(store, owner, ungrantedToggleCaller, checks);
             await VaultHistoryDeletionProbe.RunAsync(store,owner,administrator,other,checks);
+            await VaultAutomaticProtectionProbe.RunAsync(store,dataSource,owner,administrator,other,checks);
             if(fixture.RunPredecessorReadTests)
                 await PredecessorCompatibilityProbe.RunAsync(connection,(await store.AdmitAsync(owner,FluxVaultIpcRequest.GetStatus())).Vault,fixture,checks);
             var metadata = fixture.RunMetadataTests ? await VaultMetadataProbe.RunAsync(dataSource, one) : null;

@@ -31,7 +31,32 @@ rendered screens when the shell slice is commissioned; no visual direction is
 selected by this bounded exercise. Keyboard, layout, navigation and scaling
 checks continue; theme/accessibility work remains deferred.
 
-3 October 2026. Design exploration for the existing roadmap, grounded in the [actual 1 October screenshots and UX review](../../reviews/2026-10-01/ux-review.md). Windows/WPF, FluxVault/Yagasoft identity, local-first operation and multiple independent vaults stay fixed. Mock project names, dates and paths are illustrative, not user files or measured runtime evidence. These images are not an implemented UI.
+11 October installed NEXT-005 observations extend this exploration using the
+[1.0.11 screens](../../verification/2026-10-08-next005-automatic/installed-1.0.11/).
+The paused dashboard disables capture and enables Resume while Repository and
+recovery remain available. Options keeps the automatic preference checked while
+explaining that protection is paused; Resume changes the observed state to
+Waiting for changes. Both captured file versions remain visible after service
+restart. These are actual command/state observations, not a selected redesign.
+
+For the compact direction, give the automatic state and its actionable reason a
+stable place above the saved scopes. The current narrow connection summary
+truncates a long recovery message, so it should not be the only place a critical
+reason appears. Keep latest capture and latest verified recovery separate. Show
+mirror lag alongside healthy primary coverage rather than replacing that coverage
+with a general failure indication.
+
+For the guided direction, first save the selected folders, then explain and apply
+the creator's automatic preference for that saved scope. `SaveConfiguration` and
+`SetAutomaticProtection` have separate revisioned receipts. Saving folders alone
+does not enable automatic protection or prove a captured version. Once enabled,
+a creator's scope save renews consent, while a granted user's scope change requires
+creator approval. The guide must retain drafts and resolve an uncertain original
+receipt before offering another change. Both directions retain the same Recover
+journey and deliberate history-deletion review. No shell rewrite, new command,
+theme or accessibility work is introduced here.
+
+Historical exploration, 3 October 2026, grounded in the [actual 1 October screenshots and UX review](../../reviews/2026-10-01/ux-review.md). Its former multiple-vault mockups are superseded by the single-vault contract above. Windows/WPF, FluxVault/Yagasoft identity and local-first operation remain fixed. Mock project names, dates and paths are illustrative, not user files or measured runtime evidence. These images are not an implemented UI.
 
 The [NEXT-002/C specification](../../superpowers/specs/2026-10-03-next002-and-protection-save-design.md) defines the command and state contract. All directions must satisfy it; visual selection cannot relax authorisation, vault isolation or verified recovery.
 

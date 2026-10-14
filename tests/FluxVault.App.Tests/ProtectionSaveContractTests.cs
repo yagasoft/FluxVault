@@ -579,7 +579,8 @@ public sealed partial class ProtectionSaveContractTests
             window.Show();
             await viewModel.InitialiseAsync();
             var shell = Assert.IsType<Grid>(window.FindName("OptionsShell"));
-            shell.Children.OfType<TabControl>().Single().SelectedIndex = 2;
+            var tabs=shell.Children.OfType<TabControl>().Single();
+            tabs.SelectedItem=tabs.Items.OfType<TabItem>().Single(item=>Equals(item.Header,"Advanced"));
             await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
             window.UpdateLayout();
             var control = Descendants(shell).OfType<TextBox>().Single(text =>
@@ -2390,6 +2391,7 @@ public sealed partial class ProtectionSaveContractTests
 
     private sealed class StoreClient(IFluxVaultConfigurationStore store) : IFluxVaultServiceClient
     {
+        public AutomaticProtectionRuntimeStatus? AutomaticProtection { get; set; }
         public bool UseFramedTransport { get; init; }
         public string? ResponseFault { get; init; }
         public FluxVaultIpcCommand? ResponseFaultCommand { get; set; }
@@ -2495,7 +2497,7 @@ public sealed partial class ProtectionSaveContractTests
                     if (StatusCancelled) throw new OperationCanceledException("Fixture status reload cancelled");
                     if (StatusFails) return FluxVaultIpcResponse.Failure("Fixture status unavailable");
                     return Envelope(FluxVaultIpcResponse.WithStatus(new FluxVaultServiceStatus(true, await store.LoadAsync(cancellationToken),
-                        "Fixture idle", null, [], RecentVersions)));
+                        "Fixture idle", null, [], RecentVersions, AutomaticProtection: AutomaticProtection)));
                 case FluxVaultIpcCommand.SaveConfiguration:
                     SaveDispatchCheck?.Invoke(request);
                     if (SaveDispatchHandler is not null) return await SaveDispatchHandler(request, cancellationToken);

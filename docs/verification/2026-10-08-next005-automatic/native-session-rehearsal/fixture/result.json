@@ -1,0 +1,96 @@
+{
+  "FailureLocation": null,
+  "Failure": null,
+  "FixtureId": "574fe1cfb8ec4ce0832467cc4c42b9c5",
+  "Observations": [
+    {
+      "Results": [
+        {
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "574fe1cfb8ec4ce0832467cc4c42b9c5",
+            "ProbeId": "a002b8812980485796776bdb7e433fab",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": false,
+            "FixtureVerified": false,
+            "SqlState": "28000",
+            "ErrorKind": "PostgreSQL",
+            "Catalogue": null
+          },
+          "Host": "127.0.0.1"
+        },
+        {
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18",
+          "ReadProtected": true,
+          "WriteRuntime": true
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "Complete": true,
+      "RunId": "7087d8f05a704219acfe60ba87d49729",
+      "Actor": "System",
+      "ServerLogStart": 896,
+      "ServerLogEnd": 2306
+    },
+    {
+      "Actor": "System",
+      "RunId": "d9fc517148964f4d8257b10545f79fd6",
+      "Complete": true,
+      "Results": [
+        {
+          "Host": "127.0.0.1",
+          "Kind": "Npgsql",
+          "Result": {
+            "FixtureId": "574fe1cfb8ec4ce0832467cc4c42b9c5",
+            "ProbeId": "1e7c15815ec548c7b2e31ed9c2597dc2",
+            "Actor": "System",
+            "WindowsSid": "S-1-5-18",
+            "Host": "127.0.0.1",
+            "Authenticated": true,
+            "FixtureVerified": true,
+            "SqlState": null,
+            "ErrorKind": null,
+            "Catalogue": {
+              "Passed": 16,
+              "Checks": [
+                "real WTS creator SID/session/AuthenticationId and ordinary effective token are verified",
+                "actual operational rollback SQL accepts a wholly absent first-start extension without creating consent or work",
+                "actual operational rollback SQL refuses a partial extension before downgrade",
+                "automatic extension is default off in actual service composition",
+                "default-off startup and status remain available and explain an offline configured mirror before any mirror cursor exists",
+                "actual Options view-model enable has a confirmed catalogue receipt",
+                "saved creator preference is enabled and approved through the actual pipe",
+                "ordinary creator can enumerate the owned source through validated native handles",
+                "ordinary creator save reaches an automatic version without RunBackupNow",
+                "automatic, authority-observer and accepted pipe requests join before service disposal",
+                "restart retains automatic preference and acknowledged version identity",
+                "automatic version is findable through authenticated history after restart",
+                "restarted service recovery matches independently hashed original bytes",
+                "abort cancellation waits for the held runtime source reader",
+                "the retained probe's native source reader joins",
+                "SYSTEM inspection proves the held reserved result was not published and durable pending work remains"
+              ],
+              "NativeWts": true,
+              "RestartRecoveryVerified": true,
+              "NativeSignOutVerified": false,
+              "AbortRehearsal": true,
+              "StoreHost": "127.0.0.1"
+            }
+          }
+        },
+        {
+          "ReadProtected": true,
+          "WriteRuntime": true,
+          "Kind": "ACL",
+          "WindowsSid": "S-1-5-18"
+        }
+      ],
+      "WindowsSid": "S-1-5-18",
+      "ServerLogStart": 2369,
+      "ServerLogEnd": 14407
+    }
+  ]
+}

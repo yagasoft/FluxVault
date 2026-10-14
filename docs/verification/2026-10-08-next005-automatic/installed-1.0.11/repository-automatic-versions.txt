@@ -1,0 +1,277 @@
+Window: "FluxVault", App: FluxVault.App.exe.
+	0 window FluxVault Secondary Actions: Raise
+		1 title bar (settable, string) Value: FluxVault
+			2 menu bar System ID: MenuBar
+				3 menu item System
+			4 button Minimize
+			5 button Maximize
+			6 button Close
+		7 text FluxVault
+		8 text Service connection: running - Waiting for saved file changes. Restored and verified 1 file(s) to C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working\recovered-pending.bin. Last refreshed 17:32:32
+		9 button Refresh Description: Refresh dashboard status and version data.
+			10 text ⟳
+			11 text Refresh
+		12 button Stop service Description: Stop the FluxVault Windows service. ID: ServiceControlToggleButton
+			13 text ⚠
+			14 text Stop service
+		15 button Run backup now Description: Run a full scan backup now.
+			16 text ↥
+			17 text Run backup now
+		18 button Restore Description: Restore the selected repository version.
+			19 text ↙
+			20 text Restore
+		21 button Options Description: Open retention, maintenance, capture, compression, and Explorer settings. ID: OpenOptionsButton
+			22 text ⚙
+			23 text Options
+		24 button About Description: About FluxVault.
+			25 text ⓘ
+			26 text About
+		27 button Export diagnostics Description: Export local service status, diagnostics, and health details.
+			28 text ▣
+			29 text Export diagnostics
+		30 tab ID: OperationalCockpitWorkspace
+			31 tab item (selectable) 🛡 Protection
+				32 text 🛡 Protection
+			76 tab item (selectable) 📁 File browser
+				77 text 📁 File browser
+			78 tab item (selectable) 🧱 Repository
+				79 text 🧱 Repository
+				133 text
+				134 button Preview selected
+					135 text Preview selected
+				136 datagrid ID: RecentVersionsGrid
+					137 header ID: PART_ColumnHeadersPresenter
+						138 header item Version
+							139 text Version
+							140 thumb ID: PART_RightHeaderGripper
+						141 header item File
+							142 text File
+							143 thumb ID: PART_LeftHeaderGripper
+							144 thumb ID: PART_RightHeaderGripper
+						145 header item Captured
+							146 text Captured
+							147 thumb ID: PART_LeftHeaderGripper
+							148 thumb ID: PART_RightHeaderGripper
+						149 header item Consistency
+							150 text Consistency
+							151 thumb ID: PART_LeftHeaderGripper
+							152 thumb ID: PART_RightHeaderGripper
+						153 header item Lineage
+							154 text Lineage
+							155 thumb ID: PART_LeftHeaderGripper
+							156 thumb ID: PART_RightHeaderGripper
+						157 header item Chunks
+							158 text Chunks
+							159 thumb ID: PART_LeftHeaderGripper
+							160 thumb ID: PART_RightHeaderGripper
+					161 dataitem (selectable) VersionRow { VersionId = 01a12b60cd497ab4877304bd8cffbfd7, SourcePath = C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working, CapturedAt = 2026-10-11 17:32:06, Consistency = BestEffort, ChunkCount = 0, Lineage = Parent 01a12b5d4a73721e95a524b98645c9ef, EntryKind = Folder, IsDeleted = False }
+						162 data grid cell 01a12b60cd497ab4877304bd8cffbfd7 Value: 01a12b60cd497ab4877304bd8cffbfd7
+							163 text 01a12b60cd497ab4877304bd8cffbfd7
+						164 data grid cell C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working Value: C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working
+							165 text C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working
+						166 data grid cell 2026-10-11 17:32:06 Value: 2026-10-11 17:32:06
+							167 text 2026-10-11 17:32:06
+						168 data grid cell BestEffort Value: BestEffort
+							169 text BestEffort
+						170 data grid cell Parent 01a12b5d4a73721e95a524b98645c9ef Value: Parent 01a12b5d4a73721e95a524b98645c9ef
+							171 text Parent 01a12b5d4a73721e95a524b98645c9ef
+						172 data grid cell 0 Value: 0
+							173 text 0
+					174 dataitem (selectable) VersionRow { VersionId = 01a12b60ccf37378a7292dc67884c24e, SourcePath = C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working\saved.txt, CapturedAt = 2026-10-11 17:32:06, Consistency = BestEffort, ChunkCount = 1, Lineage = Parent 01a12b5d4a087d67af1fa53d1224006c, EntryKind = File, IsDeleted = False }
+						175 data grid cell 01a12b60ccf37378a7292dc67884c24e Value: 01a12b60ccf37378a7292dc67884c24e
+							176 text 01a12b60ccf37378a7292dc67884c24e
+						177 data grid cell C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working\saved.txt Value: C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working\saved.txt
+							178 text C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working\saved.txt
+						179 data grid cell 2026-10-11 17:32:06 Value: 2026-10-11 17:32:06
+							180 text 2026-10-11 17:32:06
+						181 data grid cell BestEffort Value: BestEffort
+							182 text BestEffort
+						183 data grid cell Parent 01a12b5d4a087d67af1fa53d1224006c Value: Parent 01a12b5d4a087d67af1fa53d1224006c
+							184 text Parent 01a12b5d4a087d67af1fa53d1224006c
+						185 data grid cell 1 Value: 1
+							186 text 1
+					187 dataitem (selectable) VersionRow { VersionId = 01a12b5d4a73721e95a524b98645c9ef, SourcePath = C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working, CapturedAt = 2026-10-11 17:28:16, Consistency = BestEffort, ChunkCount = 0, Lineage = Capture, EntryKind = Folder, IsDeleted = False }
+						188 data grid cell 01a12b5d4a73721e95a524b98645c9ef Value: 01a12b5d4a73721e95a524b98645c9ef
+							189 text 01a12b5d4a73721e95a524b98645c9ef
+						190 data grid cell C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working Value: C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working
+							191 text C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working
+						192 data grid cell 2026-10-11 17:28:16 Value: 2026-10-11 17:28:16
+							193 text 2026-10-11 17:28:16
+						194 data grid cell BestEffort Value: BestEffort
+							195 text BestEffort
+						196 data grid cell Capture Value: Capture
+							197 text Capture
+						198 data grid cell 0 Value: 0
+							199 text 0
+					200 dataitem (selectable) VersionRow { VersionId = 01a12b5d4a087d67af1fa53d1224006c, SourcePath = C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working\saved.txt, CapturedAt = 2026-10-11 17:28:16, Consistency = BestEffort, ChunkCount = 1, Lineage = Capture, EntryKind = File, IsDeleted = False }
+						201 data grid cell 01a12b5d4a087d67af1fa53d1224006c Value: 01a12b5d4a087d67af1fa53d1224006c
+							202 text 01a12b5d4a087d67af1fa53d1224006c
+						203 data grid cell C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working\saved.txt Value: C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working\saved.txt
+							204 text C:\Users\os008\FluxVault Staging\NEXT005\bc40ad6f24b7495eb410e49bb74f9a2c\working\saved.txt
+						205 data grid cell 2026-10-11 17:28:16 Value: 2026-10-11 17:28:16
+							206 text 2026-10-11 17:28:16
+						207 data grid cell BestEffort Value: BestEffort
+							208 text BestEffort
+						209 data grid cell Capture Value: Capture
+							210 text Capture
+						211 data grid cell 1 Value: 1
+							212 text 1
+					213 dataitem (selectable) VersionRow { VersionId = 01a12b3f12e57d73a9dff51974c82c8f, SourcePath = C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working, CapturedAt = 2026-10-11 16:55:16, Consistency = BestEffort, ChunkCount = 0, Lineage = Parent 01a12b3ea3e571a094417f8fbfc15352, EntryKind = Folder, IsDeleted = False }
+						214 data grid cell 01a12b3f12e57d73a9dff51974c82c8f Value: 01a12b3f12e57d73a9dff51974c82c8f
+							215 text 01a12b3f12e57d73a9dff51974c82c8f
+						216 data grid cell C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working Value: C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working
+							217 text C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working
+						218 data grid cell 2026-10-11 16:55:16 Value: 2026-10-11 16:55:16
+							219 text 2026-10-11 16:55:16
+						220 data grid cell BestEffort Value: BestEffort
+							221 text BestEffort
+						222 data grid cell Parent 01a12b3ea3e571a094417f8fbfc15352 Value: Parent 01a12b3ea3e571a094417f8fbfc15352
+							223 text Parent 01a12b3ea3e571a094417f8fbfc15352
+						224 data grid cell 0 Value: 0
+							225 text 0
+					226 dataitem (selectable) VersionRow { VersionId = 01a12b3f127c74d7ba351de39f0f1a5a, SourcePath = C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working\saved.txt, CapturedAt = 2026-10-11 16:55:16, Consistency = BestEffort, ChunkCount = 1, Lineage = Parent 01a12b3ea3737b3f9842852f62630e99, EntryKind = File, IsDeleted = False }
+						227 data grid cell 01a12b3f127c74d7ba351de39f0f1a5a Value: 01a12b3f127c74d7ba351de39f0f1a5a
+							228 text 01a12b3f127c74d7ba351de39f0f1a5a
+						229 data grid cell C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working\saved.txt Value: C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working\saved.txt
+							230 text C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working\saved.txt
+						231 data grid cell 2026-10-11 16:55:16 Value: 2026-10-11 16:55:16
+							232 text 2026-10-11 16:55:16
+						233 data grid cell BestEffort Value: BestEffort
+							234 text BestEffort
+						235 data grid cell Parent 01a12b3ea3737b3f9842852f62630e99 Value: Parent 01a12b3ea3737b3f9842852f62630e99
+							236 text Parent 01a12b3ea3737b3f9842852f62630e99
+						237 data grid cell 1 Value: 1
+							238 text 1
+					239 dataitem (selectable) VersionRow { VersionId = 01a12b3ea3e571a094417f8fbfc15352, SourcePath = C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working, CapturedAt = 2026-10-11 16:54:47, Consistency = BestEffort, ChunkCount = 0, Lineage = Capture, EntryKind = Folder, IsDeleted = False }
+						240 data grid cell 01a12b3ea3e571a094417f8fbfc15352 Value: 01a12b3ea3e571a094417f8fbfc15352
+							241 text 01a12b3ea3e571a094417f8fbfc15352
+						242 data grid cell C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working Value: C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working
+							243 text C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working
+						244 data grid cell 2026-10-11 16:54:47 Value: 2026-10-11 16:54:47
+							245 text 2026-10-11 16:54:47
+						246 data grid cell BestEffort Value: BestEffort
+							247 text BestEffort
+						248 data grid cell Capture Value: Capture
+							249 text Capture
+						250 data grid cell 0 Value: 0
+							251 text 0
+					252 dataitem (selectable) VersionRow { VersionId = 01a12b3ea3737b3f9842852f62630e99, SourcePath = C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working\saved.txt, CapturedAt = 2026-10-11 16:54:47, Consistency = BestEffort, ChunkCount = 1, Lineage = Capture, EntryKind = File, IsDeleted = False }
+						253 data grid cell 01a12b3ea3737b3f9842852f62630e99 Value: 01a12b3ea3737b3f9842852f62630e99
+							254 text 01a12b3ea3737b3f9842852f62630e99
+						255 data grid cell C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working\saved.txt Value: C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working\saved.txt
+							256 text C:\Users\os008\FluxVault Staging\NEXT005\bfecc98e562b40a4a0a62bed7e57c9d4\working\saved.txt
+						257 data grid cell 2026-10-11 16:54:47 Value: 2026-10-11 16:54:47
+							258 text 2026-10-11 16:54:47
+						259 data grid cell BestEffort Value: BestEffort
+							260 text BestEffort
+						261 data grid cell Capture Value: Capture
+							262 text Capture
+						263 data grid cell 1 Value: 1
+							264 text 1
+					265 dataitem (selectable) VersionRow { VersionId = 01a11bbe0af277ecb9426a8ad2126a77, SourcePath = C:\Users\os008\FluxVault.LiveValidation.NEXT004.ddc02916cbfa431a9360f07be9ca3eaa\Neighbour, CapturedAt = 2026-10-08 16:40:01, Consistency = BestEffort, ChunkCount = 0, Lineage = Capture, EntryKind = Folder, IsDeleted = False }
+						266 data grid cell 01a11bbe0af277ecb9426a8ad2126a77 Value: 01a11bbe0af277ecb9426a8ad2126a77
+							267 text 01a11bbe0af277ecb9426a8ad2126a77
+						268 data grid cell C:\Users\os008\FluxVault.LiveValidation.NEXT004.ddc02916cbfa431a9360f07be9ca3eaa\Neighbour Value: C:\Users\os008\FluxVault.LiveValidation.NEXT004.ddc02916cbfa431a9360f07be9ca3eaa\Neighbour
+							269 text C:\Users\os008\FluxVault.LiveValidation.NEXT004.ddc02916cbfa431a9360f07be9ca3eaa\Neighbour
+						270 data grid cell 2026-10-08 16:40:01 Value: 2026-10-08 16:40:01
+							271 text 2026-10-08 16:40:01
+						272 data grid cell BestEffort Value: BestEffort
+							273 text BestEffort
+						274 data grid cell Capture Value: Capture
+							275 text Capture
+						276 data grid cell 0 Value: 0
+							277 text 0
+					278 dataitem (selectable) VersionRow { VersionId = 01a11bbe0aeb7f5c8ec616dcf966d66d, SourcePath = C:\Users\os008\FluxVault.LiveValidation.NEXT004.ddc02916cbfa431a9360f07be9ca3eaa\Neighbour\NEXT004-keep.psd, CapturedAt = 2026-10-08 16:40:01, Consistency = BestEffort, ChunkCount = 1, Lineage = Capture, EntryKind = File, IsDeleted = False }
+						279 data grid cell 01a11bbe0aeb7f5c8ec616dcf966d66d Value: 01a11bbe0aeb7f5c8ec616dcf966d66d
+							280 text 01a11bbe0aeb7f5c8ec616dcf966d66d
+						281 data grid cell C:\Users\os008\FluxVault.LiveValidation.NEXT004.ddc02916cbfa431a9360f07be9ca3eaa\Neighbour\NEXT004-keep.psd Value: C:\Users\os008\FluxVault.LiveValidation.NEXT004.ddc02916cbfa431a9360f07be9ca3eaa\Neighbour\NEXT004-keep.psd
+							282 text C:\Users\os008\FluxVault.LiveValidation.NEXT004.ddc02916cbfa431a9360f07be9ca3eaa\Neighbour\NEXT004-keep.psd
+						283 data grid cell 2026-10-08 16:40:01 Value: 2026-10-08 16:40:01
+							284 text 2026-10-08 16:40:01
+						285 data grid cell BestEffort Value: BestEffort
+							286 text BestEffort
+						287 data grid cell Capture Value: Capture
+							288 text Capture
+						289 data grid cell 1 Value: 1
+							290 text 1
+					291 dataitem (selectable) VersionRow { VersionId = 01a11a1c091c744db0faf752313bb93c, SourcePath = C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance, CapturedAt = 2026-10-08 09:03:27, Consistency = BestEffort, ChunkCount = 0, Lineage = Parent 01a11a1c08797081ba6cb514944cbc45, EntryKind = Folder, IsDeleted = False }
+						292 data grid cell 01a11a1c091c744db0faf752313bb93c Value: 01a11a1c091c744db0faf752313bb93c
+							293 text 01a11a1c091c744db0faf752313bb93c
+						294 data grid cell C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance Value: C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance
+							295 text C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance
+						296 data grid cell 2026-10-08 09:03:27 Value: 2026-10-08 09:03:27
+							297 text 2026-10-08 09:03:27
+						298 data grid cell BestEffort Value: BestEffort
+							299 text BestEffort
+						300 data grid cell Parent 01a11a1c08797081ba6cb514944cbc45 Value: Parent 01a11a1c08797081ba6cb514944cbc45
+							301 text Parent 01a11a1c08797081ba6cb514944cbc45
+						302 data grid cell 0 Value: 0
+							303 text 0
+					304 dataitem (selectable) VersionRow { VersionId = 01a11a1c09197735b7d893ec0da69868, SourcePath = C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance\Completion.txt, CapturedAt = 2026-10-08 09:03:27, Consistency = BestEffort, ChunkCount = 1, Lineage = Capture, EntryKind = File, IsDeleted = False }
+						305 data grid cell 01a11a1c09197735b7d893ec0da69868 Value: 01a11a1c09197735b7d893ec0da69868
+							306 text 01a11a1c09197735b7d893ec0da69868
+						307 data grid cell C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance\Completion.txt Value: C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance\Completion.txt
+							308 text C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance\Completion.txt
+						309 data grid cell 2026-10-08 09:03:27 Value: 2026-10-08 09:03:27
+							310 text 2026-10-08 09:03:27
+						311 data grid cell BestEffort Value: BestEffort
+							312 text BestEffort
+						313 data grid cell Capture Value: Capture
+							314 text Capture
+						315 data grid cell 1 Value: 1
+							316 text 1
+					317 dataitem (selectable) VersionRow { VersionId = 01a11a1c08797081ba6cb514944cbc45, SourcePath = C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance, CapturedAt = 2026-10-08 09:03:27, Consistency = BestEffort, ChunkCount = 0, Lineage = Capture, EntryKind = Folder, IsDeleted = False }
+						318 data grid cell 01a11a1c08797081ba6cb514944cbc45 Value: 01a11a1c08797081ba6cb514944cbc45
+							319 text 01a11a1c08797081ba6cb514944cbc45
+						320 data grid cell C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance Value: C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance
+							321 text C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance
+						322 data grid cell 2026-10-08 09:03:27 Value: 2026-10-08 09:03:27
+							323 text 2026-10-08 09:03:27
+						324 data grid cell BestEffort Value: BestEffort
+							325 text BestEffort
+						326 data grid cell Capture Value: Capture
+							327 text Capture
+						328 data grid cell 0 Value: 0
+							329 text 0
+					330 dataitem (selectable) VersionRow { VersionId = 01a11a1c08707da0a2e8daf1bbbe8e5f, SourcePath = C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance\Working file.psd, CapturedAt = 2026-10-08 09:03:27, Consistency = BestEffort, ChunkCount = 20, Lineage = Inherited from 01a11a0a46dc7652bbf219dacc7356ec, EntryKind = File, IsDeleted = False }
+						331 data grid cell 01a11a1c08707da0a2e8daf1bbbe8e5f Value: 01a11a1c08707da0a2e8daf1bbbe8e5f
+							332 text 01a11a1c08707da0a2e8daf1bbbe8e5f
+						333 data grid cell C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance\Working file.psd Value: C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance\Working file.psd
+							334 text C:\Users\os008\FluxVault.LiveValidation.7871ff7f8d1b404db20771f2e742364f\Final acceptance\Working file.psd
+						335 data grid cell 2026-10-08 09:03:27 Value: 2026-10-08 09:03:27
+							336 text 2026-10-08 09:03:27
+						337 data grid cell BestEffort Value: BestEffort
+							338 text BestEffort
+						339 data grid cell Inherited from 01a11a0a46dc7652bbf219dacc7356ec Value: Inherited from 01a11a0a46dc7652bbf219dacc7356ec
+							340 text Inherited from 01a11a0a46dc7652bbf219dacc7356ec
+						341 data grid cell 20 Value: 20
+							342 text 20
+				343 button Review history deletion… Description: Review all history for the selected file, or the selected folder and its descendants. Saved protection and retained dependencies prevent deletion. ID: ReviewHistoryDeletionButton
+					344 text Review history deletion…
+				345 button (disabled) Delete reviewed history… ID: DeleteHistoryButton
+					346 text (disabled) Delete reviewed history…
+				347 button (disabled) Check original deletion outcome ID: CheckHistoryDeletionButton
+					348 text (disabled) Check original deletion outcome
+				349 text Removing a selection and saving stops protection while keeping history subject to retention. Pausing keeps the saved selections.
+				350 text Stopping protection keeps history subject to retention. Select a history row to review deliberate deletion of all versions in its file or folder scope.
+				351 group Reviewed candidates and retained dependencies
+					352 button Reviewed candidates and retained dependencies ID: HeaderSite
+						353 text Reviewed candidates and retained dependencies
+			80 tab item (selectable) 🪞 Mirrors
+				81 text 🪞 Mirrors
+			82 tab item (selectable) ↯ Activity
+				83 text ↯ Activity
+			84 tab item (selectable) ▥ Performance
+				85 text ▥ Performance
+			86 tab item (selectable) ⚙ Options
+				87 text ⚙ Options
+			88 tab item (selectable) ▣ Diagnostics
+				89 text ▣ Diagnostics
+		90 text USN: reconciliation scan
+		91 text Retention: waiting
+		92 text Mirror: local only
+		93 text Capture: idle
+
+Document text: ```
+2026-10-11 17:32:06
+```

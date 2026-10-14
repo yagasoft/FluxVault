@@ -2807,20 +2807,7 @@ public sealed class FluxVaultOperations(
         string filePath,
         out WatchedFolderConfiguration folder)
     {
-        foreach (var candidate in configuration.WatchedFolders.Where(folder => folder.IsEnabled))
-        {
-            if (IsUnderWatchedFolder(candidate, filePath)
-                && MatchesPatterns(candidate, filePath)
-                && !ProtectionExclusionMatcher.IsFileExcluded(filePath, configuration.ExclusionRules)
-                && ProtectionSelectionRegexMatcher.IsFileIncluded(filePath, configuration.SelectionRules))
-            {
-                folder = candidate;
-                return true;
-            }
-        }
-
-        folder = null!;
-        return false;
+        return ProtectionSourceSelection.TryFindFolder(configuration, filePath, out folder);
     }
 
     private static bool IsUnderWatchedFolder(WatchedFolderConfiguration folder, string filePath)

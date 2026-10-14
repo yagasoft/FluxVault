@@ -32,6 +32,21 @@ internal static class Program
         try
         {
             var options = Parse(arguments);
+            if(Require(options,"mode")=="installed-automatic-acceptance")
+            {
+                InstalledAutomaticAcceptanceProbe.RunAsync(Require(options,"root"),Require(options,"phase")).GetAwaiter().GetResult();
+                return 0;
+            }
+            if (Require(options, "mode") == "windows-automatic-session-cleanup")
+            {
+                Console.WriteLine(JsonSerializer.Serialize(WindowsAutomaticSessionProbe.CleanupOwnedSources(Require(options, "scratch"))));
+                return 0;
+            }
+            if (Require(options, "mode") == "windows-automatic-session")
+            {
+                Console.WriteLine(JsonSerializer.Serialize(WindowsAutomaticSessionProbe.RunAsync(Require(options, "creator-sid"), Require(options, "scratch")).GetAwaiter().GetResult()));
+                return 0;
+            }
             if(Require(options,"mode")=="installed-control-snapshot")
             {
                 using var identity=WindowsIdentity.GetCurrent();

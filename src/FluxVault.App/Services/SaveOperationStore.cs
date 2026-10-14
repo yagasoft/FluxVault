@@ -16,7 +16,8 @@ public sealed record PendingConfigurationSave(Guid RepositoryId, Guid OperationI
     ConfigurationSaveOrigin Origin = ConfigurationSaveOrigin.Protect, Guid? ProtectionDraftId = null,
     string? ProtectionDraftBaselineFingerprint = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] bool? IsProtectionPaused = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? HistoryDeletionFingerprint = null)
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? HistoryDeletionFingerprint = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] bool? IsAutomaticProtectionEnabled = null)
 {
     internal void Validate()
     {
@@ -29,6 +30,9 @@ public sealed record PendingConfigurationSave(Guid RepositoryId, Guid OperationI
         if (IsProtectionPaused is { } paused && (Origin != ConfigurationSaveOrigin.Protect ||
             Configuration.IsEnabled == paused || PurgeRemovedSelections || RemovedSelections.Count != 0 || PreservedSelections.Count != 0))
             throw new InvalidDataException("The pending protection control has incompatible settings or deletion intent. It has been preserved.");
+        if (IsAutomaticProtectionEnabled is not null && (Origin != ConfigurationSaveOrigin.Options || IsProtectionPaused is not null ||
+            HistoryDeletionFingerprint is not null || PurgeRemovedSelections || RemovedSelections.Count != 0 || PreservedSelections.Count != 0))
+            throw new InvalidDataException("The pending automatic preference has incompatible settings or deletion intent. It has been preserved.");
         if(Origin==ConfigurationSaveOrigin.HistoryDeletion ? PurgeRemovedSelections || IsProtectionPaused is not null ||
             RemovedSelections.Count!=1 || PreservedSelections.Count!=0 || HistoryDeletionFingerprint is not {Length:64} ||
             !HistoryDeletionFingerprint.All(Uri.IsHexDigit) : HistoryDeletionFingerprint is not null)
@@ -39,7 +43,9 @@ public sealed record PendingConfigurationSave(Guid RepositoryId, Guid OperationI
             Origin != ConfigurationSaveOrigin.Protect && ProtectionDraftId is not null)
             throw new InvalidDataException("Only a protection save may reference a valid local editing draft. Its record has been preserved.");
     }
-    internal FluxVaultIpcRequest Request => (Origin==ConfigurationSaveOrigin.HistoryDeletion
+    internal FluxVaultIpcRequest Request => (IsAutomaticProtectionEnabled is { } enabled
+        ? FluxVaultIpcRequest.SetAutomaticProtection(enabled)
+        : Origin==ConfigurationSaveOrigin.HistoryDeletion
         ? FluxVaultIpcRequest.DeleteHistory(RemovedSelections.Single(),HistoryDeletionFingerprint!)
         : IsProtectionPaused is { } paused
         ? FluxVaultIpcRequest.SetProtectionPaused(paused)
@@ -108,7 +114,7 @@ public sealed class FileConfigurationSaveOperationStore(string path) : IConfigur
             {
                 ValidateJson(bytes);
                 using var document = JsonDocument.Parse(bytes, new() { MaxDepth = 32 });
-                if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Count() is not (7 or 8 or 9 or 10 or 11 or 12) ||
+                if (document.RootElement.ValueKind != JsonValueKind.Object || document.RootElement.EnumerateObject().Count() is not (7 or 8 or 9 or 10 or 11 or 12 or 13) ||
                     new[] { "repositoryId", "operationId", "revision", "configuration", "purgeRemovedSelections", "removedSelections", "preservedSelections" }
                         .Any(name => !document.RootElement.TryGetProperty(name, out _)))
                     throw new InvalidDataException("The pending save has missing fields. It has been preserved.");

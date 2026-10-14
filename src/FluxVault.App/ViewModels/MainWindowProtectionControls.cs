@@ -8,6 +8,8 @@ namespace FluxVault.App.ViewModels;
 public sealed partial class MainWindowViewModel
 {
     private bool? requestedProtectionPause;
+    private AutomaticProtectionRuntimeStatus? automaticProtectionStatus;
+    private bool automaticStatusUnavailable;
 
     public bool CanPauseProtection => CanChangeProtectionState && acceptedConfiguration!.IsEnabled;
     public bool CanResumeProtection => CanChangeProtectionState && !acceptedConfiguration!.IsEnabled;
@@ -21,9 +23,11 @@ public sealed partial class MainWindowViewModel
         ? paused ? "Pausing: waiting for any accepted capture to finish…" : "Resuming protection…"
         : HasUnconfirmedProtectionSave && unconfirmedProtectionSave?.IsProtectionPaused is not null
             ? "Protection state uncertain: check the original outcome before continuing."
+            : automaticStatusUnavailable ? "Automatic protection status unavailable. Saved work and history are retained; reconnect to confirm progress."
             : acceptedConfiguration is null ? "Protection state unavailable."
             : acceptedConfiguration.IsEnabled
-                ? "Protection enabled. Automatic capture is not available in this release."
+                ? automaticProtectionStatus is { } automatic ? $"Automatic {AutomaticProtectionText.Label(automatic.State)}: {automatic.Reason}" :
+                    "Protection enabled. Automatic capture is not available in this release."
                 : "Protection paused. New captures are stopped; history and recovery remain available.";
 
     private void NotifyProtectionControlAvailability()
@@ -31,6 +35,7 @@ public sealed partial class MainWindowViewModel
         OnPropertyChanged(nameof(CanPauseProtection));
         OnPropertyChanged(nameof(CanResumeProtection));
         OnPropertyChanged(nameof(ProtectionControlStatus));
+        OnPropertyChanged(nameof(CaptureStrategy));
         OnPropertyChanged(nameof(CanRunBackupNow));
         PauseProtectionCommand.NotifyCanExecuteChanged();
         ResumeProtectionCommand.NotifyCanExecuteChanged();

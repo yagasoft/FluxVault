@@ -36,15 +36,23 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
     private readonly IReadOnlyList<MirrorNodeConfiguration> configuredMirrorNodes;
     private IReadOnlyList<MirrorNodeConfiguration> leasedMirrorNodes = [];
     private List<FileVersionManifest>? mutationManifestCache;
+    private readonly Func<CancellationToken,ValueTask>? runtimeFence;
 
     private async ValueTask<RepositoryLeaseSet> AcquireLeaseAsync(MirrorLeaseMode mode, CancellationToken cancellationToken)
     {
         if (binding is not null && metadataStore is PostgreSqlRepositoryMetadataStore boundStore)
             await boundStore.VerifyBindingAsync(cancellationToken).ConfigureAwait(false);
         var lease = await RepositoryLeaseSet.AcquireAsync(rootPath, configuredMirrorNodes.Select(node => node.Path).ToArray(), mode, cancellationToken, binding: binding).ConfigureAwait(false);
-        foreach (var node in configuredMirrorNodes) lease.LabelMirror(StorageOwnership.Canonical(node.Path), node.Label);
-        leasedMirrorNodes = configuredMirrorNodes.Where(node => lease.MirrorRoots.Contains(StorageOwnership.Canonical(node.Path), StringComparer.OrdinalIgnoreCase)).ToArray();
-        return lease;
+        try
+        {
+            // A replacement can publish its fence only after draining this same
+            // lease. Every new operation checks ownership while holding it.
+            if (runtimeFence is not null) await runtimeFence(cancellationToken).ConfigureAwait(false);
+            foreach (var node in configuredMirrorNodes) lease.LabelMirror(StorageOwnership.Canonical(node.Path), node.Label);
+            leasedMirrorNodes = configuredMirrorNodes.Where(node => lease.MirrorRoots.Contains(StorageOwnership.Canonical(node.Path), StringComparer.OrdinalIgnoreCase)).ToArray();
+            return lease;
+        }
+        catch { await lease.DisposeAsync().ConfigureAwait(false); throw; }
     }
 
     public FileSystemChunkRepository(
@@ -81,12 +89,14 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
 
     internal FileSystemChunkRepository(string rootPath, FastCdcChunker chunker, Blake3ContentHasher hasher,
         ZstdChunkCodec codec, MirrorSetConfiguration? mirrorSet, IRepositoryMetadataStore? metadataStore,
-        RepositoryIntegrityLimits? integrityLimits, RepositoryFaults? faults, VaultBinding? binding = null)
+        RepositoryIntegrityLimits? integrityLimits, RepositoryFaults? faults, VaultBinding? binding = null,
+        Func<CancellationToken,ValueTask>? runtimeFence = null)
     {
         binding?.Validate();
         if (binding is not null && !string.Equals(StorageOwnership.Canonical(rootPath), StorageOwnership.Canonical(binding.RepositoryPath), StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException("The repository root must match the immutable vault binding.", nameof(binding));
         this.binding = binding;
+        this.runtimeFence = runtimeFence;
         this.rootPath = rootPath;
         streamingChunker = new StreamingFastCdcChunker(chunker.Options);
         this.hasher = hasher;
@@ -111,8 +121,8 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
 
     public FileSystemChunkRepository(VaultBinding binding, FastCdcChunker chunker, Blake3ContentHasher hasher,
         ZstdChunkCodec codec, MirrorSetConfiguration? mirrorSet, PostgreSqlRepositoryMetadataStore metadataStore,
-        RepositoryIntegrityLimits? integrityLimits = null)
-        : this(binding.RepositoryPath, chunker, hasher, codec, mirrorSet, metadataStore, integrityLimits, null, binding)
+        RepositoryIntegrityLimits? integrityLimits = null, Func<CancellationToken,ValueTask>? runtimeFence = null)
+        : this(binding.RepositoryPath, chunker, hasher, codec, mirrorSet, metadataStore, integrityLimits, null, binding, runtimeFence)
     {
         if (metadataStore.Binding != binding) throw new ArgumentException("The service repository requires its exact bound PostgreSQL metadata store.", nameof(metadataStore));
     }
@@ -130,6 +140,9 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
     {
         ArgumentNullException.ThrowIfNull(request);
         await using var content = request.Content;
+        if (request.ReservedVersionId is { } reserved &&
+            (!Guid.TryParseExact(reserved, "N", out var identity) || identity == Guid.Empty || reserved != identity.ToString("N")))
+            throw new ArgumentException("A reserved capture requires a canonical nonempty version identity.", nameof(request));
         await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.BestEffort, cancellationToken).ConfigureAwait(false);
         try
         {
@@ -142,6 +155,18 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
             var existingManifests = metadataStore is null
                 ? await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false)
                 : null;
+            if (request.ReservedVersionId is { } reservedIdentity)
+            {
+                var exists = existingManifests?.Any(manifest => manifest.VersionId == reservedIdentity) == true;
+                if (metadataStore is not null)
+                {
+                    try { await metadataStore.ReadManifestAsync(reservedIdentity, cancellationToken).ConfigureAwait(false); exists = true; }
+                    catch (FileNotFoundException) { }
+                }
+                // A durable worker reconciles an existing immutable result before dispatch.
+                // Reusing its identity here must never overwrite a committed version.
+                if (exists) throw new IOException("The reserved capture is already published; reconcile its original result.");
+            }
             var localReferences = existingManifests?.SelectMany(manifest => manifest.Chunks).ToLookup(chunk => chunk.Digest, StringComparer.OrdinalIgnoreCase);
             var verifiedDescriptors = new Dictionary<string, ChunkDescriptor>(StringComparer.OrdinalIgnoreCase);
             var mirrorUsedBytes = new Dictionary<string, long>(GetMirrorNodeUsedBytes(), StringComparer.OrdinalIgnoreCase);
@@ -201,7 +226,7 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
                     cancellationToken).ConfigureAwait(false);
 
             var manifest = new FileVersionManifest(
-                VersionId: Guid.CreateVersion7().ToString("N"),
+                VersionId: request.ReservedVersionId ?? Guid.CreateVersion7().ToString("N"),
                 WatchedFolderId: request.WatchedFolderId,
                 SourcePath: sourcePath,
                 CapturedAtUtc: request.CapturedAtUtc,
@@ -227,6 +252,9 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
                     request.WatchedFolderPath,
                     cancellationToken)
                 .ConfigureAwait(false));
+            if (request.BeforePublication is not null)
+                await request.BeforePublication(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             mirrorWarnings.AddRange(await WriteManifestsAsync(manifestsToRecord, cancellationToken).ConfigureAwait(false));
             if (lineage.OperationType == VersionOperationType.Restore)
             {
@@ -329,6 +357,9 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        if (request.ReservedVersionId is { } reserved &&
+            (!Guid.TryParseExact(reserved,"N",out var identity) || identity==Guid.Empty || reserved!=identity.ToString("N")))
+            throw new ArgumentException("A reserved deletion requires a canonical nonempty version identity.",nameof(request));
         await using var lease = await AcquireLeaseAsync(MirrorLeaseMode.BestEffort, cancellationToken).ConfigureAwait(false);
         try
         {
@@ -342,6 +373,16 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
             var existingManifests = metadataStore is null
                 ? await ReadAllManifestsForMutationAsync(cancellationToken).ConfigureAwait(false)
                 : null;
+            if (request.ReservedVersionId is { } reservedIdentity)
+            {
+                var exists = existingManifests?.Any(manifest => manifest.VersionId==reservedIdentity)==true;
+                if (metadataStore is not null)
+                {
+                    try { await metadataStore.ReadManifestAsync(reservedIdentity,cancellationToken).ConfigureAwait(false); exists=true; }
+                    catch (FileNotFoundException) { }
+                }
+                if (exists) throw new IOException("The reserved deletion is already published; reconcile its original result.");
+            }
             var deletedFrom = existingManifests is null
                 ? await FindLatestManifestAsync(sourcePath, entryKind, cancellationToken).ConfigureAwait(false)
                 : LatestForPath(existingManifests, sourcePath, entryKind);
@@ -349,9 +390,11 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
             {
                 return null;
             }
+            if (request.ExpectedDeletedFromVersionId is { } expected && expected!=deletedFrom.VersionId)
+                throw new IOException("The deletion's retained version changed before publication.");
 
             var manifest = new FileVersionManifest(
-                VersionId: Guid.CreateVersion7().ToString("N"),
+                VersionId: request.ReservedVersionId ?? Guid.CreateVersion7().ToString("N"),
                 WatchedFolderId: request.WatchedFolderId,
                 SourcePath: sourcePath,
                 CapturedAtUtc: entryKind == RepositoryEntryKind.Folder
@@ -378,6 +421,9 @@ public sealed partial class FileSystemChunkRepository : IChunkRepository
                     request.WatchedFolderPath,
                     cancellationToken)
                 .ConfigureAwait(false));
+            if (request.BeforePublication is not null)
+                await request.BeforePublication(deletedFrom.VersionId,cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             mirrorWarnings.AddRange(await WriteManifestsAsync(manifestsToRecord, cancellationToken).ConfigureAwait(false));
             return new RepositoryDeletionResult(manifest, CondenseMirrorWarnings(mirrorWarnings));
         }

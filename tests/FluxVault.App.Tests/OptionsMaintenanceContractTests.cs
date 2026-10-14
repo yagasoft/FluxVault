@@ -47,6 +47,8 @@ public sealed class OptionsMaintenanceContractTests
         {
             await model.InitialiseAsync();
             window.Show();
+            var tabs=Descendants(window).OfType<TabControl>().First();
+            tabs.SelectedItem=tabs.Items.OfType<TabItem>().Single(item=>Equals(item.Header,"Basic"));
             await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
             window.UpdateLayout();
             var descendants = Descendants(window).ToArray();

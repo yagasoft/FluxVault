@@ -53,6 +53,7 @@ if ([IO.Path]::GetFullPath($Root) -ne $expectedRoot) { throw 'Actor fixture root
 $output = Join-Path $Root ("output-" + $Actor)
 $processJournal = Join-Path $output ($RunId + '-processes.jsonl')
 $results = [Collections.Generic.List[object]]::new()
+$probeFailure = $null
 $self = Get-Process -Id $PID
 try { (Get-VaultFixtureProcessIdentity $self | ConvertTo-Json -Compress) | Add-Content -LiteralPath $processJournal } finally { $self.Dispose() }
 function Invoke-ActorTool {
@@ -83,7 +84,10 @@ function Invoke-ActorTool {
         $limit=if($ClientKind -eq 'Integrity'){[int]$runtime.IntegrityTimeoutSeconds*1000}elseif($ClientKind -eq 'CallerFiles'){
             if(($configuration.PSObject.Properties.Name -contains 'RunPackagedIdentityTests') -and $configuration.RunPackagedIdentityTests){120000}
             elseif(($configuration.PSObject.Properties.Name -contains 'RunRestartTests') -and $configuration.RunRestartTests){90000}else{60000}
-        }elseif($ClientKind -eq 'RestartServer' -or $ClientKind -like 'Interrupted*Server'){70000}elseif($ClientKind -like 'Packaged*'){60000}else{25000}
+        }elseif($ClientKind -eq 'Npgsql' -and $configuration.RunAutomaticTests -and $configuration.AutomaticSessionTransition -ne 'None'){
+            ([int]$configuration.SessionTransitionTimeoutSeconds+120)*1000
+        }elseif($ClientKind -eq 'RestartServer' -or $ClientKind -like 'Interrupted*Server'){70000}elseif($ClientKind -like 'Packaged*' -or
+            (($configuration.PSObject.Properties.Name -contains 'RunAutomaticTests') -and $configuration.RunAutomaticTests)){255000}else{25000}
         if (-not $child.WaitForExit($limit)) { throw 'Actor tool exceeded its finite deadline.' }
         return @{ ExitCode=$child.ExitCode; Output=$stdout.GetAwaiter().GetResult(); Error=$stderr.GetAwaiter().GetResult() }
     } finally {
@@ -173,7 +177,14 @@ try {
     } elseif ($ClientKind -eq 'Npgsql') {
         $result = Invoke-ActorTool -Executable $runtime.Dotnet -Arguments @((Join-Path $Root 'runtime/FluxVault.TestHost.dll'), '--mode','windows-db-probe',
             '--configuration',(Join-Path $Root 'runtime/database-probe.json'), '--host',$HostAddress,'--actor',$Actor,'--probe-id',$probeId)
-        if ($result.ExitCode -ne 0) { throw "Npgsql probe failed before its result: $($result.Error)" }
+        if ($result.ExitCode -ne 0) {
+            $probeFailure=@{ExitCode=[int]$result.ExitCode;Output=[string]$result.Output;Error=[string]$result.Error}
+            foreach($field in @('Output','Error')){
+                $probeFailure[$field+'Truncated']=$probeFailure[$field].Length -gt 65536
+                if($probeFailure[$field+'Truncated']){$probeFailure[$field]=$probeFailure[$field].Substring(0,65536)}
+            }
+            throw "Npgsql probe failed before its result: exit code $($result.ExitCode); $($probeFailure | ConvertTo-Json -Compress)"
+        }
         $results.Add(@{ Kind='Npgsql'; Host=$HostAddress; Result=($result.Output | ConvertFrom-Json) })
     } else {
         $connection = "host=$HostAddress port=$($configuration.Port) dbname=fv_gate_261003 user=fv_gate_service connect_timeout=5 require_auth=sspi application_name=FVGate.$probeId.libpq"
@@ -189,7 +200,7 @@ try {
     [IO.File]::Move($resultPath+'.tmp',$resultPath)
 } catch {
     $resultPath=Join-Path $output ($RunId+'-result.json')
-    @{ RunId=$RunId; Actor=$Actor; WindowsSid=$sid; Complete=$false; Error=$_.Exception.Message } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath ($resultPath+'.tmp')
+    @{ RunId=$RunId; Actor=$Actor; WindowsSid=$sid; Complete=$false; Error=$_.Exception.Message; ToolFailure=$probeFailure } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath ($resultPath+'.tmp')
     [IO.File]::Move($resultPath+'.tmp',$resultPath)
     exit 1
 }

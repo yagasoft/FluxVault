@@ -4,6 +4,16 @@ namespace FluxVault.Core.Policies;
 
 public static class CaptureCadenceScheduler
 {
+    public static DateTimeOffset GetDueAtUtc(CaptureCadencePolicy policy, ResourceProfile profile,
+        DateTimeOffset firstEventUtc, DateTimeOffset latestEventUtc, DateTimeOffset? lastCaptureAttemptUtc)
+    {
+        var quiet = latestEventUtc + policy.GetDebounce(profile);
+        var hot = firstEventUtc + policy.GetMaxHotFileDelay(profile);
+        var due = quiet < hot ? quiet : hot;
+        return lastCaptureAttemptUtc is { } last && last + policy.MinimumSameFileCaptureInterval > due
+            ? last + policy.MinimumSameFileCaptureInterval : due;
+    }
+
     public static CaptureCadenceDecision Evaluate(
         CaptureCadencePolicy policy,
         ResourceProfile profile,

@@ -262,6 +262,7 @@ public sealed partial class OptionsViewModel : ObservableObject
             acceptedVaultId = response.VaultId;
             acceptedRevision = response.VaultRevision;
             ApplyEditableConfiguration(currentConfiguration);
+            ApplyAutomaticStatus(response.Status, loadPreference: true);
             StatusText = "Options loaded.";
             TryReadPendingSave(restoreDraft: true);
         }
@@ -349,7 +350,8 @@ public sealed partial class OptionsViewModel : ObservableObject
             var current = await SendBoundAsync(FluxVaultIpcRequest.GetStatus(), cancellationToken).ConfigureAwait(true);
             if (!IsSamePendingSave(pending)) return;
             if (response.Purge is not null || !current.Success || current.Status is null || current.VaultRevision != pending.Revision + 1 ||
-                !SameConfiguration(current.Status.Configuration, pending.Configuration))
+                !SameConfiguration(current.Status.Configuration, pending.Configuration) ||
+                pending.IsAutomaticProtectionEnabled is { } enabled && current.Status.AutomaticProtection?.Policy.Enabled != enabled)
             {
                 saveConfirmedForReview = true;
                 NotifySaveState();
@@ -359,6 +361,7 @@ public sealed partial class OptionsViewModel : ObservableObject
             if (!TryClearPendingSave(pending)) return;
             currentConfiguration = current.Status.Configuration;
             acceptedRevision = current.VaultRevision;
+            ApplyAutomaticStatus(current.Status, loadPreference: false);
             StatusText = "Previous Options save confirmed. Any newer edits are kept. No backup has started.";
         }
         catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
@@ -386,6 +389,7 @@ public sealed partial class OptionsViewModel : ObservableObject
             currentConfiguration = current.Status.Configuration;
             acceptedRevision = current.VaultRevision;
             ApplyEditableConfiguration(currentConfiguration);
+            ApplyAutomaticStatus(current.Status, loadPreference: true);
             StatusText = "Current saved options reloaded. The reviewed pending save is cleared. No backup has started.";
         }
         catch (Exception exception) when (exception is IOException or TimeoutException or OperationCanceledException or UnauthorizedAccessException)
@@ -432,6 +436,8 @@ public sealed partial class OptionsViewModel : ObservableObject
 
     private void NotifySaveState()
     {
+        OnPropertyChanged(nameof(CanApplyAutomaticProtection));
+        ApplyAutomaticProtectionCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(HasUnconfirmedSave));
         OnPropertyChanged(nameof(CanSaveOptions));
         OnPropertyChanged(nameof(CanCheckSaveOutcome));
@@ -458,7 +464,11 @@ public sealed partial class OptionsViewModel : ObservableObject
                     : "The pending Options save does not match this repository binding. Its record and your edits are kept; no save or receipt check will be sent.";
                 return false;
             }
-            if (restoreDraft) ApplyEditableConfiguration(pending.Configuration);
+            if (restoreDraft)
+            {
+                ApplyEditableConfiguration(pending.Configuration);
+                if (pending.IsAutomaticProtectionEnabled is { } enabled) AutomaticProtectionEnabled = enabled;
+            }
             StatusText = "A previous Options save could not be confirmed. Its submitted options are kept. Check the original save outcome before retrying; no backup has started.";
             return true;
         }
@@ -499,7 +509,7 @@ public sealed partial class OptionsViewModel : ObservableObject
             OperationId = request.OperationId ?? (mutation ? Guid.NewGuid() : null) };
         var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(true);
         if (!response.Success) return response;
-        var expectedRevision = request.ExpectedVaultRevision + (request.Command == FluxVaultIpcCommand.SaveConfiguration ? 1 : 0);
+        var expectedRevision = request.ExpectedVaultRevision + (request.Command is FluxVaultIpcCommand.SaveConfiguration or FluxVaultIpcCommand.SetAutomaticProtection ? 1 : 0);
         if (response.VaultId != acceptedVaultId || response.VaultRevision is not > 0 ||
             mutation && (response.OperationId != request.OperationId || response.VaultRevision != expectedRevision))
             return FluxVaultIpcResponse.Failure("The acknowledgement did not match this Options snapshot. Check the outcome before retrying.")

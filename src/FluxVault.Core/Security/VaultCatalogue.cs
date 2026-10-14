@@ -21,7 +21,7 @@ public sealed record VaultBinding(VaultId Id, string RepositoryPath, string Stat
 public sealed record VaultCatalogueEntry(VaultBinding Binding, long Revision, string DisplayName,
     VaultAccessPolicy Access, FluxVaultConfiguration Configuration);
 
-public enum VaultCatalogueFailure { Denied, StaleRevision, IdentityMismatch, InvalidConfiguration, OperationConflict }
+public enum VaultCatalogueFailure { Denied, StaleRevision, IdentityMismatch, InvalidConfiguration, OperationConflict, Unavailable }
 
 public sealed class VaultCatalogueException(VaultCatalogueFailure failure, string? message = null) : Exception(message ?? (failure switch
 {

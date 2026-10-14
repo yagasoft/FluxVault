@@ -35,8 +35,12 @@ public sealed record FluxVaultIpcRequest(
     RepositoryCurrentEntriesQuery? CurrentEntriesQuery = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] bool? IsProtectionPaused = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RepositoryPurgeScope? HistoryDeletionScope = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? HistoryDeletionFingerprint = null)
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? HistoryDeletionFingerprint = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] bool? IsAutomaticProtectionEnabled = null)
 {
+    public static FluxVaultIpcRequest SetAutomaticProtection(bool enabled) =>
+        new(FluxVaultIpcCommand.SetAutomaticProtection, null, null, null, null, IsAutomaticProtectionEnabled: enabled);
+
     public string? DestinationPath => OutputPath;
 
     public static FluxVaultIpcRequest PreviewHistoryDeletion(RepositoryPurgeScope scope) =>

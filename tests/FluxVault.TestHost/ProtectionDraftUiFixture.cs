@@ -114,7 +114,8 @@ internal static class ProtectionDraftUiFixture
                 Snapshot(window,Path.Combine(scratch,"protect-draft.png"));
                 var optionsModel=new OptionsViewModel(client,new Explorer()); await optionsModel.InitialiseAsync();
                 options=new FluxVault.App.OptionsWindow(optionsModel){Owner=window}; options.Show();
-                ((TabControl)Descendants(options).First(element=>element is TabControl)).SelectedIndex=2;
+                var tabs=(TabControl)Descendants(options).First(element=>element is TabControl);
+                tabs.SelectedItem=tabs.Items.OfType<TabItem>().Single(item=>Equals(item.Header,"Advanced"));
                 await options.Dispatcher.InvokeAsync(()=>options.UpdateLayout(),DispatcherPriority.ApplicationIdle);
                 var delay=(TextBox)options.FindName("ProtectionDraftSaveDelayTextBox"); delay.BringIntoView();
                 await options.Dispatcher.InvokeAsync(()=>options.UpdateLayout(),DispatcherPriority.ApplicationIdle);

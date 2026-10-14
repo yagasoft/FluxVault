@@ -1,0 +1,62 @@
+{
+  "JoinedBuilds": [
+    {
+      "Step": "publish-service",
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "Exited": true,
+      "StartedUtc": "2026-10-11T14:25:01.1751399Z",
+      "ExitCode": 0,
+      "ProcessId": 56372
+    },
+    {
+      "Step": "publish-app",
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "Exited": true,
+      "StartedUtc": "2026-10-11T14:25:13.500141Z",
+      "ExitCode": 0,
+      "ProcessId": 40116
+    },
+    {
+      "Step": "publish-cli",
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "Exited": true,
+      "StartedUtc": "2026-10-11T14:25:22.7379385Z",
+      "ExitCode": 0,
+      "ProcessId": 31436
+    },
+    {
+      "Step": "build-installer",
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "Exited": true,
+      "StartedUtc": "2026-10-11T14:25:26.7216548Z",
+      "ExitCode": 0,
+      "ProcessId": 53836
+    },
+    {
+      "Step": "build-bundle",
+      "Executable": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "Exited": true,
+      "StartedUtc": "2026-10-11T14:25:40.203696Z",
+      "ExitCode": 0,
+      "ProcessId": 36088
+    }
+  ],
+  "SourceCommit": "ee7ca8d9901884d4f4993a982f1cf4793d09445c",
+  "Installers": [
+    {
+      "Sha256": "4AB8992D2727693D1D72EC221CBFFEC8324C717B713D24F85647DA4B6BE3B200",
+      "Path": "C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\artifacts\\staging-single-vault\\de279a32e6fc4d7b9b86e02150bd98cd\\installer\\FluxVault.Installer.msi",
+      "Length": 14536704
+    },
+    {
+      "Sha256": "CFF453CE708DF7145DB4C4F91B25715E64E46BB7721A07571227D34D0C1B410A",
+      "Path": "C:\\Users\\os008\\.codex\\worktrees\\next004-next005-planning\\FluxVault\\artifacts\\staging-single-vault\\de279a32e6fc4d7b9b86e02150bd98cd\\installer\\FluxVault.Setup.exe",
+      "Length": 15181825
+    }
+  ],
+  "ManifestSha256": "35B669189863F0CE265BE622383B3749DB00BCBD6528A749680109125115EECA",
+  "PayloadCount": 208,
+  "Version": "1.0.11.0",
+  "RetainedRoot": "C:\\ProgramData\\FluxVault.Commission.7871ff7f8d1b404db20771f2e742364f\\retained-candidates\\de279a32e6fc4d7b9b86e02150bd98cd",
+  "Candidate": "de279a32e6fc4d7b9b86e02150bd98cd"
+}

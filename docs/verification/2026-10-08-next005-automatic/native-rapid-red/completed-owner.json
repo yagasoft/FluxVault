@@ -1,0 +1,148 @@
+{
+  "Version": 1,
+  "FixtureId": "19c3dd3890ec4664bd8019f4a7569381",
+  "RunnerIdentity": {
+    "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "ProcessId": 59064,
+    "StartedUtc": "2026-10-11T14:13:30.2397434Z"
+  },
+  "CreatedUtc": "2026-10-11T14:13:47.3009630Z",
+  "Root": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\19c3dd3890ec4664bd8019f4a7569381",
+  "Parent": "C:\\ProgramData\\FluxVault.Tests\\NEXT002",
+  "State": "Complete",
+  "Resources": [
+    {
+      "Kind": "Account",
+      "Name": "FVGateA_261003",
+      "Identity": {
+        "Sid": "S-1-5-21-136112424-624261118-1239521417-1484"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Account",
+      "Name": "FVGateB_261003",
+      "Identity": {
+        "Sid": "S-1-5-21-136112424-624261118-1239521417-1485"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Group",
+      "Name": "FVGate_261003",
+      "Identity": {
+        "Sid": "S-1-5-21-136112424-624261118-1239521417-1486"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Job",
+      "Name": "Cluster",
+      "Identity": {
+        "KernelName": "Global\\FluxVault.NEXT002.1ff87d56b05948efa3756f47ee1956e5",
+        "OwnerSid": "S-1-5-21-136112424-624261118-1239521417-1001"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Process",
+      "Name": "tool-0e00bda8085546b4997dc630efc36b0f",
+      "Identity": {
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "ProcessId": 44560,
+        "StartedUtc": "2026-10-11T14:14:36.1240743Z"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Postmaster",
+      "Name": "postgres",
+      "Identity": {
+        "Port": 54464,
+        "Executable": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\19c3dd3890ec4664bd8019f4a7569381\\postgresql\\bin\\postgres.exe",
+        "ProcessId": 45272,
+        "StartedUtc": "2026-10-11T14:14:40.3060258Z",
+        "DataDirectory": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\19c3dd3890ec4664bd8019f4a7569381\\data"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Process",
+      "Name": "tool-f2df03d8802547248aaab54a14e471a3",
+      "Identity": {
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "ProcessId": 60692,
+        "StartedUtc": "2026-10-11T14:14:39.5088616Z"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Process",
+      "Name": "tool-2d92dd15505f4f73a0258b378d2ac8b4",
+      "Identity": {
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "ProcessId": 28124,
+        "StartedUtc": "2026-10-11T14:14:40.7820774Z"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Process",
+      "Name": "tool-ee5a01fe8f0e4f2ba593b49849f79b76",
+      "Identity": {
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "ProcessId": 4040,
+        "StartedUtc": "2026-10-11T14:14:41.9787381Z"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Task",
+      "Name": "FluxVault-NEXT002-261003-SYSTEM",
+      "Identity": {
+        "DefinitionSha256": "0C401F7CB98C647D4707164BA393EA9A12F11F2D81F897D4F04FF9E5F33881CC",
+        "InstanceId": "{A2F43A93-F6A3-4720-8F9C-00C60CDF46F0}"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Job",
+      "Name": "system-6b03e124807a4973b8bcb55f2740d486",
+      "Identity": {
+        "KernelName": "Global\\FluxVault.NEXT002.f743bbb160794be4acb10d043cb9a65c",
+        "OwnerSid": "S-1-5-21-136112424-624261118-1239521417-1001"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Process",
+      "Name": "tool-66d667e303ae40769294582f6d5c2389",
+      "Identity": {
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "ProcessId": 32616,
+        "StartedUtc": "2026-10-11T14:14:45.7114998Z"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Job",
+      "Name": "system-8d39e6c5cda647c78bf1b30e5bdf1de6",
+      "Identity": {
+        "KernelName": "Global\\FluxVault.NEXT002.5271e2ea717940f6b53b19713882c875",
+        "OwnerSid": "S-1-5-21-136112424-624261118-1239521417-1001"
+      },
+      "State": "Removed"
+    },
+    {
+      "Kind": "Process",
+      "Name": "tool-039aef38d41b498294bb8710a7e537b4",
+      "Identity": {
+        "Executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "ProcessId": 60460,
+        "StartedUtc": "2026-10-11T14:15:08.2885228Z"
+      },
+      "State": "Removed"
+    }
+  ],
+  "Path": "C:\\ProgramData\\FluxVault.Tests\\NEXT002\\19c3dd3890ec4664bd8019f4a7569381\\owner.json"
+}

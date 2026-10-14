@@ -1,6 +1,6 @@
 # NEXT-005 signed-in automatic protection: design and implementation plan
 
-**Status, 11 October 2026:** the owner removed virtual machines from this plan and confirmed that FluxVault remains in staging with disposable data. The supervised automatic runtime is now installed as corrective candidate 1.0.11 under the existing standing authority. Its real save → automatic capture → service restart → history → independently verified recovery workflow passes, including retained pending work and displayed Pause/Resume states. [Evidence](../../verification/2026-10-08-next005-automatic/README.md) records the exact candidate, exercised manual-only 1.0.9 rollback and successful exact-source hosted CI. Independent final branch/live assessment accepts the bounded signed-in workflow. Actual native Windows sign-out/re-entry still blocks full candidate/slice closeout; broader NEXT-005 completion is not claimed. [NEXT-004](2026-10-08-next004-protection-controls.md) is independently live-accepted as 1.0.9 and merged through PR #35 at `41222b6`. Reuse its valid evidence, fixed architecture and deployment/cleanup procedure, subject to the staging-data scope below.
+**Status, 14 October 2026:** the bounded creator-signed-in slice is installed and live-validated as corrective 1.0.11. Its real save → automatic capture → joined service restart → history → independently verified recovery workflow passes, including pending work and displayed Pause/Resume states. The authorised native sign-out/re-entry check passes all 21 cases, including old-authority retirement, retained work and recovery without another save. [Evidence](../../verification/2026-10-08-next005-automatic/README.md) pins the exact candidate, exercised manual-only 1.0.9 rollback, hosted CI and joined cleanup. Final independent branch/live review accepts the bounded slice; source integration is tracked in PR #36. Broader NEXT-005 logged-off/reboot support remains open. [NEXT-004](2026-10-08-next004-protection-controls.md) is separately delivered as 1.0.9 and squash-merged through PR #35 at `41222b6`. The staging plan uses this PC and existing owned fixtures without VMs.
 
 **Goal:** with the creator signed in, save a supported file → durable automatic capture → restart FluxVault → find its version → independently verify recovery, without keeping the desktop open.
 
@@ -8,7 +8,7 @@
 
 **Contract:** [improvement roadmap](../../improvement-roadmap.md), the [delivered security contract](../specs/2026-10-03-next002-and-protection-save-design.md), and this bounded design. It delivers part of NEXT-005; full logged-off/reboot support and NEXT-006 disaster recovery remain separate.
 
-**Design gate:** [independent Astra review](../../verification/2026-10-08-next004-next005-planning/independent-design-review.md) accepts the corrected extension-table/rollback design. Implementation, migration and candidate proof remain required.
+**Design gate:** [independent Astra review](../../verification/2026-10-08-next004-next005-planning/independent-design-review.md) accepts the corrected extension-table/rollback design. The execution record now supplies implementation, migration, exact-candidate, rollback and installed/native proof for the bounded signed-in slice.
 
 **Staging scope:** use the installed Windows service, WPF client, PostgreSQL and
 existing owned process/database fixtures on this PC. FluxVault staging captures,
@@ -38,11 +38,15 @@ neither is actual sign-out proof.
 The subsequent authorised sign-out verified native authority loss, stale-token
 refusal, joined old readers and retained pending work. Re-entry recovery timed
 out because the owner returned after the observation window. Cleanup and
-installation preservation pass. A fresh session-2 attempt is prepared and
-independently reviewed, but another sign-out requires renewed explicit consent;
-do not repeat it automatically or claim the remaining acceptance gate passed.
+installation preservation pass. The owner renewed consent for the session-2
+retry, which passes actual re-entry capture and independently verified recovery.
+All test processes and tasks are cleared. Both single-use approvals are consumed;
+broader desktop control and another sign-out remain unauthorised.
 
-## What already exists and what must change
+## Design-time implementation gaps
+
+The table records the gaps at planning time. Delivered outcomes are above and
+in the execution record; it does not describe the current installed runtime.
 
 | Area | Verified current source | Remaining work |
 | --- | --- | --- |

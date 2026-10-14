@@ -52,15 +52,16 @@ events verify identity loss, runtime-originated capture cancellation, stale-toke
 refusal, joined old readers and retained pending/uncertain work with the reserved
 version unpublished. The observer then timed out waiting for creator re-entry;
 the owner's new console session 2 began at 08:34 Cairo, after cleanup completed
-around 06:32. **Re-entry capture and independently verified recovery remain open.**
+around 06:32. **That attempt did not prove re-entry recovery; the subsequent renewed retry below does.**
 `native-session-20261014-actual/session-collected.json` confirms all ten recorded
 process identities are gone, both SYSTEM workers exited, both tasks and the
 private fixture were removed, and owned jobs joined. Fresh installed checks match
 all 208 payload hashes and the same PostgreSQL PID/start time. No full native
 acceptance pass is claimed.
 
-Retry `8ce7aacd21554ed7a4784227b75c280e` is prepared for the current creator session
-but **unstarted pending renewed explicit consent**. Its request SHA-256 is
+The renewed retry `8ce7aacd21554ed7a4784227b75c280e` completed successfully after
+explicit consent. It passes **21 native checks**, including re-entry capture and
+independently verified recovery without another source save. Its request SHA-256 is
 `2C70E627E581784C977E2A26BDE79700B6D3C39D5097E30D9F281E7DDEC6F51C`.
 The helper and launcher differ from the accepted operation only in concrete pins;
 independent Astra/high accepts readiness to request consent. Five isolated
@@ -69,7 +70,7 @@ and uncertain registration in Ready/Running states. They create no real tasks
 and submit no sign-out. The owner must remain present and sign back in promptly
 for the finite native acceptance window. The first single-use sign-out approval
 does not authorise an automatic repeat. `native-session-20261014-retry` retains
-the concrete prepared inputs and pending-consent record.
+the concrete inputs, renewed consent, successful actor result, native event sequence and joined collection receipt.
 
 ## Current verification, 11 October
 
@@ -128,10 +129,10 @@ no deletion or retry through another mechanism.
 
 Final independent GPT-6-Astra/high review (`review_protection_design`, 11 October)
 accepts the bounded signed-in branch/live workflow with
-no additional product blocker. **Full candidate/slice closeout remains blocked by
-actual native Windows sign-out/re-entry.** Current-session and injected authority
-transitions do not close that gate. [PR #36](https://github.com/yagasoft/FluxVault/pull/36)
-remains draft while it is unresolved.
+no additional product blocker. The then-open actual native sign-out/re-entry gate
+is closed by the 21-check renewed acceptance above; current-session and injected
+checks alone were never treated as that proof. Final [independent branch/live review](independent-final-review.md) accepts this
+bounded slice; [PR #36](https://github.com/yagasoft/FluxVault/pull/36) tracks source integration.
 
 ### Prior checkpoints and corrective regression evidence
 
@@ -589,3 +590,34 @@ consent. The remaining extension/consent/authority refinement is accepted.
 The plan's two-batch checkpoint remains binding: a private real-service/DB/UI
 automatic round trip and restart result must exist, or the affected path must be
 replanned around its concrete blocker. No new tracking framework is introduced.
+
+## Completed native gate and owner restart, 14 October
+
+The owner resumed after the safe pause. The successful retry retires session 2,
+then uses session 3 / AuthenticationId `00000000:1870EDEA` to capture retained
+work without another source save. Independent recovery SHA-256 is
+`5A21353678ABF96DEDFF76E7881CF0EB15A3EBD341BFDB6C65DBCFF3FE4B8F4A`.
+`native-session-20261014-retry/session-collected.json` verifies both SYSTEM
+workers and all ten recorded process identities exited, both tasks/private
+fixture are removed, and owned jobs joined. Historical pending-consent and
+pause fields are preparation/time-specific records, superseded by the successful
+actor result and completed collection; no historical failure receipt is rewritten.
+
+The owner subsequently rebooted Windows. The fresh read-only installed check in
+`installed-1.0.11/post-owner-reboot-check.json` verifies exact 1.0.11 registration,
+all 208 installed payloads, retained 1.0.9 fallback, bootstrap/authentication and
+storage ACLs. Normal PostgreSQL PID11964 started at
+`2026-10-14T06:24:14.7311992Z` as part of that owner reboot. No agent-issued
+PostgreSQL restart occurred; this preservation check is not reboot-protection
+acceptance. The primary checkout's unrelated index edits are untouched.
+
+Hosted CI [38518651729](https://github.com/yagasoft/FluxVault/actions/runs/38518651729)
+passed at exact `5976fc7542fd43d4807cb89c142aed16d1391a34`: 608 Core, 514 App,
+173 Windows and 376 ordinary Integration tests, zero skipped/build warnings.
+Only documentation and final native receipts changed afterwards. The exact
+product candidate remains source `ee7ca8d9901884d4f4993a982f1cf4793d09445c`.
+Final independent branch/live review accepts the bounded slice; source integration is tracked in PR #36. The bounded
+creator-signed-in capability is verified; wider logged-off/reboot, independent
+disaster recovery, professional consistency and NEXT-009 acceptance stay open.
+Broader desktop control and another sign-out are not authorised by the consumed
+single-use approvals. Previously retained diagnostic folders remain untouched.

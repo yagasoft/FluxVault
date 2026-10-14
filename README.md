@@ -37,8 +37,10 @@ durable pending work, joined shutdown, restart reconciliation and visible
 failure/mirror states. Its [verification record](docs/verification/2026-10-08-next005-automatic/README.md)
 records the installed save → automatic capture → service restart → history →
 independently verified recovery result, and distinguishes it from private fixture
-evidence. Native Windows sign-out/re-entry acceptance remains open, so this is
-not full NEXT-005 closeout. Logged-off/reboot protection remains unsupported.
+evidence. The 21-check native sign-out/re-entry acceptance passes: old authority
+and readers retire before a new creator logon captures retained work and verifies
+its recovery without another save. This closes the bounded signed-in staging
+workflow; logged-off/reboot protection remains unsupported.
 NEXT-006 independent disaster recovery and NEXT-010 VSS/application consistency
 remain following work. The inventory below includes existing components and
 future direction, not those broader support claims.

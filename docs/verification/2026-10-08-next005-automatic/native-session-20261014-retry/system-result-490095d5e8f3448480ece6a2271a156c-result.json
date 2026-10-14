@@ -1,0 +1,60 @@
+{
+  "Results": [
+    {
+      "Kind": "Npgsql",
+      "Host": "127.0.0.1",
+      "Result": {
+        "FixtureId": "8ce7aacd21554ed7a4784227b75c280e",
+        "ProbeId": "0cbb11da29b64f348694163ec692ec37",
+        "Actor": "System",
+        "WindowsSid": "S-1-5-18",
+        "Host": "127.0.0.1",
+        "Authenticated": true,
+        "FixtureVerified": true,
+        "SqlState": null,
+        "ErrorKind": null,
+        "Catalogue": {
+          "Passed": 21,
+          "Checks": [
+            "real WTS creator SID/session/AuthenticationId and ordinary effective token are verified",
+            "actual operational rollback SQL accepts a wholly absent first-start extension without creating consent or work",
+            "actual operational rollback SQL refuses a partial extension before downgrade",
+            "automatic extension is default off in actual service composition",
+            "default-off startup and status remain available and explain an offline configured mirror before any mirror cursor exists",
+            "actual Options view-model enable has a confirmed catalogue receipt",
+            "saved creator preference is enabled and approved through the actual pipe",
+            "ordinary creator can enumerate the owned source through validated native handles",
+            "ordinary creator save reaches an automatic version without RunBackupNow",
+            "automatic, authority-observer and accepted pipe requests join before service disposal",
+            "restart retains automatic preference and acknowledged version identity",
+            "automatic version is findable through authenticated history after restart",
+            "restarted service recovery matches independently hashed original bytes",
+            "real WTS identity loss cancels the runtime-held capture before fixture cancellation and reader release",
+            "the retained old creator token refuses source access after actual sign-out before fixture disposal",
+            "the retained probe token cannot retire before its own held native reader joins",
+            "source suspension cannot acknowledge while the old runtime reader is held",
+            "the retained probe's native source reader joins",
+            "SYSTEM inspection proves the held reserved result was not published and durable pending work remains",
+            "native creator re-entry has a fresh AuthenticationId after the old source generation joined",
+            "native re-entry captures the retained save without another write and independently verifies recovery"
+          ],
+          "NativeWts": true,
+          "RestartRecoveryVerified": true,
+          "NativeSignOutVerified": true,
+          "AbortRehearsal": false,
+          "StoreHost": "127.0.0.1"
+        }
+      }
+    },
+    {
+      "WriteRuntime": true,
+      "WindowsSid": "S-1-5-18",
+      "Kind": "ACL",
+      "ReadProtected": true
+    }
+  ],
+  "WindowsSid": "S-1-5-18",
+  "RunId": "490095d5e8f3448480ece6a2271a156c",
+  "Complete": true,
+  "Actor": "System"
+}

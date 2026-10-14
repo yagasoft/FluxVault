@@ -103,6 +103,15 @@ injected storage failure before confirmed work admission;
 `fadcebf674264bd08bb3c2c0c807fa13` reproduced the unconfirmed-overwrite defect.
 Both joined all jobs, removed their private clusters and preserved the installation.
 
+The first hosted CI run on `216b8c8` passed Core 608, Integration 389 and Windows
+173 checks, but failed one of 515 App checks during fixture disposal. The Options
+test had not joined its asynchronous close/reload. The bounded test correction
+joins `OpenOptionsAsync`, including cleanup, without changing product code or
+behaviour assertions. The three affected checks and all 515 App checks pass
+locally; [correction evidence](ci-correction.json) retains the failed hosted run.
+Fresh hosted CI remains required. This fixture correction does not change the
+frozen `216b8c8` product candidate or invalidate its installed acceptance evidence.
+
 ## Performance and usability limits
 
 The [sample envelope](supported-corpus.json) records actual copied sizes by type.

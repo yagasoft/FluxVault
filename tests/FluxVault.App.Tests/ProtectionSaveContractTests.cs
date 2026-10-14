@@ -2133,6 +2133,7 @@ public sealed partial class ProtectionSaveContractTests
         await viewModel.RefreshAsync();
         var window = new MainWindow(new FileDataGridLayoutStore(Path.Combine(fixture.Root, "layout.json"))) { DataContext = viewModel };
         var forwarded = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        Task? openOptions = null;
         var saveWasAvailable = false;
         var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) };
         timer.Tick += async (_, _) =>
@@ -2153,15 +2154,21 @@ public sealed partial class ProtectionSaveContractTests
         try
         {
             window.Show();
-            var button = Assert.IsType<Button>(window.FindName("OpenOptionsButton"));
             timer.Start();
-            button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            openOptions = window.OpenOptionsAsync();
             await forwarded.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            await openOptions.WaitAsync(TimeSpan.FromSeconds(10));
             Assert.False(saveWasAvailable);
             Assert.DoesNotContain(FluxVaultIpcCommand.SaveConfiguration, client.Commands);
             Assert.Empty(viewModel.FileBrowser.GetSelectionRules());
         }
-        finally { timer.Stop(); foreach (Window owned in window.OwnedWindows) owned.Close(); window.Close(); }
+        finally
+        {
+            timer.Stop();
+            foreach (Window owned in window.OwnedWindows) owned.Close();
+            if (openOptions is not null) await openOptions;
+            window.Close();
+        }
     });
 
     [Fact]

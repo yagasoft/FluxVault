@@ -1,0 +1,22 @@
+{
+  "FailedHostedResult": "Core 608, Integration 389 and Windows 173 passed; App 514 passed and one failed during fixture disposal with config.json still open.",
+  "FailedHostedRun": "https://github.com/yagasoft/FluxVault/actions/runs/38538029196",
+  "FreshHostedResult": "Pending",
+  "Cause": "The test joined its forwarded action but not the asynchronous Options close/reload. It now captures and awaits OpenOptionsAsync, including cleanup, preserving all behaviour assertions.",
+  "ProductSourceCommit": "216b8c8362047b226865e10c451b68f6c18b65c9",
+  "Checks": [
+    {
+      "Counters": "<Counters total=\"3\" executed=\"3\" passed=\"3\" failed=\"0\" error=\"0\" timeout=\"0\" aborted=\"0\" inconclusive=\"0\" passedButRunAborted=\"0\" notRunnable=\"0\" notExecuted=\"0\" disconnected=\"0\" warning=\"0\" completed=\"0\" inProgress=\"0\" pending=\"0\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />",
+      "Name": "mvp-options-lifetime",
+      "Sha256": "1E25A1129A8E9B04C52A3205C1C8D88A49418AE0098BDD06D7F5B7AD3D4EBA2A",
+      "Times": "<Times creation=\"2026-10-14T12:04:40.8681531+03:00\" queuing=\"2026-10-14T12:04:40.8681532+03:00\" start=\"2026-10-14T12:04:37.5274144+03:00\" finish=\"2026-10-14T12:04:41.0645345+03:00\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />"
+    },
+    {
+      "Counters": "<Counters total=\"515\" executed=\"515\" passed=\"515\" failed=\"0\" error=\"0\" timeout=\"0\" aborted=\"0\" inconclusive=\"0\" passedButRunAborted=\"0\" notRunnable=\"0\" notExecuted=\"0\" disconnected=\"0\" warning=\"0\" completed=\"0\" inProgress=\"0\" pending=\"0\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />",
+      "Name": "mvp-app-lifetime",
+      "Sha256": "6B494C74B8B5E0DBDE3D921C8DFB7E7BD047DE8940B3DE08204E22E2476B123D",
+      "Times": "<Times creation=\"2026-10-14T12:05:01.9520277+03:00\" queuing=\"2026-10-14T12:05:01.9520278+03:00\" start=\"2026-10-14T12:05:01.2906841+03:00\" finish=\"2026-10-14T12:05:11.4246641+03:00\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />"
+    }
+  ],
+  "ProductFilesChanged": false
+}

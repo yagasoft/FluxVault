@@ -24,11 +24,7 @@ internal static class InstalledMvpAcceptanceProbe
         using var identity = WindowsIdentity.GetCurrent();
         if (identity.User?.Value != "S-1-5-21-136112424-624261118-1239521417-1001")
             throw new UnauthorizedAccessException("The installed creator is required.");
-        root = Path.GetFullPath(root);
-        var parent = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "FluxVault Staging", "MVP");
-        if (Path.GetDirectoryName(root) != parent || !Guid.TryParseExact(Path.GetFileName(root), "N", out _))
-            throw new InvalidDataException("Use an exact owned MVP staging directory.");
-        FluxVault.Testing.WindowsDatabaseProbeConfiguration.RejectReparseComponents(root);
+        root = FluxVault.Testing.MvpStagingPaths.ResolveRoot(root);
         if (phase is not ("roundtrip" or "sustain" or "verify-retained" or "restore-baseline" or "snapshot")) throw new ArgumentException("Unsupported MVP phase.");
         using var deadline = new CancellationTokenSource(TimeSpan.FromMinutes(phase == "sustain" ? 75 : 20));
         var ct = deadline.Token;

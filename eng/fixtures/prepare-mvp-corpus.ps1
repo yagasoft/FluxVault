@@ -3,14 +3,12 @@
 #Requires -Version 7.2
 param([Parameter(Mandatory)][string]$Source, [Parameter(Mandatory)][string]$RunRoot)
 $ErrorActionPreference = 'Stop'
+Import-Module (Join-Path $PSScriptRoot 'vault-windows-fixture.psm1') -Force
 $Source = [IO.Path]::GetFullPath($Source)
-$RunRoot = [IO.Path]::GetFullPath($RunRoot)
-$parent = Join-Path ([Environment]::GetFolderPath('UserProfile')) 'FluxVault Staging/MVP'
-if ([IO.Path]::GetDirectoryName($RunRoot) -ine $parent -or [IO.Path]::GetFileName($RunRoot) -notmatch '^[0-9a-f]{32}$') { throw 'An exact owned MVP run directory is required.' }
+$parent = 'I:\FluxVault Staging\MVP'
+$runId = [IO.Path]::GetFileName([IO.Path]::TrimEndingDirectorySeparator($RunRoot))
+$RunRoot = Resolve-VaultFixtureRoot -Root $RunRoot -Parent $parent -FixtureId $runId
 if (Test-Path -LiteralPath $RunRoot) { throw 'A fresh run directory is required.' }
-for ($part=$RunRoot; $part; $part=[IO.Path]::GetDirectoryName($part)) {
-    if ((Test-Path -LiteralPath $part) -and ((Get-Item -LiteralPath $part -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Reparse staging path refused.' }
-}
 $extensions = @('.docx','.xlsx','.pptx','.pdf','.vsdx','.drawio','.mpp','.xlsm','.csv','.jsonl','.ndjson','.md','.txt','.msg','.png','.jpg','.svg','.mp4','.zip','.7z','.rar','.json','.vtt','.html')
 $files = @(Get-ChildItem -LiteralPath $Source -File -Recurse -Force | Where-Object {
     $_.Extension.ToLowerInvariant() -in $extensions -and $_.Length -gt 0 -and

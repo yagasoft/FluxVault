@@ -6,6 +6,55 @@ namespace FluxVault.Integration.Tests;
 // Current-user tooling checks. These do not claim the real A/B/SYSTEM acceptance gates.
 public sealed class WindowsFixtureToolingTests
 {
+    [Fact]
+    public async Task Mvp_wrappers_share_the_owned_I_drive_root_and_refuse_other_roots()
+    {
+        using var fixture = new ScriptFixture();
+        var result = await fixture.RunAsync("""
+            $repo=Split-Path (Split-Path (Split-Path $module))
+            $wrapperRoot=Join-Path $repo 'eng/fixtures'
+            $id=[guid]::NewGuid().ToString('N')
+            $owned='I:\FluxVault Staging\MVP\'+$id
+            $legacy=Join-Path ([Environment]::GetFolderPath('UserProfile')) ('FluxVault Staging/MVP/'+$id)
+            $cases=@(
+                @{Name='owned';Path=$owned;Expected=$true},
+                @{Name='case';Path=$owned.ToUpperInvariant();Expected=$true},
+                @{Name='trailing-separator';Path=($owned+'\');Expected=$true},
+                @{Name='legacy';Path=$legacy;Expected=$false},
+                @{Name='relative';Path=$id;Expected=$false},
+                @{Name='drive-relative';Path=('I:FluxVault Staging\MVP\'+$id);Expected=$false},
+                @{Name='sibling';Path=('I:\FluxVault Staging\Other\'+$id);Expected=$false},
+                @{Name='nested';Path=($owned+'\'+$id);Expected=$false},
+                @{Name='empty-id';Path='I:\FluxVault Staging\MVP\00000000000000000000000000000000';Expected=$false},
+                @{Name='alternate-stream';Path=($owned+':payload');Expected=$false})
+            $results=@()
+            foreach($name in @('prepare-mvp-corpus.ps1','invoke-owned-mvp-probe.ps1')){
+                $tokens=$null;$errors=$null
+                $ast=[Management.Automation.Language.Parser]::ParseFile((Join-Path $repo ('eng/fixtures/'+$name)),[ref]$tokens,[ref]$errors)
+                if($errors.Count){throw 'MVP wrapper parse failure.'}
+                $boundary=if($name -eq 'prepare-mvp-corpus.ps1'){'extensions'}else{'executable'}
+                $statements=@()
+                foreach($statement in $ast.EndBlock.Statements){
+                    if($statement -is [Management.Automation.Language.AssignmentStatementAst] -and $statement.Left.VariablePath.UserPath -eq $boundary){break}
+                    # Dynamic execution supplies the same script-root context as -File.
+                    $statements+=$statement.Extent.Text.Replace('$PSScriptRoot','$wrapperRoot')
+                }
+                if(-not $statements.Count){throw 'Missing MVP admission prefix.'}
+                foreach($case in $cases){
+                    $RunRoot=$case.Path;$Source=$root;$Phase='snapshot';$TimeoutSeconds=0
+                    $accepted=$true;$failure=$null
+                    try{Invoke-Expression ($statements -join "`n")}catch{$accepted=$false;$failure=$_.Exception.Message}
+                    $results+=@{Script=$name;Case=$case.Name;Expected=$case.Expected;Accepted=$accepted;Failure=$failure}
+                }
+            }
+            ConvertTo-Json -InputObject $results -Depth 4 -Compress
+            """);
+        Assert.Equal(20, result.GetArrayLength());
+        foreach (var item in result.EnumerateArray())
+            Assert.True(item.GetProperty("Expected").GetBoolean() == item.GetProperty("Accepted").GetBoolean(),
+                $"{item.GetProperty("Script").GetString()}/{item.GetProperty("Case").GetString()}: {item.GetProperty("Failure").GetString()}");
+    }
+
     [Theory]
     [InlineData(12, false)]
     [InlineData(70000, true)]

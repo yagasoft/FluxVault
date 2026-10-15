@@ -3,14 +3,15 @@ param([Parameter(Mandatory)][string]$RunRoot,
     [Parameter(Mandatory)][ValidateSet('roundtrip','sustain','verify-retained','restore-baseline','snapshot')][string]$Phase,
     [int]$TimeoutSeconds=0)
 $ErrorActionPreference='Stop'
+Import-Module (Join-Path $PSScriptRoot 'vault-windows-fixture.psm1') -Force
 # Let the probe's cancellation and two-minute baseline restoration finish before
 # a last-resort process kill. Join alone is not proof of configuration restoration.
 $minimumSeconds=if($Phase -eq 'sustain'){4680}else{1380}
 if($TimeoutSeconds -eq 0){$TimeoutSeconds=$minimumSeconds}
 if($TimeoutSeconds -lt $minimumSeconds -or $TimeoutSeconds -gt 5400){throw 'Probe deadline must include its cancellation and restoration grace.'}
-$RunRoot=[IO.Path]::GetFullPath($RunRoot)
-$parent=Join-Path ([Environment]::GetFolderPath('UserProfile')) 'FluxVault Staging/MVP'
-if([IO.Path]::GetDirectoryName($RunRoot) -ine $parent -or [IO.Path]::GetFileName($RunRoot) -notmatch '^[0-9a-f]{32}$'){throw 'Unowned MVP root.'}
+$parent='I:\FluxVault Staging\MVP'
+$runId=[IO.Path]::GetFileName([IO.Path]::TrimEndingDirectorySeparator($RunRoot))
+$RunRoot=Resolve-VaultFixtureRoot -Root $RunRoot -Parent $parent -FixtureId $runId
 $executable=Join-Path $RunRoot 'probe/FluxVault.TestHost.exe'
 $start=[Diagnostics.ProcessStartInfo]::new($executable)
 $start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true

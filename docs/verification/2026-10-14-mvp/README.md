@@ -92,10 +92,45 @@ retained but is not the immediate fallback for this change.
 | Windows restart → automatic service → creator sign-in → reconcile | Passed after explicit consent. [Boot evidence](boot-acceptance.json): ten pre-sign-in observations retain one pending item; automatic delayed service startup then captures it after sign-in, with desktop closed and no source write or manual service start. Independent new-location SHA-256 matches. This boot did not observe a running service before sign-in; accepted native session-authority tests establish access gating. |
 | Independent final acceptance | [Approved](independent-review.md) for the bounded supplementary pilot after independent inspection of the raw boot, recovery, collection, baseline and sign-in-restoration receipts. No remaining product or live-acceptance blocker. |
 
-Raw private evidence roots: `%USERPROFILE%\FluxVault Staging\MVP\be23b1606edf419f9c228728d93becec`
+Raw private evidence roots: `I:\FluxVault Staging\MVP\be23b1606edf419f9c228728d93becec`
 and final installation run `283216a322c04a14bb4a95a03b78485e` in the same parent.
 Final native startup/storage run: `C:\ProgramData\FluxVault.Tests\MVPStartup\e7781e20745e4c19b7ab0f104b25988f`.
 These retained paths contain identity-bound evidence; do not publish the source map.
+
+### Evidence relocation, 15 October 2026
+
+The owner authorised moving this task's retained files to I:. The two MVP runs
+above were copied from `%USERPROFILE%\FluxVault Staging\MVP`: all 673 files,
+70 directories and 7,157,257,022 logical bytes matched their recorded SHA-256,
+length and last-write time. The destination retains protected access. Historical
+receipts, hashes and C: path strings remain unchanged as provenance; the mapping
+above locates their current copies. Retained probe binaries are archival and may
+still enforce their original C: root. Newly built MVP fixtures require an exact,
+non-empty UUID directory directly under `I:\FluxVault Staging\MVP`.
+
+The active task checkout is now
+`I:\Codex Workspaces\Worktrees\fluxvault-mvp-finalisation\FluxVault`.
+Its 10,897 original non-metadata files, 1,002 directories and 11,900 effective
+ACL entries matched before source retirement. A separate Git worktree registration
+was created and attached to this chat before Codex archived the old C: checkout.
+The original task branch and complete verified private checkout copy remain
+retained. The unrelated primary changes and NEXT-006 planning files match their
+previous hashes.
+
+Twelve focused checks pass, including 20 actual PowerShell admission cases, and
+the TestHost Release build has zero warnings/errors. The actual preparation wrapper
+and joined installed snapshot actor pass from a fresh I: fixture. That snapshot
+preserves the original configuration: automatic protection off, pending and
+uncertain counts zero. This relocation changes fixture tooling only; no installed
+payload, source document, service or database configuration was changed. Existing
+MVP product acceptance remains applicable.
+
+The C: worktree checkout was retired, removing 1,319,096,593 logical bytes. The
+two C: MVP run copies still occupy 7,157,257,022 bytes (6.67 GiB): automatic approval
+review rejected their removal as “blocked by policy”, including the narrower exact
+two-directory submission. Removal attempts have stopped. Their parent and siblings
+remain untouched. This is a disk-cleanup blocker, not an MVP product gate.
+[Relocation evidence](relocation.json) pins the private verification records.
 
 Focused overwrite regression failed before the fix, then 14 relevant App checks
 passed. [Final combined checks](combined-checks.json) pass: 515 App, 173 Windows and

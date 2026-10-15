@@ -1,0 +1,98 @@
+{
+  "Version": 1,
+  "Purpose": "Owner-authorised relocation of completed MVP task files; no product redeployment",
+  "ObservedUtc": "2026-10-15T11:06:06.3200096+00:00",
+  "MvpRuns": {
+    "SourceParent": "C:\\Users\\os008\\FluxVault Staging\\MVP",
+    "DestinationParent": "I:\\FluxVault Staging\\MVP",
+    "RunIds": [
+      "be23b1606edf419f9c228728d93becec",
+      "283216a322c04a14bb4a95a03b78485e"
+    ],
+    "Files": 673,
+    "Directories": 70,
+    "LogicalBytes": 7157257022,
+    "Sha256LengthAndLastWriteMatch": true,
+    "ProtectedDestination": true,
+    "SourceRemoval": "Blocked by automatic approval review; exact two-run removal also rejected as blocked by policy; no further attempts",
+    "CSourceCopiesRemain": true,
+    "ParentAndSiblingsUntouched": true
+  },
+  "Worktree": {
+    "OldCheckout": "C:\\Users\\os008\\.codex\\worktrees\\fluxvault-mvp-finalisation\\FluxVault",
+    "ActiveCheckout": "I:\\Codex Workspaces\\Worktrees\\fluxvault-mvp-finalisation\\FluxVault",
+    "OriginalTaskBranch": "codex/fluxvault-mvp-finalisation",
+    "OriginalTaskCommit": "ddfdfb41dc1312c28f474c5caa98c35d8bffcd7e",
+    "MergedMainCommit": "5185cf2cf97ddf03ba53bfe4ccf958ab3318cfcc",
+    "CopiedFilesIncludingOldGitMarker": 10898,
+    "MatchedOriginalFilesExcludingGitMarker": 10897,
+    "Directories": 1002,
+    "MatchedAclEntries": 11900,
+    "SourceLogicalBytesRetired": 1319096593,
+    "IndependentGitRegistration": true,
+    "CodexActiveIAndArchivedC": true,
+    "OldCheckoutAbsent": true,
+    "VerifiedOriginalCopyRetained": "I:\\FluxVault Staging\\Relocation\\8994967f2572483d876a0229be96ff39\\verified-checkout",
+    "OriginalCopyGitMarker": "Inert historical copy; do not run Git there"
+  },
+  "Verification": {
+    "FocusedTestsPassed": 12,
+    "Failed": 0,
+    "Skipped": 0,
+    "PowerShellAdmissionCases": 20,
+    "ReleaseBuildWarnings": 0,
+    "ReleaseBuildErrors": 0,
+    "ActualIWrapperAndInstalledSnapshotActorPassed": true,
+    "ActorJoined": true,
+    "ConfigurationPreserved": true,
+    "AutomaticProtectionEnabled": false,
+    "PendingCount": 0,
+    "UncertainCount": 0,
+    "UnrelatedAndNext006HashesUnchanged": true,
+    "InstalledPayloadOrServicesOrNormalPostgreSqlChanged": false,
+    "ExistingMvpAcceptanceReused": true
+  },
+  "PrivateEvidenceRoot": "I:\\FluxVault Staging\\Relocation\\8994967f2572483d876a0229be96ff39",
+  "PrivateEvidenceSha256": [
+    {
+      "File": "MVP-source.json",
+      "SHA256": "AAADA2B16E33880CF5534FAA3E1F363CC33C22C13FAA579B71CB8EA8F70AA372"
+    },
+    {
+      "File": "MVP-verified-8b6b9185ea1440858e73fb81188a4411.json",
+      "SHA256": "E61CAE6E567478CC5407E53478C50F53DFC3DFAB5D068B8DB882F4C7B55C0D64"
+    },
+    {
+      "File": "Worktree-source.json",
+      "SHA256": "4F9D1CE02D030141FF03D903485A410AB1097AE099873C751E6BFC84C5FCDB0B"
+    },
+    {
+      "File": "Worktree-verified-5170400c5e534d89afcd1aa270fb78c9.json",
+      "SHA256": "7673F490940084053B068CA14EB659741845C4730EAEDA882316ADD46F2F6B2A"
+    },
+    {
+      "File": "independent-worktree-verified.json",
+      "SHA256": "196846F2DA06F9A16EFB83D45FC747EEB759275C679A102411EB3DB3D5E3CDFC"
+    },
+    {
+      "File": "mvp-exact-runs-verified.json",
+      "SHA256": "C14547B41765EE6A807EA8E4D0B569CB39885D575D7C7EA07948BDF87BB4ED8F"
+    },
+    {
+      "File": "unrelated-preserved.json",
+      "SHA256": "FC1189C18F9B051412317E771F3721B7C9E03A39D49801EB178A36E3C11D7A3D"
+    },
+    {
+      "File": "fixture-native-validation.json",
+      "SHA256": "83C9EA28FFFF78CE5723063C9EBFC45C79883B1BE642A7F167CE15073450869D"
+    },
+    {
+      "File": "checks\\mvp-root-final.trx",
+      "SHA256": "D2D10E3B9259A20649DB4430A92B2B2A6CE993998D3CBC4BE77DA1747F8BF2C4"
+    },
+    {
+      "File": "final-testhost-build.log",
+      "SHA256": "D6BB2A5DBA2F9CF4F7697DFD683B466EEB79D7EFC5B579561CA750B9286A1986"
+    }
+  ]
+}

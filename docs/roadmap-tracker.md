@@ -53,6 +53,13 @@ position outside this MVP's critical path. Full shell redesign, theme/accessibil
 VSS and advanced professional consistency remain deferred; no logged-off or
 standalone disaster-protection claim is made.
 
+**MVP evidence location, 15 October 2026:** PR #37 is merged at `5185cf2`.
+The [retained MVP evidence and active task checkout](verification/2026-10-14-mvp/README.md#evidence-relocation-15-october-2026)
+are verified on I:, and future MVP fixtures require that owned staging root.
+Automatic review blocked deletion of the two original C: evidence runs; their
+6.67 GiB remains a disk-cleanup blocker. Product acceptance and NEXT-006's separate
+design and backlog position are unchanged.
+
 **Implementation continuation, updated 14 October 2026:** NEXT-004 is squash-merged through [PR #35](https://github.com/yagasoft/FluxVault/pull/35) at `41222b6` after successful exact-head hosted CI. The owner resumed the [NEXT-004 controls plan](superpowers/plans/2026-10-08-next004-protection-controls.md) and separate [NEXT-005 signed-in automatic plan](superpowers/plans/2026-10-08-next005-signed-in-automatic-protection.md). NEXT-004 was delivered and accepted as corrective 1.0.9; [live evidence](verification/2026-10-08-next004-controls/README.md) verifies explicit controls, non-purging Stop/Save, exact reviewed deletion/cancellation, independent recovery, original configuration/history preservation and joined cleanup. Independent final live/complete-branch assessment is accepted. NEXT-005's signed-in automatic runtime is installed as corrective candidate 1.0.11, with [installed and real-store evidence](verification/2026-10-08-next005-automatic/README.md) for automatic capture, pending-save restart and independently verified recovery; the renewed actual native sign-out/re-entry check passes all 21 cases and closes that remaining bounded workflow gate. The owner's 11 October staging decision removes VM/environment acquisition and its implementation block. Use this Windows PC, disposable FluxVault staging data and existing fixtures. Independent review accepts real current-session checks plus separately labelled injected transitions; actual native sign-out/re-entry, retained-work capture and independently verified recovery now pass, with all owned processes/tasks joined and removed. NEXT-009 startup dispatcher work still exceeds its proposed target; wider performance acceptance remains open. Completed baseline gates are reused within their checked scope; final acceptance supersedes historical intermediate statements below.
 
 NEXT-001/003/005 are `Partially implemented` after the bounded integrity slice. The original review and probes remain baseline evidence, not verification of fixes.

@@ -125,6 +125,13 @@ uncertain counts zero. This relocation changes fixture tooling only; no installe
 payload, source document, service or database configuration was changed. Existing
 MVP product acceptance remains applicable.
 
+The first hosted run on `c664cf8` built without warnings/errors but failed the
+new wrapper admission test because its runner had no I: PowerShell drive. Its
+other 1,695 tests passed. The test now creates a drive only in its isolated child
+process when absent; the admission assertions and real staging guards are unchanged.
+The missing-drive cause was reproduced locally, and all twelve focused checks pass
+after correction. The failed run and correction evidence remain pinned below.
+
 The C: worktree checkout was retired, removing 1,319,096,593 logical bytes. The
 two C: MVP run copies still occupy 7,157,257,022 bytes (6.67 GiB): automatic approval
 review rejected their removal as “blocked by policy”, including the narrower exact

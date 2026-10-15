@@ -1,7 +1,7 @@
 {
   "Version": 1,
   "Purpose": "Owner-authorised relocation of completed MVP task files; no product redeployment",
-  "ObservedUtc": "2026-10-15T11:06:06.3200096+00:00",
+  "ObservedUtc": "2026-10-15T14:06:06.3200096+03:00",
   "MvpRuns": {
     "SourceParent": "C:\\Users\\os008\\FluxVault Staging\\MVP",
     "DestinationParent": "I:\\FluxVault Staging\\MVP",
@@ -93,6 +93,37 @@
     {
       "File": "final-testhost-build.log",
       "SHA256": "D6BB2A5DBA2F9CF4F7697DFD683B466EEB79D7EFC5B579561CA750B9286A1986"
+    },
+    {
+      "File": "ci-c664cf8-failed.log",
+      "SHA256": "1C339F4F47D6E31F07CE9DDA079073C0216A5783FBA68703FFBFF1E06D71E162"
+    },
+    {
+      "File": "ci-missing-drive-reproduction.json",
+      "SHA256": "BFB0B74B9AC226B4AE7BB62FB1B6540D4F42953F0BC00D744D00EE85A62BA5DB"
+    },
+    {
+      "File": "checks\\mvp-root-ci-correction.trx",
+      "SHA256": "BBB4E06717D21CBA8567F12C99F729B60097D84C11831B14D83E0F7696C2FE91"
+    },
+    {
+      "File": "mvp-root-ci-correction.log",
+      "SHA256": "3AF2C15E7138A54D8B222F84E984F12458B94B98EDACBD7FE2C44AB8E27F4BC6"
     }
-  ]
+  ],
+  "HostedCiCorrection": {
+    "FailedRun": "https://github.com/yagasoft/FluxVault/actions/runs/38725159168",
+    "FailedCommit": "c664cf8bb001c2d3e0ff9d7c8a8ddb96f0b162fd",
+    "BuildWarnings": 0,
+    "BuildErrors": 0,
+    "OtherTestsPassed": 1695,
+    "FailedTests": 1,
+    "Cause": "Hosted runner has no I: PowerShell drive; Join-Path fails before admission comparison",
+    "Correction": "Create I: PSDrive only when absent, scoped to the isolated test child and its owned private fixture directory",
+    "WindowsDriveMappingChanged": false,
+    "AdmissionAssertionsChanged": false,
+    "StagingGuardsChanged": false,
+    "CorrectedFocusedTestsPassed": 12,
+    "ProductCodeChanged": false
+  }
 }

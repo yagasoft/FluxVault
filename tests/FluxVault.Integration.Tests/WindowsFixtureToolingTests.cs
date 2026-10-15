@@ -13,6 +13,10 @@ public sealed class WindowsFixtureToolingTests
         var result = await fixture.RunAsync("""
             $repo=Split-Path (Split-Path (Split-Path $module))
             $wrapperRoot=Join-Path $repo 'eng/fixtures'
+            # Hosted runners may lack I:. This mapping lives only in this isolated child.
+            if(-not(Get-PSDrive -Name I -ErrorAction SilentlyContinue)){
+                New-PSDrive -Name I -PSProvider FileSystem -Root $root -Scope Global | Out-Null
+            }
             $id=[guid]::NewGuid().ToString('N')
             $owned='I:\FluxVault Staging\MVP\'+$id
             $legacy=Join-Path ([Environment]::GetFolderPath('UserProfile')) ('FluxVault Staging/MVP/'+$id)
